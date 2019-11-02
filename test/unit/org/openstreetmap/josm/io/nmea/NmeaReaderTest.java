@@ -24,7 +24,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -100,8 +100,8 @@ public class NmeaReaderTest {
         int nTracks = gpxTrack.getSegments().size();
         assertEquals(nTracks, nmeaTrack.getSegments().size());
         if (nTracks > 0) {
-            GpxTrackSegment gpxSeg = gpxTrack.getSegments().iterator().next();
-            GpxTrackSegment nmeaSeg = nmeaTrack.getSegments().iterator().next();
+            IGpxTrackSegment gpxSeg = gpxTrack.getSegments().iterator().next();
+            IGpxTrackSegment nmeaSeg = nmeaTrack.getSegments().iterator().next();
             assertEquals(gpxSeg.getBounds(), nmeaSeg.getBounds());
             assertEquals(numCoor, gpxSeg.getWayPoints().size());
             assertEquals(numCoor, nmeaSeg.getWayPoints().size());

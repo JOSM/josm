@@ -10,8 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.gpx.Extensions;
-import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 
@@ -45,7 +43,6 @@ public class AudioMarkerTest {
         assertEquals("2", marker.getText());
         WayPoint wpt = marker.convertToWayPoint();
         assertEquals(LatLon.ZERO, wpt.getCoor());
-        Extensions ext = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
-        assertEquals("2.0", ext.get("offset"));
+        assertEquals("2.0", wpt.getExtensions().get("josm", "offset").getValue());
     }
 }

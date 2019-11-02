@@ -8,7 +8,7 @@ import java.awt.geom.Path2D;
 import org.openstreetmap.josm.actions.DownloadAlongAction;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -60,7 +60,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
         Path2D gpxPath = new Path2D.Double();
         if (near == NEAR_TRACK || near == NEAR_BOTH) {
             for (GpxTrack trk : data.tracks) {
-                for (GpxTrackSegment segment : trk.getSegments()) {
+                for (IGpxTrackSegment segment : trk.getSegments()) {
                     boolean first = true;
                     for (WayPoint p : segment.getWayPoints()) {
                         if (first) {

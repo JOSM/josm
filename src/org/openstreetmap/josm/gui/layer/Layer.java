@@ -25,9 +25,6 @@ import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.preferences.AbstractProperty;
-import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListener;
-import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -164,7 +161,6 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      */
     private File associatedFile;
 
-    private final ValueChangeListener<Object> invalidateListener = change -> invalidate();
     private boolean isDestroyed;
 
     /**
@@ -198,40 +194,28 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     public abstract Icon getIcon();
 
     /**
-     * Gets the color property to use for this layer.
-     * @return The color property.
-     * @since 10824
+     * @return whether the layer has / can handle colors.
+     * @since 15496
      */
-    public AbstractProperty<Color> getColorProperty() {
-        NamedColorProperty base = getBaseColorProperty();
-        if (base != null) {
-            return base.getChildColor(NamedColorProperty.COLOR_CATEGORY_LAYER, getName(), base.getName());
-        } else {
-            return null;
-        }
+    public boolean hasColor() {
+        return false;
     }
 
     /**
-     * Gets the color property that stores the default color for this layer.
-     * @return The property or <code>null</code> if this layer is not colored.
-     * @since 10824
+     * Return the current color of the layer
+     * @return null when not present or not supported
+     * @since 15496
      */
-    protected NamedColorProperty getBaseColorProperty() {
+    public Color getColor() {
         return null;
     }
 
-    private void addColorPropertyListener() {
-        AbstractProperty<Color> colorProperty = getColorProperty();
-        if (colorProperty != null) {
-            colorProperty.addListener(invalidateListener);
-        }
-    }
-
-    private void removeColorPropertyListener() {
-        AbstractProperty<Color> colorProperty = getColorProperty();
-        if (colorProperty != null) {
-            colorProperty.removeListener(invalidateListener);
-        }
+    /**
+     * Sets the color for this layer. Nothing happens if not supported by the layer
+     * @param color the color to be set, <code>null</code> for default
+     * @since 15496
+     */
+    public void setColor(Color color) {
     }
 
     /**
@@ -302,7 +286,6 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
         }
         isDestroyed = true;
         // Override in subclasses if needed
-        removeColorPropertyListener();
     }
 
     /**
@@ -339,17 +322,11 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * @param name the name. If null, the name is set to the empty string.
      */
     public void setName(String name) {
-        if (this.name != null) {
-            removeColorPropertyListener();
-        }
         String oldValue = this.name;
         this.name = Optional.ofNullable(name).orElse("");
         if (!this.name.equals(oldValue)) {
             propertyChangeSupport.firePropertyChange(NAME_PROP, oldValue, this.name);
         }
-
-        // re-add listener
-        addColorPropertyListener();
         invalidate();
     }
 
@@ -539,7 +516,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            SaveAction.getInstance().doSave(layer);
+            SaveAction.getInstance().doSave(layer, true);
         }
     }
 

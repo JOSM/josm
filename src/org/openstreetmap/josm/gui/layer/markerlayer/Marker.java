@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
@@ -25,9 +26,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
-import org.openstreetmap.josm.data.preferences.CachedProperty;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
@@ -71,80 +72,6 @@ import org.openstreetmap.josm.tools.template_engine.TemplateParser;
  * @author Frederik Ramm
  */
 public class Marker implements TemplateEngineDataProvider, ILatLon {
-
-    public static final class TemplateEntryProperty extends CachedProperty<TemplateEntry> {
-        // This class is a bit complicated because it supports both global and per layer settings. I've added per layer settings because
-        // GPXSettingsPanel had possibility to set waypoint label but then I've realized that markers use different layer then gpx data
-        // so per layer settings is useless. Anyway it's possible to specify marker layer pattern in Einstein preferences and maybe somebody
-        // will make gui for it so I'm keeping it here
-
-        private static final Map<String, TemplateEntryProperty> CACHE = new HashMap<>();
-
-        public static TemplateEntryProperty forMarker(String layerName) {
-            String key = "draw.rawgps.layer.wpt.pattern";
-            if (layerName != null) {
-                key += '.' + layerName;
-            }
-            TemplateEntryProperty result = CACHE.get(key);
-            if (result == null) {
-                String defaultValue = layerName == null ? LABEL_PATTERN_AUTO : "";
-                TemplateEntryProperty parent = layerName == null ? null : forMarker(null);
-                result = new TemplateEntryProperty(key, defaultValue, parent);
-                CACHE.put(key, result);
-            }
-            return result;
-        }
-
-        public static TemplateEntryProperty forAudioMarker(String layerName) {
-            String key = "draw.rawgps.layer.audiowpt.pattern";
-            if (layerName != null) {
-                key += '.' + layerName;
-            }
-            TemplateEntryProperty result = CACHE.get(key);
-            if (result == null) {
-                String defaultValue = layerName == null ? "?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }" : "";
-                TemplateEntryProperty parent = layerName == null ? null : forAudioMarker(null);
-                result = new TemplateEntryProperty(key, defaultValue, parent);
-                CACHE.put(key, result);
-            }
-            return result;
-        }
-
-        private final TemplateEntryProperty parent;
-
-        private TemplateEntryProperty(String key, String defaultValue, TemplateEntryProperty parent) {
-            super(key, defaultValue);
-            this.parent = parent;
-            updateValue(); // Needs to be called because parent wasn't know in super constructor
-        }
-
-        @Override
-        protected TemplateEntry fromString(String s) {
-            try {
-                return new TemplateParser(s).parse();
-            } catch (ParseError e) {
-                Logging.debug(e);
-                Logging.warn("Unable to parse template engine pattern ''{0}'' for property {1}. Using default (''{2}'') instead",
-                        s, getKey(), super.getDefaultValueAsString());
-                return getDefaultValue();
-            }
-        }
-
-        @Override
-        public String getDefaultValueAsString() {
-            if (parent == null)
-                return super.getDefaultValueAsString();
-            else
-                return parent.getAsString();
-        }
-
-        @Override
-        public void preferenceChanged(PreferenceChangeEvent e) {
-            if (e.getKey().equals(key) || (parent != null && e.getKey().equals(parent.getKey()))) {
-                updateValue();
-            }
-        }
-    }
 
     /**
      * Plugins can add their Marker creation stuff at the bottom or top of this list
@@ -216,7 +143,9 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
     public double offset;
 
     private String cachedText;
-    private int textVersion = -1;
+    private static Map<GpxLayer, String> cachedTemplates = new HashMap<>();
+    private String cachedDefaultTemplate;
+
     private CachedLatLon coor;
 
     private boolean erroneous;
@@ -244,6 +173,8 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
 
         this.dataProvider = dataProvider;
         this.text = text;
+
+        Preferences.main().addKeyPreferenceChangeListener("draw.rawgps." + getTextTemplateKey(), l -> updateText());
     }
 
     /**
@@ -257,7 +188,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
         WayPoint wpt = new WayPoint(getCoor());
         wpt.setTimeInMillis((long) (time * 1000));
         if (text != null) {
-            wpt.addExtension("text", text);
+            wpt.getExtensions().add("josm", "text", text);
         } else if (dataProvider != null) {
             for (String key : dataProvider.getTemplateKeys()) {
                 Object value = dataProvider.getTemplateValue(key, false);
@@ -372,8 +303,26 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
         }
     }
 
-    protected TemplateEntryProperty getTextTemplate() {
-        return TemplateEntryProperty.forMarker(parentLayer.getName());
+    protected String getTextTemplateKey() {
+        return "markers.pattern";
+    }
+
+    private String getTextTemplate() {
+        String tmpl;
+        if (cachedTemplates.containsKey(parentLayer.fromLayer)) {
+            tmpl = cachedTemplates.get(parentLayer.fromLayer);
+        } else {
+            tmpl = GPXSettingsPanel.getLayerPref(parentLayer.fromLayer, getTextTemplateKey());
+            cachedTemplates.put(parentLayer.fromLayer, tmpl);
+        }
+        return tmpl;
+    }
+
+    private String getDefaultTextTemplate() {
+        if (cachedDefaultTemplate == null) {
+            cachedDefaultTemplate = GPXSettingsPanel.getLayerPref(null,  getTextTemplateKey());
+        }
+        return cachedDefaultTemplate;
     }
 
     /**
@@ -381,20 +330,41 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
      * @return Text of the label
      */
     public String getText() {
-        if (text != null)
+        if (text != null) {
             return text;
-        else {
-            TemplateEntryProperty property = getTextTemplate();
-            if (property.getUpdateCount() != textVersion) {
-                TemplateEntry templateEntry = property.get();
-                StringBuilder sb = new StringBuilder();
-                templateEntry.appendText(sb, this);
-
-                cachedText = sb.toString();
-                textVersion = property.getUpdateCount();
+        } else if (cachedText == null) {
+            TemplateEntry template;
+            String templateString = getTextTemplate();
+            try {
+                template = new TemplateParser(templateString).parse();
+            } catch (ParseError e) {
+                Logging.debug(e);
+                String def = getDefaultTextTemplate();
+                Logging.warn("Unable to parse template engine pattern ''{0}'' for property {1}. Using default (''{2}'') instead",
+                        templateString, getTextTemplateKey(), def);
+                try {
+                    template = new TemplateParser(def).parse();
+                } catch (ParseError e1) {
+                    Logging.error(e1);
+                    cachedText = "";
+                    return "";
+                }
             }
-            return cachedText;
+            StringBuilder sb = new StringBuilder();
+            template.appendText(sb, this);
+            cachedText = sb.toString();
+
         }
+        return cachedText;
+    }
+
+    /**
+     * Called when the template changes
+     */
+    public void updateText() {
+        cachedText = null;
+        cachedDefaultTemplate = null;
+        cachedTemplates = new HashMap<>();
     }
 
     @Override

@@ -7,14 +7,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Color;
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.data.preferences.AbstractProperty;
-import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -40,25 +37,6 @@ public class LayerTest {
     @Before
     public void setUp() {
         testLayer = new LayerManagerTest.TestLayer();
-    }
-
-    /**
-     * Test {@link Layer#getColorProperty()}
-     */
-    @Test
-    public void testGetColorProperty() {
-        assertEquals(null, testLayer.getColorProperty());
-
-        AbstractProperty<Color> color = new LayerManagerTest.TestLayer() {
-            @Override
-            protected NamedColorProperty getBaseColorProperty() {
-                return new NamedColorProperty("x", Color.BLACK);
-            }
-        }.getColorProperty();
-
-        assertEquals(Color.BLACK, color.get());
-        assertEquals(Color.BLACK, color.getDefaultValue());
-        assertEquals("clr.layer.Test Layer.x", color.getKey());
     }
 
     /**
@@ -97,12 +75,7 @@ public class LayerTest {
         testLayer.setName("Test Layer2");
         assertEquals("Test Layer2", testLayer.getName());
 
-        testLayer = new LayerManagerTest.TestLayer() {
-            @Override
-            public AbstractProperty<Color> getColorProperty() {
-                return new NamedColorProperty("test", Color.RED);
-            }
-        };
+        testLayer = new LayerManagerTest.TestLayer();
 
         testLayer.setName("Test Layer2");
         testLayer.setName(null);

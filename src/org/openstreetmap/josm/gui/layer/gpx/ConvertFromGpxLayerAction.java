@@ -7,9 +7,9 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
@@ -20,11 +20,14 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.data.gpx.GpxConstants;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
+import org.openstreetmap.josm.data.gpx.GpxExtension;
+import org.openstreetmap.josm.data.gpx.GpxExtensionCollection;
+import org.openstreetmap.josm.data.gpx.IGpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -53,40 +56,33 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
     @Override
     public DataSet convert() {
         final DataSet ds = new DataSet();
+        ds.setGPXNamespaces(layer.data.getNamespaces());
 
         List<String> keys = new ArrayList<>(); // note that items in this list don't have the GPX_PREFIX
         String convertTags = Config.getPref().get(GPX_SETTING, "ask");
         boolean check = "list".equals(convertTags) || "ask".equals(convertTags);
         boolean none = "no".equals(convertTags); // no need to convert tags when no dialog will be shown anyways
 
-        for (GpxTrack trk : layer.data.getTracks()) {
-            for (GpxTrackSegment segment : trk.getSegments()) {
+        for (IGpxTrack trk : layer.data.getTracks()) {
+            for (IGpxTrackSegment segment : trk.getSegments()) {
                 List<Node> nodes = new ArrayList<>();
                 for (WayPoint p : segment.getWayPoints()) {
                     Node n = new Node(p.getCoor());
-                    for (Entry<String, Object> entry : p.attr.entrySet()) {
-                        String key = entry.getKey();
-                        Object obj = p.get(key);
-                        if (check && !keys.contains(key) && (obj instanceof String || obj instanceof Number || obj instanceof Date)) {
-                            keys.add(key);
-                        }
-                        if (!none && (obj instanceof String || obj instanceof Number)) {
-                            // only convert when required
-                            n.put(GpxConstants.GPX_PREFIX + key, obj.toString());
-                        } else if (obj instanceof Date && GpxConstants.PT_TIME.equals(key)) {
-                            // timestamps should always be converted
-                            Date date = (Date) obj;
-                            if (!none) { //... but the tag will only be set when required
-                                n.put(GpxConstants.GPX_PREFIX + key, DateUtils.fromDate(date));
-                            }
-                            n.setTimestamp(date);
-                        }
+                    addAttributes(p.getAttributes(), n, keys, check, none);
+                    if (!none) {
+                        addExtensions(p.getExtensions(), n, false, keys, check);
                     }
                     ds.addPrimitive(n);
                     nodes.add(n);
                 }
                 Way w = new Way();
                 w.setNodes(nodes);
+                addAttributes(trk.getAttributes(), w, keys, check, none);
+                addAttributes(segment.getAttributes(), w, keys, check, none);
+                if (!none) {
+                    addExtensions(trk.getExtensions(), w, false, keys, check);
+                    addExtensions(segment.getExtensions(), w, true, keys, check);
+                }
                 ds.addPrimitive(w);
             }
         }
@@ -122,6 +118,51 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
         return ds;
     }
 
+    private static void addAttributes(Map<String, Object> attr, OsmPrimitive p, List<String> keys, boolean check, boolean none) {
+        for (Entry<String, Object> entry : attr.entrySet()) {
+            String key = entry.getKey();
+            Object obj = entry.getValue();
+            if (check && !keys.contains(key) && (obj instanceof String || obj instanceof Number || obj instanceof Date)) {
+                keys.add(key);
+            }
+            if (!none && (obj instanceof String || obj instanceof Number)) {
+                // only convert when required
+                p.put(GpxConstants.GPX_PREFIX + key, obj.toString());
+            } else if (obj instanceof Date && GpxConstants.PT_TIME.equals(key)) {
+                // timestamps should always be converted
+                Date date = (Date) obj;
+                if (!none) { //... but the tag will only be set when required
+                    p.put(GpxConstants.GPX_PREFIX + key, DateUtils.fromDate(date));
+                }
+                p.setTimestamp(date);
+            }
+        }
+    }
+
+    private static void addExtensions(GpxExtensionCollection exts, OsmPrimitive p, boolean seg, List<String> keys, boolean check) {
+        for (GpxExtension ext : exts) {
+            String value = ext.getValue();
+            if (value != null && !value.isEmpty()) {
+                String extpre = "extension:";
+                String pre = ext.getPrefix();
+                if (pre == null || pre.isEmpty()) {
+                    pre = "other";
+                }
+                String segpre = seg ? "segment:" : ""; //needs to be distinguished since both track and segment extensions are applied to the resulting way
+                String key = ext.getFlatKey();
+                String fullkey = GpxConstants.GPX_PREFIX + extpre + pre + ":" + segpre + key;
+                if (GpxConstants.EXTENSION_ABBREVIATIONS.containsKey(fullkey)) {
+                    fullkey = GpxConstants.EXTENSION_ABBREVIATIONS.get(fullkey);
+                }
+                if (check && !keys.contains(fullkey)) {
+                    keys.add(fullkey);
+                }
+                p.put(fullkey, value);
+            }
+            addExtensions(ext.getExtensions(), p, seg, keys, check);
+        }
+    }
+
     /**
      * Filters the tags of the given {@link DataSet}
      * @param ds The {@link DataSet}
@@ -130,11 +171,16 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
      * @since 14103
      */
     public DataSet filterDataSet(DataSet ds, List<String> listPos) {
-        Collection<Node> nodes = ds.getNodes();
-        for (Node n : nodes) {
-            for (String key : n.keySet()) {
-                if (listPos == null || !listPos.contains(key.substring(GpxConstants.GPX_PREFIX.length()))) {
-                    n.put(key, null);
+        for (OsmPrimitive p : ds.getPrimitives(p -> p instanceof Node || p instanceof Way)) {
+            for (String key : p.keySet()) {
+                String listkey;
+                if (listPos != null && key.startsWith(GpxConstants.GPX_PREFIX)) {
+                    listkey = key.substring(GpxConstants.GPX_PREFIX.length());
+                } else {
+                    listkey = key;
+                }
+                if (listPos == null || !listPos.contains(listkey)) {
+                   p.put(key, null);
                 }
             }
         }

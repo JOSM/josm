@@ -66,20 +66,33 @@ public class ConvertToDataLayerActionTest {
     @Test
     public void testFromTrack() throws Exception {
         Config.getPref().put("gpx.convert-tags", "no");
-        testFromTrack("tracks");
+        testFromTrack("tracks.gpx", "tracks.osm");
 
         Config.getPref().put("gpx.convert-tags", "yes");
-        testFromTrack("tracks-ele-time");
+        testFromTrack("tracks.gpx", "tracks-ele-time.osm");
 
         Config.getPref().put("gpx.convert-tags", "list");
         Config.getPref().putList("gpx.convert-tags.list.yes", Arrays.asList("ele"));
         Config.getPref().putList("gpx.convert-tags.list.no", Arrays.asList("time"));
-        testFromTrack("tracks-ele");
-
+        testFromTrack("tracks.gpx", "tracks-ele.osm");
 
         Config.getPref().putList("gpx.convert-tags.list.yes", Arrays.asList("time"));
         Config.getPref().putList("gpx.convert-tags.list.no", Arrays.asList("ele"));
-        testFromTrack("tracks-time");
+        testFromTrack("tracks.gpx", "tracks-time.osm");
+
+        //Extension tests:
+        Config.getPref().put("gpx.convert-tags", "yes");
+        testFromTrack("tracks-extensions.gpx", "tracks-extensions.osm");
+
+        Config.getPref().put("gpx.convert-tags", "list");
+        Config.getPref().putList("gpx.convert-tags.list.yes", Arrays.asList("time", "ele"));
+        Config.getPref().putList("gpx.convert-tags.list.no", Arrays.asList(
+                "gpxx:DisplayColor",
+                "gpxd:color",
+                "gpx:extension:test:tag",
+                "gpx:extension:test:segment:tag"));
+        testFromTrack("tracks-extensions.gpx", "tracks-ele-time.osm");
+
     }
 
     private static class GenericNode {
@@ -106,13 +119,13 @@ public class ConvertToDataLayerActionTest {
         }
     }
 
-    private void testFromTrack(String expected) throws IOException, SAXException, IllegalDataException {
-        final GpxData data = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "tracks/tracks.gpx");
+    private void testFromTrack(String originalGpx, String expectedOsm) throws IOException, SAXException, IllegalDataException {
+        final GpxData data = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "tracks/" + originalGpx);
         final DataSet osmExpected = OsmReader.parseDataSet(Files.newInputStream(
-                Paths.get(TestUtils.getTestDataRoot(), "tracks/" + expected + ".osm")), null);
+                Paths.get(TestUtils.getTestDataRoot(), "tracks/" + expectedOsm)), null);
         final GpxLayer layer = new GpxLayer(data);
         final DataSet osm = new ConvertFromGpxLayerAction(layer).convert();
-        //compare sorted coordinates/tags and total amount of primitives, because IDs and order will vary after reload
+        //compare sorted nodes/ways, tags and total amount of primitives, because IDs and order will vary after reload
 
         List<GenericNode> nodes = osm.getNodes().stream()
                 .map(GenericNode::new)
@@ -124,8 +137,21 @@ public class ConvertToDataLayerActionTest {
                 .sorted(Comparator.comparing(g -> g.coor.hashCode()))
                 .collect(Collectors.toList());
 
-        assertEquals(nodesExpected, nodes);
-        assertEquals(osmExpected.allPrimitives().size(), osm.allPrimitives().size());
+        assertEquals("Conversion " + originalGpx + " -> " + expectedOsm + " didn't match!", nodesExpected, nodes);
+
+        List<String> ways = osm.getWays().stream()
+                .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).collect(Collectors.toList()).toString())
+                .sorted()
+                .collect(Collectors.toList());
+
+        List<String> waysExpected = osmExpected.getWays().stream()
+                .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).collect(Collectors.toList()).toString())
+                .sorted()
+                .collect(Collectors.toList());
+
+        assertEquals("Conversion " + originalGpx + " -> " + expectedOsm + " didn't match!", waysExpected, ways);
+
+        assertEquals("Conversion " + originalGpx + " -> " + expectedOsm + " didn't match!", osmExpected.allPrimitives().size(), osm.allPrimitives().size());
     }
 
     /**

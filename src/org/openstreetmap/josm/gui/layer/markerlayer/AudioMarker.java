@@ -93,8 +93,8 @@ public class AudioMarker extends ButtonMarker {
     }
 
     @Override
-    protected TemplateEntryProperty getTextTemplate() {
-        return TemplateEntryProperty.forAudioMarker(parentLayer.getName());
+    protected String getTextTemplateKey() {
+        return "markers.audio.pattern";
     }
 
     @Override
@@ -103,8 +103,8 @@ public class AudioMarker extends ButtonMarker {
         GpxLink link = new GpxLink(audioUrl.toString());
         link.type = "audio";
         wpt.put(GpxConstants.META_LINKS, Collections.singleton(link));
-        wpt.addExtension("offset", Double.toString(offset));
-        wpt.addExtension("sync-offset", Double.toString(syncOffset));
+        wpt.getExtensions().add("josm", "offset", Double.toString(offset));
+        wpt.getExtensions().add("josm", "sync-offset", Double.toString(syncOffset));
         return wpt;
     }
 }

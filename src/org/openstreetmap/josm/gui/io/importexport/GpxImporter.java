@@ -149,6 +149,8 @@ public class GpxImporter extends FileImporter {
             markerLayer = new MarkerLayer(data, markerLayerName, data.storageFile, gpxLayer);
             if (markerLayer.data.isEmpty()) {
                 markerLayer = null;
+            } else {
+                gpxLayer.setLinkedMarkerLayer(markerLayer);
             }
         }
         Runnable postLayerTask = () -> {

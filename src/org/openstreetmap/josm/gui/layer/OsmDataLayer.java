@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -60,8 +61,11 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxExtensionCollection;
 import org.openstreetmap.josm.data.gpx.GpxLink;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
@@ -757,6 +761,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      */
     public static GpxData toGpxData(DataSet data, File file) {
         GpxData gpxData = new GpxData();
+        if (data.getGPXNamespaces() != null) {
+            gpxData.getNamespaces().addAll(data.getGPXNamespaces());
+        }
         gpxData.storageFile = file;
         Set<Node> doneNodes = new HashSet<>();
         waysToGpxData(data.getWays(), gpxData, doneNodes);
@@ -777,31 +784,53 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             if (!w.isUsable()) {
                 return;
             }
-            Collection<Collection<WayPoint>> trk = new ArrayList<>();
+            List<IGpxTrackSegment> trk = new ArrayList<>();
             Map<String, Object> trkAttr = new HashMap<>();
 
-            String name = gpxVal(w, "name");
-            if (name != null) {
-                trkAttr.put("name", name);
-            }
+            GpxExtensionCollection trkExts = new GpxExtensionCollection();
+            GpxExtensionCollection segExts = new GpxExtensionCollection();
+            for (Entry<String, String> e : w.getKeys().entrySet()) {
+                String k = e.getKey().startsWith(GpxConstants.GPX_PREFIX) ? e.getKey().substring(GpxConstants.GPX_PREFIX.length()) : e.getKey();
+                String v = e.getValue();
+                if (GpxConstants.RTE_TRK_KEYS.contains(k)) {
+                    trkAttr.put(k, v);
+                } else {
+                    k = GpxConstants.EXTENSION_ABBREVIATIONS.entrySet()
+                            .stream()
+                            .filter(s -> s.getValue().equals(e.getKey()))
+                            .map(s -> s.getKey().substring(GpxConstants.GPX_PREFIX.length()))
+                            .findAny()
+                            .orElse(k);
+                    if (k.startsWith("extension")) {
+                        String[] chain = k.split(":");
+                        if (chain.length >= 3 && "segment".equals(chain[2])) {
+                            segExts.addFlat(chain, v);
+                        } else {
+                            trkExts.addFlat(chain, v);
+                        }
+                    }
 
-            List<WayPoint> trkseg = null;
+                }
+            }
+            List<WayPoint> trkseg = new ArrayList<>();
             for (Node n : w.getNodes()) {
                 if (!n.isUsable()) {
-                    trkseg = null;
+                    if (!trkseg.isEmpty()) {
+                        trk.add(new GpxTrackSegment(trkseg));
+                        trkseg.clear();
+                    }
                     continue;
-                }
-                if (trkseg == null) {
-                    trkseg = new ArrayList<>();
-                    trk.add(trkseg);
                 }
                 if (!n.isTagged() || containsOnlyGpxTags(n)) {
                     doneNodes.add(n);
                 }
                 trkseg.add(nodeToWayPoint(n));
             }
-
-            gpxData.addTrack(new ImmutableGpxTrack(trk, trkAttr));
+            trk.add(new GpxTrackSegment(trkseg));
+            trk.forEach(gpxseg -> gpxseg.getExtensions().addAll(segExts));
+            GpxTrack gpxtrk = new GpxTrack(trk, trkAttr);
+            gpxtrk.getExtensions().addAll(trkExts);
+            gpxData.addTrack(gpxtrk);
         });
     }
 

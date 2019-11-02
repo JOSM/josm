@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -240,7 +240,7 @@ public class OsmDataLayerTest {
         // Check that track is correct
         assertEquals(1, gpx.getTrackCount());
         GpxTrack track = gpx.getTracks().iterator().next();
-        Collection<GpxTrackSegment> segments = track.getSegments();
+        Collection<IGpxTrackSegment> segments = track.getSegments();
         assertEquals(1, segments.size());
         Collection<WayPoint> trackpoints = segments.iterator().next().getWayPoints();
         assertEquals(3, trackpoints.size());

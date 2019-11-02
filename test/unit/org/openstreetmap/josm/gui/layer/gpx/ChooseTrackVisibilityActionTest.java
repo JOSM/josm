@@ -38,21 +38,21 @@ public class ChooseTrackVisibilityActionTest {
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker() {
             @Override
             protected String getString(final ExtendedDialog instance) {
-                return ((JLabel) ((JPanel) this.getContent(instance)).getComponent(2)).getText();
+                return ((JLabel) ((JPanel) instance.getContentPane().getComponent(0)).getComponent(2)).getText();
             }
         };
         edMocker.getMockResultMap().put(
-            "<html>Select all tracks that you want to be displayed. You can drag select a range of " +
-            "tracks or use CTRL+Click to select specific ones. The map is updated live in the " +
-            "background. Open the URLs by double clicking them.</html>",
-            "Show all"
-        );
+                "<html>Select all tracks that you want to be displayed. " +
+                        "You can drag select a range of tracks or use CTRL+Click to select specific ones. " +
+                        "The map is updated live in the background. Open the URLs by double clicking them, edit name and description by double clicking the cell.</html>",
+                        "Show all"
+                );
 
         new ChooseTrackVisibilityAction(GpxLayerTest.getMinimalGpxLayer()).actionPerformed(null);
 
         assertEquals(1, edMocker.getInvocationLog().size());
         Object[] invocationLogEntry = edMocker.getInvocationLog().get(0);
-        assertEquals(1, (int) invocationLogEntry[0]);
+        assertEquals(2, (int) invocationLogEntry[0]);
         assertEquals("Set track visibility for Bananas", invocationLogEntry[2]);
     }
 }

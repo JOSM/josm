@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,7 +25,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.gpx.GpxTrack.GpxTrackChangeListener;
+import org.openstreetmap.josm.data.gpx.IGpxTrack.GpxTrackChangeListener;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -38,6 +40,20 @@ import org.openstreetmap.josm.tools.ListeningCollection;
  * @author Raphael Mack &lt;ramack@raphael-mack.de&gt;
  */
 public class GpxData extends WithAttributes implements Data {
+
+    /**
+     * Constructs a new GpxData.
+     */
+    public GpxData() {}
+
+    /**
+     * Constructs a new GpxData that is currently being initialized, so no listeners will be fired until {@link #endUpdate()} is called.
+     * @param initializing true
+     * @since 15496
+     */
+    public GpxData(boolean initializing) {
+        this.initializing = initializing;
+    }
 
     /**
      * The disk file this layer is stored in, if it is a local layer. May be <code>null</code>.
@@ -65,13 +81,25 @@ public class GpxData extends WithAttributes implements Data {
      * Addidionaly waypoints for this file.
      */
     private final ArrayList<WayPoint> privateWaypoints = new ArrayList<>();
-    private final GpxTrackChangeListener proxy = e -> fireInvalidate();
+    /**
+     * All namespaces read from the original file
+     */
+    private final List<XMLNamespace> namespaces = new ArrayList<>();
+    /**
+     * The layer specific prefs formerly saved in the preferences, e.g. drawing options.
+     * NOT the track specific settings (e.g. color, width)
+     */
+    private final Map<String, String> layerPrefs = new HashMap<>();
+
+    private final GpxTrackChangeListener proxy = e -> invalidate();
+    private boolean modified, updating, initializing;
+    private boolean suppressedInvalidate;
 
     /**
      * Tracks. Access is discouraged, use {@link #getTracks()} to read.
      * @see #getTracks()
      */
-    public final Collection<GpxTrack> tracks = new ListeningCollection<GpxTrack>(privateTracks, this::fireInvalidate) {
+    public final Collection<GpxTrack> tracks = new ListeningCollection<GpxTrack>(privateTracks, this::invalidate) {
 
         @Override
         protected void removed(GpxTrack cursor) {
@@ -90,13 +118,13 @@ public class GpxData extends WithAttributes implements Data {
      * Routes. Access is discouraged, use {@link #getTracks()} to read.
      * @see #getRoutes()
      */
-    public final Collection<GpxRoute> routes = new ListeningCollection<>(privateRoutes, this::fireInvalidate);
+    public final Collection<GpxRoute> routes = new ListeningCollection<>(privateRoutes, this::invalidate);
 
     /**
      * Waypoints. Access is discouraged, use {@link #getTracks()} to read.
      * @see #getWaypoints()
      */
-    public final Collection<WayPoint> waypoints = new ListeningCollection<>(privateWaypoints, this::fireInvalidate);
+    public final Collection<WayPoint> waypoints = new ListeningCollection<>(privateWaypoints, this::invalidate);
 
     /**
      * All data sources (bounds of downloaded bounds) of this GpxData.<br>
@@ -107,8 +135,6 @@ public class GpxData extends WithAttributes implements Data {
     public final Set<DataSource> dataSources = new HashSet<>();
 
     private final ListenerList<GpxDataChangeListener> listeners = ListenerList.create();
-
-    static class TimestampConfictException extends Exception {}
 
     private List<GpxTrackSegmentSpan> segSpans;
 
@@ -156,13 +182,13 @@ public class GpxData extends WithAttributes implements Data {
         other.privateRoutes.forEach(this::addRoute);
         other.privateWaypoints.forEach(this::addWaypoint);
         dataSources.addAll(other.dataSources);
-        fireInvalidate();
+        invalidate();
     }
 
     private void cutOverlapping(GpxTrack trk, boolean connect) {
-        List<GpxTrackSegment> segsOld = new ArrayList<>(trk.getSegments());
-        List<GpxTrackSegment> segsNew = new ArrayList<>();
-        for (GpxTrackSegment seg : segsOld) {
+        List<IGpxTrackSegment> segsOld = new ArrayList<>(trk.getSegments());
+        List<IGpxTrackSegment> segsNew = new ArrayList<>();
+        for (IGpxTrackSegment seg : segsOld) {
             GpxTrackSegmentSpan s = GpxTrackSegmentSpan.tryGetFromSegment(seg);
             if (s != null && anySegmentOverlapsWith(s)) {
                 List<WayPoint> wpsNew = new ArrayList<>();
@@ -203,10 +229,10 @@ public class GpxData extends WithAttributes implements Data {
                                     // splitting needs to be handled here,
                                     // because other high priority tracks between the same waypoints could follow
                                     if (!wpsNew.isEmpty()) {
-                                        segsNew.add(new ImmutableGpxTrackSegment(wpsNew));
+                                        segsNew.add(new GpxTrackSegment(wpsNew));
                                     }
                                     if (!segsNew.isEmpty()) {
-                                        privateTracks.add(new ImmutableGpxTrack(segsNew, trk.getAttributes()));
+                                        privateTracks.add(new GpxTrack(segsNew, trk.getAttributes()));
                                     }
                                     segsNew = new ArrayList<>();
                                     wpsNew = new ArrayList<>();
@@ -221,10 +247,10 @@ public class GpxData extends WithAttributes implements Data {
                         if (split) {
                             //track has to be split, because we have an overlapping short track in the middle
                             if (!wpsNew.isEmpty()) {
-                                segsNew.add(new ImmutableGpxTrackSegment(wpsNew));
+                                segsNew.add(new GpxTrackSegment(wpsNew));
                             }
                             if (!segsNew.isEmpty()) {
-                                privateTracks.add(new ImmutableGpxTrack(segsNew, trk.getAttributes()));
+                                privateTracks.add(new GpxTrack(segsNew, trk.getAttributes()));
                             }
                             segsNew = new ArrayList<>();
                             wpsNew = new ArrayList<>();
@@ -238,7 +264,7 @@ public class GpxData extends WithAttributes implements Data {
                     }
                 }
                 if (!wpsNew.isEmpty()) {
-                    segsNew.add(new ImmutableGpxTrackSegment(wpsNew));
+                    segsNew.add(new GpxTrackSegment(wpsNew));
                 }
             } else {
                 segsNew.add(seg);
@@ -247,13 +273,13 @@ public class GpxData extends WithAttributes implements Data {
         if (segsNew.equals(segsOld)) {
             privateTracks.add(trk);
         } else if (!segsNew.isEmpty()) {
-            privateTracks.add(new ImmutableGpxTrack(segsNew, trk.getAttributes()));
+            privateTracks.add(new GpxTrack(segsNew, trk.getAttributes()));
         }
     }
 
     private void connectTracks(WayPoint prevWp, GpxTrackSegmentSpan span, Map<String, Object> attr) {
         if (prevWp != null && !span.lastEquals(prevWp)) {
-            privateTracks.add(new ImmutableGpxTrack(Arrays.asList(Arrays.asList(new WayPoint(prevWp), span.getFirstWp())), attr));
+            privateTracks.add(new GpxTrack(Arrays.asList(Arrays.asList(new WayPoint(prevWp), span.getFirstWp())), attr));
         }
     }
 
@@ -309,7 +335,7 @@ public class GpxData extends WithAttributes implements Data {
                 || (other.firstTime.before(lastTime) && firstTime.before(other.lastTime));
         }
 
-        static GpxTrackSegmentSpan tryGetFromSegment(GpxTrackSegment seg) {
+        static GpxTrackSegmentSpan tryGetFromSegment(IGpxTrackSegment seg) {
             WayPoint b = getNextWpWithTime(seg, true);
             if (b != null) {
                 WayPoint e = getNextWpWithTime(seg, false);
@@ -320,7 +346,7 @@ public class GpxData extends WithAttributes implements Data {
             return null;
         }
 
-        private static WayPoint getNextWpWithTime(GpxTrackSegment seg, boolean forward) {
+        private static WayPoint getNextWpWithTime(IGpxTrackSegment seg, boolean forward) {
             List<WayPoint> wps = new ArrayList<>(seg.getWayPoints());
             for (int i = forward ? 0 : wps.size() - 1; i >= 0 && i < wps.size(); i += forward ? 1 : -1) {
                 if (wps.get(i).hasDate()) {
@@ -340,7 +366,7 @@ public class GpxData extends WithAttributes implements Data {
         if (segSpans == null) {
             segSpans = new ArrayList<>();
             for (GpxTrack trk : privateTracks) {
-                for (GpxTrackSegment seg : trk.getSegments()) {
+                for (IGpxTrackSegment seg : trk.getSegments()) {
                     GpxTrackSegmentSpan s = GpxTrackSegmentSpan.tryGetFromSegment(seg);
                     if (s != null) {
                         segSpans.add(s);
@@ -373,7 +399,7 @@ public class GpxData extends WithAttributes implements Data {
      * Get stream of track segments.
      * @return {@code Stream<GPXTrack>}
      */
-    private synchronized Stream<GpxTrackSegment> getTrackSegmentsStream() {
+    public synchronized Stream<IGpxTrackSegment> getTrackSegmentsStream() {
         return getTracks().stream().flatMap(trk -> trk.getSegments().stream());
     }
 
@@ -397,7 +423,7 @@ public class GpxData extends WithAttributes implements Data {
         }
         privateTracks.add(track);
         track.addListener(proxy);
-        fireInvalidate();
+        invalidate();
     }
 
     /**
@@ -410,7 +436,7 @@ public class GpxData extends WithAttributes implements Data {
             throw new IllegalArgumentException(MessageFormat.format("The track was not in this data: {0}", track));
         }
         track.removeListener(proxy);
-        fireInvalidate();
+        invalidate();
     }
 
     /**
@@ -420,8 +446,8 @@ public class GpxData extends WithAttributes implements Data {
      * @since 13210
      */
     public synchronized void combineTracksToSegmentedTrack() {
-        List<GpxTrackSegment> segs = getTrackSegmentsStream()
-                .collect(Collectors.toCollection(ArrayList<GpxTrackSegment>::new));
+        List<IGpxTrackSegment> segs = getTrackSegmentsStream()
+                .collect(Collectors.toCollection(ArrayList<IGpxTrackSegment>::new));
         Map<String, Object> attrs = new HashMap<>(privateTracks.get(0).getAttributes());
 
         // do not let the name grow if split / combine operations are called iteratively
@@ -431,7 +457,7 @@ public class GpxData extends WithAttributes implements Data {
         }
 
         clearTracks();
-        addTrack(new ImmutableGpxTrack(segs, attrs));
+        addTrack(new GpxTrack(segs, attrs));
     }
 
     /**
@@ -467,7 +493,7 @@ public class GpxData extends WithAttributes implements Data {
             .flatMap(trk -> trk.getSegments().stream().map(seg -> {
                     HashMap<String, Object> attrs = new HashMap<>(trk.getAttributes());
                     ensureUniqueName(attrs, counts, srcLayerName);
-                    return new ImmutableGpxTrack(Arrays.asList(seg), attrs);
+                    return new GpxTrack(Arrays.asList(seg), attrs);
                 }))
             .collect(Collectors.toCollection(ArrayList<GpxTrack>::new));
 
@@ -538,7 +564,7 @@ public class GpxData extends WithAttributes implements Data {
             throw new IllegalArgumentException(MessageFormat.format("The route was already added to this data: {0}", route));
         }
         privateRoutes.add(route);
-        fireInvalidate();
+        invalidate();
     }
 
     /**
@@ -550,7 +576,7 @@ public class GpxData extends WithAttributes implements Data {
         if (!privateRoutes.removeIf(r -> r == route)) {
             throw new IllegalArgumentException(MessageFormat.format("The route was not in this data: {0}", route));
         }
-        fireInvalidate();
+        invalidate();
     }
 
     /**
@@ -572,7 +598,7 @@ public class GpxData extends WithAttributes implements Data {
             throw new IllegalArgumentException(MessageFormat.format("The route was already added to this data: {0}", waypoint));
         }
         privateWaypoints.add(waypoint);
-        fireInvalidate();
+        invalidate();
     }
 
     /**
@@ -584,7 +610,7 @@ public class GpxData extends WithAttributes implements Data {
         if (!privateWaypoints.removeIf(w -> w == waypoint)) {
             throw new IllegalArgumentException(MessageFormat.format("The route was not in this data: {0}", waypoint));
         }
-        fireInvalidate();
+        invalidate();
     }
 
     /**
@@ -600,7 +626,7 @@ public class GpxData extends WithAttributes implements Data {
      * @return The stream
      * @see #getTracks()
      * @see GpxTrack#getSegments()
-     * @see GpxTrackSegment#getWayPoints()
+     * @see IGpxTrackSegment#getWayPoints()
      * @since 12156
      */
     public synchronized Stream<WayPoint> getTrackPoints() {
@@ -767,7 +793,7 @@ public class GpxData extends WithAttributes implements Data {
         double py = p.north();
         double rx = 0.0, ry = 0.0, sx, sy, x, y;
         for (GpxTrack track : privateTracks) {
-            for (GpxTrackSegment seg : track.getSegments()) {
+            for (IGpxTrackSegment seg : track.getSegments()) {
                 WayPoint r = null;
                 for (WayPoint wpSeg : seg.getWayPoints()) {
                     EastNorth en = wpSeg.getEastNorth(ProjectionRegistry.getProjection());
@@ -882,12 +908,13 @@ public class GpxData extends WithAttributes implements Data {
 
         private Iterator<GpxTrack> itTracks;
         private int idxTracks;
-        private Iterator<GpxTrackSegment> itTrackSegments;
+        private Iterator<IGpxTrackSegment> itTrackSegments;
         private final Iterator<GpxRoute> itRoutes;
 
         private Line next;
         private final boolean[] trackVisibility;
         private Map<String, Object> trackAttributes;
+        private GpxTrack curTrack;
 
         /**
          * Constructs a new {@code LinesIterator}.
@@ -921,17 +948,17 @@ public class GpxData extends WithAttributes implements Data {
         private Line getNext() {
             if (itTracks != null) {
                 if (itTrackSegments != null && itTrackSegments.hasNext()) {
-                    return new Line(itTrackSegments.next(), trackAttributes);
+                    return new Line(itTrackSegments.next(), trackAttributes, curTrack.getColor());
                 } else {
                     while (itTracks.hasNext()) {
-                        GpxTrack nxtTrack = itTracks.next();
-                        trackAttributes = nxtTrack.getAttributes();
+                        curTrack = itTracks.next();
+                        trackAttributes = curTrack.getAttributes();
                         idxTracks++;
                         if (trackVisibility != null && !trackVisibility[idxTracks])
                             continue;
-                        itTrackSegments = nxtTrack.getSegments().iterator();
+                        itTrackSegments = curTrack.getSegments().iterator();
                         if (itTrackSegments.hasNext()) {
-                            return new Line(itTrackSegments.next(), trackAttributes);
+                            return new Line(itTrackSegments.next(), trackAttributes, curTrack.getColor());
                         }
                     }
                     // if we get here, all the Tracks are finished; Continue with Routes
@@ -956,10 +983,31 @@ public class GpxData extends WithAttributes implements Data {
         return Collections.unmodifiableCollection(dataSources);
     }
 
+    /**
+     * The layer specific prefs formerly saved in the preferences, e.g. drawing options.
+     * NOT the track specific settings (e.g. color, width)
+     * @return Modifiable map
+     * @since 15496
+     */
+    public Map<String, String> getLayerPrefs() {
+        return layerPrefs;
+    }
+
+    /**
+     * All XML namespaces read from the original file
+     * @return Modifiable list
+     * @since 15496
+     */
+    public List<XMLNamespace> getNamespaces() {
+        return namespaces;
+    }
+
     @Override
     public synchronized int hashCode() {
         final int prime = 31;
-        int result = 1;
+        int result = prime + super.hashCode();
+        result = prime * result + ((namespaces == null) ? 0 : namespaces.hashCode());
+        result = prime * result + ((layerPrefs == null) ? 0 : layerPrefs.hashCode());
         result = prime * result + ((dataSources == null) ? 0 : dataSources.hashCode());
         result = prime * result + ((privateRoutes == null) ? 0 : privateRoutes.hashCode());
         result = prime * result + ((privateTracks == null) ? 0 : privateTracks.hashCode());
@@ -973,6 +1021,8 @@ public class GpxData extends WithAttributes implements Data {
             return true;
         if (obj == null)
             return false;
+        if (!super.equals(obj))
+            return false;
         if (getClass() != obj.getClass())
             return false;
         GpxData other = (GpxData) obj;
@@ -980,6 +1030,11 @@ public class GpxData extends WithAttributes implements Data {
             if (other.dataSources != null)
                 return false;
         } else if (!dataSources.equals(other.dataSources))
+            return false;
+        if (layerPrefs == null) {
+            if (other.layerPrefs != null)
+                return false;
+        } else if (!layerPrefs.equals(other.layerPrefs))
             return false;
         if (privateRoutes == null) {
             if (other.privateRoutes != null)
@@ -996,7 +1051,18 @@ public class GpxData extends WithAttributes implements Data {
                 return false;
         } else if (!privateWaypoints.equals(other.privateWaypoints))
             return false;
+        if (namespaces == null) {
+            if (other.namespaces != null)
+                return false;
+        } else if (!namespaces.equals(other.namespaces))
+            return false;
         return true;
+    }
+
+    @Override
+    public void put(String key, Object value) {
+        super.put(key, value);
+        invalidate();
     }
 
     /**
@@ -1025,10 +1091,45 @@ public class GpxData extends WithAttributes implements Data {
         listeners.removeListener(listener);
     }
 
-    private void fireInvalidate() {
-        if (listeners.hasListeners()) {
-            GpxDataChangeEvent e = new GpxDataChangeEvent(this);
-            listeners.fireEvent(l -> l.gpxDataChanged(e));
+    /**
+     * Fires event listeners and sets the modified flag to true.
+     */
+    public void invalidate() {
+        fireInvalidate(true);
+    }
+
+    private void fireInvalidate(boolean setModified) {
+        if (updating || initializing) {
+            suppressedInvalidate = true;
+        } else {
+            if (setModified) {
+                modified = true;
+            }
+            if (listeners.hasListeners()) {
+                GpxDataChangeEvent e = new GpxDataChangeEvent(this);
+                listeners.fireEvent(l -> l.gpxDataChanged(e));
+            }
+        }
+    }
+
+    /**
+     * Begins updating this GpxData and prevents listeners from being fired.
+     * @since 15496
+     */
+    public void beginUpdate() {
+        updating = true;
+    }
+
+    /**
+     * Finishes updating this GpxData and fires listeners if required.
+     * @since 15496
+     */
+    public void endUpdate() {
+        boolean setModified = updating;
+        updating = initializing = false;
+        if (suppressedInvalidate) {
+            fireInvalidate(setModified);
+            suppressedInvalidate = false;
         }
     }
 
@@ -1065,6 +1166,116 @@ public class GpxData extends WithAttributes implements Data {
          */
         public GpxData getSource() {
             return source;
+        }
+    }
+
+    /**
+     * @return whether anything has been modified (e.g. colors)
+     * @since 15496
+     */
+    public boolean isModified() {
+        return modified;
+    }
+
+    /**
+     * Sets the modified flag to the value.
+     * @param value modified flag
+     * @since 15496
+     */
+    public void setModified(boolean value) {
+        modified = value;
+    }
+
+    /**
+     * A class containing prefix, URI and location of a namespace
+     * @since 15496
+     */
+    public static class XMLNamespace {
+        private final String uri, prefix;
+        private String location;
+
+        /**
+         * Creates a schema with prefix and URI, tries to determine prefix from URI
+         * @param fallbackPrefix the namespace prefix, if not determined from URI
+         * @param uri the namespace URI
+         */
+        public XMLNamespace(String fallbackPrefix, String uri) {
+            this.prefix = Optional.ofNullable(GpxExtension.findPrefix(uri)).orElse(fallbackPrefix);
+            this.uri = uri;
+        }
+
+        /**
+         * Creates a schema with prefix, URI and location.
+         * Does NOT try to determine prefix from URI!
+         * @param prefix
+         * @param uri
+         * @param location
+         */
+        public XMLNamespace(String prefix, String uri, String location) {
+            this.prefix = prefix;
+            this.uri = uri;
+            this.location = location;
+        }
+
+        /**
+         * @return the URI of the namesapce
+         */
+        public String getURI() {
+            return uri;
+        }
+
+        /**
+         * @return the prefix of the namespace, determined from URI if possible
+         */
+        public String getPrefix() {
+            return prefix;
+        }
+
+        /**
+         * @return the location of the schema
+         */
+        public String getLocation() {
+            return location;
+        }
+
+        /**
+         * Sets the location of the schema
+         * @param location the location of the schema
+         */
+        public void setLocation(String location) {
+            this.location = location;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(prefix, uri, location);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            XMLNamespace other = (XMLNamespace) obj;
+            if (prefix == null) {
+                if (other.prefix != null)
+                    return false;
+            } else if (!prefix.equals(other.prefix))
+                return false;
+            if (uri == null) {
+                if (other.uri != null)
+                    return false;
+            } else if (!uri.equals(other.uri))
+                return false;
+            if (location == null) {
+                if (other.location != null)
+                    return false;
+            } else if (!location.equals(other.location))
+                return false;
+            return true;
         }
     }
 }

@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
+import org.openstreetmap.josm.data.gpx.GpxExtension;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.Logging;
@@ -45,10 +45,10 @@ public final class DefaultMarkerProducers implements MarkerProducers {
             return Collections.singleton(marker);
         } else if (Utils.hasExtension(urlStr, "wav", "mp3", "aac", "aif", "aiff")) {
             final AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
-            Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
-            if (exts != null && exts.containsKey("offset")) {
+            GpxExtension offsetExt = wpt.getExtensions().get("josm", "sync-offset");
+            if (offsetExt != null && offsetExt.getValue() != null) {
                 try {
-                    audioMarker.syncOffset = Double.parseDouble(exts.get("sync-offset"));
+                    audioMarker.syncOffset = Double.parseDouble(offsetExt.getValue());
                 } catch (NumberFormatException nfe) {
                     Logging.warn(nfe);
                 }

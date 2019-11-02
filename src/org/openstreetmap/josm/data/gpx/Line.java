@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,13 +14,17 @@ import java.util.Objects;
 public class Line implements Collection<WayPoint> {
     private final Collection<WayPoint> waypoints;
     private final boolean unordered;
+    private final Color color;
 
     /**
      * Constructs a new {@code Line}.
      * @param waypoints collection of waypoints
      * @param attributes track/route attributes
+     * @param color color of the track
+     * @since 15496
      */
-    public Line(Collection<WayPoint> waypoints, Map<String, Object> attributes) {
+    public Line(Collection<WayPoint> waypoints, Map<String, Object> attributes, Color color) {
+        this.color = color;
         this.waypoints = Objects.requireNonNull(waypoints);
         unordered = attributes.isEmpty() && waypoints.stream().allMatch(x -> x.get(GpxConstants.PT_TIME) == null);
     }
@@ -28,9 +33,11 @@ public class Line implements Collection<WayPoint> {
      * Constructs a new {@code Line}.
      * @param trackSegment track segment
      * @param trackAttributes track attributes
+     * @param color color of the track
+     * @since 15496
      */
-    public Line(GpxTrackSegment trackSegment, Map<String, Object> trackAttributes) {
-        this(trackSegment.getWayPoints(), trackAttributes);
+    public Line(IGpxTrackSegment trackSegment, Map<String, Object> trackAttributes, Color color) {
+        this(trackSegment.getWayPoints(), trackAttributes, color);
     }
 
     /**
@@ -38,7 +45,7 @@ public class Line implements Collection<WayPoint> {
      * @param route route
      */
     public Line(GpxRoute route) {
-        this(route.routePoints, route.attr);
+        this(route.routePoints, route.attr, null);
     }
 
     /**
@@ -47,6 +54,15 @@ public class Line implements Collection<WayPoint> {
      */
     public boolean isUnordered() {
         return unordered;
+    }
+
+    /**
+     * Returns the track/route color
+     * @return the color
+     * @since 15496
+     */
+    public Color getColor() {
+        return color;
     }
 
     @Override

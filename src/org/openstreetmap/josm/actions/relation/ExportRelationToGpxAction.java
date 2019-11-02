@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.IPrimitiveAction;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
@@ -154,7 +154,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
                 WayConnectionType wayConnectionType = wct.get(i);
                 if (!wayConnectionType.isOnewayLoopBackwardPart && !wayConnectionType.direction.isRoundabout()) {
                     if (!wayConnectionType.linkPrev && !trkseg.isEmpty()) {
-                        gpxData.addTrack(new ImmutableGpxTrack(trk, trkAttr));
+                        gpxData.addTrack(new GpxTrack(trk, trkAttr));
                         trkAttr.clear();
                         trk.clear();
                         trkseg.clear();
@@ -179,7 +179,7 @@ public class ExportRelationToGpxAction extends GpxExportAction
                     }
                 }
             }
-            gpxData.addTrack(new ImmutableGpxTrack(trk, trkAttr));
+            gpxData.addTrack(new GpxTrack(trk, trkAttr));
 
             String lprefix = relations.iterator().next().getName();
             if (lprefix == null || relations.size() > 1)

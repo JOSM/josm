@@ -18,12 +18,10 @@ import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -33,7 +31,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * of a certain {@link GpxLayer} or {@link org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer}.
  */
 public class CustomizeColor extends AbstractAction implements LayerAction, MultiLayerAction {
-    private final transient List<AbstractProperty<Color>> colors;
+    private final transient List<Layer> colorLayers;
 
     /**
      * Constructs a new {@code CustomizeColor} for a given list of layers.
@@ -42,8 +40,7 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
     public CustomizeColor(List<Layer> l) {
         super(tr("Customize Color"));
         new ImageProvider("colorchooser").getResource().attachImageIcon(this, true);
-        colors = l.stream().map(Layer::getColorProperty).collect(Collectors.toList());
-        CheckParameterUtil.ensureThat(colors.stream().allMatch(Objects::nonNull), "All layers must have colors.");
+        colorLayers = l.stream().filter(Objects::nonNull).filter(Layer::hasColor).collect(Collectors.toList());
         putValue("help", ht("/Action/LayerCustomizeColor"));
     }
 
@@ -57,7 +54,7 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
 
     @Override
     public boolean supportLayers(List<Layer> layers) {
-        return layers.stream().allMatch(l -> l.getColorProperty() != null);
+        return layers.stream().allMatch(Layer::hasColor);
     }
 
     @Override
@@ -72,7 +69,7 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Color cl = colors.stream().map(AbstractProperty::get).filter(Objects::nonNull).findAny().orElse(Color.GRAY);
+        Color cl = colorLayers.stream().filter(Objects::nonNull).map(Layer::getColor).filter(Objects::nonNull).findAny().orElse(Color.GRAY);
         JColorChooser c = new JColorChooser(cl);
         Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
         int answer = JOptionPane.showOptionDialog(
@@ -87,12 +84,12 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
         );
         switch (answer) {
         case 0:
-            colors.stream().forEach(prop -> prop.put(c.getColor()));
+            colorLayers.stream().forEach(l -> l.setColor(c.getColor()));
             break;
         case 1:
             return;
         case 2:
-            colors.stream().forEach(prop -> prop.put(null));
+            colorLayers.stream().forEach(l -> l.setColor(null));
             break;
         }
         // TODO: Make the layer dialog listen to property change events so that this is not needed any more.

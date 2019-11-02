@@ -39,7 +39,7 @@ public final class GpxImageCorrelation {
 
         for (GpxTrack trk : selectedGpx.tracks) {
             List<List<WayPoint>> segs = new ArrayList<>();
-            for (GpxTrackSegment seg : trk.getSegments()) {
+            for (IGpxTrackSegment seg : trk.getSegments()) {
                 List<WayPoint> wps = new ArrayList<>(seg.getWayPoints());
                 if (!wps.isEmpty()) {
                     //remove waypoints at the beginning of the track/segment without timestamps

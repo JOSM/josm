@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -31,7 +33,6 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -46,20 +47,24 @@ import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.gpx.ImportAudioAction;
 import org.openstreetmap.josm.gui.layer.gpx.ImportImagesAction;
 import org.openstreetmap.josm.gui.layer.gpx.MarkersFromNamedPointsAction;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * A layer that displays data from a Gpx file / the OSM gpx downloads.
  */
-public class GpxLayer extends Layer implements ExpertModeChangeListener {
+public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChangeListener {
 
     /** GPX data */
     public GpxData data;
-    private final boolean isLocalFile;
+    private boolean isLocalFile;
     private boolean isExpertMode;
+
     /**
      * used by {@link ChooseTrackVisibilityAction} to determine which tracks to show/hide
      *
@@ -72,6 +77,10 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
      * Added as field to be kept as reference.
      */
     private final GpxDataChangeListener dataChangeListener = e -> this.invalidate();
+    /**
+     * The MarkerLayer imported from the same file.
+     */
+    private MarkerLayer linkedMarkerLayer;
 
     /**
      * Constructs a new {@code GpxLayer} without name.
@@ -108,8 +117,24 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
     }
 
     @Override
-    protected NamedColorProperty getBaseColorProperty() {
-        return GpxDrawHelper.DEFAULT_COLOR;
+    public Color getColor() {
+        Color[] c = data.getTracks().stream().map(t -> t.getColor()).distinct().toArray(Color[]::new);
+        return c.length == 1 ? c[0] : null; //only return if exactly one distinct color present
+    }
+
+    @Override
+    public void setColor(Color color) {
+        data.beginUpdate();
+        for (GpxTrack trk : data.getTracks()) {
+            trk.setColor(color);
+        }
+        GPXSettingsPanel.putLayerPrefLocal(this, "colormode", "0");
+        data.endUpdate();
+    }
+
+    @Override
+    public boolean hasColor() {
+        return true;
     }
 
     /**
@@ -276,8 +301,15 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
             .append(", ")
             .append(trn("{0} route, ", "{0} routes, ", data.getRoutes().size(), data.getRoutes().size()))
             .append(trn("{0} waypoint", "{0} waypoints", data.getWaypoints().size(), data.getWaypoints().size())).append("<br>")
-            .append(tr("Length: {0}", SystemOfMeasurement.getSystemOfMeasurement().getDistText(data.length())))
-            .append("<br></html>");
+            .append(tr("Length: {0}", SystemOfMeasurement.getSystemOfMeasurement().getDistText(data.length())));
+
+        if (Logging.isDebugEnabled() && !data.getLayerPrefs().isEmpty()) {
+            info.append("<br><br>")
+                .append(String.join("<br>", data.getLayerPrefs().entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList())));
+        }
+
+        info.append("<br></html>");
+
         return info.toString();
     }
 
@@ -339,6 +371,22 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
     @Override
     public void setAssociatedFile(File file) {
         data.storageFile = file;
+    }
+
+    /**
+     * @return the linked MarkerLayer (imported from the same file)
+     * @since 15496
+     */
+    public MarkerLayer getLinkedMarkerLayer() {
+        return linkedMarkerLayer;
+    }
+
+    /**
+     * @param linkedMarkerLayer the linked MarkerLayer
+     * @since 15496
+     */
+    public void setLinkedMarkerLayer(MarkerLayer linkedMarkerLayer) {
+        this.linkedMarkerLayer = linkedMarkerLayer;
     }
 
     @Override
@@ -477,6 +525,23 @@ public class GpxLayer extends Layer implements ExpertModeChangeListener {
     @Override
     public void expertChanged(boolean isExpert) {
         this.isExpertMode = isExpert;
+    }
+
+    @Override
+    public boolean isModified() {
+        return data.isModified();
+    }
+
+    @Override
+    public boolean requiresSaveToFile() {
+        return isModified() && isLocalFile();
+    }
+
+    @Override
+    public void onPostSaveToFile() {
+        isLocalFile = true;
+        data.invalidate();
+        data.setModified(false);
     }
 
     @Override

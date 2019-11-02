@@ -1,10 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -95,17 +98,38 @@ public interface GpxConstants {
      * @see GpxData#getMetaBounds()
      */
     String META_BOUNDS = META_PREFIX + "bounds";
-    /**
-     * A constant for the metadata hash map: the extension data. This is a {@link Extensions} object
-     * @see GpxData#addExtension(String, String)
-     * @see GpxData#get(String)
-     */
-    String META_EXTENSIONS = META_PREFIX + "extensions";
 
     /**
-     * A namespace for josm GPX extensions
+     * Namespace for the XSD
      */
-    String JOSM_EXTENSIONS_NAMESPACE_URI = Config.getUrls().getXMLBase() + "/gpx-extensions-1.0";
+    String XML_URI_XSD = "http://www.w3.org/2001/XMLSchema-instance";
+
+    /**
+     * Namespace for JOSM GPX extensions
+     */
+    String XML_URI_EXTENSIONS_JOSM = Config.getUrls().getXMLBase() + "/gpx-extensions-1.1";
+    /**
+     * Location of the XSD schema for JOSM GPX extensions
+     */
+    String XML_XSD_EXTENSIONS_JOSM = Config.getUrls().getXMLBase() + "/gpx-extensions-1.1.xsd";
+
+    /**
+     * Namespace for GPX drawing extensions
+     */
+    String XML_URI_EXTENSIONS_DRAWING = Config.getUrls().getXMLBase() + "/gpx-drawing-extensions-1.0";
+    /**
+     * Location of the XSD schema for GPX drawing extensions
+     */
+    String XML_XSD_EXTENSIONS_DRAWING = Config.getUrls().getXMLBase() + "/gpx-drawing-extensions-1.0.xsd";
+
+    /**
+     * Namespace for Garmin GPX extensions
+     */
+    String XML_URI_EXTENSIONS_GARMIN = "http://www.garmin.com/xmlschemas/GpxExtensions/v3";
+    /**
+     * Location of the XSD schema for GPX drawing extensions
+     */
+    String XML_XSD_EXTENSIONS_GARMIN = "http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd";
 
     /** Elevation (in meters) of the point. */
     String PT_ELE = "ele";
@@ -154,13 +178,70 @@ public interface GpxConstants {
      */
     List<String> WPT_KEYS = Collections.unmodifiableList(Arrays.asList(PT_ELE, PT_TIME, PT_MAGVAR, PT_GEOIDHEIGHT,
             GPX_NAME, GPX_CMT, GPX_DESC, GPX_SRC, META_LINKS, PT_SYM, PT_TYPE,
-            PT_FIX, PT_SAT, PT_HDOP, PT_VDOP, PT_PDOP, PT_AGEOFDGPSDATA, PT_DGPSID, META_EXTENSIONS));
+            PT_FIX, PT_SAT, PT_HDOP, PT_VDOP, PT_PDOP, PT_AGEOFDGPSDATA, PT_DGPSID));
 
     /**
      * Ordered list of all possible route and track keys.
      */
     List<String> RTE_TRK_KEYS = Collections.unmodifiableList(Arrays.asList(
-            GPX_NAME, GPX_CMT, GPX_DESC, GPX_SRC, META_LINKS, "number", PT_TYPE, META_EXTENSIONS));
+            GPX_NAME, GPX_CMT, GPX_DESC, GPX_SRC, META_LINKS, "number", PT_TYPE));
+
+    /**
+     * Map with all supported Garmin colors
+     */
+    Map<String, Color> GARMIN_COLORS = getGarminColors();
+
+    /**
+     * Helper method for {@link #GARMIN_COLORS}
+     * @return Map with all supported Garmin colors
+     */
+    static Map<String, Color> getGarminColors() {
+        TreeMap<String, Color> m = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        m.put("Black", Color.BLACK);
+        m.put("DarkRed", new Color(139, 0, 0));
+        m.put("DarkGreen", new Color(0, 100, 0));
+        m.put("DarkYellow", new Color(255, 170, 0));
+        m.put("DarkBlue", new Color(0, 0, 139));
+        m.put("DarkMagenta", new Color(139, 0, 139));
+        m.put("DarkCyan", new Color(0, 139, 139));
+        m.put("LightGray", Color.LIGHT_GRAY);
+        m.put("DarkGray", Color.DARK_GRAY);
+        m.put("Red", Color.RED);
+        m.put("Green", Color.GREEN);
+        m.put("Yellow", Color.YELLOW);
+        m.put("Blue", Color.BLUE);
+        m.put("Magenta", Color.MAGENTA);
+        m.put("Cyan", Color.CYAN);
+        m.put("White", Color.WHITE);
+        m.put("Transparent", new Color(0, 0, 0, 255));
+        return Collections.unmodifiableMap(m);
+    }
+
+    /**
+     * Enum with color formats that can be written by JOSM
+     */
+    enum ColorFormat {
+        /** Drawing extension format */
+        GPXD,
+        /** Garmin track extension format */
+        GPXX
+    }
+
+    /**
+     * Map with all supported extension abbreviations for easier readability in OSM layers
+     */
+    Map<String, String> EXTENSION_ABBREVIATIONS = getExtensionAbbreviations();
+
+    /**
+     * Helper method for {@link #EXTENSION_ABBREVIATIONS}
+     * @return Map with all supported extension abbreviations
+     */
+    static Map<String, String> getExtensionAbbreviations() {
+        TreeMap<String, String> m = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        m.put("gpx:extension:gpxx:TrackExtensions:DisplayColor", "gpxx:DisplayColor");
+        m.put("gpx:extension:gpxd:color", "gpxd:color");
+        return m;
+    }
 
     /**
      * Possible fix values. NMEA 0183 Version 4.00

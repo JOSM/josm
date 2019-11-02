@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Object with attributes (in the context of GPX data).
@@ -50,11 +51,15 @@ public interface IWithAttributes {
     void put(String key, Object value);
 
     /**
-     * Add a key / value pair that is not part of the GPX schema as an extension.
-     *
-     * @param key the key
-     * @param value the value
+     * Returns the attributes
+     * @return the attributes
      */
-    void addExtension(String key, String value);
+    Map<String, Object> getAttributes();
+
+    /**
+     * Returns the extensions
+     * @return the extensions
+     */
+    GpxExtensionCollection getExtensions();
 
 }

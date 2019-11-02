@@ -22,7 +22,6 @@ public class NamedColorProperty extends AbstractProperty<Color> {
 
     public static final String COLOR_CATEGORY_GENERAL = "general";
     public static final String COLOR_CATEGORY_MAPPAINT = "mappaint";
-    public static final String COLOR_CATEGORY_LAYER = "layer";
 
     private final String category;
     private final String source;
@@ -31,8 +30,7 @@ public class NamedColorProperty extends AbstractProperty<Color> {
     /**
      * Construct a new {@code NamedColorProperty}.
      * @param category a category, can be any identifier, but the following values are recognized by
-     * the GUI preferences: {@link #COLOR_CATEGORY_GENERAL}, {@link #COLOR_CATEGORY_MAPPAINT} and
-     * {@link #COLOR_CATEGORY_LAYER}
+     * the GUI preferences: {@link #COLOR_CATEGORY_GENERAL} and {@link #COLOR_CATEGORY_MAPPAINT}
      * @param source a filename or similar associated with the color, can be null if not applicable
      * @param name a short description of the color
      * @param defaultValue the default value, can be null

@@ -293,8 +293,7 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append(reportHeader);
 
         Preferences.main().getAllSettings().forEach((key, setting) -> {
-            if (key.startsWith("marker.show")
-                    || "file-open.history".equals(key)
+            if ("file-open.history".equals(key)
                     || "download.overpass.query".equals(key)
                     || "download.overpass.queries".equals(key)
                     || key.contains("username")

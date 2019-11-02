@@ -25,6 +25,7 @@ import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -77,6 +78,15 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
     @Override
     public void exportData(File file, Layer layer) throws IOException {
+        exportData(file, layer, false);
+    }
+
+    @Override
+    public void exportDataQuiet(File file, Layer layer) throws IOException {
+        exportData(file, layer, true);
+    }
+
+    private void exportData(File file, Layer layer, boolean quiet) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         if (!(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
             throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer
@@ -89,10 +99,21 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             file = new File(fn);
         }
 
+        GpxData gpxData;
+        if (quiet) {
+            gpxData = getGpxData(layer, file);
+            try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
+                GpxWriter w = new GpxWriter(fo);
+                w.write(gpxData);
+                w.close();
+                fo.flush();
+            }
+            return;
+        }
+
         // open the dialog asking for options
         JPanel p = new JPanel(new GridBagLayout());
 
-        GpxData gpxData;
         // At this moment, we only need to know the attributes of the GpxData,
         // conversion of OsmDataLayer (if needed) will be done after the dialog is closed.
         if (layer instanceof GpxLayer) {
@@ -146,13 +167,45 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         p.add(new JLabel(tr("Keywords")), GBC.eol());
         JosmTextField keywords = new JosmTextField();
         keywords.setText(gpxData.getString(META_KEYWORDS));
-        p.add(keywords, GBC.eop().fill(GBC.HORIZONTAL));
+        p.add(keywords, GBC.eol().fill(GBC.HORIZONTAL));
+
+        boolean sel = Config.getPref().getBoolean("gpx.export.colors", true);
+        JCheckBox colors = new JCheckBox(tr("Save track colors in GPX file"), sel);
+        p.add(colors, GBC.eol().fill(GBC.HORIZONTAL));
+        JCheckBox garmin = new JCheckBox(tr("Use Garmin compatible GPX extensions"),
+                Config.getPref().getBoolean("gpx.export.colors.garmin", false));
+        garmin.setEnabled(sel);
+        p.add(garmin, GBC.eol().fill(GBC.HORIZONTAL).insets(20, 0, 0, 0));
+
+        boolean hasPrefs = !gpxData.getLayerPrefs().isEmpty();
+        JCheckBox layerPrefs = new JCheckBox(tr("Save layer specific preferences"),
+                hasPrefs && Config.getPref().getBoolean("gpx.export.prefs", true));
+        layerPrefs.setEnabled(hasPrefs);
+        p.add(layerPrefs, GBC.eop().fill(GBC.HORIZONTAL));
 
         ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Export options"),
                 tr("Export and Save"), tr("Cancel"))
             .setButtonIcons("exportgpx", "cancel")
             .setContent(p);
+
+        colors.addActionListener(l -> {
+            garmin.setEnabled(colors.isSelected());
+        });
+
+        garmin.addActionListener(l -> {
+            if (garmin.isSelected() &&
+                    !ConditionalOptionPaneUtil.showConfirmationDialog(
+                            "gpx_color_garmin",
+                            ed,
+                            new JLabel(tr("<html>Garmin track extensions only support 16 colors.<br>If you continue, the closest supported track color will be used.</html>")),
+                            tr("Information"),
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.INFORMATION_MESSAGE,
+                            JOptionPane.OK_OPTION)) {
+                garmin.setSelected(false);
+            }
+        });
 
         if (ed.showDialog().getValue() != 1) {
             setCanceled(true);
@@ -167,14 +220,17 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         if (!copyright.getText().isEmpty()) {
             Config.getPref().put("lastCopyright", copyright.getText());
         }
-
-        if (layer instanceof OsmDataLayer) {
-            gpxData = ((OsmDataLayer) layer).toGpxData();
-        } else if (layer instanceof GpxLayer) {
-            gpxData = ((GpxLayer) layer).data;
-        } else {
-            gpxData = OsmDataLayer.toGpxData(MainApplication.getLayerManager().getEditDataSet(), file);
+        Config.getPref().putBoolean("gpx.export.colors", colors.isSelected());
+        Config.getPref().putBoolean("gpx.export.colors.garmin", garmin.isSelected());
+        if (hasPrefs) {
+            Config.getPref().putBoolean("gpx.export.prefs", layerPrefs.isSelected());
         }
+        ColorFormat cFormat = null;
+        if (colors.isSelected()) {
+            cFormat = garmin.isSelected() ? ColorFormat.GPXX : ColorFormat.GPXD;
+        }
+
+        gpxData = getGpxData(layer, file);
 
         // add author and copyright details to the gpx data
         if (author.isSelected()) {
@@ -203,9 +259,21 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             gpxData.put(META_KEYWORDS, keywords.getText());
         }
 
-        try (OutputStream fo = Compression.getCompressedFileOutputStream(file); GpxWriter writer = new GpxWriter(fo)) {
-            writer.write(gpxData);
+        try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
+            GpxWriter w = new GpxWriter(fo);
+            w.write(gpxData, cFormat, layerPrefs.isSelected());
+            w.close();
+            fo.flush();
         }
+    }
+
+    private static GpxData getGpxData(Layer layer, File file) {
+        if (layer instanceof OsmDataLayer) {
+            return ((OsmDataLayer) layer).toGpxData();
+        } else if (layer instanceof GpxLayer) {
+            return ((GpxLayer) layer).data;
+        }
+        return OsmDataLayer.toGpxData(MainApplication.getLayerManager().getEditDataSet(), file);
     }
 
     private static void enableCopyright(final GpxData data, final JosmTextField copyright, final JButton predefined,

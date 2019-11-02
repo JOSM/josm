@@ -19,9 +19,8 @@ import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.SaveToFile;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -35,6 +34,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class SaveActionBase extends DiskAccessAction {
 
+    private boolean quiet;
+
     /**
      * Constructs a new {@code SaveActionBase}.
      * @param name The action's text as displayed on the menu (if it is added to a menu)
@@ -46,11 +47,25 @@ public abstract class SaveActionBase extends DiskAccessAction {
         super(name, iconName, tooltip, shortcut);
     }
 
+    /**
+     * Constructs a new {@code SaveActionBase}.
+     * @param name The action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName The filename of the icon to use
+     * @param tooltip A longer description of the action that will be displayed in the tooltip
+     * @param shortcut A ready-created shortcut object or {@code null} if you don't want a shortcut
+     * @param quiet whether the quiet exporter is called
+     * @since 15496
+     */
+    public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut, boolean quiet) {
+        super(name, iconName, tooltip, shortcut);
+        this.quiet = quiet;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        doSave();
+        doSave(quiet);
     }
 
     /**
@@ -58,9 +73,19 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @return {@code true} if the save operation succeeds
      */
     public boolean doSave() {
+        return doSave(false);
+    }
+
+    /**
+     * Saves the active layer.
+     * @param quiet If the file is saved without prompting the user
+     * @return {@code true} if the save operation succeeds
+     * @since 15496
+     */
+    public boolean doSave(boolean quiet) {
         Layer layer = getLayerManager().getActiveLayer();
         if (layer != null && layer.isSavable()) {
-            return doSave(layer);
+            return doSave(layer, quiet);
         }
         return false;
     }
@@ -71,13 +96,21 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @return {@code true} if the save operation succeeds
      */
     public boolean doSave(Layer layer) {
+        return doSave(layer, false);
+    }
+
+    /**
+     * Saves the given layer.
+     * @param layer layer to save
+     * @param quiet If the file is saved without prompting the user
+     * @return {@code true} if the save operation succeeds
+     * @since 15496
+     */
+    public boolean doSave(Layer layer, boolean quiet) {
         if (!layer.checkSaveConditions())
             return false;
-        final boolean requiresSave = layer instanceof SaveToFile && ((SaveToFile) layer).requiresSaveToFile();
-        final boolean result = doInternalSave(layer, getFile(layer));
-        if (!requiresSave) {
-            updateEnabledState();
-        }
+        final boolean result = doInternalSave(layer, getFile(layer), quiet);
+        updateEnabledState();
         return result;
     }
 
@@ -86,18 +119,17 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @param layer The layer to save
      * @param file The destination file
      * @param checkSaveConditions if {@code true}, checks preconditions before saving. Set it to {@code false} to skip it
-     * if preconditions have already been checked (as this check can prompt UI dialog in EDT it may be best in some cases
-     * to do it earlier).
+     * and prevent dialogs from being shown.
      * @return {@code true} if the layer has been successfully saved, {@code false} otherwise
      * @since 7204
      */
     public static boolean doSave(Layer layer, File file, boolean checkSaveConditions) {
         if (checkSaveConditions && !layer.checkSaveConditions())
             return false;
-        return doInternalSave(layer, file);
+        return doInternalSave(layer, file, !checkSaveConditions);
     }
 
-    private static boolean doInternalSave(Layer layer, File file) {
+    private static boolean doInternalSave(Layer layer, File file, boolean quiet) {
         if (file == null)
             return false;
 
@@ -106,7 +138,11 @@ public abstract class SaveActionBase extends DiskAccessAction {
             boolean canceled = false;
             for (FileExporter exporter : ExtensionFileFilter.getExporters()) {
                 if (exporter.acceptFile(file, layer)) {
-                    exporter.exportData(file, layer);
+                    if (quiet) {
+                        exporter.exportDataQuiet(file, layer);
+                    } else {
+                        exporter.exportData(file, layer);
+                    }
                     exported = true;
                     canceled = exporter.isCanceled();
                     break;
@@ -124,8 +160,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 layer.setName(file.getName());
             }
             layer.setAssociatedFile(file);
-            if (layer instanceof OsmDataLayer) {
-                ((OsmDataLayer) layer).onPostSaveToFile();
+            if (layer instanceof AbstractModifiableLayer) {
+                ((AbstractModifiableLayer) layer).onPostSaveToFile();
             }
         } catch (IOException | InvalidPathException e) {
             showAndLogException(e);

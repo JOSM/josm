@@ -18,12 +18,15 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxData.XMLNamespace;
+import org.openstreetmap.josm.data.gpx.GpxExtensionCollection;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -67,7 +70,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
     private class Parser extends DefaultHandler {
 
         private GpxData data;
-        private Collection<Collection<WayPoint>> currentTrack;
+        private Collection<IGpxTrackSegment> currentTrack;
         private Map<String, Object> currentTrackAttr;
         private Collection<WayPoint> currentTrackSeg;
         private GpxRoute currentRoute;
@@ -76,7 +79,8 @@ public class GpxReader implements GpxConstants, IGpxReader {
         private State currentState = State.INIT;
 
         private GpxLink currentLink;
-        private Extensions currentExtensions;
+        private GpxExtensionCollection currentExtensionCollection;
+        private GpxExtensionCollection currentTrackExtensionCollection;
         private Stack<State> states;
         private final Stack<String> elements = new Stack<>();
 
@@ -88,7 +92,14 @@ public class GpxReader implements GpxConstants, IGpxReader {
         public void startDocument() {
             accumulator = new StringBuilder();
             states = new Stack<>();
-            data = new GpxData();
+            data = new GpxData(true);
+            currentExtensionCollection = new GpxExtensionCollection();
+            currentTrackExtensionCollection = new GpxExtensionCollection();
+        }
+
+        @Override
+        public void startPrefixMapping(String prefix, String uri) throws SAXException {
+            data.getNamespaces().add(new XMLNamespace(prefix, uri));
         }
 
         private double parseCoord(Attributes atts, String key) {
@@ -133,6 +144,17 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     // unknown version, assume 1.1
                     version = "1.1";
                 }
+                String schemaLocation = atts.getValue(GpxConstants.XML_URI_XSD, "schemaLocation");
+                if (schemaLocation != null) {
+                    String[] schemaLocations = schemaLocation.split(" ");
+                    for (int i = 0; i < schemaLocations.length - 1; i += 2) {
+                        final String schemaURI = schemaLocations[i];
+                        final String schemaXSD = schemaLocations[i + 1];
+                        data.getNamespaces().stream().filter(xml -> xml.getURI().equals(schemaURI)).forEach(xml -> {
+                            xml.setLocation(schemaXSD);
+                        });
+                    }
+                }
                 break;
             case GPX:
                 switch (localName) {
@@ -159,7 +181,6 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "extensions":
                     states.push(currentState);
                     currentState = State.EXT;
-                    currentExtensions = new Extensions();
                     break;
                 case "gpx":
                     if (atts.getValue("creator") != null && atts.getValue("creator").startsWith("Nokia Sports Tracker")) {
@@ -178,7 +199,6 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "extensions":
                     states.push(currentState);
                     currentState = State.EXT;
-                    currentExtensions = new Extensions();
                     break;
                 case "copyright":
                     states.push(currentState);
@@ -228,16 +248,21 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "extensions":
                     states.push(currentState);
                     currentState = State.EXT;
-                    currentExtensions = new Extensions();
                     break;
                 default: // Do nothing
                 }
                 break;
             case TRKSEG:
-                if ("trkpt".equals(localName)) {
+                switch (localName) {
+                case "trkpt":
                     states.push(currentState);
                     currentState = State.WPT;
                     currentWayPoint = new WayPoint(parseLatLon(atts));
+                    break;
+                case "extensions":
+                    states.push(currentState);
+                    currentState = State.EXT;
+                    break;
                 }
                 break;
             case WPT:
@@ -250,7 +275,6 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "extensions":
                     states.push(currentState);
                     currentState = State.EXT;
-                    currentExtensions = new Extensions();
                     break;
                 default: // Do nothing
                 }
@@ -270,9 +294,15 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "extensions":
                     states.push(currentState);
                     currentState = State.EXT;
-                    currentExtensions = new Extensions();
                     break;
                 default: // Do nothing
+                }
+                break;
+            case EXT:
+                if (states.lastElement() == State.TRK) {
+                    currentTrackExtensionCollection.openChild(namespaceURI, qName, atts);
+                } else {
+                    currentExtensionCollection.openChild(namespaceURI, qName, atts);
                 }
                 break;
             default: // Do nothing
@@ -349,9 +379,8 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     if ((currentState == State.METADATA && "metadata".equals(localName)) ||
                         (currentState == State.GPX && "gpx".equals(localName))) {
                         convertUrlToLink(data.attr);
-                        if (currentExtensions != null && !currentExtensions.isEmpty()) {
-                            data.put(META_EXTENSIONS, currentExtensions);
-                        }
+                        data.getExtensions().addAll(currentExtensionCollection);
+                        currentExtensionCollection.clear();
                         currentState = states.pop();
                     }
                     break;
@@ -359,7 +388,6 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     // do nothing, has been parsed on startElement
                     break;
                 default:
-                    //TODO: parse extensions
                 }
                 break;
             case AUTHOR:
@@ -464,10 +492,9 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "wpt":
                     currentState = states.pop();
                     convertUrlToLink(currentWayPoint.attr);
-                    if (currentExtensions != null && !currentExtensions.isEmpty()) {
-                        currentWayPoint.put(META_EXTENSIONS, currentExtensions);
-                    }
+                    currentWayPoint.getExtensions().addAll(currentExtensionCollection);
                     data.waypoints.add(currentWayPoint);
+                    currentExtensionCollection.clear();
                     break;
                 default: // Do nothing
                 }
@@ -475,7 +502,12 @@ public class GpxReader implements GpxConstants, IGpxReader {
             case TRKSEG:
                 if ("trkseg".equals(localName)) {
                     currentState = states.pop();
-                    currentTrack.add(currentTrackSeg);
+                    if (!currentTrackSeg.isEmpty()) {
+                        GpxTrackSegment seg = new GpxTrackSegment(currentTrackSeg);
+                        seg.getExtensions().addAll(currentExtensionCollection);
+                        currentTrack.add(seg);
+                    }
+                    currentExtensionCollection.clear();
                 }
                 break;
             case TRK:
@@ -483,7 +515,10 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case "trk":
                     currentState = states.pop();
                     convertUrlToLink(currentTrackAttr);
-                    data.addTrack(new ImmutableGpxTrack(currentTrack, currentTrackAttr));
+                    GpxTrack trk = new GpxTrack(new ArrayList<>(currentTrack), currentTrackAttr);
+                    trk.getExtensions().addAll(currentTrackExtensionCollection);
+                    data.addTrack(trk);
+                    currentTrackExtensionCollection.clear();
                     break;
                 case "name":
                 case "cmt":
@@ -501,9 +536,13 @@ public class GpxReader implements GpxConstants, IGpxReader {
             case EXT:
                 if ("extensions".equals(localName)) {
                     currentState = states.pop();
-                } else if (JOSM_EXTENSIONS_NAMESPACE_URI.equals(namespaceURI)) {
-                    // only interested in extensions written by JOSM
-                    currentExtensions.put(localName, accumulator.toString());
+                } else if (currentExtensionCollection != null) {
+                    String acc = accumulator.toString().trim();
+                    if (states.lastElement() == State.TRK) {
+                        currentTrackExtensionCollection.closeChild(qName, acc); //a segment inside the track can have an extension too
+                    } else {
+                        currentExtensionCollection.closeChild(qName, acc);
+                    }
                 }
                 break;
             default:
@@ -519,16 +558,28 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 default: // Do nothing
                 }
             }
+            accumulator.setLength(0);
         }
 
         @Override
         public void endDocument() throws SAXException {
             if (!states.empty())
                 throw new SAXException(tr("Parse error: invalid document structure for GPX document."));
-            Extensions metaExt = (Extensions) data.get(META_EXTENSIONS);
-            if (metaExt != null && "true".equals(metaExt.get("from-server"))) {
-                data.fromServer = true;
-            }
+
+            data.getExtensions().stream("josm", "from-server").findAny().ifPresent(ext -> {
+                data.fromServer = "true".equals(ext.getValue());
+            });
+
+            data.getExtensions().stream("josm", "layerPreferences").forEach(prefs -> {
+                prefs.getExtensions().stream("josm", "entry").forEach(prefEntry -> {
+                    Object key = prefEntry.get("key");
+                    Object val = prefEntry.get("value");
+                    if (key != null && val != null) {
+                        data.getLayerPrefs().put(key.toString(), val.toString());
+                    }
+                });
+            });
+            data.endUpdate();
             gpxData = data;
         }
 

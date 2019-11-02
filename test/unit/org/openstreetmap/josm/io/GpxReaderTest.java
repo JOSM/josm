@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -66,6 +68,24 @@ public class GpxReaderTest {
         final WayPoint tenthWayPoint = new ArrayList<>(result.getWaypoints()).get(10);
         assertEquals("128970", tenthWayPoint.get(GpxData.GPX_NAME));
         assertEquals(new LatLon(48.183956146240234, 11.43463134765625), tenthWayPoint.getCoor());
+    }
+
+    /**
+     * Tests if layer preferences can be read
+     * @throws Exception if track can't be parsed
+     */
+    @Test
+    public void testLayerPrefs() throws Exception {
+        final GpxData data = parseGpxData(TestUtils.getTestDataRoot() + "tracks/tracks-layerprefs.gpx");
+        Map<String, String> e = new HashMap<>();
+        e.put("colormode.velocity.tune", "10");
+        e.put("lines.arrows.min-distance", "20");
+        e.put("colormode", "1");
+        e.put("lines", "1");
+        e.put("lines.arrows", "true");
+        e.put("colormode.dynamic-range", "true");
+        e.put("colors", "0");
+        assertEquals(data.getLayerPrefs(), e);
     }
 
     /**

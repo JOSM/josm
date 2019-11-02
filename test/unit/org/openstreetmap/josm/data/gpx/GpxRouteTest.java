@@ -29,9 +29,12 @@ public class GpxRouteTest {
     @Test
     public void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
+        GpxExtensionCollection col = new GpxExtensionCollection();
+        col.add("josm", "from-server", "true");
         EqualsVerifier.forClass(GpxRoute.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .withPrefabValues(WayPoint.class, new WayPoint(LatLon.NORTH_POLE), new WayPoint(LatLon.SOUTH_POLE))
+            .withPrefabValues(GpxExtensionCollection.class, new GpxExtensionCollection(), col)
             .verify();
     }
 }

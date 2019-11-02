@@ -18,7 +18,7 @@ import java.util.Objects;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.IGpxReader;
 import org.openstreetmap.josm.tools.Logging;
@@ -114,7 +114,7 @@ public class RtkLibPosReader implements IGpxReader {
             } while (line != null);
         }
         currentTrack.add(waypoints);
-        data.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
+        data.tracks.add(new GpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
         return true;
     }
 

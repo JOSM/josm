@@ -28,8 +28,11 @@ public class WithAttributesTest {
     @Test
     public void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
+        GpxExtensionCollection col = new GpxExtensionCollection();
+        col.add("josm", "from-server", "true");
         EqualsVerifier.forClass(WithAttributes.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
+            .withPrefabValues(GpxExtensionCollection.class, new GpxExtensionCollection(), col)
             .verify();
     }
 }

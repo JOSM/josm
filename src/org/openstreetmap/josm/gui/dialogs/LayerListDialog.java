@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -17,7 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -42,7 +41,6 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
-import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListener;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -611,18 +609,9 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             }
             if (Config.getPref().getBoolean("dialog.layer.colorname", true)) {
-                AbstractProperty<Color> prop = layer.getColorProperty();
-                Color c = prop == null ? null : prop.get();
-                if (c == null || model.getLayers().stream()
-                        .map(Layer::getColorProperty)
-                        .filter(Objects::nonNull)
-                        .map(AbstractProperty::get)
-                        .noneMatch(oc -> oc != null && !oc.equals(c))) {
-                    /* not more than one color, don't use coloring */
-                    label.setForeground(UIManager.getColor(isSelected ? "Table.selectionForeground" : "Table.foreground"));
-                } else {
-                    label.setForeground(c);
-                }
+                label.setForeground(Optional
+                        .ofNullable(layer.getColor())
+                        .orElse(UIManager.getColor(isSelected ? "Table.selectionForeground" : "Table.foreground")));
             }
             label.setIcon(layer.getIcon());
             label.setToolTipText(layer.getToolTipText());

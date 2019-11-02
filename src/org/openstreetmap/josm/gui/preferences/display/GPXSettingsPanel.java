@@ -4,12 +4,16 @@ package org.openstreetmap.josm.gui.preferences.display;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -22,13 +26,13 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 
+import org.apache.commons.jcs.access.exception.InvalidArgumentException;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.data.PreferencesUtils;
-import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
-import org.openstreetmap.josm.gui.layer.markerlayer.Marker.TemplateEntryProperty;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -67,7 +71,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JRadioButton colorTypeQuality = new JRadioButton(tr("Quality (RTKLib only, if available)"));
     private final JRadioButton colorTypeTime = new JRadioButton(tr("Track date"));
     private final JRadioButton colorTypeHeatMap = new JRadioButton(tr("Heat Map (dark = few, bright = many)"));
-    private final JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
+    private final JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized in the layer manager)"));
     private final JRadioButton colorTypeGlobal = new JRadioButton(tr("Use global settings"));
     private final JosmComboBox<String> colorTypeVelocityTune = new JosmComboBox<>(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
     private final JosmComboBox<String> colorTypeHeatMapTune = new JosmComboBox<>(new String[] {
@@ -93,21 +97,59 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JCheckBox useGpsAntialiasing = new JCheckBox(tr("Smooth GPX graphics (antialiasing)"));
     private final JCheckBox drawLineWithAlpha = new JCheckBox(tr("Draw with Opacity (alpha blending) "));
 
-    private String layerName;
-    private final boolean local; // flag to display LocalOnly checkbox
-    private final boolean nonlocal; // flag to display AllLines checkbox
+    private final List<GpxLayer> layers;
+    private final GpxLayer firstLayer;
+    private final boolean global; // global settings vs. layer specific settings
+    private final boolean hasLocalFile; // flag to display LocalOnly checkbooks
+    private final boolean hasNonLocalFile; // flag to display AllLines checkbox
+
+    private final static Map<String, Object> DEFAULT_PREFS = getDefaultPrefs();
+
+    private static Map<String, Object> getDefaultPrefs() {
+        HashMap<String, Object> m = new HashMap<>();
+        m.put("colormode", -1);
+        m.put("colormode.dynamic-range", false);
+        m.put("colormode.heatmap.colormap", 0);
+        m.put("colormode.heatmap.gain", 0);
+        m.put("colormode.heatmap.line-extra", false); //Einstein only
+        m.put("colormode.heatmap.lower-limit", 0);
+        m.put("colormode.heatmap.use-points", false);
+        m.put("colormode.time.min-distance", 60); //Einstein only
+        m.put("colormode.velocity.tune", 45);
+        m.put("lines", -1);
+        m.put("lines.alpha-blend", false);
+        m.put("lines.arrows", false);
+        m.put("lines.arrows.fast", false);
+        m.put("lines.arrows.min-distance", 40);
+        m.put("lines.force", false);
+        m.put("lines.max-length", 200);
+        m.put("lines.max-length.local", -1);
+        m.put("lines.width", 0);
+        m.put("markers.color", "");
+        m.put("markers.show-text", true);
+        m.put("markers.pattern", Marker.LABEL_PATTERN_AUTO);
+        m.put("markers.audio.pattern", "?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }");
+        m.put("points.hdopcircle", false);
+        m.put("points.large", false);
+        m.put("points.large.alpha", -1); //Einstein only
+        m.put("points.large.size", 3); //Einstein only
+        return Collections.unmodifiableMap(m);
+    }
 
     /**
-     * Constructs a new {@code GPXSettingsPanel} for a given layer name.
-     * @param layerName The GPX layer name
-     * @param local flag to display LocalOnly checkbox
-     * @param nonlocal flag to display AllLines checkbox
+     * Constructs a new {@code GPXSettingsPanel} for the given layers.
+     * @param layers the GPX layers
      */
-    public GPXSettingsPanel(String layerName, boolean local, boolean nonlocal) {
+    public GPXSettingsPanel(List<GpxLayer> layers) {
         super(new GridBagLayout());
-        this.local = local;
-        this.nonlocal = nonlocal;
-        this.layerName = "layer "+layerName;
+        this.layers = layers;
+        if (layers == null || layers.isEmpty()) {
+            throw new InvalidArgumentException("At least one layer required");
+        }
+        firstLayer = layers.get(0);
+        global = false;
+        hasLocalFile = layers.stream().anyMatch(GpxLayer::isLocalFile);
+        hasNonLocalFile = layers.stream().anyMatch(l -> !l.isLocalFile());
         initComponents();
         loadPreferences();
     }
@@ -117,24 +159,155 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      */
     public GPXSettingsPanel() {
         super(new GridBagLayout());
+        layers = null;
+        firstLayer = null;
+        global = hasLocalFile = hasNonLocalFile = true;
         initComponents();
-        local = false;
-        nonlocal = false;
         loadPreferences(); // preferences -> controls
+    }
+
+    /**
+     * Reads the preference for the given layer or the default preference if not available
+     * @param layer the GpxLayer. Can be <code>null</code>, default preference will be returned then
+     * @param key the drawing key to be read, without "draw.rawgps."
+     * @return the value
+     */
+    public static String getLayerPref(GpxLayer layer, String key) {
+        Object d = DEFAULT_PREFS.get(key);
+        String ds;
+        if (d != null) {
+            ds = d.toString();
+        } else {
+            Logging.warn("No default value found for layer preference \"" + key + "\".");
+            ds = null;
+        }
+        return Optional.ofNullable(tryGetLayerPrefLocal(layer, key)).orElse(Config.getPref().get("draw.rawgps." + key, ds));
+    }
+
+    /**
+     * Reads the integer preference for the given layer or the default preference if not available
+     * @param layer the GpxLayer. Can be <code>null</code>, default preference will be returned then
+     * @param key the drawing key to be read, without "draw.rawgps."
+     * @return the integer value
+     */
+    public static int getLayerPrefInt(GpxLayer layer, String key) {
+        String s = getLayerPref(layer, key);
+        if (s != null) {
+            try {
+                return Integer.parseInt(s);
+            } catch (NumberFormatException ex) {
+                Object d = DEFAULT_PREFS.get(key);
+                if (d instanceof Integer) {
+                    return (int) d;
+                } else {
+                    Logging.warn("No valid default value found for layer preference \"" + key + "\".");
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Try to read the preference for the given layer
+     * @param layer the GpxLayer
+     * @param key the drawing key to be read, without "draw.rawgps."
+     * @return the value or <code>null</code> if not found
+     */
+    public static String tryGetLayerPrefLocal(GpxLayer layer, String key) {
+        return layer != null ? tryGetLayerPrefLocal(layer.data, key) : null;
+    }
+
+    /**
+     * Try to read the preference for the given GpxData
+     * @param data the GpxData
+     * @param key the drawing key to be read, without "draw.rawgps."
+     * @return the value or <code>null</code> if not found
+     */
+    public static String tryGetLayerPrefLocal(GpxData data, String key) {
+        return data != null ? data.getLayerPrefs().get(key) : null;
+    }
+
+    /**
+     * Puts the preference for the given layers or the default preference if layers is <code>null</code>
+     * @param layers List of <code>GpxLayer</code> to put the drawingOptions
+     * @param key the drawing key to be written, without "draw.rawgps."
+     * @param value (can be <code>null</code> to remove option)
+     */
+    public static void putLayerPref(List<GpxLayer> layers, String key, Object value) {
+        String v = value == null ? null : value.toString();
+        if (layers != null) {
+            for (GpxLayer l : layers) {
+                putLayerPrefLocal(l.data, key, v);
+            }
+        } else {
+            Config.getPref().put("draw.rawgps." + key, v);
+        }
+    }
+
+    /**
+     * Puts the preference for the given layer
+     * @param layer <code>GpxLayer</code> to put the drawingOptions
+     * @param key the drawing key to be written, without "draw.rawgps."
+     * @param value the value or <code>null</code> to remove key
+     */
+    public static void putLayerPrefLocal(GpxLayer layer, String key, String value) {
+        if (layer == null) return;
+        putLayerPrefLocal(layer.data, key, value);
+    }
+
+    /**
+     * Puts the preference for the given layer
+     * @param data <code>GpxData</code> to put the drawingOptions. Must not be <code>null</code>
+     * @param key the drawing key to be written, without "draw.rawgps."
+     * @param value the value or <code>null</code> to remove key
+     */
+    public static void putLayerPrefLocal(GpxData data, String key, String value) {
+        if (value == null || value.trim().isEmpty() || (getLayerPref(null, key).equals(value) && DEFAULT_PREFS.get(key) != null && DEFAULT_PREFS.get(key).toString().equals(value))) {
+            data.getLayerPrefs().remove(key);
+        } else {
+            data.getLayerPrefs().put(key, value);
+        }
+    }
+
+    private String pref(String key) {
+        return getLayerPref(firstLayer, key);
+    }
+
+    private boolean prefBool(String key) {
+        return Boolean.parseBoolean(pref(key));
+    }
+
+    private int prefInt(String key) {
+        return getLayerPrefInt(firstLayer, key);
+    }
+
+    private int prefIntLocal(String key) {
+        try {
+            return Integer.parseInt(tryGetLayerPrefLocal(firstLayer, key));
+        } catch (NumberFormatException ex) {
+            return -1;
+        }
+
+    }
+
+    private void putPref(String key, Object value) {
+        putLayerPref(layers, key, value);
     }
 
     // CHECKSTYLE.OFF: ExecutableStatementCountCheck
     private void initComponents() {
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        // makeAutoMarkers
-        makeAutoMarkers.setToolTipText(tr("Automatically make a marker layer from any waypoints when opening a GPX layer."));
-        ExpertToggleAction.addVisibilitySwitcher(makeAutoMarkers);
-        add(makeAutoMarkers, GBC.eol().insets(20, 0, 0, 5));
+        if (global) {
+            // makeAutoMarkers
+            makeAutoMarkers.setToolTipText(tr("Automatically make a marker layer from any waypoints when opening a GPX layer."));
+            ExpertToggleAction.addVisibilitySwitcher(makeAutoMarkers);
+            add(makeAutoMarkers, GBC.eol().insets(20, 0, 0, 5));
+        }
 
         // drawRawGpsLines
         ButtonGroup gpsLinesGroup = new ButtonGroup();
-        if (layerName != null) {
+        if (!global) {
             gpsLinesGroup.add(drawRawGpsLinesGlobal);
         }
         gpsLinesGroup.add(drawRawGpsLinesNone);
@@ -145,14 +318,14 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         JLabel label = new JLabel(tr("Draw lines between raw GPS points"));
         add(label, GBC.eol().insets(20, 0, 0, 0));
-        if (layerName != null) {
+        if (!global) {
             add(drawRawGpsLinesGlobal, GBC.eol().insets(40, 0, 0, 0));
         }
         add(drawRawGpsLinesNone, GBC.eol().insets(40, 0, 0, 0));
-        if (layerName == null || local) {
+        if (hasLocalFile) {
             add(drawRawGpsLinesLocal, GBC.eol().insets(40, 0, 0, 0));
         }
-        if (layerName == null || nonlocal) {
+        if (hasNonLocalFile) {
             add(drawRawGpsLinesAll, GBC.eol().insets(40, 0, 0, 0));
         }
         ExpertToggleAction.addVisibilitySwitcher(label);
@@ -242,7 +415,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         // colorTracks
         ButtonGroup colorGroup = new ButtonGroup();
-        if (layerName != null) {
+        if (!global) {
             colorGroup.add(colorTypeGlobal);
         }
         colorGroup.add(colorTypeNone);
@@ -253,7 +426,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorGroup.add(colorTypeTime);
         colorGroup.add(colorTypeHeatMap);
 
-        colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
+        colorTypeNone.setToolTipText(tr("All points and track segments will have their own color. Can be customized in Layer Manager."));
         colorTypeVelocity.setToolTipText(tr("Colors points and track segments by velocity."));
         colorTypeDirection.setToolTipText(tr("Colors points and track segments by direction."));
         colorTypeDilution.setToolTipText(
@@ -272,7 +445,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         add(new JLabel(tr("Track and Point Coloring")), GBC.eol().insets(20, 0, 0, 0));
-        if (layerName != null) {
+        if (!global) {
             add(colorTypeGlobal, GBC.eol().insets(40, 0, 0, 0));
         }
         add(colorTypeNone, GBC.eol().insets(40, 0, 0, 0));
@@ -331,15 +504,10 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             if (null != dim) {
                 // get image size of environment
                 final int iconSize = (int) dim.getHeight();
-                final Color color;
-                // ask the GPX draw for the correct color of that layer ( if there is one )
-                if (null != layerName) {
-                    color = GpxDrawHelper.DEFAULT_COLOR.getChildColor(
-                            NamedColorProperty.COLOR_CATEGORY_LAYER, layerName, GpxDrawHelper.DEFAULT_COLOR.getName()).get();
-                } else {
-                    color = GpxDrawHelper.DEFAULT_COLOR.getDefaultValue();
-                }
-                colorTypeHeatIconLabel.setIcon(GpxDrawHelper.getColorMapImageIcon(color, colorTypeHeatMapTune.getSelectedIndex(), iconSize));
+                colorTypeHeatIconLabel.setIcon(GpxDrawHelper.getColorMapImageIcon(
+                        GpxDrawHelper.DEFAULT_COLOR_PROPERTY.get(),
+                        colorTypeHeatMapTune.getSelectedIndex(),
+                        iconSize));
             }
         });
 
@@ -353,7 +521,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorDynamic, GBC.eop().insets(40, 0, 0, 0));
         ExpertToggleAction.addVisibilitySwitcher(colorDynamic);
 
-        if (layerName == null) {
+        if (global) {
             // Setting waypoints for gpx layer doesn't make sense - waypoints are shown in marker layer that has different name - so show
             // this only for global config
 
@@ -363,7 +531,6 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             label.setLabelFor(waypointLabel);
             add(waypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
             waypointLabel.addActionListener(e -> updateWaypointPattern(waypointLabel, waypointLabelPattern));
-            updateWaypointLabelCombobox(waypointLabel, waypointLabelPattern, TemplateEntryProperty.forMarker(layerName));
             add(waypointLabelPattern, GBC.eol().fill(GBC.HORIZONTAL).insets(20, 0, 0, 5));
             ExpertToggleAction.addVisibilitySwitcher(label);
             ExpertToggleAction.addVisibilitySwitcher(waypointLabel);
@@ -379,7 +546,6 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             label.setLabelFor(audioWaypointLabel);
             add(audioWaypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
             audioWaypointLabel.addActionListener(e -> updateWaypointPattern(audioWaypointLabel, audioWaypointLabelPattern));
-            updateWaypointLabelCombobox(audioWaypointLabel, audioWaypointLabelPattern, TemplateEntryProperty.forAudioMarker(layerName));
             add(audioWaypointLabelPattern, GBC.eol().fill(GBC.HORIZONTAL).insets(20, 0, 0, 5));
             ExpertToggleAction.addVisibilitySwitcher(label);
             ExpertToggleAction.addVisibilitySwitcher(audioWaypointLabel);
@@ -395,46 +561,32 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      */
     public final void loadPreferences() {
         makeAutoMarkers.setSelected(Config.getPref().getBoolean("marker.makeautomarkers", true));
-        if (layerName != null && Config.getPref().get("draw.rawgps.lines."+layerName).isEmpty()
-                && Config.getPref().get("draw.rawgps.lines.local."+layerName).isEmpty()) {
-            // no line preferences for layer is found
+        int lines = global ? prefInt("lines") : prefIntLocal("lines");
+        if (lines == 2 && hasNonLocalFile) {
+            drawRawGpsLinesAll.setSelected(true);
+        } else if ((lines == 1 && hasLocalFile) || (lines == -1 && global)) {
+            drawRawGpsLinesLocal.setSelected(true);
+        } else if (lines == 0) {
+            drawRawGpsLinesNone.setSelected(true);
+        } else if (lines == -1) {
             drawRawGpsLinesGlobal.setSelected(true);
         } else {
-            Boolean lf = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.local", layerName, true);
-            if (PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines", layerName, true)) {
-                drawRawGpsLinesAll.setSelected(true);
-            } else if (lf) {
-                drawRawGpsLinesLocal.setSelected(true);
-            } else {
-                drawRawGpsLinesNone.setSelected(true);
-            }
+            Logging.warn("Unknown line type: " + lines);
         }
-
-        drawRawGpsMaxLineLengthLocal.setText(Integer.toString(PreferencesUtils.getInteger(Config.getPref(),
-                "draw.rawgps.max-line-length.local", layerName, -1)));
-        drawRawGpsMaxLineLength.setText(Integer.toString(PreferencesUtils.getInteger(Config.getPref(),
-                "draw.rawgps.max-line-length", layerName, 200)));
-        drawLineWidth.setText(Integer.toString(PreferencesUtils.getInteger(Config.getPref(),
-                "draw.rawgps.linewidth", layerName, 0)));
-        drawLineWithAlpha.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
-                "draw.rawgps.lines.alpha-blend", layerName, false));
-        forceRawGpsLines.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
-                "draw.rawgps.lines.force", layerName, false));
-        drawGpsArrows.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
-                "draw.rawgps.direction", layerName, false));
-        drawGpsArrowsFast.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
-                "draw.rawgps.alternatedirection", layerName, false));
-        drawGpsArrowsMinDist.setText(Integer.toString(PreferencesUtils.getInteger(Config.getPref(),
-                "draw.rawgps.min-arrow-distance", layerName, 40)));
-        hdopCircleGpsPoints.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
-                "draw.rawgps.hdopcircle", layerName, false));
-        largeGpsPoints.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
-                "draw.rawgps.large", layerName, false));
+        drawRawGpsMaxLineLengthLocal.setText(pref("lines.max-length.local"));
+        drawRawGpsMaxLineLength.setText(pref("lines.max-length"));
+        drawLineWidth.setText(pref("lines.width"));
+        drawLineWithAlpha.setSelected(prefBool("lines.alpha-blend"));
+        forceRawGpsLines.setSelected(prefBool("lines.force"));
+        drawGpsArrows.setSelected(prefBool("lines.arrows"));
+        drawGpsArrowsFast.setSelected(prefBool("lines.arrows.fast"));
+        drawGpsArrowsMinDist.setText(pref("lines.arrows.min-distance"));
+        hdopCircleGpsPoints.setSelected(prefBool("points.hdopcircle"));
+        largeGpsPoints.setSelected(prefBool("points.large"));
         useGpsAntialiasing.setSelected(Config.getPref().getBoolean("mappaint.gpx.use-antialiasing", false));
 
         drawRawGpsLinesActionListener.actionPerformed(null);
-
-        if (layerName != null && Config.getPref().get("draw.rawgps.colors."+layerName).isEmpty()) {
+        if (!global && prefIntLocal("colormode") == -1) {
             colorTypeGlobal.setSelected(true);
             colorDynamic.setSelected(false);
             colorDynamic.setEnabled(false);
@@ -442,9 +594,9 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             colorTypeHeatMapGain.setValue(0);
             colorTypeHeatMapLowerLimit.setValue(0);
         } else {
-            int colorType = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colors", layerName, 0);
+            int colorType = prefInt("colormode");
             switch (colorType) {
-            case 0: colorTypeNone.setSelected(true); break;
+            case -1: case 0: colorTypeNone.setSelected(true); break;
             case 1: colorTypeVelocity.setSelected(true); break;
             case 2: colorTypeDilution.setSelected(true); break;
             case 3: colorTypeDirection.setSelected(true); break;
@@ -453,110 +605,99 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             case 6: colorTypeQuality.setSelected(true); break;
             default: Logging.warn("Unknown color type: " + colorType);
             }
-            int ccts = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colorTracksTune", layerName, 45);
+            int ccts = prefInt("colormode.velocity.tune");
             colorTypeVelocityTune.setSelectedIndex(ccts == 10 ? 2 : (ccts == 20 ? 1 : 0));
-            colorTypeHeatMapTune.setSelectedIndex(PreferencesUtils.getInteger(Config.getPref(),
-                    "draw.rawgps.heatmap.colormap", layerName, 0));
-            colorDynamic.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
-                    "draw.rawgps.colors.dynamic", layerName, false));
-            colorTypeHeatMapPoints.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
-                    "draw.rawgps.heatmap.use-points", layerName, false));
-            colorTypeHeatMapGain.setValue(PreferencesUtils.getInteger(Config.getPref(),
-                    "draw.rawgps.heatmap.gain", layerName, 0));
-            colorTypeHeatMapLowerLimit.setValue(PreferencesUtils.getInteger(Config.getPref(),
-                    "draw.rawgps.heatmap.lower-limit", layerName, 0));
+            colorTypeHeatMapTune.setSelectedIndex(prefInt("colormode.heatmap.colormap"));
+            colorDynamic.setSelected(prefBool("colormode.dynamic-range"));
+            colorTypeHeatMapPoints.setSelected(prefBool("colormode.heatmap.use-points"));
+            colorTypeHeatMapGain.setValue(prefInt("colormode.heatmap.gain"));
+            colorTypeHeatMapLowerLimit.setValue(prefInt("colormode.heatmap.lower-limit"));
         }
+        updateWaypointLabelCombobox(waypointLabel, waypointLabelPattern, pref("markers.pattern"));
+        updateWaypointLabelCombobox(audioWaypointLabel, audioWaypointLabelPattern, pref("markers.audio.pattern"));
+
     }
 
     /**
-     * Save preferences from UI controls, globally or for a specified layer.
-     * @param layerName The GPX layer name. Can be {@code null}, in that case, global preferences are written
-     * @param locLayer {@code true} if the GPX layer is a local one. Ignored if {@code layerName} is null
+     * Save preferences from UI controls, globally or for the specified layers.
      * @return {@code true} when restart is required, {@code false} otherwise
      */
-    public boolean savePreferences(String layerName, boolean locLayer) {
-        String layerNameDot = ".layer "+layerName;
-        if (layerName == null) {
-            layerNameDot = "";
+    public boolean savePreferences() {
+        if (global) {
+            Config.getPref().putBoolean("marker.makeautomarkers", makeAutoMarkers.isSelected());
+            putPref("markers.pattern", waypointLabelPattern.getText());
+            putPref("markers.audio.pattern", audioWaypointLabelPattern.getText());
         }
-        Config.getPref().putBoolean("marker.makeautomarkers"+layerNameDot, makeAutoMarkers.isSelected());
-        if (drawRawGpsLinesGlobal.isSelected()) {
-            Config.getPref().put("draw.rawgps.lines" + layerNameDot, null);
-            Config.getPref().put("draw.rawgps.max-line-length" + layerNameDot, null);
-            Config.getPref().put("draw.rawgps.lines.local" + layerNameDot, null);
-            Config.getPref().put("draw.rawgps.max-line-length.local" + layerNameDot, null);
-            Config.getPref().put("draw.rawgps.lines.force"+layerNameDot, null);
-            Config.getPref().put("draw.rawgps.direction"+layerNameDot, null);
-            Config.getPref().put("draw.rawgps.alternatedirection"+layerNameDot, null);
-            Config.getPref().put("draw.rawgps.min-arrow-distance"+layerNameDot, null);
+        boolean g;
+        if (!global && ((g = drawRawGpsLinesGlobal.isSelected()) || drawRawGpsLinesNone.isSelected())) {
+            if (g) {
+                putPref("lines", null);
+            } else {
+                putPref("lines", 0);
+            }
+            putPref("lines.max-length", null);
+            putPref("lines.max-length.local", null);
+            putPref("lines.force", null);
+            putPref("lines.arrows", null);
+            putPref("lines.arrows.fast", null);
+            putPref("lines.arrows.min-distance", null);
         } else {
-            if (layerName == null || !locLayer) {
-                Config.getPref().putBoolean("draw.rawgps.lines" + layerNameDot, drawRawGpsLinesAll.isSelected());
-                Config.getPref().put("draw.rawgps.max-line-length" + layerNameDot, drawRawGpsMaxLineLength.getText());
+            if (drawRawGpsLinesLocal.isSelected()) {
+                putPref("lines", 1);
+            } else if (drawRawGpsLinesAll.isSelected()) {
+                putPref("lines", 2);
             }
-            if (layerName == null || locLayer) {
-                Config.getPref().putBoolean("draw.rawgps.lines.local" + layerNameDot,
-                        drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
-                Config.getPref().put("draw.rawgps.max-line-length.local" + layerNameDot,
-                        drawRawGpsMaxLineLengthLocal.getText());
-            }
-            Config.getPref().putBoolean("draw.rawgps.lines.force"+layerNameDot, forceRawGpsLines.isSelected());
-            Config.getPref().putBoolean("draw.rawgps.direction"+layerNameDot, drawGpsArrows.isSelected());
-            Config.getPref().putBoolean("draw.rawgps.alternatedirection"+layerNameDot, drawGpsArrowsFast.isSelected());
-            Config.getPref().put("draw.rawgps.min-arrow-distance"+layerNameDot, drawGpsArrowsMinDist.getText());
+            putPref("lines.max-length", drawRawGpsMaxLineLength.getText());
+            putPref("lines.max-length.local", drawRawGpsMaxLineLengthLocal.getText());
+            putPref("lines.force", forceRawGpsLines.isSelected());
+            putPref("lines.arrows", drawGpsArrows.isSelected());
+            putPref("lines.arrows.fast", drawGpsArrowsFast.isSelected());
+            putPref("lines.arrows.min-distance", drawGpsArrowsMinDist.getText());
         }
 
-        Config.getPref().putBoolean("draw.rawgps.hdopcircle"+layerNameDot, hdopCircleGpsPoints.isSelected());
-        Config.getPref().putBoolean("draw.rawgps.large"+layerNameDot, largeGpsPoints.isSelected());
-        Config.getPref().put("draw.rawgps.linewidth"+layerNameDot, drawLineWidth.getText());
-        Config.getPref().putBoolean("draw.rawgps.lines.alpha-blend"+layerNameDot, drawLineWithAlpha.isSelected());
+        putPref("points.hdopcircle", hdopCircleGpsPoints.isSelected());
+        putPref("points.large", largeGpsPoints.isSelected());
+        putPref("lines.width", drawLineWidth.getText());
+        putPref("lines.alpha-blend", drawLineWithAlpha.isSelected());
 
         Config.getPref().putBoolean("mappaint.gpx.use-antialiasing", useGpsAntialiasing.isSelected());
 
-        TemplateEntryProperty.forMarker(layerName).put(waypointLabelPattern.getText());
-        TemplateEntryProperty.forAudioMarker(layerName).put(audioWaypointLabelPattern.getText());
-
         if (colorTypeGlobal.isSelected()) {
-            Config.getPref().put("draw.rawgps.colors"+layerNameDot, null);
-            Config.getPref().put("draw.rawgps.colors.dynamic"+layerNameDot, null);
-            Config.getPref().put("draw.rawgps.colorTracksTunec"+layerNameDot, null);
+            putPref("colormode", null);
+            putPref("colormode.dynamic-range", null);
+            putPref("colormode.velocity.tune", null);
             return false;
         } else if (colorTypeVelocity.isSelected()) {
-            Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 1);
+            putPref("colormode", 1);
         } else if (colorTypeDilution.isSelected()) {
-            Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 2);
+            putPref("colormode", 2);
         } else if (colorTypeDirection.isSelected()) {
-            Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 3);
+            putPref("colormode", 3);
         } else if (colorTypeTime.isSelected()) {
-            Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 4);
+            putPref("colormode", 4);
         } else if (colorTypeHeatMap.isSelected()) {
-            Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 5);
+            putPref("colormode", 5);
         } else if (colorTypeQuality.isSelected()) {
-            Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 6);
+            putPref("colormode", 6);
         } else {
-            Config.getPref().putInt("draw.rawgps.colors"+layerNameDot, 0);
+            putPref("colormode", 0);
         }
-        Config.getPref().putBoolean("draw.rawgps.colors.dynamic"+layerNameDot, colorDynamic.isSelected());
+        putPref("colormode.dynamic-range", colorDynamic.isSelected());
         int ccti = colorTypeVelocityTune.getSelectedIndex();
-        Config.getPref().putInt("draw.rawgps.colorTracksTune"+layerNameDot, ccti == 2 ? 10 : (ccti == 1 ? 20 : 45));
-        Config.getPref().putInt("draw.rawgps.heatmap.colormap"+layerNameDot, colorTypeHeatMapTune.getSelectedIndex());
-        Config.getPref().putBoolean("draw.rawgps.heatmap.use-points"+layerNameDot, colorTypeHeatMapPoints.isSelected());
-        Config.getPref().putInt("draw.rawgps.heatmap.gain"+layerNameDot, colorTypeHeatMapGain.getValue());
-        Config.getPref().putInt("draw.rawgps.heatmap.lower-limit"+layerNameDot, colorTypeHeatMapLowerLimit.getValue());
+        putPref("colormode.velocity.tune", ccti == 2 ? 10 : (ccti == 1 ? 20 : 45));
+        putPref("colormode.heatmap.colormap", colorTypeHeatMapTune.getSelectedIndex());
+        putPref("colormode.heatmap.use-points", colorTypeHeatMapPoints.isSelected());
+        putPref("colormode.heatmap.gain", colorTypeHeatMapGain.getValue());
+        putPref("colormode.heatmap.lower-limit", colorTypeHeatMapLowerLimit.getValue());
+
+        if (!global && layers != null && !layers.isEmpty()) {
+            layers.forEach(l -> l.data.invalidate());
+        }
 
         return false;
     }
 
-    /**
-     * Save preferences from UI controls for initial layer or globally
-     * @return {@code true} when restart is required, {@code false} otherwise
-     */
-    public boolean savePreferences() {
-        return savePreferences(null, false);
-    }
-
-    private static void updateWaypointLabelCombobox(JosmComboBox<String> cb, JosmTextField tf, TemplateEntryProperty property) {
-        String labelPattern = property.getAsString();
+    private static void updateWaypointLabelCombobox(JosmComboBox<String> cb, JosmTextField tf, String labelPattern) {
         boolean found = false;
         for (int i = 0; i < LABEL_PATTERN_TEMPLATE.length; i++) {
             if (LABEL_PATTERN_TEMPLATE[i].equals(labelPattern)) {

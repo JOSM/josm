@@ -35,6 +35,7 @@ import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests for class {@link GpxData}.
@@ -63,7 +64,7 @@ public class GpxDataTest {
      */
     @Test
     public void testMergeFrom() {
-        ImmutableGpxTrack track = singleWaypointGpxTrack();
+        GpxTrack track = singleWaypointGpxTrack();
         GpxRoute route = singleWaypointRoute();
         WayPoint newWP = new WayPoint(LatLon.NORTH_POLE);
         WayPoint existingWP = new WayPoint(LatLon.SOUTH_POLE);
@@ -102,7 +103,9 @@ public class GpxDataTest {
         final GpxData other = getGpx("Layer2");
         final GpxData expected = getGpx(exp);
         own.mergeFrom(other, cut, connect);
-        assertEquals(expected, own);
+        own.put(GpxConstants.META_BOUNDS, null);
+        expected.put(GpxConstants.META_BOUNDS, null); //they are only updated by GpxWriter
+        assertEquals(exp + " didn't match!", expected, own);
     }
 
     private static GpxData getGpx(String file) throws IOException, SAXException {
@@ -116,8 +119,8 @@ public class GpxDataTest {
     public void testTracks() {
         assertEquals(0, data.getTracks().size());
 
-        ImmutableGpxTrack track1 = emptyGpxTrack();
-        ImmutableGpxTrack track2 = singleWaypointGpxTrack();
+        GpxTrack track1 = emptyGpxTrack();
+        GpxTrack track2 = singleWaypointGpxTrack();
         data.addTrack(track1);
         assertEquals(1, data.getTracks().size());
         data.addTrack(track2);
@@ -136,7 +139,7 @@ public class GpxDataTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testAddTrackFails() {
-        ImmutableGpxTrack track1 = emptyGpxTrack();
+        GpxTrack track1 = emptyGpxTrack();
         data.addTrack(track1);
         data.addTrack(track1);
     }
@@ -146,7 +149,7 @@ public class GpxDataTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void testRemoveTrackFails() {
-        ImmutableGpxTrack track1 = emptyGpxTrack();
+        GpxTrack track1 = emptyGpxTrack();
         data.addTrack(track1);
         data.removeTrack(track1);
         data.removeTrack(track1);
@@ -245,10 +248,10 @@ public class GpxDataTest {
     @Test
     public void testHasTrackPoints() {
         assertFalse(data.hasTrackPoints());
-        ImmutableGpxTrack track1 = emptyGpxTrack();
+        GpxTrack track1 = emptyGpxTrack();
         data.addTrack(track1);
         assertFalse(data.hasTrackPoints());
-        ImmutableGpxTrack track2 = singleWaypointGpxTrack();
+        GpxTrack track2 = singleWaypointGpxTrack();
         data.addTrack(track2);
         assertTrue(data.hasTrackPoints());
     }
@@ -259,10 +262,10 @@ public class GpxDataTest {
     @Test
     public void testGetTrackPoints() {
         assertEquals(0, data.getTrackPoints().count());
-        ImmutableGpxTrack track1 = singleWaypointGpxTrack();
+        GpxTrack track1 = singleWaypointGpxTrack();
         data.addTrack(track1);
         assertEquals(1, data.getTrackPoints().count());
-        ImmutableGpxTrack track2 = singleWaypointGpxTrack();
+        GpxTrack track2 = singleWaypointGpxTrack();
         data.addTrack(track2);
         assertEquals(2, data.getTrackPoints().count());
     }
@@ -280,7 +283,7 @@ public class GpxDataTest {
      */
     @Test
     public void testIsEmpty() {
-        ImmutableGpxTrack track1 = singleWaypointGpxTrack();
+        GpxTrack track1 = singleWaypointGpxTrack();
         WayPoint waypoint = new WayPoint(LatLon.ZERO);
         GpxRoute route = singleWaypointRoute();
 
@@ -307,11 +310,11 @@ public class GpxDataTest {
      */
     @Test
     public void testLength() {
-        ImmutableGpxTrack track1 = waypointGpxTrack(
+        GpxTrack track1 = waypointGpxTrack(
                 new WayPoint(new LatLon(0, 0)),
                 new WayPoint(new LatLon(1, 1)),
                 new WayPoint(new LatLon(0, 2)));
-        ImmutableGpxTrack track2 = waypointGpxTrack(
+        GpxTrack track2 = waypointGpxTrack(
                 new WayPoint(new LatLon(0, 0)),
                 new WayPoint(new LatLon(-1, 1)));
         data.addTrack(track1);
@@ -335,8 +338,8 @@ public class GpxDataTest {
         p1.setTime(new Date(200020));
         p2.setTime(new Date(100020));
         p4.setTime(new Date(500020));
-        data.addTrack(new ImmutableGpxTrack(Arrays.asList(Arrays.asList(p1, p2)), Collections.emptyMap()));
-        data.addTrack(new ImmutableGpxTrack(Arrays.asList(Arrays.asList(p3, p4, p5)), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p1, p2)), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p3, p4, p5)), Collections.emptyMap()));
 
         Date[] times = data.getMinMaxTimeForAllTracks();
         assertEquals(times.length, 2);
@@ -354,7 +357,7 @@ public class GpxDataTest {
                 .map(ProjectionRegistry.getProjection()::eastNorth2latlon)
                 .map(WayPoint::new)
                 .collect(Collectors.toList());
-        data.addTrack(new ImmutableGpxTrack(Arrays.asList(points), Collections.emptyMap()));
+        data.addTrack(new GpxTrack(Arrays.asList(points), Collections.emptyMap()));
 
         WayPoint closeToMiddle = data.nearestPointOnTrack(new EastNorth(10, 0), 10);
         assertEquals(points.get(1), closeToMiddle);
@@ -448,16 +451,16 @@ public class GpxDataTest {
 
     }
 
-    private static ImmutableGpxTrack emptyGpxTrack() {
-        return new ImmutableGpxTrack(Collections.<Collection<WayPoint>>emptyList(), Collections.emptyMap());
+    private static GpxTrack emptyGpxTrack() {
+        return new GpxTrack(Collections.<Collection<WayPoint>>emptyList(), Collections.emptyMap());
     }
 
-    private static ImmutableGpxTrack singleWaypointGpxTrack() {
-        return new ImmutableGpxTrack(Collections.singleton(Collections.singleton(new WayPoint(LatLon.ZERO))), Collections.emptyMap());
+    private static GpxTrack singleWaypointGpxTrack() {
+        return new GpxTrack(Collections.singleton(Collections.singleton(new WayPoint(LatLon.ZERO))), Collections.emptyMap());
     }
 
-    private static ImmutableGpxTrack waypointGpxTrack(WayPoint... wps) {
-        return new ImmutableGpxTrack(Collections.singleton(Arrays.asList(wps)), Collections.emptyMap());
+    private static GpxTrack waypointGpxTrack(WayPoint... wps) {
+        return new GpxTrack(Collections.singleton(Arrays.asList(wps)), Collections.emptyMap());
     }
 
     private static GpxRoute singleWaypointRoute() {
@@ -472,10 +475,14 @@ public class GpxDataTest {
     @Test
     public void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
+        GpxExtensionCollection col = new GpxExtensionCollection();
+        col.add("josm", "from-server", "true");
         EqualsVerifier.forClass(GpxData.class).usingGetClass()
-            .withIgnoredFields("attr", "creator", "fromServer", "storageFile", "listeners", "tracks", "routes", "waypoints", "proxy", "segSpans")
+            .suppress(Warning.NONFINAL_FIELDS)
+            .withIgnoredFields("creator", "fromServer", "storageFile", "initializing", "updating", "suppressedInvalidate", "listeners", "tracks", "routes", "waypoints", "proxy", "segSpans", "modified")
             .withPrefabValues(WayPoint.class, new WayPoint(LatLon.NORTH_POLE), new WayPoint(LatLon.SOUTH_POLE))
             .withPrefabValues(ListenerList.class, ListenerList.create(), ListenerList.create())
+            .withPrefabValues(GpxExtensionCollection.class, new GpxExtensionCollection(), col)
             .verify();
     }
 }

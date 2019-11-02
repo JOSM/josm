@@ -167,10 +167,11 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 }
 
 /* #2760 */
-*[/^gpx:/] {
+*[/^(gpx|gpxx|gpxd):/] {
   throwWarning: tr("{0} should not be uploaded", "{0.key}");
   group: tr("unnecessary tag");
   fixRemove: "{0.key}";
   assertMatch: "node gpx:time=2018-01-01T12:00:00Z";
+  assertMatch: "node gpxd:color=#FF0000";
   assertNoMatch: "node source=gpx:foo";
 }

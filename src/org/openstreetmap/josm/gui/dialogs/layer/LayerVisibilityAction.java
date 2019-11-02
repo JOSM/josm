@@ -593,7 +593,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
                     List<Layer> layers = layerSupplier.get();
                     for (Layer l : layers) {
                         if (l instanceof GpxLayer) {
-                            l.getColorProperty().put(color);
+                            l.setColor(color);
                         }
                     }
                     highlightColor(color);
@@ -602,7 +602,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             add(colorPanel, GBC.std().weight(1, 1).fill().insets(5));
             panels.put(color, colorPanel);
 
-            List<Color> colors = layerSupplier.get().stream().map(l -> l.getColorProperty().get()).distinct().collect(Collectors.toList());
+            List<Color> colors = layerSupplier.get().stream().map(l -> l.getColor()).distinct().collect(Collectors.toList());
             if (colors.size() == 1) {
                 highlightColor(colors.get(0));
             }
@@ -611,7 +611,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         @Override
         public void updateLayers(List<Layer> layers, boolean allVisible, boolean allHidden) {
             List<Color> colors = layers.stream().filter(l -> l instanceof GpxLayer)
-                    .map(l -> ((GpxLayer) l).getColorProperty().get())
+                    .map(l -> ((GpxLayer) l).getColor())
                     .distinct()
                     .collect(Collectors.toList());
             if (colors.size() == 1) {

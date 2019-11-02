@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -59,12 +60,7 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
 
     @Override
     public boolean supportLayers(List<Layer> layers) {
-        for (Layer layer : layers) {
-            if (!(layer instanceof GpxLayer)) {
-                return false;
-            }
-        }
-        return true;
+        return layers.stream().allMatch(l -> l instanceof GpxLayer);
     }
 
     @Override
@@ -79,18 +75,7 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        boolean hasLocal = false;
-        boolean hasNonlocal = false;
-        for (Layer layer : layers) {
-            if (layer instanceof GpxLayer) {
-                if (((GpxLayer) layer).isLocalFile()) {
-                    hasLocal = true;
-                } else {
-                    hasNonlocal = true;
-                }
-            }
-        }
-        GPXSettingsPanel panel = new GPXSettingsPanel(layers.get(0).getName(), hasLocal, hasNonlocal);
+        GPXSettingsPanel panel = new GPXSettingsPanel(layers.stream().filter(l -> l instanceof GpxLayer).map(l -> (GpxLayer) l).collect(Collectors.toList()));
         JScrollPane scrollpane = GuiHelper.embedInVerticalScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         int screenHeight = GuiHelper.getScreenSize().height;
@@ -103,15 +88,9 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
         if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) {
             return;
         }
-        for (Layer layer : layers) {
-            // save preferences for all layers
-            boolean f = false;
-            if (layer instanceof GpxLayer) {
-                f = ((GpxLayer) layer).isLocalFile();
-            }
-            panel.savePreferences(layer.getName(), f);
-        }
-        MainApplication.getMap().repaint();
+        panel.savePreferences();
+        MainApplication.getMainPanel().repaint();
+        layers.stream().forEach(Layer::invalidate);
     }
 
 }

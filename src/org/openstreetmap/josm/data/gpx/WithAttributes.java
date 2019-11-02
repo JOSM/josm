@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.gpx;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Default implementation for IWithAttributes.
@@ -19,6 +20,11 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
      * The "attr" hash is used to store the XML payload (not only XML attributes!)
      */
     public Map<String, Object> attr = new HashMap<>(0);
+
+    /**
+     * The "exts" collection contains all extensions.
+     */
+    private final GpxExtensionCollection exts = new GpxExtensionCollection(this);
 
     /**
      * Returns the Object value to which the specified key is mapped,
@@ -64,7 +70,6 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
 
     /**
      * Put a key / value pair as a new attribute.
-     *
      * Overrides key / value pair with the same key (if present).
      *
      * @param key the key
@@ -75,24 +80,19 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
         attr.put(key, value);
     }
 
-    /**
-     * Add a key / value pair that is not part of the GPX schema as an extension.
-     *
-     * @param key the key
-     * @param value the value
-     */
     @Override
-    public void addExtension(String key, String value) {
-        if (!attr.containsKey(META_EXTENSIONS)) {
-            attr.put(META_EXTENSIONS, new Extensions());
-        }
-        Extensions ext = (Extensions) attr.get(META_EXTENSIONS);
-        ext.put(key, value);
+    public Map<String, Object> getAttributes() {
+        return attr;
+    }
+
+    @Override
+    public GpxExtensionCollection getExtensions() {
+        return exts;
     }
 
     @Override
     public int hashCode() {
-        return 31 + ((attr == null) ? 0 : attr.hashCode());
+        return Objects.hash(attr, exts);
     }
 
     @Override
@@ -108,6 +108,11 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
             if (other.attr != null)
                 return false;
         } else if (!attr.equals(other.attr))
+            return false;
+        if (exts == null) {
+            if (other.exts != null)
+                return false;
+        } else if (!exts.equals(other.exts))
             return false;
         return true;
     }

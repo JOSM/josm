@@ -27,12 +27,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.MapViewEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationListener;
+import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorScale;
@@ -65,10 +66,10 @@ import org.openstreetmap.josm.tools.Utils;
 public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerPainter, PaintableInvalidationListener, GpxDataChangeListener {
 
     /**
-     * The color that is used for drawing GPX points.
-     * @since 10824
+     * The default color property that is used for drawing GPX points.
+     * @since 15496
      */
-    public static final NamedColorProperty DEFAULT_COLOR = new NamedColorProperty(marktr("gps point"), Color.magenta);
+    public static final NamedColorProperty DEFAULT_COLOR_PROPERTY = new NamedColorProperty(marktr("gps point"), Color.magenta);
 
     private final GpxData data;
     private final GpxLayer layer;
@@ -78,7 +79,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     // use alpha blending for line draw
     private boolean alphaLines;
     // draw direction arrows on the lines
-    private boolean direction;
+    private boolean arrows;
     /** width of line for paint **/
     private int lineWidth;
     /** don't draw lines if longer than x meters **/
@@ -90,9 +91,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private int largesize;
     private boolean hdopCircle;
     /** paint direction arrow with alternate math. may be faster **/
-    private boolean alternateDirection;
+    private boolean arrowsFast;
     /** don't draw arrows nearer to each other than this **/
-    private int delta;
+    private int arrowsDelta;
     private double minTrackDurationForTimeColoring;
 
     /** maximum value of displayed HDOP, minimum is 0 */
@@ -106,17 +107,20 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private Color computeCacheColorUsed;
     private boolean computeCacheColorDynamic;
     private ColorMode computeCacheColored;
-    private int computeCacheColorTracksTune;
+    private int computeCacheVelocityTune;
     private int computeCacheHeatMapDrawColorTableIdx;
     private boolean computeCacheHeatMapDrawPointMode;
     private int computeCacheHeatMapDrawGain;
     private int computeCacheHeatMapDrawLowerLimit;
 
+    private Color colorCache;
+    private Color colorCacheTransparent;
+
     //// Color-related fields
     /** Mode of the line coloring **/
     private ColorMode colored;
     /** max speed for coloring - allows to tweak line coloring for different speed levels. **/
-    private int colorTracksTune;
+    private int velocityTune;
     private boolean colorModeDynamic;
     private Color neutralColor;
     private int largePointAlpha;
@@ -145,8 +149,6 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
 
     /** heat map parameters **/
 
-    // enabled or not (override by settings)
-    private boolean heatMapEnabled;
     // draw small extra line
     private boolean heatMapDrawExtraLine;
     // used index for color table (parameter)
@@ -268,35 +270,14 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         setupColors();
     }
 
-    private static String specName(String layerName) {
-        return "layer " + layerName;
-    }
-
-    /**
-     * Get the default color for gps tracks for specified layer
-     * @param layerName name of the GpxLayer
-     * @param ignoreCustom do not use preferences
-     * @return the color or null if the color is not constant
-     */
-    public Color getColor(String layerName, boolean ignoreCustom) {
-        if (ignoreCustom || getColorMode(layerName) == ColorMode.NONE) {
-            return DEFAULT_COLOR.getChildColor(
-                    NamedColorProperty.COLOR_CATEGORY_LAYER,
-                    layerName,
-                    DEFAULT_COLOR.getName()).get();
-        } else {
-            return null;
-        }
-    }
-
     /**
      * Read coloring mode for specified layer from preferences
-     * @param layerName name of the GpxLayer
      * @return coloring mode
      */
-    public ColorMode getColorMode(String layerName) {
+    public ColorMode getColorMode() {
         try {
-            int i = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colors", specName(layerName), 0);
+            int i = optInt("colormode");
+            if (i == -1) i = 0; //global
             return ColorMode.fromIndex(i);
         } catch (IndexOutOfBoundsException e) {
             Logging.warn(e);
@@ -304,56 +285,58 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         return ColorMode.NONE;
     }
 
-    /** Reads generic color from preferences (usually gray)
-     * @return the color
-     **/
-    public static Color getGenericColor() {
-        return DEFAULT_COLOR.get();
+    private String opt(String key) {
+        return GPXSettingsPanel.getLayerPref(layer, key);
+    }
+
+    private boolean optBool(String key) {
+        return Boolean.parseBoolean(opt(key));
+    }
+
+    private int optInt(String key) {
+        return GPXSettingsPanel.getLayerPrefInt(layer, key);
     }
 
     /**
      * Read all drawing-related settings from preferences
-     * @param layerName layer name used to access its specific preferences
      **/
-    public void readPreferences(String layerName) {
-        String spec = specName(layerName);
-        forceLines = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.force", spec, false);
-        direction = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.direction", spec, false);
-        lineWidth = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.linewidth", spec, 0);
-        alphaLines = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.alpha-blend", spec, false);
+    public void readPreferences() {
+        forceLines = optBool("lines.force");
+        arrows = optBool("lines.arrows");
+        arrowsFast = optBool("lines.arrows.fast");
+        arrowsDelta = optInt("lines.arrows.min-distance");
+        lineWidth = optInt("lines.width");
+        alphaLines = optBool("lines.alpha-blend");
 
+        int l = optInt("lines");
         if (!data.fromServer) {
-            maxLineLength = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.max-line-length.local", spec, -1);
-            lines = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.local", spec, true);
+            maxLineLength = optInt("lines.max-length.local");
+            lines = l != 0; //draw for -1 (default), 1 (local) and 2 (all)
         } else {
-            maxLineLength = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.max-line-length", spec, 200);
-            lines = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines", spec, true);
+            maxLineLength = optInt("lines.max-length");
+            lines = l == 2; //draw only for 2 (all)
         }
-        large = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.large", spec, false);
-        largesize = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.large.size", spec, 3);
-        hdopCircle = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.hdopcircle", spec, false);
-        colored = getColorMode(layerName);
-        alternateDirection = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.alternatedirection", spec, false);
-        delta = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.min-arrow-distance", spec, 40);
-        colorTracksTune = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colorTracksTune", spec, 45);
-        colorModeDynamic = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.colors.dynamic", spec, false);
+        large = optBool("points.large");
+        largesize = optInt("points.large.size");
+        hdopCircle = optBool("points.hdopcircle");
+        colored = getColorMode();
+        velocityTune = optInt("colormode.velocity.tune");
+        colorModeDynamic = optBool("colormode.dynamic-range");
         /* good HDOP's are between 1 and 3, very bad HDOP's go into 3 digit values */
         hdoprange = Config.getPref().getInt("hdop.range", 7);
-        minTrackDurationForTimeColoring = Config.getPref().getInt("draw.rawgps.date-coloring-min-dt", 60);
-        largePointAlpha = Config.getPref().getInt("draw.rawgps.large.alpha", -1) & 0xFF;
+        minTrackDurationForTimeColoring = optInt("colormode.time.min-distance");
+        largePointAlpha = optInt("points.large.alpha") & 0xFF;
 
         // get heatmap parameters
-        heatMapEnabled = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.heatmap.enabled", spec, false);
-        heatMapDrawExtraLine = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.heatmap.line-extra", spec, false);
-        heatMapDrawColorTableIdx = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.heatmap.colormap", spec, 0);
-        heatMapDrawPointMode = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.heatmap.use-points", spec, false);
-        heatMapDrawGain = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.heatmap.gain", spec, 0);
-        heatMapDrawLowerLimit = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.heatmap.lower-limit", spec, 0);
+        heatMapDrawExtraLine = optBool("colormode.heatmap.line-extra");
+        heatMapDrawColorTableIdx = optInt("colormode.heatmap.colormap");
+        heatMapDrawPointMode = optBool("colormode.heatmap.use-points");
+        heatMapDrawGain = optInt("colormode.heatmap.gain");
+        heatMapDrawLowerLimit = optInt("colormode.heatmap.lower-limit");
 
         // shrink to range
         heatMapDrawGain = Utils.clamp(heatMapDrawGain, -10, 10);
-
-        neutralColor = getColor(layerName, true);
+        neutralColor = DEFAULT_COLOR_PROPERTY.get();
         velocityScale.setNoDataColor(neutralColor);
         dateScale.setNoDataColor(neutralColor);
         hdopScale.setNoDataColor(neutralColor);
@@ -368,7 +351,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         Bounds clipBounds = graphics.getClipBounds().getLatLonBoundsBox();
         List<WayPoint> visibleSegments = listVisibleSegments(clipBounds);
         if (!visibleSegments.isEmpty()) {
-            readPreferences(layer.getName());
+            readPreferences();
             drawAll(graphics.getDefaultGraphics(), graphics.getMapView(), visibleSegments, clipBounds);
             if (graphics.getMapView().getLayerManager().getActiveLayer() == layer) {
                 drawColorBar(graphics.getDefaultGraphics(), graphics.getMapView());
@@ -430,7 +413,6 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      * @param clipBounds      the clipping rectangle for the current view
      * @since 14748 : new parameter clipBounds
      */
-
     public void drawAll(Graphics2D g, MapView mv, List<WayPoint> visibleSegments, Bounds clipBounds) {
 
         final long timeStart = System.currentTimeMillis();
@@ -462,7 +444,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         }
 
         // global enabled or select via color
-        boolean useHeatMap = heatMapEnabled || ColorMode.HEATMAP == colored;
+        boolean useHeatMap = ColorMode.HEATMAP == colored;
 
         // default global alpha level
         float layerAlpha = 1.00f;
@@ -570,7 +552,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             }
             oldWp = null;
         } else { // color mode not dynamic
-            velocityScale.setRange(0, colorTracksTune);
+            velocityScale.setRange(0, velocityTune);
             hdopScale.setRange(0, hdoprange);
             qualityScale.setRange(1, rtkLibQualityColors.length);
         }
@@ -594,7 +576,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             }
             for (WayPoint trkPnt : segment) {
                 LatLon c = trkPnt.getCoor();
-                trkPnt.customColoring = neutralColor;
+                trkPnt.customColoring = segment.getColor();
                 if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
                     continue;
                 }
@@ -642,7 +624,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     }
                 } else { // make sure we reset outdated data
                     trkPnt.drawLine = false;
-                    color = neutralColor;
+                    color = segment.getColor();
                 }
                 if (color != null) {
                     trkPnt.customColoring = color;
@@ -700,7 +682,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         /****************************************************************
          ********** STEP 3b - DRAW NICE ARROWS **************************
          ****************************************************************/
-        if (lines && direction && !alternateDirection) {
+        if (lines && arrows && !arrowsFast) {
             Point old = null;
             Point oldA = null; // last arrow painted
             for (WayPoint trkPnt : visibleSegments) {
@@ -712,8 +694,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     Point screen = mv.getPoint(trkPnt);
                     // skip points that are on the same screenposition
                     if (old != null
-                            && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
-                            || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
+                            && (oldA == null || screen.x < oldA.x - arrowsDelta || screen.x > oldA.x + arrowsDelta
+                            || screen.y < oldA.y - arrowsDelta || screen.y > oldA.y + arrowsDelta)) {
                         g.setColor(trkPnt.customColoring);
                         double t = Math.atan2((double) screen.y - old.y, (double) screen.x - old.x) + Math.PI;
                         g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t - PHI)),
@@ -730,7 +712,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         /****************************************************************
          ********** STEP 3c - DRAW FAST ARROWS **************************
          ****************************************************************/
-        if (lines && direction && alternateDirection) {
+        if (lines && arrows && arrowsFast) {
             Point old = null;
             Point oldA = null; // last arrow painted
             for (WayPoint trkPnt : visibleSegments) {
@@ -742,8 +724,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     Point screen = mv.getPoint(trkPnt);
                     // skip points that are on the same screenposition
                     if (old != null
-                            && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
-                            || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
+                            && (oldA == null || screen.x < oldA.x - arrowsDelta || screen.x > oldA.x + arrowsDelta
+                            || screen.y < oldA.y - arrowsDelta || screen.y > oldA.y + arrowsDelta)) {
                         g.setColor(trkPnt.customColoring);
                         g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][0], screen.y
                                 + dir[trkPnt.dir][1]);
@@ -794,10 +776,16 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                 if (large) {
                     // color the large GPS points like the gps lines
                     if (trkPnt.customColoring != null) {
-                        Color customColoringTransparent = largePointAlpha < 0 ? trkPnt.customColoring :
-                            new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (largePointAlpha << 24), true);
+                        if (trkPnt.customColoring.equals(colorCache) && colorCacheTransparent != null) {
+                            g.setColor(colorCacheTransparent);
+                        } else {
+                            Color customColoringTransparent = largePointAlpha < 0 ? trkPnt.customColoring :
+                                new Color((trkPnt.customColoring.getRGB() & 0x00ffffff) | (largePointAlpha << 24), true);
 
-                        g.setColor(customColoringTransparent);
+                            g.setColor(customColoringTransparent);
+                            colorCache = trkPnt.customColoring;
+                            colorCacheTransparent = customColoringTransparent;
+                        }
                     }
                     g.fillRect(screen.x-halfSize, screen.y-halfSize, largesize, largesize);
                 }
@@ -815,6 +803,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     continue;
                 }
                 if (!trkPnt.drawLine) {
+                    g.setColor(trkPnt.customColoring);
                     Point screen = mv.getPoint(trkPnt);
                     g.drawRect(screen.x, screen.y, 0, 0);
                 }
@@ -1480,12 +1469,12 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         // CHECKSTYLE.OFF: BooleanExpressionComplexity
         if ((computeCacheMaxLineLengthUsed != maxLineLength)
                 || (computeCacheColored != colored)
-                || (computeCacheColorTracksTune != colorTracksTune)
+                || (computeCacheVelocityTune != velocityTune)
                 || (computeCacheColorDynamic != colorModeDynamic)
                 || (computeCacheHeatMapDrawColorTableIdx != heatMapDrawColorTableIdx)
-                || (!neutralColor.equals(computeCacheColorUsed)
+                || !Objects.equals(neutralColor, computeCacheColorUsed)
                 || (computeCacheHeatMapDrawPointMode != heatMapDrawPointMode)
-                || (computeCacheHeatMapDrawGain != heatMapDrawGain))
+                || (computeCacheHeatMapDrawGain != heatMapDrawGain)
                 || (computeCacheHeatMapDrawLowerLimit != heatMapDrawLowerLimit)
         ) {
             // CHECKSTYLE.ON: BooleanExpressionComplexity
@@ -1493,7 +1482,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             computeCacheInSync = false;
             computeCacheColorUsed = neutralColor;
             computeCacheColored = colored;
-            computeCacheColorTracksTune = colorTracksTune;
+            computeCacheVelocityTune = velocityTune;
             computeCacheColorDynamic = colorModeDynamic;
             computeCacheHeatMapDrawColorTableIdx = heatMapDrawColorTableIdx;
             computeCacheHeatMapDrawPointMode = heatMapDrawPointMode;

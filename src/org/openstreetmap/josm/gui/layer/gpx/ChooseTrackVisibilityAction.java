@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer.gpx;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -12,29 +13,37 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.swing.AbstractAction;
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.commons.jcs.access.exception.InvalidArgumentException;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -55,7 +64,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
      * @param layer The associated GPX layer
      */
     public ChooseTrackVisibilityAction(final GpxLayer layer) {
-        super(tr("Choose visible tracks"));
+        super(tr("Choose track visibility and colors"));
         new ImageProvider("dialogs/filter").getResource().attachImageIcon(this, true);
         this.layer = layer;
         putValue("help", ht("/Action/ChooseTrackVisibility"));
@@ -116,14 +125,44 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             String time = GpxLayer.getTimespanForTrack(trk);
             TrackLength length = new TrackLength(trk.length());
             String url = (String) Optional.ofNullable(attr.get("url")).orElse("");
-            tracks[i] = new Object[]{name, desc, time, length, url};
+            tracks[i] = new Object[]{name, desc, time, length, url, trk};
             i++;
         }
         return tracks;
     }
 
+    private void showColorDialog(List<GpxTrack> tracks) {
+        Color cl = tracks.stream().filter(Objects::nonNull)
+                .map(GpxTrack::getColor).filter(Objects::nonNull)
+                .findAny().orElse(GpxDrawHelper.DEFAULT_COLOR_PROPERTY.get());
+        JColorChooser c = new JColorChooser(cl);
+        Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
+        int answer = JOptionPane.showOptionDialog(
+                MainApplication.getMainFrame(),
+                c,
+                tr("Choose a color"),
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+        switch (answer) {
+        case 0:
+            tracks.stream().forEach(t -> t.setColor(c.getColor()));
+            GPXSettingsPanel.putLayerPrefLocal(layer, "colormode", "0"); //set Colormode to none
+            break;
+        case 1:
+            return;
+        case 2:
+            tracks.stream().forEach(t -> t.setColor(null));
+            break;
+        }
+        table.repaint();
+    }
+
     /**
-     * Builds an non-editable table whose 5th column will open a browser when double clicked.
+     * Builds an editable table whose 5th column will open a browser when double clicked.
      * The table will fill its parent.
      * @param content table data
      * @return non-editable table
@@ -138,13 +177,68 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 if (c instanceof JComponent) {
                     JComponent jc = (JComponent) c;
                     jc.setToolTipText(getValueAt(row, col).toString());
+                    if (content.length > row
+                            && content[row].length > 5
+                            && content[row][5] instanceof GpxTrack) {
+                        Color color = ((GpxTrack) content[row][5]).getColor();
+                        if (color != null) {
+                            double brightness = Math.sqrt(Math.pow(color.getRed(), 2) * .241
+                                    + Math.pow(color.getGreen(), 2) * .691
+                                    + Math.pow(color.getBlue(), 2) * .068);
+                            if (brightness > 250) {
+                                color = color.darker();
+                            }
+                            if (isRowSelected(row)) {
+                                jc.setBackground(color);
+                                if (brightness <= 130) {
+                                    jc.setForeground(Color.WHITE);
+                                } else {
+                                    jc.setForeground(Color.BLACK);
+                                }
+                            } else {
+                                if (brightness > 200) {
+                                    color = color.darker(); //brightness >250 is darkened twice on purpose
+                                }
+                                jc.setForeground(color);
+                                jc.setBackground(Color.WHITE);
+                            }
+                        } else {
+                            jc.setForeground(Color.BLACK);
+                            if (isRowSelected(row)) {
+                                jc.setBackground(new Color(175, 210, 210));
+                            } else {
+                                jc.setBackground(Color.WHITE);
+                            }
+                        }
+                    }
                 }
                 return c;
             }
 
             @Override
             public boolean isCellEditable(int rowIndex, int colIndex) {
-                return false;
+                return colIndex <= 1;
+            }
+
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                super.tableChanged(e);
+                int col = e.getColumn();
+                int row = e.getFirstRow();
+                if (row >= 0 && row < content.length && col >= 0 && col <= 1) {
+                    Object t = content[row][5];
+                    String val = (String) getValueAt(row, col);
+                    if (t != null && t instanceof GpxTrack) {
+                        GpxTrack trk = (GpxTrack) t;
+                        if (col == 0) {
+                            trk.put("name", val);
+                        } else {
+                            trk.put("desc", val);
+                        }
+                    } else {
+                        throw new InvalidArgumentException("Invalid object in table, must be GpxTrack.");
+                    }
+                }
             }
         };
         // define how to sort row
@@ -180,6 +274,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         };
         t.addMouseListener(urlOpener);
         t.setFillsViewportHeight(true);
+        t.putClientProperty("terminateEditOnFocusLost", true);
         return t;
     }
 
@@ -249,11 +344,13 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
 
         msg.add(new JLabel(tr("<html>Select all tracks that you want to be displayed. " +
                 "You can drag select a range of tracks or use CTRL+Click to select specific ones. " +
-                "The map is updated live in the background. Open the URLs by double clicking them.</html>")),
+                "The map is updated live in the background. Open the URLs by double clicking them, " +
+                "edit name and description by double clicking the cell.</html>")),
                 GBC.eop().fill(GBC.HORIZONTAL));
         // build table
         final boolean[] trackVisibilityBackup = layer.trackVisibility.clone();
-        table = buildTable(buildTableContents());
+        Object[][] content = buildTableContents();
+        table = buildTable(content);
         selectVisibleTracksInTable();
         listenToSelectionChanges();
         // make the table scrollable
@@ -262,9 +359,26 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
 
         int v = 1;
         // build dialog
-        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(), tr("Set track visibility for {0}", layer.getName()),
-                tr("Show all"), tr("Show selected only"), tr("Cancel"));
-        ed.setButtonIcons("eye", "dialogs/filter", "cancel");
+        ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
+                tr("Set track visibility for {0}", layer.getName()),
+                tr("Set color for selected tracks..."), tr("Show all"), tr("Show selected only"), tr("Close")) {
+            @Override
+            protected void buttonAction(int buttonIndex, ActionEvent evt) {
+                if (buttonIndex == 0) {
+                    List<GpxTrack> trks = new ArrayList<>();
+                    for (int i : table.getSelectedRows()) {
+                        Object trk = content[i][5];
+                        if (trk != null && trk instanceof GpxTrack) {
+                            trks.add((GpxTrack) trk);
+                        }
+                    }
+                    showColorDialog(trks);
+                } else {
+                    super.buttonAction(buttonIndex, evt);
+                }
+            }
+        };
+        ed.setButtonIcons("colorchooser", "eye", "dialogs/filter", "cancel");
         ed.setContent(msg, false);
         ed.setDefaultButton(2);
         ed.setCancelButton(3);
@@ -275,21 +389,21 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         dateFilter.saveInPrefs();
         v = ed.getValue();
         // cancel for unknown buttons and copy back original settings
-        if (v != 1 && v != 2) {
+        if (v != 2 && v != 3) {
             layer.trackVisibility = Arrays.copyOf(trackVisibilityBackup, layer.trackVisibility.length);
             MainApplication.getMap().repaint();
             return;
         }
-        // set visibility (1 = show all, 2 = filter). If no tracks are selected
+        // set visibility (2 = show all, 3 = filter). If no tracks are selected
         // set all of them visible and...
         ListSelectionModel s = table.getSelectionModel();
-        final boolean all = v == 1 || s.isSelectionEmpty();
+        final boolean all = v == 2 || s.isSelectionEmpty();
         for (int i = 0; i < layer.trackVisibility.length; i++) {
             layer.trackVisibility[table.convertRowIndexToModel(i)] = all || s.isSelectedIndex(i);
         }
         // layer has been changed
         layer.invalidate();
         // ...sync with layer visibility instead to avoid having two ways to hide everything
-        layer.setVisible(v == 1 || !s.isSelectionEmpty());
+        layer.setVisible(v == 2 || !s.isSelectionEmpty());
     }
 }

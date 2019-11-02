@@ -100,19 +100,6 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
          */
         public String getDisplay() {
             switch (info.getCategory()) {
-                case NamedColorProperty.COLOR_CATEGORY_LAYER:
-                    String v = null;
-                    if (info.getSource() != null) {
-                        v = info.getSource();
-                    }
-                    if (!info.getName().isEmpty()) {
-                        if (v == null) {
-                            v = tr(I18n.escape(info.getName()));
-                        } else {
-                            v += " - " + tr(I18n.escape(info.getName()));
-                        }
-                    }
-                    return tr("Layer: {0}", v);
                 case NamedColorProperty.COLOR_CATEGORY_MAPPAINT:
                     if (info.getSource() != null)
                         return tr("Paint style {0}: {1}", tr(I18n.escape(info.getSource())), tr(info.getName()));
@@ -251,8 +238,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         switch (category) {
             case NamedColorProperty.COLOR_CATEGORY_GENERAL: return 1;
             case NamedColorProperty.COLOR_CATEGORY_MAPPAINT: return 2;
-            case NamedColorProperty.COLOR_CATEGORY_LAYER: return 3;
-            default: return 4;
+            default: return 3;
         }
     }
 
@@ -379,8 +365,12 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private static boolean isRemoveColor(ColorEntry ce) {
-        return NamedColorProperty.COLOR_CATEGORY_LAYER.equals(ce.info.getCategory());
+        return false;
+        //COLOR_CATEGORY_LAYER is no longer supported and was the only one that could be removed.
+        //Maybe this is useful for other categories in the future.
+        //return NamedColorProperty.COLOR_CATEGORY_LAYER.equals(ce.info.getCategory());
     }
 
     /**
@@ -390,8 +380,8 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         PaintColors.values();
         ConflictColors.getColors();
         Severity.getColors();
-        MarkerLayer.getGenericColor();
-        GpxDrawHelper.getGenericColor();
+        MarkerLayer.DEFAULT_COLOR_PROPERTY.get();
+        GpxDrawHelper.DEFAULT_COLOR_PROPERTY.get();
         OsmDataLayer.getOutsideColor();
         MapScaler.getColor();
         MapStatus.getColors();

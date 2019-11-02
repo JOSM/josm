@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -30,9 +31,9 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxExtension;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -48,6 +49,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.gpx.ConvertFromMarkerLayerAction;
+import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -75,9 +77,12 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     public GpxLayer fromLayer;
     private Marker currentMarker;
     public AudioMarker syncAudioMarker;
+    private Color color, realcolor;
 
-    private static final Color DEFAULT_COLOR = Color.magenta;
-    private static final NamedColorProperty COLOR_PROPERTY = new NamedColorProperty(marktr("gps marker"), DEFAULT_COLOR);
+    /**
+     * The default color that is used for drawing markers.
+     */
+    public static final NamedColorProperty DEFAULT_COLOR_PROPERTY = new NamedColorProperty(marktr("gps marker"), Color.magenta);
 
     /**
      * Constructs a new {@code MarkerLayer}.
@@ -93,6 +98,17 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         this.fromLayer = fromLayer;
         double firstTime = -1.0;
         String lastLinkedFile = "";
+
+        Color c = null;
+        String cs = GPXSettingsPanel.tryGetLayerPrefLocal(indata, "markers.color");
+        if (cs != null) {
+            try {
+                c = Color.decode(cs);
+            } catch (NumberFormatException ex) {
+                Logging.warn("Could not read marker color: " + cs);
+            }
+        }
+        setPrivateColors(c);
 
         for (WayPoint wpt : indata.waypoints) {
             /* calculate time differences in waypoints */
@@ -123,10 +139,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             // audio file) calculate the offset relative to the first marker of
             // that group. This way the user can jump to the corresponding
             // playback positions in a long audio track.
-            Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
-            if (exts != null && exts.containsKey("offset")) {
+            GpxExtension offsetExt = wpt.getExtensions().get("josm", "offset");
+            if (offsetExt != null && offsetExt.getValue() != null) {
                 try {
-                    offset = Double.valueOf(exts.get("offset"));
+                    offset = Double.valueOf(offsetExt.getValue());
                 } catch (NumberFormatException nfe) {
                     Logging.warn(nfe);
                 }
@@ -173,20 +189,9 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     @Override
-    protected NamedColorProperty getBaseColorProperty() {
-        return COLOR_PROPERTY;
-    }
-
-    /* for preferences */
-    public static Color getGenericColor() {
-        return COLOR_PROPERTY.get();
-    }
-
-    @Override
     public void paint(Graphics2D g, MapView mv, Bounds box) {
         boolean showTextOrIcon = isTextOrIconShown();
-        g.setColor(getColorProperty().get());
-
+        g.setColor(realcolor);
         if (mousePressed) {
             boolean mousePressedTmp = mousePressed;
             Point mousePos = mv.getMousePosition(); // Get mouse position only when necessary (it's the slowest part of marker layer painting)
@@ -450,8 +455,35 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
      * @return <code>true</code> if text should be shown, <code>false</code> otherwise.
      */
     private boolean isTextOrIconShown() {
-        String current = Config.getPref().get("marker.show "+getName(), "show");
-        return "show".equalsIgnoreCase(current);
+        return Boolean.parseBoolean(GPXSettingsPanel.getLayerPref(fromLayer, "markers.show-text"));
+    }
+
+    @Override
+    public boolean hasColor() {
+        return true;
+    }
+
+    @Override
+    public Color getColor() {
+        return color;
+    }
+
+    @Override
+    public void setColor(Color color) {
+        setPrivateColors(color);
+        if (fromLayer != null) {
+            String cs = null;
+            if (color != null) {
+                cs = String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
+            }
+            GPXSettingsPanel.putLayerPrefLocal(fromLayer, "markers.color", cs);
+        }
+        invalidate();
+    }
+
+    private void setPrivateColors(Color color) {
+        this.color = color;
+        this.realcolor = Optional.ofNullable(color).orElse(DEFAULT_COLOR_PROPERTY.get());
     }
 
     private final class MarkerMouseAdapter extends MouseAdapter {
@@ -503,7 +535,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Config.getPref().put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
+            GPXSettingsPanel.putLayerPrefLocal(layer.fromLayer, "markers.show-text", Boolean.toString(!layer.isTextOrIconShown()));
             layer.invalidate();
         }
 

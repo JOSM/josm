@@ -18,7 +18,7 @@ import org.openstreetmap.josm.actions.mapmode.PlayHeadDragMode;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -327,7 +327,7 @@ public final class PlayHeadMarker extends Marker {
         WayPoint w2 = null;
 
         for (GpxTrack track : trackLayer.data.getTracks()) {
-            for (GpxTrackSegment trackseg : track.getSegments()) {
+            for (IGpxTrackSegment trackseg : track.getSegments()) {
                 for (WayPoint w: trackseg.getWayPoints()) {
                     if (audioTime < w.getTime()) {
                         w2 = w;

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.layer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
@@ -18,7 +19,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -73,15 +75,19 @@ public class GpxLayerTest {
     @Test
     public void testGpxLayer() throws Exception {
         GpxLayer layer = new GpxLayer(new GpxData(), "foo", false);
+        GpxTrack trk = new GpxTrack(new ArrayList<IGpxTrackSegment>(), new HashMap<>());
+        trk.getExtensions().add("gpxd", "color", "#FF0000");
+        layer.data.addTrack(trk);
+
         assertEquals("foo", layer.getName());
         assertFalse(layer.isLocalFile());
-        assertEquals(Color.MAGENTA, layer.getColorProperty().get());
-        assertEquals("<html>0 tracks (0 segments), 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer.getToolTipText());
+        assertEquals(layer.getColor(), Color.RED);
+        assertEquals("<html>1 track (0 segments), 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer.getToolTipText());
 
         GpxLayer layer2 = new GpxLayer(new GpxData(), "bar", true);
         assertEquals("bar", layer2.getName());
         assertTrue(layer2.isLocalFile());
-        assertEquals(Color.MAGENTA, layer2.getColorProperty().get());
+        assertNull(layer2.getColor());
         assertEquals("<html>0 tracks (0 segments), 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer2.getToolTipText());
 
         assertTrue(layer.checkSaveConditions());
@@ -187,7 +193,7 @@ public class GpxLayerTest {
     @Test
     public void testGetTimespanForTrack() throws Exception {
         assertEquals("", GpxLayer.getTimespanForTrack(
-                new ImmutableGpxTrack(new ArrayList<Collection<WayPoint>>(), new HashMap<String, Object>())));
+                new GpxTrack(new ArrayList<Collection<WayPoint>>(), new HashMap<String, Object>())));
 
         assertEquals("1/3/16 11:59 AM - 12:00 PM (0:00)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
 

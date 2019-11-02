@@ -81,7 +81,7 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            SaveAction.getInstance().doSave(layer);
+            SaveAction.getInstance().doSave(layer, true);
             updateEnabledState();
         }
 

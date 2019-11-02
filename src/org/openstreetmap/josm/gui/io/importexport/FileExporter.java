@@ -55,6 +55,18 @@ public abstract class FileExporter implements ActiveLayerChangeListener {
     }
 
     /**
+     * Execute the data export without prompting the user. (To be overridden by subclasses.)
+     *
+     * @param file target file
+     * @param layer the layer to export
+     * @throws IOException in case of an IO error
+     * @since 15496
+     */
+    public void exportDataQuiet(File file, Layer layer) throws IOException {
+        exportData(file, layer); //backwards compatibility
+    }
+
+    /**
      * Returns the enabled state of this {@code FileExporter}. When enabled, it is listed and usable in "File-&gt;Save" dialogs.
      * @return true if this {@code FileExporter} is enabled
      * @since 5459

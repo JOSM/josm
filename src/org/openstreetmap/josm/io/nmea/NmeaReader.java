@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.IGpxReader;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -264,7 +264,7 @@ public class NmeaReader implements IGpxReader {
                 }
             }
             currentTrack.add(ps.waypoints);
-            data.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
+            data.tracks.add(new GpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
 
         } catch (IllegalDataException e) {
             Logging.warn(e);

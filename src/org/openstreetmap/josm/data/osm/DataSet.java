@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxData.XMLNamespace;
 import org.openstreetmap.josm.data.osm.DataSelectionListener.SelectionAddEvent;
 import org.openstreetmap.josm.data.osm.DataSelectionListener.SelectionChangeEvent;
 import org.openstreetmap.josm.data.osm.DataSelectionListener.SelectionRemoveEvent;
@@ -168,6 +169,12 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
 
     private short mappaintCacheIdx = 1;
     private String remark;
+
+    /**
+     * Used to temporarily store namespaces from the GPX file in case the user converts back and forth.
+     * Will not be saved to .osm files, but that's not necessary because GPX files won't automatically be overridden after that.
+     */
+    private List<XMLNamespace> GPXNamespaces;
 
     /**
      * Constructs a new {@code DataSet}.
@@ -1191,6 +1198,22 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      */
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    /**
+     * Gets the GPX (XML) namespaces if this DataSet was created from a GPX file
+     * @return the GPXNamespaces or <code>null</code>
+     */
+    public List<XMLNamespace> getGPXNamespaces() {
+        return GPXNamespaces;
+    }
+
+    /**
+     * Sets the GPX (XML) namespaces
+     * @param GPXNamespaces the GPXNamespaces to set
+     */
+    public void setGPXNamespaces(List<XMLNamespace> GPXNamespaces) {
+        this.GPXNamespaces = GPXNamespaces;
     }
 
     /**

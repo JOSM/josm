@@ -661,8 +661,9 @@ area[roof:color][roof:colour]["roof:color"=*"roof:colour"] {
   assertNoMatch: "way roof:color=red roof:colour=red";
   assertMatch: "way roof:color=red roof:colour=green";
 }
-  /* further more universal checks, no autofix */
-*[/:color/][!building:color][!roof:color] {
+/* further more universal checks, no autofix */
+/* gpxd:color has another warning in unnecessary.mapcss */ 
+*[/:color/][!building:color][!roof:color][!gpxd:color] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: ":colour";
   group: tr("deprecated tagging");
