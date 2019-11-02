@@ -104,7 +104,7 @@ public final class I18n {
         languages.put("de", PluralMode.MODE_NOTONE);
         languages.put("el", PluralMode.MODE_NOTONE);
         languages.put("en_AU", PluralMode.MODE_NOTONE);
-        languages.put("en_CA", PluralMode.MODE_NOTONE);
+        //languages.put("en_CA", PluralMode.MODE_NOTONE);
         languages.put("en_GB", PluralMode.MODE_NOTONE);
         languages.put("es", PluralMode.MODE_NOTONE);
         languages.put("et", PluralMode.MODE_NOTONE);
