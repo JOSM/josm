@@ -816,7 +816,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
         // Construct the list of loaded GPX tracks
         gpxModel = new DefaultComboBoxModel<>();
         GpxDataWrapper defaultItem = null;
-        for (GpxLayer cur : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class).stream().filter(GpxLayer::isLocalFile).collect(Collectors.toList())) {
+        for (GpxLayer cur : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class).stream()
+                .filter(GpxLayer::isLocalFile).collect(Collectors.toList())) {
             GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), cur.data, cur.data.storageFile);
             gpxModel.addElement(gdw);
             if (cur == yLayer.gpxLayer || (defaultItem == null && gdw.file != null)) {

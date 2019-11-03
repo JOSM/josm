@@ -341,7 +341,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     private static class GpxTrackTable extends JTable {
         final Object[][] content;
 
-        public GpxTrackTable(Object[][] content, TableModel model) {
+        GpxTrackTable(Object[][] content, TableModel model) {
             super(model);
             this.content = content;
         }

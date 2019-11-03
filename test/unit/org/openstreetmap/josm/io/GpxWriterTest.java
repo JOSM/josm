@@ -97,7 +97,7 @@ public class GpxWriterTest {
 
     /**
      * Tests if extensions are written correctly.
-     * @throws IOException
+     * @throws IOException in case of I/O error
      */
     @Test
     public void testExtensions() throws IOException {
