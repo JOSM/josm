@@ -8,10 +8,10 @@ import org.openstreetmap.josm.data.gpx.GpxData.XMLNamespace;
 import org.xml.sax.Attributes;
 
 /**
- * A GpxExtension that has attributes and child extensions (implements {@link IWithAttributes}).
+ * A GpxExtension that has attributes and child extensions (implements {@link IWithAttributes} and {@link GpxConstants}).
  * @since 15496
  */
-public class GpxExtension extends WithAttributes implements GpxConstants {
+public class GpxExtension extends WithAttributes {
     private final String qualifiedName, prefix, key;
     private IWithAttributes parent;
     private String value;
