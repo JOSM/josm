@@ -18,6 +18,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -139,6 +141,16 @@ public final class I18n {
         languages.put("zh_CN", PluralMode.MODE_NONE);
         languages.put("zh_TW", PluralMode.MODE_NONE);
     }
+
+    private static final String HIRAGANA = "hira";
+    private static final String KATAKANA = "kana";
+    private static final String LATIN = "latn";
+    private static final String PINYIN = "pinyin";
+    private static final String ROMAJI = "rm";
+
+    // Matches ISO-639 two and three letters language codes + scripts
+    private static final Pattern LANGUAGE_NAMES = Pattern.compile(
+            "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA, LATIN, PINYIN, ROMAJI) + ")))?");
 
     private static String format(String text, Object... objects) {
         try {
@@ -666,5 +678,52 @@ public final class I18n {
      */
     public static Locale getOriginalLocale() {
         return originalLocale;
+    }
+
+    /**
+     * Returns the localized name of the given script. Only scripts used in the OSM database are known.
+     * @param script Writing system
+     * @return the localized name of the given script, or null
+     * @since 15501
+     */
+    public static String getLocalizedScript(String script) {
+        if (script != null) {
+            switch (script.toLowerCase(Locale.ENGLISH)) {
+                case HIRAGANA:
+                    return tr("Hiragana");
+                case KATAKANA:
+                    return tr("Katakana");
+                case LATIN:
+                    return tr("Latin");
+                case PINYIN:
+                    return tr("Pinyin");
+                case ROMAJI:
+                    return tr("Rōmaji");
+                default:
+                    Logging.warn("Unsupported script: " + script);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the localized name of the given language and optional script.
+     * @param language Language
+     * @return the pair of localized name + known state of the given language, or null
+     * @since 15501
+     */
+    public static Pair<String, Boolean> getLocalizedLanguageName(String language) {
+        Matcher m = LANGUAGE_NAMES.matcher(language);
+        if (m.matches()) {
+            String code = m.group(1);
+            String label = new Locale(code).getDisplayLanguage();
+            boolean knownNameKey = !code.equals(label);
+            String script = getLocalizedScript(m.group(2));
+            if (script != null) {
+                label += " (" + script + ")";
+            }
+            return new Pair<>(label, knownNameKey);
+        }
+        return null;
     }
 }
