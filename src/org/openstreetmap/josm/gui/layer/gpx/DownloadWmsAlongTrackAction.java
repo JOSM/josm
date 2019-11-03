@@ -15,7 +15,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.actions.AbstractMergeAction;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -91,7 +91,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
 
     PrecacheWmsTask createTask() {
         List<LatLon> points = new ArrayList<>();
-        for (GpxTrack trk : data.tracks) {
+        for (IGpxTrack trk : data.tracks) {
             for (IGpxTrackSegment segment : trk.getSegments()) {
                 for (WayPoint p : segment.getWayPoints()) {
                     points.add(p.getCoor());

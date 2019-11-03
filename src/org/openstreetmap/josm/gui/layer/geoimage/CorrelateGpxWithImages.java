@@ -71,7 +71,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
 import org.openstreetmap.josm.data.gpx.GpxTimeOffset;
 import org.openstreetmap.josm.data.gpx.GpxTimezone;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -1262,7 +1262,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         long firstGPXDate = -1;
         // Finds first GPX point
-        outer: for (GpxTrack trk : gpx.tracks) {
+        outer: for (IGpxTrack trk : gpx.tracks) {
             for (IGpxTrackSegment segment : trk.getSegments()) {
                 for (WayPoint curWp : segment.getWayPoints()) {
                     if (curWp.hasDate()) {

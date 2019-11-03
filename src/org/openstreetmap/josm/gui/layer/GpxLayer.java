@@ -31,7 +31,7 @@ import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
@@ -125,7 +125,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
     @Override
     public void setColor(Color color) {
         data.beginUpdate();
-        for (GpxTrack trk : data.getTracks()) {
+        for (IGpxTrack trk : data.getTracks()) {
             trk.setColor(color);
         }
         GPXSettingsPanel.putLayerPrefLocal(this, "colormode", "0");
@@ -142,7 +142,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      * @param trk The GPX track for which timespan is displayed
      * @return The timespan as a string
      */
-    public static String getTimespanForTrack(GpxTrack trk) {
+    public static String getTimespanForTrack(IGpxTrack trk) {
         Date[] bounds = GpxData.getMinMaxTimeForTrack(trk);
         String ts = "";
         if (bounds != null) {
@@ -200,7 +200,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
                 .append("</td><td>").append(tr("URL"))
                 .append("</td></tr></thead>");
 
-            for (GpxTrack trk : data.getTracks()) {
+            for (IGpxTrack trk : data.getTracks()) {
                 info.append("<tr><td>");
                 if (trk.getAttributes().containsKey(GpxConstants.GPX_NAME)) {
                     info.append(trk.get(GpxConstants.GPX_NAME));
@@ -329,7 +329,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
         int i = 0;
         long from = fromDate.getTime();
         long to = toDate.getTime();
-        for (GpxTrack trk : data.getTracks()) {
+        for (IGpxTrack trk : data.getTracks()) {
             Date[] t = GpxData.getMinMaxTimeForTrack(trk);
 
             if (t == null) continue;

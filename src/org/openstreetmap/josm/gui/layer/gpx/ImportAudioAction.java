@@ -20,7 +20,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -146,7 +146,7 @@ public class ImportAudioAction extends AbstractAction {
         // determine time of first point in track
         double firstTime = -1.0;
         if (hasTracks) {
-            for (GpxTrack track : layer.data.tracks) {
+            for (IGpxTrack track : layer.data.tracks) {
                 for (IGpxTrackSegment seg : track.getSegments()) {
                     for (WayPoint w : seg.getWayPoints()) {
                         firstTime = w.getTime();
@@ -205,7 +205,7 @@ public class ImportAudioAction extends AbstractAction {
         // (c) use explicitly named track points, again unless suppressed
         if (layer.data.tracks != null && Config.getPref().getBoolean("marker.audiofromnamedtrackpoints", false)
                 && !layer.data.tracks.isEmpty()) {
-            for (GpxTrack track : layer.data.tracks) {
+            for (IGpxTrack track : layer.data.tracks) {
                 for (IGpxTrackSegment seg : track.getSegments()) {
                     for (WayPoint w : seg.getWayPoints()) {
                         if (w.attr.containsKey(GpxConstants.GPX_NAME) || w.attr.containsKey(GpxConstants.GPX_DESC)) {
@@ -226,7 +226,7 @@ public class ImportAudioAction extends AbstractAction {
             WayPoint w1 = null;
             WayPoint w2 = null;
 
-            for (GpxTrack track : layer.data.tracks) {
+            for (IGpxTrack track : layer.data.tracks) {
                 for (IGpxTrackSegment seg : track.getSegments()) {
                     for (WayPoint w : seg.getWayPoints()) {
                         if (startTime < w.getTime()) {
@@ -262,7 +262,7 @@ public class ImportAudioAction extends AbstractAction {
         // (f) simply add a single marker at the start of the track
         if ((Config.getPref().getBoolean("marker.audiofromstart") || waypoints.isEmpty()) && hasTracks) {
             boolean gotOne = false;
-            for (GpxTrack track : layer.data.tracks) {
+            for (IGpxTrack track : layer.data.tracks) {
                 for (IGpxTrackSegment seg : track.getSegments()) {
                     for (WayPoint w : seg.getWayPoints()) {
                         WayPoint wStart = new WayPoint(w.getCoor());

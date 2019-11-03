@@ -34,12 +34,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.jcs.access.exception.InvalidArgumentException;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -118,7 +119,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     private Object[][] buildTableContents() {
         Object[][] tracks = new Object[layer.data.tracks.size()][5];
         int i = 0;
-        for (GpxTrack trk : layer.data.tracks) {
+        for (IGpxTrack trk : layer.data.tracks) {
             Map<String, Object> attr = trk.getAttributes();
             String name = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_NAME)).orElse("");
             String desc = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_DESC)).orElse("");
@@ -131,9 +132,9 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         return tracks;
     }
 
-    private void showColorDialog(List<GpxTrack> tracks) {
+    private void showColorDialog(List<IGpxTrack> tracks) {
         Color cl = tracks.stream().filter(Objects::nonNull)
-                .map(GpxTrack::getColor).filter(Objects::nonNull)
+                .map(IGpxTrack::getColor).filter(Objects::nonNull)
                 .findAny().orElse(GpxDrawHelper.DEFAULT_COLOR_PROPERTY.get());
         JColorChooser c = new JColorChooser(cl);
         Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
@@ -170,77 +171,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     private static JTable buildTable(Object[]... content) {
         final String[] headers = {tr("Name"), tr("Description"), tr("Timespan"), tr("Length"), tr("URL")};
         DefaultTableModel model = new DefaultTableModel(content, headers);
-        final JTable t = new JTable(model) {
-            @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
-                Component c = super.prepareRenderer(renderer, row, col);
-                if (c instanceof JComponent) {
-                    JComponent jc = (JComponent) c;
-                    jc.setToolTipText(getValueAt(row, col).toString());
-                    if (content.length > row
-                            && content[row].length > 5
-                            && content[row][5] instanceof GpxTrack) {
-                        Color color = ((GpxTrack) content[row][5]).getColor();
-                        if (color != null) {
-                            double brightness = Math.sqrt(Math.pow(color.getRed(), 2) * .241
-                                    + Math.pow(color.getGreen(), 2) * .691
-                                    + Math.pow(color.getBlue(), 2) * .068);
-                            if (brightness > 250) {
-                                color = color.darker();
-                            }
-                            if (isRowSelected(row)) {
-                                jc.setBackground(color);
-                                if (brightness <= 130) {
-                                    jc.setForeground(Color.WHITE);
-                                } else {
-                                    jc.setForeground(Color.BLACK);
-                                }
-                            } else {
-                                if (brightness > 200) {
-                                    color = color.darker(); //brightness >250 is darkened twice on purpose
-                                }
-                                jc.setForeground(color);
-                                jc.setBackground(Color.WHITE);
-                            }
-                        } else {
-                            jc.setForeground(Color.BLACK);
-                            if (isRowSelected(row)) {
-                                jc.setBackground(new Color(175, 210, 210));
-                            } else {
-                                jc.setBackground(Color.WHITE);
-                            }
-                        }
-                    }
-                }
-                return c;
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int colIndex) {
-                return colIndex <= 1;
-            }
-
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                super.tableChanged(e);
-                int col = e.getColumn();
-                int row = e.getFirstRow();
-                if (row >= 0 && row < content.length && col >= 0 && col <= 1) {
-                    Object t = content[row][5];
-                    String val = (String) getValueAt(row, col);
-                    if (t != null && t instanceof GpxTrack) {
-                        GpxTrack trk = (GpxTrack) t;
-                        if (col == 0) {
-                            trk.put("name", val);
-                        } else {
-                            trk.put("desc", val);
-                        }
-                    } else {
-                        throw new InvalidArgumentException("Invalid object in table, must be GpxTrack.");
-                    }
-                }
-            }
-        };
+        final GpxTrackTable t = new GpxTrackTable(content, model);
         // define how to sort row
         TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>();
         t.setRowSorter(rowSorter);
@@ -365,11 +296,11 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             @Override
             protected void buttonAction(int buttonIndex, ActionEvent evt) {
                 if (buttonIndex == 0) {
-                    List<GpxTrack> trks = new ArrayList<>();
+                    List<IGpxTrack> trks = new ArrayList<>();
                     for (int i : table.getSelectedRows()) {
                         Object trk = content[i][5];
-                        if (trk != null && trk instanceof GpxTrack) {
-                            trks.add((GpxTrack) trk);
+                        if (trk != null && trk instanceof IGpxTrack) {
+                            trks.add((IGpxTrack) trk);
                         }
                     }
                     showColorDialog(trks);
@@ -405,5 +336,84 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         layer.invalidate();
         // ...sync with layer visibility instead to avoid having two ways to hide everything
         layer.setVisible(v == 2 || !s.isSelectionEmpty());
+    }
+
+    private static class GpxTrackTable extends JTable {
+        final Object[][] content;
+
+        public GpxTrackTable(Object[][] content, TableModel model) {
+            super(model);
+            this.content = content;
+        }
+
+        @Override
+        public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
+            Component c = super.prepareRenderer(renderer, row, col);
+            if (c instanceof JComponent) {
+                JComponent jc = (JComponent) c;
+                jc.setToolTipText(getValueAt(row, col).toString());
+                if (content.length > row
+                        && content[row].length > 5
+                        && content[row][5] instanceof IGpxTrack) {
+                    Color color = ((IGpxTrack) content[row][5]).getColor();
+                    if (color != null) {
+                        double brightness = Math.sqrt(Math.pow(color.getRed(), 2) * .241
+                                + Math.pow(color.getGreen(), 2) * .691
+                                + Math.pow(color.getBlue(), 2) * .068);
+                        if (brightness > 250) {
+                            color = color.darker();
+                        }
+                        if (isRowSelected(row)) {
+                            jc.setBackground(color);
+                            if (brightness <= 130) {
+                                jc.setForeground(Color.WHITE);
+                            } else {
+                                jc.setForeground(Color.BLACK);
+                            }
+                        } else {
+                            if (brightness > 200) {
+                                color = color.darker(); //brightness >250 is darkened twice on purpose
+                            }
+                            jc.setForeground(color);
+                            jc.setBackground(Color.WHITE);
+                        }
+                    } else {
+                        jc.setForeground(Color.BLACK);
+                        if (isRowSelected(row)) {
+                            jc.setBackground(new Color(175, 210, 210));
+                        } else {
+                            jc.setBackground(Color.WHITE);
+                        }
+                    }
+                }
+            }
+            return c;
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int colIndex) {
+            return colIndex <= 1;
+        }
+
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            super.tableChanged(e);
+            int col = e.getColumn();
+            int row = e.getFirstRow();
+            if (row >= 0 && row < content.length && col >= 0 && col <= 1) {
+                Object t = content[row][5];
+                String val = (String) getValueAt(row, col);
+                if (t != null && t instanceof IGpxTrack) {
+                    IGpxTrack trk = (IGpxTrack) t;
+                    if (col == 0) {
+                        trk.put("name", val);
+                    } else {
+                        trk.put("desc", val);
+                    }
+                } else {
+                    throw new InvalidArgumentException("Invalid object in table, must be IGpxTrack.");
+                }
+            }
+        }
     }
 }

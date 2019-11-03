@@ -72,7 +72,7 @@ public class GpxData extends WithAttributes implements Data {
     /**
      * A list of tracks this file consists of
      */
-    private final ArrayList<GpxTrack> privateTracks = new ArrayList<>();
+    private final ArrayList<IGpxTrack> privateTracks = new ArrayList<>();
     /**
      * GPX routes in this file
      */
@@ -99,16 +99,16 @@ public class GpxData extends WithAttributes implements Data {
      * Tracks. Access is discouraged, use {@link #getTracks()} to read.
      * @see #getTracks()
      */
-    public final Collection<GpxTrack> tracks = new ListeningCollection<GpxTrack>(privateTracks, this::invalidate) {
+    public final Collection<IGpxTrack> tracks = new ListeningCollection<IGpxTrack>(privateTracks, this::invalidate) {
 
         @Override
-        protected void removed(GpxTrack cursor) {
+        protected void removed(IGpxTrack cursor) {
             cursor.removeListener(proxy);
             super.removed(cursor);
         }
 
         @Override
-        protected void added(GpxTrack cursor) {
+        protected void added(IGpxTrack cursor) {
             super.added(cursor);
             cursor.addListener(proxy);
         }
@@ -173,7 +173,7 @@ public class GpxData extends WithAttributes implements Data {
         }
 
         if (cutOverlapping) {
-            for (GpxTrack trk : other.privateTracks) {
+            for (IGpxTrack trk : other.privateTracks) {
                 cutOverlapping(trk, connect);
             }
         } else {
@@ -185,7 +185,7 @@ public class GpxData extends WithAttributes implements Data {
         invalidate();
     }
 
-    private void cutOverlapping(GpxTrack trk, boolean connect) {
+    private void cutOverlapping(IGpxTrack trk, boolean connect) {
         List<IGpxTrackSegment> segsOld = new ArrayList<>(trk.getSegments());
         List<IGpxTrackSegment> segsNew = new ArrayList<>();
         for (IGpxTrackSegment seg : segsOld) {
@@ -365,7 +365,7 @@ public class GpxData extends WithAttributes implements Data {
     public synchronized List<GpxTrackSegmentSpan> getSegmentSpans() {
         if (segSpans == null) {
             segSpans = new ArrayList<>();
-            for (GpxTrack trk : privateTracks) {
+            for (IGpxTrack trk : privateTracks) {
                 for (IGpxTrackSegment seg : trk.getSegments()) {
                     GpxTrackSegmentSpan s = GpxTrackSegmentSpan.tryGetFromSegment(seg);
                     if (s != null) {
@@ -391,7 +391,7 @@ public class GpxData extends WithAttributes implements Data {
      * Get all tracks contained in this data set.
      * @return The tracks.
      */
-    public synchronized Collection<GpxTrack> getTracks() {
+    public synchronized Collection<IGpxTrack> getTracks() {
         return Collections.unmodifiableCollection(privateTracks);
     }
 
@@ -417,7 +417,7 @@ public class GpxData extends WithAttributes implements Data {
      * @param track The new track
      * @since 12156
      */
-    public synchronized void addTrack(GpxTrack track) {
+    public synchronized void addTrack(IGpxTrack track) {
         if (privateTracks.stream().anyMatch(t -> t == track)) {
             throw new IllegalArgumentException(MessageFormat.format("The track was already added to this data: {0}", track));
         }
@@ -431,7 +431,7 @@ public class GpxData extends WithAttributes implements Data {
      * @param track The old track
      * @since 12156
      */
-    public synchronized void removeTrack(GpxTrack track) {
+    public synchronized void removeTrack(IGpxTrack track) {
         if (!privateTracks.removeIf(t -> t == track)) {
             throw new IllegalArgumentException(MessageFormat.format("The track was not in this data: {0}", track));
         }
@@ -625,7 +625,7 @@ public class GpxData extends WithAttributes implements Data {
      * Gets a stream of all track points in the segments of the tracks of this data.
      * @return The stream
      * @see #getTracks()
-     * @see GpxTrack#getSegments()
+     * @see IGpxTrack#getSegments()
      * @see IGpxTrackSegment#getWayPoints()
      * @since 12156
      */
@@ -697,7 +697,7 @@ public class GpxData extends WithAttributes implements Data {
                 }
             }
         }
-        for (GpxTrack trk : privateTracks) {
+        for (IGpxTrack trk : privateTracks) {
             Bounds trkBounds = trk.getBounds();
             if (trkBounds != null) {
                 if (bounds == null) {
@@ -715,7 +715,7 @@ public class GpxData extends WithAttributes implements Data {
      * @return the length in meters
      */
     public synchronized double length() {
-        return privateTracks.stream().mapToDouble(GpxTrack::length).sum();
+        return privateTracks.stream().mapToDouble(IGpxTrack::length).sum();
     }
 
     /**
@@ -723,7 +723,7 @@ public class GpxData extends WithAttributes implements Data {
      * @param trk track to analyze
      * @return  minimum and maximum dates in array of 2 elements
      */
-    public static Date[] getMinMaxTimeForTrack(GpxTrack trk) {
+    public static Date[] getMinMaxTimeForTrack(IGpxTrack trk) {
         final LongSummaryStatistics statistics = trk.getSegments().stream()
                 .flatMap(seg -> seg.getWayPoints().stream())
                 .mapToLong(WayPoint::getTimeInMillis)
@@ -792,7 +792,7 @@ public class GpxData extends WithAttributes implements Data {
         double px = p.east();
         double py = p.north();
         double rx = 0.0, ry = 0.0, sx, sy, x, y;
-        for (GpxTrack track : privateTracks) {
+        for (IGpxTrack track : privateTracks) {
             for (IGpxTrackSegment seg : track.getSegments()) {
                 WayPoint r = null;
                 for (WayPoint wpSeg : seg.getWayPoints()) {
@@ -906,7 +906,7 @@ public class GpxData extends WithAttributes implements Data {
      */
     public static class LinesIterator implements Iterator<Line> {
 
-        private Iterator<GpxTrack> itTracks;
+        private Iterator<IGpxTrack> itTracks;
         private int idxTracks;
         private Iterator<IGpxTrackSegment> itTrackSegments;
         private final Iterator<GpxRoute> itRoutes;
@@ -914,7 +914,7 @@ public class GpxData extends WithAttributes implements Data {
         private Line next;
         private final boolean[] trackVisibility;
         private Map<String, Object> trackAttributes;
-        private GpxTrack curTrack;
+        private IGpxTrack curTrack;
 
         /**
          * Constructs a new {@code LinesIterator}.

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.gpx.GpxExtensionCollection;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.IWithAttributes;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -84,7 +85,9 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
 
         //Prepare extensions for writing
         data.beginUpdate();
-        data.getTracks().forEach(trk -> trk.convertColor(colorFormat));
+        data.getTracks().stream()
+        .filter(GpxTrack.class::isInstance).map(GpxTrack.class::cast)
+        .forEach(trk -> trk.convertColor(colorFormat));
         data.getExtensions().removeAllWithPrefix("josm");
         if (data.fromServer) {
             data.getExtensions().add("josm", "from-server", "true");
@@ -258,7 +261,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     }
 
     private void writeTracks() {
-        for (GpxTrack trk : data.getTracks()) {
+        for (IGpxTrack trk : data.getTracks()) {
             openln("trk");
             writeAttr(trk, RTE_TRK_KEYS);
             gpxExtensions(trk.getExtensions());

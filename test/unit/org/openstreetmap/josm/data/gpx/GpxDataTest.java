@@ -113,7 +113,7 @@ public class GpxDataTest {
     }
 
     /**
-     * Test method for {@link GpxData#getTracks()},  {@link GpxData#addTrack(GpxTrack)},  {@link GpxData#removeTrack(GpxTrack)}.
+     * Test method for {@link GpxData#getTracks()},  {@link GpxData#addTrack(IGpxTrack)},  {@link GpxData#removeTrack(IGpxTrack)}.
      */
     @Test
     public void testTracks() {
@@ -135,7 +135,7 @@ public class GpxDataTest {
     }
 
     /**
-     * Test method for {@link GpxData#addTrack(GpxTrack)}.
+     * Test method for {@link GpxData#addTrack(IGpxTrack)}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testAddTrackFails() {
@@ -145,7 +145,7 @@ public class GpxDataTest {
     }
 
     /**
-     * Test method for {@link GpxData#removeTrack(GpxTrack)}.
+     * Test method for {@link GpxData#removeTrack(IGpxTrack)}.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testRemoveTrackFails() {

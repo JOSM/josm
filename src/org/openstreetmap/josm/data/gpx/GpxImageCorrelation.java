@@ -37,7 +37,7 @@ public final class GpxImageCorrelation {
 
         List<List<List<WayPoint>>> trks = new ArrayList<>();
 
-        for (GpxTrack trk : selectedGpx.tracks) {
+        for (IGpxTrack trk : selectedGpx.tracks) {
             List<List<WayPoint>> segs = new ArrayList<>();
             for (IGpxTrackSegment seg : trk.getSegments()) {
                 List<WayPoint> wps = new ArrayList<>(seg.getWayPoints());
