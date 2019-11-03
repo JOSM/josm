@@ -6,12 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
@@ -196,8 +198,18 @@ public class GeoJSONReader extends AbstractReader {
 
     private LatLon getLatLon(final JsonArray coordinates) {
         return projection.eastNorth2latlon(new EastNorth(
-                coordinates.getJsonNumber(0).doubleValue(),
-                coordinates.getJsonNumber(1).doubleValue()));
+                parseCoordinate(coordinates.get(0)),
+                parseCoordinate(coordinates.get(1))));
+    }
+
+    private static double parseCoordinate(JsonValue coordinate) {
+        if (coordinate instanceof JsonString) {
+            return Double.parseDouble(((JsonString) coordinate).getString());
+        } else if (coordinate instanceof JsonNumber) {
+            return ((JsonNumber) coordinate).doubleValue();
+        } else {
+            throw new IllegalArgumentException(Objects.toString(coordinate));
+        }
     }
 
     private void parsePoint(final JsonObject feature, final JsonArray coordinates) {
