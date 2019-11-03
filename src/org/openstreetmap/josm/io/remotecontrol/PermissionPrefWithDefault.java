@@ -3,8 +3,10 @@ package org.openstreetmap.josm.io.remotecontrol;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 
@@ -16,6 +18,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
  * @author Bodo Meissner
  */
 public class PermissionPrefWithDefault {
+    private static final List<PermissionPrefWithDefault> PREFS = new ArrayList<>();
 
     public static final PermissionPrefWithDefault LOAD_DATA =
             new PermissionPrefWithDefault("remotecontrol.permission.load-data", true, tr("Load data from API"));
@@ -46,20 +49,59 @@ public class PermissionPrefWithDefault {
      */
     public final String preferenceText;
 
+    /**
+     * Create a new {@code PermissionPrefWithDefault}
+     *
+     * @param pref           The preference key for the permission
+     * @param defaultVal     The default value of the preference
+     * @param preferenceText The text to show in UI objects
+     */
     public PermissionPrefWithDefault(String pref, boolean defaultVal, String preferenceText) {
         this.pref = pref;
         this.defaultVal = defaultVal;
         this.preferenceText = preferenceText;
     }
 
+    /**
+     * Determines if the action is allowed.
+     * @return true if the action is allowed
+     */
     public boolean isAllowed() {
         return Config.getPref().getBoolean(pref, defaultVal);
     }
 
+    /**
+     * Returns a non-modifiable list of permission preferences for Remote Control.
+     * @return A non-modifiable list of permission preferences for Remote Control
+     */
     public static List<PermissionPrefWithDefault> getPermissionPrefs() {
-        return Arrays.asList(
-                LOAD_DATA, IMPORT_DATA, OPEN_FILES, LOAD_IMAGERY,
-                CHANGE_SELECTION, CHANGE_VIEWPORT,
-                CREATE_OBJECTS, READ_PROTOCOL_VERSION);
+        return Collections.unmodifiableList(PREFS);
+    }
+
+    /**
+     * Adds a permission preference.
+     * @param pref The preference to add to the list returned by
+     *             {@link PermissionPrefWithDefault#getPermissionPrefs}
+     * @since 15500
+     */
+    public static void addPermissionPref(PermissionPrefWithDefault pref) {
+        if (pref.pref != null && PREFS.parallelStream().noneMatch(tPref -> pref.pref.equals(tPref.pref)))
+            PREFS.add(pref);
+    }
+
+    /**
+     * Removes a permission preference.
+     * @param pref The preference to remove from the list returned by
+     *             {@link PermissionPrefWithDefault#getPermissionPrefs}
+     *
+     * @return see {@link List#removeAll}
+     * @since 15500
+     */
+    public static boolean removePermissionPref(PermissionPrefWithDefault pref) {
+        List<PermissionPrefWithDefault> toRemove = Collections.emptyList();
+        if (pref.pref != null)
+            toRemove = PREFS.parallelStream().filter(tPref -> pref.pref.equals(tPref.pref))
+                    .collect(Collectors.toList());
+        return PREFS.removeAll(toRemove);
     }
 }

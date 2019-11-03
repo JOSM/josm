@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -126,21 +127,31 @@ public class RequestProcessor extends Thread {
                     command + "\" (handled by " + handler.getSimpleName() + ')');
             }
             handlers.put(commandWithSlash, handler);
+            try {
+                Optional.ofNullable(handler.getConstructor().newInstance().getPermissionPref())
+                        .ifPresent(PermissionPrefWithDefault::addPermissionPref);
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                Logging.debug(e);
+            }
         }
     }
 
-    /** Add default request handlers */
+    /**
+     * Add default request handlers and permission preferences (order is important)
+     */
     static {
         addRequestHandlerClass(LoadAndZoomHandler.command, LoadAndZoomHandler.class, true);
         addRequestHandlerClass(LoadAndZoomHandler.command2, LoadAndZoomHandler.class, true);
+        addRequestHandlerClass(LoadObjectHandler.command, LoadObjectHandler.class, true);
         addRequestHandlerClass(LoadDataHandler.command, LoadDataHandler.class, true);
+        addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
+        addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
         addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
+        PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.CHANGE_SELECTION);
+        PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.CHANGE_VIEWPORT);
         addRequestHandlerClass(AddNodeHandler.command, AddNodeHandler.class, true);
         addRequestHandlerClass(AddWayHandler.command, AddWayHandler.class, true);
-        addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
         addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);
-        addRequestHandlerClass(LoadObjectHandler.command, LoadObjectHandler.class, true);
-        addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
         addRequestHandlerClass(FeaturesHandler.command, FeaturesHandler.class, true);
     }
 
