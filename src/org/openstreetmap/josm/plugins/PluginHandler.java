@@ -150,7 +150,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("download_along", inCore),
             new DeprecatedPlugin("plastic_laf", tr("no longer required")),
             new DeprecatedPlugin("osmarender", tr("no longer required")),
-            new DeprecatedPlugin("geojson", inCore)
+            new DeprecatedPlugin("geojson", inCore),
+            new DeprecatedPlugin("gpxfilter", inCore)
         );
     }
 
