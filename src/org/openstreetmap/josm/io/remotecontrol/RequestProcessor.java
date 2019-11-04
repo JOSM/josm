@@ -73,6 +73,10 @@ public class RequestProcessor extends Thread {
      */
     private static Map<String, Class<? extends RequestHandler>> handlers = new TreeMap<>();
 
+    static {
+        initialize();
+    }
+
     /**
      * Constructor
      *
@@ -137,22 +141,24 @@ public class RequestProcessor extends Thread {
     }
 
     /**
-     * Add default request handlers and permission preferences (order is important)
+     * Force the class to initialize and load the handlers
      */
-    static {
-        addRequestHandlerClass(LoadAndZoomHandler.command, LoadAndZoomHandler.class, true);
-        addRequestHandlerClass(LoadAndZoomHandler.command2, LoadAndZoomHandler.class, true);
-        addRequestHandlerClass(LoadObjectHandler.command, LoadObjectHandler.class, true);
-        addRequestHandlerClass(LoadDataHandler.command, LoadDataHandler.class, true);
-        addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
-        addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
-        addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
-        PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.CHANGE_SELECTION);
-        PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.CHANGE_VIEWPORT);
-        addRequestHandlerClass(AddNodeHandler.command, AddNodeHandler.class, true);
-        addRequestHandlerClass(AddWayHandler.command, AddWayHandler.class, true);
-        addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);
-        addRequestHandlerClass(FeaturesHandler.command, FeaturesHandler.class, true);
+    public static void initialize() {
+        if (handlers.isEmpty()) {
+            addRequestHandlerClass(LoadAndZoomHandler.command, LoadAndZoomHandler.class, true);
+            addRequestHandlerClass(LoadAndZoomHandler.command2, LoadAndZoomHandler.class, true);
+            addRequestHandlerClass(LoadObjectHandler.command, LoadObjectHandler.class, true);
+            addRequestHandlerClass(LoadDataHandler.command, LoadDataHandler.class, true);
+            addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
+            addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
+            addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
+            PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.CHANGE_SELECTION);
+            PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.CHANGE_VIEWPORT);
+            addRequestHandlerClass(AddNodeHandler.command, AddNodeHandler.class, true);
+            addRequestHandlerClass(AddWayHandler.command, AddWayHandler.class, true);
+            addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);
+            addRequestHandlerClass(FeaturesHandler.command, FeaturesHandler.class, true);
+        }
     }
 
     /**

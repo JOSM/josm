@@ -75,6 +75,8 @@ public class PermissionPrefWithDefault {
      * @return A non-modifiable list of permission preferences for Remote Control
      */
     public static List<PermissionPrefWithDefault> getPermissionPrefs() {
+        if (PREFS.isEmpty())
+            RequestProcessor.initialize();
         return Collections.unmodifiableList(PREFS);
     }
 
