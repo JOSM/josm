@@ -690,17 +690,17 @@ public final class I18n {
         if (script != null) {
             switch (script.toLowerCase(Locale.ENGLISH)) {
                 case HIRAGANA:
-                    return tr("Hiragana");
+                    return /* I18n: a Japanese syllabary */ tr("Hiragana");
                 case KATAKANA:
-                    return tr("Katakana");
+                    return /* I18n: a Japanese syllabary */ tr("Katakana");
                 case LATIN:
-                    return tr("Latin");
+                    return /* I18n: usage of latin letters/script for usually non-latin languages */ tr("Latin");
                 case PINYIN:
-                    return tr("Pinyin");
+                    return /* I18n: official romanization system for Standard Chinese */ tr("Pinyin");
                 case ROMAJI:
-                    return tr("Rōmaji");
+                    return /* I18n: a Japanese syllabary (latin script) */  tr("Rōmaji");
                 default:
-                    Logging.warn("Unsupported script: " + script);
+                    Logging.warn("Unsupported script: {0}", script);
             }
         }
         return null;
