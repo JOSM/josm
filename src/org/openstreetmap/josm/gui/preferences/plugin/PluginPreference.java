@@ -55,6 +55,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePan
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
@@ -324,8 +325,12 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             List<String> l = new LinkedList<>(model.getSelectedPluginNames());
             Collections.sort(l);
             Config.getPref().putList("plugins", l);
-            if (!model.getNewlyDeactivatedPlugins().isEmpty())
-                return true;
+            List<PluginInformation> deactivatedPlugins = model.getNewlyDeactivatedPlugins();
+            if (!deactivatedPlugins.isEmpty()) {
+                boolean requiresRestart = PluginHandler.removePlugins(deactivatedPlugins);
+                if (requiresRestart)
+                    return requiresRestart;
+            }
             for (PluginInformation pi : model.getNewlyActivatedPlugins()) {
                 if (!pi.canloadatruntime)
                     return true;

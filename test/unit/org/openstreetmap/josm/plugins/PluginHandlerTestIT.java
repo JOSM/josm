@@ -7,19 +7,24 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.junit.Rule;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -30,6 +35,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -39,12 +45,24 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class PluginHandlerTestIT {
 
+    private static List<String> errorsToIgnore = new ArrayList<>();
     /**
      * Setup test.
      */
-    @Rule
+    @ClassRule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().preferences().https().timeout(10*60*1000);
+    public static JOSMTestRules test = new JOSMTestRules().main().projection().preferences().https()
+            .timeout(10 * 60 * 1000);
+
+    /**
+     * Setup test
+     *
+     * @throws IOException in case of I/O error
+     */
+    @BeforeClass
+    public static void beforeClass() throws IOException {
+        errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(PluginHandlerTestIT.class));
+    }
 
     /**
      * Test that available plugins rules can be loaded.
@@ -74,20 +92,64 @@ public class PluginHandlerTestIT {
             testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
 
+        Map<String, Throwable> noRestartExceptions = new HashMap<>();
+        testCompletelyRestartlessPlugins(loadedPlugins, noRestartExceptions);
+
         debugPrint(invalidManifestEntries);
         debugPrint(loadingExceptions);
         debugPrint(layerExceptions);
+        debugPrint(noRestartExceptions);
+
+        invalidManifestEntries = filterKnownErrors(invalidManifestEntries);
+        loadingExceptions = filterKnownErrors(loadingExceptions);
+        layerExceptions = filterKnownErrors(layerExceptions);
+        noRestartExceptions = filterKnownErrors(noRestartExceptions);
+
         String msg = Arrays.toString(invalidManifestEntries.entrySet().toArray()) + '\n' +
                      Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
-                     Arrays.toString(layerExceptions.entrySet().toArray());
+                Arrays.toString(layerExceptions.entrySet().toArray()) + '\n'
+                + Arrays.toString(noRestartExceptions.entrySet().toArray());
         assertTrue(msg, invalidManifestEntries.isEmpty() && loadingExceptions.isEmpty() && layerExceptions.isEmpty());
+    }
+
+    private static void testCompletelyRestartlessPlugins(List<PluginInformation> loadedPlugins,
+            Map<String, Throwable> noRestartExceptions) {
+        try {
+            List<PluginInformation> restartable = loadedPlugins.parallelStream()
+                    .filter(info -> PluginHandler.getPlugin(info.name) instanceof Destroyable)
+                    .collect(Collectors.toList());
+            // ensure good plugin behavior with regards to Destroyable (i.e., they can be
+            // removed and readded)
+            for (int i = 0; i < 2; i++) {
+                assertFalse(PluginHandler.removePlugins(restartable));
+                assertTrue(restartable.stream().noneMatch(info -> PluginHandler.getPlugins().contains(info)));
+                loadPlugins(restartable);
+            }
+
+            assertTrue(PluginHandler.removePlugins(loadedPlugins));
+            assertTrue(restartable.parallelStream().noneMatch(info -> PluginHandler.getPlugins().contains(info)));
+        } catch (Exception | LinkageError t) {
+            Throwable root = ExceptionUtils.getRootCause(t);
+            root.printStackTrace();
+            noRestartExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
+        }
+    }
+
+    private static <T> Map<String, T> filterKnownErrors(Map<String, T> errorMap) {
+        return errorMap.entrySet().parallelStream()
+                .filter(entry -> !errorsToIgnore.contains(convertEntryToString(entry)))
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
     }
 
     private static void debugPrint(Map<String, ?> invalidManifestEntries) {
         System.out.println(invalidManifestEntries.entrySet()
                 .stream()
-                .map(e -> e.getKey() + "=\"" + e.getValue() + "\"")
+                .map(e -> convertEntryToString(e))
                 .collect(Collectors.joining(", ")));
+    }
+
+    private static String convertEntryToString(Entry<String, ?> entry) {
+        return entry.getKey() + "=\"" + entry.getValue() + "\"";
     }
 
     /**
@@ -133,6 +195,10 @@ public class PluginHandlerTestIT {
         // Download plugins
         downloadPlugins(plugins);
 
+        loadPlugins(plugins);
+    }
+
+    static void loadPlugins(List<PluginInformation> plugins) {
         // Load early plugins
         PluginHandler.loadEarlyPlugins(null, plugins, null);
 

@@ -68,6 +68,7 @@ import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -1168,7 +1169,6 @@ public final class PluginHandler {
                         pluginsToDownload,
                         tr("Update plugins")
                 );
-
                 try {
                     pluginDownloadTask.run();
                 } catch (RuntimeException e) { // NOPMD
@@ -1332,6 +1332,18 @@ public final class PluginHandler {
                     URL oldPluginURL = updatedPlugin.toURI().toURL();
                     pluginsToLoad.stream().filter(x -> x.libraries.contains(oldPluginURL)).forEach(
                             x -> Collections.replaceAll(x.libraries, oldPluginURL, newPluginURL));
+
+                    // Attempt to update loaded plugin (must implement Destroyable)
+                    PluginInformation tInfo = pluginsToLoad.parallelStream()
+                            .filter(x -> x.libraries.contains(newPluginURL)).findAny().orElse(null);
+                    if (tInfo != null) {
+                        Object tUpdatedPlugin = getPlugin(tInfo.name);
+                        if (tUpdatedPlugin instanceof Destroyable) {
+                            ((Destroyable) tUpdatedPlugin).destroy();
+                            PluginHandler.loadPlugins(getInfoPanel(), Collections.singleton(tInfo),
+                                    NullProgressMonitor.INSTANCE);
+                        }
+                    }
                 } catch (MalformedURLException e) {
                     Logging.warn(e);
                 }
@@ -1642,5 +1654,30 @@ public final class PluginHandler {
         public boolean isRememberDecision() {
             return cbDontShowAgain.isSelected();
         }
+    }
+
+    /**
+     * Remove deactivated plugins, returning true if JOSM should restart
+     *
+     * @param deactivatedPlugins The plugins to deactivate
+     *
+     * @return true if there was a plugin that requires a restart
+     * @since 15508
+     */
+    public static boolean removePlugins(List<PluginInformation> deactivatedPlugins) {
+        List<Destroyable> noRestart = deactivatedPlugins.parallelStream()
+                .map(info -> PluginHandler.getPlugin(info.name)).filter(Destroyable.class::isInstance)
+                .map(Destroyable.class::cast).collect(Collectors.toList());
+        boolean restartNeeded;
+        try {
+            noRestart.forEach(Destroyable::destroy);
+            new ArrayList<>(pluginList).stream().filter(proxy -> noRestart.contains(proxy.getPlugin()))
+                    .forEach(pluginList::remove);
+            restartNeeded = deactivatedPlugins.size() != noRestart.size();
+        } catch (Exception e) {
+            Logging.error(e);
+            restartNeeded = true;
+        }
+        return restartNeeded;
     }
 }
