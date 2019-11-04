@@ -68,16 +68,6 @@ public class CertificateAmendmentTestIT {
     }
 
     /**
-     * Test a broken certificate.
-     * @throws IOException in case of I/O error
-     */
-    @Test
-    public void testBrokenCert() throws IOException {
-        // broken at the moment (may get fixed some day)
-        connect("https://www.pcwebshop.co.uk", false);
-    }
-
-    /**
      * Test overpass API.
      * @throws IOException in case of I/O error
      */
