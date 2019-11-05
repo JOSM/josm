@@ -120,7 +120,8 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean ignoreUnconnectedEndNode(Node n) {
-            return n.hasTag(RAILWAY, "buffer_stop");
+            return n.hasTag(RAILWAY, "buffer_stop")
+                || n.isKeyTrue("noexit");
         }
     }
 
