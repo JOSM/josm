@@ -72,6 +72,8 @@ public class MultipolygonTest extends Test {
     public static final int EQUAL_RINGS = 1616;
     /** Multipolygon rings share nodes */
     public static final int RINGS_SHARE_NODES = 1617;
+    /** Incomplete multipolygon was modified */
+    public static final int MODIFIED_INCOMPLETE = 1618;
 
     private static final int FOUND_INSIDE = 1;
     private static final int FOUND_OUTSIDE = 2;
@@ -95,13 +97,23 @@ public class MultipolygonTest extends Test {
             List<TestError> tmpErrors = new ArrayList<>(30);
             boolean hasUnexpectedWayRoles = checkMembersAndRoles(r, tmpErrors);
             boolean hasRepeatedMembers = checkRepeatedWayMembers(r);
+            if (r.isModified() && r.hasIncompleteMembers()) {
+                errors.add(TestError.builder(this, Severity.WARNING, MODIFIED_INCOMPLETE)
+                        .message(tr("Incomplete multipolygon relation was modified"))
+                        .primitives(r)
+                        .build());
+            }
             // Rest of checks is only for complete multipolygon
-            if (!hasUnexpectedWayRoles && !hasRepeatedMembers && !r.hasIncompleteMembers()) {
-                Multipolygon polygon = new Multipolygon(r);
-                checkStyleConsistency(r, polygon);
-                checkGeometryAndRoles(r, polygon);
-                // see #17010: don't report problems twice
-                tmpErrors.removeIf(e -> e.getCode() == WRONG_MEMBER_ROLE);
+            if (!hasUnexpectedWayRoles && !hasRepeatedMembers) {
+                if (r.hasIncompleteMembers()) {
+                    findIntersectingWaysIncomplete(r);
+                } else {
+                    Multipolygon polygon = new Multipolygon(r);
+                    checkStyleConsistency(r, polygon);
+                    checkGeometryAndRoles(r, polygon);
+                    // see #17010: don't report problems twice
+                    tmpErrors.removeIf(e -> e.getCode() == WRONG_MEMBER_ROLE);
+                }
             }
             errors.addAll(tmpErrors);
         }
@@ -506,6 +518,7 @@ public class MultipolygonTest extends Test {
         return en != null && p.get().contains(en.getX(), en.getY());
     }
 
+
     /**
      * Determine multipolygon ways which are intersecting (crossing without a common node) or sharing one or more way segments.
      * See also {@link CrossingWays}
@@ -520,24 +533,18 @@ public class MultipolygonTest extends Test {
         HashMap<PolyData, List<PolyData>> sharedWaySegmentsPolygonsMap = new HashMap<>();
 
         for (int loop = 0; loop < 2; loop++) {
-            /** All way segments, grouped by cells */
-            final Map<Point2D, List<WaySegment>> cellSegments = new HashMap<>(1000);
-            /** The already detected ways in error */
-            final Map<List<Way>, List<WaySegment>> problemWays = new HashMap<>(50);
 
-            Map<PolyData, List<PolyData>> problemPolygonMap = (loop == 0) ? crossingPolygonsMap
-                    : sharedWaySegmentsPolygonsMap;
+            Map<List<Way>, List<WaySegment>> crossingWays = findIntersectingWays(r, loop == 1);
 
-            for (Way w : r.getMemberPrimitives(Way.class)) {
-                findIntersectingWay(w, cellSegments, problemWays, loop == 1);
-            }
+            if (!crossingWays.isEmpty()) {
+                Map<PolyData, List<PolyData>> problemPolygonMap = (loop == 0) ? crossingPolygonsMap
+                        : sharedWaySegmentsPolygonsMap;
 
-            if (!problemWays.isEmpty()) {
                 List<PolyData> allPolygons = new ArrayList<>(innerPolygons.size() + outerPolygons.size());
                 allPolygons.addAll(innerPolygons);
                 allPolygons.addAll(outerPolygons);
 
-                for (Entry<List<Way>, List<WaySegment>> entry : problemWays.entrySet()) {
+                for (Entry<List<Way>, List<WaySegment>> entry : crossingWays.entrySet()) {
                     List<Way> ways = entry.getKey();
                     if (ways.size() != 2)
                         continue;
@@ -586,10 +593,51 @@ public class MultipolygonTest extends Test {
     }
 
     /**
+    * Determine multipolygon ways which are intersecting (crossing without a common node).
+    * This should only be used for relations with incomplete members.
+    * See also {@link CrossingWays}
+    * @param r the relation (for error reporting)
+     */
+    private void findIntersectingWaysIncomplete(Relation r) {
+        for (Entry<List<Way>, List<WaySegment>> entry : findIntersectingWays(r, false).entrySet()) {
+            List<Way> ways = entry.getKey();
+            if (ways.size() != 2)
+                continue;
+
+            errors.add(TestError.builder(this, Severity.ERROR, CROSSING_WAYS)
+                    .message(tr("Intersection between multipolygon ways"))
+                    .primitives(Arrays.asList(r, ways.get(0), ways.get(1)))
+                    .highlightWaySegments(entry.getValue())
+                    .build());
+        }
+    }
+
+    /**
+     * See {@link CrossingWays}
+     * @param r the relation
+     * @param findSharedWaySegments true: find shared way segments instead of crossings
+     * @return map with crossing ways and the related segments
+     */
+    private static Map<List<Way>, List<WaySegment>> findIntersectingWays(Relation r, boolean findSharedWaySegments) {
+        /** All way segments, grouped by cells */
+        final Map<Point2D, List<WaySegment>> cellSegments = new HashMap<>(1000);
+        /** The detected crossing ways */
+        final Map<List<Way>, List<WaySegment>> crossingWays = new HashMap<>(50);
+
+        for (Way w: r.getMemberPrimitives(Way.class)) {
+            if (!w.hasIncompleteNodes()) {
+                findIntersectingWay(w, cellSegments, crossingWays, findSharedWaySegments);
+            }
+        }
+        return crossingWays;
+    }
+
+
+    /**
      * Find ways which are crossing without sharing a node.
      * @param w way that is member of the relation
      * @param cellSegments map with already collected way segments
-     * @param crossingWays list to collect crossing ways
+     * @param crossingWays map to collect crossing ways and related segments
      * @param findSharedWaySegments true: find shared way segments instead of crossings
      */
     private static void findIntersectingWay(Way w, Map<Point2D, List<WaySegment>> cellSegments,
@@ -607,11 +655,9 @@ public class MultipolygonTest extends Test {
                 for (WaySegment es2 : segments) {
 
                     List<WaySegment> highlight;
-                    if (es2.way == w)
-                        continue; // reported by CrossingWays.SelfIntersection
-                    if (findSharedWaySegments && !es1.isSimilar(es2))
-                        continue;
-                    if (!findSharedWaySegments && !es1.intersects(es2))
+                    if (es2.way == w // reported by CrossingWays.SelfIntersection
+                            || (findSharedWaySegments && !es1.isSimilar(es2))
+                            || (!findSharedWaySegments && !es1.intersects(es2)))
                         continue;
 
                     List<Way> prims = Arrays.asList(es1.way, es2.way);
