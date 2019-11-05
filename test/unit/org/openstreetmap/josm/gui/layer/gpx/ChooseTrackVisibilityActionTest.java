@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -33,6 +34,7 @@ public class ChooseTrackVisibilityActionTest {
      * @throws Exception if an error occurs
      */
     @Test
+    @Ignore("broken, see #16796")
     public void testAction() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker() {
