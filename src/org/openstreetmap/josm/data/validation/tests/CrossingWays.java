@@ -26,7 +26,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
- * Tests if there are segments that crosses in the same layer
+ * Tests if there are segments that crosses in the same layer/level
  *
  * @author frsantos
  */
@@ -106,7 +106,7 @@ public abstract class CrossingWays extends Test {
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
             if (w1 == w2)
                 return false;
-            if (!Objects.equals(OsmUtils.getLayer(w1), OsmUtils.getLayer(w2))) {
+            if (areLayerOrLevelDifferent(w1, w2)) {
                 return true;
             }
             if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
@@ -251,9 +251,8 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            return !Objects.equals(OsmUtils.getLayer(w1), OsmUtils.getLayer(w2));
+            return areLayerOrLevelDifferent(w1, w2);
         }
-
     }
 
     /**
@@ -390,6 +389,11 @@ public abstract class CrossingWays extends Test {
                 segments.add(es1);
             }
         }
+    }
+
+    private static boolean areLayerOrLevelDifferent(Way w1, Way w2) {
+        return !Objects.equals(OsmUtils.getLayer(w1), OsmUtils.getLayer(w2))
+            || !Objects.equals(w1.get("level"), w2.get("level"));
     }
 
     /**
