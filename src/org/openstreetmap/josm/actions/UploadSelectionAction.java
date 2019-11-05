@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
  * Uploads the current selection to the server.
  * @since 2250
  */
-public class UploadSelectionAction extends JosmAction {
+public class UploadSelectionAction extends AbstractUploadAction {
     /**
      * Constructs a new {@code UploadSelectionAction}.
      */

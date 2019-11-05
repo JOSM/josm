@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +29,6 @@ import org.openstreetmap.josm.gui.io.AsynchronousUploadPrimitivesTask;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetUpdater;
@@ -51,7 +48,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public class UploadAction extends JosmAction {
+public class UploadAction extends AbstractUploadAction {
     /**
      * The list of upload hooks. These hooks will be called one after the other
      * when the user wants to upload data. Plugins can insert their own hooks here
@@ -93,12 +90,6 @@ public class UploadAction extends JosmAction {
          */
         LATE_UPLOAD_HOOKS.add(new DiscardTagsHook());
     }
-
-    private final PropertyChangeListener updateOnRequireUploadChange = evt -> {
-        if (OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP.equals(evt.getPropertyName())) {
-            updateEnabledState();
-        }
-    };
 
     /**
      * Registers an upload hook. Adds the hook at the first position of the upload hooks.
@@ -152,27 +143,6 @@ public class UploadAction extends JosmAction {
         super(tr("Upload data..."), "upload", tr("Upload all changes in the active data layer to the OSM server"),
                 Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload data")), KeyEvent.VK_UP, Shortcut.CTRL_SHIFT), true);
         setHelpId(ht("/Action/Upload"));
-    }
-
-    @Override
-    protected LayerChangeAdapter buildLayerChangeAdapter() {
-        return new LayerChangeAdapter() {
-            @Override
-            public void layerAdded(LayerAddEvent e) {
-                if (e.getAddedLayer() instanceof OsmDataLayer) {
-                    e.getAddedLayer().addPropertyChangeListener(updateOnRequireUploadChange);
-                }
-                super.layerAdded(e);
-            }
-
-            @Override
-            public void layerRemoving(LayerRemoveEvent e) {
-                if (e.getRemovedLayer() instanceof OsmDataLayer) {
-                    e.getRemovedLayer().removePropertyChangeListener(updateOnRequireUploadChange);
-                }
-                super.layerRemoving(e);
-            }
-        };
     }
 
     @Override
