@@ -789,7 +789,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             boolean stopped = false;
             for (Thread t : threads) {
                 if (t instanceof SmoothScrollThread) {
-                    ((SmoothScrollThread)t).stopIt();
+                    ((SmoothScrollThread) t).stopIt();
                     /* handle this case outside in case there is more than one smooth thread */
                     stopped = true;
                 }
