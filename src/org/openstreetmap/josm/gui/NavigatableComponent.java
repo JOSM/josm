@@ -737,7 +737,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Thread class for smooth scrolling. Made a separate class, so we can safely terminate it.
      */
     private class SmoothScrollThread extends Thread {
-        private boolean doStop = false;
+        private boolean doStop;
         private final EastNorth oldCenter = getCenter();
         private final EastNorth finalNewCenter;
         private final double frames;
