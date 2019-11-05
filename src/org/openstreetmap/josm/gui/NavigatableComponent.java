@@ -734,6 +734,40 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
+     * Thread class for smooth scrolling. Made a separate class, so we can safely terminate it.
+     */
+    private class SmoothScrollThread extends Thread {
+        private boolean doStop = false;
+        private final EastNorth oldCenter = getCenter();
+        private final EastNorth finalNewCenter;
+        private final double frames;
+        private final long sleepTime;
+
+        SmoothScrollThread(EastNorth newCenter, double frameNum, int fps) {
+            super("smooth-scroller");
+            finalNewCenter = newCenter;
+            frames = frameNum;
+            sleepTime = 1000L / fps;
+        }
+
+        @Override
+        public void run() {
+            try {
+                for (int i = 0; i < frames && !doStop; i++) {
+                    zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
+                    Thread.sleep(sleepTime);
+                }
+            } catch (InterruptedException ex) {
+                Logging.warn("Interruption during smooth scrolling");
+            }
+        }
+
+        public void stopIt() {
+            doStop = true;
+        }
+    }
+
+    /**
      * Create a thread that moves the viewport to the given center in an animated fashion.
      * @param newCenter new east/north center
      */
@@ -748,24 +782,24 @@ public class NavigatableComponent extends JComponent implements Helpful {
             if (milliseconds > maxtime) { // prevent overlong scroll time, speed up if necessary
                 milliseconds = maxtime;
             }
-            final double frames = milliseconds * fps / 1000;
-            final EastNorth finalNewCenter = newCenter;
 
-            new Thread("smooth-scroller") {
-                @Override
-                public void run() {
-                    for (int i = 0; i < frames; i++) {
-                        // FIXME - do not use zoom history here
-                        zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
-                        try {
-                            Thread.sleep(1000L / fps);
-                        } catch (InterruptedException ex) {
-                            Logging.warn("InterruptedException in "+NavigatableComponent.class.getSimpleName()+" during smooth scrolling");
-                            Thread.currentThread().interrupt();
-                        }
-                    }
+            ThreadGroup group = Thread.currentThread().getThreadGroup();
+            Thread[] threads = new Thread[group.activeCount()];
+            group.enumerate(threads, true);
+            boolean stopped = false;
+            for (Thread t : threads) {
+                if (t instanceof SmoothScrollThread) {
+                    ((SmoothScrollThread)t).stopIt();
+                    /* handle this case outside in case there is more than one smooth thread */
+                    stopped = true;
                 }
-            }.start();
+            }
+            if (stopped && milliseconds > maxtime/2.0) { /* we aren't fast enough, skip smooth */
+                Logging.warn("Skip smooth scrolling");
+                zoomTo(newCenter);
+            } else {
+                new SmoothScrollThread(newCenter, milliseconds * fps / 1000, fps).start();
+            }
         }
     }
 
