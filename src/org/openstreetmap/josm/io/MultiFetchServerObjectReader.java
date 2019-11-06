@@ -100,9 +100,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      *
      * @param fromMirror {@code false} for {@link MultiFetchServerObjectReader}, {@code true} for {@link MultiFetchOverpassObjectReader}
      * @return a new instance
-     * @since 9241
+     * @since 15520 (changed visibility)
      */
-    static MultiFetchServerObjectReader create(final boolean fromMirror) {
+    public static MultiFetchServerObjectReader create(final boolean fromMirror) {
         if (fromMirror) {
             return new MultiFetchOverpassObjectReader();
         } else {
