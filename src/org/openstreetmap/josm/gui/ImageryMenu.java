@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.swing.Action;
@@ -300,7 +299,6 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
 
     private void removeDynamicItem(Object item) {
         if (item instanceof JMenuItem) {
-            Optional.ofNullable(((JMenuItem) item).getAction()).ifPresent(MainApplication.getToolbar()::unregister);
             remove((JMenuItem) item);
         } else if (item instanceof MenuComponent) {
             remove((MenuComponent) item);
