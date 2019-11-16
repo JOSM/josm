@@ -2450,6 +2450,7 @@
                 <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
                 <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
                 <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway" />
+                <role key="hail_and_ride" text="hail and ride route segment" requisite="optional" type="way,closedway" member_expression="highway" />
             </roles>
         </item> <!-- Public Transport Route (Bus) -->
         <item name="Route Master" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
@@ -7518,9 +7519,6 @@
             <space />
             <key key="type" value="restriction" />
             <combo key="restriction" text="Restriction" values="no_left_turn,no_right_turn,no_straight_on,no_u_turn,only_right_turn,only_left_turn,only_straight_on" values_searchable="true" />
-            <optional>
-                <text key="name" text="Name" />
-            </optional>
             <roles>
                 <role key="from" text="from way" requisite="required" count="1" type="way" />
                 <role key="via" text="via node or ways" requisite="required" type="way,node" />

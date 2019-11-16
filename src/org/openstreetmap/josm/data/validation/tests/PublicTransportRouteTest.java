@@ -51,7 +51,7 @@ public class PublicTransportRouteTest extends Test {
                         .primitives(r)
                         .build());
                 return;
-            } else if (member.hasRole("") && OsmPrimitiveType.WAY == member.getType()) {
+            } else if (member.hasRole("", "hail_and_ride") && OsmPrimitiveType.WAY == member.getType()) {
                 membersToCheck.add(member);
                 routeNodes.addAll(member.getWay().getNodes());
             }
