@@ -469,7 +469,6 @@ public final class DomainValidator extends AbstractValidator {
         "career", // career dotCareer LLC
         "careers", // careers Wild Corner, LLC
         "cars", // cars Uniregistry, Corp.
-        "cartier", // cartier Richemont DNS Inc.
         "casa", // casa Top Level Domain Holdings Limited
         "case", // case CNH Industrial N.V.
         "caseih", // caseih CNH Industrial N.V.
@@ -630,7 +629,6 @@ public final class DomainValidator extends AbstractValidator {
         "eurovision", // eurovision European Broadcasting Union (EBU)
         "eus", // eus Puntueus Fundazioa
         "events", // events Pioneer Maple, LLC
-        "everbank", // everbank EverBank
         "exchange", // exchange Spring Falls, LLC
         "expert", // expert Magic Pass, LLC
         "exposed", // exposed Victor Beach, LLC
@@ -1068,7 +1066,6 @@ public final class DomainValidator extends AbstractValidator {
         "photography", // photography Sugar Glen, LLC
         "photos", // photos Sea Corner, LLC
         "physio", // physio PhysBiz Pty Ltd
-        "piaget", // piaget Richemont DNS Inc.
         "pics", // pics Uniregistry, Corp.
         "pictet", // pictet Pictet Europe S.A.
         "pictures", // pictures Foggy Sky, LLC
