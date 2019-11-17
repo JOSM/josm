@@ -75,10 +75,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         this.tile = tile;
         this.options = options;
         if (listener != null) {
-            String deduplicationKey = getCacheKey();
-            synchronized (inProgress) {
-                inProgress.computeIfAbsent(deduplicationKey, k -> new HashSet<>()).add(listener);
-            }
+            inProgress.computeIfAbsent(getCacheKey(), k -> new HashSet<>()).add(listener);
         }
     }
 
@@ -161,10 +158,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     @Override
     public void loadingFinished(CacheEntry object, CacheEntryAttributes attributes, LoadResult result) {
         this.attributes = attributes; // as we might get notification from other object than our selfs, pass attributes along
-        Set<TileLoaderListener> listeners;
-        synchronized (inProgress) {
-            listeners = inProgress.remove(getCacheKey());
-        }
+        Set<TileLoaderListener> listeners = inProgress.remove(getCacheKey());
         boolean status = result == LoadResult.SUCCESS;
 
         try {

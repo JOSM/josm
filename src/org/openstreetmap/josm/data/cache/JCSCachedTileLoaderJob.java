@@ -152,15 +152,10 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             Logging.warn("No url returned for: {0}, skipping", getCacheKey());
             throw new IllegalArgumentException("No url returned");
         }
-        synchronized (inProgress) {
-            Set<ICachedLoaderListener> newListeners = inProgress.get(deduplicationKey);
-            if (newListeners == null) {
-                newListeners = new HashSet<>();
-                inProgress.put(deduplicationKey, newListeners);
-                first = true;
-            }
-            newListeners.add(listener);
+        synchronized (this) {
+            first = !inProgress.containsKey(deduplicationKey);
         }
+        inProgress.computeIfAbsent(deduplicationKey, k -> new HashSet<>()).add(listener);
 
         if (first || force) {
             // submit all jobs to separate thread, so calling thread is not blocked with IO when loading from disk
@@ -249,13 +244,11 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     private void finishLoading(LoadResult result) {
         Set<ICachedLoaderListener> listeners;
-        synchronized (inProgress) {
-            try {
-                listeners = inProgress.remove(getUrl().toString());
-            } catch (IOException e) {
-                listeners = null;
-                Logging.trace(e);
-            }
+        try {
+            listeners = inProgress.remove(getUrl().toString());
+        } catch (IOException e) {
+            listeners = null;
+            Logging.trace(e);
         }
         if (listeners == null) {
             Logging.warn("Listener not found for URL: {0}. Listener not notified!", getUrlNoException());
