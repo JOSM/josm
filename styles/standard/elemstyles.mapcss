@@ -2056,6 +2056,7 @@ area[shop=tea],
 area[shop=coffee],
 area[shop=antiques],
 area[shop=music],
+area[shop=weapons],
 area[shop=funeral_directors],
 area[shop=wine],
 area[shop=farm],
@@ -2419,6 +2420,10 @@ node[shop=antiques] {
 }
 node[shop=music] {
     icon-image: "presets/shop/music.svg";
+    set icon_z17;
+}
+node[shop=weapons] {
+    icon-image: "presets/shop/weapons.svg";
     set icon_z17;
 }
 node[shop=funeral_directors] {
