@@ -4872,14 +4872,6 @@
             <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
             <text key="pressure" text="Pressure (bar)" />
         </item> <!-- Pipeline -->
-        <item name="Pipeline Marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
-            <link wiki="Tag:pipeline=marker" />
-            <space />
-            <key key="pipeline" value="marker" />
-            <text key="ref" text="Reference" />
-            <reference ref="operator_substance" />
-            <reference ref="support" />
-        </item> <!-- Pipeline Marker -->
         <item name="Pipeline Valve" icon="presets/misc/valve.svg" type="node" preset_name_label="true">
             <link wiki="Tag:pipeline=valve" />
             <space />
@@ -4891,6 +4883,18 @@
             <combo key="sensor:position" text="Position sensor" values="optical,mechanical,inductive,yes" />
             <reference ref="ref_operator" />
         </item> <!-- Pipeline Valve -->
+        <item name="Marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
+            <link wiki="Key:marker" />
+            <space />
+            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" match="key" />
+            <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" />
+            <optional>
+                <reference ref="ref_operator" />
+                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" values_context="marker />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
+                <combo key="location" text="Location" values="underground,overground" values_context="pipeline" />
+            </optional>
+        </item> <!-- Marker -->
         <item name="Manhole" icon="presets/misc/manhole.svg" type="node" preset_name_label="true">
             <link wiki="Key:manhole" />
             <space />

@@ -1818,3 +1818,12 @@ node[pole:type=suspension] {
   fixChangeKey: "pole:type => line_attachment";
   group: tr("deprecated tagging");
 }
+
+/* #18267 */
+node[pipeline=marker],
+node[power=marker],
+node[cable=marker] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "marker=* + utility=*";
+  group: tr("deprecated tagging");
+}
