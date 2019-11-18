@@ -1821,7 +1821,6 @@ node[pole:type=suspension] {
 
 /* #18267 */
 node[man_made=pipeline_marker],
-node[man_made=marker],
 node[pipeline=marker],
 node[power=marker],
 node[cable=marker] {
