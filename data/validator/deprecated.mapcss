@@ -471,7 +471,9 @@ way[type=palm] {
   fixAdd: "park_ride=yes";
 }
 
-/* see #17950, #10661, #10837, #11737, #12771 */
+/* see #18334, #17950, #10661, #10837, #11737, #12771 */
+*[manhole=plain],
+*[manhole=unknown],
 *[police=yes],
 *[traffic_calming=yes],
 *[access=restricted],
