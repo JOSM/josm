@@ -31,6 +31,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -49,6 +50,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -69,6 +71,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class CreateMultipolygonAction extends JosmAction {
 
     private final boolean update;
+    private static final int MAX_MEMBERS_TO_DOWNLOAD = 100;
 
     /**
      * Constructs a new {@code CreateMultipolygonAction}.
@@ -169,14 +172,22 @@ public class CreateMultipolygonAction extends JosmAction {
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
         if (multipolygonRelation != null && editLayer != null && editLayer.isDownloadable()) {
             if (!multipolygonRelation.isNew() && multipolygonRelation.isIncomplete()) {
-                MainApplication.worker.submit(
-                        new DownloadRelationTask(Collections.singleton(multipolygonRelation), editLayer));
+                MainApplication.worker
+                        .submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), editLayer));
             } else if (multipolygonRelation.hasIncompleteMembers()) {
-                MainApplication.worker.submit(new DownloadRelationMemberTask(multipolygonRelation,
-                        Utils.filteredCollection(
-                            DownloadSelectedIncompleteMembersAction.buildSetOfIncompleteMembers(
-                                    Collections.singleton(multipolygonRelation)), OsmPrimitive.class),
-                        editLayer));
+                // with complex relations the download of the full relation is much faster than download of almost all members, see #18341
+                SubclassFilteredCollection<IPrimitive, OsmPrimitive> incompleteMembers = Utils
+                        .filteredCollection(DownloadSelectedIncompleteMembersAction.buildSetOfIncompleteMembers(
+                                Collections.singleton(multipolygonRelation)), OsmPrimitive.class);
+
+                if (incompleteMembers.size() <= MAX_MEMBERS_TO_DOWNLOAD) {
+                    MainApplication.worker
+                            .submit(new DownloadRelationMemberTask(multipolygonRelation, incompleteMembers, editLayer));
+                } else {
+                    MainApplication.worker
+                            .submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), editLayer));
+
+                }
             }
         }
         // create/update multipolygon relation
