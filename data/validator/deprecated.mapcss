@@ -474,6 +474,7 @@ way[type=palm] {
 /* see #18334, #17950, #10661, #10837, #11737, #12771 */
 *[manhole=plain],
 *[manhole=unknown],
+*[manhole=yes],
 *[police=yes],
 *[traffic_calming=yes],
 *[access=restricted],
