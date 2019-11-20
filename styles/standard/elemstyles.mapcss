@@ -1493,11 +1493,15 @@ way[man_made=embankment][!highway][!railway][!waterway] {
 }
 way[embankment?][highway],
 way[embankment?][railway],
-way[embankment?][waterway],
+way[embankment?][waterway] {
+    repeat-image: "presets/misc/embankment-pattern-centered.png";
+}
 way[man_made=embankment][highway],
 way[man_made=embankment][railway],
 way[man_made=embankment][waterway] {
-    repeat-image: "presets/misc/embankment-pattern-centered.png";
+    repeat-image: "presets/misc/embankment-pattern.png";
+    repeat-image-align: top;
+    repeat-image-offset: -1;
 }
 way[man_made=pipeline][!waterway] {
     width: 2;

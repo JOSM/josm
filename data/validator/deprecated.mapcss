@@ -1831,3 +1831,11 @@ node[cable=marker] {
   suggestAlternative: "marker=* + utility=*";
   group: tr("deprecated tagging");
 }
+
+/* #17643 */
+way[barrier=embankment] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "man_made=embankment";
+  suggestAlternative: "embankment=yes";
+  group: tr("deprecated tagging");
+}
