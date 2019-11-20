@@ -496,7 +496,6 @@ public final class DomainValidator extends AbstractValidator {
         "chintai", // chintai CHINTAI Corporation
         "christmas", // christmas Uniregistry, Corp.
         "chrome", // chrome Charleston Road Registry Inc.
-        "chrysler", // chrysler FCA US LLC.
         "church", // church Holly Fileds, LLC
         "cipriani", // cipriani Hotel Cipriani Srl
         "circle", // circle Amazon Registry Services, Inc.
@@ -592,7 +591,6 @@ public final class DomainValidator extends AbstractValidator {
         "dnp", // dnp Dai Nippon Printing Co., Ltd.
         "docs", // docs Charleston Road Registry Inc.
         "doctor", // doctor Brice Trail, LLC
-        "dodge", // dodge FCA US LLC.
         "dog", // dog Koko Mill, LLC
         "domains", // domains Sugar Cross, LLC
         "dot", // dot Dish DBS Corporation
@@ -861,7 +859,6 @@ public final class DomainValidator extends AbstractValidator {
         "kuokgroup", // kuokgroup Kerry Trading Co. Limited
         "kyoto", // kyoto Academic Institution: Kyoto Jyoho Gakuen
         "lacaixa", // lacaixa CAIXA D&#39;ESTALVIS I PENSIONS DE BARCELONA
-        "ladbrokes", // ladbrokes LADBROKES INTERNATIONAL PLC
         "lamborghini", // lamborghini Automobili Lamborghini S.p.A.
         "lamer", // lamer The Estée Lauder Companies Inc.
         "lancaster", // lancaster LANCASTER
@@ -967,7 +964,6 @@ public final class DomainValidator extends AbstractValidator {
         "monash", // monash Monash University
         "money", // money Outer McCook, LLC
         "monster", // monster Monster Worldwide, Inc.
-        "mopar", // mopar FCA US LLC.
         "mormon", // mormon IRI Domain Management, LLC (&quot;Applicant&quot;)
         "mortgage", // mortgage United TLD Holdco, Ltd
         "moscow", // moscow Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
@@ -1237,7 +1233,6 @@ public final class DomainValidator extends AbstractValidator {
         "spot", // spot Amazon Registry Services, Inc.
         "spreadbetting", // spreadbetting DOTSPREADBETTING REGISTRY LTD
         "srl", // srl InterNetX Corp.
-        "srt", // srt FCA US LLC.
         "ss", // ss National Communication Authority (NCA)
         "stada", // stada STADA Arzneimittel AG
         "staples", // staples Staples, Inc.
@@ -1327,7 +1322,6 @@ public final class DomainValidator extends AbstractValidator {
         "tvs", // tvs T V SUNDRAM IYENGAR  &amp; SONS PRIVATE LIMITED
         "ubank", // ubank National Australia Bank Limited
         "ubs", // ubs UBS AG
-        "uconnect", // uconnect FCA US LLC.
         "unicom", // unicom China United Network Communications Corporation Limited
         "university", // university Little Station, LLC
         "uno", // uno Dot Latin LLC
@@ -1368,7 +1362,6 @@ public final class DomainValidator extends AbstractValidator {
         "walter", // walter Sandvik AB
         "wang", // wang Zodiac Registry Limited
         "wanggou", // wanggou Amazon Registry Services, Inc.
-        "warman", // warman Weir Group IP Limited
         "watch", // watch Sand Shadow, LLC
         "watches", // watches Richemont DNS Inc.
         "weather", // weather The Weather Channel, LLC
