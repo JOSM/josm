@@ -1554,6 +1554,55 @@
   </group> <!-- Highways -->
   <group name="Water" name_context="main group" icon="presets/nautical/waterway_river.svg">
     <group name="Water" name_context="sub group" icon="presets/nautical/waterway_river.svg">
+        <item name="River" icon="presets/nautical/waterway_river.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:waterway=river" />
+            <space />
+            <key key="waterway" value="river" />
+            <text key="name" text="Name" />
+            <optional>
+                <reference ref="waterway_wikipedia" />
+                <check key="lock" text="Lock" disable_off="true" />
+            </optional>
+            <reference ref="water_access" />
+        </item> <!-- River -->
+        <item name="Stream" icon="presets/nautical/waterway_stream.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:waterway=stream" />
+            <space />
+            <key key="waterway" value="stream" />
+            <text key="name" text="Name" />
+            <optional>
+                <reference ref="waterway_wikipedia" />
+            </optional>
+            <reference ref="water_access" />
+        </item> <!-- Stream -->
+        <item name="Tidal channel" icon="presets/nautical/tidal_channel.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:waterway=tidal_channel" />
+            <space />
+            <key key="waterway" value="tidal_channel" />
+            <optional>
+                <text key="name" text="Name" />
+                <check key="salt" text="Salt Water" disable_off="true" />
+                <check key="intermittent" text="Intermittent" disable_off="true" />
+                <check key="seasonal" text="Seasonal" disable_off="true" />
+                <text key="width" text="Width (meters)" />
+                <text key="wikipedia" text="Wikipedia" />
+            </optional>
+        </item> <!-- Tidal channel -->
+        <item name="Canal" icon="presets/nautical/waterway_canal.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:waterway=canal" />
+            <space />
+            <key key="waterway" value="canal" />
+            <text key="name" text="Name" />
+            <optional>
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
+                <combo key="tunnel" text="Tunnel" values="culvert,flooded,yes" />
+                <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" values_context="usage" />
+                <text key="width" text="Width (meters)" />
+                <text key="wikipedia" text="Wikipedia" />
+                <check key="lock" text="Lock" disable_off="true" />
+            </optional>
+            <reference ref="water_access" />
+        </item> <!-- Canal -->
         <item name="Drain" icon="presets/nautical/waterway_drain.svg" type="way" preset_name_label="true">
             <link wiki="Tag:waterway=drain" />
             <space />
@@ -1572,42 +1621,6 @@
                 <reference ref="waterway" />
             </optional>
         </item> <!-- Ditch -->
-        <item name="Stream" icon="presets/nautical/waterway_stream.svg" type="way" preset_name_label="true">
-            <link wiki="Tag:waterway=stream" />
-            <space />
-            <key key="waterway" value="stream" />
-            <text key="name" text="Name" />
-            <optional>
-                <reference ref="waterway_wikipedia" />
-            </optional>
-            <reference ref="water_access" />
-        </item> <!-- Stream -->
-        <item name="River" icon="presets/nautical/waterway_river.svg" type="way" preset_name_label="true">
-            <link wiki="Tag:waterway=river" />
-            <space />
-            <key key="waterway" value="river" />
-            <text key="name" text="Name" />
-            <optional>
-                <reference ref="waterway_wikipedia" />
-                <check key="lock" text="Lock" disable_off="true" />
-            </optional>
-            <reference ref="water_access" />
-        </item> <!-- River -->
-        <item name="Canal" icon="presets/nautical/waterway_canal.svg" type="way" preset_name_label="true">
-            <link wiki="Tag:waterway=canal" />
-            <space />
-            <key key="waterway" value="canal" />
-            <text key="name" text="Name" />
-            <optional>
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-                <combo key="tunnel" text="Tunnel" values="culvert,flooded,yes" />
-                <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" values_context="usage" />
-                <text key="width" text="Width (meters)" />
-                <text key="wikipedia" text="Wikipedia" />
-                <check key="lock" text="Lock" disable_off="true" />
-            </optional>
-            <reference ref="water_access" />
-        </item> <!-- Canal -->
         <separator/>
         <item name="Spring" icon="presets/landmark/spring.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:natural=spring" />

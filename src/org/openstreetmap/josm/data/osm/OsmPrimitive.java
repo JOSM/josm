@@ -71,7 +71,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
                 "(aerialway=t-bar & -oneway=no) | "+
                 "(aerialway=j-bar & -oneway=no) | "+
                 "(aerialway=platter & -oneway=no) | "+
-                "waterway=stream | waterway=river | waterway=ditch | waterway=drain | "+
+                "waterway=stream | waterway=river | waterway=ditch | waterway=drain | waterway=tidal_channel | "+
                 "(\"piste:type\"=downhill & -area=yes) | (\"piste:type\"=sled & -area=yes) | (man_made=\"piste:halfpipe\" & -area=yes) | "+
                 "junction=circular | junction=roundabout | (highway=motorway & -oneway=no & -oneway=reversible) | "+
                 "(highway=motorway_link & -oneway=no & -oneway=reversible)";

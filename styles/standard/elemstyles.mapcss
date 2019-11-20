@@ -4578,12 +4578,17 @@ way[waterway=drain] {
     width: 1;
     color: water#0000ff;
 }
+way[waterway=tidal_channel] {
+    width: 1;
+    color: tidal_channel#0000ff;
+}
 way[waterway=river][intermittent=yes],
 area[waterway=riverbank][intermittent=yes],
 way[waterway=canal][intermittent=yes],
 way[waterway=stream][intermittent=yes],
 way[waterway=ditch][intermittent=yes],
-way[waterway=drain][intermittent=yes] {
+way[waterway=drain][intermittent=yes],
+way[waterway=tidal_channel][intermittent=yes] {
     dashes: 15, 5;
 }
 area[waterway=dock] {
