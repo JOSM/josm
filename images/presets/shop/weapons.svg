@@ -11,8 +11,8 @@
    height="10"
    width="16"
    version="1.1"
-   viewBox="0 0 14.999403 9.3749926"
-   sodipodi:docname="Gun4.svg"
+   viewBox="0 0 16 10"
+   sodipodi:docname="weapons2.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata36">
@@ -43,7 +43,7 @@
      showgrid="true"
      units="px"
      inkscape:zoom="26.089307"
-     inkscape:cx="7.9018707"
+     inkscape:cx="-0.46115101"
      inkscape:cy="4.9084256"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -55,7 +55,7 @@
   </sodipodi:namedview>
   <g
      id="layer1"
-     transform="matrix(0.03433132,0,0,0.03433132,-4.9654879,-10.180279)">
+     transform="matrix(0.0366201,0,0,0.0366201,-5.2874403,-10.858967)">
     <g
        id="g7534"
        transform="matrix(2.236,0,0,2.236,-363.42,-1228.9)"
