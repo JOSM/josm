@@ -3253,6 +3253,7 @@ area[tourism=chalet],
 area[tourism=alpine_hut],
 area[tourism=wilderness_hut],
 area[tourism=camp_site],
+area[tourism=camp_pitch],
 area[tourism=caravan_site] {
     fill-color: hotel#feced0;
 }
@@ -3290,6 +3291,10 @@ node[tourism=wilderness_hut] {
 }
 node[tourism=camp_site] {
     icon-image: "presets/accommodation/camping.svg";
+    set icon_z17;
+}
+node[tourism=camp_pitch] {
+    icon-image: "presets/accommodation/camp_pitch.svg";
     set icon_z17;
 }
 node[tourism=caravan_site] {
