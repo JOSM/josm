@@ -778,6 +778,8 @@ Build-Date: ${build.tstamp}
             <ignore classname="io.*"/>
             <ignore classname="it.*"/>
             <ignore classname="java.lang.invoke.MethodHandle"/>
+        	<ignore classname="java.nio.ByteBuffer"/>
+        	<ignore classname="java.nio.FloatBuffer"/>
             <ignore classname="java.util.list.kotlin.*"/>
             <ignore classname="javax.*"/>
             <ignore classname="jdk.swing.interop.*"/>
@@ -830,6 +832,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.testng.*"/>
             <ignore classname="org.w3c.*"/>
             <ignore classname="org.zeromq.*"/>
+            <ignore classname="waffle.*"/>
             <!-- plugins used by another ones -->
             <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jaxb.*"/>
