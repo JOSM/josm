@@ -340,6 +340,20 @@ public class DownloadDialog extends JDialog {
     }
 
     /**
+     * Remove a download source from the download dialog
+     *
+     * @param downloadSource The download source to be removed.
+     * @return see {@link List#remove}
+     * @since 15542
+     */
+    public static boolean removeDownloadSource(DownloadSource<?> downloadSource) {
+        if (downloadSources.contains(downloadSource)) {
+            return downloadSources.remove(downloadSource);
+        }
+        return false;
+    }
+
+    /**
      * Refreshes the tile sources.
      * @since 6364
      */
