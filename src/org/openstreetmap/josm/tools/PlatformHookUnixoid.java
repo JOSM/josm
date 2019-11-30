@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -68,7 +67,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 Arrays.asList("xdg-open", "#DESKTOP#", "$BROWSER", "gnome-open", "kfmclient openURL", "firefox"))) {
             try {
                 if ("#DESKTOP#".equals(program)) {
-                    Desktop.getDesktop().browse(new URI(url));
+                    Desktop.getDesktop().browse(Utils.urlToURI(url));
                 } else if (program.startsWith("$")) {
                     program = System.getenv().get(program.substring(1));
                     Runtime.getRuntime().exec(new String[]{program, url});

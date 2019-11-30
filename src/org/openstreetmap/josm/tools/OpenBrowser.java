@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Desktop;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -62,8 +63,8 @@ public final class OpenBrowser {
      */
     public static String displayUrl(String url) {
         try {
-            return displayUrl(new URI(url));
-        } catch (URISyntaxException e) {
+            return displayUrl(Utils.urlToURI(url));
+        } catch (URISyntaxException | MalformedURLException e) {
             Logging.debug(e);
             return e.getMessage();
         }

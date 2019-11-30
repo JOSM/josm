@@ -39,7 +39,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryIteratorException;
@@ -168,7 +167,7 @@ public class PlatformHookWindows implements PlatformHook {
         }
         try {
             // Desktop API works fine under Windows
-            Desktop.getDesktop().browse(new URI(url));
+            Desktop.getDesktop().browse(Utils.urlToURI(url));
         } catch (IOException | URISyntaxException e) {
             Logging.log(Logging.LEVEL_WARN, "Desktop class failed. Platform dependent fall back for open url in browser.", e);
             Runtime.getRuntime().exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});

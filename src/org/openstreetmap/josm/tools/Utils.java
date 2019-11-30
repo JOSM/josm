@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -539,6 +541,35 @@ public final class Utils {
             }
         }
         return null;
+    }
+
+    /**
+     * Converts the given URL to its URI.
+     * @param url the URL to get URI from
+     * @return the URI of given URL
+     * @throws URISyntaxException if the URL cannot be converted to an URI
+     * @throws MalformedURLException if no protocol is specified, or an unknown protocol is found, or {@code spec} is {@code null}.
+     * @since 15543
+     */
+    public static URI urlToURI(String url) throws URISyntaxException, MalformedURLException {
+        return urlToURI(new URL(url));
+    }
+
+    /**
+     * Converts the given URL to its URI.
+     * @param url the URL to get URI from
+     * @return the URI of given URL
+     * @throws URISyntaxException if the URL cannot be converted to an URI
+     * @since 15543
+     */
+    public static URI urlToURI(URL url) throws URISyntaxException {
+        try {
+            return url.toURI();
+        } catch (URISyntaxException e) {
+            Logging.trace(e);
+            return new URI(
+                    url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+        }
     }
 
     private static final double EPSILON = 1e-11;
