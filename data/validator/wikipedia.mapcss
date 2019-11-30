@@ -82,12 +82,12 @@
   fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),1), upper(get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),2)), get(regexp_match("(?i)^([-a-z]+:)(.)(.*)$", tag("wikipedia")),3));
   assertMatch: "node wikipedia=en:foo";
   assertNoMatch: "node wikipedia=en:Foo";
-  assertMatch: "node wikipedia=ru:Ð°Ð±Ð²";
-  assertNoMatch: "node wikipedia=ru:Ð�Ð±Ð²";
+  assertMatch: "node wikipedia=ru:абв";
+  assertNoMatch: "node wikipedia=ru:Абв";
 }
 
 *[wikipedia =~ /(?i)^[-a-z]{2,12}:.*_/][wikipedia !~ /(?i)^[-a-z]{2,12}:https?:/] {
-  throwWarning: tr("wikipedia page title should have spaces instead of underscores (''_''â†’'' '')");
+  throwWarning: tr("wikipedia page title should have spaces instead of underscores (''_''→'' '')");
   fixAdd: concat("wikipedia=", get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),1), trim(replace(get(regexp_match("(?i)^([-a-z]+:)(.+)$", tag("wikipedia")),2), "_", " ")));
   assertMatch: "node wikipedia=en:foo_bar";
   assertNoMatch: "node wikipedia=en:foo bar";
