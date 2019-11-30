@@ -3302,6 +3302,14 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Horse Riding -->
+        <item name="Hackerspace" icon="presets/leisure/hackerspace.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:leisure=hackerspace" />
+            <space />
+            <key key="leisure" value="hackerspace" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <space />
+            <reference ref="link_contact_address" />
+        </item> <!-- Hackerspace -->
         <separator/>
         <item name="Playground" icon="presets/leisure/playground.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:leisure=playground" />
