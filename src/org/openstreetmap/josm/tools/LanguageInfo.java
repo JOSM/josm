@@ -196,6 +196,20 @@ public final class LanguageInfo {
      * @return the resulting locale
      */
     public static Locale getLocale(String localeName) {
+        return getLocale(localeName, false);
+    }
+
+    /**
+     * Replies the locale used by Java for a given language code.
+     *
+     * Accepts JOSM and Java codes as input.
+     *
+     * @param localeName the locale code.
+     * @param useDefaultCountry if {@code true}, the current locale country will be used if no country is specified
+     * @return the resulting locale
+     * @since 15547
+     */
+    public static Locale getLocale(String localeName, boolean useDefaultCountry) {
         int country = localeName.indexOf('_');
         int variant = localeName.indexOf('@');
         if (variant < 0 && country >= 0)
@@ -208,7 +222,7 @@ public final class LanguageInfo {
         } else if (country > 0) {
             l = new Locale(localeName.substring(0, country), localeName.substring(country + 1));
         } else {
-            l = new Locale(localeName, Locale.getDefault().getCountry());
+            l = new Locale(localeName, useDefaultCountry ? Locale.getDefault().getCountry() : "");
         }
         return l;
     }

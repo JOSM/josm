@@ -604,7 +604,7 @@ public final class I18n {
      */
     public static void set(String localeName) {
         if (localeName != null) {
-            Locale l = LanguageInfo.getLocale(localeName);
+            Locale l = LanguageInfo.getLocale(localeName, true);
             if (load(LanguageInfo.getJOSMLocaleCode(l))) {
                 Locale.setDefault(l);
             } else {
