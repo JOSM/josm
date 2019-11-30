@@ -863,7 +863,6 @@ public final class DomainValidator extends AbstractValidator {
         "lamer", // lamer The Estée Lauder Companies Inc.
         "lancaster", // lancaster LANCASTER
         "lancia", // lancia Fiat Chrysler Automobiles N.V.
-        "lancome", // lancome L&#39;Oréal
         "land", // land Pine Moon, LLC
         "landrover", // landrover Jaguar Land Rover Ltd
         "lanxess", // lanxess LANXESS Corporation
