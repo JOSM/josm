@@ -145,7 +145,7 @@ relation[route=ski  ][!piste:type][type=route],
 *[leisure=pitch][!sport],
 *[aeroway=terminal][!building],
 *[power=generator][!generator:source],
-*[amenity=recycling][!/^recycling:/],
+*[amenity=recycling][!/^recycling:/][recycling_type!=centre],
 *[amenity=social_facility][!social_facility],
 *[amenity=place_of_worship][!religion] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
