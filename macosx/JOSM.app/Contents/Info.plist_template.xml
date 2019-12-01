@@ -52,6 +52,28 @@
             </array>
         </dict>
     </dict>
+    <!-- Export GeoJSON file format UTI (*.geojson) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>public.geojson</string>
+        <key>UTTypeDescription</key>
+        <string>GeoJSON File</string>
+        <key>UTTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.json</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>com.apple.ostype</key>
+            <string>GeoJSON</string>
+            <key>public.filename-extension</key>
+            <array>
+                <string>geojson</string>
+            </array>
+        </dict>
+    </dict>
 </array>
 <key>UTImportedTypeDeclarations</key>
 <array>
@@ -138,6 +160,21 @@
         <key>LSItemContentTypes</key>
         <array>
             <string>org.openstreetmap.josm.joz</string>
+        </array>
+    </dict>
+    <!-- Registers opening *.geojson files -->
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>GeoJSON Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>public.geojson</string>
         </array>
     </dict>
     <!-- Registers opening *.gpx files -->
