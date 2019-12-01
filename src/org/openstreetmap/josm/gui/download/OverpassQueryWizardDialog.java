@@ -149,7 +149,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                     dsPanel.getParent(),
                     "<html>" +
                      tr("The Overpass wizard could not parse the following query:") +
-                     Utils.joinAsHtmlUnorderedList(Collections.singleton(searchTerm)) +
+                     Utils.joinAsHtmlUnorderedList(Collections.singleton(Utils.escapeReservedCharactersHTML(searchTerm))) +
                      "</html>",
                     tr("Parse error"),
                     JOptionPane.ERROR_MESSAGE
