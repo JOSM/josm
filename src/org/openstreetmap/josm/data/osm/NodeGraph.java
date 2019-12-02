@@ -1,17 +1,24 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import org.openstreetmap.josm.tools.Pair;
 
@@ -135,26 +142,16 @@ public class NodeGraph {
     private final Map<Node, List<NodePair>> predecessors = new LinkedHashMap<>();
 
     protected void rememberSuccessor(NodePair pair) {
-        if (successors.containsKey(pair.getA())) {
-            if (!successors.get(pair.getA()).contains(pair)) {
-                successors.get(pair.getA()).add(pair);
-            }
-        } else {
-            List<NodePair> l = new ArrayList<>();
+        List<NodePair> l = successors.computeIfAbsent(pair.getA(), k -> new ArrayList<>());
+        if (!l.contains(pair)) {
             l.add(pair);
-            successors.put(pair.getA(), l);
         }
     }
 
     protected void rememberPredecessors(NodePair pair) {
-        if (predecessors.containsKey(pair.getB())) {
-            if (!predecessors.get(pair.getB()).contains(pair)) {
-                predecessors.get(pair.getB()).add(pair);
-            }
-        } else {
-            List<NodePair> l = new ArrayList<>();
+        List<NodePair> l = predecessors.computeIfAbsent(pair.getB(), k -> new ArrayList<>());
+        if (!l.contains(pair)) {
             l.add(pair);
-            predecessors.put(pair.getB(), l);
         }
     }
 
@@ -239,7 +236,7 @@ public class NodeGraph {
         return nodes;
     }
 
-    protected boolean isSpanningWay(Stack<NodePair> way) {
+    protected boolean isSpanningWay(Collection<NodePair> way) {
         return numUndirectedEges == way.size();
     }
 
@@ -262,16 +259,19 @@ public class NodeGraph {
      */
     protected List<Node> buildSpanningPath(Node startNode) {
         if (startNode != null) {
+            // do not simply replace `Stack` by `ArrayDeque` because of different iteration behaviour, see #11957
             Stack<NodePair> path = new Stack<>();
+            Set<NodePair> dupCheck = new HashSet<>();
             Stack<NodePair> nextPairs = new Stack<>();
             nextPairs.addAll(getOutboundPairs(startNode));
             while (!nextPairs.isEmpty()) {
                 NodePair cur = nextPairs.pop();
-                if (!path.contains(cur) && !path.contains(cur.swap())) {
+                if (!dupCheck.contains(cur) && !dupCheck.contains(cur.swap())) {
                     while (!path.isEmpty() && !path.peek().isPredecessorOf(cur)) {
-                        path.pop();
+                        dupCheck.remove(path.pop());
                     }
                     path.push(cur);
+                    dupCheck.add(cur);
                     if (isSpanningWay(path)) return buildPathFromNodePairs(path);
                     nextPairs.addAll(getOutboundPairs(path.peek()));
                 }
@@ -283,25 +283,84 @@ public class NodeGraph {
     /**
      * Tries to find a path through the graph which visits each edge (i.e.
      * the segment of a way) exactly once.
+     * <p><b>Note that duplicated edges are removed first!</b>
      *
      * @return the path; null, if no path was found
      */
     public List<Node> buildSpanningPath() {
         prepare();
-        // try to find a path from each "terminal node", i.e. from a
-        // node which is connected by exactly one undirected edges (or
-        // two directed edges in opposite direction) to the graph. A
-        // graph built up from way segments is likely to include such
-        // nodes, unless all ways are closed.
-        // In the worst case this loops over all nodes which is very slow for large ways.
-        //
-        Set<Node> nodes = getTerminalNodes();
-        nodes = nodes.isEmpty() ? getNodes() : nodes;
-        for (Node n: nodes) {
-            List<Node> path = buildSpanningPath(n);
-            if (!path.isEmpty())
-                return path;
+        if(numUndirectedEges > 0 && isConnected()) {
+            // try to find a path from each "terminal node", i.e. from a
+            // node which is connected by exactly one undirected edges (or
+            // two directed edges in opposite direction) to the graph. A
+            // graph built up from way segments is likely to include such
+            // nodes, unless the edges build one or more closed rings.
+            // We order the nodes to start with the best candidates, but
+            // it might take very long if there is no valid path as we iterate over all nodes
+            // to find out.
+            Set<Node> nodes = getTerminalNodes();
+            nodes = nodes.isEmpty() ? getMostFrequentVisitedNodesFirst() : nodes;
+            for (Node n : nodes) {
+                List<Node> path = buildSpanningPath(n);
+                if (!path.isEmpty())
+                    return path;
+            }
         }
         return null;
     }
+
+    /**
+     * Find out if the graph is connected.
+     * @return true if it is connected.
+     */
+    private boolean isConnected() {
+        Set<Node> nodes = getNodes();
+        if (nodes.isEmpty())
+            return false;
+        Deque<Node> toVisit = new ArrayDeque<>();
+        HashSet<Node> visited = new HashSet<>();
+        toVisit.add(nodes.iterator().next());
+        while(!toVisit.isEmpty()) {
+            Node n = toVisit.pop();
+            if (!visited.contains(n)) {
+                List<NodePair> neighbours = getOutboundPairs(n);
+                for (NodePair pair : neighbours) {
+                    toVisit.addLast(pair.getA());
+                    toVisit.addLast(pair.getB());
+                }
+                visited.add(n);
+            }
+        }
+        return nodes.size() == visited.size();
+    }
+
+    /**
+     * Sort the nodes by number of appearances in the edges.
+     * @return set of nodes which can be start nodes in a spanning way.
+     */
+    private Set<Node> getMostFrequentVisitedNodesFirst() {
+        if (edges.isEmpty())
+            return Collections.emptySet();
+        // count appearance of nodes in edges
+        Map<Node, Integer> counters = new HashMap<>();
+        for (NodePair pair : edges) {
+            Integer c = counters.get(pair.getA());
+            counters.put(pair.getA(), c == null ? 1 : c + 1);
+            c = counters.get(pair.getB());
+            counters.put(pair.getB(), c == null ? 1 : c + 1);
+        }
+        // group by counters
+        TreeMap<Integer, Set<Node>> sortedMap = new TreeMap<>(Comparator.reverseOrder());
+        for (Entry<Node, Integer> e : counters.entrySet()) {
+            sortedMap.computeIfAbsent(e.getValue(), LinkedHashSet::new).add(e.getKey());
+        }
+        LinkedHashSet<Node> result = new LinkedHashSet<>();
+        for (Entry<Integer, Set<Node>> e : sortedMap.entrySet()) {
+            if (e.getKey() > 4 || result.isEmpty()) {
+                result.addAll(e.getValue());
+            }
+        }
+        return result;
+    }
+
 }
