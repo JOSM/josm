@@ -190,9 +190,15 @@ public class ParallelWays {
 
     private List<Command> makeAddWayAndNodesCommandList() {
         DataSet ds = OsmDataManager.getInstance().getEditDataSet();
+
         List<Command> commands = new ArrayList<>(sortedNodes.size() + ways.size());
+        Set<Node> dupCheck = new HashSet<>();
         for (int i = 0; i < sortedNodes.size() - (isClosedPath() ? 1 : 0); i++) {
-            commands.add(new AddCommand(ds, sortedNodes.get(i)));
+            Node n = sortedNodes.get(i);
+            // don't add the same node twice, see #18386
+            if (dupCheck.add(n)) {
+                commands.add(new AddCommand(ds, n));
+            }
         }
         for (Way w : ways) {
             commands.add(new AddCommand(ds, w));
