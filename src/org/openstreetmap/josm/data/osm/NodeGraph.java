@@ -138,6 +138,8 @@ public class NodeGraph {
 
     private final Set<NodePair> edges;
     private int numUndirectedEges;
+    /** counts the number of edges that were added */
+    private int addedEdges;
     private final Map<Node, List<NodePair>> successors = new LinkedHashMap<>();
     private final Map<Node, List<NodePair>> predecessors = new LinkedHashMap<>();
 
@@ -194,9 +196,8 @@ public class NodeGraph {
      * @param pair node pair
      */
     public void add(NodePair pair) {
-        if (!edges.contains(pair)) {
-            edges.add(pair);
-        }
+        addedEdges++;
+        edges.add(pair);
     }
 
     /**
@@ -289,7 +290,7 @@ public class NodeGraph {
      */
     public List<Node> buildSpanningPath() {
         prepare();
-        if(numUndirectedEges > 0 && isConnected()) {
+        if (numUndirectedEges > 0 && isConnected()) {
             // try to find a path from each "terminal node", i.e. from a
             // node which is connected by exactly one undirected edges (or
             // two directed edges in opposite direction) to the graph. A
@@ -310,6 +311,21 @@ public class NodeGraph {
     }
 
     /**
+     * Tries to find a path through the graph which visits each edge (i.e.
+     * the segment of a way) exactly once. If the graph was build from overlapping
+     * ways duplicate edges were removed already. This method will return null if
+     * any duplicated edge was removed.
+     *
+     * @return the path; null, if no path was found or duplicated edges were found
+     * @since xxx
+     */
+    public List<Node> buildSpanningPathNoRemove() {
+        if (edges.size() != addedEdges)
+            return null;
+        return buildSpanningPath();
+    }
+
+    /**
      * Find out if the graph is connected.
      * @return true if it is connected.
      */
@@ -320,7 +336,7 @@ public class NodeGraph {
         Deque<Node> toVisit = new ArrayDeque<>();
         HashSet<Node> visited = new HashSet<>();
         toVisit.add(nodes.iterator().next());
-        while(!toVisit.isEmpty()) {
+        while (!toVisit.isEmpty()) {
             Node n = toVisit.pop();
             if (!visited.contains(n)) {
                 List<NodePair> neighbours = getOutboundPairs(n);

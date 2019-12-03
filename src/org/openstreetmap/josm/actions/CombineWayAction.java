@@ -123,7 +123,7 @@ public class CombineWayAction extends JosmAction {
 
         // try to build a new way which includes all the combined ways
         NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ways);
-        List<Node> path = graph.buildSpanningPath();
+        List<Node> path = graph.buildSpanningPathNoRemove();
         if (path == null) {
             warnCombiningImpossible();
             return null;

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +46,7 @@ public class CombineWayActionTest {
         try (InputStream is = TestUtils.getRegressionDataStream(11957, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ds.getWays());
-            List<Node> path = graph.buildSpanningPath();
+            List<Node> path = graph.buildSpanningPathNoRemove();
             assertEquals(10, path.size());
             Set<Long> firstAndLastObtained = new HashSet<>();
             firstAndLastObtained.add(path.get(0).getId());
@@ -54,6 +55,21 @@ public class CombineWayActionTest {
             firstAndLastExpected.add(1618969016L);
             firstAndLastExpected.add(35213705L);
             assertEquals(firstAndLastExpected, firstAndLastObtained);
+        }
+    }
+
+    /**
+     * Non-regression test for bug #1835 (combine way with overlapping ways)
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if OSM parsing fails
+     */
+    @Test
+    public void testTicket18385() throws IOException, IllegalDataException {
+        try (InputStream is = TestUtils.getRegressionDataStream(18385, "data.osm")) {
+            DataSet ds = OsmReader.parseDataSet(is, null);
+            NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ds.getWays());
+            List<Node> path = graph.buildSpanningPathNoRemove();
+            assertNull(path);
         }
     }
 
