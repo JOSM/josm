@@ -317,7 +317,7 @@ public class NodeGraph {
      * any duplicated edge was removed.
      *
      * @return the path; null, if no path was found or duplicated edges were found
-     * @since xxx
+     * @since 15555
      */
     public List<Node> buildSpanningPathNoRemove() {
         if (edges.size() != addedEdges)
