@@ -220,6 +220,13 @@ public class NodeGraph {
         return ret;
     }
 
+    private List<NodePair> getConnectedPairs (Node node) {
+        List<NodePair> connected = new ArrayList<>();
+        connected.addAll(Optional.ofNullable(successors.get(node)).orElseGet(Collections::emptyList));
+        connected.addAll(Optional.ofNullable(predecessors.get(node)).orElseGet(Collections::emptyList));
+        return connected;
+    }
+
     protected List<NodePair> getOutboundPairs(NodePair pair) {
         return getOutboundPairs(pair.getB());
     }
@@ -339,10 +346,11 @@ public class NodeGraph {
         while (!toVisit.isEmpty()) {
             Node n = toVisit.pop();
             if (!visited.contains(n)) {
-                List<NodePair> neighbours = getOutboundPairs(n);
-                for (NodePair pair : neighbours) {
-                    toVisit.addLast(pair.getA());
-                    toVisit.addLast(pair.getB());
+                for (NodePair pair : getConnectedPairs(n)) {
+                    if (n != pair.getA())
+                        toVisit.addLast(pair.getA());
+                    if (n != pair.getB())
+                        toVisit.addLast(pair.getB());
                 }
                 visited.add(n);
             }
