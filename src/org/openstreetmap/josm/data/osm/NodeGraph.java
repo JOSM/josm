@@ -220,7 +220,7 @@ public class NodeGraph {
         return ret;
     }
 
-    private List<NodePair> getConnectedPairs (Node node) {
+    private List<NodePair> getConnectedPairs(Node node) {
         List<NodePair> connected = new ArrayList<>();
         connected.addAll(Optional.ofNullable(successors.get(node)).orElseGet(Collections::emptyList));
         connected.addAll(Optional.ofNullable(predecessors.get(node)).orElseGet(Collections::emptyList));
