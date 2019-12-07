@@ -39,6 +39,8 @@ public final class JoinNodeWayActionTest {
 
     private void setupMapView(DataSet ds) {
         // setup a reasonable screen size
+        MainApplication.getMap().mapView.addNotify();
+        MainApplication.getMap().mapView.doLayout();
         MainApplication.getMap().mapView.setBounds(new Rectangle(1920, 1080));
         if (ds.getDataSourceBoundingBox() != null) {
             MainApplication.getMap().mapView.zoomTo(ds.getDataSourceBoundingBox());
