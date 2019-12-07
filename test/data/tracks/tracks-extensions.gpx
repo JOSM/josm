@@ -17,9 +17,9 @@
   <trk>
     <extensions>
       <test:tag>Track extension</test:tag>
-      <gpxx:TrackExtensions>
+      <gpxx:TrackExtension>
         <gpxx:DisplayColor>Red</gpxx:DisplayColor>
-      </gpxx:TrackExtensions>
+      </gpxx:TrackExtension>
     </extensions>
     <trkseg>
       <extensions>

@@ -147,7 +147,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
 
     /**
      * Adds an extension from a flat chain without prefix, e.g. when converting from OSM
-     * @param chain the full key chain, e.g. ["extension", "gpxx", "TrackExtensions", "DisplayColor"]
+     * @param chain the full key chain, e.g. ["extension", "gpxx", "TrackExtension", "DisplayColor"]
      * @param value the value
      */
     public void addFlat(String[] chain, String value) {

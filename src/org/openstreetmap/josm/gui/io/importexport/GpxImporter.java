@@ -12,7 +12,10 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -153,6 +156,12 @@ public class GpxImporter extends FileImporter {
                 gpxLayer.setLinkedMarkerLayer(markerLayer);
             }
         }
+
+        final boolean isSameColor = MainApplication.getLayerManager()
+                .getLayersOfType(ImageryLayer.class)
+                .stream().noneMatch(ImageryLayer::isVisible)
+                && data.getTracks().stream().anyMatch(t -> OsmDataLayer.getBackgroundColor().equals(t.getColor()));
+
         Runnable postLayerTask = () -> {
             if (!parsedProperly) {
                 String msg;
@@ -164,6 +173,13 @@ public class GpxImporter extends FileImporter {
                             data.storageFile.getPath());
                 }
                 JOptionPane.showMessageDialog(null, msg);
+            }
+            if (isSameColor) {
+                new Notification(tr("The imported track \"{0}\" might not be visible because it has the same color as the background." +
+                        "<br>You can change this in the context menu of the imported layer.", gpxLayerName))
+                .setIcon(JOptionPane.WARNING_MESSAGE)
+                .setDuration(Notification.TIME_LONG)
+                .show();
             }
         };
         return new GpxImporterData(gpxLayer, markerLayer, postLayerTask);

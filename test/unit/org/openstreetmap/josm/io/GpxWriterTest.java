@@ -190,9 +190,9 @@ public class GpxWriterTest {
                 "  </metadata>\n" +
                 "  <trk>\n" +
                 "    <extensions>\n" +
-                "      <gpxx:TrackExtensions>\n" +
+                "      <gpxx:TrackExtension>\n" +
                 "        <gpxx:DisplayColor>Red</gpxx:DisplayColor>\n" +
-                "      </gpxx:TrackExtensions>\n" +
+                "      </gpxx:TrackExtension>\n" +
                 "    </extensions>\n" +
                 "    <trkseg>\n" +
                 "      <extensions>\n" +
@@ -262,9 +262,9 @@ public class GpxWriterTest {
                 "  </metadata>\n" +
                 "  <trk>\n" +
                 "    <extensions>\n" +
-                "      <gpxx:TrackExtensions>\n" +
+                "      <gpxx:TrackExtension>\n" +
                 "        <gpxx:DisplayColor>Red</gpxx:DisplayColor>\n" +
-                "      </gpxx:TrackExtensions>\n" +
+                "      </gpxx:TrackExtension>\n" +
                 "    </extensions>\n" +
                 "    <trkseg>\n" +
                 "      <extensions>\n" +

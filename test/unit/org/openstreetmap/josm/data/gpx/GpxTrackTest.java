@@ -47,7 +47,7 @@ public class GpxTrackTest {
         ext.remove("gpxd", "color");
         trk.invalidate();
         assertNull(trk.getColor());
-        ext.add("gpxx", "TrackExtensions").getExtensions().add("gpxx", "DisplayColor", "Blue");
+        ext.add("gpxx", "TrackExtension").getExtensions().add("gpxx", "DisplayColor", "Blue");
         trk.invalidate();
         assertEquals(trk.getColor(), Color.BLUE);
         trk.setColor(null);

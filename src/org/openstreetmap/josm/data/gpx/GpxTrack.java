@@ -169,7 +169,7 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
                     }
                 }
                 closestGarminColorCache.put(c, colorString);
-                getExtensions().addIfNotPresent("gpxx", "TrackExtensions").getExtensions().addOrUpdate("gpxx", "DisplayColor", colorString);
+                getExtensions().addIfNotPresent("gpxx", "TrackExtension").getExtensions().addOrUpdate("gpxx", "DisplayColor", colorString);
             } else if (cFormat == ColorFormat.GPXD) {
                 setColor(c);
             }

@@ -238,7 +238,7 @@ public interface GpxConstants {
      */
     static Map<String, String> getExtensionAbbreviations() {
         TreeMap<String, String> m = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        m.put("gpx:extension:gpxx:TrackExtensions:DisplayColor", "gpxx:DisplayColor");
+        m.put("gpx:extension:gpxx:TrackExtension:DisplayColor", "gpxx:DisplayColor");
         m.put("gpx:extension:gpxd:color", "gpxd:color");
         return m;
     }
