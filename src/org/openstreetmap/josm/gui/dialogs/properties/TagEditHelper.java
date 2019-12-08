@@ -123,6 +123,10 @@ public class TagEditHelper {
     /** Maximum number of recent tags */
     public static final int MAX_LRU_TAGS_NUMBER = 30;
 
+    /** Autocomplete keys by default */
+    public static final BooleanProperty AUTOCOMPLETE_KEYS = new BooleanProperty("properties.autocomplete-keys", true);
+    /** Autocomplete values by default */
+    public static final BooleanProperty AUTOCOMPLETE_VALUES = new BooleanProperty("properties.autocomplete-values", true);
     /** Use English language for tag by default */
     public static final BooleanProperty PROPERTY_FIX_TAG_LOCALE = new BooleanProperty("properties.fix-tag-combobox-locale", false);
     /** Whether recent tags must be remembered */
@@ -714,6 +718,8 @@ public class TagEditHelper {
             mainPanel = new JPanel(new GridBagLayout());
             keys = new AutoCompletingComboBox();
             values = new AutoCompletingComboBox();
+            keys.setAutocompleteEnabled(AUTOCOMPLETE_KEYS.get());
+            values.setAutocompleteEnabled(AUTOCOMPLETE_VALUES.get());
 
             mainPanel.add(new JLabel("<html>"+trn("This will change up to {0} object.",
                 "This will change up to {0} objects.", sel.size(), sel.size())

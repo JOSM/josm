@@ -343,7 +343,12 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
         return autocompleteEnabled;
     }
 
-    protected void setAutocompleteEnabled(boolean autocompleteEnabled) {
+    /**
+     * Sets whether the autocompletion is enabled
+     * @param autocompleteEnabled {@code true} to enable autocompletion
+     * @since 15567 (visibility)
+     */
+    public void setAutocompleteEnabled(boolean autocompleteEnabled) {
         this.autocompleteEnabled = autocompleteEnabled;
     }
 
