@@ -35,12 +35,10 @@ public final class JoinNodeWayActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences();
+    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences().projection();
 
     private void setupMapView(DataSet ds) {
         // setup a reasonable screen size
-        MainApplication.getMap().mapView.addNotify();
-        MainApplication.getMap().mapView.doLayout();
         MainApplication.getMap().mapView.setBounds(new Rectangle(1920, 1080));
         if (ds.getDataSourceBoundingBox() != null) {
             MainApplication.getMap().mapView.zoomTo(ds.getDataSourceBoundingBox());
