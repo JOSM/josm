@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -479,9 +478,7 @@ public class LayerManager {
             }
         }
         if (layer instanceof OsmDataLayer) {
-            DataSet data = ((OsmDataLayer) layer).data;
-            if (data != null && !data.isLocked())
-                data.clear();
+            ((OsmDataLayer) layer).clear();
         }
         return e.scheduleForRemoval;
     }

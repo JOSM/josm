@@ -10,7 +10,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -31,10 +34,12 @@ public final class Territories {
 
     private static final String ISO3166_1 = "ISO3166-1:alpha2";
     private static final String ISO3166_2 = "ISO3166-2";
+    private static final String TAGINFO = "taginfo";
 
     private static DataSet dataSet;
 
     private static volatile Map<String, GeoPropertyIndex<Boolean>> iso3166Cache;
+    private static volatile Map<String, String> taginfoCache;
 
     private Territories() {
         // Hide implicit public constructor for utility classes
@@ -77,8 +82,17 @@ public final class Territories {
     }
 
     /**
-     * Returns the territories dataset.
-     * @return the territories dataset
+     * Returns the original territories dataset. Be extra cautious when manipulating it!
+     * @return the original territories dataset
+     * @since 15565
+     */
+    public static synchronized DataSet getOriginalDataSet() {
+        return dataSet;
+    }
+
+    /**
+     * Returns a copy of the territories dataset.
+     * @return a copy of the territories dataset
      */
     public static synchronized DataSet getDataSet() {
         return new DataSet(dataSet);
@@ -90,6 +104,7 @@ public final class Territories {
      */
     public static synchronized void initialize() {
         iso3166Cache = new HashMap<>();
+        taginfoCache = new TreeMap<>();
         try (CachedFile cf = new CachedFile("resource://data/" + FILENAME);
                 InputStream is = cf.getInputStream()) {
             dataSet = OsmReader.parseDataSet(is, null);
@@ -108,6 +123,10 @@ public final class Territories {
                     GeoPropertyIndex<Boolean> gpi = new GeoPropertyIndex<>(gp, 24);
                     if (iso1 != null) {
                         iso3166Cache.put(iso1, gpi);
+                        String taginfo = osm.get(TAGINFO);
+                        if (taginfo != null) {
+                            taginfoCache.put(iso1, taginfo);
+                        }
                     }
                     if (iso2 != null) {
                         iso3166Cache.put(iso2, gpi);
@@ -117,5 +136,25 @@ public final class Territories {
         } catch (IOException | IllegalDataException ex) {
             throw new JosmRuntimeException(ex);
         }
+    }
+
+    /**
+     * Returns a map of national taginfo instances for the given location.
+     * @param ll lat/lon where to look.
+     * @return a map of national taginfo instances for the given location (code / url)
+     * @since 15565
+     */
+    public static Map<String, String> getNationalTaginfoUrls(LatLon ll) {
+        Map<String, String> result = new TreeMap<>();
+        for (String code : iso3166Cache.entrySet().parallelStream().distinct()
+            .filter(e -> Boolean.TRUE.equals(e.getValue().get(ll)))
+            .map(Entry<String, GeoPropertyIndex<Boolean>>::getKey)
+            .collect(Collectors.toSet())) {
+            String taginfo = taginfoCache.get(code);
+            if (taginfo != null) {
+                result.put(code, taginfo);
+            }
+        }
+        return result;
     }
 }

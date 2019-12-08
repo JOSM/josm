@@ -39,10 +39,13 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LogShowDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CustomConfigurator;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -55,6 +58,7 @@ import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -69,6 +73,57 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         @Override
         public PreferenceSetting createPreferenceSetting() {
             return new AdvancedPreference();
+        }
+    }
+
+    private static class UnclearableOsmDataLayer extends OsmDataLayer {
+        UnclearableOsmDataLayer(DataSet data, String name) {
+            super(data, name, null);
+        }
+
+        @Override
+        public void clear() {
+            // Do nothing
+        }
+    }
+
+    private final class EditBoundariesAction extends AbstractAction {
+        EditBoundariesAction() {
+            super(tr("Edit boundaries"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            DataSet dataSet = Territories.getOriginalDataSet();
+            MainLayerManager layerManager = MainApplication.getLayerManager();
+            if (layerManager.getLayersOfType(OsmDataLayer.class).stream().noneMatch(l -> dataSet.equals(l.getDataSet()))) {
+                layerManager.addLayer(new UnclearableOsmDataLayer(dataSet, tr("Internal JOSM boundaries")));
+            }
+        }
+    }
+
+    private final class ResetPreferencesAction extends AbstractAction {
+        ResetPreferencesAction() {
+            super(tr("Reset preferences"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (!GuiHelper.warnUser(tr("Reset preferences"),
+                    "<html>"+
+                    tr("You are about to clear all preferences to their default values<br />"+
+                    "All your settings will be deleted: plugins, imagery, filters, toolbar buttons, keyboard, etc. <br />"+
+                    "Are you sure you want to continue?")
+                    +"</html>", null, "")) {
+                Preferences.main().resetToDefault();
+                try {
+                    Preferences.main().save();
+                } catch (IOException | InvalidPathException e) {
+                    Logging.log(Logging.LEVEL_WARN, "Exception while saving preferences:", e);
+                }
+                readPreferences(Preferences.main());
+                applyFilter();
+            }
         }
     }
 
@@ -332,26 +387,9 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         menu.addSeparator();
         menu.add(getProfileMenu());
         menu.addSeparator();
-        menu.add(new AbstractAction(tr("Reset preferences")) {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if (!GuiHelper.warnUser(tr("Reset preferences"),
-                        "<html>"+
-                        tr("You are about to clear all preferences to their default values<br />"+
-                        "All your settings will be deleted: plugins, imagery, filters, toolbar buttons, keyboard, etc. <br />"+
-                        "Are you sure you want to continue?")
-                        +"</html>", null, "")) {
-                    Preferences.main().resetToDefault();
-                    try {
-                        Preferences.main().save();
-                    } catch (IOException | InvalidPathException e) {
-                        Logging.log(Logging.LEVEL_WARN, "Exception while saving preferences:", e);
-                    }
-                    readPreferences(Preferences.main());
-                    applyFilter();
-                }
-            }
-        });
+        menu.add(new EditBoundariesAction());
+        menu.addSeparator();
+        menu.add(new ResetPreferencesAction());
         return menu;
     }
 

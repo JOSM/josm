@@ -25383,6 +25383,7 @@
     <tag k='maxspeed:rural' v='90' />
     <tag k='maxspeed:urban' v='50' />
     <tag k='name:en' v='Czechia' />
+    <tag k='taginfo' v='https://taginfo.openstreetmap.cz' />
   </way>
   <way id='-28998'>
     <nd ref='-8326' />
@@ -28994,6 +28995,7 @@
     <tag k='maxspeed:trunk' v='110' />
     <tag k='maxspeed:urban' v='50' />
     <tag k='name:en' v='Hungary' />
+    <tag k='taginfo' v='http://taginfo.openstreetmap.hu' />
   </way>
   <way id='-29068'>
     <nd ref='-7830' />
@@ -29650,6 +29652,7 @@
     <tag k='ISO3166-1:alpha2' v='IN' />
     <tag k='driving_side' v='left' />
     <tag k='name:en' v='India' />
+    <tag k='taginfo' v='https://taginfo.openstreetmap.in' />
   </way>
   <way id='-29070'>
     <nd ref='-6610' />
@@ -35826,6 +35829,7 @@
     <tag k='maxspeed:trunk_single' v='100' />
     <tag k='maxspeed:urban' v='50' />
     <tag k='name:en' v='Poland' />
+    <tag k='taginfo' v='http://taginfo.openstreetmap.pl' />
   </way>
   <way id='-29170'>
     <nd ref='-7736' />
@@ -37951,6 +37955,7 @@
     <tag k='maxspeed:source' v='http://ec.europa.eu/transport/road_safety/going_abroad/sweden/speed_limits_en.htm' />
     <tag k='maxspeed:urban' v='50' />
     <tag k='name:en' v='Sweden' />
+    <tag k='taginfo' v='http://se.taginfo.openstreetmap.se' />
   </way>
   <way id='-29212'>
     <nd ref='-11564' />
@@ -39568,6 +39573,7 @@
     <tag k='ISO3166-2' v='CN-TW' />
     <tag k='name:en' v='Taiwan' />
     <tag k='note' v='Self admin.; Claimed by China' />
+    <tag k='taginfo' v='https://taginfo.osm.kcwu.csie.org' />
   </way>
   <way id='-29238'>
     <nd ref='-11444' />
@@ -42428,6 +42434,7 @@
     <tag k='ISO3166-1:alpha2' v='JP' />
     <tag k='driving_side' v='left' />
     <tag k='name:en' v='Japan' />
+    <tag k='taginfo' v='http://taginfo.openstreetmap.jp' />
   </way>
   <way id='-29312'>
     <nd ref='-10938' />
@@ -58366,6 +58373,7 @@
     <tag k='maxspeed:trunk' v='110' />
     <tag k='maxspeed:urban' v='50' />
     <tag k='name:en' v='France' />
+    <tag k='taginfo' v='https://taginfo.openstreetmap.fr' />
     <tag k='type' v='multipolygon' />
   </relation>
   <relation id='-29616'>
@@ -58398,6 +58406,7 @@
     <tag k='maxspeed:source2' v='https://www.gov.uk/speed-limits' />
     <tag k='maxspeed:urban' v='30 mph' />
     <tag k='name:en' v='United Kingdom' />
+    <tag k='taginfo' v='https://taginfo.openstreetmap.org.uk' />
     <tag k='type' v='multipolygon' />
   </relation>
   <relation id='-29618'>
@@ -58643,6 +58652,7 @@
     <tag k='maxspeed:trunk' v='100' />
     <tag k='maxspeed:urban' v='50' />
     <tag k='name:en' v='Switzerland' />
+    <tag k='taginfo' v='https://taginfo.osm.ch' />
     <tag k='type' v='multipolygon' />
   </relation>
   <relation id='-29658'>

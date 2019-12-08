@@ -33,4 +33,15 @@ public abstract class AbstractOsmDataLayer extends AbstractModifiableLayer {
     public boolean isLocked() {
         return getDataSet().isLocked();
     }
+
+    /**
+     * Clears the data backing this layer, unless if locked.
+     * @since 15565
+     */
+    public void clear() {
+        OsmData<?, ?, ?, ?> data = getDataSet();
+        if (data != null && !data.isLocked()) {
+            data.clear();
+        }
+    }
 }

@@ -27,10 +27,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -108,6 +110,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -171,6 +174,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final transient PopupMenuHandler membershipMenuHandler = new PopupMenuHandler(membershipMenu);
     private final transient PopupMenuHandler blankSpaceMenuHandler = new PopupMenuHandler(blankSpaceMenu);
 
+    private final List<JMenuItem> tagMenuTagInfoNatItems = new ArrayList<>();
+    private final List<JMenuItem> membershipMenuTagInfoNatItems = new ArrayList<>();
+
     private final transient Map<String, Map<String, Integer>> valueCount = new TreeMap<>();
     /**
      * This sub-object is responsible for all adding and editing of tags
@@ -182,6 +188,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
     private final TaginfoAction taginfoAction = new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
             membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
+    private final Collection<TaginfoAction> taginfoNationalActions = new ArrayList<>();
     private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction(
             tagTable, editHelper::getDataKey, OsmDataManager.getInstance()::getInProgressISelection);
@@ -344,6 +351,28 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             PopupMenuLauncher launcher = new BlankSpaceMenuLauncher(blankSpaceMenu);
             bothTables.addMouseListener(launcher);
             tagTable.addMouseListener(launcher);
+        }
+    }
+
+    private void destroyTaginfoNationalActions() {
+        membershipMenuTagInfoNatItems.forEach(membershipMenu::remove);
+        membershipMenuTagInfoNatItems.clear();
+        tagMenuTagInfoNatItems.forEach(tagMenu::remove);
+        tagMenuTagInfoNatItems.clear();
+        taginfoNationalActions.forEach(JosmAction::destroy);
+        taginfoNationalActions.clear();
+    }
+
+    private void setupTaginfoNationalActions(Collection<? extends IPrimitive> newSel) {
+        destroyTaginfoNationalActions();
+        if (!newSel.isEmpty()) {
+            for (Entry<String, String> e : Territories.getNationalTaginfoUrls(
+                    newSel.iterator().next().getBBox().getCenter()).entrySet()) {
+                taginfoNationalActions.add(new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
+                        membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), e.getValue(), e.getKey()));
+            }
+            membershipMenuTagInfoNatItems.addAll(taginfoNationalActions.stream().map(membershipMenu::add).collect(Collectors.toList()));
+            tagMenuTagInfoNatItems.addAll(taginfoNationalActions.stream().map(tagMenu::add).collect(Collectors.toList()));
         }
     }
 
@@ -537,6 +566,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     @Override
     public void destroy() {
         taginfoAction.destroy();
+        destroyTaginfoNationalActions();
         super.destroy();
         Config.getPref().removeKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
         Container parent = pluginHook.getParent();
@@ -557,9 +587,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
         Collection<? extends IPrimitive> newSel = OsmDataManager.getInstance().getInProgressISelection();
-        String selectedTag;
+        int newSelSize = newSel.size();
         IRelation<?> selectedRelation = null;
-        selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
+        String selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
         if (selectedTag == null && tagTable.getSelectedRowCount() == 1) {
             selectedTag = editHelper.getDataKey(tagTable.getSelectedRow());
         }
@@ -597,8 +627,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             for (Entry<String, Integer> e1 : e.getValue().entrySet()) {
                 count += e1.getValue();
             }
-            if (count < newSel.size()) {
-                e.getValue().put("", newSel.size() - count);
+            if (count < newSelSize) {
+                e.getValue().put("", newSelSize - count);
             }
             tagData.addRow(new Object[]{e.getKey(), e.getValue()});
             tags.put(e.getKey(), e.getValue().size() == 1
@@ -654,6 +684,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         selectSth.setVisible(!hasSelection);
         pluginHook.setVisible(hasSelection);
 
+        setupTaginfoNationalActions(newSel);
         autoresizeTagTable();
 
         int selectedIndex;
@@ -668,9 +699,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
 
         if (tagData.getRowCount() != 0 || membershipData.getRowCount() != 0) {
-            if (newSel.size() > 1) {
+            if (newSelSize > 1) {
                 setTitle(tr("Objects: {2} / Tags: {0} / Memberships: {1}",
-                    tagData.getRowCount(), membershipData.getRowCount(), newSel.size()));
+                    tagData.getRowCount(), membershipData.getRowCount(), newSelSize));
             } else {
                 setTitle(tr("Tags: {0} / Memberships: {1}",
                     tagData.getRowCount(), membershipData.getRowCount()));
