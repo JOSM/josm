@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,7 +154,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         synchronized (this) {
             first = !inProgress.containsKey(deduplicationKey);
         }
-        inProgress.computeIfAbsent(deduplicationKey, k -> new HashSet<>()).add(listener);
+        inProgress.computeIfAbsent(deduplicationKey, k -> ConcurrentHashMap.newKeySet()).add(listener);
 
         if (first || force) {
             // submit all jobs to separate thread, so calling thread is not blocked with IO when loading from disk
