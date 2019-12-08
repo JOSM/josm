@@ -146,13 +146,15 @@ public final class Territories {
      */
     public static Map<String, String> getNationalTaginfoUrls(LatLon ll) {
         Map<String, String> result = new TreeMap<>();
-        for (String code : iso3166Cache.entrySet().parallelStream().distinct()
-            .filter(e -> Boolean.TRUE.equals(e.getValue().get(ll)))
-            .map(Entry<String, GeoPropertyIndex<Boolean>>::getKey)
-            .collect(Collectors.toSet())) {
-            String taginfo = taginfoCache.get(code);
-            if (taginfo != null) {
-                result.put(code, taginfo);
+        if (iso3166Cache != null) {
+            for (String code : iso3166Cache.entrySet().parallelStream().distinct()
+                .filter(e -> Boolean.TRUE.equals(e.getValue().get(ll)))
+                .map(Entry<String, GeoPropertyIndex<Boolean>>::getKey)
+                .collect(Collectors.toSet())) {
+                String taginfo = taginfoCache.get(code);
+                if (taginfo != null) {
+                    result.put(code, taginfo);
+                }
             }
         }
         return result;
