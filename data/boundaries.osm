@@ -37955,7 +37955,6 @@
     <tag k='maxspeed:source' v='http://ec.europa.eu/transport/road_safety/going_abroad/sweden/speed_limits_en.htm' />
     <tag k='maxspeed:urban' v='50' />
     <tag k='name:en' v='Sweden' />
-    <tag k='taginfo' v='http://se.taginfo.openstreetmap.se' />
   </way>
   <way id='-29212'>
     <nd ref='-11564' />
