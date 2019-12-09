@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -57,6 +58,7 @@ public final class JoinNodeWayActionTest {
      * @throws Exception if an error occurs
      */
     @Test
+    @Ignore
     public void testTicket18189() throws Exception {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
@@ -102,6 +104,7 @@ public final class JoinNodeWayActionTest {
      * @throws Exception if an error occurs
      */
     @Test
+    @Ignore
     public void testTicket11508() throws Exception {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(11508, "11508_example.osm"), null);
         Layer layer = new OsmDataLayer(ds, OsmDataLayer.createNewName(), null);
@@ -130,6 +133,7 @@ public final class JoinNodeWayActionTest {
      * @throws Exception if an error occurs
      */
     @Test
+    @Ignore
     public void testTicket18189Crossing() throws Exception {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(18189, "moveontocrossing.osm"), null);
         Layer layer = new OsmDataLayer(ds, OsmDataLayer.createNewName(), null);
@@ -155,6 +159,7 @@ public final class JoinNodeWayActionTest {
      * @throws Exception if an error occurs
      */
     @Test
+    @Ignore
     public void testTicket18189ThreeWays() throws Exception {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(18189, "data.osm"), null);
         Layer layer = new OsmDataLayer(ds, OsmDataLayer.createNewName(), null);
