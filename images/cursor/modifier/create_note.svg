@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="16" height="16" xmlns:xlink="https://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="grad" gradientTransform="rotate(90)">
+      <stop stop-color="#5fa4d5" offset="0"/>
+      <stop stop-color="#2f74b8" offset="1"/>
+    </linearGradient>
+  </defs>
+  <path d="m7.5,16l4.68509,-7.61905a5.5,5.5 0 1 0 -9.37019,0z" fill="#3983c4"/>
+  <path d="m4,5h3v-3h1v3h3v1h-3v3h-1v-3h-3z" fill="#fff"/>
+</svg>
