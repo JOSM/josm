@@ -128,7 +128,6 @@ public class CombineWayActionTest {
         try (InputStream is = TestUtils.getRegressionDataStream(18367, "split-and-reverse.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ArrayList<Way> selection = new ArrayList<>(ds.getWays());
-            assertEquals(2, selection.size());
             double expectedLen = getOriginalLength(selection);
             List<Node> path = CombineWayAction.tryJoin(selection);
             assertFalse(path.isEmpty());

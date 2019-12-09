@@ -1,19 +1,26 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <osm version='0.6' generator='JOSM'>
-  <node id='-202121' action='modify' visible='true' lat='0.03681838663' lon='0.00176729094' />
-  <node id='-202123' action='modify' visible='true' lat='0.03673994598' lon='0.00172212813' />
-  <node id='-202125' action='modify' visible='true' lat='0.03669478317' lon='0.00181245375' />
-  <node id='-202127' action='modify' visible='true' lat='0.03675539641' lon='0.00186118205' />
-  <node id='-202129' action='modify' visible='true' lat='0.03645589572' lon='0.00185761657' />
-  <way id='-202132' action='modify' visible='true'>
-    <nd ref='-202121' />
-    <nd ref='-202123' />
-    <nd ref='-202125' />
-    <nd ref='-202127' />
-    <nd ref='-202121' />
+  <node id='-202210' action='modify' visible='true' lat='0.03724777429' lon='0.00134787612' />
+  <node id='-202211' action='modify' visible='true' lat='0.0369372941' lon='0.00121974141' />
+  <node id='-202213' action='modify' visible='true' lat='0.03659724436' lon='0.0012788805' />
+  <node id='-202215' action='modify' visible='true' lat='0.03655535417' lon='0.00153022166' />
+  <node id='-202219' action='modify' visible='true' lat='0.03690332323' lon='0.00143858567' />
+  <node id='-202221' action='modify' visible='true' lat='0.03688801153' lon='0.00129366528' />
+  <node id='-202223' action='modify' visible='true' lat='0.03677219748' lon='0.00135034025' />
+  <node id='-202225' action='modify' visible='true' lat='0.03689699597' lon='0.00137870018' />
+  <way id='-202212' action='modify' visible='true'>
+    <nd ref='-202210' />
+    <nd ref='-202211' />
+    <nd ref='-202213' />
+    <nd ref='-202215' />
+    <nd ref='-202219' />
+    <nd ref='-202210' />
   </way>
-  <way id='-202133' action='modify' visible='true'>
-    <nd ref='-202125' />
-    <nd ref='-202129' />
+  <way id='-202222' action='modify' visible='true'>
+    <nd ref='-202219' />
+    <nd ref='-202225' />
+    <nd ref='-202221' />
+    <nd ref='-202223' />
+    <nd ref='-202225' />
   </way>
 </osm>
