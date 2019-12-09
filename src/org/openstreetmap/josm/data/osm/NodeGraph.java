@@ -11,13 +11,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeMap;
 
 import org.openstreetmap.josm.tools.Pair;
@@ -248,12 +246,12 @@ public class NodeGraph {
         return numUndirectedEges == way.size();
     }
 
-    protected List<Node> buildPathFromNodePairs(Stack<NodePair> path) {
-        List<Node> ret = new LinkedList<>();
-        for (NodePair pair: path) {
+    protected List<Node> buildPathFromNodePairs(Deque<NodePair> path) {
+        List<Node> ret = new ArrayList<>(path.size() + 1);
+        for (NodePair pair : path) {
             ret.add(pair.getA());
         }
-        ret.add(path.peek().getB());
+        ret.add(path.peekLast().getB());
         return ret;
     }
 
@@ -263,25 +261,25 @@ public class NodeGraph {
      * Traverses the path in depth-first order.
      *
      * @param startNode the start node
-     * @return the spanning path; null, if no path is found
+     * @return the spanning path; empty list if no path is found
      */
     protected List<Node> buildSpanningPath(Node startNode) {
         if (startNode != null) {
-            // do not simply replace `Stack` by `ArrayDeque` because of different iteration behaviour, see #11957
-            Stack<NodePair> path = new Stack<>();
+            Deque<NodePair> path = new ArrayDeque<>();
             Set<NodePair> dupCheck = new HashSet<>();
-            Stack<NodePair> nextPairs = new Stack<>();
+            Deque<NodePair> nextPairs = new ArrayDeque<>();
             nextPairs.addAll(getOutboundPairs(startNode));
             while (!nextPairs.isEmpty()) {
-                NodePair cur = nextPairs.pop();
+                NodePair cur = nextPairs.removeLast();
                 if (!dupCheck.contains(cur) && !dupCheck.contains(cur.swap())) {
-                    while (!path.isEmpty() && !path.peek().isPredecessorOf(cur)) {
-                        dupCheck.remove(path.pop());
+                    while (!path.isEmpty() && !path.peekLast().isPredecessorOf(cur)) {
+                        dupCheck.remove(path.removeLast());
                     }
-                    path.push(cur);
+                    path.addLast(cur);
                     dupCheck.add(cur);
-                    if (isSpanningWay(path)) return buildPathFromNodePairs(path);
-                    nextPairs.addAll(getOutboundPairs(path.peek()));
+                    if (isSpanningWay(path))
+                        return buildPathFromNodePairs(path);
+                    nextPairs.addAll(getOutboundPairs(path.peekLast()));
                 }
             }
         }
@@ -323,13 +321,14 @@ public class NodeGraph {
      * ways duplicate edges were removed already. This method will return null if
      * any duplicated edge was removed.
      *
-     * @return the path; null, if no path was found or duplicated edges were found
-     * @since 15555
+     * @return List of nodes that build the path; an empty list if no path or duplicated edges were found
+     * @since 15573 (return value not null)
      */
     public List<Node> buildSpanningPathNoRemove() {
-        if (edges.size() != addedEdges)
-            return null;
-        return buildSpanningPath();
+        List<Node> path = null;
+        if (edges.size() == addedEdges)
+            path = buildSpanningPath();
+        return path == null ? Collections.emptyList() : path;
     }
 
     /**

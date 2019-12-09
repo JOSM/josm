@@ -31,7 +31,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.JoinedWay;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.validation.Test;
+import org.openstreetmap.josm.data.validation.tests.OverlappingWays;
+import org.openstreetmap.josm.data.validation.tests.SelfIntersectingWay;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
@@ -122,9 +127,8 @@ public class CombineWayAction extends JosmAction {
         }
 
         // try to build a new way which includes all the combined ways
-        NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ways);
-        List<Node> path = graph.buildSpanningPathNoRemove();
-        if (path == null) {
+        List<Node> path = tryJoin(ways);
+        if (path.isEmpty()) {
             warnCombiningImpossible();
             return null;
         }
@@ -136,14 +140,7 @@ public class CombineWayAction extends JosmAction {
         final List<Command> reverseWayTagCommands = new LinkedList<>();
         List<Way> reversedWays = new LinkedList<>();
         List<Way> unreversedWays = new LinkedList<>();
-        for (Way w: ways) {
-            // Treat zero or one-node ways as unreversed as Combine action action is a good way to fix them (see #8971)
-            if (w.getNodesCount() < 2 || (path.indexOf(w.getNode(0)) + 1) == path.lastIndexOf(w.getNode(1))) {
-                unreversedWays.add(w);
-            } else {
-                reversedWays.add(w);
-            }
-        }
+        detectReversedWays(ways, path, reversedWays, unreversedWays);
         // reverse path if all ways have been reversed
         if (unreversedWays.isEmpty()) {
             Collections.reverse(path);
@@ -163,7 +160,7 @@ public class CombineWayAction extends JosmAction {
                 reversedWays = tempWays;
             }
             // if there are still reversed ways with direction-dependent tags, reverse their tags
-            if (!reversedWays.isEmpty() && PROP_REVERSE_WAY.get()) {
+            if (!reversedWays.isEmpty() && Boolean.TRUE.equals(PROP_REVERSE_WAY.get())) {
                 List<Way> unreversedTagWays = new ArrayList<>(ways);
                 unreversedTagWays.removeAll(reversedWays);
                 ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
@@ -212,6 +209,63 @@ public class CombineWayAction extends JosmAction {
         return new Pair<>(targetWay, sequenceCommand);
     }
 
+    protected static void detectReversedWays(Collection<Way> ways, List<Node> path, List<Way> reversedWays,
+            List<Way> unreversedWays) {
+        for (Way w: ways) {
+            // Treat zero or one-node ways as unreversed as Combine action action is a good way to fix them (see #8971)
+            if (w.getNodesCount() < 2) {
+                unreversedWays.add(w);
+            } else {
+                boolean foundStartSegment = false;
+                int last = path.lastIndexOf(w.getNode(0));
+
+                for (int i = path.indexOf(w.getNode(0)); i <= last; i++) {
+                    if (path.get(i) == w.getNode(0) && i + 1 < path.size() && w.getNode(1) == path.get(i + 1)) {
+                        foundStartSegment = true;
+                        break;
+                    }
+                }
+                if (foundStartSegment) {
+                    unreversedWays.add(w);
+                } else {
+                    reversedWays.add(w);
+                }
+            }
+        }
+    }
+
+    protected static List<Node> tryJoin(Collection<Way> ways) {
+        List<Node> path = joinWithMultipolygonCode(ways);
+        if (path.isEmpty()) {
+            NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ways);
+            path = graph.buildSpanningPathNoRemove();
+        }
+        return path;
+    }
+
+    /**
+     * Use {@link Multipolygon#joinWays(Collection)} to join ways.
+     * @param ways the ways
+     * @return List of nodes of the combined ways or null if ways could not be combined to a single way.
+     * Result may contain overlapping segments.
+     */
+    private static List<Node> joinWithMultipolygonCode(Collection<Way> ways) {
+        // sort so that old unclosed ways appear first
+        LinkedList<Way> toJoin = new LinkedList<>(ways);
+        toJoin.sort((o1, o2) -> {
+            int d = Boolean.compare(o1.isNew(), o2.isNew());
+            if (d == 0)
+                d = Boolean.compare(o1.isClosed(), o2.isClosed());
+            return d;
+        });
+        Collection<JoinedWay> list = Multipolygon.joinWays(toJoin);
+        if (list.size() == 1) {
+            // ways form a single line string
+            return new ArrayList<>(list.iterator().next().getNodes());
+        }
+        return Collections.emptyList();
+    }
+
     @Override
     public void actionPerformed(ActionEvent event) {
         final DataSet ds = getLayerManager().getEditDataSet();
@@ -237,8 +291,25 @@ public class CombineWayAction extends JosmAction {
 
         if (combineResult == null)
             return;
+
         final Way selectedWay = combineResult.a;
         UndoRedoHandler.getInstance().add(combineResult.b);
+        Test test = new OverlappingWays();
+        test.startTest(null);
+        test.visit(combineResult.a);
+        test.endTest();
+        if (test.getErrors().isEmpty()) {
+            test = new SelfIntersectingWay();
+            test.startTest(null);
+            test.visit(combineResult.a);
+            test.endTest();
+        }
+        if (!test.getErrors().isEmpty()) {
+            new Notification(test.getErrors().get(0).getMessage())
+            .setIcon(JOptionPane.WARNING_MESSAGE)
+            .setDuration(Notification.TIME_SHORT)
+            .show();
+        }
         if (selectedWay != null) {
             GuiHelper.runInEDT(() -> ds.setSelected(selectedWay));
         }
@@ -261,4 +332,5 @@ public class CombineWayAction extends JosmAction {
         }
         setEnabled(numWays >= 2);
     }
+
 }
