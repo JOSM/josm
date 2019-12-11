@@ -52,7 +52,8 @@ import org.openstreetmap.josm.tools.Utils;
  * GUI component to select tagging preset: the list with filter and two checkboxes
  * @since 6068
  */
-public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPreset> implements DataSelectionListener {
+public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPreset>
+        implements DataSelectionListener, TaggingPresetListener {
 
     private static final int CLASSIFICATION_IN_FAVORITES = 300;
     private static final int CLASSIFICATION_NAME_MATCH = 300;
@@ -193,6 +194,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         super();
         lsResult.setCellRenderer(new ResultListCellRenderer());
         classifications.loadPresets(TaggingPresets.getTaggingPresets());
+        TaggingPresets.addListener(this);
 
         JPanel pnChecks = new JPanel();
         pnChecks.setLayout(new BoxLayout(pnChecks, BoxLayout.Y_AXIS));
@@ -435,5 +437,11 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
     public synchronized void setSelectedPreset(TaggingPreset p) {
         lsResult.setSelectedValue(p, true);
+    }
+
+    @Override
+    public void taggingPresetsModified() {
+        classifications.clear();
+        classifications.loadPresets(TaggingPresets.getTaggingPresets());
     }
 }

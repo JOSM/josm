@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetListener;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
@@ -38,7 +39,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Check for wrong relations.
  * @since 3669
  */
-public class RelationChecker extends Test {
+public class RelationChecker extends Test implements TaggingPresetListener {
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     /** Role ''{0}'' is not in templates ''{1}'' */
@@ -79,6 +80,7 @@ public class RelationChecker extends Test {
 
     @Override
     public void initialize() {
+        TaggingPresets.addListener(this);
         initializePresets();
     }
 
@@ -374,5 +376,11 @@ public class RelationChecker extends Test {
     public boolean isFixable(TestError testError) {
         Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
         return testError.getCode() == RELATION_EMPTY && !primitives.isEmpty() && primitives.iterator().next().isNew();
+    }
+
+    @Override
+    public void taggingPresetsModified() {
+        relationpresets.clear();
+        initializePresets();
     }
 }

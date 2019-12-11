@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.validation.util.Entities;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetListener;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Check;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
@@ -60,7 +61,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author frsantos
  * @since 3669
  */
-public class TagChecker extends TagTest {
+public class TagChecker extends TagTest implements TaggingPresetListener {
 
     /** The config file of ignored tags */
     public static final String IGNORE_FILE = "resource://data/validator/ignoretags.cfg";
@@ -181,6 +182,7 @@ public class TagChecker extends TagTest {
 
     @Override
     public void initialize() throws IOException {
+        TaggingPresets.addListener(this);
         initializeData();
         initializePresets();
         analysePresets();
@@ -1007,5 +1009,16 @@ public class TagChecker extends TagTest {
         }
 
         return false;
+    }
+
+    @Override
+    public void taggingPresetsModified() {
+        try {
+            initializeData();
+            initializePresets();
+            analysePresets();
+        } catch (IOException e) {
+            Logging.error(e);
+        }
     }
 }
