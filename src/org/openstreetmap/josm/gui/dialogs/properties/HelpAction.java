@@ -9,12 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.IntFunction;
 
 import javax.swing.AbstractAction;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
@@ -34,31 +30,12 @@ import org.xml.sax.SAXException;
  * Launch browser with wiki help for selected object.
  * @since 13521
  */
-public class HelpAction extends AbstractAction {
-    private final JTable tagTable;
-    private final IntFunction<String> tagKeySupplier;
-    private final IntFunction<Map<String, Integer>> tagValuesSupplier;
-
-    private final JTable membershipTable;
-    private final IntFunction<IRelation<?>> memberValueSupplier;
+public abstract class HelpAction extends AbstractAction {
 
     /**
      * Constructs a new {@code HelpAction}.
-     * @param tagTable The tag table. Cannot be null
-     * @param tagKeySupplier Finds the key from given row of tag table. Cannot be null
-     * @param tagValuesSupplier Finds the values from given row of tag table (map of values and number of occurrences). Cannot be null
-     * @param membershipTable The membership table. Can be null
-     * @param memberValueSupplier Finds the parent relation from given row of membership table. Can be null
-     * @since 13959 (signature)
      */
-    public HelpAction(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
-            JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier) {
-        this.tagTable = Objects.requireNonNull(tagTable);
-        this.tagKeySupplier = Objects.requireNonNull(tagKeySupplier);
-        this.tagValuesSupplier = Objects.requireNonNull(tagValuesSupplier);
-        this.membershipTable = membershipTable;
-        this.memberValueSupplier = memberValueSupplier;
-        putValue(NAME, tr("Go to OSM wiki for tag help"));
+    public HelpAction() {
         putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help for selected object"));
         new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
         putValue(ACCELERATOR_KEY, getKeyStroke());
@@ -68,28 +45,14 @@ public class HelpAction extends AbstractAction {
      * Returns the keystroke launching this action (F1).
      * @return the keystroke launching this action
      */
-    public KeyStroke getKeyStroke() {
+    public static KeyStroke getKeyStroke() {
         return KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (tagTable.getSelectedRowCount() == 1) {
-            int row = tagTable.getSelectedRow();
-            String key = tagKeySupplier.apply(row);
-            Map<String, Integer> m = tagValuesSupplier.apply(row);
-            if (!m.isEmpty()) {
-                String val = m.entrySet().iterator().next().getKey();
-                MainApplication.worker.execute(() -> displayTagHelp(key, val));
-            }
-        } else if (membershipTable != null && membershipTable.getSelectedRowCount() == 1) {
-            int row = membershipTable.getSelectedRow();
-            final IRelation<?> relation = memberValueSupplier.apply(row);
-            MainApplication.worker.execute(() -> displayRelationHelp(relation));
-        } else {
-            // give the generic help page, if more than one element is selected
-            MainApplication.worker.execute(HelpAction::displayGenericHelp);
-        }
+        // give the generic help page, if more than one element is selected
+        MainApplication.worker.execute(HelpAction::displayGenericHelp);
     }
 
     /**

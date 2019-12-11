@@ -184,8 +184,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final transient TagEditHelper editHelper = new TagEditHelper(tagTable, tagData, valueCount);
 
     private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
-    private final HelpAction helpAction = new HelpAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
-            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
+    private final HelpAction helpTagAction = new HelpTagAction(tagTable, editHelper::getDataKey, editHelper::getDataValues);
+    private final HelpAction helpRelAction = new HelpMembershipAction(membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
     private final TaginfoAction taginfoAction = new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
             membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
     private final Collection<TaginfoAction> taginfoNationalActions = new ArrayList<>();
@@ -388,7 +388,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         }
         RelationPopupMenus.setupHandler(membershipMenuHandler, EditRelationAction.class, DeleteRelationsAction.class);
         membershipMenu.addSeparator();
-        membershipMenu.add(helpAction);
+        membershipMenu.add(helpRelAction);
         membershipMenu.add(taginfoAction);
 
         membershipTable.addMouseListener(new PopupMenuLauncher(membershipMenu) {
@@ -440,7 +440,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagMenu.add(searchActionAny);
         tagMenu.add(searchActionSame);
         tagMenu.addSeparator();
-        tagMenu.add(helpAction);
+        tagMenu.add(helpTagAction);
         tagMenu.add(taginfoAction);
         tagTable.addMouseListener(new PopupMenuLauncher(tagMenu));
     }
@@ -485,8 +485,17 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         // F1 button = custom help action
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
-                helpAction.getKeyStroke(), "onHelp");
-        getActionMap().put("onHelp", helpAction);
+                HelpAction.getKeyStroke(), "onHelp");
+        getActionMap().put("onHelp", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (membershipTable.getSelectedRowCount() == 1) {
+                    helpRelAction.actionPerformed(e);
+                } else {
+                    helpTagAction.actionPerformed(e);
+                }
+            }
+        });
     }
 
     private JosmTextField setupFilter() {

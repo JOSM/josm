@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyAllKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyValueAction;
-import org.openstreetmap.josm.gui.dialogs.properties.HelpAction;
+import org.openstreetmap.josm.gui.dialogs.properties.HelpTagAction;
 import org.openstreetmap.josm.gui.dialogs.properties.TaginfoAction;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 
@@ -94,7 +94,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
         tagMenu.add(trackJosmAction(new CopyKeyValueAction(table, tagKeyFn, objectSp)));
         tagMenu.add(trackJosmAction(new CopyAllKeyValueAction(table, tagKeyFn, objectSp)));
         tagMenu.addSeparator();
-        tagMenu.add(trackJosmAction(new HelpAction(table, tagKeyFn, tagValuesFn, null, null)));
+        tagMenu.add(trackJosmAction(new HelpTagAction(table, tagKeyFn, tagValuesFn)));
         tagMenu.add(trackJosmAction(new TaginfoAction(table, tagKeyFn, tagValuesFn, null, null)));
 
         table.addMouseListener(new PopupMenuLauncher(tagMenu));
