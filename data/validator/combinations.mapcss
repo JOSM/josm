@@ -127,7 +127,8 @@ way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
   group: tr("missing tag");
 }
 
-/* {0.tag} without {1.key} (warning level), #18246 */
+/* {0.tag} without {1.key} (warning level), #18411, #18246 */
+way[railway=construction][!construction],
 way[highway=construction][!construction],
 node[traffic_sign=maxspeed][!maxspeed],
 node[actuator=manual][!handle],
