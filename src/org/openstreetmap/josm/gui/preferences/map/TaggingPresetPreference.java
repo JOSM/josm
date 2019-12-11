@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
@@ -246,10 +247,13 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        boolean restart = Config.getPref().putBoolean("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null);
-        restart |= sources.finish();
+        if (sources.finish()
+                || Config.getPref().putBoolean("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null)) {
+            TaggingPresets.destroy();
+            TaggingPresets.initialize();
+        }
 
-        return restart;
+        return false;
     }
 
     @Override

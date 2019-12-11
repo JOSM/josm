@@ -16,6 +16,7 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MenuScroller;
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
@@ -98,6 +99,24 @@ public final class TaggingPresets {
         if (Config.getPref().getBoolean("taggingpreset.sortmenu")) {
             TaggingPresetMenu.sortMenu(MainApplication.getMenu().presetsMenu);
         }
+        listeners.forEach(TaggingPresetListener::taggingPresetsModified);
+    }
+
+    // Cannot implement Destroyable since this is static
+    /**
+     * Call to deconstruct the TaggingPresets menus and other information so that it
+     * can be rebuilt later.
+     *
+     * @since 15582
+     */
+    public static void destroy() {
+        ToolbarPreferences toolBar = MainApplication.getToolbar();
+        taggingPresets.forEach(toolBar::unregister);
+        taggingPresets.clear();
+        PRESET_TAG_CACHE.clear();
+        PRESET_ROLE_CACHE.clear();
+        MainApplication.getMenu().presetsMenu.removeAll();
+        listeners.forEach(TaggingPresetListener::taggingPresetsModified);
     }
 
     /**
@@ -201,9 +220,7 @@ public final class TaggingPresets {
      */
     public static void addTaggingPresets(Collection<TaggingPreset> presets) {
         if (presets != null && taggingPresets.addAll(presets)) {
-            for (TaggingPresetListener listener : listeners) {
-                listener.taggingPresetsModified();
-            }
+            listeners.forEach(TaggingPresetListener::taggingPresetsModified);
         }
     }
 
