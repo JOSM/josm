@@ -60,7 +60,7 @@ public class CancelAction extends SavingAction {
     }
 
     protected int confirmClosingByCancel() {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Yes, save the changes and close"),
                         new ImageProvider("ok"),

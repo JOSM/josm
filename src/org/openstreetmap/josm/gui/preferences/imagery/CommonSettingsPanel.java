@@ -25,7 +25,6 @@ public class CommonSettingsPanel extends JPanel {
     private final JosmComboBox<String> sharpen;
     private final JSlider tilesZoom = new JSlider(-2, 2, 0);
 
-
     /**
      * Constructs a new {@code CommonSettingsPanel}.
      */

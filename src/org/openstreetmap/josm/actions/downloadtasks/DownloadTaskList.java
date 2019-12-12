@@ -168,7 +168,7 @@ public class DownloadTaskList {
      * @param potentiallyDeleted a set of primitives (given by their ids)
      */
     protected void handlePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Check on the server"),
                         new ImageProvider("ok"),

@@ -73,7 +73,7 @@ import org.openstreetmap.josm.tools.bugreport.ReportedException;
 public final class GuiHelper {
 
     /* Localization keys for file chooser (and color chooser). */
-    private static final String[] JAVA_INTERNAL_MESSAGE_KEYS = new String[] {
+    private static final String[] JAVA_INTERNAL_MESSAGE_KEYS = {
         /* JFileChooser windows laf */
         "FileChooser.detailsViewActionLabelText",
         "FileChooser.detailsViewButtonAccessibleName",

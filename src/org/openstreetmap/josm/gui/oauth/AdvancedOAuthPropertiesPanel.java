@@ -160,7 +160,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     }
 
     protected boolean confirmOverwriteCustomSettings() {
-        ButtonSpec[] buttons = new ButtonSpec[] {
+        ButtonSpec[] buttons = {
                 new ButtonSpec(
                         tr("Continue"),
                         new ImageProvider("ok"),

@@ -311,7 +311,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
-
     /* -------
     /* FLAGS
     /* ------*/

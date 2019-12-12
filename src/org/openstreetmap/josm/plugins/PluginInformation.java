@@ -438,7 +438,7 @@ public class PluginInformation {
 
         Collection<String> locations = getPluginLocations();
 
-        String[] nameCandidates = new String[] {
+        String[] nameCandidates = {
                 pluginName,
                 pluginName + "-" + PlatformManager.getPlatform().getPlatform().name().toLowerCase(Locale.ENGLISH)};
         for (String s : locations) {

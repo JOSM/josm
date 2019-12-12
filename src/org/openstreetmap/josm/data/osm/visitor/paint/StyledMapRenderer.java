@@ -790,7 +790,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         });
     }
 
-
     /**
      * Draw the icon for a given area. Normally, the icon is drawn around the center of the area.
      * @param osm The primitive to draw the icon for

@@ -446,7 +446,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         return output.toString();
     }
 
-
     /**
      * Call remote server and parse response to WMTSCapabilities object
      *
@@ -1075,7 +1074,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 Collectors.groupingBy(x -> x.identifier + '\u001c' + x.tileMatrixSet.identifier));
         return layerByName.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
     }
-
 
     /**
      * @return set of projection codes that this TileSource supports

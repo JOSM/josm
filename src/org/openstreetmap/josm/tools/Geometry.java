@@ -1145,7 +1145,6 @@ public final class Geometry {
         return res;
     }
 
-
     /**
      * Data class to hold two double values (area and perimeter of a polygon).
      */

@@ -83,7 +83,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
     }
 
     protected MaxChangesetSizeExceededPolicy askMaxChangesetSizeExceedsPolicy() {
-        ButtonSpec[] specs = new ButtonSpec[] {
+        ButtonSpec[] specs = {
                 new ButtonSpec(
                         tr("Continue uploading"),
                         new ImageProvider("upload"),

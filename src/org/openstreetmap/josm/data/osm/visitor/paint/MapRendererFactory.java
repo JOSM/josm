@@ -229,7 +229,6 @@ public final class MapRendererFactory {
         descriptors.add(d);
     }
 
-
     /**
      * <p>Unregisters a map renderer class.</p>
      *

@@ -201,7 +201,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final AddAction addAction = new AddAction();
     private final EditAction editAction = new EditAction();
     private final DeleteAction deleteAction = new DeleteAction();
-    private final JosmAction[] josmActions = new JosmAction[]{addAction, editAction, deleteAction};
+    private final JosmAction[] josmActions = {addAction, editAction, deleteAction};
 
     private final transient HighlightHelper highlightHelper = new HighlightHelper();
 

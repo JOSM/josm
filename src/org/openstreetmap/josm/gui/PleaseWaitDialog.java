@@ -42,7 +42,6 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     private final JosmTextArea taLog = new JosmTextArea(5, 50);
     private final JScrollPane spLog = new JScrollPane(taLog);
 
-
     /**
      * Constructs a new {@code PleaseWaitDialog}.
      * @param parent the {@code Component} from which the dialog is displayed. Can be {@code null}.

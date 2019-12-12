@@ -33,7 +33,6 @@ public class TMSSettingsPanel extends JPanel {
     private final JSpinner maxConcurrentDownloads;
     private final JSpinner maxDownloadsPerHost;
 
-
     /**
      * Constructs a new {@code TMSSettingsPanel}.
      */

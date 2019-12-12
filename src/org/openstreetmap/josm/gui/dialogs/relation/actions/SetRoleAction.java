@@ -54,7 +54,7 @@ public class SetRoleAction extends AbstractRelationEditorAction implements Docum
                     + tr("This is equal to deleting the roles of these objects.") +
                     "<br>"
                     + tr("Do you really want to apply the new role?") + "</html>";
-        String[] options = new String[] {
+        String[] options = {
                 tr("Yes, apply it"),
                 tr("No, do not apply")
         };

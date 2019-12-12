@@ -280,7 +280,6 @@ public final class UndoRedoHandler {
         return !redoCommands.isEmpty();
     }
 
-
     /**
      * Executes the command and add it to the intern command queue.
      * @param c The command to execute. Must not be {@code null}.

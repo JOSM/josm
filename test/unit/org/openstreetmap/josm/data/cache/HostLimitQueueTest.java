@@ -32,7 +32,6 @@ public class HostLimitQueueTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20 * 1000);
 
-
     /**
      * Mock class for tests
      */

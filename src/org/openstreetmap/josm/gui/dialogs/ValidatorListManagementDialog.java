@@ -38,7 +38,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
-
 /**
  * A management window for the validator's ignorelist
  * @author Taylor Smock
@@ -213,7 +212,6 @@ public class ValidatorListManagementDialog extends ExtendedDialog {
         }
         tree.updateUI();
     }
-
 
     /**
      * Prompt to rerun the validator when the ignore list changes

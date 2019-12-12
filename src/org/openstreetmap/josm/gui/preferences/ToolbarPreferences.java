@@ -735,7 +735,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         private class ActionTransferable implements Transferable {
 
-            private final DataFlavor[] flavors = new DataFlavor[] {ACTION_FLAVOR};
+            private final DataFlavor[] flavors = {ACTION_FLAVOR};
 
             private final List<ActionDefinition> actions;
 

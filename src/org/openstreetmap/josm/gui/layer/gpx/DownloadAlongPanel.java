@@ -163,7 +163,7 @@ public class DownloadAlongPanel extends JPanel {
      * @return The selected button index (0 for download, 1 for cancel, 2 for dialog closure)
      */
     public int showInDownloadDialog(String title, String helpTopic) {
-        final ButtonSpec[] options = new ButtonSpec[] {
+        final ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Download"),
                         new ImageProvider("download"),

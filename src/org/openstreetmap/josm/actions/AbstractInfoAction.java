@@ -70,7 +70,7 @@ public abstract class AbstractInfoAction extends JosmAction {
                 "You are about to launch {0} browser windows.<br>"
                         + "This may both clutter your screen with browser windows<br>"
                         + "and take some time to finish.", numBrowsers, numBrowsers);
-        ButtonSpec[] spec = new ButtonSpec[] {
+        ButtonSpec[] spec = {
                 new ButtonSpec(
                         tr("Continue"),
                         new ImageProvider("ok"),

@@ -152,10 +152,10 @@ public class PaintVisitor implements OsmPrimitiveVisitor, ValidatorVisitor {
         int deg = (int) Utils.toDegrees(t);
         if (selected) {
             g.setColor(getHighlightColor(color));
-            int[] x = new int[] {(int) (p1.x + cosT), (int) (p2.x + cosT),
-                                 (int) (p2.x - cosT), (int) (p1.x - cosT)};
-            int[] y = new int[] {(int) (p1.y - sinT), (int) (p2.y - sinT),
-                                 (int) (p2.y + sinT), (int) (p1.y + sinT)};
+            int[] x = {(int) (p1.x + cosT), (int) (p2.x + cosT),
+                       (int) (p2.x - cosT), (int) (p1.x - cosT)};
+            int[] y = {(int) (p1.y - sinT), (int) (p2.y - sinT),
+                       (int) (p2.y + sinT), (int) (p1.y + sinT)};
             g.fillPolygon(x, y, 4);
             g.fillArc(p1.x - 5, p1.y - 5, 10, 10, deg, 180);
             g.fillArc(p2.x - 5, p2.y - 5, 10, 10, deg, -180);

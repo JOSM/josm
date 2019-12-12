@@ -486,7 +486,7 @@ public final class PluginHandler {
             Logging.warn(tr("Unexpected value ''{0}'' for preference ''{1}''. Assuming value ''ask''.", policy, togglePreferenceKey));
         }
 
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Update plugins"),
                         new ImageProvider("dialogs", "refresh"),
@@ -563,7 +563,7 @@ public final class PluginHandler {
                 missingRequiredPlugin.size()))
           .append(Utils.joinAsHtmlUnorderedList(missingRequiredPlugin))
           .append("</html>");
-        ButtonSpec[] specs = new ButtonSpec[] {
+        ButtonSpec[] specs = {
                 new ButtonSpec(
                         tr("Download and restart"),
                         new ImageProvider("restart"),
@@ -1206,7 +1206,7 @@ public final class PluginHandler {
      * @return true, if the plugin shall be disabled; false, otherwise
      */
     public static boolean confirmDisablePlugin(Component parent, String reason, String name) {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Disable plugin"),
                         new ImageProvider("dialogs", "delete"),
@@ -1419,7 +1419,7 @@ public final class PluginHandler {
     }
 
     private static int askUpdateDisableKeepPluginAfterException(PluginProxy plugin) {
-        final ButtonSpec[] options = new ButtonSpec[] {
+        final ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Update plugin"),
                         new ImageProvider("dialogs", "refresh"),

@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.ImageResource;
  * @since 1622
  */
 public class TagMerger extends AbstractMergePanel implements IConflictResolver {
-    private static final String[] KEY_VALUE = new String[] {tr("Key"), tr("Value")};
+    private static final String[] KEY_VALUE = {tr("Key"), tr("Value")};
 
     private final TagMergeModel model = new TagMergeModel();
 

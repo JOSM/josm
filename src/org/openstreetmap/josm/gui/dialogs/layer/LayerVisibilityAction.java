@@ -558,7 +558,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         private static final Border SELECTED_BORDER = BorderFactory.createLineBorder(Color.BLACK, 2);
 
         // TODO: Nicer color palette
-        private static final Color[] COLORS = new Color[] {
+        private static final Color[] COLORS = {
                 Color.RED,
                 Color.ORANGE,
                 Color.YELLOW,

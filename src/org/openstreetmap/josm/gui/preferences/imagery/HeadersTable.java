@@ -71,7 +71,7 @@ public class HeadersTable extends JPanel {
                 }
 
             } else if (row == headers.size()) {
-                String[] entry = new String[] {"", ""};
+                String[] entry = {"", ""};
                 entry[col] = (String) value;
                 headers.add(entry);
                 fireTableRowsInserted(row + 1, row + 1);

@@ -62,9 +62,9 @@ public final class ColorScale {
         ColorScale sc = new ColorScale();
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         //                   red  yellow  green   blue    red
-        int[] h = new int[] {0,    59,     127,    244,   360};
-        int[] s = new int[] {100,  84,     99,     100};
-        int[] b = new int[] {90,   93,     74,     83};
+        int[] h = {0,    59,     127,    244,   360};
+        int[] s = {100,  84,     99,     100};
+        int[] b = {90,   93,     74,     83};
         // CHECKSTYLE.ON: SingleSpaceSeparator
 
         sc.colors = new Color[count];

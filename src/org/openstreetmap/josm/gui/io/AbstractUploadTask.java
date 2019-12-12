@@ -127,7 +127,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         // CHECKSTYLE.ON: SingleSpaceSeparator
         default: throw new AssertionError();
         }
-        ButtonSpec[] spec = new ButtonSpec[] {
+        ButtonSpec[] spec = {
                 new ButtonSpec(
                         lbl,
                         new ImageProvider("updatedata"),
@@ -175,7 +175,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      *
      */
     protected void handleUploadConflictForUnknownConflict() {
-        ButtonSpec[] spec = new ButtonSpec[] {
+        ButtonSpec[] spec = {
                 new ButtonSpec(
                         tr("Synchronize entire dataset"),
                         new ImageProvider("updatedata"),
@@ -234,7 +234,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * @param conflict conflict
      */
     protected void handleUploadPreconditionFailedConflict(OsmApiException e, Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict) {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Prepare conflict resolution"),
                         new ImageProvider("ok"),

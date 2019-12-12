@@ -341,7 +341,6 @@ public class WayConnectionTypeCalculator {
         return NONE;
     }
 
-
     /**
      * Free resources.
      */

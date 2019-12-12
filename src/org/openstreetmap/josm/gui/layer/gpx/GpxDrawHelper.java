@@ -179,7 +179,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private static Color[] heatMapLutColorJosmBrown2Green = createColorFromResource("brown2green");
     private static Color[] heatMapLutColorJosmRed2Blue = createColorFromResource("red2blue");
 
-    private static Color[] rtkLibQualityColors = new Color[] {
+    private static Color[] rtkLibQualityColors = {
         Color.GREEN, // Fixed, solution by carrier‐based relative positioning and the integer ambiguity is properly resolved.
         Color.ORANGE, // Float, solution by carrier‐based relative positioning but the integer ambiguity is not resolved.
         Color.PINK, // Reserved

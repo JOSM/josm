@@ -994,7 +994,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             return null;
     }
 
-
     /**
      * Gets a node index from selected way after given index.
      * @param index index of current node

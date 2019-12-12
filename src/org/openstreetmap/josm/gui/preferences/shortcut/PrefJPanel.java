@@ -122,7 +122,7 @@ public class PrefJPanel extends JPanel {
     }
 
     private static class ScListModel extends AbstractTableModel {
-        private final String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
+        private final String[] columnNames = {tr("Action"), tr("Shortcut")};
         private final transient List<Shortcut> data;
 
         /**

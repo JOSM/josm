@@ -113,7 +113,6 @@ public interface DataSelectionListener {
         }
     }
 
-
     /**
      * The selection is replaced by a new selection
      * @author Michael Zangl

@@ -219,7 +219,7 @@ public class MergeNodesAction extends JosmAction {
                 if (w.getReferrers().isEmpty()) {
                     waysToDelete.add(w);
                 } else {
-                    ButtonSpec[] options = new ButtonSpec[] {
+                    ButtonSpec[] options = {
                             new ButtonSpec(
                                     tr("Abort Merging"),
                                     new ImageProvider("cancel"),

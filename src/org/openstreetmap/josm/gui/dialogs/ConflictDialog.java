@@ -615,7 +615,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         final StringBuilder sb = new StringBuilder();
         sb.append("<html>").append(msg1).append("</html>");
         if (numNewConflicts > 0) {
-            final ButtonSpec[] options = new ButtonSpec[] {
+            final ButtonSpec[] options = {
                     new ButtonSpec(
                             tr("OK"),
                             new ImageProvider("ok"),

@@ -289,12 +289,12 @@ public final class DomainValidator extends AbstractValidator {
     // .um  country-code    Not assigned
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
-    private static final String[] INFRASTRUCTURE_TLDS = new String[] {
+    private static final String[] INFRASTRUCTURE_TLDS = {
         "arpa",               // internet infrastructure
     };
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
-    private static final String[] GENERIC_TLDS = new String[] {
+    private static final String[] GENERIC_TLDS = {
         // Taken from Version 2019120700, Last Updated Sat Dec  7 07:07:01 2019 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
@@ -1523,7 +1523,7 @@ public final class DomainValidator extends AbstractValidator {
     };
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
-    private static final String[] COUNTRY_CODE_TLDS = new String[] {
+    private static final String[] COUNTRY_CODE_TLDS = {
         "ac",                 // Ascension Island
         "ad",                 // Andorra
         "ae",                 // United Arab Emirates
@@ -1821,7 +1821,7 @@ public final class DomainValidator extends AbstractValidator {
     };
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
-    private static final String[] LOCAL_TLDS = new String[] {
+    private static final String[] LOCAL_TLDS = {
        "localdomain",         // Also widely used as localhost.localdomain
        "localhost",           // RFC2606 defined
     };

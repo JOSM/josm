@@ -30,7 +30,7 @@ public class MultiValueResolutionDecision {
     /** the selected value if {@link #type} is {@link MultiValueDecisionType#KEEP_ONE} */
     private String value;
 
-    private static final String[] SUMMABLE_KEYS = new String[] {
+    private static final String[] SUMMABLE_KEYS = {
         "capacity(:.+)?", "step_count"
     };
 

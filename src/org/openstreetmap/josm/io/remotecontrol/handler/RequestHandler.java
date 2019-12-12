@@ -187,7 +187,7 @@ public abstract class RequestHandler {
             if (label.getPreferredSize().width > maxWidth) {
                 label.setText(message.replaceFirst("<div>", "<div style=\"width:" + maxWidth + "px;\">"));
             }
-            Object[] choices = new Object[] {tr("Yes, always"), tr("Yes, once"), tr("No")};
+            Object[] choices = {tr("Yes, always"), tr("Yes, once"), tr("No")};
             int choice = JOptionPane.showOptionDialog(MainApplication.getMainFrame(), label, tr("Confirm Remote Control action"),
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
             if (choice != JOptionPane.YES_OPTION && choice != JOptionPane.NO_OPTION) { // Yes/no refer to always/once

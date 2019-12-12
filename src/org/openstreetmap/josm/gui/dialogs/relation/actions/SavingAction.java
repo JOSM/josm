@@ -106,7 +106,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
     }
 
     protected boolean confirmClosingBecauseOfDirtyState() {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Yes, create a conflict and close"),
                         new ImageProvider("ok"),

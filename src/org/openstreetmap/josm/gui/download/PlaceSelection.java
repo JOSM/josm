@@ -73,7 +73,7 @@ public class PlaceSelection implements DownloadSelection {
     private NamedResultTableColumnModel columnmodel;
     private JTable tblSearchResults;
     private DownloadDialog parent;
-    private static final Server[] SERVERS = new Server[] {
+    private static final Server[] SERVERS = {
         new Server("Nominatim", NameFinder.NOMINATIM_URL, tr("Class Type"), tr("Bounds"))
     };
     private final JosmComboBox<Server> server = new JosmComboBox<>(SERVERS);

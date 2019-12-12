@@ -518,7 +518,6 @@ public class MultipolygonTest extends Test {
         return en != null && p.get().contains(en.getX(), en.getY());
     }
 
-
     /**
      * Determine multipolygon ways which are intersecting (crossing without a common node) or sharing one or more way segments.
      * See also {@link CrossingWays}
@@ -631,7 +630,6 @@ public class MultipolygonTest extends Test {
         }
         return crossingWays;
     }
-
 
     /**
      * Find ways which are crossing without sharing a node.

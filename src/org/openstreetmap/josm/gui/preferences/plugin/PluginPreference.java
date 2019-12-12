@@ -267,7 +267,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     }
 
     private void configureSites() {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("OK"),
                         new ImageProvider("ok"),

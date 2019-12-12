@@ -80,7 +80,7 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     protected boolean confirmSimplifyManyWays(int numWays) {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Yes"),
                         new ImageProvider("ok"),

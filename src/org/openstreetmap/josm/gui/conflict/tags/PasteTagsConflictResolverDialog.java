@@ -367,7 +367,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
     }
 
     static final class StatisticsTableModel extends DefaultTableModel {
-        private static final String[] HEADERS = new String[] {tr("Paste ..."), tr("From ..."), tr("To ...") };
+        private static final String[] HEADERS = {tr("Paste ..."), tr("From ..."), tr("To ...") };
         private final transient List<StatisticsInfo> data = new ArrayList<>();
 
         @Override

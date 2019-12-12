@@ -58,7 +58,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
      */
     public abstract Collection<Command> execute(P oldprimitive, P primitive) throws UserCancelException;
 
-    private static final String[] APPLICATION_OPTIONS = new String[] {
+    private static final String[] APPLICATION_OPTIONS = {
             tr("Apply selected changes"),
             tr("Do not apply changes"),
             tr("Cancel")

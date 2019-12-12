@@ -167,7 +167,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-
     /**
      * Builds and shows the search dialog.
      * @param initialValues A set of initial values needed in order to initialize the search dialog.

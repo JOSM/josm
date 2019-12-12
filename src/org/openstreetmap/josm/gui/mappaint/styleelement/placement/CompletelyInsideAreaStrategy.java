@@ -71,7 +71,7 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
         // |  4  C  2  |
         // |  8  3  7  |
         // +-----------+
-        Rectangle[] candidates = new Rectangle[] {
+        Rectangle[] candidates = {
                 new Rectangle(x2, y1, nbw, nbh),
                 new Rectangle(x3, y2, nbw, nbh),
                 new Rectangle(x2, y3, nbw, nbh),

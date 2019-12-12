@@ -137,7 +137,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 .map(IGpxTrack::getColor).filter(Objects::nonNull)
                 .findAny().orElse(GpxDrawHelper.DEFAULT_COLOR_PROPERTY.get());
         JColorChooser c = new JColorChooser(cl);
-        Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
+        Object[] options = {tr("OK"), tr("Cancel"), tr("Default")};
         int answer = JOptionPane.showOptionDialog(
                 MainApplication.getMainFrame(),
                 c,

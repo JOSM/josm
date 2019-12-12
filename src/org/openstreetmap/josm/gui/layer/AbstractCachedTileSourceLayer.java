@@ -39,7 +39,6 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
     private ICacheAccess<String, BufferedImageCacheEntry> cache;
     private volatile TileLoaderFactory loaderFactory;
 
-
     /**
      * Creates an instance of class based on InageryInfo
      *
@@ -87,7 +86,6 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
                 CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
         return cache;
     }
-
 
     /**
      * Plugins that wish to set custom tile loader should call this method

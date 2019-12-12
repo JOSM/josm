@@ -26,19 +26,19 @@ public class SharpenImageProcessor implements ImageProcessor, SessionAwareReadAp
     private float sharpenLevel = 1.0f;
     private ConvolveOp op;
 
-    private static final float[] KERNEL_IDENTITY = new float[] {
+    private static final float[] KERNEL_IDENTITY = {
         0, 0, 0,
         0, 1, 0,
         0, 0, 0
     };
 
-    private static final float[] KERNEL_BLUR = new float[] {
+    private static final float[] KERNEL_BLUR = {
         1f / 16, 2f / 16, 1f / 16,
         2f / 16, 4f / 16, 2f / 16,
         1f / 16, 2f / 16, 1f / 16
     };
 
-    private static final float[] KERNEL_SHARPEN = new float[] {
+    private static final float[] KERNEL_SHARPEN = {
         -.5f, -1f, -.5f,
          -1f, 7, -1f,
         -.5f, -1f, -.5f

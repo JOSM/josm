@@ -144,7 +144,6 @@ public final class GetCapabilitiesParseHelper {
         throw new IllegalStateException("WMTS Parser error - moveReaderToEndCurrentTag failed to find closing tag");
     }
 
-
     /**
      * Moves reader to first occurrence of the structure equivalent of Xpath tags[0]/tags[1]../tags[n]. If fails to find
      * moves the reader to the closing tag of current tag

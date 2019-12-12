@@ -76,7 +76,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
     }
 
     protected int confirmDiscardDirtyData() {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Yes, discard changes and reload"),
                         new ImageProvider("ok"),
@@ -105,7 +105,7 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
     }
 
     protected int confirmCloseDeletedRelation() {
-        ButtonSpec[] options = new ButtonSpec[] {
+        ButtonSpec[] options = {
                 new ButtonSpec(
                         tr("Yes"),
                         new ImageProvider("ok"),

@@ -94,7 +94,6 @@ public class MapCSSTagChecker extends Test.TagTest {
     MapCSSTagCheckerIndex indexData;
     final Set<OsmPrimitive> tested = new HashSet<>();
 
-
     /**
     * A grouped MapCSSRule with multiple selectors for a single declaration.
     * @see MapCSSRule
