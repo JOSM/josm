@@ -982,6 +982,18 @@ public final class Functions {
     }
 
     /**
+     * Trim whitespaces from the strings {@code strings}.
+     *
+     * @param strings The list of strings to strip
+     * @return The resulting string
+     * @see Utils#strip
+     * @since 15591
+     */
+    public static List<String> trim_list(List<String> strings) {
+        return strings.stream().map(Utils::strip).filter(str -> !str.isEmpty()).collect(Collectors.toList());
+    }
+
+    /**
      * Check if two strings are similar, but not identical, i.e., have a Levenshtein distance of 1 or 2.
      * @param string1 first string to compare
      * @param string2 second string to compare

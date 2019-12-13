@@ -324,6 +324,19 @@ public class MapCSSParserTest {
         assertTrue(c1.matches(new Environment(n1)));
     }
 
+    /**
+     * Test case for {@link Functions#trim_list}
+     */
+    @Test
+    public void testTrimList() {
+        List<String> trimmed = Functions.trim_list(Arrays.asList(" A1 ", "A2", " A3", "A4 ", ""));
+        assertEquals(4, trimmed.size());
+        assertEquals("A1", trimmed.get(0));
+        assertEquals("A2", trimmed.get(1));
+        assertEquals("A3", trimmed.get(2));
+        assertEquals("A4", trimmed.get(3));
+    }
+
     @Test
     public void testTicket8568() throws Exception {
         MapCSSStyleSource sheet = new MapCSSStyleSource(
