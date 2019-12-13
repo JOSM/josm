@@ -777,7 +777,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         if (referrers == null) {
             return Stream.empty();
         }
-        final Stream<OsmPrimitive> stream = referrers instanceof OsmPrimitive
+        final Stream<OsmPrimitive> stream = referrers instanceof OsmPrimitive // NOPMD
                 ? Stream.of((OsmPrimitive) referrers)
                 : Arrays.stream((OsmPrimitive[]) referrers);
         return stream

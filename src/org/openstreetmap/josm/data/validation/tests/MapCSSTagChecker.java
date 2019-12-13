@@ -390,9 +390,9 @@ public class MapCSSTagChecker extends Test.TagTest {
 
             final MapCSSStyleSource source = new MapCSSStyleSource("");
             final MapCSSParser preprocessor = new MapCSSParser(css, MapCSSParser.LexicalState.PREPROCESSOR);
-            final StringReader mapcss = new StringReader(preprocessor.pp_root(source));
-            final MapCSSParser parser = new MapCSSParser(mapcss, MapCSSParser.LexicalState.DEFAULT);
-            parser.sheet(source);
+            try (StringReader mapcss = new StringReader(preprocessor.pp_root(source))) {
+                new MapCSSParser(mapcss, MapCSSParser.LexicalState.DEFAULT).sheet(source);
+            }
             // Ignore "meta" rule(s) from external rules of JOSM wiki
             source.removeMetaRules();
             // group rules with common declaration block

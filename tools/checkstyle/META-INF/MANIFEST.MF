@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JOSM Checkstyle Eclipse Plugin
 Bundle-SymbolicName: org.openstreetmap.josm.checkstyle-eclipse-plugin;singleton:=true
-Bundle-Version: 8.12.0.qualifier
+Bundle-Version: 8.27.0.qualifier
 Require-Bundle: net.sf.eclipsecs.checkstyle,
  net.sf.eclipsecs.core,
  net.sf.eclipsecs.ui

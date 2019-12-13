@@ -107,7 +107,7 @@ public final class OsmValidator {
      * All available tests in core
      */
     @SuppressWarnings("unchecked")
-    private static final Class<Test>[] CORE_TEST_CLASSES = new Class[] {
+    private static final Class<Test>[] CORE_TEST_CLASSES = new Class[] {// NOPMD
         /* FIXME - unique error numbers for tests aren't properly unique - ignoring will not work as expected */
         DuplicateNode.class, // ID    1 ..   99
         OverlappingWays.class, // ID  101 ..  199

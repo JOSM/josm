@@ -633,16 +633,8 @@ public class MapPaintDialog extends ToggleDialog {
             txtSource.setEditable(false);
             p.add(new JScrollPane(txtSource), GBC.std().fill());
 
-            try {
-                InputStream is = s.getSourceInputStream();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        txtSource.append(line + '\n');
-                    }
-                } finally {
-                    s.closeSourceInputStream(is);
-                }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(s.getSourceInputStream(), StandardCharsets.UTF_8))) {
+                reader.lines().forEach(line -> txtSource.append(line + '\n'));
             } catch (IOException ex) {
                 Logging.error(ex);
                 txtSource.append("<ERROR: failed to read file!>");

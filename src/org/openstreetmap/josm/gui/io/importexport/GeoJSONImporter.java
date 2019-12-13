@@ -70,7 +70,7 @@ public class GeoJSONImporter extends FileImporter {
      */
     public DataSet parseDataSet(final String source) throws IOException, IllegalDataException {
         try (CachedFile cf = new CachedFile(source)) {
-            InputStream fileInputStream = Compression.getUncompressedFileInputStream(cf.getFile());
+            InputStream fileInputStream = Compression.getUncompressedFileInputStream(cf.getFile()); // NOPMD
             return GeoJSONReader.parseDataSet(fileInputStream, NullProgressMonitor.INSTANCE);
         }
     }

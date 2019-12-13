@@ -5,7 +5,6 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,6 +18,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -85,7 +85,7 @@ public class RequestProcessor extends Thread {
     public RequestProcessor(Socket request) {
         super("RemoteControl request processor");
         this.setDaemon(true);
-        this.request = request;
+        this.request = Objects.requireNonNull(request);
     }
 
     /**
@@ -93,8 +93,7 @@ public class RequestProcessor extends Thread {
      * @param request The request to process
      */
     public static void processRequest(Socket request) {
-        RequestProcessor processor = new RequestProcessor(request);
-        processor.start();
+        new RequestProcessor(request).start();
     }
 
     /**
@@ -166,11 +165,10 @@ public class RequestProcessor extends Thread {
      */
     @Override
     public void run() {
-        Writer out = null;
-        try {
-            OutputStream raw = new BufferedOutputStream(request.getOutputStream());
-            out = new OutputStreamWriter(raw, RESPONSE_CHARSET);
-            BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII"));
+        Writer out = null; // NOPMD
+        try { // NOPMD
+            out = new OutputStreamWriter(new BufferedOutputStream(request.getOutputStream()), RESPONSE_CHARSET);
+            BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII")); // NOPMD
 
             String get = in.readLine();
             if (get == null) {
@@ -273,7 +271,6 @@ public class RequestProcessor extends Thread {
                     sendForbidden(out, ex.getMessage());
                 }
             }
-
         } catch (IOException ioe) {
             Logging.debug(Logging.getErrorMessage(ioe));
         } catch (ReflectiveOperationException e) {
@@ -422,9 +419,10 @@ public class RequestProcessor extends Thread {
                 return null;
             }
 
-            PrintWriter r = new PrintWriter(w);
-            printJsonInfo(cmd, r, handler);
-            return w.toString();
+            try (PrintWriter r = new PrintWriter(w)) {
+                printJsonInfo(cmd, r, handler);
+                return w.toString();
+            }
         } catch (IOException e) {
             Logging.error(e);
             return null;

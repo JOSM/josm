@@ -432,12 +432,11 @@ public class MapCSSStyleSource extends StyleSource {
                 try (Reader reader = new BufferedReader(UTFInputStreamReader.create(in))) {
                     // evaluate @media { ... } blocks
                     MapCSSParser preprocessor = new MapCSSParser(reader, MapCSSParser.LexicalState.PREPROCESSOR);
-                    String mapcss = preprocessor.pp_root(this);
 
                     // do the actual mapcss parsing
-                    Reader in2 = new StringReader(mapcss);
-                    MapCSSParser parser = new MapCSSParser(in2, MapCSSParser.LexicalState.DEFAULT);
-                    parser.sheet(this);
+                    try (Reader in2 = new StringReader(preprocessor.pp_root(this))) {
+                        new MapCSSParser(in2, MapCSSParser.LexicalState.DEFAULT).sheet(this);
+                    }
 
                     loadMeta();
                     if (!metadataOnly) {

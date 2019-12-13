@@ -101,7 +101,7 @@ public class RemoteControlHttpServer extends Thread {
         while (true) {
             try {
                 @SuppressWarnings("resource")
-                Socket request = server.accept();
+                Socket request = server.accept(); // NOPMD
                 RequestProcessor.processRequest(request);
             } catch (SocketException e) {
                 if (!server.isClosed()) {

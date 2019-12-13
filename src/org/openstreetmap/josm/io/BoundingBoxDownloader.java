@@ -217,10 +217,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
         CheckParameterUtil.ensureThat(noteLimit <= 10_000, "Requested note limit is over API hard limit of 10000.");
         CheckParameterUtil.ensureThat(daysClosed >= -1, "Requested note limit is less than -1.");
         String url = "notes?limit=" + noteLimit + "&closed=" + daysClosed + "&bbox=" + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2;
-        try {
-            InputStream is = getInputStream(url, progressMonitor.createSubTaskMonitor(1, false));
-            NoteReader reader = new NoteReader(is);
-            final List<Note> notes = reader.parse();
+        try (InputStream is = getInputStream(url, progressMonitor.createSubTaskMonitor(1, false))) {
+            final List<Note> notes = new NoteReader(is).parse();
             if (notes.size() == noteLimit) {
                 throw new MoreNotesException(notes, noteLimit);
             }

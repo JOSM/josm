@@ -58,9 +58,7 @@ public class PluginListParser {
      */
     public List<PluginInformation> parse(InputStream in) throws PluginListParseException {
         List<PluginInformation> ret = new LinkedList<>();
-        BufferedReader r = null;
-        try {
-            r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             String name = null;
             String url = null;
             StringBuilder manifest = new StringBuilder();
@@ -84,7 +82,6 @@ public class PluginListParser {
                 name = x[0];
                 url = x[1];
                 manifest = new StringBuilder();
-
             }
             addPluginInformation(ret, name, url, manifest.toString());
             return ret;

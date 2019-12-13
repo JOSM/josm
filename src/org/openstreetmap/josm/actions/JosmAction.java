@@ -278,7 +278,9 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         if (selectionChangeAdapter != null) {
             SelectionEventManager.getInstance().removeSelectionListener(selectionChangeAdapter);
         }
-        MainApplication.getToolbar().unregister(this);
+        if (MainApplication.getToolbar() != null) {
+            MainApplication.getToolbar().unregister(this);
+        }
     }
 
     private void setHelpId() {

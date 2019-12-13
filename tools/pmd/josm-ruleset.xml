@@ -11,11 +11,13 @@
     <exclude name="AccessorMethodGeneration"/>
     <exclude name="ArrayIsStoredDirectly"/>
     <exclude name="AvoidPrintStackTrace"/>
+    <exclude name="AvoidReassigningLoopVariables"/>
     <exclude name="AvoidReassigningParameters"/>
     <exclude name="AvoidStringBufferField"/>
     <exclude name="AvoidUsingHardCodedIP"/>
     <exclude name="ConstantsInInterface"/>
     <exclude name="ForLoopCanBeForeach"/>
+    <exclude name="ForLoopVariableCount"/>
     <exclude name="GuardLogStatement"/>
     <exclude name="JUnit4TestShouldUseAfterAnnotation"/>
     <exclude name="JUnit4TestShouldUseTestAnnotation"/>
@@ -161,6 +163,7 @@
     <exclude name="AvoidLiteralsInIfCondition"/>
     <exclude name="BeanMembersShouldSerialize"/>
     <exclude name="CloneThrowsCloneNotSupportedException"/>
+    <!-- <exclude name="CloseResource"/> -->
     <exclude name="CompareObjectsWithEquals"/>
     <exclude name="ConstructorCallsOverridableMethod"/>
     <exclude name="DataflowAnomalyAnalysis"/>

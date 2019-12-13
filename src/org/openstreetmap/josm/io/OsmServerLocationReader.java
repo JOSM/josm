@@ -143,7 +143,7 @@ public class OsmServerLocationReader extends OsmServerReader {
 
     protected final <T> T doParse(Parser<T> parser, final ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(tr("Contacting Server...", 10));
-        try {
+        try { // NOPMD
             return parser.parse();
         } catch (OsmTransferException e) {
             throw e;
@@ -210,7 +210,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             if (in == null)
                 return null;
             progressMonitor.subTask(tr("Downloading OSM data..."));
-            InputStream uncompressedInputStream = compression.getUncompressedInputStream(in);
+            InputStream uncompressedInputStream = compression.getUncompressedInputStream(in); // NOPMD
             ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(1, false);
             if ("application/json".equals(contentType)) {
                 return OsmJsonReader.parseDataSet(uncompressedInputStream, subTaskMonitor);

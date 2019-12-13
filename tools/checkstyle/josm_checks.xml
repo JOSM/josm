@@ -45,10 +45,6 @@ JOSM Checkstyle rules
       <property name="max" value="150"/>
       <property name="tokens" value="INSTANCE_INIT,STATIC_INIT,METHOD_DEF,CTOR_DEF"/>
     </module>
-    <module name="LineLength">
-      <property name="max" value="145"/>
-      <property name="tabWidth" value="4"/>
-    </module>
     <module name="MethodLength">
       <property name="max" value="300"/>
     </module>
@@ -115,11 +111,21 @@ JOSM Checkstyle rules
     <property name="max" value="2500"/>
   </module>
   <module name="FileTabCharacter"/>
+  <module name="LineLength">
+    <property name="fileExtensions" value="java" />
+    <property name="max" value="145"/>
+    <property name="tabWidth" value="4"/>
+  </module>
   <module name="NewlineAtEndOfFile">
     <property name="lineSeparator" value="lf"/>
   </module>
   <module name="SuppressionFilter">
     <property name="file" value="${basedir}/tools/checkstyle/josm_filters.xml" default="tools/checkstyle/josm_filters.xml"/>
     <property name="optional" value="true"/>
+  </module>
+  <module name="SuppressWithPlainTextCommentFilter">
+    <property name="offCommentFormat" value="CHECKSTYLE\.OFF\: ([\w\|]+)"/>
+    <property name="onCommentFormat" value="CHECKSTYLE\.ON\: ([\w\|]+)"/>
+    <property name="checkFormat" value="$1"/>
   </module>
 </module>

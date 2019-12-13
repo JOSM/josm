@@ -688,8 +688,9 @@ public final class CustomConfigurator {
 
                 String fragmentWithReplacedVars = evalVars(outputWriter.toString());
 
-                CharArrayReader reader = new CharArrayReader(fragmentWithReplacedVars.toCharArray());
-                tmpPref.fromXML(reader);
+                try (CharArrayReader reader = new CharArrayReader(fragmentWithReplacedVars.toCharArray())) {
+                    tmpPref.fromXML(reader);
+                }
             } catch (TransformerException | XMLStreamException | IOException ex) {
                 PreferencesUtils.log(ex, "Error: can not read XML fragment:");
             }

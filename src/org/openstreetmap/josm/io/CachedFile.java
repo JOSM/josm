@@ -346,7 +346,7 @@ public class CachedFile implements Closeable {
             return null;
         Pair<String, InputStream> res = null;
         try {
-            ZipFile zipFile = new ZipFile(file, StandardCharsets.UTF_8);
+            ZipFile zipFile = new ZipFile(file, StandardCharsets.UTF_8); // NOPMD
             ZipEntry resentry = null;
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
@@ -357,7 +357,7 @@ public class CachedFile implements Closeable {
                 }
             }
             if (resentry != null) {
-                InputStream is = zipFile.getInputStream(resentry);
+                InputStream is = zipFile.getInputStream(resentry); // NOPMD
                 res = Pair.create(resentry.getName(), is);
             } else {
                 Utils.close(zipFile);

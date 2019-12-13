@@ -176,7 +176,7 @@ public enum Compression {
      */
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
         try {
-            InputStream in = Files.newInputStream(file.toPath());
+            InputStream in = Files.newInputStream(file.toPath()); // NOPMD
             try {
                 return byExtension(file.getName()).getUncompressedInputStream(in);
             } catch (IOException e) {
@@ -220,7 +220,7 @@ public enum Compression {
      * @throws InvalidPathException if a Path object cannot be constructed from the abstract path
      */
     public static OutputStream getCompressedFileOutputStream(File file) throws IOException {
-        OutputStream out = Files.newOutputStream(file.toPath());
+        OutputStream out = Files.newOutputStream(file.toPath()); // NOPMD
         try {
             return byExtension(file.getName()).getCompressedOutputStream(out);
         } catch (IOException e) {
