@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences.plugin;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
@@ -177,9 +178,9 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         gc.weightx = 1.0;
         ButtonGroup bg = new ButtonGroup();
         JPanel radios = new JPanel();
-        addRadioButton(bg, radios, new JRadioButton(tr("All"), true), gc, PluginInstallation.ALL);
-        addRadioButton(bg, radios, new JRadioButton(tr("Installed")), gc, PluginInstallation.INSTALLED);
-        addRadioButton(bg, radios, new JRadioButton(tr("Available")), gc, PluginInstallation.AVAILABLE);
+        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "All"), true), gc, PluginInstallation.ALL);
+        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "Installed")), gc, PluginInstallation.INSTALLED);
+        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "Available")), gc, PluginInstallation.AVAILABLE);
         pnl.add(radios, gc);
 
         gc.gridx = 0;
