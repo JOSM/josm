@@ -87,7 +87,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         }
     }
 
-    private final class EditBoundariesAction extends AbstractAction {
+    private static final class EditBoundariesAction extends AbstractAction {
         EditBoundariesAction() {
             super(tr("Edit boundaries"));
         }
