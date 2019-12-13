@@ -94,7 +94,7 @@ public final class Logging {
          * Set output stream to one acquired from calling outputStreamSupplier
          */
         public synchronized void reacquireOutputStream() {
-            final OutputStream reacquiredStream = this.outputStreamSupplier.get();
+            final OutputStream reacquiredStream = this.outputStreamSupplier.get(); // NOPMD
 
             // only bother calling setOutputStream if it's actually different, as setOutputStream
             // has the nasty side effect of closing any previous output stream, which is certainly not

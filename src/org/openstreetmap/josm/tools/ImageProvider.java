@@ -1708,7 +1708,7 @@ public class ImageProvider {
             throw new IIOException("Can't read input file!");
         }
 
-        ImageInputStream stream = createImageInputStream(input);
+        ImageInputStream stream = createImageInputStream(input); // NOPMD
         if (stream == null) {
             throw new IIOException("Can't create an ImageInputStream!");
         }
@@ -1758,7 +1758,7 @@ public class ImageProvider {
     public static BufferedImage read(InputStream input, boolean readMetadata, boolean enforceTransparency) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(input, "input");
 
-        ImageInputStream stream = createImageInputStream(input);
+        ImageInputStream stream = createImageInputStream(input); // NOPMD
         BufferedImage bi = read(stream, readMetadata, enforceTransparency);
         if (bi == null) {
             stream.close();
@@ -1802,7 +1802,7 @@ public class ImageProvider {
         CheckParameterUtil.ensureParameterNotNull(input, "input");
 
         try (InputStream istream = Utils.openStream(input)) {
-            ImageInputStream stream = createImageInputStream(istream);
+            ImageInputStream stream = createImageInputStream(istream); // NOPMD
             BufferedImage bi = read(stream, readMetadata, enforceTransparency);
             if (bi == null) {
                 stream.close();
@@ -1853,7 +1853,7 @@ public class ImageProvider {
         ImageReadParam param = reader.getDefaultReadParam();
         reader.setInput(stream, true, !readMetadata && !enforceTransparency);
         BufferedImage bi = null;
-        try {
+        try { // NOPMD
             bi = reader.read(0, param);
             if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency) && Utils.getJavaVersion() < 11) {
                 Color color = getTransparentColor(bi.getColorModel(), reader);

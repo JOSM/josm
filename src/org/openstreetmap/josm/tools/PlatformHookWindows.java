@@ -439,7 +439,7 @@ public class PlatformHookWindows implements PlatformHook {
             byte[] content = Files.readAllBytes(templateFile);
             File cachePath = Config.getDirs().getCacheDirectory(true);
             Path fontconfigFile = cachePath.toPath().resolve("fontconfig.properties");
-            OutputStream os = Files.newOutputStream(fontconfigFile);
+            OutputStream os = Files.newOutputStream(fontconfigFile); // NOPMD
             os.write(content);
             try (Writer w = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
                 Collection<FontEntry> extrasPref = StructUtils.getListOfStructs(Config.getPref(),

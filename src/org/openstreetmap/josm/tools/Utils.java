@@ -1469,10 +1469,11 @@ public final class Utils {
      * @throws IOException if any I/O error occurs
      */
     public static byte[] readBytesFromStream(InputStream stream) throws IOException {
+        // TODO: remove this method when switching to Java 11 and use InputStream.readAllBytes
         if (stream == null) {
             return new byte[0];
         }
-        try {
+        try { // NOPMD
             ByteArrayOutputStream bout = new ByteArrayOutputStream(stream.available());
             byte[] buffer = new byte[8192];
             boolean finished = false;
