@@ -38,9 +38,11 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
+import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeEvent;
 import org.openstreetmap.josm.data.preferences.AbstractProperty.ValueChangeListener;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -129,7 +131,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
 
     /** the list of layers (technically its a JTable, but appears like a list) */
     private final LayerList layerList;
-    private final ValueChangeListener<? super Boolean> displayNumbersPrefListener;
+    private final ColumnWidthAdaptionListener visibilityWidthListener;
 
     private final ActivateLayerAction activateLayerAction;
     private final ShowHideLayerAction showHideLayerAction;
@@ -222,11 +224,8 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         layerList.getColumnModel().getColumn(2).setPreferredWidth(16);
         layerList.getColumnModel().getColumn(2).setResizable(false);
 
-        int width = getLayerNumberWidth();
         layerList.getColumnModel().getColumn(3).setCellRenderer(new LayerVisibleCellRenderer());
         layerList.getColumnModel().getColumn(3).setCellEditor(new LayerVisibleCellEditor(new LayerVisibleCheckBox()));
-        layerList.getColumnModel().getColumn(3).setMaxWidth(width);
-        layerList.getColumnModel().getColumn(3).setPreferredWidth(width);
         layerList.getColumnModel().getColumn(3).setResizable(false);
 
         layerList.getColumnModel().getColumn(4).setCellRenderer(new LayerNameCellRenderer());
@@ -251,13 +250,11 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             layerList.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ks, new Object());
         }
 
-        displayNumbersPrefListener = change -> {
-            int numberWidth = getLayerNumberWidth();
-            layerList.getColumnModel().getColumn(3).setMaxWidth(numberWidth);
-            layerList.getColumnModel().getColumn(3).setPreferredWidth(numberWidth);
-            repaint();
-        };
-        DISPLAY_NUMBERS.addListener(displayNumbersPrefListener);
+        visibilityWidthListener = new ColumnWidthAdaptionListener(3, 16);
+        DISPLAY_NUMBERS.addListener(visibilityWidthListener);
+        ExpertToggleAction.addExpertModeChangeListener(visibilityWidthListener);
+        layerManager.addLayerChangeListener(visibilityWidthListener);
+        visibilityWidthListener.updateColumnWidth();
 
         // init the model
         //
@@ -342,10 +339,6 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         return ExpertToggleAction.isExpert() && DISPLAY_NUMBERS.get();
     }
 
-    private static int getLayerNumberWidth() {
-        return displayLayerNumbers() ? 48 : 16;
-    }
-
     /**
      * Gets the layer manager this dialog is for.
      * @return The layer manager.
@@ -387,13 +380,62 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         MultikeyActionsHandler.getInstance().removeAction(showHideLayerAction);
         JumpToMarkerActions.unregisterActions();
         layerList.setTransferHandler(null);
-        DISPLAY_NUMBERS.removeListener(displayNumbersPrefListener);
+        DISPLAY_NUMBERS.removeListener(visibilityWidthListener);
+        ExpertToggleAction.removeExpertModeChangeListener(visibilityWidthListener);
+        layerManager.removeLayerChangeListener(visibilityWidthListener);
         super.destroy();
         instance = null;
     }
 
     static ImageIcon createBlankIcon() {
         return ImageProvider.createBlankIcon(ImageSizes.LAYER);
+    }
+
+    private class ColumnWidthAdaptionListener implements ValueChangeListener<Boolean>, ExpertModeChangeListener, LayerChangeListener {
+        private final int minWidth;
+        private final int column;
+
+        ColumnWidthAdaptionListener(int column, int minWidth) {
+            this.column = column;
+            this.minWidth = minWidth;
+        }
+
+        @Override
+        public void expertChanged(boolean isExpert) {
+            updateColumnWidth();
+        }
+
+        @Override
+        public void valueChanged(ValueChangeEvent<? extends Boolean> e) {
+            updateColumnWidth();
+        }
+
+        @Override
+        public void layerAdded(LayerAddEvent e) {
+            updateColumnWidth();
+        }
+
+        @Override
+        public void layerRemoving(LayerRemoveEvent e) {
+            updateColumnWidth();
+        }
+
+        @Override
+        public void layerOrderChanged(LayerOrderChangeEvent e) {
+            //not needed
+        }
+
+        public void updateColumnWidth() {
+            int width = minWidth;
+            for (int row = 0; row < layerList.getRowCount(); row++) {
+                TableCellRenderer renderer = layerList.getCellRenderer(row, column);
+                Component comp = layerList.prepareRenderer(renderer, row, column);
+                width = Math.max(comp.getPreferredSize().width + 1, width);
+            }
+            layerList.getColumnModel().getColumn(column).setMaxWidth(width);
+            layerList.getColumnModel().getColumn(column).setPreferredWidth(width);
+            repaint();
+        }
     }
 
     private static class ActiveLayerCheckBox extends JCheckBox {
@@ -418,7 +460,6 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
          * Constructs a new {@code LayerVisibleCheckBox}.
          */
         LayerVisibleCheckBox() {
-            setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
             iconEye = ImageProvider.get("dialogs/layerlist", "eye");
             iconEyeTranslucent = ImageProvider.get("dialogs/layerlist", "eye-translucent");
             setIcon(ImageProvider.get("dialogs/layerlist", "eye-off"));
