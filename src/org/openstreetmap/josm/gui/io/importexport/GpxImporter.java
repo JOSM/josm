@@ -112,7 +112,7 @@ public class GpxImporter extends FileImporter {
             addLayers(loadLayers(r.getGpxData(), parsedProperly, fileName, tr("Markers from {0}", fileName)));
         } catch (SAXException e) {
             Logging.error(e);
-            throw new IOException(tr("Parsing data for layer ''{0}'' failed", fileName), e);
+            throw new IOException(e.getLocalizedMessage(), e);
         }
     }
 

@@ -644,14 +644,23 @@ public class GpxReader implements GpxConstants, IGpxReader {
         } catch (SAXException e) {
             if (tryToFinish) {
                 parser.tryToFinish();
-                if (parser.data.isEmpty())
-                    throw e;
-                String message = e.getMessage();
+                String message = e.getLocalizedMessage();
                 if (e instanceof SAXParseException) {
+                    boolean dot = message.lastIndexOf('.') == message.length() - 1;
+                    if (dot)
+                        message = message.substring(0, message.length() - 1);
                     SAXParseException spe = (SAXParseException) e;
                     message += ' ' + tr("(at line {0}, column {1})", spe.getLineNumber(), spe.getColumnNumber());
+                    if (dot)
+                        message += '.';
                 }
-                Logging.warn(message);
+                if (parser.data.creator != null && !parser.data.creator.trim().isEmpty()) {
+                    message += "\n" + tr("The file was created by \"{0}\".", parser.data.creator);
+                }
+                SAXException ex = new SAXException(message, e);
+                if (parser.data.isEmpty())
+                    throw ex;
+                Logging.warn(ex);
                 return false;
             } else
                 throw e;
