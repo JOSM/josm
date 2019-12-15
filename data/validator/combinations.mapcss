@@ -268,6 +268,8 @@ way[highway=footway][oneway=no] {
 }
 
 /* {0.tag} together with {1.tag}, see #17950, #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186 */
+*[man_made=bridge][bridge=yes],
+*[man_made=tunnel][tunnel=yes],
 *[amenity=police][police],
 node[highway=crossing][crossing=no],
 node[railway=crossing][crossing=no],
@@ -392,7 +394,7 @@ way[highway=footway][cycleway=lane] {
 }
 
 /* {0} on suspicious object */
-*[tunnel  ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing],
+*[tunnel  ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=tunnel],
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=bridge][building!=bridge],
 *[psv     ][!highway][!railway][!waterway][barrier!=bollard][amenity !~ /^parking.*/],
 *[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance][natural!=stone][leisure!=track],
