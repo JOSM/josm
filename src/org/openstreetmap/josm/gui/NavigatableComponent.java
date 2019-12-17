@@ -740,10 +740,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         private boolean doStop;
         private final EastNorth oldCenter = getCenter();
         private final EastNorth finalNewCenter;
-        private final double frames;
+        private final long frames;
         private final long sleepTime;
 
-        SmoothScrollThread(EastNorth newCenter, double frameNum, int fps) {
+        SmoothScrollThread(EastNorth newCenter, long frameNum, int fps) {
             super("smooth-scroller");
             finalNewCenter = newCenter;
             frames = frameNum;
@@ -754,7 +754,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         public void run() {
             try {
                 for (int i = 0; i < frames && !doStop; i++) {
-                    zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
+                    zoomTo(oldCenter.interpolate(finalNewCenter, (1.0+i) / frames));
                     Thread.sleep(sleepTime);
                 }
             } catch (InterruptedException ex) {
@@ -798,7 +798,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 Logging.warn("Skip smooth scrolling");
                 zoomTo(newCenter);
             } else {
-                new SmoothScrollThread(newCenter, milliseconds * fps / 1000, fps).start();
+                long frames = Math.round(milliseconds * fps / 1000);
+                if(frames < 1)
+                    zoomTo(newCenter);
+                else
+                    new SmoothScrollThread(newCenter, frames, fps).start();
             }
         }
     }
