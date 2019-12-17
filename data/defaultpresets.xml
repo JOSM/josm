@@ -164,7 +164,7 @@
         <reference ref="oh_wheelchair" />
     </chunk>
     <chunk id="cuisine">
-    <multiselect key="cuisine" text="Cuisine" values="african;american;arab;argentinian;asian;bagel;balkan;barbecue;bavarian;brazilian;burger;cake;caribbean;chicken;chinese;coffee_shop;crepe;curry;danish;donut;ethiopian;fish;fish_and_chips;french;friture;german;greek;ice_cream;indian;indonesian;international;italian;japanese;kebab;korean;lebanese;mediterranean;mexican;moroccan;noodle;pancake;pasta;peruvian;pizza;polish;portuguese;regional;russian;sandwich;sausage;seafood;spanish;steak_house;sushi;tapas;thai;turkish;vietnamese" values_searchable="true" />
+    <multiselect key="cuisine" text="Cuisine" values="african;american;arab;argentinian;asian;bagel;balkan;barbecue;bavarian;beef_bowl;brazilian;burger;cake;caribbean;chicken;chinese;coffee_shop;crepe;curry;danish;donut;ethiopian;filipino;fish;fish_and_chips;french;friture;frozen_yogurt;german;georgian;greek;heuriger;hot_dog;ice_cream;indian;indonesian;international;italian;japanese;kebab;korean;lebanese;malaysian;mediterranean;mexican;moroccan;noodle;pancake;pasta;persian;peruvian;pizza;polish;portuguese;ramen;regional;russian;sandwich;sausage;seafood;soba;spanish;steak_house;sushi;tex-mex;tapas;thai;turkish;vietnamese;wings" values_searchable="true" />
     </chunk>
     <chunk id="internet">
         <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" />
