@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -81,16 +82,28 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.getEditorComponent().addFocusListener(commentModelListener);
         pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
 
-        JEditorPane sourceLabel = new JMultilineLabel("<html><b>" + tr("Specify the data source for the changes")
-                + "</b> (<a href=\"urn:changeset-source\">" + tr("obtain from current layers") + "</a>)<b>:</b>");
-        sourceLabel.addHyperlinkListener(e -> {
+        JEditorPane sourceLabel = new JMultilineLabel("<html><b>" + tr("Specify the data source for the changes") + ":</b>");
+        pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 0).fill(GBC.HORIZONTAL));
+        JEditorPane obtainSourceOnce = new JMultilineLabel(
+                "<html><a href=\"urn:changeset-source\">" + tr("just once") + "</a></html>");
+        obtainSourceOnce.addHyperlinkListener(e -> {
             if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-                final String source = MainApplication.getMap().mapView.getLayerInformationForSourceTag();
-                hcbUploadSource.setText(Utils.shortenString(source, Changeset.MAX_CHANGESET_TAG_LENGTH));
-                changesetSourceModel.setComment(hcbUploadSource.getText()); // Fix #9965
+                automaticallyAddSource();
             }
         });
-        pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 3).fill(GBC.HORIZONTAL));
+        JCheckBox obtainSourceAutomatically = new JCheckBox(tr("Automatically obtain source from current layers"));
+        obtainSourceAutomatically.setSelected(Config.getPref().getBoolean("upload.source.obtainautomatically", false));
+        obtainSourceAutomatically.addActionListener(e -> {
+            if (obtainSourceAutomatically.isSelected())
+                automaticallyAddSource();
+
+            obtainSourceOnce.setVisible(!obtainSourceAutomatically.isSelected());
+        });
+        JPanel obtainSource = new JPanel(new GridBagLayout());
+        obtainSource.add(obtainSourceAutomatically, GBC.std().anchor(GBC.WEST));
+        obtainSource.add(obtainSourceOnce, GBC.std().anchor(GBC.WEST));
+        obtainSource.add(new JLabel(), GBC.eol().fill(GBC.HORIZONTAL));
+        pnl.add(obtainSource, GBC.eol().insets(0, 0, 10, 3).fill(GBC.HORIZONTAL));
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
         hcbUploadSource.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
@@ -99,7 +112,19 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadSource.getEditor().addActionListener(sourceModelListener);
         hcbUploadSource.getEditorComponent().addFocusListener(sourceModelListener);
         pnl.add(hcbUploadSource, GBC.eol().fill(GBC.HORIZONTAL));
+        if (obtainSourceAutomatically.isSelected()) {
+            automaticallyAddSource();
+        }
         return pnl;
+    }
+
+    /**
+     * Add the source tags
+     */
+    protected void automaticallyAddSource() {
+        final String source = MainApplication.getMap().mapView.getLayerInformationForSourceTag();
+        hcbUploadSource.setText(Utils.shortenString(source, Changeset.MAX_CHANGESET_TAG_LENGTH));
+        changesetSourceModel.setComment(hcbUploadSource.getText()); // Fix #9965
     }
 
     /**
