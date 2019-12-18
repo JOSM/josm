@@ -28,7 +28,7 @@ public class ViewportFollowToggleAction extends ToggleAction {
               true /* register shortcut */
         );
         setHelpId(ht("/Action/ViewportFollowing"));
-        setSelected(false);
+        setSelected(DrawAction.VIEWPORT_FOLLOWING.get());
         notifySelectedState();
     }
 
