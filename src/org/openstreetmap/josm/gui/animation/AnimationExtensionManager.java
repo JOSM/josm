@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+
 /**
  * Animation extension manager. Copied from Icedtea-Web.
  * @author Jiri Vanek (Red Hat)
@@ -14,6 +16,7 @@ import java.util.GregorianCalendar;
 public final class AnimationExtensionManager {
 
     private static volatile AnimationExtension currentExtension;
+    private static final BooleanProperty PROP_ANIMATION = new BooleanProperty("gui.start.animation", true);
 
     private AnimationExtensionManager() {
         // Hide default constructor for utility classes
@@ -25,7 +28,8 @@ public final class AnimationExtensionManager {
      */
     public static AnimationExtension getExtension() {
         if (currentExtension == null) {
-            currentExtension = isChristmas() ? new ChristmasExtension() : new NoExtension();
+            currentExtension = Boolean.TRUE.equals(PROP_ANIMATION.get()) && isChristmas() ? new ChristmasExtension()
+                    : new NoExtension();
         }
         return currentExtension;
     }
