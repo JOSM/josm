@@ -23,6 +23,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
@@ -115,6 +117,23 @@ public class BasicUploadSettingsPanel extends JPanel {
         if (obtainSourceAutomatically.isSelected()) {
             automaticallyAddSource();
         }
+        pnl.addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                if (obtainSourceAutomatically.isSelected())
+                    automaticallyAddSource();
+            }
+
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+                // Do nothing
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) {
+                // Do nothing
+            }
+        });
         return pnl;
     }
 
