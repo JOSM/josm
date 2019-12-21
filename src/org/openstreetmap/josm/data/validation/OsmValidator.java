@@ -165,6 +165,23 @@ public final class OsmValidator {
         }
     }
 
+    /**
+     * Removes a test from the list of available tests. This will not remove
+     * core tests.
+     *
+     * @param testClass The test class
+     * @return {@code true} if the test was removed (see {@link Collection#remove})
+     * @since 15603
+     */
+    public static boolean removeTest(Class<? extends Test> testClass) {
+        boolean removed = false;
+        if (!Arrays.asList(CORE_TEST_CLASSES).contains(testClass)) {
+            removed = allTests.remove(testClass);
+            allTestsMap.remove(testClass.getName());
+        }
+        return removed;
+    }
+
     static {
         for (Class<? extends Test> testClass : CORE_TEST_CLASSES) {
             addTest(testClass);

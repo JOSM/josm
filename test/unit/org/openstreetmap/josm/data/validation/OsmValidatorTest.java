@@ -2,11 +2,13 @@
 package org.openstreetmap.josm.data.validation;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.validation.tests.Addresses;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -81,6 +83,25 @@ public class OsmValidatorTest {
         assertFalse(OsmValidator.hasIgnoredError("1351"));
         assertTrue(OsmValidator.hasIgnoredError("1351:n_2449148994:w_236955234"));
         assertTrue(OsmValidator.hasIgnoredError("1351:n_6871910559:w_733713588"));
+    }
+
+    /**
+     * Test that tests are really removed, and that core tests cannot be removed
+     */
+    @Test
+    public void testRemoveTests() {
+        org.openstreetmap.josm.data.validation.Test test = new org.openstreetmap.josm.data.validation.Test("test") {
+        };
+        assertNotEquals(org.openstreetmap.josm.data.validation.Test.class, test.getClass());
+        OsmValidator.addTest(test.getClass());
+        assertTrue(OsmValidator.getAllAvailableTestClasses().contains(test.getClass()));
+        assertTrue(OsmValidator.removeTest(test.getClass()));
+        assertFalse(OsmValidator.removeTest(test.getClass()));
+        assertFalse(OsmValidator.getAllAvailableTestClasses().contains(test.getClass()));
+
+        assertTrue(OsmValidator.getAllAvailableTestClasses().contains(Addresses.class));
+        assertFalse(OsmValidator.removeTest(Addresses.class));
+        assertTrue(OsmValidator.getAllAvailableTestClasses().contains(Addresses.class));
     }
 
 }
