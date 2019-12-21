@@ -881,6 +881,12 @@ public class Preferences extends AbstractPreferences {
                 }
             });
         }
+        if (!getBoolean("preferences.reset.draw.rawgps.lines")) {
+            // see #18444
+            // add "preferences.reset.draw.rawgps.lines" to OBSOLETE_PREF_KEYS when removing
+            putBoolean("preferences.reset.draw.rawgps.lines", true);
+            putInt("draw.rawgps.lines", -1);
+        }
         if (modifiedDefault) {
             try {
                 saveDefaults();

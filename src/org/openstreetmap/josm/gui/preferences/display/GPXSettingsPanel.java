@@ -147,8 +147,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         }
         firstLayer = layers.get(0);
         global = false;
-        hasLocalFile = layers.stream().anyMatch(GpxLayer::isLocalFile);
-        hasNonLocalFile = layers.stream().anyMatch(l -> !l.isLocalFile());
+        hasLocalFile = layers.stream().anyMatch(l -> !l.data.fromServer);
+        hasNonLocalFile = layers.stream().anyMatch(l -> l.data.fromServer);
         initComponents();
         loadPreferences();
     }
@@ -562,9 +562,13 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     public final void loadPreferences() {
         makeAutoMarkers.setSelected(Config.getPref().getBoolean("marker.makeautomarkers", true));
         int lines = global ? prefInt("lines") : prefIntLocal("lines");
-        if (lines == 2 && hasNonLocalFile) {
+        // -1 = global (default: all)
+        //  0 = none
+        //  1 = local
+        //  2 = all
+        if ((lines == 2 && hasNonLocalFile) || (lines == -1 && global)) {
             drawRawGpsLinesAll.setSelected(true);
-        } else if ((lines == 1 && hasLocalFile) || (lines == -1 && global)) {
+        } else if (lines == 1 && hasLocalFile) {
             drawRawGpsLinesLocal.setSelected(true);
         } else if (lines == 0) {
             drawRawGpsLinesNone.setSelected(true);

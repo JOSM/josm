@@ -309,12 +309,16 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         alphaLines = optBool("lines.alpha-blend");
 
         int l = optInt("lines");
-        if (!data.fromServer) {
+        // -1 = global (default: all)
+        //  0 = none
+        //  1 = local
+        //  2 = all
+        if (!data.fromServer) { //local settings apply
             maxLineLength = optInt("lines.max-length.local");
-            lines = l != 0; //draw for -1 (default), 1 (local) and 2 (all)
+            lines = l != 0; // don't draw if "none"
         } else {
             maxLineLength = optInt("lines.max-length");
-            lines = l == 2; //draw only for 2 (all)
+            lines = l != 0 && l != 1; //don't draw if "none" or "local only"
         }
         large = optBool("points.large");
         largesize = optInt("points.large.size");
