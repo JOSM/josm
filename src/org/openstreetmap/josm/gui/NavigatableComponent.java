@@ -799,7 +799,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 zoomTo(newCenter);
             } else {
                 long frames = Math.round(milliseconds * fps / 1000);
-                if(frames <= 1)
+                if (frames <= 1)
                     zoomTo(newCenter);
                 else
                     new SmoothScrollThread(newCenter, frames, fps).start();
