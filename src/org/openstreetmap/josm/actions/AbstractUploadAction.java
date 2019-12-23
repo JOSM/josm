@@ -11,7 +11,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Abstract super-class of all upload actions.
  * Listens to layer change events to update its enabled state.
- * @since xxx
+ * @since 15513
  */
 public abstract class AbstractUploadAction extends JosmAction {
 

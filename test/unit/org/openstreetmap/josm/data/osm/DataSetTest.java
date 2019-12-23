@@ -13,7 +13,11 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.event.DataSourceAddedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSourceRemovedEvent;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -246,5 +250,41 @@ public class DataSetTest {
         assertTrue(UploadPolicy.BLOCKED.compareTo(UploadPolicy.NORMAL) > 0);
         assertTrue(UploadPolicy.BLOCKED.compareTo(UploadPolicy.DISCOURAGED) > 0);
         assertTrue(UploadPolicy.DISCOURAGED.compareTo(UploadPolicy.NORMAL) > 0);
+    }
+
+    /**
+     * Checks that data source listeners get called when a data source is added
+     */
+    @Test
+    public void testAddDataSourceListener() {
+        DataSourceListener addListener = new DataSourceListener() {
+            @Override
+            public void dataSourceChange(DataSourceChangeEvent event) {
+                assertTrue(event instanceof DataSourceAddedEvent);
+            }
+        };
+
+        DataSet ds = new DataSet();
+        ds.addDataSourceListener(addListener);
+        ds.addDataSource(new DataSource(new Bounds(0, 0, 0.1, 0.1), "fake source"));
+
+    }
+
+    /**
+     * Checks that data source listeners get called when a data source is removed
+     */
+    @Test
+    public void testRemoveDataSourceListener() {
+        DataSourceListener removeListener = new DataSourceListener() {
+            @Override
+            public void dataSourceChange(DataSourceChangeEvent event) {
+                assertTrue(event instanceof DataSourceRemovedEvent);
+            }
+        };
+
+        DataSet ds = new DataSet();
+        ds.addDataSource(new DataSource(new Bounds(0, 0, 0.1, 0.1), "fake source"));
+        ds.addDataSourceListener(removeListener);
+        new DataSet().mergeFrom(ds);
     }
 }

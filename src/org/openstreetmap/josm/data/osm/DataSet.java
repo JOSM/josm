@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.DataSourceAddedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSourceRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.FilterChangedEvent;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitiveFlagsChangedEvent;
@@ -165,6 +168,11 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      */
     private final Collection<DataSource> dataSources = new LinkedList<>();
 
+    /**
+     * A list of listeners that listen to DataSource changes on this layer
+     */
+    private final ListenerList<DataSourceListener> dataSourceListeners = ListenerList.create();
+
     private final ConflictCollection conflicts = new ConflictCollection();
 
     private short mappaintCacheIdx = 1;
@@ -225,9 +233,12 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                         .map(rm -> new RelationMember(rm.getRole(), primMap.get(rm.getMember())))
                         .collect(Collectors.toList()));
             }
+            DataSourceAddedEvent addedEvent = new DataSourceAddedEvent(this,
+                    new LinkedHashSet<>(dataSources), copyFrom.dataSources.stream());
             for (DataSource source : copyFrom.dataSources) {
                 dataSources.add(new DataSource(source));
             }
+            dataSourceListeners.fireEvent(d -> d.dataSourceChange(addedEvent));
             version = copyFrom.version;
             uploadPolicy = copyFrom.uploadPolicy;
             downloadPolicy = copyFrom.downloadPolicy;
@@ -271,11 +282,14 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * @since 11626
      */
     public synchronized boolean addDataSources(Collection<DataSource> sources) {
+        DataSourceAddedEvent addedEvent = new DataSourceAddedEvent(this,
+                new LinkedHashSet<>(dataSources), sources.stream());
         boolean changed = dataSources.addAll(sources);
         if (changed) {
             cachedDataSourceArea = null;
             cachedDataSourceBounds = null;
         }
+        dataSourceListeners.fireEvent(d -> d.dataSourceChange(addedEvent));
         return changed;
     }
 
@@ -572,6 +586,30 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     @Override
     public void removeHighlightUpdateListener(HighlightUpdateListener listener) {
         highlightUpdateListeners.removeListener(listener);
+    }
+
+    /**
+     * Adds a listener that gets notified whenever the data sources change
+     *
+     * @param listener The listener
+     * @see #removeDataSourceListener
+     * @see #getDataSources
+     * @since 15609
+     */
+    public void addDataSourceListener(DataSourceListener listener) {
+        dataSourceListeners.addListener(listener);
+    }
+
+    /**
+     * Removes a listener that gets notified whenever the data sources change
+     *
+     * @param listener The listener
+     * @see #addDataSourceListener
+     * @see #getDataSources
+     * @since 15609
+     */
+    public void removeDataSourceListener(DataSourceListener listener) {
+        dataSourceListeners.removeListener(listener);
     }
 
     @Override
@@ -1084,13 +1122,20 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             new DataSetMerger(this, from).merge(progressMonitor);
             synchronized (from) {
                 if (!from.dataSources.isEmpty()) {
-                    if (dataSources.addAll(from.dataSources)) {
+                    DataSourceAddedEvent addedEvent = new DataSourceAddedEvent(
+                            this, new LinkedHashSet<>(dataSources), from.dataSources.stream());
+                    DataSourceRemovedEvent clearEvent = new DataSourceRemovedEvent(
+                            this, new LinkedHashSet<>(from.dataSources), from.dataSources.stream());
+                    if (from.dataSources.stream().filter(dataSource -> !dataSources.contains(dataSource))
+                            .map(dataSources::add).filter(Boolean.TRUE::equals).count() > 0) {
                         cachedDataSourceArea = null;
                         cachedDataSourceBounds = null;
                     }
                     from.dataSources.clear();
                     from.cachedDataSourceArea = null;
                     from.cachedDataSourceBounds = null;
+                    dataSourceListeners.fireEvent(d -> d.dataSourceChange(addedEvent));
+                    from.dataSourceListeners.fireEvent(d -> d.dataSourceChange(clearEvent));
                 }
             }
         }
