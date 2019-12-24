@@ -12,10 +12,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
@@ -90,7 +93,7 @@ public class JoinNodeWayAction extends JosmAction {
         DataSet ds = getLayerManager().getEditDataSet();
         Collection<Node> selectedNodes = ds.getSelectedNodes();
         Collection<Command> cmds = new LinkedList<>();
-        Map<Way, MultiMap<Integer, Node>> data = new HashMap<>();
+        Map<Way, MultiMap<Integer, Node>> data = new LinkedHashMap<>();
 
         // If the user has selected some ways, only join the node to these.
         boolean restrictToSelectedWays = !ds.getSelectedWays().isEmpty();
@@ -99,21 +102,48 @@ public class JoinNodeWayAction extends JosmAction {
         MapView mapView = MainApplication.getMap().mapView;
         for (Node node : selectedNodes) {
             List<WaySegment> wss = mapView.getNearestWaySegments(mapView.getPoint(node), OsmPrimitive::isSelectable);
-            Set<Way> seenWays = new HashSet<>();
+            // we cannot trust the order of elements in wss because it was calculated based on rounded position value of node
+            TreeMap<Double, List<WaySegment>> nearestMap = new TreeMap<>();
+            EastNorth en = node.getEastNorth();
             for (WaySegment ws : wss) {
                 // Maybe cleaner to pass a "isSelected" predicate to getNearestWaySegments, but this is less invasive.
                 if (restrictToSelectedWays && !ws.way.isSelected()) {
                     continue;
                 }
-                // only use the closest WaySegment of each way and ignore those that already contain the node
-                if (!ws.getFirstNode().equals(node) && !ws.getSecondNode().equals(node)
-                        && !seenWays.contains(ws.way)) {
-                    MultiMap<Integer, Node> innerMap = data.get(ws.way);
-                    if (innerMap == null) {
-                        innerMap = new MultiMap<>();
-                        data.put(ws.way, innerMap);
+                /* perpendicular distance squared
+                 * loose some precision to account for possible deviations in the calculation above
+                 * e.g. if identical (A and B) come about reversed in another way, values may differ
+                 * -- zero out least significant 32 dual digits of mantissa..
+                 */
+                double distSq = en.distanceSq(Geometry.closestPointToSegment(ws.getFirstNode().getEastNorth(),
+                        ws.getSecondNode().getEastNorth(), en));
+                // resolution in numbers with large exponent not needed here..
+                distSq = Double.longBitsToDouble(Double.doubleToLongBits(distSq) >> 32 << 32);
+                List<WaySegment> wslist = nearestMap.computeIfAbsent(distSq, k -> new LinkedList<>());
+                wslist.add(ws);
+            }
+            Set<Way> seenWays = new HashSet<>();
+            Double usedDist = null;
+            while (!nearestMap.isEmpty()) {
+                Entry<Double, List<WaySegment>> entry = nearestMap.pollFirstEntry();
+                if (usedDist != null) {
+                    double delta = entry.getKey() - usedDist;
+                    if (delta > 1e-4)
+                        break;
+                }
+                for (WaySegment ws : entry.getValue()) {
+                    // only use the closest WaySegment of each way and ignore those that already contain the node
+                    if (!ws.getFirstNode().equals(node) && !ws.getSecondNode().equals(node)
+                            && !seenWays.contains(ws.way)) {
+                        if (usedDist == null)
+                            usedDist = entry.getKey();
+                        MultiMap<Integer, Node> innerMap = data.get(ws.way);
+                        if (innerMap == null) {
+                            innerMap = new MultiMap<>();
+                            data.put(ws.way, innerMap);
+                        }
+                        innerMap.put(ws.lowerIndex, node);
                     }
-                    innerMap.put(ws.lowerIndex, node);
                     seenWays.add(ws.way);
                 }
             }
@@ -141,6 +171,7 @@ public class JoinNodeWayAction extends JosmAction {
                         EastNorth prevMove = movedNodes.get(node);
                         if (prevMove != null) {
                             if (!prevMove.equalsEpsilon(newPosition, 1e-4)) {
+                                // very unlikely: node has same distance to multiple ways which are not nearly overlapping
                                 new Notification(tr("Multiple target ways, no common point found. Nothing was changed."))
                                         .setIcon(JOptionPane.INFORMATION_MESSAGE)
                                         .show();

@@ -5,10 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Rectangle;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -36,11 +36,11 @@ public final class JoinNodeWayActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences().projection();
+    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences();
 
     private void setupMapView(DataSet ds) {
-        // setup a reasonable screen size
-        MainApplication.getMap().mapView.setBounds(new Rectangle(1920, 1080));
+        // setup a reasonable size for the edit window
+        MainApplication.getMap().mapView.setBounds(new Rectangle(1345, 939));
         if (ds.getDataSourceBoundingBox() != null) {
             MainApplication.getMap().mapView.zoomTo(ds.getDataSourceBoundingBox());
         } else {
@@ -58,7 +58,6 @@ public final class JoinNodeWayActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore
     public void testTicket18189() throws Exception {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
@@ -104,7 +103,6 @@ public final class JoinNodeWayActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore
     public void testTicket11508() throws Exception {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(11508, "11508_example.osm"), null);
         Layer layer = new OsmDataLayer(ds, OsmDataLayer.createNewName(), null);
@@ -133,7 +131,6 @@ public final class JoinNodeWayActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore
     public void testTicket18189Crossing() throws Exception {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(18189, "moveontocrossing.osm"), null);
         Layer layer = new OsmDataLayer(ds, OsmDataLayer.createNewName(), null);
@@ -159,7 +156,6 @@ public final class JoinNodeWayActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore
     public void testTicket18189ThreeWays() throws Exception {
         DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(18189, "data.osm"), null);
         Layer layer = new OsmDataLayer(ds, OsmDataLayer.createNewName(), null);
@@ -178,6 +174,39 @@ public final class JoinNodeWayActionTest {
             assertTrue("Node was moved to an unexpected position", toMove.getEastNorth().equalsEpsilon(expected.getEastNorth(), 1e-7));
             assertTrue("Node was not added to expected number of ways", toMove.getParentWays().size() == 4);
 
+        } finally {
+            MainApplication.getLayerManager().removeLayer(layer);
+        }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18420">Bug #18420</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket18420() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(18420, "user-sample.osm"), null);
+        Layer layer = new OsmDataLayer(ds, OsmDataLayer.createNewName(), null);
+        MainApplication.getLayerManager().addLayer(layer);
+        try {
+            List<Node> nodesToMove = ds.getNodes().stream().filter(n -> n.hasTag("name")).collect(Collectors.toList());
+            assertTrue(nodesToMove.size() == 2);
+            Node n = nodesToMove.iterator().next();
+            if (!n.hasTag("name", "select me 1st"))
+                Collections.reverse(nodesToMove);
+            Node toMove1 = nodesToMove.get(0);
+            Node toMove2 = nodesToMove.get(1);
+            Node expected1 = new Node(new LatLon(49.8546658263727, 6.206059532463773));
+            Node expected2 = new Node(new LatLon(49.854738602108085, 6.206213646054511));
+            ds.setSelected(nodesToMove);
+            setupMapView(ds);
+            JoinNodeWayAction action = JoinNodeWayAction.createMoveNodeOntoWayAction();
+            action.setEnabled(true);
+            action.actionPerformed(null);
+            assertTrue("Node was moved to an unexpected position", toMove1.getEastNorth().equalsEpsilon(expected1.getEastNorth(), 1e-7));
+            assertTrue("Node was moved to an unexpected position", toMove2.getEastNorth().equalsEpsilon(expected2.getEastNorth(), 1e-7));
+            assertTrue("Node was not added to expected number of ways", toMove1.getParentWays().size() == 2);
+            assertTrue("Node was not added to expected number of ways", toMove2.getParentWays().size() == 2);
         } finally {
             MainApplication.getLayerManager().removeLayer(layer);
         }
