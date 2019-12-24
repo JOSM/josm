@@ -985,14 +985,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             for (Node n : ds.searchNodes(getBBox(p, PROP_SNAP_DISTANCE.get()))) {
                 if (predicate.test(n)
                         && (dist = getPoint2D(n).distanceSq(p)) < snapDistanceSq) {
-                    List<Node> nlist;
-                    if (nearestMap.containsKey(dist)) {
-                        nlist = nearestMap.get(dist);
-                    } else {
-                        nlist = new LinkedList<>();
-                        nearestMap.put(dist, nlist);
-                    }
-                    nlist.add(n);
+                    nearestMap.computeIfAbsent(dist, k -> new LinkedList<>()).add(n);
                 }
             }
         }
@@ -1223,14 +1216,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                             >> 32 << 32); // resolution in numbers with large exponent not needed here..
 
                     if (perDistSq < snapDistanceSq && a < c + snapDistanceSq && b < c + snapDistanceSq) {
-                        List<WaySegment> wslist;
-                        if (nearestMap.containsKey(perDistSq)) {
-                            wslist = nearestMap.get(perDistSq);
-                        } else {
-                            wslist = new LinkedList<>();
-                            nearestMap.put(perDistSq, wslist);
-                        }
-                        wslist.add(new WaySegment(w, i));
+                        nearestMap.computeIfAbsent(perDistSq, k -> new LinkedList<>()).add(new WaySegment(w, i));
                     }
 
                     lastN = n;
