@@ -438,8 +438,13 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         return isUnusualPhoneticUse(key, b, c) || isUnusualBmpUse(b) || isUnusualSmpUse(b);
     }
 
+    private static boolean isAllowedPhoneticCharacter(String key, int c) {
+        return c == 0x0259                                          // U+0259 is used as a standard character in azerbaidjani
+            || (key.endsWith("ref") && 0x1D2C <= c && c <= 0x1D42); // allow uppercase superscript latin characters in *ref tags
+    }
+
     private static boolean isUnusualPhoneticUse(String key, UnicodeBlock b, int c) {
-        return c != 0x0259                                              // U+0259 is used as a standard character in azerbaidjani
+        return !isAllowedPhoneticCharacter(key, c)
             && (b == UnicodeBlock.IPA_EXTENSIONS                        // U+0250..U+02AF
              || b == UnicodeBlock.PHONETIC_EXTENSIONS                   // U+1D00..U+1D7F
              || b == UnicodeBlock.PHONETIC_EXTENSIONS_SUPPLEMENT)       // U+1D80..U+1DBF

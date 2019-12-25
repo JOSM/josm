@@ -316,6 +316,19 @@ public class TagCheckerTest {
     }
 
     /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18322">Bug #18322</a>.
+     */
+    @Test
+    public void testTicket18322() {
+        assertTrue(TagChecker.containsUnusualUnicodeCharacter("name", "D36ᴬ"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("ref", "D36ᴬ"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("old_ref", "D36ᴬ"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("old_ref", "D36ᵂ"));
+        assertTrue(TagChecker.containsUnusualUnicodeCharacter("old_ref", "D36ᴫ"));
+        assertTrue(TagChecker.containsUnusualUnicodeCharacter("old_ref", "D36ᵃ"));
+    }
+
+    /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18449">Bug #18449</a>.
      */
     @Test
