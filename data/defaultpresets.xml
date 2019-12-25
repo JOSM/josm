@@ -1268,6 +1268,21 @@
         <item name="Elevator" icon="presets/service/elevator.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=elevator" />
             <key key="highway" value="elevator" />
+            <text key="capacity:persons" text="Capacity (persons)" />
+            <text key="maxweight" text="Max. weight (tonnes)" />
+            <text key="level" text="Storey" />
+            <optional>
+                <text key="manufacturer" text="Manufacturer" />
+                <reference ref="name_ref_operator" />
+                <reference ref="oh_wheelchair" />
+                <check key="handrail" text="Handrail" />
+                <check key="bicycle" text="Bicycle" />
+                <check key="indoor" text="Indoor" />
+                <reference ref="fee" />
+                <combo key="goods" text="Freight elevator" values="yes,designated,no" />
+                <combo key="access" text="Access" values="yes,no,customers,private" />
+                <combo key="surveillance" text="Surveillance Camera" values="indoor,outdoor" />
+            </optional>
         </item> <!-- Elevator -->
         <separator/>
         <item name="Grit Bin" icon="presets/misc/grit_bin.svg" type="node" preset_name_label="true">
