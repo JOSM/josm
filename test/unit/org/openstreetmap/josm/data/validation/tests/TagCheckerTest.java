@@ -314,4 +314,12 @@ public class TagCheckerTest {
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Cinderella II - Strandvägen ↔ Hagede"));
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Tallinn — Narva"));
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18449">Bug #18449</a>.
+     */
+    @Test
+    public void testTicket18449() {
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Hökumət Evi"));
+    }
 }

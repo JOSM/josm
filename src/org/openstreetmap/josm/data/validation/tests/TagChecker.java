@@ -424,21 +424,23 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     static boolean containsUnusualUnicodeCharacter(String key, String value) {
-        return value != null && value.chars().anyMatch(c -> isUnusualUnicodeBlock(key, UnicodeBlock.of(c)));
+        return value != null && value.chars().anyMatch(c -> isUnusualUnicodeBlock(key, c));
     }
 
     /**
      * Detects highly suspicious Unicode characters that have been seen in OSM database.
      * @param key tag key
-     * @param b Unicode block of the current character
+     * @param c current character code point
      * @return {@code true} if the current unicode block is very unusual for the given key
      */
-    private static boolean isUnusualUnicodeBlock(String key, UnicodeBlock b) {
-        return isUnusualPhoneticUse(key, b) || isUnusualBmpUse(b) || isUnusualSmpUse(b);
+    private static boolean isUnusualUnicodeBlock(String key, int c) {
+        UnicodeBlock b = UnicodeBlock.of(c);
+        return isUnusualPhoneticUse(key, b, c) || isUnusualBmpUse(b) || isUnusualSmpUse(b);
     }
 
-    private static boolean isUnusualPhoneticUse(String key, UnicodeBlock b) {
-        return (b == UnicodeBlock.IPA_EXTENSIONS                        // U+0250..U+02AF
+    private static boolean isUnusualPhoneticUse(String key, UnicodeBlock b, int c) {
+        return c != 0x0259                                              // U+0259 is used as a standard character in azerbaidjani
+            && (b == UnicodeBlock.IPA_EXTENSIONS                        // U+0250..U+02AF
              || b == UnicodeBlock.PHONETIC_EXTENSIONS                   // U+1D00..U+1D7F
              || b == UnicodeBlock.PHONETIC_EXTENSIONS_SUPPLEMENT)       // U+1D80..U+1DBF
                 && !key.endsWith(":pronunciation");
