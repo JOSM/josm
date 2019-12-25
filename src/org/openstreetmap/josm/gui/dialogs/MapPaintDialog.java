@@ -184,6 +184,7 @@ public class MapPaintDialog extends ToggleDialog {
     @Override
     public void showNotify() {
         MapPaintStyles.addMapPaintSylesUpdateListener(model);
+        model.mapPaintStylesUpdated();
         MainApplication.getMenu().wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
     }
 
