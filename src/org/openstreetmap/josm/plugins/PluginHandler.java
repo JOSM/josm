@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.plugins;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -90,6 +91,8 @@ public final class PluginHandler {
     static final Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
     static {
         String inCore = tr("integrated into main program");
+        String replacedByPlugin = marktr("replaced by new {0} plugin");
+        String noLongerRequired = tr("no longer required");
 
         DEPRECATED_PLUGINS = Arrays.asList(
             new DeprecatedPlugin("mappaint", inCore),
@@ -105,11 +108,11 @@ public final class PluginHandler {
             new DeprecatedPlugin("ywms", inCore),
             new DeprecatedPlugin("tways-0.2", inCore),
             new DeprecatedPlugin("geotagged", inCore),
-            new DeprecatedPlugin("landsat", tr("replaced by new {0} plugin", "scanaerial")),
+            new DeprecatedPlugin("landsat", tr(replacedByPlugin, "scanaerial")),
             new DeprecatedPlugin("namefinder", inCore),
             new DeprecatedPlugin("waypoints", inCore),
             new DeprecatedPlugin("slippy_map_chooser", inCore),
-            new DeprecatedPlugin("tcx-support", tr("replaced by new {0} plugin", "dataimport")),
+            new DeprecatedPlugin("tcx-support", tr(replacedByPlugin, "dataimport")),
             new DeprecatedPlugin("usertools", inCore),
             new DeprecatedPlugin("AgPifoJ", inCore),
             new DeprecatedPlugin("utilsplugin", inCore),
@@ -122,37 +125,38 @@ public final class PluginHandler {
             new DeprecatedPlugin("slippymap", inCore),
             new DeprecatedPlugin("wmsplugin", inCore),
             new DeprecatedPlugin("ParallelWay", inCore),
-            new DeprecatedPlugin("dumbutils", tr("replaced by new {0} plugin", "utilsplugin2")),
+            new DeprecatedPlugin("dumbutils", tr(replacedByPlugin, "utilsplugin2")),
             new DeprecatedPlugin("ImproveWayAccuracy", inCore),
-            new DeprecatedPlugin("Curves", tr("replaced by new {0} plugin", "utilsplugin2")),
+            new DeprecatedPlugin("Curves", tr(replacedByPlugin, "utilsplugin2")),
             new DeprecatedPlugin("epsg31287", inCore),
-            new DeprecatedPlugin("licensechange", tr("no longer required")),
+            new DeprecatedPlugin("licensechange", noLongerRequired),
             new DeprecatedPlugin("restart", inCore),
             new DeprecatedPlugin("wayselector", inCore),
             new DeprecatedPlugin("openstreetbugs", inCore),
-            new DeprecatedPlugin("nearclick", tr("no longer required")),
+            new DeprecatedPlugin("nearclick", noLongerRequired),
             new DeprecatedPlugin("notes", inCore),
             new DeprecatedPlugin("mirrored_download", inCore),
             new DeprecatedPlugin("ImageryCache", inCore),
-            new DeprecatedPlugin("commons-imaging", tr("replaced by new {0} plugin", "apache-commons")),
-            new DeprecatedPlugin("missingRoads", tr("replaced by new {0} plugin", "ImproveOsm")),
-            new DeprecatedPlugin("trafficFlowDirection", tr("replaced by new {0} plugin", "ImproveOsm")),
-            new DeprecatedPlugin("kendzi3d-jogl", tr("replaced by new {0} plugin", "jogl")),
-            new DeprecatedPlugin("josm-geojson", tr("replaced by new {0} plugin", "geojson")),
+            new DeprecatedPlugin("commons-imaging", tr(replacedByPlugin, "apache-commons")),
+            new DeprecatedPlugin("missingRoads", tr(replacedByPlugin, "ImproveOsm")),
+            new DeprecatedPlugin("trafficFlowDirection", tr(replacedByPlugin, "ImproveOsm")),
+            new DeprecatedPlugin("kendzi3d-jogl", tr(replacedByPlugin, "jogl")),
+            new DeprecatedPlugin("josm-geojson", inCore),
             new DeprecatedPlugin("proj4j", inCore),
-            new DeprecatedPlugin("OpenStreetView", tr("replaced by new {0} plugin", "OpenStreetCam")),
+            new DeprecatedPlugin("OpenStreetView", tr(replacedByPlugin, "OpenStreetCam")),
             new DeprecatedPlugin("imageryadjust", inCore),
-            new DeprecatedPlugin("walkingpapers", tr("replaced by new {0} plugin", "fieldpapers")),
-            new DeprecatedPlugin("czechaddress", tr("no longer required")),
-            new DeprecatedPlugin("kendzi3d_Improved_by_Andrei", tr("no longer required")),
-            new DeprecatedPlugin("videomapping", tr("no longer required")),
-            new DeprecatedPlugin("public_transport_layer", tr("replaced by new {0} plugin", "pt_assistant")),
-            new DeprecatedPlugin("lakewalker", tr("replaced by new {0} plugin", "scanaerial")),
+            new DeprecatedPlugin("walkingpapers", tr(replacedByPlugin, "fieldpapers")),
+            new DeprecatedPlugin("czechaddress", noLongerRequired),
+            new DeprecatedPlugin("kendzi3d_Improved_by_Andrei", noLongerRequired),
+            new DeprecatedPlugin("videomapping", noLongerRequired),
+            new DeprecatedPlugin("public_transport_layer", tr(replacedByPlugin, "pt_assistant")),
+            new DeprecatedPlugin("lakewalker", tr(replacedByPlugin, "scanaerial")),
             new DeprecatedPlugin("download_along", inCore),
-            new DeprecatedPlugin("plastic_laf", tr("no longer required")),
-            new DeprecatedPlugin("osmarender", tr("no longer required")),
+            new DeprecatedPlugin("plastic_laf", noLongerRequired),
+            new DeprecatedPlugin("osmarender", noLongerRequired),
             new DeprecatedPlugin("geojson", inCore),
-            new DeprecatedPlugin("gpxfilter", inCore)
+            new DeprecatedPlugin("gpxfilter", inCore),
+            new DeprecatedPlugin("rapid", tr(replacedByPlugin, "MapWithAI"))
         );
     }
 
