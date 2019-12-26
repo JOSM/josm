@@ -20,6 +20,7 @@ import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
+import javax.json.stream.JsonParsingException;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -346,7 +347,11 @@ public class GeoJSONReader extends AbstractReader {
     @Override
     protected DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         setParser(Json.createParser(source));
-        parse();
+        try {
+            parse();
+        } catch (JsonParsingException e) {
+            throw new IllegalDataException(e);
+        }
         return getDataSet();
     }
 
