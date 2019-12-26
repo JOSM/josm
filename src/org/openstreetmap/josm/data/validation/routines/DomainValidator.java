@@ -971,7 +971,6 @@ public final class DomainValidator extends AbstractValidator {
         "motorcycles", // motorcycles DERMotorcycles, LLC
         "mov", // mov Charleston Road Registry Inc.
         "movie", // movie New Frostbite, LLC
-        "movistar", // movistar Telefónica S.A.
         "msd", // msd MSD Registry Holdings, Inc.
         "mtn", // mtn MTN Dubai Limited
         "mtr", // mtr MTR Corporation Limited
@@ -1277,7 +1276,6 @@ public final class DomainValidator extends AbstractValidator {
         "tech", // tech Dot Tech LLC
         "technology", // technology Auburn Falls, LLC
         "tel", // tel Telnic Ltd.
-        "telefonica", // telefonica Telefónica S.A.
         "temasek", // temasek Temasek Holdings (Private) Limited
         "tennis", // tennis Cotton Bloom, LLC
         "teva", // teva Teva Pharmaceutical Industries Limited
