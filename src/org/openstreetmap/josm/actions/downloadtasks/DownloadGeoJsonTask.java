@@ -22,10 +22,11 @@ import org.openstreetmap.josm.tools.Utils;
 public class DownloadGeoJsonTask extends DownloadOsmTask {
 
     private static final String PATTERN_COMPRESS = "https?://.*/(.*\\.(json|geojson)(\\.(gz|xz|bz2?|zip))?)";
+    private static final String PATTERN_FORMAT_GEOJSON = "https?://.*format=geojson.*";
 
     @Override
     public String[] getPatterns() {
-        return new String[]{PATTERN_COMPRESS};
+        return new String[]{PATTERN_COMPRESS, PATTERN_FORMAT_GEOJSON};
     }
 
     @Override
