@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.util.Objects;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -65,7 +66,7 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
                 if (info.getLayer().requiresSaveToFile()) {
                     panel.add(needsSave, DEFAULT_CELL_STYLE);
                     sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.",
-                            htmlInfoName, info.getFile().toString()));
+                            htmlInfoName, Objects.toString(info.getFile())));
                 } else {
                     if (info.isSavable()) {
                         panel.add(pnlEmpty, DEFAULT_CELL_STYLE);
