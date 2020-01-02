@@ -116,7 +116,7 @@ public class CombineWayAction extends JosmAction {
         // remove duplicates, preserving order
         ways = new LinkedHashSet<>(ways);
         // remove incomplete ways
-        ways.removeIf(w -> w.isIncomplete() || w.isOutsideDownloadArea());
+        ways.removeIf(OsmPrimitive::isIncomplete);
         // we need at least two ways
         if (ways.size() < 2)
             return null;
@@ -325,8 +325,7 @@ public class CombineWayAction extends JosmAction {
         int numWays = 0;
         if (OsmUtils.isOsmCollectionEditable(selection)) {
             for (OsmPrimitive osm : selection) {
-                if (osm instanceof Way && !osm.isIncomplete() && !((Way) osm).isOutsideDownloadArea()
-                        && ++numWays >= 2) {
+                if (osm instanceof Way && !osm.isIncomplete() && ++numWays >= 2) {
                     break;
                 }
             }
