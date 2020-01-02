@@ -1345,7 +1345,9 @@ public class JoinAreasAction extends JosmAction {
         }
 
         Pair<Way, Command> result = CombineWayAction.combineWaysWorker(actionWays);
-
+        if (result == null) {
+            throw new JosmRuntimeException("Join areas internal error.");
+        }
         commitCommand(result.b);
         cmdsCount++;
 
