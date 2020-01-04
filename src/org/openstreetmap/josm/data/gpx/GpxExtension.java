@@ -233,7 +233,7 @@ public class GpxExtension extends WithAttributes {
 
     @Override
     public int hashCode() {
-        return Objects.hash(prefix, key, value, attr, parent, visible, super.hashCode());
+        return Objects.hash(prefix, key, value, attr, visible, super.hashCode());
     }
 
     @Override
@@ -268,11 +268,6 @@ public class GpxExtension extends WithAttributes {
             if (other.attr != null)
                 return false;
         } else if (!attr.equals(other.attr))
-            return false;
-        if (parent == null) {
-            if (other.parent != null)
-                return false;
-        } else if (!parent.equals(other.parent))
             return false;
         return true;
     }

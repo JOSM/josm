@@ -38,7 +38,7 @@ public class GpxExtensionTest {
         col.add("josm", "from-server", "true");
         EqualsVerifier.forClass(GpxExtension.class).usingGetClass()
         .suppress(Warning.NONFINAL_FIELDS)
-        .withIgnoredFields("qualifiedName")
+        .withIgnoredFields("qualifiedName", "parent")
         .withPrefabValues(GpxExtensionCollection.class, new GpxExtensionCollection(), col)
         .verify();
     }
