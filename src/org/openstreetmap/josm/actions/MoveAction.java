@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -34,69 +35,62 @@ public class MoveAction extends JosmAction {
      */
     public enum Direction {
         /** Move up */
-        UP,
+        UP(tr("up"), "up", KeyEvent.VK_UP),
         /** Move left */
-        LEFT,
+        LEFT(tr("left"), "previous", KeyEvent.VK_LEFT),
         /** Move right */
-        RIGHT,
+        RIGHT(tr("right"), "next", KeyEvent.VK_RIGHT),
         /** Move down */
-        DOWN
+        DOWN(tr("down"), "down", KeyEvent.VK_DOWN);
+
+        private final String localizedName;
+        private final String icon;
+        private final int shortcutKey;
+
+        Direction(String localizedName, String icon, int shortcutKey) {
+            this.localizedName = localizedName;
+            this.icon = icon;
+            this.shortcutKey = shortcutKey;
+        }
+
+        String getId() {
+            return name().toLowerCase(Locale.ENGLISH);
+        }
+
+        String getLocalizedName() {
+            return localizedName;
+        }
+
+        String getIcon() {
+            return "dialogs/" + icon;
+        }
+
+        String getToolbarName() {
+            return "action/move/" + getId();
+        }
+
+        int getShortcutKey() {
+            return shortcutKey;
+        }
+
+        Shortcut getShortcut() {
+            return Shortcut.registerShortcut(
+                    "core:move" + getId(), tr("Move objects {0}", getLocalizedName()), getShortcutKey(), Shortcut.SHIFT);
+        }
     }
 
     private final Direction myDirection;
-
-    // any better idea?
-    private static String calltosupermustbefirststatementinconstructortext(Direction dir) {
-        String directiontext;
-        if (dir == Direction.UP) {
-            directiontext = tr("up");
-        } else if (dir == Direction.DOWN) {
-            directiontext = tr("down");
-        } else if (dir == Direction.LEFT) {
-            directiontext = tr("left");
-        } else {
-            directiontext = tr("right");
-        }
-        return directiontext;
-    }
-
-    // any better idea?
-    private static Shortcut calltosupermustbefirststatementinconstructor(Direction dir) {
-        Shortcut sc;
-        // CHECKSTYLE.OFF: SingleSpaceSeparator
-        if (dir == Direction.UP) {
-            sc = Shortcut.registerShortcut("core:moveup",    tr("Move objects {0}", tr("up")),    KeyEvent.VK_UP,    Shortcut.SHIFT);
-        } else if (dir == Direction.DOWN) {
-            sc = Shortcut.registerShortcut("core:movedown",  tr("Move objects {0}", tr("down")),  KeyEvent.VK_DOWN,  Shortcut.SHIFT);
-        } else if (dir == Direction.LEFT) {
-            sc = Shortcut.registerShortcut("core:moveleft",  tr("Move objects {0}", tr("left")),  KeyEvent.VK_LEFT,  Shortcut.SHIFT);
-        } else { //dir == Direction.RIGHT
-            sc = Shortcut.registerShortcut("core:moveright", tr("Move objects {0}", tr("right")), KeyEvent.VK_RIGHT, Shortcut.SHIFT);
-        }
-        // CHECKSTYLE.ON: SingleSpaceSeparator
-        return sc;
-    }
 
     /**
      * Constructs a new {@code MoveAction}.
      * @param dir direction
      */
     public MoveAction(Direction dir) {
-        super(tr("Move {0}", calltosupermustbefirststatementinconstructortext(dir)), null,
-                tr("Moves Objects {0}", calltosupermustbefirststatementinconstructortext(dir)),
-                calltosupermustbefirststatementinconstructor(dir), false);
+        super(tr("Move {0}", dir.getLocalizedName()), dir.getIcon(),
+                tr("Moves Objects {0}", dir.getLocalizedName()),
+                dir.getShortcut(), true, dir.getToolbarName(), true);
         myDirection = dir;
         setHelpId(ht("/Action/Move"));
-        if (dir == Direction.UP) {
-            putValue("toolbar", "action/move/up");
-        } else if (dir == Direction.DOWN) {
-            putValue("toolbar", "action/move/down");
-        } else if (dir == Direction.LEFT) {
-            putValue("toolbar", "action/move/left");
-        } else { //dir == Direction.RIGHT
-            putValue("toolbar", "action/move/right");
-        }
-        MainApplication.getToolbar().register(this);
     }
 
     @Override
