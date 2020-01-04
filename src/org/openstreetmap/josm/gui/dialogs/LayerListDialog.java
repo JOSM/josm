@@ -3,10 +3,14 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -16,7 +20,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -455,15 +458,16 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         private final ImageIcon iconEye;
         private final ImageIcon iconEyeTranslucent;
         private boolean isTranslucent;
+        private Layer layer;
 
         /**
          * Constructs a new {@code LayerVisibleCheckBox}.
          */
         LayerVisibleCheckBox() {
-            iconEye = ImageProvider.get("dialogs/layerlist", "eye");
-            iconEyeTranslucent = ImageProvider.get("dialogs/layerlist", "eye-translucent");
+            iconEye = new EyeIcon("eye");
+            iconEyeTranslucent = new EyeIcon("eye-translucent", true);
             setIcon(ImageProvider.get("dialogs/layerlist", "eye-off"));
-            setPressedIcon(ImageProvider.get("dialogs/layerlist", "eye-pressed"));
+            setPressedIcon(new EyeIcon("eye-pressed"));
             setSelectedIcon(iconEye);
             isTranslucent = false;
         }
@@ -479,6 +483,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         }
 
         public void updateStatus(Layer layer) {
+            this.layer = layer;
             boolean visible = layer.isVisible();
             setSelected(visible);
             if (displayLayerNumbers()) {
@@ -492,6 +497,37 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             setToolTipText(visible ?
                 tr("layer is currently visible (click to hide layer)") :
                 tr("layer is currently hidden (click to show layer)"));
+        }
+
+        private class EyeIcon extends ImageIcon {
+            private final boolean translucent;
+
+            EyeIcon(String name) {
+                this(name, false);
+            }
+
+            EyeIcon(String name, boolean translucent) {
+                super(ImageProvider.get("dialogs/layerlist", name).getImage());
+                this.translucent = translucent;
+            }
+
+            @Override
+            public synchronized void paintIcon(Component comp, Graphics g, int x, int y) {
+                Color c;
+                if (Config.getPref().getBoolean("dialog.layer.colorname", true)
+                        && layer != null && (c = layer.getColor()) != null) {
+                    if (g instanceof Graphics2D) {
+                        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    }
+                    if (translucent) {
+                        g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 125));
+                    } else {
+                        g.setColor(c);
+                    }
+                    g.fillOval(x, y + 1, getIconWidth(), getIconHeight() - 2);
+                }
+                super.paintIcon(comp, g, x, y);
+            }
         }
     }
 
@@ -648,11 +684,6 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                     layer.getName(), isSelected, hasFocus, row, column);
             if (isActiveLayer(layer)) {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
-            }
-            if (Config.getPref().getBoolean("dialog.layer.colorname", true)) {
-                label.setForeground(Optional
-                        .ofNullable(layer.getColor())
-                        .orElse(UIManager.getColor(isSelected ? "Table.selectionForeground" : "Table.foreground")));
             }
             label.setIcon(layer.getIcon());
             label.setToolTipText(layer.getToolTipText());
