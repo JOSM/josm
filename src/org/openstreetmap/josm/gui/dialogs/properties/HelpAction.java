@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.dialogs.properties;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,11 +41,11 @@ public abstract class HelpAction extends AbstractAction {
     }
 
     /**
-     * Returns the keystroke launching this action (F1).
+     * Returns the keystroke launching this action (F1 by default).
      * @return the keystroke launching this action
      */
     public static KeyStroke getKeyStroke() {
-        return KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0);
+        return MainApplication.getMenu().help.getShortcut().getKeyStroke();
     }
 
     @Override
