@@ -778,8 +778,8 @@ Build-Date: ${build.tstamp}
             <ignore classname="io.*"/>
             <ignore classname="it.*"/>
             <ignore classname="java.lang.invoke.MethodHandle"/>
-        	<ignore classname="java.nio.ByteBuffer"/>
-        	<ignore classname="java.nio.FloatBuffer"/>
+            <ignore classname="java.nio.ByteBuffer"/>
+            <ignore classname="java.nio.FloatBuffer"/>
             <ignore classname="java.util.list.kotlin.*"/>
             <ignore classname="javax.*"/>
             <ignore classname="jdk.swing.interop.*"/>
@@ -820,6 +820,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.junit.*"/>
             <ignore classname="org.jvnet.*"/>
             <ignore classname="org.kxml2.*"/>
+            <ignore classname="org.locationtech.*"/>
             <ignore classname="org.mozilla.*"/>
             <ignore classname="org.objectweb.*"/>
             <ignore classname="org.opentest4j.*"/>
