@@ -161,6 +161,11 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
     }
 
     @Override
+    public boolean isExpert() {
+        return isExpert;
+    }
+
+    @Override
     public void setShowHideButtonListener(ShowHideButtonListener l) {
         listener = l;
     }

@@ -447,11 +447,10 @@ public class MainMenu extends JMenuBar {
                 return;
             final JPopupMenu m = ((JMenu) a.getSource()).getPopupMenu();
             for (int i = 0; i < m.getComponentCount()-1; i++) {
-                if (!(m.getComponent(i) instanceof JSeparator)) {
-                    continue;
-                }
                 // hide separator if the next menu item is one as well
-                ((JSeparator) m.getComponent(i)).setVisible(!(m.getComponent(i+1) instanceof JSeparator));
+                if (m.getComponent(i) instanceof JSeparator && m.getComponent(i+1) instanceof JSeparator) {
+                    ((JSeparator) m.getComponent(i)).setVisible(false);
+                }
             }
             // hide separator at the end of the menu
             if (m.getComponent(m.getComponentCount()-1) instanceof JSeparator) {
@@ -565,7 +564,7 @@ public class MainMenu extends JMenuBar {
     public static <E extends Enum<E>> JMenuItem add(JMenu menu, JosmAction action, Enum<E> group) {
         if (action.getShortcut().isAutomatic())
             return null;
-        int i = getInsertionIndexForGroup(menu, group.ordinal());
+        int i = getInsertionIndexForGroup(menu, group.ordinal(), false);
         JMenuItem menuitem = (JMenuItem) menu.add(new JMenuItem(action), i);
         KeyStroke ks = action.getShortcut().getKeyStroke();
         if (ks != null) {
@@ -586,11 +585,33 @@ public class MainMenu extends JMenuBar {
      * @return The created menu item
      */
     public static <E extends Enum<E>> JCheckBoxMenuItem addWithCheckbox(JMenu menu, JosmAction action, Enum<E> group) {
-        int i = getInsertionIndexForGroup(menu, group.ordinal());
+        return addWithCheckbox(menu, action, group, false, false);
+    }
+
+    /**
+     * Add a JosmAction to a menu and automatically prints accelerator if available.
+     * Also adds a checkbox that may be toggled.
+     * @param <E> group enum item type
+     * @param menu to add the action to
+     * @param action the action that should get a menu item
+     * @param group the item should be added to. Groups are split by a separator. Use
+     *        one of the enums that are defined for some of the menus to tell in which
+     *        group the item should go.
+     * @param isEntryExpert whether the entry should only be visible if the expert mode is activated
+     * @param isGroupSeparatorExpert whether the group separator should only be visible if the expert mode is activated
+     * @return The created menu item
+     * @since 15633
+     */
+    public static <E extends Enum<E>> JCheckBoxMenuItem addWithCheckbox(JMenu menu, JosmAction action, Enum<E> group,
+            boolean isEntryExpert, boolean isGroupSeparatorExpert) {
+        int i = getInsertionIndexForGroup(menu, group.ordinal(), isGroupSeparatorExpert);
         final JCheckBoxMenuItem mi = (JCheckBoxMenuItem) menu.add(new JCheckBoxMenuItem(action), i);
         final KeyStroke ks = action.getShortcut().getKeyStroke();
         if (ks != null) {
             mi.setAccelerator(ks);
+        }
+        if (isEntryExpert) {
+            ExpertToggleAction.addVisibilitySwitcher(mi);
         }
         return mi;
     }
@@ -599,9 +620,10 @@ public class MainMenu extends JMenuBar {
      * Finds the correct insertion index for a given group and adds separators if necessary
      * @param menu menu
      * @param group group number
+     * @param isGroupSeparatorExpert whether the added separators should only be visible if the expert mode is activated
      * @return correct insertion index
      */
-    private static int getInsertionIndexForGroup(JMenu menu, int group) {
+    private static int getInsertionIndexForGroup(JMenu menu, int group, boolean isGroupSeparatorExpert) {
         if (group < 0)
             return -1;
         // look for separator that *ends* the group (or stop at end of menu)
@@ -618,6 +640,9 @@ public class MainMenu extends JMenuBar {
         // not enough separators have been found, add them
         while (group > 0) {
             menu.addSeparator();
+            if (isGroupSeparatorExpert) {
+                ExpertToggleAction.addVisibilitySwitcher(menu.getMenuComponent(menu.getMenuComponentCount() - 1));
+            }
             group--;
             i++;
         }
@@ -831,7 +856,7 @@ public class MainMenu extends JMenuBar {
 
         // -- changeset manager toggle action
         final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManager,
-                MainMenu.WINDOW_MENU_GROUP.ALWAYS);
+                MainMenu.WINDOW_MENU_GROUP.ALWAYS, true, false);
         changesetManager.addButtonModel(mi.getModel());
 
         if (!Config.getPref().getBoolean("audio.menuinvisible", false)) {

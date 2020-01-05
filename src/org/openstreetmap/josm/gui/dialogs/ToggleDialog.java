@@ -265,7 +265,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     protected void registerInWindowMenu() {
         windowMenuItem = MainMenu.addWithCheckbox(MainApplication.getMenu().windowMenu,
                 (JosmAction) getToggleAction(),
-                MainMenu.WINDOW_MENU_GROUP.TOGGLE_DIALOG);
+                MainMenu.WINDOW_MENU_GROUP.TOGGLE_DIALOG, false, true);
     }
 
     /**

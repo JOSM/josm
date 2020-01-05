@@ -43,6 +43,7 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
@@ -670,25 +671,27 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         public void actionPerformed(ActionEvent e) {
             JPopupMenu menu = new JPopupMenu();
             for (HideableButton b : buttons) {
-                final HideableButton t = b;
-                menu.add(new JCheckBoxMenuItem(new AbstractAction() {
-                    {
-                        putValue(NAME, t.getActionName());
-                        putValue(SMALL_ICON, t.getIcon());
-                        putValue(SELECTED_KEY, t.isButtonVisible());
-                        putValue(SHORT_DESCRIPTION, tr("Hide or show this toggle button"));
-                    }
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if ((Boolean) getValue(SELECTED_KEY)) {
-                            t.showButton();
-                        } else {
-                            t.hideButton();
+                if (!b.isExpert() || ExpertToggleAction.isExpert()) {
+                    final HideableButton t = b;
+                    menu.add(new JCheckBoxMenuItem(new AbstractAction() {
+                        {
+                            putValue(NAME, t.getActionName());
+                            putValue(SMALL_ICON, t.getIcon());
+                            putValue(SELECTED_KEY, t.isButtonVisible());
+                            putValue(SHORT_DESCRIPTION, tr("Hide or show this toggle button"));
                         }
-                        validateToolBarsVisibility();
-                    }
-                }));
+
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if ((Boolean) getValue(SELECTED_KEY)) {
+                                t.showButton();
+                            } else {
+                                t.hideButton();
+                            }
+                            validateToolBarsVisibility();
+                        }
+                    }));
+                }
             }
             if (button != null && button.isShowing()) {
                 Rectangle bounds = button.getBounds();

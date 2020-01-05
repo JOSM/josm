@@ -22,5 +22,7 @@ interface HideableButton {
 
     boolean isButtonVisible();
 
+    boolean isExpert();
+
     void setShowHideButtonListener(ShowHideButtonListener l);
 }
