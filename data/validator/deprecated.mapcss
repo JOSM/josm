@@ -1845,3 +1845,11 @@ way[barrier=embankment] {
   suggestAlternative: "embankment=yes";
   group: tr("deprecated tagging");
 }
+
+/* #18469 */
+way[landuse=churchyard] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "landuse=religious";
+  suggestAlternative: "amenity=graveyard";
+  group: tr("deprecated tagging");
+}
