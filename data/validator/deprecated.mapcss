@@ -1068,6 +1068,12 @@ way[barrier=wall][type=noise_barrier][wall][wall!=noise_barrier] {
   group: tr("deprecated tagging");
 }
 
+*[office=administrative] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  group: tr("deprecated tagging");
+  suggestAlternative: "office=government";
+}
+
 /* #12708 */
 *[vending=news_papers] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");

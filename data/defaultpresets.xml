@@ -6484,13 +6484,6 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Accountant -->
-    <item name="Administrative" icon="presets/office/administrative.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
-        <link wiki="Tag:office=administrative" />
-        <space />
-        <key key="office" value="administrative" />
-        <reference ref="name_operator_oh_wheelchair" />
-        <reference ref="link_contact_address" />
-    </item> <!-- Administrative -->
     <item name="Advertising agency" icon="presets/office/advertising_agency.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:office=advertising_agency" />
         <space />
@@ -6552,7 +6545,7 @@
         <space />
         <key key="office" value="government" />
         <text key="name" text="Name" />
-        <combo key="government" text="Type" values="administrative,cadaster,customs,education,healthcare,legislative,migration,ministry,pension_fund,prosecutor,public_service,register_office,social_security,social_services,tax,transportation" />
+        <combo key="government" text="Type" values="administrative,audit,cadaster,culture,customs,data_protection,education,environment,forestry,healthcare,legislative,migration,ministry,pension_fund,prosecutor,public_service,register_office,social_security,social_services,statistics,tax,transportation" />
         <reference ref="oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Government -->
