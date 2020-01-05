@@ -1628,7 +1628,6 @@ node[man_made=street_cabinet][street_cabinet=telecom] {
 /***************/
 
 area[office=accountant],
-area[office=administrative],
 area[office=advertising_agency],
 area[office=architect],
 area[office=association],
@@ -1653,10 +1652,6 @@ area[office=telecommunication] {
 }
 node[office=accountant] {
     icon-image: "presets/office/accountant.svg";
-    set icon_z17;
-}
-node[office=administrative] {
-    icon-image: "presets/office/administrative.svg";
     set icon_z17;
 }
 node[office=advertising_agency] {
