@@ -156,6 +156,7 @@ relation[route=ski  ][!piste:type][type=route],
 /* {0.tag} without {1.key} (info level), #15107 */
 *[aeroway=runway               ][!ref],
 *[aeroway=runway               ][!surface],
+node[highway=crossing          ][!crossing],
 way[highway=track              ][!tracktype],
 way[power=cable                ][!location],
 node[power=transformer         ][!voltage:primary],
