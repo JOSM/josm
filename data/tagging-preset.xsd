@@ -102,6 +102,9 @@
                 <group ref="tns:list_elements" minOccurs="1" maxOccurs="unbounded" />-->
                 <element name="list_entry" type="tns:list_entry" minOccurs="1" maxOccurs="unbounded" />
             </sequence>
+            <sequence>
+                <element name="role" type="tns:role" minOccurs="1" maxOccurs="unbounded" />
+            </sequence>
         </choice>
         <attribute name="id" type="ID" use="required" />
     </complexType>
@@ -304,10 +307,15 @@
     </simpleType>
 
     <complexType name="roles">
-        <sequence>
-            <element name="role" type="tns:role" minOccurs="1" maxOccurs="unbounded" />
-        </sequence>
+        <group ref="tns:roles_elements" maxOccurs="unbounded" />
     </complexType>
+
+    <group name="roles_elements">
+        <choice>
+            <element name="role" type="tns:role" minOccurs="1" maxOccurs="unbounded" />
+            <element name="reference" type="tns:reference" />
+        </choice>
+    </group>
 
     <complexType name="role">
         <attribute name="key" type="string" />
