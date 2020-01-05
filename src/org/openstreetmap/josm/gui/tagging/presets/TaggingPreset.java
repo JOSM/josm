@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -524,13 +525,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      */
     public Collection<OsmPrimitive> createSelection(Collection<OsmPrimitive> participants) {
         originalSelectionEmpty = participants.isEmpty();
-        Collection<OsmPrimitive> sel = new LinkedList<>();
-        for (OsmPrimitive osm : participants) {
-            if (typeMatches(EnumSet.of(TaggingPresetType.forPrimitive(osm)))) {
-                sel.add(osm);
-            }
-        }
-        return sel;
+        return participants.stream().filter(this::typeMatches).collect(Collectors.toList());
     }
 
     /**
@@ -539,9 +534,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      */
     public List<Tag> getChangedTags() {
         List<Tag> result = new ArrayList<>();
-        for (TaggingPresetItem i: data) {
-            i.addCommands(result);
-        }
+        data.forEach(i -> i.addCommands(result));
         return result;
     }
 
@@ -584,6 +577,16 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     @Override
     public String toString() {
         return (types == null ? "" : types.toString()) + ' ' + name;
+    }
+
+    /**
+     * Determines whether this preset matches the OSM primitive type.
+     * @param primitive The OSM primitive for which type must match
+     * @return <code>true</code> if type matches.
+     * @since 15640
+     */
+    public final boolean typeMatches(IPrimitive primitive) {
+        return typeMatches(EnumSet.of(TaggingPresetType.forPrimitive(primitive)));
     }
 
     /**

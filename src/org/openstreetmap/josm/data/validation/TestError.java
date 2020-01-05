@@ -84,7 +84,7 @@ public class TestError implements Comparable<TestError> {
         /**
          * Sets the error message.
          *
-         * @param message       The the message of this error group
+         * @param message       The message of this error group
          * @param description   The translated description of this error
          * @param descriptionEn The English description (for ignoring errors)
          * @return {@code this}

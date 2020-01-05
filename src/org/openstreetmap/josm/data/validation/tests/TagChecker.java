@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetListener;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Check;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
@@ -105,6 +107,10 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * The preference key to search for fixme tags
      */
     public static final String PREF_CHECK_FIXMES = PREFIX + ".checkFixmes";
+    /**
+     * The preference key to check presets
+     */
+    public static final String PREF_CHECK_PRESETS_TYPES = PREFIX + ".checkPresetsTypes";
 
     /**
      * The preference key for source files
@@ -129,6 +135,10 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * The preference key to search for fixmes - used before upload
      */
     public static final String PREF_CHECK_FIXMES_BEFORE_UPLOAD = PREF_CHECK_FIXMES + BEFORE_UPLOAD;
+    /**
+     * The preference key to search for presets - used before upload
+     */
+    public static final String PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD = PREF_CHECK_PRESETS_TYPES + BEFORE_UPLOAD;
 
     private static final int MAX_LEVENSHTEIN_DISTANCE = 2;
 
@@ -137,18 +147,19 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     /** Was used for special configuration file, might be used to disable value spell checker. */
     protected boolean checkComplex;
     protected boolean checkFixmes;
+    protected boolean checkPresetsTypes;
 
     protected JCheckBox prefCheckKeys;
     protected JCheckBox prefCheckValues;
     protected JCheckBox prefCheckComplex;
     protected JCheckBox prefCheckFixmes;
-    protected JCheckBox prefCheckPaint;
+    protected JCheckBox prefCheckPresetsTypes;
 
     protected JCheckBox prefCheckKeysBeforeUpload;
     protected JCheckBox prefCheckValuesBeforeUpload;
     protected JCheckBox prefCheckComplexBeforeUpload;
     protected JCheckBox prefCheckFixmesBeforeUpload;
-    protected JCheckBox prefCheckPaintBeforeUpload;
+    protected JCheckBox prefCheckPresetsTypesBeforeUpload;
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected static final int EMPTY_VALUES             = 1200;
@@ -167,6 +178,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected static final int MULTIPLE_SPACES          = 1214;
     protected static final int MISSPELLED_VALUE_NO_FIX  = 1215;
     protected static final int UNUSUAL_UNICODE_CHAR_VALUE = 1216;
+    protected static final int INVALID_PRESETS_TYPE     = 1217;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     protected EditableList sourcesList;
@@ -577,9 +589,6 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      */
     @Override
     public void check(OsmPrimitive p) {
-        if (!p.isTagged())
-            return;
-
         // Just a collection to know if a primitive has been already marked with error
         MultiMap<OsmPrimitive, String> withErrors = new MultiMap<>();
 
@@ -601,6 +610,19 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                         .primitives(p)
                         .build());
                 withErrors.put(p, "FIXME");
+            }
+        }
+
+        if (checkPresetsTypes) {
+            for (TaggingPreset tp : TaggingPresets.getMatchingPresets(null, p.getKeys(), false)) {
+                TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
+                if (!tp.typeMatches(EnumSet.of(presetType))) {
+                    errors.add(TestError.builder(this, Severity.OTHER, INVALID_PRESETS_TYPE)
+                            .message(tr("Wrong presets types"),
+                                    marktr("{0} is not supported by tagging preset: {1}"), tr(presetType.getName()), tp.getLocaleName())
+                            .primitives(p)
+                            .build());
+                }
             }
         }
     }
@@ -880,11 +902,16 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (isBeforeUpload) {
             checkFixmes = checkFixmes && Config.getPref().getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true);
         }
+
+        checkPresetsTypes = Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES, true);
+        if (isBeforeUpload) {
+            checkPresetsTypes = checkPresetsTypes && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true);
+        }
     }
 
     @Override
     public void visit(Collection<OsmPrimitive> selection) {
-        if (checkKeys || checkValues || checkComplex || checkFixmes) {
+        if (checkKeys || checkValues || checkComplex || checkFixmes || checkPresetsTypes) {
             super.visit(selection);
         }
     }
@@ -941,6 +968,14 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         prefCheckFixmesBeforeUpload = new JCheckBox();
         prefCheckFixmesBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckFixmesBeforeUpload, a);
+
+        prefCheckPresetsTypes = new JCheckBox(tr("Check for presets types."), Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES, true));
+        prefCheckPresetsTypes.setToolTipText(tr("Validate that objects types are valid checking against presets."));
+        testPanel.add(prefCheckPresetsTypes, GBC.std().insets(20, 0, 0, 0));
+
+        prefCheckPresetsTypesBeforeUpload = new JCheckBox();
+        prefCheckPresetsTypesBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true));
+        testPanel.add(prefCheckPresetsTypesBeforeUpload, a);
     }
 
     /**
@@ -962,10 +997,12 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         Config.getPref().putBoolean(PREF_CHECK_COMPLEX, prefCheckComplex.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_KEYS, prefCheckKeys.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_FIXMES, prefCheckFixmes.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_PRESETS_TYPES, prefCheckPresetsTypes.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, prefCheckValuesBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
         Config.getPref().putBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, prefCheckPresetsTypesBeforeUpload.isSelected());
         return Config.getPref().putList(PREF_SOURCES, sourcesList.getItems());
     }
 

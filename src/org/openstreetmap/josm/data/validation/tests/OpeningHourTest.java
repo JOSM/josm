@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.data.validation.Test;
+import org.openstreetmap.josm.data.validation.Test.TagTest;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @since 6370
  */
-public class OpeningHourTest extends Test.TagTest {
+public class OpeningHourTest extends TagTest {
 
     /**
      * Javascript engine
@@ -327,10 +327,8 @@ public class OpeningHourTest extends Test.TagTest {
 
     @Override
     public void check(final OsmPrimitive p) {
-        if (p.isTagged()) {
-            check(p, "opening_hours");
-            check(p, "collection_times");
-            check(p, "service_times");
-        }
+        check(p, "opening_hours");
+        check(p, "collection_times");
+        check(p, "service_times");
     }
 }

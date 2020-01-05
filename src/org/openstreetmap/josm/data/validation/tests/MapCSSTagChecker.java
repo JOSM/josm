@@ -785,7 +785,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         for (TestError e : getErrorsForPrimitive(p, ValidatorPrefHelper.PREF_OTHER.get())) {
             addIfNotSimilar(e, errors);
         }
-        if (partialSelection && p.isTagged()) {
+        if (partialSelection) {
             tested.add(p);
         }
     }

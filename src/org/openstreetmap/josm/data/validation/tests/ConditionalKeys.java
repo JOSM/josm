@@ -248,8 +248,6 @@ public class ConditionalKeys extends Test.TagTest {
 
     @Override
     public void check(OsmPrimitive p) {
-        if (p.isTagged()) {
-            errors.addAll(validatePrimitive(p));
-        }
+        errors.addAll(validatePrimitive(p));
     }
 }
