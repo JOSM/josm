@@ -291,7 +291,7 @@ way >[index=-1] node {
 }
 way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash|ferry_terminal|weighbridge|taxi|toilets)$/],
 way[highway] > node[building][!entrance],
-way[highway] > node[leisure][!entrance][leisure!=slipway],
+way[highway] > node[leisure][!entrance][leisure!=slipway][leisure!=fitness_station],
 way[highway] > node[office][!entrance],
 way[highway] > node[shop][!entrance],
 way[highway] > node[tourism][!entrance][tourism!=viewpoint]!.guidepost.first_last_node:connection,

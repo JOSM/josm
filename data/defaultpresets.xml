@@ -463,6 +463,16 @@
          <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
      </roles>
   </chunk>
+  <chunk id="route_segment_roles">
+     <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry|leisure=track"/>
+     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
+     <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
+  </chunk>
+  <chunk id="route_start_stop_roles">
+     <role key="start" text="start endpoint" requisite="optional" type="node" />
+     <role key="stop" text="stop endpoint" requisite="optional" type="node" />
+     <role key="start_stop" text="start and stop endpoint" requisite="optional" type="node" />
+  </chunk>
   <!-- Link chunks -->
   <chunk id="link_contact_address">
     <preset_link preset_name="Contact (Common Schema)" />
@@ -7616,9 +7626,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
-                    <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
-                    <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
+                    <reference ref="route_segment_roles" />
                 </roles>
             </item> <!-- Bicycle Route -->
             <item name="Mountain Biking Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
@@ -7631,9 +7639,7 @@
                     <reference ref="route_hikebike_optionals" />
                 </optional>
                 <roles>
-                    <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
-                    <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
-                    <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
+                    <reference ref="route_segment_roles" />
                 </roles>
             </item> <!-- Mountain Biking Route -->
             <item name="Hiking Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
@@ -7660,6 +7666,36 @@
                 </optional>
                 <reference ref="walking_routes_roles" />
             </item> <!-- Walking Route -->
+            <item name="Running Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+                <link wiki="Tag:route=running" />
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="running"/>
+                <text key="name" text="Name" />
+                <optional>
+                    <reference ref="route_hikebike_optionals" />
+                </optional>
+                <roles>
+                    <reference ref="route_segment_roles" />
+                    <reference ref="route_start_stop_roles" />
+                </roles>
+            </item> <!-- Running Route -->
+            <item name="Fitness Trail" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+                <link wiki="Tag:route=fitness_trail" />
+                <space/>
+                <key key="type" value="route"/>
+                <key key="route" value="fitness_trail"/>
+                <text key="name" text="Name" />
+                <optional>
+                    <reference ref="route_hikebike_optionals" />
+                </optional>
+                <roles>
+                    <reference ref="route_segment_roles" />
+                    <reference ref="route_start_stop_roles" />
+                    <role key="" text="fitness station" requisite="optional" type="node,way,closedway" member_expression="leisure=fitness_station" />
+                    <role key="station" text="fitness station" requisite="optional" type="node,way,closedway" member_expression="leisure=fitness_station" />
+                </roles>
+            </item> <!-- Fitness Trail -->
             <item name="Riding Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
                 <link wiki="Tag:route=horse" />
                 <space/>
