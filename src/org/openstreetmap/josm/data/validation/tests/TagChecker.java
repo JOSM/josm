@@ -618,8 +618,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
                 if (!tp.typeMatches(EnumSet.of(presetType))) {
                     errors.add(TestError.builder(this, Severity.OTHER, INVALID_PRESETS_TYPE)
-                            .message(tr("Type not in preset"),
-                                    marktr("{0} is not supported by tagging preset: {1}"), tr(presetType.getName()), tp.getLocaleName())
+                            .message(tr("Object type not in preset"),
+                                    marktr("Object type {0} is not supported by tagging preset: {1}"),
+                                    tr(presetType.getName()), tp.getLocaleName())
                             .primitives(p)
                             .build());
                 }
