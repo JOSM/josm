@@ -152,8 +152,8 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
         private String getLayerName() {
             // Extract .gpx filename from URL to set the new layer name
-            final Matcher matcher = Pattern.compile(GpxUrlPattern.EXTERNAL_GPX_FILE.pattern()).matcher(url);
-            final String newLayerName = matcher.matches() ? matcher.group(1) : null;
+            final Matcher matcher = url != null ? Pattern.compile(GpxUrlPattern.EXTERNAL_GPX_FILE.pattern()).matcher(url) : null;
+            final String newLayerName = matcher != null && matcher.matches() ? matcher.group(1) : null;
             final String metadataName = rawData != null ? rawData.getString(GpxConstants.META_NAME) : null;
             final String defaultName = tr("Downloaded GPX Data");
 
