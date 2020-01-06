@@ -464,10 +464,10 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
          * Constructs a new {@code LayerVisibleCheckBox}.
          */
         LayerVisibleCheckBox() {
-            iconEye = new EyeIcon("eye");
-            iconEyeTranslucent = new EyeIcon("eye-translucent", true);
+            iconEye = new EyeIcon(/* ICON(dialogs/layerlist/) */ "eye");
+            iconEyeTranslucent = new EyeIcon(/* ICON(dialogs/layerlist/) */ "eye-translucent", true);
             setIcon(ImageProvider.get("dialogs/layerlist", "eye-off"));
-            setPressedIcon(new EyeIcon("eye-pressed"));
+            setPressedIcon(new EyeIcon(/* ICON(dialogs/layerlist/) */ "eye-pressed"));
             setSelectedIcon(iconEye);
             isTranslucent = false;
         }
