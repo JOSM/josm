@@ -230,6 +230,24 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      */
     public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow,
             Class<? extends PreferenceSetting> prefClass) {
+        this(name, iconName, tooltip, shortcut, preferredHeight, defShow, prefClass, false);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param name  the name of the dialog
+     * @param iconName the name of the icon to be displayed
+     * @param tooltip  the tool tip
+     * @param shortcut  the shortcut
+     * @param preferredHeight the preferred height for the dialog
+     * @param defShow if the dialog should be shown by default, if there is no preference
+     * @param prefClass the preferences settings class, or null if not applicable
+     * @param isExpert {@code true} if this dialog should only be displayed in expert mode
+     * @since 15650
+     */
+    public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow,
+            Class<? extends PreferenceSetting> prefClass, boolean isExpert) {
         super(new BorderLayout());
         this.preferencePrefix = iconName;
         this.name = name;
@@ -256,17 +274,18 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         MainApplication.redirectToMainContentPane(this);
         Config.getPref().addPreferenceChangeListener(this);
 
-        registerInWindowMenu();
+        registerInWindowMenu(isExpert);
     }
 
     /**
      * Registers this dialog in the window menu. Called in the constructor.
-     * @since 10467
+     * @param isExpert {@code true} if this dialog should only be displayed in expert mode
+     * @since 15650
      */
-    protected void registerInWindowMenu() {
+    protected void registerInWindowMenu(boolean isExpert) {
         windowMenuItem = MainMenu.addWithCheckbox(MainApplication.getMenu().windowMenu,
                 (JosmAction) getToggleAction(),
-                WindowMenu.WINDOW_MENU_GROUP.TOGGLE_DIALOG, false, true);
+                WindowMenu.WINDOW_MENU_GROUP.TOGGLE_DIALOG, isExpert, true);
     }
 
     /**

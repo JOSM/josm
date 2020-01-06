@@ -35,7 +35,7 @@ public class LayerVisibilityActionTest {
         TMSLayer layer = TMSLayerTest.createTmsLayer();
         LayerListModel model = new LayerListDialog(MainApplication.getLayerManager()) {
             @Override
-            protected void registerInWindowMenu() {
+            protected void registerInWindowMenu(boolean isExpert) {
                 // ignore
             }
         }.getModel();

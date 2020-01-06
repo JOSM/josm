@@ -251,7 +251,9 @@ public class ChangesetDialog extends ToggleDialog {
                 tr("Open the list of changesets in the current layer."),
                 null, /* no keyboard shortcut */
                 200, /* the preferred height */
-                false /* don't show if there is no preference */
+                false, /* don't show if there is no preference */
+                null /* no preferences settings */,
+                true /* expert only */
         );
         build();
         initWithCurrentData();
