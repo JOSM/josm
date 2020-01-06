@@ -94,6 +94,17 @@ public class ExpertToggleAction extends ToggleAction {
     }
 
     /**
+     * Determines if the given component tracks visibility changes.
+     * @param c The component.
+     * @return {@code true} if the given component tracks visibility changes
+     * @since 15649
+     */
+    public static synchronized boolean hasVisibilitySwitcher(Component c) {
+        if (c == null) return false;
+        return visibilityToggleListeners.containsListener(c);
+    }
+
+    /**
      * Constructs a new {@code ExpertToggleAction}.
      */
     public ExpertToggleAction() {

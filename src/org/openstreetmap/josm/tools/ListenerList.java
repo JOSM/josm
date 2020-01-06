@@ -112,7 +112,13 @@ public class ListenerList<T> {
                         listener.getClass().getName()));
     }
 
-    private boolean containsListener(T listener) {
+    /**
+     * Determines if this listener list contains the given listener.
+     * @param listener listener to find
+     * @return {@code true} is the listener is known
+     * @since 15649
+     */
+    public synchronized boolean containsListener(T listener) {
         return listeners.contains(listener) || weakListeners.contains(new WeakListener<>(listener));
     }
 

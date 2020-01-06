@@ -60,6 +60,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.WindowMenu;
 import org.openstreetmap.josm.gui.draw.MapPath2D;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
@@ -193,7 +194,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
                 MainApplication.getMenu().editMenu.remove(i);
             }
         }
-        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, snapChangeAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, snapChangeAction, WindowMenu.WINDOW_MENU_GROUP.VOLATILE);
     }
 
     /**

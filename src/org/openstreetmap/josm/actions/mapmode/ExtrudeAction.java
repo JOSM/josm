@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.WindowMenu;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -250,7 +251,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 MainApplication.getMenu().editMenu.remove(i);
             }
         }
-        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, dualAlignChangeAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, dualAlignChangeAction, WindowMenu.WINDOW_MENU_GROUP.VOLATILE);
     }
 
     // -------------------------------------------------------------------------

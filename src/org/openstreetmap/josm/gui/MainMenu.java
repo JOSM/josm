@@ -144,8 +144,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class MainMenu extends JMenuBar {
 
-    public enum WINDOW_MENU_GROUP { ALWAYS, TOGGLE_DIALOG, VOLATILE }
-
     /* File menu */
     /** File / New Layer **/
     public final NewAction newAction = new NewAction();
@@ -391,7 +389,7 @@ public class MainMenu extends JMenuBar {
      * group is for currently open windows that cannot be toggled, e.g. relation editors. It's recommended
      * to use WINDOW_MENU_GROUP to determine the group integer.
      */
-    public final JMenu windowMenu = addMenu("Windows", /* I18N: mnemonic: W */ trc("menu", "Windows"), KeyEvent.VK_W, 11, ht("/ToggleDialogs"));
+    public final WindowMenu windowMenu = addMenu(new WindowMenu(), /* untranslated name */ "Windows", KeyEvent.VK_W, 11, ht("/ToggleDialogs"));
 
     /**
      * audioMenu contains all audio-related actions. Be careful, this menu is not guaranteed to be displayed at all
@@ -605,7 +603,7 @@ public class MainMenu extends JMenuBar {
     public static <E extends Enum<E>> JCheckBoxMenuItem addWithCheckbox(JMenu menu, JosmAction action, Enum<E> group,
             boolean isEntryExpert, boolean isGroupSeparatorExpert) {
         int i = getInsertionIndexForGroup(menu, group.ordinal(), isGroupSeparatorExpert);
-        final JCheckBoxMenuItem mi = (JCheckBoxMenuItem) menu.add(new JCheckBoxMenuItem(action), i);
+        final JCheckBoxMenuItem mi = new JCheckBoxMenuItem(action);
         final KeyStroke ks = action.getShortcut().getKeyStroke();
         if (ks != null) {
             mi.setAccelerator(ks);
@@ -613,7 +611,7 @@ public class MainMenu extends JMenuBar {
         if (isEntryExpert) {
             ExpertToggleAction.addVisibilitySwitcher(mi);
         }
-        return mi;
+        return (JCheckBoxMenuItem) menu.add(mi, i);
     }
 
     /**
@@ -856,7 +854,7 @@ public class MainMenu extends JMenuBar {
 
         // -- changeset manager toggle action
         final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManager,
-                MainMenu.WINDOW_MENU_GROUP.ALWAYS, true, false);
+                WindowMenu.WINDOW_MENU_GROUP.ALWAYS, true, false);
         changesetManager.addButtonModel(mi.getModel());
 
         if (!Config.getPref().getBoolean("audio.menuinvisible", false)) {
