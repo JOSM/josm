@@ -157,3 +157,9 @@ node[railway!=level_crossing].is_in_railway.is_in_major_road!.is_in_minor_road {
   group: tr("missing tag");
   fixAdd: "railway=level_crossing";
 }
+
+node[highway=crossing][barrier=kerb].is_in_major_road {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "kerb=*";
+  group: tr("suspicious tag combination");
+}

@@ -542,6 +542,7 @@ way[sidewalk=yes] {
 }
 
 /* see #11070 */
+*[kerb=unknown],
 *[lock=unknown],
 *[hide=unknown],
 *[shelter=unknown],
@@ -1068,10 +1069,12 @@ way[barrier=wall][type=noise_barrier][wall][wall!=noise_barrier] {
   group: tr("deprecated tagging");
 }
 
+/* #18517 */
 *[office=administrative] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
-  group: tr("deprecated tagging");
   suggestAlternative: "office=government";
+  group: tr("deprecated tagging");
+  fixAdd: "office=government";
 }
 
 /* #12708 */
@@ -1851,5 +1854,27 @@ way[landuse=churchyard] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "landuse=religious";
   suggestAlternative: "amenity=graveyard";
+  group: tr("deprecated tagging");
+}
+
+*[sloped_curb=yes][!kerb],
+*[sloped_curb=both][!kerb] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "kerb=lowered";
+  group: tr("deprecated tagging");
+  fixRemove: "sloped_curb";
+  fixAdd: "kerb=lowered";
+}
+*[sloped_curb=no][!kerb] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "kerb=yes";
+  group: tr("deprecated tagging");
+  fixRemove: "sloped_curb";
+  fixAdd: "kerb=yes";
+}
+*[sloped_curb][sloped_curb !~ /^(yes|both|no)$/][!kerb],
+*[sloped_curb][kerb] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "kerb=*";
   group: tr("deprecated tagging");
 }

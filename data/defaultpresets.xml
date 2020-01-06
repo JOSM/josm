@@ -1114,6 +1114,7 @@
             <optional text="Optional crossing attributes:">
                 <combo key="crossing" text="Pedestrian crossing type" values="uncontrolled,traffic_signals,unmarked,no" />
                 <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" />
+                <combo key="kerb" text="Kerb" values="flush,lowered,no,raised,rolled,yes" values_context="kerb" />
                 <check key="crossing:island" text="With island" />
                 <check key="button_operated" text="Button operated" />
                 <check key="traffic_signals:sound" text="Sound signals" />
@@ -1159,6 +1160,7 @@
                 <list_entry value="unmarked" icon="presets/vehicle/crossing_unmarked.svg" />
             </combo>
             <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
+            <combo key="kerb" text="Kerb" values="flush,lowered,no,raised,rolled,yes" values_context="kerb" />
             <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             <check key="crossing:island" text="With island" />
@@ -1992,6 +1994,15 @@
             </optional>
         </item> <!-- Bus Guideway -->
         <separator/>
+        <item name="Railway construction" icon="presets/transport/railway/railway_construction.svg" type="way" preset_name_label="true">
+            <link wiki="Key:construction" />
+            <key key="railway" value="construction" />
+            <combo key="construction" text="Railway type" values="rail,narrow_gauge,monorail,preserved,light_rail,subway,tram,funicular" />
+            <optional>
+                <combo key="usage" text="Usage" values="main,branch,industrial,military,tourism,freight" />
+                <reference ref="railway_service_gauge_electrified_yesno" />
+            </optional>
+        </item> <!-- Railway construction -->
         <item name="Disused Rail" icon="presets/transport/railway/disused_rail.svg" type="way" preset_name_label="true">
             <link wiki="Tag:railway=disused" />
             <key key="railway" value="disused" />
@@ -4072,7 +4083,8 @@
             <key key="amenity" value="recycling" />
             <key key="recycling_type" value="container" />
             <text key="operator" text="Operator" />
-            <reference ref="oh_wheelchair" />
+            <combo key="opening_hours" text="Throw in times" delimiter="|" values="24/7|Mo-Fr 06:30-12:30,15:30-20:00; Sa 08:00-12:00; PH off" values_no_i18n="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
             <space />
             <checkgroup columns="4">
                 <check key="recycling:batteries" text="Batteries" />
@@ -4750,7 +4762,7 @@
         <item name="Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building" />
             <space />
-            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,farm_auxiliary,garage,garages,gasometer,ger,greenhouse,hangar,hospital,industrial,kindergarten,manufacture,mosque,office,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,supermarket,synagogue,temple,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,farm_auxiliary,garage,garages,gasometer,greenhouse,hangar,hospital,industrial,kindergarten,manufacture,mosque,office,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,supermarket,synagogue,temple,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -4761,7 +4773,7 @@
         <item name="Residential Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,residential,apartments,house,hotel,hut,bungalow,dormitory,terrace,detached,farm" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,residential,apartments,ger,house,hotel,hut,bungalow,dormitory,terrace,detached,farm" default="residential" match="keyvalue!" values_context="building" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -6676,7 +6688,7 @@
         <reference ref="link_contact_address" />
     </item> <!-- Caterer -->
     <separator/> <!-- food group -->
-    <item name="Upholsterer" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Upholsterer" icon="presets/craft/upholsterer.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=upholsterer" />
         <space />
         <key key="craft" value="upholsterer" />
@@ -6775,14 +6787,14 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Pottery -->
-    <item name="Gardener" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Gardener" icon="presets/craft/gardener.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=gardener" />
         <space />
         <key key="craft" value="gardener" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Gardener -->
-    <item name="Shoemaker" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Shoemaker" icon="presets/craft/shoemaker.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=shoemaker" />
         <space />
         <key key="craft" value="shoemaker" />

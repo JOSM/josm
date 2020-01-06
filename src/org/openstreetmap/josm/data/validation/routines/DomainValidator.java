@@ -880,7 +880,6 @@ public final class DomainValidator extends AbstractValidator {
         "lego", // lego LEGO Juris A/S
         "lexus", // lexus TOYOTA MOTOR CORPORATION
         "lgbt", // lgbt Afilias Limited
-        "liaison", // liaison Liaison Technologies, Incorporated
         "lidl", // lidl Schwarz Domains und Services GmbH &amp; Co. KG
         "life", // life Trixy Oaks, LLC
         "lifeinsurance", // lifeinsurance American Council of Life Insurers

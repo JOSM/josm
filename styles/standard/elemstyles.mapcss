@@ -3148,8 +3148,8 @@ node[craft=carpenter] {
     icon-image: "presets/craft/carpenter.svg";
     set icon_z17;
 }
-node[craft=shoemaker][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=shoemaker] {
+    icon-image: "presets/craft/shoemaker.svg";
     set icon_z17;
 }
 node[craft=photographer][!is_prop_set(icon-image)] {
@@ -3175,8 +3175,8 @@ node[craft=sawmill] {
     icon-image: "presets/craft/sawmill.svg";
     set icon_z17;
 }
-node[craft=gardener][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=gardener] {
+    icon-image: "presets/craft/gardener.svg";
     set icon_z17;
 }
 node[craft=winery][!is_prop_set(icon-image)] {
@@ -3231,8 +3231,8 @@ node[craft=window_construction] {
     icon-image: "presets/craft/window_construction.svg";
     set icon_z17;
 }
-node[craft=upholsterer][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=upholsterer] {
+    icon-image: "presets/craft/upholsterer.svg";
     set icon_z17;
 }
 node[craft=tiler] {

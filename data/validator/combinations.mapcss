@@ -269,7 +269,10 @@ way[highway=footway][oneway=no] {
   group: tr("suspicious tag combination");
 }
 
-/* {0.tag} together with {1.tag}, see #17950, #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186 */
+/* {0.tag} together with {1.tag}, see #18411, #17950, #17330, #17623, #17592, #17594, #17542, #16861, #16147, #10186 */
+*[barrier=kerb][kerb=no],
+way[highway=construction][construction=yes],
+way[railway=construction][construction=yes],
 *[man_made=bridge][bridge=yes],
 *[man_made=tunnel][tunnel=yes],
 *[amenity=police][police],
@@ -646,5 +649,24 @@ node[emergency_ward_entrance][emergency!=emergency_ward_entrance] {
 /* #18203 */
 way[construction][construction!=yes][construction!=minor][highway][highway!=construction] {
   throwWarning: tr("{0} together with {1}", "{2.tag}", "{0.tag}");
+  group: tr("suspicious tag combination");
+}
+
+/* #18374 */
+*[amenity=recycling][collection_times="24/7"][!opening_hours],
+*[amenity=recycling][collection_times       ][!opening_hours][collection_times=~/[a-z]-[A-Z].*[0-9]-[0-9]/] {
+  throwWarning: tr("{0} together with {1}. Probably {2} is meant.", "{1.key}", "{0.tag}", "{2.key}");
+  group: tr("suspicious tag combination");
+  fixChangeKey: "collection_times => opening_hours";
+  /* spaces in asserts are not yet supported
+  assertMatch: "node amenity=recycling collection_times=Mo-Fr 06:00-20:00";
+  assertNoMatch: "node amenity=recycling collection_times=Mo-Fr 15:00";
+  assertNoMatch: "node amenity=recycling collection_times=Mo 08:00-11:00";
+  assertNoMatch: "node amenity=recycling collection_times=Sa[2,4] 8:00-11:00";
+  */
+}
+*[amenity=recycling][collection_times="24/7"][opening_hours],
+*[amenity=recycling][collection_times       ][opening_hours][collection_times=~/[a-z]-[A-Z].*[0-9]-[0-9]/] {
+  throwWarning: tr("{0} together with {1}. Probably {2} is meant.", "{1.key}", "{0.tag}", "{2.key}");
   group: tr("suspicious tag combination");
 }
