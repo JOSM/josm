@@ -746,6 +746,22 @@ public final class Utils {
     }
 
     /**
+     * Returns the first not empty string in the given candidates, otherwise the default string.
+     * @param defaultString default string returned if all candidates would be empty if stripped
+     * @param candidates string candidates to consider
+     * @return the first not empty string in the given candidates, otherwise the default string
+     * @since 15646
+     */
+    public static String firstNotEmptyString(String defaultString, String... candidates) {
+        for (String candidate : candidates) {
+            if (!Utils.isStripEmpty(candidate)) {
+                return candidate;
+            }
+        }
+        return defaultString;
+    }
+
+    /**
      * Determines if the given String would be empty if stripped.
      * This is an efficient alternative to {@code strip(s).isEmpty()} that avoids to create useless String object.
      * @param str The string to test

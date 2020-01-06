@@ -106,12 +106,11 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      * @param isLocal whether data is attached to a local file
      */
     public GpxLayer(GpxData d, String name, boolean isLocal) {
-        super(d.getString(GpxConstants.META_NAME));
+        super(name);
         data = d;
         data.addWeakChangeListener(dataChangeListener);
         trackVisibility = new boolean[data.getTracks().size()];
         Arrays.fill(trackVisibility, true);
-        setName(name);
         isLocalFile = isLocal;
         ExpertToggleAction.addExpertModeChangeListener(this, true);
     }

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Bounds.ParseMethod;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -33,6 +34,7 @@ import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -43,7 +45,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
     private DownloadTask downloadTask;
     private GpxLayer gpxLayer;
 
-    protected String newLayerName;
+    protected String url;
 
     @Override
     public String[] getPatterns() {
@@ -67,6 +69,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
     @Override
     public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
+        this.url = url;
         final Optional<String> mappedUrl = Stream.of(GpxUrlPattern.USER_TRACE_ID, GpxUrlPattern.EDIT_TRACE_ID)
                 .map(p -> Pattern.compile(p.pattern()).matcher(url))
                 .filter(Matcher::matches)
@@ -80,9 +83,6 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
                 .anyMatch(p -> url.matches(p.pattern()))) {
             downloadTask = new DownloadTask(settings,
                     new OsmServerLocationReader(url), progressMonitor);
-            // Extract .gpx filename from URL to set the new layer name
-            Matcher matcher = Pattern.compile(GpxUrlPattern.EXTERNAL_GPX_FILE.pattern()).matcher(url);
-            newLayerName = matcher.matches() ? matcher.group(1) : null;
             // We need submit instead of execute so we can wait for it to finish and get the error
             // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
             return MainApplication.worker.submit(downloadTask);
@@ -138,7 +138,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             rememberDownloadedData(rawData);
             if (rawData == null)
                 return;
-            String name = newLayerName != null ? newLayerName : tr("Downloaded GPX Data");
+            String name = getLayerName();
 
             GpxImporterData layers = GpxImporter.loadLayers(rawData, reader.isGpxParsedProperly(), name,
                     tr("Markers from {0}", name));
@@ -148,6 +148,20 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             addOrMergeLayer(layers.getMarkerLayer(), findMarkerMergeLayer(gpxLayer));
 
             layers.getPostLayerTask().run();
+        }
+
+        private String getLayerName() {
+            // Extract .gpx filename from URL to set the new layer name
+            final Matcher matcher = Pattern.compile(GpxUrlPattern.EXTERNAL_GPX_FILE.pattern()).matcher(url);
+            final String newLayerName = matcher.matches() ? matcher.group(1) : null;
+            final String metadataName = rawData != null ? rawData.getString(GpxConstants.META_NAME) : null;
+            final String defaultName = tr("Downloaded GPX Data");
+
+            if (Config.getPref().getBoolean("gpx.prefermetadataname", false)) {
+                return Utils.firstNotEmptyString(defaultName, metadataName, newLayerName);
+            } else {
+                return Utils.firstNotEmptyString(defaultName, newLayerName, metadataName);
+            }
         }
 
         private <L extends Layer> L addOrMergeLayer(L layer, L mergeLayer) {
