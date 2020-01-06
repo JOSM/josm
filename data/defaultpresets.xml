@@ -524,6 +524,9 @@
   <chunk id="nudism">
     <combo key="nudism" text="Nudism" values="yes,no,obligatory,designated,customary,permissive" />
   </chunk>
+  <chunk id="wall_material">
+    <combo key="material" text="Material" values="adobe,brick,concrete,masonry,reinforced_concrete,stone" />
+  </chunk>
   <!--  Groups -->
   <group name="Highways" icon="presets/transport/way/way_secondary.svg">
     <group name="Streets" icon="presets/transport/way/way_secondary.svg">
@@ -1317,7 +1320,7 @@
             <reference ref="barrier_4" />
             <optional>
                 <text key="maxwidth" text="Max. width (meters)" length="7" />
-                <combo key="material" text="Material" values="concrete,stone" />
+                <combo key="material" text="Material" values="concrete,reinforced_concrete,stone" />
             </optional>
         </item> <!-- Block -->
         <item name="Bollard" icon="presets/barrier/bollard.svg" type="node,way" preset_name_label="true">
@@ -1407,16 +1410,19 @@
             <key key="barrier" value="wall" />
             <reference ref="optional_height" />
             <combo key="wall" text="Type" values="castle_wall,dry_stone,flood_wall,noise_barrier,seawall" />
+            <reference ref="wall_material" />
         </item> <!-- Wall -->
         <item name="City Wall" icon="presets/barrier/city_wall.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=city_wall" />
             <key key="barrier" value="city_wall" />
             <reference ref="optional_height" />
+            <reference ref="wall_material" />
         </item> <!-- City Wall -->
         <item name="Retaining Wall" icon="presets/barrier/retaining_wall.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=retaining_wall" />
             <key key="barrier" value="retaining_wall" />
             <reference ref="optional_height" />
+            <reference ref="wall_material" />
         </item> <!-- Retaining Wall -->
         <item name="Jersey Barrier" icon="presets/barrier/jersey_barrier.svg"  type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=jersey_barrier" />
@@ -3468,7 +3474,7 @@
             <text key="name" text="Name" />
             <text key="artwork_subject" text="Subject" />
             <text key="artist_name" text="Artist Name" />
-            <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+            <combo key="material" text="Material" values="brass,bronze,concrete,glass,granite,metal,plastic,steel,stone,wood" />
             <text key="start_date" text="Start date" />
         </item> <!-- Artwork -->
         <item name="Studio" icon="presets/service/studio.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -5078,6 +5084,7 @@
             <text key="name" text="Name" />
             <text key="ref" text="Reference" />
             <text key="ele" text="Elevation" />
+            <combo key="material" text="Material" values="andesite,brass,bronze,concrete,granite,metal,steel,stone" />
         </item> <!-- Survey Point -->
         <item name="Surveillance Camera" icon="presets/service/surveillance.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=surveillance" />
@@ -5659,7 +5666,7 @@
             <optional>
                 <text key="inscription" text="Inscription" />
                 <text key="artist_name" text="Artist Name" />
-                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+                <combo key="material" text="Material" values="concrete,granite,metal,plastic,steel,stone,wood" />
                 <text key="start_date" text="Start date" />
                 <text key="wikipedia" text="Wikipedia" />
             </optional>
