@@ -188,4 +188,9 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
         MainApplication.getLayerManager().removeLayerChangeListener(this);
         super.destroy();
     }
+
+    @Override
+    public String getChangesetSourceTag() {
+        return "Validator";
+    }
 }

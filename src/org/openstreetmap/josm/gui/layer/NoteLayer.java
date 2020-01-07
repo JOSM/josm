@@ -473,4 +473,9 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
     public void selectedNoteChanged(NoteData noteData) {
         invalidate();
     }
+
+    @Override
+    public String getChangesetSourceTag() {
+        return "Notes";
+    }
 }
