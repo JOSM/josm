@@ -5045,6 +5045,8 @@
             <link wiki="Tag:highway=street_lamp" />
             <space />
             <key key="highway" value="street_lamp" />
+            <combo key="lamp_type" text="Type" values="electric,floodlight,sodium,solar_lamp" values_context="lamp_type" match="key" />
+            <combo key="lamp_mount" text="Mounted on" values="bent_mast,straight_mast,suspended,wall" values_context="lamp_mount" match="key" />
             <combo key="opening_hours" text="Operation times" values="Mo-Fr 22:00-05:00" values_no_i18n="true" />
         </item> <!-- Street Lamp -->
         <item name="Street cabinet" icon="presets/misc/street_cabinet.svg" type="node" preset_name_label="true">
