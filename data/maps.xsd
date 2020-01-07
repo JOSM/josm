@@ -681,7 +681,7 @@
                             <!-- A link that is opened, when the user clicks on the terms-of-use text -->
                             <xs:element name="terms-of-use-url" minOccurs="0" maxOccurs="1" type="xs:string" />
                             <!-- The image category, don't use enumeration, so future extension is possible -->
-                            <!-- Currently defined values are: "photo", "map", "historicmap", "osmbasedmap", "historicphoto" and "other" -->
+                            <!-- Currently defined values are: "photo", "elevation", "map", "historicmap", "osmbasedmap", "historicphoto", "qa" and "other" -->
                             <xs:element name="category" minOccurs="1" maxOccurs="1" type="xs:string" />
                             <!-- The ISO 3166 country code -->
                             <xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />

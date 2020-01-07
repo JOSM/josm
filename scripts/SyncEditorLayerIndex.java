@@ -1174,7 +1174,8 @@ public class SyncEditorLayerIndex {
                         + getDescription(j));
                 }
             }
-            List<String> knownCategories = Arrays.asList("photo", "map", "historicmap", "osmbasedmap", "historicphoto", "other");
+            List<String> knownCategories = Arrays.asList(
+                    "photo", "elevation", "map", "historicmap", "osmbasedmap", "historicphoto", "qa", "other");
             String cat = getCategory(j);
             if (isBlank(cat)) {
                 myprintln("* No category: "+getDescription(j));

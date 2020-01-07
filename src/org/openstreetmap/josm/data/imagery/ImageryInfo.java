@@ -111,6 +111,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     public enum ImageryCategory {
         /** A aerial or satellite photo. **/
         PHOTO(/* ICON(data/imagery/) */ "photo", tr("Aerial or satellite photo")),
+        /** A map of digital terrain model or digital surface model. **/
+        ELEVATION(/* ICON(data/imagery/) */ "elevation", tr("Elevation map")),
         /** A map. **/
         MAP(/* ICON(data/imagery/) */ "map", tr("Map")),
         /** A historic or otherwise outdated map. */
@@ -119,6 +121,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         OSMBASEDMAP(/* ICON(data/imagery/) */ "osmbasedmap", tr("Map based on OSM data")),
         /** A historic or otherwise outdated aerial or satellite photo. **/
         HISTORICPHOTO(/* ICON(data/imagery/) */ "historicphoto", tr("Historic or otherwise outdated aerial or satellite photo")),
+        /** A map for quality assurance **/
+        QUALITY_ASSURANCE(/* ICON(data/imagery/) */ "qa", tr("Map for quality assurance")),
         /** Any other type of imagery **/
         OTHER(/* ICON(data/imagery/) */ "other", tr("Imagery not matching any other category"));
 
