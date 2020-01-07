@@ -186,7 +186,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
     private JCheckBoxMenuItem addMenuItem() {
         int n = MainApplication.getMenu().editMenu.getItemCount();
-        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, snapChangeAction, n-5, false);
+        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, snapChangeAction, n >= 5 ? n-5 : -1, false);
     }
 
     /**

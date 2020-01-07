@@ -244,7 +244,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     private JCheckBoxMenuItem addDualAlignMenuItem() {
         int n = MainApplication.getMenu().editMenu.getItemCount();
-        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, dualAlignChangeAction, n-5, false);
+        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, dualAlignChangeAction, n >= 5 ? n-5 : -1, false);
     }
 
     // -------------------------------------------------------------------------
