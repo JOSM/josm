@@ -16,7 +16,7 @@ public class ImageryFilterSettings {
 
     protected GammaImageProcessor gammaImageProcessor = new GammaImageProcessor();
     protected SharpenImageProcessor sharpenImageProcessor = new SharpenImageProcessor();
-    protected ColorfulImageProcessor collorfulnessImageProcessor = new ColorfulImageProcessor();
+    protected ColorfulImageProcessor colorfulnessImageProcessor = new ColorfulImageProcessor();
     private final List<FilterChangeListener> filterChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
@@ -61,7 +61,7 @@ public class ImageryFilterSettings {
      * @return The colorfulness
      */
     public double getColorfulness() {
-        return collorfulnessImageProcessor.getColorfulness();
+        return colorfulnessImageProcessor.getColorfulness();
     }
 
     /**
@@ -72,7 +72,7 @@ public class ImageryFilterSettings {
      * @param colorfulness The colorfulness.
      */
     public void setColorfulness(double colorfulness) {
-        collorfulnessImageProcessor.setColorfulness(colorfulness);
+        colorfulnessImageProcessor.setColorfulness(colorfulness);
         fireListeners();
     }
 
@@ -81,7 +81,7 @@ public class ImageryFilterSettings {
      * @return The processors in the order in which they should be applied.
      */
     public List<ImageProcessor> getProcessors() {
-        return Arrays.asList(collorfulnessImageProcessor, gammaImageProcessor, sharpenImageProcessor);
+        return Arrays.asList(colorfulnessImageProcessor, gammaImageProcessor, sharpenImageProcessor);
     }
 
     /**
