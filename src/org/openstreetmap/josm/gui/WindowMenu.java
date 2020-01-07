@@ -19,19 +19,6 @@ import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListene
 public class WindowMenu extends JMenu implements ContainerListener, ExpertModeChangeListener {
 
     /**
-     * The possible item groups of the Windows menu.
-     * @see MainMenu#addWithCheckbox
-     */
-    public enum WINDOW_MENU_GROUP {
-        /** Entries always displayed, at the top */
-        ALWAYS,
-        /** Entries displayed only for visible toggle dialogs */
-        TOGGLE_DIALOG,
-        /** Volatile entries displayed at the end */
-        VOLATILE
-    }
-
-    /**
      * Constructs a new {@code WindowMenu}
      */
     public WindowMenu() {

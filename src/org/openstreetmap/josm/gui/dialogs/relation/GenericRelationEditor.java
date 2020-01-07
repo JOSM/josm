@@ -59,7 +59,6 @@ import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.ScrollViewport;
-import org.openstreetmap.josm.gui.WindowMenu;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AbstractRelationEditorAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAfterSelection;
@@ -765,7 +764,7 @@ public class GenericRelationEditor extends RelationEditor {
             }
         };
         focusAction.putValue("relationEditor", re);
-        return MainMenu.add(MainApplication.getMenu().windowMenu, focusAction, WindowMenu.WINDOW_MENU_GROUP.VOLATILE);
+        return MainMenu.add(MainApplication.getMenu().windowMenu, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
     }
 
     /**

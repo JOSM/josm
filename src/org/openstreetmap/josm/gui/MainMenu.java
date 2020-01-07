@@ -144,6 +144,19 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class MainMenu extends JMenuBar {
 
+    /**
+     * The possible item groups of the Windows menu.
+     * @see MainMenu#addWithCheckbox
+     */
+    public enum WINDOW_MENU_GROUP {
+        /** Entries always displayed, at the top */
+        ALWAYS,
+        /** Entries displayed only for visible toggle dialogs */
+        TOGGLE_DIALOG,
+        /** Volatile entries displayed at the end */
+        VOLATILE
+    }
+
     /* File menu */
     /** File / New Layer **/
     public final NewAction newAction = new NewAction();
@@ -555,14 +568,13 @@ public class MainMenu extends JMenuBar {
      * @param <E> group item enum type
      * @param menu to add the action to
      * @param action the action that should get a menu item
-     * @param group the item should be added to. Groups are split by a separator.
-     *        0 is the first group, -1 will add the item to the end.
+     * @param group the item should be added to. Groups are split by a separator. null will add the item to the end.
      * @return The created menu item
      */
     public static <E extends Enum<E>> JMenuItem add(JMenu menu, JosmAction action, Enum<E> group) {
         if (action.getShortcut().isAutomatic())
             return null;
-        int i = getInsertionIndexForGroup(menu, group.ordinal(), false);
+        int i = group != null ? getInsertionIndexForGroup(menu, group.ordinal(), false) : -1;
         JMenuItem menuitem = (JMenuItem) menu.add(new JMenuItem(action), i);
         KeyStroke ks = action.getShortcut().getKeyStroke();
         if (ks != null) {
@@ -594,7 +606,7 @@ public class MainMenu extends JMenuBar {
      * @param action the action that should get a menu item
      * @param group the item should be added to. Groups are split by a separator. Use
      *        one of the enums that are defined for some of the menus to tell in which
-     *        group the item should go.
+     *        group the item should go. null will add the item to the end.
      * @param isEntryExpert whether the entry should only be visible if the expert mode is activated
      * @param isGroupSeparatorExpert whether the group separator should only be visible if the expert mode is activated
      * @return The created menu item
@@ -602,7 +614,22 @@ public class MainMenu extends JMenuBar {
      */
     public static <E extends Enum<E>> JCheckBoxMenuItem addWithCheckbox(JMenu menu, JosmAction action, Enum<E> group,
             boolean isEntryExpert, boolean isGroupSeparatorExpert) {
-        int i = getInsertionIndexForGroup(menu, group.ordinal(), isGroupSeparatorExpert);
+        int i = group != null ? getInsertionIndexForGroup(menu, group.ordinal(), isGroupSeparatorExpert) : -1;
+        return addWithCheckbox(menu, action, i, isEntryExpert);
+    }
+
+    /**
+     * Add a JosmAction to a menu and automatically prints accelerator if available.
+     * Also adds a checkbox that may be toggled.
+     * @param <E> group enum item type
+     * @param menu to add the action to
+     * @param action the action that should get a menu item
+     * @param i the item position in the menu. -1 will add the item to the end.
+     * @param isEntryExpert whether the entry should only be visible if the expert mode is activated
+     * @return The created menu item
+     * @since 15655
+     */
+    public static <E extends Enum<E>> JCheckBoxMenuItem addWithCheckbox(JMenu menu, JosmAction action, int i, boolean isEntryExpert) {
         final JCheckBoxMenuItem mi = new JCheckBoxMenuItem(action);
         final KeyStroke ks = action.getShortcut().getKeyStroke();
         if (ks != null) {
@@ -854,7 +881,7 @@ public class MainMenu extends JMenuBar {
 
         // -- changeset manager toggle action
         final JCheckBoxMenuItem mi = MainMenu.addWithCheckbox(windowMenu, changesetManager,
-                WindowMenu.WINDOW_MENU_GROUP.ALWAYS, true, false);
+                WINDOW_MENU_GROUP.ALWAYS, true, false);
         changesetManager.addButtonModel(mi.getModel());
 
         if (!Config.getPref().getBoolean("audio.menuinvisible", false)) {

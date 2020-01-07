@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -60,7 +59,6 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.WindowMenu;
 import org.openstreetmap.josm.gui.draw.MapPath2D;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
@@ -188,13 +186,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
     private JCheckBoxMenuItem addMenuItem() {
         int n = MainApplication.getMenu().editMenu.getItemCount();
-        for (int i = n-1; i > 0; i--) {
-            JMenuItem item = MainApplication.getMenu().editMenu.getItem(i);
-            if (item != null && item.getAction() != null && item.getAction() instanceof SnapChangeAction) {
-                MainApplication.getMenu().editMenu.remove(i);
-            }
-        }
-        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, snapChangeAction, WindowMenu.WINDOW_MENU_GROUP.VOLATILE);
+        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, snapChangeAction, n-5, false);
     }
 
     /**
@@ -1375,6 +1367,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     public void destroy() {
         super.destroy();
         finishDrawing();
+        MainApplication.getMenu().editMenu.remove(snapCheckboxMenuItem);
         snapChangeAction.destroy();
     }
 

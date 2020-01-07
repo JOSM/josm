@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
@@ -50,7 +49,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.WindowMenu;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -240,18 +238,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     @Override
     public void destroy() {
         super.destroy();
+        MainApplication.getMenu().editMenu.remove(dualAlignCheckboxMenuItem);
         dualAlignChangeAction.destroy();
     }
 
     private JCheckBoxMenuItem addDualAlignMenuItem() {
         int n = MainApplication.getMenu().editMenu.getItemCount();
-        for (int i = n-1; i > 0; i--) {
-            JMenuItem item = MainApplication.getMenu().editMenu.getItem(i);
-            if (item != null && item.getAction() != null && item.getAction() instanceof DualAlignChangeAction) {
-                MainApplication.getMenu().editMenu.remove(i);
-            }
-        }
-        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, dualAlignChangeAction, WindowMenu.WINDOW_MENU_GROUP.VOLATILE);
+        return MainMenu.addWithCheckbox(MainApplication.getMenu().editMenu, dualAlignChangeAction, n-5, false);
     }
 
     // -------------------------------------------------------------------------

@@ -36,7 +36,6 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
-import org.openstreetmap.josm.gui.WindowMenu;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
@@ -214,7 +213,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
                 windowMenuItem = null;
             }
             if (windowMenuItem == null && visible) {
-                windowMenuItem = MainMenu.add(menu.windowMenu, FOCUS_ACTION, WindowMenu.WINDOW_MENU_GROUP.VOLATILE);
+                windowMenuItem = MainMenu.add(menu.windowMenu, FOCUS_ACTION, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
             }
         }
         super.setVisible(visible);
