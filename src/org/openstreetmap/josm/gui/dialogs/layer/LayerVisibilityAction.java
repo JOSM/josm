@@ -33,6 +33,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
@@ -62,7 +63,11 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
      * Steps the value is changed by a mouse wheel change (one full click)
      */
     private static final int SLIDER_WHEEL_INCREMENT = 5;
+    private static final double DEFAULT_OPACITY = 1;
+    private static final double DEFAULT_GAMMA_VALUE = 0;
+    private static final double DEFAULT_SHARPNESS_FACTOR = 1;
     private static final double MAX_SHARPNESS_FACTOR = 2;
+    private static final double DEFAULT_COLORFUL_FACTOR = 1;
     private static final double MAX_COLORFUL_FACTOR = 2;
     private final LayerListModel model;
     private final JPopupMenu popup;
@@ -230,9 +235,10 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          * Create a new filter slider.
          * @param minValue The minimum value to map to the left side.
          * @param maxValue The maximum value to map to the right side.
+         * @param defaultValue The default value for resetting.
          * @param layerClassFilter The type of layer influenced by this filter.
          */
-        AbstractFilterSlider(double minValue, double maxValue, Class<T> layerClassFilter) {
+        AbstractFilterSlider(double minValue, double maxValue, double defaultValue, Class<T> layerClassFilter) {
             super(new GridBagLayout());
             this.minValue = minValue;
             this.maxValue = maxValue;
@@ -250,6 +256,14 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             slider.setPaintTicks(true);
 
             slider.addChangeListener(e -> onStateChanged());
+            slider.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() > 1) {
+                        setRealValue(defaultValue);
+                    }
+                }
+            });
 
             //final NumberFormat format = DecimalFormat.getInstance();
             //setLabels(format.format(minValue), format.format((minValue + maxValue) / 2), format.format(maxValue));
@@ -351,9 +365,9 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          * Create a new {@link OpacitySlider}.
          */
         OpacitySlider() {
-            super(0, 1, Layer.class);
+            super(0, 1, DEFAULT_OPACITY, Layer.class);
             setLabels("0%", "50%", "100%");
-            slider.setToolTipText(tr("Adjust opacity of the layer."));
+            slider.setToolTipText(tr("Adjust opacity of the layer.") + " " + tr("Double click to reset."));
         }
 
         @Override
@@ -424,9 +438,9 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          * Create a new {@link GammaFilterSlider}
          */
         GammaFilterSlider() {
-            super(-1, 1, ImageryLayer.class);
+            super(-1, 1, DEFAULT_GAMMA_VALUE, ImageryLayer.class);
             setLabels("0", "1", "∞");
-            slider.setToolTipText(tr("Adjust gamma value of the layer."));
+            slider.setToolTipText(tr("Adjust gamma value of the layer.") + " " + tr("Double click to reset."));
         }
 
         @Override
@@ -484,9 +498,9 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          * Creates a new {@link SharpnessSlider}
          */
         SharpnessSlider() {
-            super(0, MAX_SHARPNESS_FACTOR, ImageryLayer.class);
+            super(0, MAX_SHARPNESS_FACTOR, DEFAULT_SHARPNESS_FACTOR, ImageryLayer.class);
             setLabels(trc("image sharpness", "blurred"), trc("image sharpness", "normal"), trc("image sharpness", "sharp"));
-            slider.setToolTipText(tr("Adjust sharpness/blur value of the layer."));
+            slider.setToolTipText(tr("Adjust sharpness/blur value of the layer.") + " " + tr("Double click to reset."));
         }
 
         @Override
@@ -522,9 +536,9 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
          * Create a new {@link ColorfulnessSlider}
          */
         ColorfulnessSlider() {
-            super(0, MAX_COLORFUL_FACTOR, ImageryLayer.class);
+            super(0, MAX_COLORFUL_FACTOR, DEFAULT_COLORFUL_FACTOR, ImageryLayer.class);
             setLabels(trc("image colorfulness", "less"), trc("image colorfulness", "normal"), trc("image colorfulness", "more"));
-            slider.setToolTipText(tr("Adjust colorfulness of the layer."));
+            slider.setToolTipText(tr("Adjust colorfulness of the layer.") + " " + tr("Double click to reset."));
         }
 
         @Override
