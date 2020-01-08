@@ -470,6 +470,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             if (entry.getExifImgDir() != null) {
                 osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
             }
+
             DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
             // Make sure date/time format includes milliseconds
             if (dtf instanceof SimpleDateFormat) {
@@ -478,6 +479,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                     dtf = new SimpleDateFormat(pattern.replace(":ss", ":ss.SSS"));
                 }
             }
+            // Set timezone to UTC since UTC is assumed when parsing the EXIF timestamp,
+            // see see org.openstreetmap.josm.tools.ExifReader.readTime(com.drew.metadata.Metadata)
+            dtf.setTimeZone(DateUtils.UTC);
+
             if (entry.hasExifTime()) {
                 osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifTime())));
             }
