@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,7 +20,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.AbstractCoordinateFormat;
 import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -54,7 +53,7 @@ public class ExifReaderTest {
     @Test
     public void testReadTime() throws ParseException {
         Date date = ExifReader.readTime(directionSampleFile);
-        assertEquals(ZonedDateTime.of(2010, 5, 15, 17, 12, 5, 0, DateUtils.UTC.toZoneId()).toInstant(), date.toInstant());
+        doTest("2010-05-15T17:12:05.000", date);
     }
 
     /**
