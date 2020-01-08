@@ -202,7 +202,7 @@ public final class LanguageInfo {
     /**
      * Replies the locale used by Java for a given language code.
      *
-     * Accepts JOSM and Java codes as input.
+     * Accepts JOSM, Java and POSIX codes as input.
      *
      * @param localeName the locale code.
      * @param useDefaultCountry if {@code true}, the current locale country will be used if no country is specified
@@ -210,6 +210,10 @@ public final class LanguageInfo {
      * @since 15547
      */
     public static Locale getLocale(String localeName, boolean useDefaultCountry) {
+        final int encoding = localeName.indexOf('.');
+        if (encoding > 0) {
+            localeName = localeName.substring(0, encoding);
+        }
         int country = localeName.indexOf('_');
         int variant = localeName.indexOf('@');
         if (variant < 0 && country >= 0)

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * A system of units used to express length and area measurements.
@@ -288,7 +289,11 @@ public class SystemOfMeasurement {
      * @since 15395
      */
     public static SystemOfMeasurement getDefault() {
-        switch (Locale.getDefault().getCountry()) {
+        final String country = Optional.ofNullable(System.getenv("LC_MEASUREMENT"))
+                .map(LanguageInfo::getLocale)
+                .orElse(Locale.getDefault())
+                .getCountry();
+        switch (country) {
             case "US":
                 // https://en.wikipedia.org/wiki/Metrication_in_the_United_States#Current_use
                 // Imperial units still used in transportation and Earth sciences

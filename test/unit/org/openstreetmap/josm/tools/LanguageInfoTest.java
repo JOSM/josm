@@ -62,6 +62,19 @@ public class LanguageInfoTest {
     }
 
     /**
+     * Unit test of {@link LanguageInfo#getLocale}.
+     */
+    @Test
+    public void testGetLocale() {
+        Assert.assertEquals(RU, LanguageInfo.getLocale("ru"));
+        Assert.assertEquals(EN_GB, LanguageInfo.getLocale("en_GB"));
+        Assert.assertEquals(CA_ES_VALENCIA, LanguageInfo.getLocale("ca_ES@valencia"));
+        Assert.assertEquals(DE_DE, LanguageInfo.getLocale("de_DE"));
+        Assert.assertEquals(DE_DE, LanguageInfo.getLocale("de_DE.UTF-8")); // LANG, LC_MEASUREMENT
+        Assert.assertEquals(PT_BR, LanguageInfo.getLocale("pt_BR.UTF-8")); // LANG, LC_MEASUREMENT
+    }
+
+    /**
      * Unit test of {@link LanguageInfo#getJOSMLocaleCode}.
      */
     @Test
