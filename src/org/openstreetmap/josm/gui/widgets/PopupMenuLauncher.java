@@ -71,7 +71,7 @@ public class PopupMenuLauncher extends MouseAdapter {
 
     /**
      * Launches the popup menu according to the given mouse event.
-     * This method needs to be overriden if the default constructor has been called.
+     * This method needs to be overridden if the default constructor has been called.
      * @param evt A mouse event
      */
     public void launch(final MouseEvent evt) {

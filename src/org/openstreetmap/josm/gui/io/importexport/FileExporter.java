@@ -86,7 +86,7 @@ public abstract class FileExporter implements ActiveLayerChangeListener {
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        // To be overriden by subclasses if their enabled state depends of the active layer nature
+        // To be overridden by subclasses if their enabled state depends of the active layer nature
     }
 
     /**

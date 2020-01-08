@@ -72,7 +72,7 @@ public abstract class RangeEncoder extends RangeCoder {
         // RangeEncoderToBuffer.finish() needs a return value to tell
         // how big the finished buffer is. RangeEncoderToStream has no
         // buffer and thus no return value is needed. Here we use a dummy
-        // value which can be overriden in RangeEncoderToBuffer.finish().
+        // value which can be overridden in RangeEncoderToBuffer.finish().
         return -1;
     }
 

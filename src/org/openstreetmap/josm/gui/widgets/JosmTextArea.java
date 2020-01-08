@@ -95,7 +95,7 @@ public class JosmTextArea extends JTextArea implements Destroyable, FocusListene
     }
 
     /**
-     * Restore default behaviour of focus transfer with TAB, overriden by {@link JTextArea}.
+     * Restore default behaviour of focus transfer with TAB, overridden by {@link JTextArea}.
      * @return {@code this}
      * @since 11308
      */

@@ -755,8 +755,8 @@ public class JOSMTestRules implements TestRule {
     @Target(ElementType.METHOD)
     public @interface OverrideAssumeRevision {
         /**
-         * Returns overriden assumed JOSM version.
-         * @return overriden assumed JOSM version
+         * Returns overridden assumed JOSM version.
+         * @return overridden assumed JOSM version
          */
         String value();
     }
@@ -770,8 +770,8 @@ public class JOSMTestRules implements TestRule {
     @Target(ElementType.METHOD)
     public @interface OverrideTimeout {
         /**
-         * Returns overriden timeout value.
-         * @return overriden timeout value
+         * Returns overridden timeout value.
+         * @return overridden timeout value
          */
         int value();
     }

@@ -593,7 +593,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * @since 5459
      */
     public void onPostLoadFromFile() {
-        // To be overriden if needed
+        // To be overridden if needed
     }
 
     /**

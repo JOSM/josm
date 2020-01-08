@@ -125,7 +125,7 @@ public class BasicArrayCache extends ArrayCache {
             // (STACKS_MAX + 1) / 0.75 < 2 * STACKS_MAX.
             //
             // That last argument is true to get LRU cache behavior together
-            // with the overriden removeEldestEntry method.
+            // with the overridden removeEldestEntry method.
             super(2 * STACKS_MAX, 0.75f, true);
         }
 

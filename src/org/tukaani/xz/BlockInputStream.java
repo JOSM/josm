@@ -77,7 +77,7 @@ class BlockInputStream extends InputStream {
                 buf, 2, headerSize - 6);
 
         try {
-            // Set the maximum valid compressed size. This is overriden
+            // Set the maximum valid compressed size. This is overridden
             // by the value from the Compressed Size field if it is present.
             compressedSizeLimit = (DecoderUtil.VLI_MAX & ~3)
                                   - headerSize - check.getSize();
