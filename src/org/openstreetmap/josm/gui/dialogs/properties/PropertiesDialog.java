@@ -40,6 +40,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -96,6 +97,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.util.AbstractTag2LinkPopupListener;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
@@ -390,6 +392,16 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         membershipMenu.add(helpRelAction);
         membershipMenu.add(taginfoAction);
 
+        membershipMenu.addPopupMenuListener(new AbstractTag2LinkPopupListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                final IRelation<?> relation = getSelectedMembershipRelation();
+                if (relation != null) {
+                    relation.visitKeys((primitive, key, value) -> addLinks(membershipMenu, key, value));
+                }
+            }
+        });
+
         membershipTable.addMouseListener(new PopupMenuLauncher(membershipMenu) {
             @Override
             protected int checkTableSelection(JTable table, Point p) {
@@ -441,6 +453,16 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagMenu.addSeparator();
         tagMenu.add(helpTagAction);
         tagMenu.add(taginfoAction);
+        tagMenu.addPopupMenuListener(new AbstractTag2LinkPopupListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                final Tags tags = getSelectedProperties();
+                if (tags != null) {
+                    tags.getValues().forEach(value -> addLinks(tagMenu, tags.getKey(), value));
+                }
+            }
+        });
+
         tagTable.addMouseListener(new PopupMenuLauncher(tagMenu));
     }
 

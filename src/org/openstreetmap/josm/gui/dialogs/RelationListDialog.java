@@ -77,6 +77,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.util.AbstractTag2LinkPopupListener;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
@@ -659,6 +660,16 @@ public class RelationListDialog extends ToggleDialog
             @Override
             public void popupMenuCanceled(PopupMenuEvent e) {
                 // Do nothing
+            }
+        });
+
+        popupMenuHandler.addListener(new AbstractTag2LinkPopupListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                final IRelation<?> selection = getSelected();
+                if (selection != null) {
+                    selection.visitKeys((primitive, key, value) -> addLinks(popupMenu, key, value));
+                }
             }
         });
     }

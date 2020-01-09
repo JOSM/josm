@@ -35,6 +35,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
 
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -73,6 +74,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationPopupMenus;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.util.AbstractTag2LinkPopupListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
@@ -230,6 +232,15 @@ public class SelectionListDialog extends ToggleDialog {
         handler.addAction(actZoomToJOSMSelection);
         handler.addAction(actZoomToListSelection);
         handler.addSeparator();
+        handler.addListener(new AbstractTag2LinkPopupListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                final Collection<OsmPrimitive> selection = getSelectedPrimitives();
+                if (!selection.isEmpty()) {
+                    selection.iterator().next().visitKeys((primitive, key, value) -> addLinks(popupMenu, key, value));
+                }
+            }
+        });
         return RelationPopupMenus.setupHandler(handler);
     }
 

@@ -5,13 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Container;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
@@ -19,9 +17,8 @@ import javax.swing.JPopupMenu;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.gui.util.OpenBrowserAction;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
  * A menu displaying links to external history viewers for a changeset.
@@ -106,19 +103,4 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
         }
     }
 
-    static class OpenBrowserAction extends AbstractAction {
-        final String url;
-
-        OpenBrowserAction(String name, String url) {
-            super(name);
-            putValue(SHORT_DESCRIPTION, tr("Open {0}", url));
-            new ImageProvider("help/internet").getResource().attachImageIcon(this, true);
-            this.url = url;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            OpenBrowser.displayUrl(url);
-        }
-    }
 }
