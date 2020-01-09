@@ -78,7 +78,7 @@ public class MoveAction extends JosmAction {
         }
 
         Shortcut getShortcut() {
-            return Shortcut.registerShortcut( /* NO-SHORTCUT - adapt definition above when modified */
+            return Shortcut.registerShortcut(/* NO-SHORTCUT - adapt definition above when modified */
                     "core:move" + getId(), tr("Move objects {0}", getLocalizedName()), getShortcutKey(), Shortcut.SHIFT);
         }
     }
