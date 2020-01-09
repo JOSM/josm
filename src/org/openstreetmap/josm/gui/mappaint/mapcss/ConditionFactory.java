@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
@@ -172,7 +171,7 @@ public final class ConditionFactory {
         NREGEX(REGEX),
         /** The reference is treated as a list separated by ';'. Spaces around the ; are ignored.
          *  The value needs to be equal one of the list elements. */
-        ONE_OF((test, prototype) -> Arrays.asList(test.split("\\s*;\\s*")).contains(prototype)),
+        ONE_OF((test, prototype) -> OsmUtils.splitMultipleValues(test).anyMatch(prototype::equals)),
         /** The value needs to begin with the reference string. */
         BEGINS_WITH(String::startsWith),
         /** The value needs to end with the reference string. */

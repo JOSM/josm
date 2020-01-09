@@ -4,6 +4,9 @@ package org.openstreetmap.josm.data.osm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -38,5 +41,14 @@ public class OsmUtilsTest {
     @Test(expected = IllegalArgumentException.class)
     public void testCreatePrimitiveFail() throws Exception {
         OsmUtils.createPrimitive("noway name=Foo");
+    }
+
+    @Test
+    public void testSplitMultipleValues() {
+        // examples from https://wiki.openstreetmap.org/wiki/Semi-colon_value_separator
+        assertEquals(Arrays.asList("B500", "B550"), OsmUtils.splitMultipleValues("B500;B550").collect(Collectors.toList()));
+        assertEquals(Arrays.asList("B500", "B550"), OsmUtils.splitMultipleValues("B500 ; B550").collect(Collectors.toList()));
+        assertEquals(Arrays.asList("Tu-Fr 08:00-18:00", "Mo 09:00-18:00", "Sa 09:00-12:00", "closed Aug"),
+                OsmUtils.splitMultipleValues("Tu-Fr 08:00-18:00;Mo 09:00-18:00;Sa 09:00-12:00;closed Aug").collect(Collectors.toList()));
     }
 }

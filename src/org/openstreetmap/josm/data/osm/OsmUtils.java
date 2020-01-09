@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -205,5 +207,17 @@ public final class OsmUtils {
         // see #16510: optimization: only consider the first primitive, as collection always refer to the same dataset
         OsmData<?, ?, ?, ?> ds = collection.iterator().next().getDataSet();
         return ds == null || !ds.isLocked();
+    }
+
+    /**
+     * Splits a tag value by <a href="https://wiki.openstreetmap.org/wiki/Semi-colon_value_separator">semi-colon value separator</a>.
+     * Spaces around the ; are ignored.
+     *
+     * @param value the value to separate
+     * @return the separated values as Stream
+     * @since xxx
+     */
+    public static Stream<String> splitMultipleValues(String value) {
+        return Pattern.compile("\\s*;\\s*").splitAsStream(value);
     }
 }
