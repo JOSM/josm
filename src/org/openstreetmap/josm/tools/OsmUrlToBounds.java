@@ -225,7 +225,7 @@ public final class OsmUrlToBounds {
      */
     public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
         final Dimension screenSize = mapSize.get();
-        double scale = (1 << zoom) * TILE_SIZE_IN_PIXELS / (2 * Math.PI * Ellipsoid.WGS84.a);
+        double scale = (1L << zoom) * TILE_SIZE_IN_PIXELS / (2.0 * Math.PI * Ellipsoid.WGS84.a);
         double deltaX = screenSize.getWidth() / 2.0 / scale;
         double deltaY = screenSize.getHeight() / 2.0 / scale;
         final Projection mercator = Projections.getProjectionByCode("EPSG:3857");
