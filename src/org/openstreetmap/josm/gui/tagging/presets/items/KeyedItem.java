@@ -190,7 +190,7 @@ public abstract class KeyedItem extends TaggingPresetItem {
     }
 
     @Override
-    protected Boolean matches(Map<String, String> tags) {
+    public Boolean matches(Map<String, String> tags) {
         switch (MatchType.ofString(match)) {
         case NONE:
             return null;

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -34,6 +35,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -614,9 +616,25 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         }
 
         if (checkPresetsTypes) {
-            for (TaggingPreset tp : TaggingPresets.getMatchingPresets(null, p.getKeys(), false)) {
-                TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
-                if (!tp.typeMatches(EnumSet.of(presetType))) {
+            TagMap tags = p.getKeys();
+            TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
+            EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
+            Collection<TaggingPreset> matchingPresets = TaggingPresets.getMatchingPresets(null, tags, false);
+            Collection<TaggingPreset> matchingPresetsOK = matchingPresets.stream().filter(
+                    tp -> tp.typeMatches(presetTypes)).collect(Collectors.toList());
+            Collection<TaggingPreset> matchingPresetsKO = matchingPresets.stream().filter(
+                    tp -> !tp.typeMatches(presetTypes)).collect(Collectors.toList());
+
+            for (TaggingPreset tp : matchingPresetsKO) {
+                // Potential error, unless matching tags are all known by a supported preset
+                Map<String, String> matchingTags = tp.data.stream()
+                    .filter(i -> Boolean.TRUE.equals(i.matches(tags)))
+                    .filter(i -> i instanceof KeyedItem).map(i -> ((KeyedItem) i).key)
+                    .collect(Collectors.toMap(k -> k, tags::get));
+                if (matchingPresetsOK.stream().noneMatch(
+                        tp2 -> matchingTags.entrySet().stream().allMatch(
+                                e -> tp2.data.stream().anyMatch(
+                                        i -> i instanceof KeyedItem && ((KeyedItem) i).key.equals(e.getKey()))))) {
                     errors.add(TestError.builder(this, Severity.OTHER, INVALID_PRESETS_TYPE)
                             .message(tr("Object type not in preset"),
                                     marktr("Object type {0} is not supported by tagging preset: {1}"),

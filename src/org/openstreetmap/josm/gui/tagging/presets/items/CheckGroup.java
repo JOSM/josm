@@ -52,7 +52,7 @@ public class CheckGroup extends TaggingPresetItem {
     }
 
     @Override
-    protected Boolean matches(Map<String, String> tags) {
+    public Boolean matches(Map<String, String> tags) {
         for (Check check : checks) {
             if (Boolean.TRUE.equals(check.matches(tags))) {
                 return Boolean.TRUE;

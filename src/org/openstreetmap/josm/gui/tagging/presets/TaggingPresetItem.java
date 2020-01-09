@@ -75,7 +75,7 @@ public abstract class TaggingPresetItem {
      * @param tags the tags of an {@link OsmPrimitive}
      * @return {@code true} if matches (positive), {@code null} if neutral, {@code false} if mismatches (negative).
      */
-    protected Boolean matches(Map<String, String> tags) {
+    public Boolean matches(Map<String, String> tags) {
         return null;
     }
 

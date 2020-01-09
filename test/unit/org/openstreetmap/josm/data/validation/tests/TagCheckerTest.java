@@ -335,4 +335,17 @@ public class TagCheckerTest {
     public void testTicket18449() {
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Hökumət Evi"));
     }
+
+    /**
+     * Detects objects with types not supported by their presets.
+     * @throws IOException in case of I/O error
+     */
+    @Test
+    public void testObjectTypeNotSupportedByPreset() throws IOException {
+        List<TestError> errors = test(OsmUtils.createPrimitive("relation waterway=river"));
+        assertEquals(1, errors.size());
+        assertEquals(TagChecker.INVALID_PRESETS_TYPE, errors.get(0).getCode());
+        errors = test(OsmUtils.createPrimitive("relation type=waterway waterway=river"));
+        assertTrue(errors.toString(), errors.isEmpty());
+    }
 }
