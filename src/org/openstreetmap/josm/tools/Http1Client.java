@@ -74,7 +74,11 @@ public final class Http1Client extends HttpClient {
 
     @Override
     protected ConnectionResponse performConnection() throws IOException {
-        connection.connect();
+        try {
+            connection.connect();
+        } catch (RuntimeException e) {
+            throw new IOException(e);
+        }
         return new ConnectionResponse() {
             @Override
             public String getResponseVersion() {
