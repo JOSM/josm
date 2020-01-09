@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
@@ -40,9 +41,9 @@ public class NameVisitor implements OsmPrimitiveVisitor {
      */
     public Icon icon;
 
-    private static final Icon nodeIcon = ImageProvider.get("data", "node");
-    private static final Icon wayIcon = ImageProvider.get("data", "way");
-    private static final Icon relIcon = ImageProvider.get("data", "relation");
+    protected void setIcon(OsmPrimitive p) {
+        icon = ImageProvider.get(p.getDisplayType());
+    }
 
     /**
      * If the node has a name-key or id-key, this is displayed. If not, (lat,lon) is displayed.
@@ -50,7 +51,7 @@ public class NameVisitor implements OsmPrimitiveVisitor {
     @Override
     public void visit(Node n) {
         name = n.getDisplayName(DefaultNameFormatter.getInstance());
-        icon = nodeIcon;
+        setIcon(n);
         className = "node";
         classNamePlural = trn("node", "nodes", 2);
     }
@@ -62,7 +63,7 @@ public class NameVisitor implements OsmPrimitiveVisitor {
     @Override
     public void visit(Way w) {
         name = w.getDisplayName(DefaultNameFormatter.getInstance());
-        icon = wayIcon;
+        setIcon(w);
         className = "way";
         classNamePlural = trn("way", "ways", 2);
     }
@@ -70,7 +71,7 @@ public class NameVisitor implements OsmPrimitiveVisitor {
     @Override
     public void visit(Relation e) {
         name = e.getDisplayName(DefaultNameFormatter.getInstance());
-        icon = relIcon;
+        setIcon(e);
         className = "relation";
         classNamePlural = trn("relation", "relations", 2);
     }
