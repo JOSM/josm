@@ -444,6 +444,11 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagTable.addMouseListener(new PopupMenuLauncher(tagMenu));
     }
 
+    /**
+     * Sets a filter to restrict the displayed properties.
+     * @param filter the filter
+     * @since 8980
+     */
     public void setFilter(final SearchCompiler.Match filter) {
         this.tagRowSorter.setRowFilter(new SearchBasedRowFilter(filter));
     }
