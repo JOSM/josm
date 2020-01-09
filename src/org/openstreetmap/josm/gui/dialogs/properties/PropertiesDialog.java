@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -371,8 +370,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                 taginfoNationalActions.add(new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
                         membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), e.getValue(), e.getKey()));
             }
-            membershipMenuTagInfoNatItems.addAll(taginfoNationalActions.stream().map(membershipMenu::add).collect(Collectors.toList()));
-            tagMenuTagInfoNatItems.addAll(taginfoNationalActions.stream().map(tagMenu::add).collect(Collectors.toList()));
+            taginfoNationalActions.stream().map(membershipMenu::add).forEach(membershipMenuTagInfoNatItems::add);
+            taginfoNationalActions.stream().map(tagMenu::add).forEach(tagMenuTagInfoNatItems::add);
         }
     }
 
