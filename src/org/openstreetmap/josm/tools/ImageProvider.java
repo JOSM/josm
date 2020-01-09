@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -295,7 +296,7 @@ public class ImageProvider {
     /**
      * The icon cache
      */
-    private static final Map<String, ImageResource> cache = new HashMap<>();
+    private static final Map<String, ImageResource> cache = new ConcurrentHashMap<>();
 
     /**
      * Caches the image data for rotated versions of the same image.
@@ -835,9 +836,7 @@ public class ImageProvider {
      * @since 11021
      */
     public static void clearCache() {
-        synchronized (cache) {
-            cache.clear();
-        }
+        cache.clear();
         synchronized (ROTATE_CACHE) {
             ROTATE_CACHE.clear();
         }
@@ -855,112 +854,110 @@ public class ImageProvider {
      * @return the requested image or null if the request failed
      */
     private ImageResource getIfAvailableImpl() {
-        synchronized (cache) {
-            // This method is called from different thread and modifying HashMap concurrently can result
-            // for example in loops in map entries (ie freeze when such entry is retrieved)
+        // This method is called from different thread and modifying HashMap concurrently can result
+        // for example in loops in map entries (ie freeze when such entry is retrieved)
 
-            String prefix = isDisabled ? "dis:" : "";
-            if (name.startsWith("data:")) {
-                String url = name;
-                ImageResource ir = cache.get(prefix+url);
-                if (ir != null) return ir;
-                ir = getIfAvailableDataUrl(url);
-                if (ir != null) {
-                    cache.put(prefix+url, ir);
+        String prefix = isDisabled ? "dis:" : "";
+        if (name.startsWith("data:")) {
+            String url = name;
+            ImageResource ir = cache.get(prefix + url);
+            if (ir != null) return ir;
+            ir = getIfAvailableDataUrl(url);
+            if (ir != null) {
+                cache.put(prefix + url, ir);
+            }
+            return ir;
+        }
+
+        ImageType type = Utils.hasExtension(name, "svg") ? ImageType.SVG : ImageType.OTHER;
+
+        if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(HTTPS_PROTOCOL)) {
+            String url = name;
+            ImageResource ir = cache.get(prefix + url);
+            if (ir != null) return ir;
+            ir = getIfAvailableHttp(url, type);
+            if (ir != null) {
+                cache.put(prefix + url, ir);
+            }
+            return ir;
+        } else if (name.startsWith(WIKI_PROTOCOL)) {
+            ImageResource ir = cache.get(prefix + name);
+            if (ir != null) return ir;
+            ir = getIfAvailableWiki(name, type);
+            if (ir != null) {
+                cache.put(prefix + name, ir);
+            }
+            return ir;
+        }
+
+        if (subdir == null) {
+            subdir = "";
+        } else if (!subdir.isEmpty() && !subdir.endsWith("/")) {
+            subdir += '/';
+        }
+        String[] extensions;
+        if (name.indexOf('.') != -1) {
+            extensions = new String[] {""};
+        } else {
+            extensions = new String[] {".png", ".svg"};
+        }
+        final int typeArchive = 0;
+        final int typeLocal = 1;
+        for (int place : new Integer[] {typeArchive, typeLocal}) {
+            for (String ext : extensions) {
+
+                if (".svg".equals(ext)) {
+                    type = ImageType.SVG;
+                } else if (".png".equals(ext)) {
+                    type = ImageType.OTHER;
                 }
-                return ir;
-            }
 
-            ImageType type = Utils.hasExtension(name, "svg") ? ImageType.SVG : ImageType.OTHER;
-
-            if (name.startsWith(HTTP_PROTOCOL) || name.startsWith(HTTPS_PROTOCOL)) {
-                String url = name;
-                ImageResource ir = cache.get(prefix+url);
-                if (ir != null) return ir;
-                ir = getIfAvailableHttp(url, type);
-                if (ir != null) {
-                    cache.put(prefix+url, ir);
-                }
-                return ir;
-            } else if (name.startsWith(WIKI_PROTOCOL)) {
-                ImageResource ir = cache.get(prefix+name);
-                if (ir != null) return ir;
-                ir = getIfAvailableWiki(name, type);
-                if (ir != null) {
-                    cache.put(prefix+name, ir);
-                }
-                return ir;
-            }
-
-            if (subdir == null) {
-                subdir = "";
-            } else if (!subdir.isEmpty() && !subdir.endsWith("/")) {
-                subdir += '/';
-            }
-            String[] extensions;
-            if (name.indexOf('.') != -1) {
-                extensions = new String[] {""};
-            } else {
-                extensions = new String[] {".png", ".svg"};
-            }
-            final int typeArchive = 0;
-            final int typeLocal = 1;
-            for (int place : new Integer[] {typeArchive, typeLocal}) {
-                for (String ext : extensions) {
-
-                    if (".svg".equals(ext)) {
-                        type = ImageType.SVG;
-                    } else if (".png".equals(ext)) {
-                        type = ImageType.OTHER;
+                String fullName = subdir + name + ext;
+                String cacheName = prefix + fullName;
+                /* cache separately */
+                if (dirs != null && !dirs.isEmpty()) {
+                    cacheName = "id:" + id + ':' + fullName;
+                    if (archive != null) {
+                        cacheName += ':' + archive.getName();
                     }
+                }
 
-                    String fullName = subdir + name + ext;
-                    String cacheName = prefix + fullName;
-                    /* cache separately */
-                    if (dirs != null && !dirs.isEmpty()) {
-                        cacheName = "id:" + id + ':' + fullName;
-                        if (archive != null) {
-                            cacheName += ':' + archive.getName();
-                        }
-                    }
-
-                    switch (place) {
-                    case typeArchive:
-                        if (archive != null) {
-                            cacheName = "zip:"+archive.hashCode()+':'+cacheName;
-                            ImageResource ir = cache.get(cacheName);
-                            if (ir != null) return ir;
-
-                            ir = getIfAvailableZip(fullName, archive, inArchiveDir, type);
-                            if (ir != null) {
-                                cache.put(cacheName, ir);
-                                return ir;
-                            }
-                        }
-                        break;
-                    case typeLocal:
+                switch (place) {
+                case typeArchive:
+                    if (archive != null) {
+                        cacheName = "zip:" + archive.hashCode() + ':' + cacheName;
                         ImageResource ir = cache.get(cacheName);
                         if (ir != null) return ir;
 
-                        // getImageUrl() does a ton of "stat()" calls and gets expensive
-                        // and redundant when you have a whole ton of objects. So,
-                        // index the cache by the name of the icon we're looking for
-                        // and don't bother to create a URL unless we're actually creating the image.
-                        URL path = getImageUrl(fullName);
-                        if (path == null) {
-                            continue;
-                        }
-                        ir = getIfAvailableLocalURL(path, type);
+                        ir = getIfAvailableZip(fullName, archive, inArchiveDir, type);
                         if (ir != null) {
                             cache.put(cacheName, ir);
                             return ir;
                         }
-                        break;
                     }
+                    break;
+                case typeLocal:
+                    ImageResource ir = cache.get(cacheName);
+                    if (ir != null) return ir;
+
+                    // getImageUrl() does a ton of "stat()" calls and gets expensive
+                    // and redundant when you have a whole ton of objects. So,
+                    // index the cache by the name of the icon we're looking for
+                    // and don't bother to create a URL unless we're actually creating the image.
+                    URL path = getImageUrl(fullName);
+                    if (path == null) {
+                        continue;
+                    }
+                    ir = getIfAvailableLocalURL(path, type);
+                    if (ir != null) {
+                        cache.put(cacheName, ir);
+                        return ir;
+                    }
+                    break;
                 }
             }
-            return null;
         }
+        return null;
     }
 
     /**
