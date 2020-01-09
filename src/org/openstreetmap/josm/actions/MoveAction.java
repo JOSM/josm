@@ -36,12 +36,16 @@ public class MoveAction extends JosmAction {
     public enum Direction {
         /** Move up */
         UP(tr("up"), "up", KeyEvent.VK_UP),
+        /* SHORTCUT(Move objects up, core:move:up, SHIFT, UP) */
         /** Move left */
         LEFT(tr("left"), "previous", KeyEvent.VK_LEFT),
+        /* SHORTCUT(Move objects left, core:move:left, SHIFT, LEFT) */
         /** Move right */
         RIGHT(tr("right"), "next", KeyEvent.VK_RIGHT),
+        /* SHORTCUT(Move objects right, core:move:right, SHIFT, RIGHT) */
         /** Move down */
         DOWN(tr("down"), "down", KeyEvent.VK_DOWN);
+        /* SHORTCUT(Move objects down, core:move:down, SHIFT, DOWN) */
 
         private final String localizedName;
         private final String icon;
@@ -74,7 +78,7 @@ public class MoveAction extends JosmAction {
         }
 
         Shortcut getShortcut() {
-            return Shortcut.registerShortcut(
+            return Shortcut.registerShortcut( /* NO-SHORTCUT - adapt definition above when modified */
                     "core:move" + getId(), tr("Move objects {0}", getLocalizedName()), getShortcutKey(), Shortcut.SHIFT);
         }
     }
