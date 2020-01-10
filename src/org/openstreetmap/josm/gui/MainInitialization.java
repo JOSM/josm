@@ -25,6 +25,7 @@ import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.Tag2Link;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -116,6 +117,7 @@ public class MainInitialization implements InitializationSequence {
             new InitializationTask(tr("Initializing validator"), OsmValidator::initialize),
             new InitializationTask(tr("Initializing presets"), TaggingPresets::initialize),
             new InitializationTask(tr("Initializing map styles"), MapPaintPreference::initialize),
+            new InitializationTask(tr("Initializing Tag2Link rules"), Tag2Link::initialize),
             new InitializationTask(tr("Loading imagery preferences"), ImageryPreference::initialize)
         );
     }

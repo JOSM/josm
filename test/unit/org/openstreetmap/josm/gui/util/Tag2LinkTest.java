@@ -47,7 +47,7 @@ public class Tag2LinkTest {
     @Test
     public void testBrandWikidata() {
         Tag2Link.getLinksForTag("brand:wikidata", "Q259340", this::addLink);
-        checkLinks("View Wikidata item // https://www.wikidata.org/wiki/Q259340");
+        checkLinks("View Wikidata item Q259340 // https://www.wikidata.org/wiki/Q259340");
     }
 
     /**
@@ -56,8 +56,8 @@ public class Tag2LinkTest {
     @Test
     public void testArchipelagoWikidata() {
         Tag2Link.getLinksForTag("archipelago:wikidata", "Q756987;Q756988", this::addLink);
-        checkLinks("View Wikidata item // https://www.wikidata.org/wiki/Q756987",
-                "View Wikidata item // https://www.wikidata.org/wiki/Q756988");
+        checkLinks("View Wikidata item Q756987 // https://www.wikidata.org/wiki/Q756987",
+                "View Wikidata item Q756988 // https://www.wikidata.org/wiki/Q756988");
     }
 
 }

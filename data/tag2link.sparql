@@ -1,0 +1,11 @@
+SELECT ?OSM_key ?formatter_URL WHERE {
+  { ?item wdt:P1282 ?OSM_key. }
+  FILTER(STRSTARTS(?OSM_key, 'Key:')) .
+
+  {
+    { ?item wdt:P1630 ?formatter_URL. }
+    UNION
+    { ?item wdt:P3303 ?formatter_URL. }
+  }
+}
+ORDER BY LCASE(?OSM_tag_or_key)
