@@ -25,6 +25,13 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Extracts web links from OSM tags.
+ * <p></p>
+ * The following rules are used:
+ * <ul>
+ * <li>internal rules for basic tags</li>
+ * <li>rules from Wikidata based on OSM tag or key (P1282); formatter URL (P1630); third-party formatter URL (P3303)</li>
+ * <li>rules from OSM Sophox based on permanent key ID (P16); formatter URL (P8)</li>
+ * </ul>
  *
  * @since 15673
  */
@@ -34,7 +41,7 @@ public final class Tag2Link {
     // - https://github.com/openstreetmap/openstreetmap-website/blob/master/app/helpers/browse_tags_helper.rb
 
     /**
-     * Maps OSM keys to formatter URLs from Wikidata where {@code "$1"} has to be replaced by a value.
+     * Maps OSM keys to formatter URLs from Wikidata and OSM Sophox where {@code "$1"} has to be replaced by a value.
      */
     protected static MultiMap<String, String> wikidataRules = new MultiMap<>();
 
@@ -52,7 +59,9 @@ public final class Tag2Link {
      */
     public static void initialize() {
         try {
-            fetchRulesFromWikidata();
+            wikidataRules.clear();
+            fetchRulesViaSPARQL("resource://data/tag2link.wikidata.sparql", "https://query.wikidata.org/sparql");
+            fetchRulesViaSPARQL("resource://data/tag2link.sophox.sparql", "https://sophox.org/sparql");
         } catch (Exception e) {
             Logging.error("Failed to initialize tag2link rules");
             Logging.error(e);
@@ -62,11 +71,14 @@ public final class Tag2Link {
     /**
      * Fetches rules from Wikidata using a SPARQL query.
      *
+     * @param query the SPARQL query
+     * @param server the query server
      * @throws IOException in case of I/O error
      */
-    private static void fetchRulesFromWikidata() throws IOException {
-        final String sparql = new String(new CachedFile("resource://data/tag2link.sparql").getByteContent(), Charsets.UTF_8);
-        final CachedFile sparqlFile = new CachedFile("https://query.wikidata.org/sparql?query=" + Utils.encodeUrl(sparql))
+    private static void fetchRulesViaSPARQL(final String query, final String server) throws IOException {
+        final int initialSize = wikidataRules.size();
+        final String sparql = new String(new CachedFile(query).getByteContent(), Charsets.UTF_8);
+        final CachedFile sparqlFile = new CachedFile(server + "?query=" + Utils.encodeUrl(sparql))
                 .setHttpAccept("application/json");
 
         final JsonArray rules;
@@ -85,10 +97,11 @@ public final class Tag2Link {
         Stream.of("image", "url", "website", "wikidata", "wikimedia_commons")
                 .forEach(wikidataRules::remove);
 
+        final int size = wikidataRules.size() - initialSize;
         Logging.info(trn(
                 "Obtained {0} Tag2Link rule from {1}",
                 "Obtained {0} Tag2Link rules from {1}",
-                wikidataRules.size(), wikidataRules.size(), "Wikidata"));
+                size, size, server));
     }
 
     static void getLinksForTag(String key, String value, LinkConsumer linkConsumer) {

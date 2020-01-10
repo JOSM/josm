@@ -8,4 +8,3 @@ SELECT ?OSM_key ?formatter_URL WHERE {
     { ?item wdt:P3303 ?formatter_URL. }
   }
 }
-ORDER BY LCASE(?OSM_tag_or_key)
