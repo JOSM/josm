@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -65,9 +66,11 @@ public class ReferringRelationsBrowser extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2
-                    && !e.isAltDown() && !e.isAltGraphDown() && !e.isControlDown() && !e.isMetaDown() && !e.isShiftDown()
-                    && referrers.getCellBounds(referrers.getSelectedIndex(), referrers.getSelectedIndex()).contains(e.getPoint())) {
-                    editAction.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, null));
+                    && !e.isAltDown() && !e.isAltGraphDown() && !e.isControlDown() && !e.isMetaDown() && !e.isShiftDown()) {
+                    Rectangle cellBounds = referrers.getCellBounds(referrers.getSelectedIndex(), referrers.getSelectedIndex());
+                    if (cellBounds != null && cellBounds.contains(e.getPoint())) {
+                        editAction.actionPerformed(new ActionEvent(e.getSource(), ActionEvent.ACTION_PERFORMED, null));
+                    }
                 }
             }
         });
@@ -85,6 +88,9 @@ public class ReferringRelationsBrowser extends JPanel {
         add(pnl, BorderLayout.SOUTH);
     }
 
+    /**
+     * Initializes the model with layer data.
+     */
     public void init() {
         model.populate(getLayer().data);
     }
