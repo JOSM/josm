@@ -36,16 +36,16 @@ public class MoveAction extends JosmAction {
     public enum Direction {
         /** Move up */
         UP(tr("up"), "up", KeyEvent.VK_UP),
-        /* SHORTCUT(Move objects up, core:move:up, SHIFT, UP) */
+        /* SHORTCUT(Move objects up, core:moveup, SHIFT, UP) */
         /** Move left */
         LEFT(tr("left"), "previous", KeyEvent.VK_LEFT),
-        /* SHORTCUT(Move objects left, core:move:left, SHIFT, LEFT) */
+        /* SHORTCUT(Move objects left, core:moveleft, SHIFT, LEFT) */
         /** Move right */
         RIGHT(tr("right"), "next", KeyEvent.VK_RIGHT),
-        /* SHORTCUT(Move objects right, core:move:right, SHIFT, RIGHT) */
+        /* SHORTCUT(Move objects right, core:moveright, SHIFT, RIGHT) */
         /** Move down */
         DOWN(tr("down"), "down", KeyEvent.VK_DOWN);
-        /* SHORTCUT(Move objects down, core:move:down, SHIFT, DOWN) */
+        /* SHORTCUT(Move objects down, core:movedown, SHIFT, DOWN) */
 
         private final String localizedName;
         private final String icon;
