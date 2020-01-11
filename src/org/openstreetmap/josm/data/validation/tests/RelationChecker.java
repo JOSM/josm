@@ -147,7 +147,7 @@ public class RelationChecker extends Test implements TaggingPresetListener {
                     .primitives(n)
                     .build());
         } else if (allroles.isEmpty()) {
-            errors.add(TestError.builder(this, Severity.WARNING, RELATION_UNKNOWN)
+            errors.add(TestError.builder(this, Severity.OTHER, RELATION_UNKNOWN)
                     .message(tr("Relation type is unknown"))
                     .primitives(n)
                     .build());
