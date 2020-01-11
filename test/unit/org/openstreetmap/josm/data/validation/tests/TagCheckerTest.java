@@ -36,7 +36,12 @@ public class TagCheckerTest {
     public JOSMTestRules rule = new JOSMTestRules().presets();
 
     List<TestError> test(OsmPrimitive primitive) throws IOException {
-        final TagChecker checker = new TagChecker();
+        final TagChecker checker = new TagChecker() {
+            @Override
+            protected boolean includeOtherSeverityChecks() {
+                return true;
+            }
+        };
         checker.initialize();
         checker.startTest(null);
         checker.check(TestUtils.addFakeDataSet(primitive));

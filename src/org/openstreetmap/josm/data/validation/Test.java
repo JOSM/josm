@@ -143,7 +143,7 @@ public class Test implements OsmPrimitiveVisitor {
             check(r);
         }
 
-        protected final boolean includeOtherSeverityChecks() {
+        protected boolean includeOtherSeverityChecks() {
             return isBeforeUpload ? ValidatorPrefHelper.PREF_OTHER_UPLOAD.get() : ValidatorPrefHelper.PREF_OTHER.get();
         }
     }
