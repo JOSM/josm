@@ -10,10 +10,12 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -280,6 +282,21 @@ public class CombineWayAction extends JosmAction {
                     .show();
             return;
         }
+
+        // see #18083: check if we will combine ways at nodes outside of the download area
+        Set<Node> endNodesOutside = new HashSet<>();
+        for (Way w : selectedWays) {
+            final Node[] endnodes = { w.firstNode(), w.lastNode() };
+            for (Node n : endnodes) {
+                if (!n.isNew() && n.isOutsideDownloadArea() && !endNodesOutside.add(n)) {
+                    new Notification(tr("Combine ways refused<br>" + "(A shared node is outside of the download area)"))
+                            .setIcon(JOptionPane.INFORMATION_MESSAGE).show();
+                    return;
+
+                }
+            }
+        }
+
         // combine and update gui
         Pair<Way, Command> combineResult;
         try {
