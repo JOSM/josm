@@ -286,7 +286,7 @@ public class CombineWayAction extends JosmAction {
         // see #18083: check if we will combine ways at nodes outside of the download area
         Set<Node> endNodesOutside = new HashSet<>();
         for (Way w : selectedWays) {
-            final Node[] endnodes = { w.firstNode(), w.lastNode() };
+            final Node[] endnodes = {w.firstNode(), w.lastNode()};
             for (Node n : endnodes) {
                 if (!n.isNew() && n.isOutsideDownloadArea() && !endNodesOutside.add(n)) {
                     new Notification(tr("Combine ways refused<br>" + "(A shared node is outside of the download area)"))
