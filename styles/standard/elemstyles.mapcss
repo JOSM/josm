@@ -2982,6 +2982,7 @@ area[amenity=bus_station],
 area[amenity=ferry_terminal],
 area[amenity=theatre],
 area[amenity=cinema],
+area[amenity=dive_centre],
 area[amenity=arts_centre],
 area[amenity=courthouse],
 area[amenity=prison],
@@ -3022,6 +3023,10 @@ node[amenity=theatre] {
 }
 node[amenity=cinema] {
     icon-image: "presets/leisure/cinema.svg";
+    set icon_z17;
+}
+node[amenity=dive_centre] {
+    icon-image: "presets/leisure/dive_centre.svg";
     set icon_z17;
 }
 node[amenity=arts_centre] {
