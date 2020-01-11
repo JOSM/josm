@@ -156,6 +156,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("osmarender", noLongerRequired),
             new DeprecatedPlugin("geojson", inCore),
             new DeprecatedPlugin("gpxfilter", inCore),
+            new DeprecatedPlugin("tag2link", inCore),
             new DeprecatedPlugin("rapid", tr(replacedByPlugin, "MapWithAI"))
         );
     }
