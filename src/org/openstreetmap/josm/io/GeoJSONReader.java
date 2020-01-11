@@ -16,7 +16,6 @@ import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
-import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
@@ -329,7 +328,7 @@ public class GeoJSONReader extends AbstractReader {
 
                     if (value instanceof JsonString) {
                         tags.put(stringJsonValueEntry.getKey(), ((JsonString) value).getString());
-                    } else if (value instanceof JsonStructure) {
+                    } else if (value instanceof JsonObject) {
                         Logging.warn(
                             "The GeoJSON contains an object with property '" + stringJsonValueEntry.getKey()
                                 + "' whose value has the unsupported type '" + value.getClass().getSimpleName()
