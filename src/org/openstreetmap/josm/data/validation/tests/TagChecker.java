@@ -144,6 +144,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
 
     private static final int MAX_LEVENSHTEIN_DISTANCE = 2;
 
+    protected boolean includeOtherSeverity;
+
     protected boolean checkKeys;
     protected boolean checkValues;
     /** Was used for special configuration file, might be used to disable value spell checker. */
@@ -693,7 +695,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .build());
             withErrors.put(p, errTypeSpace);
         }
-        if (!value.equals(Entities.unescape(value)) && !withErrors.contains(p, "HTML")) {
+        if (includeOtherSeverity && !value.equals(Entities.unescape(value)) && !withErrors.contains(p, "HTML")) {
             errors.add(TestError.builder(this, Severity.OTHER, INVALID_HTML)
                     .message(tr("Property values contain HTML entity"), s, key)
                     .primitives(p)
@@ -780,7 +782,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 errors.add(error.fix(() -> new ChangePropertyKeyCommand(p, key, proposedKey)).build());
             }
             withErrors.put(p, "WPK");
-        } else {
+        } else if (includeOtherSeverity) {
             errors.add(TestError.builder(this, Severity.OTHER, INVALID_KEY)
                     .message(tr("Presets do not contain property key"), marktr("Key ''{0}'' not in presets."), key)
                     .primitives(p)
@@ -866,7 +868,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .primitives(p)
                     .build());
             withErrors.put(p, "WPV");
-        } else {
+        } else if (includeOtherSeverity) {
             // unknown preset value
             errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
                     .message(tr("Presets do not contain property value"),
@@ -902,6 +904,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
+        includeOtherSeverity = includeOtherSeverityChecks();
         checkKeys = Config.getPref().getBoolean(PREF_CHECK_KEYS, true);
         if (isBeforeUpload) {
             checkKeys = checkKeys && Config.getPref().getBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, true);
@@ -917,12 +920,12 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             checkComplex = checkComplex && Config.getPref().getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true);
         }
 
-        checkFixmes = Config.getPref().getBoolean(PREF_CHECK_FIXMES, true);
+        checkFixmes = includeOtherSeverity && Config.getPref().getBoolean(PREF_CHECK_FIXMES, true);
         if (isBeforeUpload) {
             checkFixmes = checkFixmes && Config.getPref().getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true);
         }
 
-        checkPresetsTypes = Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES, true);
+        checkPresetsTypes = includeOtherSeverity && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES, true);
         if (isBeforeUpload) {
             checkPresetsTypes = checkPresetsTypes && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true);
         }

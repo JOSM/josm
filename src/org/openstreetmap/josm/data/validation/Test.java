@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.InDataSourceArea;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.NotOutsideDataSourceArea;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.GBC;
@@ -140,6 +141,10 @@ public class Test implements OsmPrimitiveVisitor {
         @Override
         public void visit(Relation r) {
             check(r);
+        }
+
+        protected final boolean includeOtherSeverityChecks() {
+            return isBeforeUpload ? ValidatorPrefHelper.PREF_OTHER_UPLOAD.get() : ValidatorPrefHelper.PREF_OTHER.get();
         }
     }
 

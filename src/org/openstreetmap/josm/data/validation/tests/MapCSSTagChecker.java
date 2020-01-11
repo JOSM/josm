@@ -1004,9 +1004,4 @@ public class MapCSSTagChecker extends Test.TagTest {
         // no need to keep the index, it is quickly build and doubles the memory needs
         indexData = null;
     }
-
-    private boolean includeOtherSeverityChecks() {
-        return isBeforeUpload ? ValidatorPrefHelper.PREF_OTHER_UPLOAD.get() : ValidatorPrefHelper.PREF_OTHER.get();
-    }
-
 }
