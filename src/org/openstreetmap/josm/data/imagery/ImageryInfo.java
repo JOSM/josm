@@ -636,6 +636,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.customHttpHeaders = i.customHttpHeaders;
         this.transparent = i.transparent;
         this.minimumTileExpire = i.minimumTileExpire;
+        this.categoryOriginalString = i.categoryOriginalString;
         this.category = i.category;
     }
 
