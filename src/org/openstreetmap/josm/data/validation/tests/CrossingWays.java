@@ -7,9 +7,11 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -213,19 +215,43 @@ public abstract class CrossingWays extends Test {
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && p.hasKey("boundary")
-                    && (!(p instanceof Relation) || (((Relation) p).isMultipolygon() && !((Relation) p).hasIncompleteMembers()));
+            return super.isPrimitiveUsable(p) && p.hasKey("boundary") && !p.hasTag("boundary", "protected_area")
+                    && (!(p instanceof Relation) || (((Relation) p).isMultipolygon()));
         }
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            return !Objects.equals(w1.get("boundary"), w2.get("boundary"));
+            // ignore ways which have no common boundary tag value
+            Set<String> s1 = getBoundaryTags(w1);
+            Set<String> s2 = getBoundaryTags(w2);
+            for (String type : s1) {
+                if (s2.contains(type))
+                    return false;
+            }
+            return true;
+        }
+
+        /**
+         * Collect all boundary tag values of the way and its parent relations
+         * @param w the way to check
+         * @return set with the found boundary tag values
+         */
+        private static Set<String> getBoundaryTags(Way w) {
+            final Set<String> types = new HashSet<>();
+            String type = w.get("boundary");
+            if (type != null)
+                types.add(type);
+            w.referrers(Relation.class).filter(Relation::isMultipolygon).map(r -> r.get("boundary"))
+                    .filter(Objects::nonNull).forEach(types::add);
+            types.remove("protected_area");
+            return types;
         }
 
         @Override
         public void visit(Relation r) {
             for (Way w : r.getMemberPrimitives(Way.class)) {
-                visit(w);
+                if (!w.isIncomplete())
+                    visit(w);
             }
         }
     }
