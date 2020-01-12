@@ -60,7 +60,7 @@ public class PublicTransportRouteTest extends Test {
             return;
         }
 
-        final List<WayConnectionType> links = connectionTypeCalculator.updateLinks(membersToCheck);
+        final List<WayConnectionType> links = connectionTypeCalculator.updateLinks(r, membersToCheck);
         for (int i = 0; i < links.size(); i++) {
             final WayConnectionType link = links.get(i);
             final boolean hasError = !(i == 0 || link.linkPrev)

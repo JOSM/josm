@@ -31,12 +31,11 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             int row, int column) {
 
         reset();
-        if (value == null)
-            return this;
-
-        this.value = (WayConnectionType) value;
-        setToolTipText(((WayConnectionType) value).getTooltip());
-        renderBackgroundForeground(getModel(table), null, isSelected);
+        if (value != null) {
+            this.value = (WayConnectionType) value;
+            setToolTipText(((WayConnectionType) value).getTooltip());
+            renderBackgroundForeground(getModel(table), null, isSelected);
+        }
         return this;
     }
 
@@ -62,69 +61,8 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         }
         int w = 2;
         int p = 2 + w + 1;
-        int y1;
-        int y2;
-
-        if (value.linkPrev) {
-            if (value.onewayFollowsPrevious) {
-                g.setColor(Color.black);
-            } else {
-                g.setColor(Color.lightGray);
-            }
-            if (value.isOnewayHead) {
-                g.fillRect(xoff - 1, 0, 3, 1);
-            } else {
-                g.fillRect(xoff - 1 + xowloop, 0, 3, 1);
-            }
-            y1 = 0;
-        } else {
-            if (value.isLoop) {
-                g.setColor(Color.black);
-                y1 = 5;
-                g.drawImage(CORNERS, xoff, y1-3, xoff+3, y1, 0, 0, 3, 3, new Color(0, 0, 0, 0), null);
-                g.drawImage(CORNERS, xoff+xloop-2, y1-3, xoff+xloop+1, y1, 2, 0, 5, 3, new Color(0, 0, 0, 0), null);
-                g.drawLine(xoff+3, y1-3, xoff+xloop-3, y1-3);
-            } else {
-                g.setColor(Color.red);
-                if (value.isOnewayHead) {
-                    g.drawRect(xoff-1, p - 3 - w, w, w);
-                } else {
-                    g.drawRect(xoff-1 + xowloop, p - 1 - w, w, w);
-                }
-                y1 = p;
-            }
-        }
-
-        if (value.linkNext) {
-            if (value.onewayFollowsNext) {
-                g.setColor(Color.black);
-            } else {
-                g.setColor(Color.lightGray);
-            }
-            if (value.isOnewayTail) {
-                g.fillRect(xoff - 1, ymax, 3, 1);
-            } else {
-                g.fillRect(xoff - 1 + xowloop, ymax, 3, 1);
-            }
-            y2 = ymax;
-        } else {
-            if (value.isLoop) {
-                g.setColor(Color.black);
-                y2 = ymax - 5;
-                g.fillRect(xoff-1, y2+2, 3, 3);
-                g.drawLine(xoff, y2, xoff, y2+2);
-                g.drawImage(CORNERS, xoff+xloop-2, y2+1, xoff+xloop+1, y2+4, 2, 2, 5, 5, new Color(0, 0, 0, 0), null);
-                g.drawLine(xoff+3-1, y2+3, xoff+xloop-3, y2+3);
-            } else {
-                g.setColor(Color.red);
-                if (value.isOnewayTail) {
-                    g.drawRect(xoff-1, ymax - p + 3, w, w);
-                } else {
-                    g.drawRect(xoff-1 + xowloop, ymax - p + 1, w, w);
-                }
-                y2 = ymax - p;
-            }
-        }
+        int y1 = computePreviousY(g, xloop, xowloop, xoff, w, p);
+        int y2 = computeNextY(g, ymax, xloop, xowloop, xoff, w, p);
 
         /* vertical lines */
         if (value.onewayFollowsNext && value.onewayFollowsPrevious) {
@@ -171,17 +109,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         g.drawLine(xoff+xowloop, y1, xoff+xowloop, y2);
 
         /* special icons */
-        Image arrow;
-        switch (value.direction) {
-        case FORWARD:
-            arrow = ARROW_DOWN;
-            break;
-        case BACKWARD:
-            arrow = ARROW_UP;
-            break;
-        default:
-            arrow = null;
-        }
+        Image arrow = getArrow();
         if (value.direction == Direction.ROUNDABOUT_LEFT) {
             g.drawImage(ROUNDABOUT_LEFT, xoff-6, 1, null);
         } else if (value.direction == Direction.ROUNDABOUT_RIGHT) {
@@ -204,6 +132,91 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         if (arrow != null) {
             g.drawImage(arrow, xoff+xowloop-3, (y1 + y2) / 2 - 2, null);
         }
+    }
+
+    private int computePreviousY(Graphics g, int xloop, int xowloop, int xoff, int w, int p) {
+        int y1;
+
+        if (value.linkPrev) {
+            if (value.onewayFollowsPrevious) {
+                g.setColor(Color.black);
+            } else {
+                g.setColor(Color.lightGray);
+            }
+            if (value.isOnewayHead) {
+                g.fillRect(xoff - 1, 0, 3, 1);
+            } else {
+                g.fillRect(xoff - 1 + xowloop, 0, 3, 1);
+            }
+            y1 = 0;
+        } else {
+            if (value.isLoop) {
+                g.setColor(Color.black);
+                y1 = 5;
+                g.drawImage(CORNERS, xoff, y1-3, xoff+3, y1, 0, 0, 3, 3, new Color(0, 0, 0, 0), null);
+                g.drawImage(CORNERS, xoff+xloop-2, y1-3, xoff+xloop+1, y1, 2, 0, 5, 3, new Color(0, 0, 0, 0), null);
+                g.drawLine(xoff+3, y1-3, xoff+xloop-3, y1-3);
+            } else {
+                g.setColor(Color.red);
+                if (value.isOnewayHead) {
+                    g.drawRect(xoff-1, p - 3 - w, w, w);
+                } else {
+                    g.drawRect(xoff-1 + xowloop, p - 1 - w, w, w);
+                }
+                y1 = p;
+            }
+        }
+        return y1;
+    }
+
+    private int computeNextY(Graphics g, int ymax, int xloop, int xowloop, int xoff, int w, int p) {
+        int y2;
+
+        if (value.linkNext) {
+            if (value.onewayFollowsNext) {
+                g.setColor(Color.black);
+            } else {
+                g.setColor(Color.lightGray);
+            }
+            if (value.isOnewayTail) {
+                g.fillRect(xoff - 1, ymax, 3, 1);
+            } else {
+                g.fillRect(xoff - 1 + xowloop, ymax, 3, 1);
+            }
+            y2 = ymax;
+        } else {
+            if (value.isLoop) {
+                g.setColor(Color.black);
+                y2 = ymax - 5;
+                g.fillRect(xoff-1, y2+2, 3, 3);
+                g.drawLine(xoff, y2, xoff, y2+2);
+                g.drawImage(CORNERS, xoff+xloop-2, y2+1, xoff+xloop+1, y2+4, 2, 2, 5, 5, new Color(0, 0, 0, 0), null);
+                g.drawLine(xoff+3-1, y2+3, xoff+xloop-3, y2+3);
+            } else {
+                g.setColor(Color.red);
+                if (value.isOnewayTail) {
+                    g.drawRect(xoff-1, ymax - p + 3, w, w);
+                } else {
+                    g.drawRect(xoff-1 + xowloop, ymax - p + 1, w, w);
+                }
+                y2 = ymax - p;
+            }
+        }
+        return y2;
+    }
+
+    private Image getArrow() {
+        if (!value.ignoreOneway) {
+            switch (value.direction) {
+            case FORWARD:
+                return ARROW_DOWN;
+            case BACKWARD:
+                return ARROW_UP;
+            default:
+                break;
+            }
+        }
+        return null;
     }
 
     private static void setDotted(Graphics g) {

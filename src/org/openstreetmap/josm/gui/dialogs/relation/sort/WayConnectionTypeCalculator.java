@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
@@ -29,6 +30,17 @@ public class WayConnectionTypeCalculator {
      * @return way connections
      */
     public List<WayConnectionType> updateLinks(List<RelationMember> members) {
+        return updateLinks(null, members);
+    }
+
+    /**
+     * refresh the cache of member WayConnectionTypes
+     * @param r relation. Can be null, for plugins compatibility, but really shouldn't
+     * @param members relation members
+     * @return way connections
+     * @since 15696
+     */
+    public List<WayConnectionType> updateLinks(Relation r, List<RelationMember> members) {
         this.members = members;
         final List<WayConnectionType> con = new ArrayList<>();
 
@@ -45,7 +57,7 @@ public class WayConnectionTypeCalculator {
 
         for (int i = 0; i < members.size(); ++i) {
             try {
-                lastWct = updateLinksFor(con, lastWct, i);
+                lastWct = updateLinksFor(r, con, lastWct, i);
             } catch (RuntimeException e) {
                 int index = i;
                 throw BugReport.intercept(e).put("i", i).put("member", () -> members.get(index)).put("con", con)
@@ -57,7 +69,7 @@ public class WayConnectionTypeCalculator {
         return con;
     }
 
-    private WayConnectionType updateLinksFor(final List<WayConnectionType> con, WayConnectionType lastWct, int i) {
+    private WayConnectionType updateLinksFor(Relation r, List<WayConnectionType> con, WayConnectionType lastWct, int i) {
         final RelationMember m = members.get(i);
         if (isNoHandleableWay(m)) {
             if (i > 0) {
@@ -66,7 +78,7 @@ public class WayConnectionTypeCalculator {
             con.set(i, new WayConnectionType());
             firstGroupIdx = i;
         } else {
-            WayConnectionType wct = computeNextWayConnection(con, lastWct, i, m);
+            WayConnectionType wct = computeNextWayConnection(r, con, lastWct, i, m);
 
             if (!wct.linkPrev) {
                 if (i > 0) {
@@ -83,13 +95,14 @@ public class WayConnectionTypeCalculator {
         return !m.isWay() || m.getWay() == null || m.getWay().isIncomplete();
     }
 
-    private WayConnectionType computeNextWayConnection(final List<WayConnectionType> con, WayConnectionType lastWct, int i,
+    private WayConnectionType computeNextWayConnection(Relation r, List<WayConnectionType> con, WayConnectionType lastWct, int i,
             final RelationMember m) {
         WayConnectionType wct = new WayConnectionType(false);
         wct.linkPrev = i > 0 && con.get(i-1) != null && con.get(i-1).isValid();
         wct.direction = NONE;
+        wct.ignoreOneway = isOnewayIgnored(r);
 
-        if (RelationSortUtils.isOneway(m)) {
+        if (!wct.ignoreOneway && RelationSortUtils.isOneway(m)) {
             handleOneway(lastWct, i, wct);
         }
 
@@ -120,6 +133,19 @@ public class WayConnectionTypeCalculator {
             lastWct.linkNext = wct.linkPrev;
         }
 
+        if (!wct.ignoreOneway) {
+            handleOnewayFollows(lastWct, i, m, wct);
+        }
+        con.set(i, wct);
+        return wct;
+    }
+
+    private static boolean isOnewayIgnored(Relation r) {
+        return r != null && "boundary".equals(r.get("type"));
+    }
+
+    protected void handleOnewayFollows(WayConnectionType lastWct, int i, final RelationMember m,
+            WayConnectionType wct) {
         if (lastWct != null && i > 0 && m.getMember() instanceof Way && members.get(i - 1).getMember() instanceof Way
                 && (m.getWay().isOneway() != 0 || members.get(i - 1).getWay().isOneway() != 0)) {
             Way way = m.getWay();
@@ -134,8 +160,6 @@ public class WayConnectionTypeCalculator {
                 wct.onewayFollowsPrevious = false;
             }
         }
-        con.set(i, wct);
-        return wct;
     }
 
     private void handleOneway(WayConnectionType lastWct, int i, WayConnectionType wct) {

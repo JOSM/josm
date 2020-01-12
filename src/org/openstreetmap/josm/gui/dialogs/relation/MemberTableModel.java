@@ -776,7 +776,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     WayConnectionType getWayConnection(int i) {
         try {
             if (connectionType == null) {
-                connectionType = wayConnectionTypeCalculator.updateLinks(members);
+                connectionType = wayConnectionTypeCalculator.updateLinks(relation, members);
             }
             return connectionType.get(i);
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {

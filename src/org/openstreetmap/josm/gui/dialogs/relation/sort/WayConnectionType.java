@@ -35,6 +35,10 @@ public class WayConnectionType {
     public enum Direction {
         FORWARD, BACKWARD, ROUNDABOUT_LEFT, ROUNDABOUT_RIGHT, NONE;
 
+        /**
+         * Determines if the direction denotes a roundabout.
+         * @return {@code true} if the direction denotes a roundabout
+         */
         public boolean isRoundabout() {
             return this == ROUNDABOUT_RIGHT || this == ROUNDABOUT_LEFT;
         }
@@ -42,6 +46,9 @@ public class WayConnectionType {
 
     /** True, if the element is part of a closed loop of ways. */
     public boolean isLoop;
+
+    /** True, if all oneway features are ignored */
+    public boolean ignoreOneway;
 
     public boolean isOnewayLoopForwardPart;
     public boolean isOnewayLoopBackwardPart;
@@ -53,6 +60,12 @@ public class WayConnectionType {
     /** True, if the way is oneway and it doesn't follow the flow of the next member */
     public boolean onewayFollowsNext = true;
 
+    /**
+     * Constructs a valid instance.
+     * @param linkPrev {@code true} if linked to the previous member
+     * @param linkNext {@code true} if linked to the next member
+     * @param direction the direction type
+     */
     public WayConnectionType(boolean linkPrev, boolean linkNext, Direction direction) {
         this.linkPrev = linkPrev;
         this.linkNext = linkNext;
@@ -61,6 +74,10 @@ public class WayConnectionType {
         invalid = false;
     }
 
+    /**
+     * Constructs a valid or invalid instance.
+     * @param invalid {@code true} if the instance is invalid (i.e does not concern a complete way)
+     */
     public WayConnectionType(boolean invalid) {
         this.invalid = invalid;
     }
@@ -74,6 +91,10 @@ public class WayConnectionType {
         invalid = true;
     }
 
+    /**
+     * Determines if the connection type is valid (i.e. it concerns a complete way).
+     * @return {@code true} if the connection type is valid (i.e. it concerns a complete way)
+     */
     public boolean isValid() {
         return !invalid;
     }
