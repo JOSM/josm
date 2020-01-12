@@ -2795,6 +2795,7 @@ area[amenity=grave_yard],
 area[amenity=crematorium],
 area[amenity=post_office],
 area[amenity=studio],
+area[landuse=school],
 area[amenity=school],
 area[amenity=university],
 area[amenity=college],
@@ -3523,6 +3524,9 @@ area[landuse=salt_pond] {
 }
 area[landuse=aquaculture] {
     fill-color: aquaculture#189dff;
+}
+area[landuse=flowerbed] {
+    fill-color: flowerbed#91c956;
 }
 area[landuse=grass] {
     fill-color: grass#97ca96;
