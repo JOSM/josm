@@ -215,7 +215,7 @@ public final class OsmUtils {
      *
      * @param value the value to separate
      * @return the separated values as Stream
-     * @since xxx
+     * @since 15671
      */
     public static Stream<String> splitMultipleValues(String value) {
         return Pattern.compile("\\s*;\\s*").splitAsStream(value);

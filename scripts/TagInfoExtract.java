@@ -127,6 +127,7 @@ public class TagInfoExtract {
 
     /**
      * Parse command line arguments.
+     * @param args command line arguments
      */
     private void parseCommandLineArguments(String[] args) {
         if (args.length == 1 && "--help".equals(args[0])) {
@@ -202,6 +203,7 @@ public class TagInfoExtract {
         /**
          * Determine full image url (can refer to JOSM or OSM repository).
          * @param path the image path
+         * @return full image url
          */
         private String findImageUrl(String path) {
             final Path f = baseDir.resolve("images").resolve(path);
@@ -322,6 +324,8 @@ public class TagInfoExtract {
 
         /**
          * Read the style sheet file and parse the MapCSS code.
+         * @throws IOException if any I/O error occurs
+         * @throws ParseException in case of parsing error
          */
         private void parseStyleSheet() throws IOException, ParseException {
             try (BufferedReader reader = options.inputFile.getContentReader()) {
@@ -334,6 +338,7 @@ public class TagInfoExtract {
 
         /**
          * Collect all the tag from the style sheet.
+         * @return list of taginfo tags
          */
         private List<TagInfoTag> convertStyleSheet() {
             return styleSource.rules.stream()
@@ -402,6 +407,9 @@ public class TagInfoExtract {
 
             /**
              * Create image file from StyleElement.
+             * @param element style element
+             * @param type object type
+             * @param nc navigatable component
              *
              * @return the URL
              */
@@ -427,6 +435,7 @@ public class TagInfoExtract {
              *
              * @param generateImage if true, create or find a suitable image icon and return URL,
              *                       if false, just check if tag is supported and return true or false
+             * @return URL for image icon if tag is supported
              */
             abstract Optional<String> findUrl(boolean generateImage);
 
@@ -549,6 +558,7 @@ public class TagInfoExtract {
 
     /**
      * Initialize the script.
+     * @throws IOException if any I/O error occurs
      */
     private void init() throws IOException {
         Logging.setLogLevel(Logging.LEVEL_INFO);

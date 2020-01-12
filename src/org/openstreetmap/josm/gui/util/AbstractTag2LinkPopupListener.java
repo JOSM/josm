@@ -12,7 +12,7 @@ import javax.swing.event.PopupMenuListener;
 /**
  * A popup listener which adds web links based on tags of OSM primitives.
  *
- * @since xxx
+ * @since 15673
  */
 public abstract class AbstractTag2LinkPopupListener implements PopupMenuListener {
 

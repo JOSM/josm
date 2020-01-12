@@ -13,7 +13,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
 /**
  * Action to open browser on given URL.
  * @see OpenBrowser
- * @since xxx
+ * @since 15673
  */
 public class OpenBrowserAction extends AbstractAction {
 

@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +56,7 @@ import org.openstreetmap.josm.data.validation.routines.DomainValidator;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.OptionParser.OptionCount;
@@ -256,15 +258,19 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void myprintlnfinal(String s) throws IOException {
+    void myprintlnfinal(String s) {
         if (outputStream != null) {
-            outputStream.write(s + System.getProperty("line.separator"));
+            try {
+                outputStream.write(s + System.getProperty("line.separator"));
+            } catch (IOException e) {
+                throw new JosmRuntimeException(e);
+            }
         } else {
             System.out.println(s);
         }
     }
 
-    void myprintln(String s) throws IOException {
+    void myprintln(String s) {
         if (skip.containsKey(s)) {
             String color = skip.get(s);
             skip.remove(s);
@@ -289,7 +295,7 @@ public class SyncEditorLayerIndex {
         myprintlnfinal(s);
     }
 
-    void start() throws IOException {
+    void start() {
         if (optionXhtml) {
             myprintlnfinal(
                     "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
@@ -299,7 +305,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void end() throws IOException {
+    void end() {
         for (String s : skip.keySet()) {
             myprintln("+++ Obsolete skip entry: " + s);
         }
@@ -503,7 +509,7 @@ public class SyncEditorLayerIndex {
         myprintln("*** Loaded "+josmEntries.size()+" entries (JOSM). ***");
     }
 
-    void checkInOneButNotTheOther() throws IOException {
+    void checkInOneButNotTheOther() {
         List<String> le = new LinkedList<>(eliUrls.keySet());
         List<String> lj = new LinkedList<>(josmUrls.keySet());
 
@@ -563,7 +569,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void checkCommonEntries() throws IOException {
+    void checkCommonEntries() {
         doSameUrlButDifferentName();
         doSameUrlButDifferentId();
         doSameUrlButDifferentType();
@@ -574,10 +580,11 @@ public class SyncEditorLayerIndex {
         doSameUrlButDifferentInformation();
         doMismatchingShapes();
         doMismatchingIcons();
+        doMismatchingCategories();
         doMiscellaneousChecks();
     }
 
-    void doSameUrlButDifferentName() throws IOException {
+    void doSameUrlButDifferentName() {
         myprintln("*** Same URL, but different name: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -591,7 +598,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doSameUrlButDifferentId() throws IOException {
+    void doSameUrlButDifferentId() {
         myprintln("*** Same URL, but different Id: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -605,7 +612,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doSameUrlButDifferentType() throws IOException {
+    void doSameUrlButDifferentType() {
         myprintln("*** Same URL, but different type: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -617,7 +624,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doSameUrlButDifferentZoomBounds() throws IOException {
+    void doSameUrlButDifferentZoomBounds() {
         myprintln("*** Same URL, but different zoom bounds: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -643,7 +650,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doSameUrlButDifferentCountryCode() throws IOException {
+    void doSameUrlButDifferentCountryCode() {
         myprintln("*** Same URL, but different country code: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -659,7 +666,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doSameUrlButDifferentQuality() throws IOException {
+    void doSameUrlButDifferentQuality() {
         myprintln("*** Same URL, but different quality: ***");
         for (String url : eliUrls.keySet()) {
             JsonObject e = eliUrls.get(url);
@@ -677,7 +684,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doSameUrlButDifferentDates() throws IOException {
+    void doSameUrlButDifferentDates() {
         myprintln("*** Same URL, but different dates: ***");
         Pattern pattern = Pattern.compile("^(.*;)(\\d\\d\\d\\d)(-(\\d\\d)(-(\\d\\d))?)?$");
         for (String url : eliUrls.keySet()) {
@@ -719,7 +726,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doSameUrlButDifferentInformation() throws IOException {
+    void doSameUrlButDifferentInformation() {
         myprintln("*** Same URL, but different information: ***");
         for (String url : eliUrls.keySet()) {
             if (!josmUrls.containsKey(url)) continue;
@@ -737,7 +744,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void compareDescriptions(JsonObject e, ImageryInfo j) throws IOException {
+    void compareDescriptions(JsonObject e, ImageryInfo j) {
         String et = getDescriptions(e).getOrDefault("en", "");
         String jt = getDescriptions(j).getOrDefault("en", "");
         if (!et.equals(jt)) {
@@ -751,7 +758,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void comparePermissionReferenceUrls(JsonObject e, ImageryInfo j) throws IOException {
+    void comparePermissionReferenceUrls(JsonObject e, ImageryInfo j) {
         String et = getPermissionReferenceUrl(e);
         String jt = getPermissionReferenceUrl(j);
         String jt2 = getTermsOfUseUrl(j);
@@ -779,7 +786,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void compareAttributionUrls(JsonObject e, ImageryInfo j) throws IOException {
+    void compareAttributionUrls(JsonObject e, ImageryInfo j) {
         String et = getAttributionUrl(e);
         String jt = getAttributionUrl(j);
         if (!Objects.equals(et, jt)) {
@@ -798,7 +805,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void compareAttributionTexts(JsonObject e, ImageryInfo j) throws IOException {
+    void compareAttributionTexts(JsonObject e, ImageryInfo j) {
         String et = getAttributionText(e);
         String jt = getAttributionText(j);
         if (!Objects.equals(et, jt)) {
@@ -812,7 +819,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void compareProjections(JsonObject e, ImageryInfo j) throws IOException {
+    void compareProjections(JsonObject e, ImageryInfo j) {
         String et = getProjections(e).stream().sorted().collect(Collectors.joining(" "));
         String jt = getProjections(j).stream().sorted().collect(Collectors.joining(" "));
         if (!Objects.equals(et, jt)) {
@@ -835,7 +842,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void compareDefaults(JsonObject e, ImageryInfo j) throws IOException {
+    void compareDefaults(JsonObject e, ImageryInfo j) {
         boolean ed = getDefault(e);
         boolean jd = getDefault(j);
         if (ed != jd) {
@@ -847,7 +854,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void compareOverlays(JsonObject e, ImageryInfo j) throws IOException {
+    void compareOverlays(JsonObject e, ImageryInfo j) {
         boolean eo = getOverlay(e);
         boolean jo = getOverlay(j);
         if (eo != jo) {
@@ -859,7 +866,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void compareNoTileHeaders(JsonObject e, ImageryInfo j) throws IOException {
+    void compareNoTileHeaders(JsonObject e, ImageryInfo j) {
         Map<String, Set<String>> eh = getNoTileHeader(e);
         Map<String, Set<String>> jh = getNoTileHeader(j);
         if (!Objects.equals(eh, jh)) {
@@ -873,7 +880,7 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doMismatchingShapes() throws IOException {
+    void doMismatchingShapes() {
         myprintln("*** Mismatching shapes: ***");
         for (String url : josmUrls.keySet()) {
             ImageryInfo j = josmUrls.get(url);
@@ -997,39 +1004,65 @@ public class SyncEditorLayerIndex {
         }
     }
 
-    void doMismatchingIcons() throws IOException {
+    void doMismatchingIcons() {
         myprintln("*** Mismatching icons: ***");
+        doMismatching(this::compareIcons);
+    }
+
+    void doMismatchingCategories() {
+        myprintln("*** Mismatching categories: ***");
+        doMismatching(this::compareCategories);
+    }
+
+    void doMismatching(BiConsumer<ImageryInfo, JsonObject> comparator) {
         for (String url : eliUrls.keySet()) {
-            JsonObject e = eliUrls.get(url);
-            if (!josmUrls.containsKey(url)) {
-                continue;
-            }
-            ImageryInfo j = josmUrls.get(url);
-            String ij = getIcon(j);
-            String ie = getIcon(e);
-            boolean ijok = isNotBlank(ij);
-            boolean ieok = isNotBlank(ie);
-            if (ijok && !ieok) {
-                if (!optionNoEli) {
-                    myprintln("+ No ELI icon: "+getDescription(j));
-                }
-            } else if (!ijok && ieok) {
-                myprintln("- No JOSM icon: "+getDescription(j));
-            } else if (ijok && ieok && !Objects.equals(ij, ie) && !(
-              (ie.startsWith("https://osmlab.github.io/editor-layer-index/")
-              || ie.startsWith("https://raw.githubusercontent.com/osmlab/editor-layer-index/")) &&
-              ij.startsWith("data:"))) {
-                String iehttps = ie.replace("http:", "https:");
-                if (ij.equals(iehttps)) {
-                    myprintln("+ Different icons: "+getDescription(j));
-                } else {
-                    myprintln("* Different icons: "+getDescription(j));
-                }
+            if (josmUrls.containsKey(url)) {
+                comparator.accept(josmUrls.get(url), eliUrls.get(url));
             }
         }
     }
 
-    void doMiscellaneousChecks() throws IOException {
+    void compareIcons(ImageryInfo j, JsonObject e) {
+        String ij = getIcon(j);
+        String ie = getIcon(e);
+        boolean ijok = isNotBlank(ij);
+        boolean ieok = isNotBlank(ie);
+        if (ijok && !ieok) {
+            if (!optionNoEli) {
+                myprintln("+ No ELI icon: "+getDescription(j));
+            }
+        } else if (!ijok && ieok) {
+            myprintln("- No JOSM icon: "+getDescription(j));
+        } else if (ijok && ieok && !Objects.equals(ij, ie) && !(
+          (ie.startsWith("https://osmlab.github.io/editor-layer-index/")
+          || ie.startsWith("https://raw.githubusercontent.com/osmlab/editor-layer-index/")) &&
+          ij.startsWith("data:"))) {
+            String iehttps = ie.replace("http:", "https:");
+            if (ij.equals(iehttps)) {
+                myprintln("+ Different icons: "+getDescription(j));
+            } else {
+                myprintln("* Different icons: "+getDescription(j));
+            }
+        }
+    }
+
+    void compareCategories(ImageryInfo j, JsonObject e) {
+        String cj = getCategory(j);
+        String ce = getCategory(e);
+        boolean cjok = isNotBlank(cj);
+        boolean ceok = isNotBlank(ce);
+        if (cjok && !ceok) {
+            if (!optionNoEli) {
+                myprintln("+ No ELI category: "+getDescription(j));
+            }
+        } else if (!cjok && ceok) {
+            myprintln("- No JOSM category: "+getDescription(j));
+        } else if (cjok && ceok && !Objects.equals(cj, ce)) {
+            myprintln("+ Different categories: "+getDescription(j));
+        }
+    }
+
+    void doMiscellaneousChecks() {
         myprintln("*** Miscellaneous checks: ***");
         Map<String, ImageryInfo> josmIds = new HashMap<>();
         Collection<String> all = Projections.getAllProjectionCodes();
@@ -1375,7 +1408,7 @@ public class SyncEditorLayerIndex {
         if (e instanceof ImageryInfo) {
             return ((ImageryInfo) e).getImageryCategoryOriginalString();
         }
-        return null;
+        return ((Map<String, JsonObject>) e).get("properties").getString("category", null);
     }
 
     static String getLogoImage(Object e) {
