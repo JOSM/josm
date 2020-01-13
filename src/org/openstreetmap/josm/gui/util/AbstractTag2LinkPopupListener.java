@@ -9,6 +9,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import org.openstreetmap.josm.tools.Tag2Link;
+
 /**
  * A popup listener which adds web links based on tags of OSM primitives.
  *

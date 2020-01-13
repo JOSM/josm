@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.util;
+package org.openstreetmap.josm.tools;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Assert;
@@ -20,11 +20,11 @@ public class Tag2LinkTestIT {
     public static JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Integration test of function {@link Tag2Link#initialize()}.
+     * Integration test of function {@link org.openstreetmap.josm.tools.Tag2Link#initialize()}.
      */
     @Test
     public void testInitialize() {
-        Tag2Link.initialize();
+        org.openstreetmap.josm.tools.Tag2Link.initialize();
         Assert.assertTrue("obtails at least 40 rules", Tag2Link.wikidataRules.size() > 40);
     }
 }

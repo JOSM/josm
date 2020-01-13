@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.util;
+package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -20,9 +20,6 @@ import javax.json.JsonValue;
 
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.io.CachedFile;
-import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Extracts web links from OSM tags.
@@ -54,7 +51,7 @@ public final class Tag2Link {
      * Represents an operation that accepts a link.
      */
     @FunctionalInterface
-    interface LinkConsumer {
+    public interface LinkConsumer {
         /**
          * Performs the operation on the given arguments.
          * @param name the name/label of the link
@@ -116,7 +113,13 @@ public final class Tag2Link {
                 size, size, server));
     }
 
-    static void getLinksForTag(String key, String value, LinkConsumer linkConsumer) {
+    /**
+     * Generates the links for the tag given by {@code key} and {@code value}, and sends 0, 1 or more links to the {@code linkConsumer}.
+     * @param key the tag key
+     * @param value the tag value
+     * @param linkConsumer the receiver of the generated links
+     */
+    public static void getLinksForTag(String key, String value, LinkConsumer linkConsumer) {
 
         // Search
         if (key.matches("^(.+[:_])?name([:_].+)?$")) {
