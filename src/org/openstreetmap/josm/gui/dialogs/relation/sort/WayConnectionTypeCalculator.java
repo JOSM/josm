@@ -141,7 +141,7 @@ public class WayConnectionTypeCalculator {
     }
 
     private static boolean isOnewayIgnored(Relation r) {
-        return r != null && "boundary".equals(r.get("type"));
+        return r != null && r.hasTag("type", "boundary", "multipolygon");
     }
 
     protected void handleOnewayFollows(WayConnectionType lastWct, int i, final RelationMember m,
