@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -64,6 +65,7 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
+import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
@@ -395,10 +397,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         membershipMenu.addPopupMenuListener(new AbstractTag2LinkPopupListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                final IRelation<?> relation = getSelectedMembershipRelation();
-                if (relation != null) {
-                    relation.visitKeys((primitive, key, value) -> addLinks(membershipMenu, key, value));
-                }
+                getSelectedMembershipRelations().forEach(relation ->
+                        relation.visitKeys((primitive, key, value) -> addLinks(membershipMenu, key, value)));
             }
         });
 
@@ -456,10 +456,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagMenu.addPopupMenuListener(new AbstractTag2LinkPopupListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                final Tags tags = getSelectedProperties();
-                if (tags != null) {
-                    tags.getValues().forEach(value -> addLinks(tagMenu, tags.getKey(), value));
-                }
+                visitSelectedProperties((primitive, key, value) -> addLinks(tagMenu, key, value));
             }
         });
 
@@ -803,6 +800,19 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     }
 
     /**
+     * Visits all combinations of the selected keys/values.
+     * @param visitor the visitor
+     * @since 15707
+     */
+    public void visitSelectedProperties(KeyValueVisitor visitor) {
+        for (int row : tagTable.getSelectedRows()) {
+            final String key = editHelper.getDataKey(row);
+            Set<String> values = editHelper.getDataValues(row).keySet();
+            values.forEach(value -> visitor.visitKeyValue(null, key, value));
+        }
+    }
+
+    /**
      * Replies the membership popup menu handler.
      * @return The membership popup menu handler
      */
@@ -817,6 +827,17 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     public IRelation<?> getSelectedMembershipRelation() {
         int row = membershipTable.getSelectedRow();
         return row > -1 ? (IRelation<?>) membershipData.getValueAt(row, 0) : null;
+    }
+
+    /**
+     * Returns all selected relation memberships.
+     * @return The selected relation memberships
+     * @since 15707
+     */
+    public Collection<IRelation<?>> getSelectedMembershipRelations() {
+        return Arrays.stream(membershipTable.getSelectedRows())
+                .mapToObj(row -> (IRelation<?>) membershipData.getValueAt(row, 0))
+                .collect(Collectors.toList());
     }
 
     /**

@@ -666,10 +666,8 @@ public class RelationListDialog extends ToggleDialog
         popupMenuHandler.addListener(new AbstractTag2LinkPopupListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                final IRelation<?> selection = getSelected();
-                if (selection != null) {
-                    selection.visitKeys((primitive, key, value) -> addLinks(popupMenu, key, value));
-                }
+                getSelectedRelations().forEach(relation ->
+                        relation.visitKeys((primitive, key, value) -> addLinks(popupMenu, key, value)));
             }
         });
     }

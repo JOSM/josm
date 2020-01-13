@@ -235,10 +235,8 @@ public class SelectionListDialog extends ToggleDialog {
         handler.addListener(new AbstractTag2LinkPopupListener() {
             @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                final Collection<OsmPrimitive> selection = getSelectedPrimitives();
-                if (!selection.isEmpty()) {
-                    selection.iterator().next().visitKeys((primitive, key, value) -> addLinks(popupMenu, key, value));
-                }
+                getSelectedPrimitives().forEach(primitive ->
+                        primitive.visitKeys((p, key, value) -> addLinks(popupMenu, key, value)));
             }
         });
         return RelationPopupMenus.setupHandler(handler);
