@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public abstract class CrossingWays extends Test {
 
+    static final String BARRIER = "barrier";
     static final String HIGHWAY = "highway";
     static final String RAILWAY = "railway";
     static final String WATERWAY = "waterway";
@@ -53,9 +54,11 @@ public abstract class CrossingWays extends Test {
      * Type of way. Entries have to be declared in alphabetical order, see sort below.
      */
     private enum WayType {
-        BUILDING, HIGHWAY, RAILWAY, RESIDENTIAL_AREA, WATERWAY, WAY;
+        BARRIER, BUILDING, HIGHWAY, RAILWAY, RESIDENTIAL_AREA, WATERWAY, WAY;
 
         static WayType of(Way w) {
+            if (w.hasKey(CrossingWays.BARRIER))
+                return BARRIER;
             if (isBuilding(w))
                 return BUILDING;
             else if (w.hasKey(CrossingWays.HIGHWAY))
@@ -101,6 +104,7 @@ public abstract class CrossingWays extends Test {
                     || isRailway(w)
                     || isCoastline(w)
                     || isBuilding(w)
+                    || w.hasKey(BARRIER)
                     || isResidentialArea(w));
         }
 
@@ -114,8 +118,8 @@ public abstract class CrossingWays extends Test {
             if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
                 return true;
             }
-            if ((w1.hasKey(HIGHWAY, RAILWAY, WATERWAY) && isResidentialArea(w2))
-             || (w2.hasKey(HIGHWAY, RAILWAY, WATERWAY) && isResidentialArea(w1)))
+            if ((w1.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY) && isResidentialArea(w2))
+             || (w2.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY) && isResidentialArea(w1)))
                 return true;
             if (isSubwayOrTramOrRazed(w2)) {
                 return true;
@@ -136,64 +140,80 @@ public abstract class CrossingWays extends Test {
             Arrays.sort(types);
 
             if (types[0] == types[1]) {
-                switch(types[0]) {
-                    case BUILDING:
-                        return new MessageHelper(tr("Crossing buildings"), 610);
-                    case HIGHWAY:
-                        return new MessageHelper(tr("Crossing highways"), 620);
-                    case RAILWAY:
-                        return new MessageHelper(tr("Crossing railways"), 630);
-                    case RESIDENTIAL_AREA:
-                        return new MessageHelper(tr("Crossing residential areas"), 640);
-                    case WATERWAY:
-                        return new MessageHelper(tr("Crossing waterways"), 650);
-                    case WAY:
-                    default:
-                        return new MessageHelper(tr("Crossing ways"), CROSSING_WAYS);
+                switch (types[0]) {
+                case BARRIER:
+                    return new MessageHelper(tr("Crossing barriers"), 603);
+                case BUILDING:
+                    return new MessageHelper(tr("Crossing buildings"), 610);
+                case HIGHWAY:
+                    return new MessageHelper(tr("Crossing highways"), 620);
+                case RAILWAY:
+                    return new MessageHelper(tr("Crossing railways"), 630);
+                case RESIDENTIAL_AREA:
+                    return new MessageHelper(tr("Crossing residential areas"), 640);
+                case WATERWAY:
+                    return new MessageHelper(tr("Crossing waterways"), 650);
+                case WAY:
+                default:
+                    return new MessageHelper(tr("Crossing ways"), CROSSING_WAYS);
                 }
             } else {
                 switch (types[0]) {
+                case BARRIER:
+                    switch (types[1]) {
                     case BUILDING:
-                        switch (types[1]) {
-                            case HIGHWAY:
-                                return new MessageHelper(tr("Crossing building/highway"), 612);
-                            case RAILWAY:
-                                return new MessageHelper(tr("Crossing building/railway"), 613);
-                            case RESIDENTIAL_AREA:
-                                return new MessageHelper(tr("Crossing building/residential area"), 614);
-                            case WATERWAY:
-                                return new MessageHelper(tr("Crossing building/waterway"), 615);
-                            case WAY:
-                            default:
-                                return new MessageHelper(tr("Crossing building/way"), 611);
-                        }
+                        return new MessageHelper(tr("Crossing barrier/building"), 661);
                     case HIGHWAY:
-                        switch (types[1]) {
-                            case RAILWAY:
-                                return new MessageHelper(tr("Crossing highway/railway"), 622);
-                            case WATERWAY:
-                                return new MessageHelper(tr("Crossing highway/waterway"), 623);
-                            case WAY:
-                            default:
-                                return new MessageHelper(tr("Crossing highway/way"), 621);
-                        }
+                        return new MessageHelper(tr("Crossing barrier/highway"), 662);
                     case RAILWAY:
-                        switch (types[1]) {
-                            case WATERWAY:
-                                return new MessageHelper(tr("Crossing railway/waterway"), 632);
-                            case WAY:
-                            default:
-                                return new MessageHelper(tr("Crossing railway/way"), 631);
-                        }
-                    case RESIDENTIAL_AREA:
-                        switch (types[1]) {
-                            case WAY:
-                            default:
-                                return new MessageHelper(tr("Crossing residential area/way"), 641);
-                        }
+                        return new MessageHelper(tr("Crossing barrier/railway"), 663);
                     case WATERWAY:
+                        return new MessageHelper(tr("Crossing barrier/waterway"), 664);
+                    case WAY:
                     default:
-                        return new MessageHelper(tr("Crossing waterway/way"), 651);
+                        return new MessageHelper(tr("Crossing barrier/way"), 665);
+                    }
+                case BUILDING:
+                    switch (types[1]) {
+                    case HIGHWAY:
+                        return new MessageHelper(tr("Crossing building/highway"), 612);
+                    case RAILWAY:
+                        return new MessageHelper(tr("Crossing building/railway"), 613);
+                    case RESIDENTIAL_AREA:
+                        return new MessageHelper(tr("Crossing building/residential area"), 614);
+                    case WATERWAY:
+                        return new MessageHelper(tr("Crossing building/waterway"), 615);
+                    case WAY:
+                    default:
+                        return new MessageHelper(tr("Crossing building/way"), 611);
+                    }
+                case HIGHWAY:
+                    switch (types[1]) {
+                    case RAILWAY:
+                        return new MessageHelper(tr("Crossing highway/railway"), 622);
+                    case WATERWAY:
+                        return new MessageHelper(tr("Crossing highway/waterway"), 623);
+                    case WAY:
+                    default:
+                        return new MessageHelper(tr("Crossing highway/way"), 621);
+                    }
+                case RAILWAY:
+                    switch (types[1]) {
+                    case WATERWAY:
+                        return new MessageHelper(tr("Crossing railway/waterway"), 632);
+                    case WAY:
+                    default:
+                        return new MessageHelper(tr("Crossing railway/way"), 631);
+                    }
+                case RESIDENTIAL_AREA:
+                    switch (types[1]) {
+                    case WAY:
+                    default:
+                        return new MessageHelper(tr("Crossing residential area/way"), 641);
+                    }
+                case WATERWAY:
+                default:
+                    return new MessageHelper(tr("Crossing waterway/way"), 651);
                 }
             }
         }
@@ -257,31 +277,6 @@ public abstract class CrossingWays extends Test {
     }
 
     /**
-     * Crossing barriers ways test.
-     */
-    public static class Barrier extends CrossingWays {
-
-        protected static final int CROSSING_BARRIERS = 603;
-
-        /**
-         * Constructs a new crossing {@code Barrier} test.
-         */
-        public Barrier() {
-            super(tr("Crossing barriers"), CROSSING_BARRIERS);
-        }
-
-        @Override
-        public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && p.hasKey("barrier");
-        }
-
-        @Override
-        boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            return areLayerOrLevelDifferent(w1, w2);
-        }
-    }
-
-    /**
      * Self crossing ways test (for all the rest)
      */
     public static class SelfCrossing extends CrossingWays {
@@ -289,7 +284,6 @@ public abstract class CrossingWays extends Test {
         protected static final int CROSSING_SELF = 604;
 
         CrossingWays.Ways normalTest = new Ways();
-        CrossingWays.Barrier barrierTest = new Barrier();
         CrossingWays.Boundaries boundariesTest = new Boundaries();
 
         /**
@@ -301,7 +295,7 @@ public abstract class CrossingWays extends Test {
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && !(normalTest.isPrimitiveUsable(p) || barrierTest.isPrimitiveUsable(p)
+            return super.isPrimitiveUsable(p) && !(normalTest.isPrimitiveUsable(p)
                     || boundariesTest.isPrimitiveUsable(p));
         }
 

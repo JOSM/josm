@@ -16,7 +16,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.validation.tests.CrossingWays.Barrier;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays.Boundaries;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays.SelfCrossing;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays.Ways;
@@ -143,6 +142,16 @@ public class CrossingWaysTest {
         testMessage(641, test, "landuse=residential", "amenity=restaurant");
         testMessage(650, test, "waterway=river", "waterway=river");
         testMessage(651, test, "waterway=river", "amenity=restaurant");
+        testMessage(603, test, "barrier=hedge", "barrier=yes");
+        testMessage(661, test, "barrier=hedge", "building=yes");
+        testMessage(662, test, "barrier=hedge", "highway=road");
+        testMessage(663, test, "barrier=hedge", "railway=rail");
+        testMessage(664, test, "barrier=hedge", "waterway=river");
+
+        assertFalse(test.isPrimitiveUsable(newUsableWay("amenity=restaurant")));
+        assertFalse(test.isPrimitiveUsable(TestUtils.newWay("barrier=yes"))); // Unusable (0 node)
+        assertTrue(test.isPrimitiveUsable(newUsableWay("barrier=yes"))); // Usable (2 nodes)
+
     }
 
     /**
@@ -157,18 +166,6 @@ public class CrossingWaysTest {
         assertTrue(test.isPrimitiveUsable(newUsableWay("boundary=administrative"))); // Usable (2 nodes)
         assertFalse(test.isPrimitiveUsable(TestUtils.newRelation("boundary=administrative")));
         assertTrue(test.isPrimitiveUsable(TestUtils.newRelation("boundary=administrative type=multipolygon")));
-    }
-
-    /**
-     * Unit test of {@link CrossingWays.Barrier}
-     */
-    @Test
-    public void testBarrier() {
-        Barrier test = new CrossingWays.Barrier();
-        // isPrimitiveUsable
-        assertFalse(test.isPrimitiveUsable(newUsableWay("amenity=restaurant")));
-        assertFalse(test.isPrimitiveUsable(TestUtils.newWay("barrier=yes"))); // Unusable (0 node)
-        assertTrue(test.isPrimitiveUsable(newUsableWay("barrier=yes"))); // Usable (2 nodes)
     }
 
     /**
