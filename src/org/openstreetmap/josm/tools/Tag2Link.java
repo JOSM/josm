@@ -121,6 +121,10 @@ public final class Tag2Link {
      */
     public static void getLinksForTag(String key, String value, LinkConsumer linkConsumer) {
 
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+
         // Search
         if (key.matches("^(.+[:_])?name([:_].+)?$")) {
             linkConsumer.acceptLink(tr("Search on DuckDuckGo"), "https://duckduckgo.com/?q=" + value);
@@ -150,7 +154,7 @@ public final class Tag2Link {
         }
         if (key.matches("(.*:)?wikidata")) {
             OsmUtils.splitMultipleValues(value)
-                    .forEach(q -> linkConsumer.acceptLink(tr("View Wikidata item {0}", q), "https://www.wikidata.org/wiki/" + q));
+                    .forEach(q -> linkConsumer.acceptLink(tr("View Wikidata item"), "https://www.wikidata.org/wiki/" + q));
         }
         if (key.matches("(.*:)?species")) {
             final String url = "https://species.wikimedia.org/wiki/" + value;

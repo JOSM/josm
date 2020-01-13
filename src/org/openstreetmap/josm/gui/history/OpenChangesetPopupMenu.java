@@ -14,10 +14,10 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 
+import org.openstreetmap.josm.actions.OpenBrowserAction;
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.gui.util.OpenBrowserAction;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**

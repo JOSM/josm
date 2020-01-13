@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.actions.OpenBrowserAction;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -431,7 +431,7 @@ public class ChangesetDialog extends ToggleDialog {
             Set<Changeset> sel = getCurrentChangesetListModel().getSelectedChangesets();
             if (sel.isEmpty())
                 return;
-            if (sel.size() > 10 && !AbstractInfoAction.confirmLaunchMultiple(sel.size()))
+            if (sel.size() > 10 && !OpenBrowserAction.confirmLaunchMultiple(sel.size()))
                 return;
             String baseUrl = Config.getUrls().getBaseBrowseUrl();
             for (Changeset cs: sel) {
