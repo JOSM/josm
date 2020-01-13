@@ -594,7 +594,7 @@ Build-Date: ${build.tstamp}
     <target name="test-perf-hardfail" depends="test-perf" description="Run 'test-perf' target but abort if tests failed">
         <fail message="'test-perf' failed" if="test.performance.failed"/>
     </target>
-    <target name="test-html" depends="test, test-it, test-perf" description="Generate HTML test reports">
+    <target name="test-html" depends="test, test-it, test-perf" description="Generate HTML, CSV and XML test reports">
         <!-- May require additional ant dependencies like ant-trax package -->
         <junitreport todir="${test.dir}/report">
             <fileset dir="${test.dir}/report">
@@ -615,6 +615,8 @@ Build-Date: ${build.tstamp}
                 </sourcefiles>
             </structure>
             <html destdir="${test.dir}/report/jacoco"/>
+            <xml destfile="${test.dir}/report/jacoco.xml"/>
+            <csv destfile="${test.dir}/report/jacoco.csv"/>
         </jacoco:report>
     </target>
     <target name="dist-optimized" depends="dist" unless="isJava11">
