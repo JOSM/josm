@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
+import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -36,6 +38,12 @@ public class ViewportFollowToggleAction extends ToggleAction {
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
         DrawAction.VIEWPORT_FOLLOWING.put(isSelected());
+        if (!getShortcut().getKeyText().isEmpty()) {
+            String msg = isSelected()
+                    ? tr("Viewport following is enabled, press {0} to disable it", getShortcut().getKeyText())
+                    : tr("Viewport following is disabled");
+            GuiHelper.runInEDT(() -> new Notification(msg).show());
+        }
         notifySelectedState();
     }
 
