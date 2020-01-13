@@ -1058,7 +1058,7 @@ public class SyncEditorLayerIndex {
         } else if (!cjok && ceok) {
             myprintln("- No JOSM category: "+getDescription(j));
         } else if (cjok && ceok && !Objects.equals(cj, ce)) {
-            myprintln("+ Different categories: "+getDescription(j));
+            myprintln("* Different categories: "+getDescription(j));
         }
     }
 
