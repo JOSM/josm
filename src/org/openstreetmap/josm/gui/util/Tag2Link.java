@@ -8,15 +8,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonReader;
 import javax.json.JsonValue;
 
-import com.drew.lang.Charsets;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.Logging;
@@ -43,14 +44,22 @@ public final class Tag2Link {
     /**
      * Maps OSM keys to formatter URLs from Wikidata and OSM Sophox where {@code "$1"} has to be replaced by a value.
      */
-    protected static MultiMap<String, String> wikidataRules = new MultiMap<>();
+    static MultiMap<String, String> wikidataRules = new MultiMap<>();
 
     private Tag2Link() {
         // private constructor for utility class
     }
 
+    /**
+     * Represents an operation that accepts a link.
+     */
     @FunctionalInterface
     interface LinkConsumer {
+        /**
+         * Performs the operation on the given arguments.
+         * @param name the name/label of the link
+         * @param url the URL of the link
+         */
         void acceptLink(String name, String url);
     }
 
@@ -77,13 +86,16 @@ public final class Tag2Link {
      */
     private static void fetchRulesViaSPARQL(final String query, final String server) throws IOException {
         final int initialSize = wikidataRules.size();
-        final String sparql = new String(new CachedFile(query).getByteContent(), Charsets.UTF_8);
-        final CachedFile sparqlFile = new CachedFile(server + "?query=" + Utils.encodeUrl(sparql))
-                .setHttpAccept("application/json");
+        final String sparql;
+        try (CachedFile cachedFile = new CachedFile(query)) {
+            sparql = new String(cachedFile.getByteContent(), StandardCharsets.UTF_8);
+        }
 
         final JsonArray rules;
-        try (BufferedReader reader = sparqlFile.getContentReader()) {
-            rules = Json.createReader(reader).read().asJsonObject().getJsonObject("results").getJsonArray("bindings");
+        try (CachedFile cachedFile = new CachedFile(server + "?query=" + Utils.encodeUrl(sparql));
+             BufferedReader reader = cachedFile.setHttpAccept("application/json").getContentReader();
+             JsonReader jsonReader = Json.createReader(reader)) {
+            rules = jsonReader.read().asJsonObject().getJsonObject("results").getJsonArray("bindings");
         }
 
         for (JsonValue rule : rules) {
@@ -105,8 +117,6 @@ public final class Tag2Link {
     }
 
     static void getLinksForTag(String key, String value, LinkConsumer linkConsumer) {
-        Matcher keyMatcher;
-        Matcher valueMatcher;
 
         // Search
         if (key.matches("^(.+[:_])?name([:_].+)?$")) {
@@ -129,8 +139,9 @@ public final class Tag2Link {
         }
 
         // Wikimedia
-        if ((keyMatcher = Pattern.compile("wikipedia(:(?<lang>\\p{Lower}{2,}))?").matcher(key)).matches()
-                && (valueMatcher = Pattern.compile("((?<lang>\\p{Lower}{2,}):)?(?<article>.*)").matcher(value)).matches()) {
+        final Matcher keyMatcher = Pattern.compile("wikipedia(:(?<lang>\\p{Lower}{2,}))?").matcher(key);
+        final Matcher valueMatcher = Pattern.compile("((?<lang>\\p{Lower}{2,}):)?(?<article>.*)").matcher(value);
+        if (keyMatcher.matches() && valueMatcher.matches()) {
             final String lang = Utils.firstNotEmptyString("en", keyMatcher.group("lang"), valueMatcher.group("lang"));
             linkConsumer.acceptLink(tr("View Wikipedia article"), "https://" + lang + ".wikipedia.org/wiki/" + valueMatcher.group("article"));
         }
