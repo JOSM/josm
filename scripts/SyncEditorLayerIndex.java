@@ -992,7 +992,7 @@ public class SyncEditorLayerIndex {
                             if (enums != jnums) {
                                 numtxt += '/' + Integer.toString(jnums+1);
                             }
-                            myprintln("* Different number of points for shape "+numtxt+" ("+ep.size()+" ! = "+jp.size()+")): "
+                            myprintln("* Different number of points for shape "+numtxt+" ("+ep.size()+" ! = "+jp.size()+"): "
                                     + getDescription(j));
                             edone[enums] = true;
                             jdone[jnums] = true;
@@ -1058,7 +1058,7 @@ public class SyncEditorLayerIndex {
         } else if (!cjok && ceok) {
             myprintln("- No JOSM category: "+getDescription(j));
         } else if (cjok && ceok && !Objects.equals(cj, ce)) {
-            myprintln("* Different categories: "+getDescription(j));
+            myprintln("* Different categories ('"+ce+"' != '"+cj+"'): "+getDescription(j));
         }
     }
 
