@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -80,20 +81,21 @@ public class XmlObjectParser implements Iterable<Object> {
 
         @Override
         public void startElement(String ns, String lname, String qname, Attributes a) throws SAXException {
-            if (mapping.containsKey(qname)) {
-                Class<?> klass = mapping.get(qname).klass;
+            final Entry entry = mapping.get(qname);
+            if (entry != null) {
+                Class<?> klass = entry.klass;
                 try {
                     current.push(klass.getConstructor().newInstance());
                 } catch (ReflectiveOperationException e) {
                     throwException(e);
                 }
                 for (int i = 0; i < a.getLength(); ++i) {
-                    setValue(mapping.get(qname), a.getQName(i), a.getValue(i));
+                    setValue(entry, a.getQName(i), a.getValue(i));
                 }
-                if (mapping.get(qname).onStart) {
+                if (entry.onStart) {
                     report();
                 }
-                if (mapping.get(qname).both) {
+                if (entry.both) {
                     queue.add(current.peek());
                 }
             }
@@ -101,10 +103,11 @@ public class XmlObjectParser implements Iterable<Object> {
 
         @Override
         public void endElement(String ns, String lname, String qname) throws SAXException {
-            if (mapping.containsKey(qname) && !mapping.get(qname).onStart) {
+            final Entry entry = mapping.get(qname);
+            if (entry != null && !entry.onStart) {
                 report();
-            } else if (mapping.containsKey(qname) && characters != null && !current.isEmpty()) {
-                setValue(mapping.get(qname), qname, characters.toString().trim());
+            } else if (entry != null && characters != null && !current.isEmpty()) {
+                setValue(entry, qname, characters.toString().trim());
                 characters = new StringBuilder(64);
             }
         }
@@ -203,34 +206,17 @@ public class XmlObjectParser implements Iterable<Object> {
         }
 
         Field getField(String s) {
-            if (fields.containsKey(s)) {
-                return fields.get(s);
-            } else {
-                try {
-                    Field f = klass.getField(s);
-                    fields.put(s, f);
-                    return f;
-                } catch (NoSuchFieldException ex) {
-                    Logging.trace(ex);
-                    fields.put(s, null);
-                    return null;
-                }
-            }
+            return fields.computeIfAbsent(s, ignore -> Arrays.stream(klass.getFields())
+                    .filter(f -> f.getName().equals(s))
+                    .findFirst()
+                    .orElse(null));
         }
 
         Method getMethod(String s) {
-            if (methods.containsKey(s)) {
-                return methods.get(s);
-            } else {
-                for (Method m : klass.getMethods()) {
-                    if (m.getName().equals(s) && m.getParameterTypes().length == 1) {
-                        methods.put(s, m);
-                        return m;
-                    }
-                }
-                methods.put(s, null);
-                return null;
-            }
+            return methods.computeIfAbsent(s, ignore -> Arrays.stream(klass.getMethods())
+                    .filter(m -> m.getName().equals(s) && m.getParameterTypes().length == 1)
+                    .findFirst()
+                    .orElse(null));
         }
     }
 
