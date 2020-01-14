@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -17,6 +18,11 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @since 3837
  */
 public class ViewportFollowToggleAction extends ToggleAction {
+
+    /**
+     * Defines if a notification should be displayed after enabling and disabling
+     */
+    public static final BooleanProperty PROP_NOTIFICATION = new BooleanProperty("viewportfollow.notification", true);
 
     /**
      * Constructs a new {@code ViewportFollowToggleAction}.
@@ -38,7 +44,7 @@ public class ViewportFollowToggleAction extends ToggleAction {
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
         DrawAction.VIEWPORT_FOLLOWING.put(isSelected());
-        if (!getShortcut().getKeyText().isEmpty()) {
+        if (!getShortcut().getKeyText().isEmpty() && PROP_NOTIFICATION.get()) {
             String msg = isSelected()
                     ? tr("Viewport following is enabled, press {0} to disable it", getShortcut().getKeyText())
                     : tr("Viewport following is disabled");
