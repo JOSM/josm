@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -287,7 +287,7 @@ public final class LanguageInfo {
      * @since 8283
      */
     public static List<String> getLanguageCodes(Locale l) {
-        List<String> list = new LinkedList<>();
+        List<String> list = new ArrayList<>(4);
         if (l == null)
             l = Locale.getDefault();
         String lang = l.getLanguage();

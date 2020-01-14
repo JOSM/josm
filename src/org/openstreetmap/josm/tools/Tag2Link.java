@@ -11,6 +11,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.json.Json;
@@ -41,7 +42,11 @@ public final class Tag2Link {
     /**
      * Maps OSM keys to formatter URLs from Wikidata and OSM Sophox where {@code "$1"} has to be replaced by a value.
      */
-    static MultiMap<String, String> wikidataRules = new MultiMap<>();
+    static final MultiMap<String, String> wikidataRules = new MultiMap<>();
+
+    static final String languagePattern = LanguageInfo.getLanguageCodes(null).stream()
+            .map(Pattern::quote)
+            .collect(Collectors.joining("|"));
 
     private Tag2Link() {
         // private constructor for utility class
@@ -126,7 +131,7 @@ public final class Tag2Link {
         }
 
         // Search
-        if (key.matches("^(.+[:_])?name([:_].+)?$")) {
+        if (key.matches("^(.+[:_])?name([:_]" + languagePattern + ")?$")) {
             linkConsumer.acceptLink(tr("Search on DuckDuckGo"), "https://duckduckgo.com/?q=" + value);
         }
 
