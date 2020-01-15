@@ -355,7 +355,7 @@ public class SyncEditorLayerIndex {
     String cdata(String s, boolean escape) {
         if (escape) {
             return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-        } else if (s.matches("[<>&]"))
+        } else if (s.matches(".*[<>&].*"))
             return "<![CDATA["+s+"]]>";
         return s;
     }
