@@ -4600,6 +4600,7 @@
                 <check key="gaelic_games:football" text="Football" />
                 <check key="gaelic_games:camogie" text="Camogie" />
                 <check key="gaelic_games:rounders" text="Rounders" />
+                <check key="gaelic_games:handball" text="Handball" />
             </optional>
         </item> <!-- Gaelic Games -->
         <item name="Rugby League" icon="presets/sport/football.svg" type="node,closedway,multipolygon" preset_name_label="true">
