@@ -94,7 +94,7 @@ public class ChangesetQueryDialog extends JDialog {
         InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
 
         // context sensitive help
-        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetQueryDialog"));
+        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetQuery"));
 
         addWindowListener(new WindowEventHandler());
     }
