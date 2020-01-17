@@ -397,3 +397,16 @@ node[fire_hydrant:pressure="#"] {
   assertNoMatch: "way aeroway=aerodrome icao=EDDB";
   assertMatch: "way aeroway=aerodrome icao=EQQQ";
 }
+
+/* #18573 */
+*[isced:level][isced:level !~ /^(0|1|2|3|4|5|6|7|8)((;|-)(1|2|3|4|5|6|7|8))*$/] {
+  throwWarning: tr("unusual value of {0}", "{0.key}");
+  assertMatch: "node isced:level=secondary";
+  assertMatch: "node isced:level=0,1,2,3";
+  assertMatch: "node isced:level=9";
+  assertMatch: "node isced:level=10";
+  assertNoMatch: "node isced:level=0;1;2;3";
+  assertNoMatch: "node isced:level=0";
+  assertNoMatch: "node isced:level=5";
+  assertNoMatch: "node isced:level=0-3";
+}

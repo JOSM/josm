@@ -467,6 +467,7 @@
      <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry|leisure=track"/>
      <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
      <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
+     <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
   </chunk>
   <chunk id="route_start_stop_roles">
      <role key="start" text="start endpoint" requisite="optional" type="node" />
@@ -3675,6 +3676,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="min_age" />
             <reference ref="max_age" />
+            <combo key="isced:level" text="ISCED level" values="0" />
             <reference ref="link_contact_address" />
             <preset_link preset_name="Building" />
         </item> <!-- Kindergarten -->
@@ -3684,6 +3686,7 @@
             <key key="amenity" value="school" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="min_age" />
+            <multiselect key="isced:level" text="ISCED level" values="0;1;2;3;4" />
             <reference ref="link_contact_address" />
             <preset_link preset_name="Building" />
         </item> <!-- School -->
@@ -3692,6 +3695,7 @@
             <space />
             <key key="amenity" value="university" />
             <reference ref="name_operator_oh_wheelchair" />
+            <multiselect key="isced:level" text="ISCED level" values="4;5;6;7;8" />
             <reference ref="link_contact_address" />
         </item> <!-- University -->
         <item name="College" icon="presets/education/college.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3699,6 +3703,7 @@
             <space />
             <key key="amenity" value="college" />
             <reference ref="name_operator_oh_wheelchair" />
+            <multiselect key="isced:level" text="ISCED level" values="3;4;5;6;7" />
             <reference ref="link_contact_address" />
         </item> <!-- College -->
          <item name="Driving School" icon="presets/education/driving_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -7749,6 +7754,7 @@
                     <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
                     <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
+                    <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
                 </roles>
             </item> <!-- Riding Route -->
             <item name="Piste Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
@@ -7769,6 +7775,7 @@
                     <role key="shortcut" text="shortcut segment" requisite="optional" type="way" />
                     <role key="variant" text="variant segment" requisite="optional" type="way" />
                     <role key="start" text="entry points" requisite="optional" type="node" />
+                    <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
                 </roles>
             </item> <!-- Piste Route -->
             <item name="Ski Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
@@ -7789,6 +7796,7 @@
                     <role key="shortcut" text="shortcut segment" requisite="optional" type="way" />
                     <role key="variant" text="variant segment" requisite="optional" type="way" />
                     <role key="start" text="entry points" requisite="optional" type="node" />
+                    <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
                 </roles>
             </item> <!-- Ski Route -->
             <separator/>
@@ -7806,6 +7814,7 @@
                 <roles>
                     <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="fork" text="fork node for alternative routes" requisite="optional" type="node"/>
+                    <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
                 </roles>
             </item> <!-- Detour Route -->
             <item name="Power Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
@@ -7843,6 +7852,7 @@
                     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="link" text="link segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
+                    <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
                 </roles>
             </item> <!-- Road Route -->
             <separator/>

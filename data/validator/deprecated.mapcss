@@ -1878,3 +1878,11 @@ way[landuse=churchyard] {
   suggestAlternative: "kerb=*";
   group: tr("deprecated tagging");
 }
+
+/* #18571 */
+*[unnamed=yes] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "noname=yes";
+  fixChangeKey: "unnamed => noname";
+  group: tr("deprecated tagging");
+}
