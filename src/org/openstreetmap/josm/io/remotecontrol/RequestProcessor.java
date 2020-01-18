@@ -12,7 +12,6 @@ import java.io.Writer;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -493,7 +492,7 @@ public class RequestProcessor extends Thread {
                 usage.append(" &mdash; <i>").append(sample.getUsage()).append("</i>");
             }
             if (mandatory != null && mandatory.length > 0) {
-                usage.append("<br/>mandatory parameters: ").append(String.join(", ", mandatory))
+                usage.append("<br/>mandatory parameters: ").append(String.join(", ", mandatory));
             }
             if (optional != null && optional.length > 0) {
                 usage.append("<br/>optional parameters: ").append(String.join(", ", optional));
