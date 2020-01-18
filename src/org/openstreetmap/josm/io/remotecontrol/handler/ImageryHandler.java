@@ -130,7 +130,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     public String[] getUsageExamples() {
-        final String types = Utils.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()),
+        final String types = String.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()),
                 ImageryType::getTypeString));
         return new String[] {
             "/imagery?title=osm&type=tms&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",

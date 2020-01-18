@@ -493,10 +493,10 @@ public class RequestProcessor extends Thread {
                 usage.append(" &mdash; <i>").append(sample.getUsage()).append("</i>");
             }
             if (mandatory != null && mandatory.length > 0) {
-                usage.append("<br/>mandatory parameters: ").append(Utils.join(", ", Arrays.asList(mandatory)));
+                usage.append("<br/>mandatory parameters: ").append(String.join(", ", mandatory))
             }
             if (optional != null && optional.length > 0) {
-                usage.append("<br/>optional parameters: ").append(Utils.join(", ", Arrays.asList(optional)));
+                usage.append("<br/>optional parameters: ").append(String.join(", ", optional));
             }
             if (examples != null && examples.length > 0) {
                 usage.append("<br/>examples: ");
