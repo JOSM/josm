@@ -107,7 +107,9 @@ public final class Utils {
      * @param collection The collection
      * @param clazz The class to search for.
      * @return <code>true</code> if that item exists in the collection.
+     * @deprecated use {@link Stream#anyMatch}
      */
+    @Deprecated
     public static <T> boolean exists(Iterable<T> collection, Class<? extends T> clazz) {
         CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");
         return StreamUtils.toStream(collection).anyMatch(clazz::isInstance);
@@ -119,7 +121,9 @@ public final class Utils {
      * @param collection The iterable to search in.
      * @param predicate The predicate to match
      * @return the item or <code>null</code> if there was not match.
+     * @deprecated use {@link Stream#filter} and {@link Stream#findFirst}
      */
+    @Deprecated
     public static <T> T find(Iterable<? extends T> collection, Predicate<? super T> predicate) {
         for (T item : collection) {
             if (predicate.test(item)) {
@@ -135,7 +139,9 @@ public final class Utils {
      * @param collection The iterable to search in.
      * @param clazz The class to search for.
      * @return the item or <code>null</code> if there was not match.
+     * @deprecated use {@link Stream#filter} and {@link Stream#findFirst}
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static <T> T find(Iterable<? extends Object> collection, Class<? extends T> clazz) {
         CheckParameterUtil.ensureParameterNotNull(clazz, "clazz");

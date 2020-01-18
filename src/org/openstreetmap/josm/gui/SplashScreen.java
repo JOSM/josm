@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
@@ -291,14 +292,17 @@ public class SplashScreen extends JFrame implements ChangeListener {
          * @param title the task title
          */
         public void finishTask(String title) {
-            final Task task = Utils.find(tasks, new MeasurableTask(title)::equals);
-            if (task instanceof MeasurableTask) {
+            Optional<Task> taskOptional = tasks.stream()
+                    .filter(new MeasurableTask(title)::equals)
+                    .filter(MeasurableTask.class::isInstance)
+                    .findAny();
+            taskOptional.ifPresent(task -> {
                 ((MeasurableTask) task).finish();
                 if (Logging.isDebugEnabled()) {
                     Logging.debug(tr("{0} completed in {1}", title, ((MeasurableTask) task).duration));
                 }
                 listener.stateChanged(null);
-            }
+            });
         }
 
         @Override

@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -172,9 +173,9 @@ public class RelationChecker extends Test implements TaggingPresetListener {
 
         for (TaggingPreset p : relationpresets) {
             final boolean matches = TaggingPresetItem.matches(Utils.filteredCollection(p.data, KeyedItem.class), n.getKeys());
-            final Roles r = Utils.find(p.data, Roles.class);
-            if (matches && r != null) {
-                for (Role role: r.roles) {
+            final SubclassFilteredCollection<TaggingPresetItem, Roles> roles = Utils.filteredCollection(p.data, Roles.class);
+            if (matches && !roles.isEmpty()) {
+                for (Role role: roles.iterator().next().roles) {
                     allroles.put(role, p.name);
                 }
             }

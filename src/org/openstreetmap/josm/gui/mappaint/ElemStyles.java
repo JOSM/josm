@@ -40,7 +40,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Generates a list of {@link StyleElement}s for a primitive, to
@@ -193,8 +192,13 @@ public class ElemStyles implements PreferenceChangedListener {
                 }
             }
             if (!hasProperLineStyle) {
-                AreaElement area = Utils.find(p.a, AreaElement.class);
-                LineElement line = area == null ? LineElement.UNTAGGED_WAY : LineElement.createSimpleLineStyle(area.color, true);
+                LineElement line = LineElement.UNTAGGED_WAY;
+                for (StyleElement element : p.a) {
+                    if (element instanceof AreaElement) {
+                        line = LineElement.createSimpleLineStyle(((AreaElement) element).color, true);
+                        break;
+                    }
+                }
                 p.a = new StyleElementList(p.a, line);
             }
         }
@@ -287,9 +291,11 @@ public class ElemStyles implements PreferenceChangedListener {
                             p.a = new StyleElementList(p.a, mpLine);
                             break;
                         } else if (wayColor == null && isDefaultLines()) {
-                            AreaElement mpArea = Utils.find(mpElemStyles.a, AreaElement.class);
-                            if (mpArea != null) {
-                                wayColor = mpArea.color;
+                            for (StyleElement element : mpElemStyles.a) {
+                                if (element instanceof AreaElement) {
+                                    wayColor = ((AreaElement) element).color;
+                                    break;
+                                }
                             }
                         }
                     }
