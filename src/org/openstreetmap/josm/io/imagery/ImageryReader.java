@@ -90,7 +90,7 @@ public class ImageryReader implements Closeable {
         Parser parser = new Parser();
         try {
             cachedFile = new CachedFile(source);
-            cachedFile.setParam(Utils.join(",", ImageryInfo.getActiveIds()));
+            cachedFile.setParam(String.join(",", ImageryInfo.getActiveIds()));
             cachedFile.setFastFail(fastFail);
             try (BufferedReader in = cachedFile
                     .setMaxAge(CachedFile.DAYS)

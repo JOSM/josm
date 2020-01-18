@@ -351,9 +351,9 @@ public class WMSImagery {
         return buildRootUrlWithoutCapabilities()
                 + "FORMAT=" + format + ((imageFormatHasTransparency(format) && transparent) ? "&TRANSPARENT=TRUE" : "")
                 + "&VERSION=" + this.version + "&" + SERVICE_WMS + "&REQUEST=GetMap&LAYERS="
-                + selectedLayers.stream().collect(Collectors.joining(","))
+                + String.join(",", selectedLayers)
                 + "&STYLES="
-                + (selectedStyles != null ? Utils.join(",", selectedStyles) : "")
+                + (selectedStyles != null ? String.join(",", selectedStyles) : "")
                 + "&"
                 + (belowWMS130() ? "SRS" : "CRS")
                 + "={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}";

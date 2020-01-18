@@ -16,7 +16,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -64,7 +63,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Preference settings for plugins.
@@ -505,10 +503,10 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             JTextArea textField = new JTextArea(10, 0);
             JCheckBox deleteNotInList = new JCheckBox(tr("Disable all other plugins"));
 
-            JLabel helpLabel = new JLabel("<html>" + Utils.join("<br/>", Arrays.asList(
+            JLabel helpLabel = new JLabel("<html>" + String.join("<br/>",
                     tr("Enter a list of plugins you want to download."),
                     tr("You should add one plugin id per line, version information is ignored."),
-                    tr("You can copy+paste the list of a status report here."))) + "</html>");
+                    tr("You can copy+paste the list of a status report here.")) + "</html>");
 
             if (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(GuiHelper.getFrameForComponent(getTabPane()),
                     new Object[] {helpLabel, new JScrollPane(textField), deleteNotInList},
@@ -558,7 +556,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
 
         private boolean confirmIgnoreNotFound(List<String> notFound) {
-            String list = "<ul><li>" + Utils.join("</li><li>", notFound) + "</li></ul>";
+            String list = "<ul><li>" + String.join("</li><li>", notFound) + "</li></ul>";
             String message = "<html>" + tr("The following plugins were not found. Continue anyway?") + list + "</html>";
             return JOptionPane.showConfirmDialog(GuiHelper.getFrameForComponent(getTabPane()),
                     message) == JOptionPane.OK_OPTION;

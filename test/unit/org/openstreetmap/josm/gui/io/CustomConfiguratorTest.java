@@ -54,7 +54,7 @@ public class CustomConfiguratorTest {
                 "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh.",
                 "Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit."));
         CustomConfigurator.exportPreferencesKeysToFile(tmp.getAbsolutePath(), false, "lorem_ipsum");
-        String xml = Utils.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
+        String xml = String.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
         assertTrue(xml.contains("<preferences operation=\"replace\">"));
         for (String entry : Config.getPref().getList("lorem_ipsum")) {
             assertTrue(entry + "\nnot found in:\n" + xml, xml.contains(entry));
@@ -62,7 +62,7 @@ public class CustomConfiguratorTest {
 
         Config.getPref().putList("test", Arrays.asList("11111111", "2222222", "333333333"));
         CustomConfigurator.exportPreferencesKeysByPatternToFile(tmp.getAbsolutePath(), true, "test");
-        xml = Utils.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
+        xml = String.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
         assertTrue(xml.contains("<preferences operation=\"append\">"));
         for (String entry : Config.getPref().getList("test")) {
             assertTrue(entry + "\nnot found in:\n" + xml, xml.contains(entry));

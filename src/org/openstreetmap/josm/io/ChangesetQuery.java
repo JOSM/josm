@@ -382,7 +382,7 @@ public class ChangesetQuery {
             if (sb.length() > 0) {
                 sb.append('&');
             }
-            sb.append("changesets=").append(Utils.join(",", changesetIds));
+            sb.append("changesets=").append(changesetIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
         }
         return sb.toString();
     }

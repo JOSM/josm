@@ -323,7 +323,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         List<List<String>> content = new ArrayList<>();
         Collection<String> nativeProjections = getNativeProjections();
         if (nativeProjections != null) {
-            content.add(Arrays.asList(tr("Native projections"), Utils.join(", ", getNativeProjections())));
+            content.add(Arrays.asList(tr("Native projections"), String.join(", ", getNativeProjections())));
         }
         EastNorth offset = getDisplaySettings().getDisplacement();
         if (offset.distanceSq(0, 0) > 1e-10) {

@@ -903,7 +903,7 @@ public final class Utils {
     public static String execOutput(List<String> command, long timeout, TimeUnit unit)
             throws IOException, ExecutionException, InterruptedException {
         if (Logging.isDebugEnabled()) {
-            Logging.debug(join(" ", command));
+            Logging.debug(String.join(" ", command));
         }
         Path out = Files.createTempFile("josm_exec_", ".txt");
         Process p = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(out.toFile()).start();
@@ -1118,7 +1118,7 @@ public final class Utils {
         if (s == null) {
             return null;
         } else {
-            return join("\n", limit(Arrays.asList(s.split("\\n")), maxLines, "..."));
+            return String.join("\n", limit(Arrays.asList(s.split("\\n")), maxLines, "..."));
         }
     }
 

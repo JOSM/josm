@@ -488,12 +488,12 @@ public class PlatformHookWindows implements PlatformHook {
                     w.append(key + '=' + value + '\n');
                 }
                 w.append('\n');
+                w.append("sequence.fallback=");
                 String fallback = props.getProperty("sequence.fallback");
                 if (fallback != null) {
-                    w.append("sequence.fallback=" + fallback + ',' + Utils.join(",", allCharSubsets) + '\n');
-                } else {
-                    w.append("sequence.fallback=" + Utils.join(",", allCharSubsets) + '\n');
+                    w.append(fallback).append(",");
                 }
+                w.append(String.join(",", allCharSubsets)).append("\n");
             }
             Utils.updateSystemProperty("sun.awt.fontconfig", fontconfigFile.toString());
         } catch (IOException | InvalidPathException ex) {

@@ -558,7 +558,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 return getMessage(p);
             } else {
                 /* I18N: {0} is the test error message and {1} is an alternative */
-                return tr("{0}, use {1} instead", getMessage(p), Utils.join(tr(" or "), alternatives));
+                return tr("{0}, use {1} instead", getMessage(p), String.join(tr(" or "), alternatives));
             }
         }
 

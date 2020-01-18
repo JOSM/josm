@@ -394,10 +394,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             }
         }
         return new ExtensionFileFilter(
-            Utils.join(",", extensionsPlusArchive),
+            String.join(",", extensionsPlusArchive),
             defaultExtension,
             description + (!extensionsForDescription.isEmpty()
-                ? (" (" + Utils.join(", ", extensionsForDescription) + ')')
+                ? (" (" + String.join(", ", extensionsForDescription) + ')')
                 : "")
             );
     }

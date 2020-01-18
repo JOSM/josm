@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,9 +42,6 @@ import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.PlatformManager;
-import org.openstreetmap.josm.tools.Utils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test projections using reference data from external program.
@@ -322,7 +320,7 @@ public class ProjectionRefTest {
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error: Running external command failed: " + e + "\nCommand was: "+Utils.join(" ", args));
+            System.err.println("Error: Running external command failed: " + e + "\nCommand was: " + String.join(" ", args));
             return null;
         }
         Pattern p = Pattern.compile("(\\S+)\\s+(\\S+)\\s.*");
@@ -340,7 +338,7 @@ public class ProjectionRefTest {
         try {
             return new EastNorth(Double.parseDouble(es), Double.parseDouble(ns));
         } catch (NumberFormatException nfe) {
-            System.err.println("Error: Cannot parse cs2cs output: '" + es + "', '" + ns + "'" + "\nCommand was: "+Utils.join(" ", args));
+            System.err.println("Error: Cannot parse cs2cs output: '" + es + "', '" + ns + "'" + "\nCommand was: " + String.join(" ", args));
             return null;
         }
     }

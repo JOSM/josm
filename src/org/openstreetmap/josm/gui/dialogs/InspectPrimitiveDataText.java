@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -25,7 +24,6 @@ import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator.Hemisphere;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -255,10 +253,10 @@ public class InspectPrimitiveDataText {
      * @return String in the format {@code "1.23456[separator]2.34567"}
      */
     private static String toStringCSV(String separator, ILatLon ll) {
-        return Utils.join(separator, Arrays.asList(
+        return String.join(separator,
                 DecimalDegreesCoordinateFormat.INSTANCE.latToString(ll),
                 DecimalDegreesCoordinateFormat.INSTANCE.lonToString(ll)
-        ));
+        );
     }
 
     @Override

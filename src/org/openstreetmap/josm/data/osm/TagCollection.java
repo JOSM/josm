@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * TagCollection is a collection of tags which can be used to manipulate
@@ -709,7 +708,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
                 return i.getKey();
             }
         }
-        return Utils.join(";", values);
+        return String.join(";", values);
     }
 
     /**

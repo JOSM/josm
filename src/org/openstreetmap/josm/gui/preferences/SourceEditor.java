@@ -1110,7 +1110,7 @@ public abstract class SourceEditor extends JPanel {
                         tr("Cancel and return to the previous dialog"),
                         tr("Ignore warning and install style anyway"));
                     dlg.setContent("<html>" + tr("Some entries have unmet dependencies:") +
-                            "<br>" + Utils.join("<br>", messages) + "</html>");
+                            "<br>" + String.join("<br>", messages) + "</html>");
                     dlg.setIcon(JOptionPane.WARNING_MESSAGE);
                     if (dlg.showDialog().getValue() != 2)
                         return;

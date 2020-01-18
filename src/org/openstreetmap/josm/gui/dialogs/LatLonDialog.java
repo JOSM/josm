@@ -60,23 +60,23 @@ public class LatLonDialog extends ExtendedDialog {
         pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
 
         pnl.add(new HtmlPanel(
-                Utils.join("<br/>", Arrays.asList(
+                String.join("<br/>",
                         tr("Enter the coordinates for the new node."),
                         tr("You can separate longitude and latitude with space, comma or semicolon."),
                         tr("Use positive numbers or N, E characters to indicate North or East cardinal direction."),
                         tr("For South and West cardinal directions you can use either negative numbers or S, W characters."),
                         tr("Coordinate value can be in one of three formats:")
-                      )) +
+                      ) +
                 Utils.joinAsHtmlUnorderedList(Arrays.asList(
                         tr("<i>degrees</i><tt>&deg;</tt>"),
                         tr("<i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt>"),
                         tr("<i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt> <i>seconds</i><tt>&quot</tt>")
                       )) +
-                Utils.join("<br/><br/>", Arrays.asList(
+                String.join("<br/><br/>",
                         tr("Symbols <tt>&deg;</tt>, <tt>&#39;</tt>, <tt>&prime;</tt>, <tt>&quot;</tt>, <tt>&Prime;</tt> are optional."),
                         tr("You can also use the syntax <tt>lat=\"...\" lon=\"...\"</tt> or <tt>lat=''...'' lon=''...''</tt>."),
                         tr("Some examples:")
-                      )) +
+                      ) +
                 "<table><tr><td>" +
                 Utils.joinAsHtmlUnorderedList(Arrays.asList(
                         "49.29918 19.24788",

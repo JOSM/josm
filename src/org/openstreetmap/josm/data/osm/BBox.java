@@ -2,14 +2,12 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A BBox represents an area in lat/lon space. It is used for the quad tree.
@@ -393,10 +391,10 @@ public class BBox {
      * @return A string
      */
     public String toStringCSV(String separator) {
-        return Utils.join(separator, Arrays.asList(
+        return String.join(separator,
                 LatLon.cDdFormatter.format(xmin),
                 LatLon.cDdFormatter.format(ymin),
                 LatLon.cDdFormatter.format(xmax),
-                LatLon.cDdFormatter.format(ymax)));
+                LatLon.cDdFormatter.format(ymax));
     }
 }

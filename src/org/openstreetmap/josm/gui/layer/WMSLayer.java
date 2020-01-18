@@ -33,7 +33,6 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
@@ -181,7 +180,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
     private Projection selectProjection(Projection proj) {
         Logging.info(tr("Reprojecting layer {0} from {1} to {2}. For best image quality and performance,"
                 + " switch to one of the supported projections: {3}",
-                getName(), proj.toCode(), ProjectionRegistry.getProjection().toCode(), Utils.join(", ", getNativeProjections())));
+                getName(), proj.toCode(), ProjectionRegistry.getProjection().toCode(), String.join(", ", getNativeProjections())));
         return proj;
     }
 

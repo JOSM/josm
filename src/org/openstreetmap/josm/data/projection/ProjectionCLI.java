@@ -20,7 +20,6 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.tools.OptionParser;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Command line interface for projecting coordinates.
@@ -70,8 +69,8 @@ public class ProjectionCLI implements CLIModule {
                 otherPositional.add(arg);
             }
         }
-        String fromStr = Utils.join(" ", projParamFrom);
-        String toStr = Utils.join(" ", projParamTo);
+        String fromStr = String.join(" ", projParamFrom);
+        String toStr = String.join(" ", projParamTo);
         try {
             run(fromStr, toStr, otherPositional);
         } catch (ProjectionConfigurationException | IllegalArgumentException | IOException ex) {

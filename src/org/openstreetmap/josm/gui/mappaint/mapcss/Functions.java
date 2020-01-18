@@ -317,11 +317,11 @@ public final class Functions {
      * Assembles the strings to one, where the first entry is used as separator.
      * @param args arguments. First one is used as separator
      * @return assembled string
-     * @see Utils#join
+     * @see String#join
      */
     @NullableArguments
     public static String join(String... args) { // NO_UCD (unused code)
-        return Utils.join(args[0], Arrays.asList(args).subList(1, args.length));
+        return String.join(args[0], Arrays.asList(args).subList(1, args.length));
     }
 
     /**
@@ -329,10 +329,10 @@ public final class Functions {
      * @param separator the separator
      * @param values collection of objects
      * @return assembled string
-     * @see Utils#join
+     * @see String#join
      */
     public static String join_list(final String separator, final List<String> values) { // NO_UCD (unused code)
-        return Utils.join(separator, values);
+        return String.join(separator, values);
     }
 
     /**

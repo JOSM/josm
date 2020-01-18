@@ -853,7 +853,7 @@ public class TagEditHelper {
             Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | KeyEvent.SHIFT_DOWN_MASK).ifPresent(sc ->
                     lines.add(sc.getKeyText() + ' ' + tr("to add first suggestion without closing the dialog"))
             );
-            final JLabel helpLabel = new JLabel("<html>" + Utils.join("<br>", lines) + "</html>");
+            final JLabel helpLabel = new JLabel("<html>" + String.join("<br>", lines) + "</html>");
             helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));
             contentPane.add(helpLabel, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 5, 5));
             super.setContentPane(contentPane);
