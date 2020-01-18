@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.Tag2Link;
  */
 public abstract class AbstractTag2LinkPopupListener implements PopupMenuListener {
 
-    private final Map<String, org.openstreetmap.josm.actions.OpenBrowserAction> browserActions = new HashMap<>();
+    private final Map<String, OpenBrowserAction> browserActions = new HashMap<>();
     private final Collection<Component> itemList = new ArrayList<>();
 
     protected AbstractTag2LinkPopupListener() {
