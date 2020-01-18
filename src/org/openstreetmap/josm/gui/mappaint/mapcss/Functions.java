@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -310,7 +311,10 @@ public final class Functions {
      */
     @NullableArguments
     public static String concat(Object... args) { // NO_UCD (unused code)
-        return Arrays.stream(args).map(String::valueOf).collect(Collectors.joining());
+        return Arrays.stream(args)
+                .filter(Objects::nonNull)
+                .map(String::valueOf)
+                .collect(Collectors.joining());
     }
 
     /**

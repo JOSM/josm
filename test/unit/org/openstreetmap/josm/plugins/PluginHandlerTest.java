@@ -70,9 +70,9 @@ public class PluginHandlerTest {
         final String old = System.getProperty("josm.plugins");
         try {
             final String plugins = Stream.concat(
-                    PluginHandler.DEPRECATED_PLUGINS.stream(),
+                    PluginHandler.DEPRECATED_PLUGINS.stream().map(p -> p.name),
                     PluginHandler.UNMAINTAINED_PLUGINS.stream()
-            ).map(String::valueOf).collect(Collectors.joining(","));
+            ).collect(Collectors.joining(","));
             System.setProperty("josm.plugins", plugins);
             List<PluginInformation> list = PluginHandler.buildListOfPluginsToLoad(null, null);
             assertNotNull(list);

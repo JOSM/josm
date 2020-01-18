@@ -50,7 +50,7 @@ public class MultiMapTest {
         assertEquals(new HashSet<>(Arrays.asList("bar", "baz2")), map.get("foo"));
         map.remove("foo");
         assertEquals(null, map.get("foo"));
-        assertEquals("(alpha->{})", map.toString());
+        assertEquals("(alpha->[])", map.toString());
         map.remove("alpha");
         assertTrue(map.isEmpty());
         map.remove("omega", null);
