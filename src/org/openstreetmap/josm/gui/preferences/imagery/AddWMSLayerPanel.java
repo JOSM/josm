@@ -29,7 +29,6 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An imagery panel used to add WMS imagery sources.
@@ -160,7 +159,8 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                     true // TODO: ask user about transparency
                 )
             );
-            name.setText(wms.buildRootUrlWithoutCapabilities() + ": " + Utils.join(", ", tree.getSelectedLayers()));
+            name.setText(wms.buildRootUrlWithoutCapabilities() + ": " +
+                    tree.getSelectedLayers().stream().map(LayerDetails::toString).collect(Collectors.joining(", ")));
         }
         showBounds.setEnabled(tree.getSelectedLayers().size() == 1);
     }

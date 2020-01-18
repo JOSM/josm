@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
@@ -43,7 +44,6 @@ import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class to manage projections.
@@ -406,9 +406,9 @@ public final class Projections {
     }
 
     private static String listKeys(Map<String, ?> map) {
-        List<String> keys = new ArrayList<>(map.keySet());
-        Collections.sort(keys);
-        return Utils.join(", ", keys);
+        return map.keySet().stream()
+                .sorted()
+                .collect(Collectors.joining(", "));
     }
 
     /**

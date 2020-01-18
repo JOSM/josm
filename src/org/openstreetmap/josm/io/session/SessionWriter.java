@@ -8,12 +8,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -236,19 +237,17 @@ public class SessionWriter {
                 el.setAttribute("opacity", Double.toString(layer.getOpacity()));
             }
             Set<Layer> deps = dependencies.get(layer);
-            if (deps != null && !deps.isEmpty()) {
-                List<Integer> depsInt = new ArrayList<>();
-                for (Layer depLayer : deps) {
-                    int depIndex = layers.indexOf(depLayer);
-                    if (depIndex == -1) {
-                        Logging.warn("Unable to find " + depLayer);
-                    } else {
-                        depsInt.add(depIndex+1);
-                    }
+            final String depends = deps == null ? "" : deps.stream().map(depLayer -> {
+                int depIndex = layers.indexOf(depLayer);
+                if (depIndex == -1) {
+                    Logging.warn("Unable to find " + depLayer);
+                    return null;
+                } else {
+                    return Integer.toString(depIndex+1);
                 }
-                if (!depsInt.isEmpty()) {
-                    el.setAttribute("depends", Utils.join(",", depsInt));
-                }
+            }).filter(Objects::nonNull).collect(Collectors.joining(","));
+            if (!depends.isEmpty()) {
+                el.setAttribute("depends", depends);
             }
             layersEl.appendChild(el);
         }

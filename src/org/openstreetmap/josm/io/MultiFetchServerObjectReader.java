@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
@@ -269,7 +270,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @return the request string
      */
     protected String buildRequestString(final OsmPrimitiveType type, Set<Long> idPackage) {
-        return type.getAPIName() + "s?" + type.getAPIName() + "s=" + Utils.join(",", idPackage);
+        return type.getAPIName() + "s?" + type.getAPIName() + "s=" + idPackage.stream().map(String::valueOf).collect(Collectors.joining(","));
     }
 
     protected void rememberNodesOfIncompleteWaysToLoad(DataSet from) {

@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -782,7 +783,9 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return base + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range) + (conds != null ? Utils.join("", conds) : "")
+            return base
+                    + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range)
+                    + (conds != null ? conds.stream().map(String::valueOf).collect(Collectors.joining("")) : "")
                     + (subpart != null && subpart != Subpart.DEFAULT_SUBPART ? ("::" + subpart) : "");
         }
     }

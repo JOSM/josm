@@ -17,8 +17,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.junit.Assume;
@@ -34,6 +36,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -41,6 +44,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Unit tests of {@link MultiFetchServerObjectReader}.
@@ -48,6 +52,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 public class MultiFetchServerObjectReaderTest {
     private static Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
+
+    /**
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Global timeout applied to all test methods.
@@ -330,5 +341,15 @@ public class MultiFetchServerObjectReaderTest {
         assertFalse(reader.getMissingPrimitives().isEmpty());
         assertEquals(1, reader.getMissingPrimitives().size());
         assertEquals(9999999, reader.getMissingPrimitives().iterator().next().getUniqueId());
+    }
+
+    /**
+     * Test {@link MultiFetchServerObjectReader#buildRequestString}
+     */
+    @Test
+    public void testBuildRequestString() {
+        String requestString = new MultiFetchServerObjectReader()
+                .buildRequestString(OsmPrimitiveType.WAY, new TreeSet<>(Arrays.asList(130L, 123L, 126L)));
+        assertEquals("ways?ways=123,126,130", requestString);
     }
 }

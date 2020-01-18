@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -346,8 +344,7 @@ public final class MapPaintStyles {
         if (entry.url == null && entry instanceof MapCSSStyleSource) {
             return (MapCSSStyleSource) entry;
         }
-        Set<String> mimes = new HashSet<>(Arrays.asList(MapCSSStyleSource.MAPCSS_STYLE_MIME_TYPES.split(", ")));
-        try (CachedFile cf = new CachedFile(entry.url).setHttpAccept(Utils.join(", ", mimes))) {
+        try (CachedFile cf = new CachedFile(entry.url).setHttpAccept(MapCSSStyleSource.MAPCSS_STYLE_MIME_TYPES)) {
             String zipEntryPath = cf.findZipEntryPath("mapcss", "style");
             if (zipEntryPath != null) {
                 entry.isZip = true;

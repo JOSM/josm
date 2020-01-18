@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -218,7 +218,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         txt.setBackground(p.getBackground());
         txt.setColumns(40);
         txt.setRows(1);
-        txt.setText(Utils.join(", ", errs));
+        txt.setText(errs.stream().map(String::valueOf).collect(Collectors.joining(", ")));
         JScrollPane scroll = new JScrollPane(txt);
         p.add(scroll, GBC.eop().weight(1.0, 0.0).fill(GBC.HORIZONTAL));
 

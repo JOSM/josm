@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -810,6 +811,6 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public String toString() {
-        return Utils.join("\n", rules);
+        return rules.stream().map(MapCSSRule::toString).collect(Collectors.joining("\n"));
     }
 }

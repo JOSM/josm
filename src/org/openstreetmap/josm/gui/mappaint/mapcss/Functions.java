@@ -306,11 +306,11 @@ public final class Functions {
      * Assembles the strings to one.
      * @param args arguments
      * @return assembled string
-     * @see Utils#join
+     * @see Collectors#joining
      */
     @NullableArguments
     public static String concat(Object... args) { // NO_UCD (unused code)
-        return Utils.join("", Arrays.asList(args));
+        return Arrays.stream(args).map(String::valueOf).collect(Collectors.joining());
     }
 
     /**

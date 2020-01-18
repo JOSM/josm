@@ -1,16 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * MultiMap - maps keys to multiple values.
@@ -245,10 +244,8 @@ public class MultiMap<A, B> {
 
     @Override
     public String toString() {
-        List<String> entries = new ArrayList<>(map.size());
-        for (Entry<A, Set<B>> entry : map.entrySet()) {
-            entries.add(entry.getKey() + "->{" + Utils.join(",", entry.getValue()) + '}');
-        }
-        return '(' + Utils.join(",", entries) + ')';
+        return map.entrySet().stream()
+                .map(entry -> entry.getKey() + "->" + entry.getValue())
+                .collect(Collectors.joining(",", "(", ")"));
     }
 }

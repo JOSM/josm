@@ -2,19 +2,18 @@
 package org.openstreetmap.josm.gui.dialogs.properties;
 
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Super class of all copy actions from tag table.
@@ -43,21 +42,18 @@ public abstract class AbstractCopyAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         int[] rows = tagTable.getSelectedRows();
-        Set<String> values = new TreeSet<>();
         Collection<? extends Tagged> sel = objectSupplier.get();
         if (rows.length == 0 || sel == null || sel.isEmpty()) return;
 
-        for (int row: rows) {
-            String key = keySupplier.apply(row);
-            for (Tagged p : sel) {
-                Collection<String> s = getString(p, key);
-                if (s != null) {
-                    values.addAll(s);
-                }
-            }
-        }
+        final String values = Arrays.stream(rows)
+                .mapToObj(keySupplier)
+                .flatMap(key -> sel.stream().map(p -> getString(p, key)))
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .sorted()
+                .collect(Collectors.joining("\n"));
         if (!values.isEmpty()) {
-            ClipboardUtils.copyString(Utils.join("\n", values));
+            ClipboardUtils.copyString(values);
         }
     }
 }

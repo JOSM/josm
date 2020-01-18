@@ -9,6 +9,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JScrollPane;
 
@@ -23,8 +25,6 @@ import org.openstreetmap.josm.plugins.PluginHandler.PluginInformationAction;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-import org.openstreetmap.josm.tools.Utils;
-
 import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -69,9 +69,11 @@ public class PluginHandlerTest {
         );
         final String old = System.getProperty("josm.plugins");
         try {
-            System.setProperty("josm.plugins",
-                    Utils.join(",", PluginHandler.DEPRECATED_PLUGINS) + "," +
-                    Utils.join(",", Arrays.asList(PluginHandler.UNMAINTAINED_PLUGINS)));
+            final String plugins = Stream.concat(
+                    PluginHandler.DEPRECATED_PLUGINS.stream(),
+                    PluginHandler.UNMAINTAINED_PLUGINS.stream()
+            ).map(String::valueOf).collect(Collectors.joining(","));
+            System.setProperty("josm.plugins", plugins);
             List<PluginInformation> list = PluginHandler.buildListOfPluginsToLoad(null, null);
             assertNotNull(list);
             assertTrue(list.isEmpty());

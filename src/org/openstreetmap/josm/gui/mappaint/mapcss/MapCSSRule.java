@@ -3,10 +3,10 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A MapCSS rule.
@@ -108,7 +108,9 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
 
     @Override
     public String toString() {
-        return selector + " {\n  " + Utils.join("\n  ", declaration.instructions) + "\n}";
+        return selector + declaration.instructions.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining("\n  ", " {\n  ", "\n}"));
     }
 }
 
