@@ -1886,3 +1886,8 @@ way[landuse=churchyard] {
   fixChangeKey: "unnamed => noname";
   group: tr("deprecated tagging");
 }
+
+node[segregated][segregated!=yes][segregated!=no],
+way[segregated ][segregated!=yes][segregated!=no] {
+  throwWarning: tr("unusual value of {0}", "{0.key}");
+}

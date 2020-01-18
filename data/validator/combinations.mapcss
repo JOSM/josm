@@ -312,6 +312,12 @@ node[marker][substance],
   group: tr("suspicious tag combination");
 }
 
+/* {0.tag} together with {1.tag} and {2.key}, #18471 */
+way[highway=~/^(cycleway|footway|path)$/][segregated=no][sidewalk =~/^(left|right|both)$/] {
+  throwWarning: tr("{0} together with {1} and {2}", "{0.tag}", "{1.tag}", "{2.key}");
+  group: tr("suspicious tag combination");
+}
+
 /* #11127, #13727 */
 way[waterway][bridge=yes][waterway!=weir] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.tag}");
