@@ -60,6 +60,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
@@ -225,7 +226,9 @@ public final class Utils {
      * @param values collection of objects, null is converted to the
      *  empty string
      * @return null if values is null. The joined string otherwise.
+     * @deprecated use {@link String#join} or {@link Collectors#joining}
      */
+    @Deprecated
     public static String join(String sep, Collection<?> values) {
         CheckParameterUtil.ensureParameterNotNull(sep, "sep");
         if (values == null)
