@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -169,13 +170,8 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         Matcher m = PATTERN_PARAM.matcher(url);
         while (m.find()) {
-            boolean isSupportedPattern = false;
-            for (Pattern pattern : ALL_PATTERNS) {
-                if (pattern.matcher(m.group()).matches()) {
-                    isSupportedPattern = true;
-                    break;
-                }
-            }
+            boolean isSupportedPattern = Arrays.stream(ALL_PATTERNS)
+                    .anyMatch(pattern -> pattern.matcher(m.group()).matches());
             if (!isSupportedPattern) {
                 throw new IllegalArgumentException(
                         tr("{0} is not a valid WMS argument. Please check this server URL:\n{1}", m.group(), url));

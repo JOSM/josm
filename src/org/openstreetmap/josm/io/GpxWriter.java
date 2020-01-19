@@ -396,8 +396,10 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 // this might lead to loss of an unknown extension *after* the file was saved as .osm,
                 // but otherwise the file is invalid and can't even be parsed by SAX anymore
                 String k = (e.getPrefix().isEmpty() ? "" : e.getPrefix() + ":") + e.getKey();
-                String attr = String.join(" ", e.getAttributes().entrySet().stream()
-                        .map(a -> encode(a.getKey()) + "=\"" + encode(a.getValue().toString()) + "\"").sorted().collect(Collectors.toList()));
+                String attr = e.getAttributes().entrySet().stream()
+                        .map(a -> encode(a.getKey()) + "=\"" + encode(a.getValue().toString()) + "\"")
+                        .sorted()
+                        .collect(Collectors.joining(" "));
                 if (e.getValue() == null && e.getExtensions().isEmpty()) {
                     inline(k, attr);
                 } else if (e.getExtensions().isEmpty()) {

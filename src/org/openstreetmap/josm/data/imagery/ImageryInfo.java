@@ -411,7 +411,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 }
             }
             if (!i.serverProjections.isEmpty()) {
-                projections = i.serverProjections.stream().collect(Collectors.joining(","));
+                projections = String.join(",", i.serverProjections);
             }
             if (i.noTileHeaders != null && !i.noTileHeaders.isEmpty()) {
                 noTileHeaders = new MultiMap<>(i.noTileHeaders);

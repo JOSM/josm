@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -346,7 +345,7 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     private static List<AutoCompletionItem> setToList(AutoCompletionSet set, Comparator<AutoCompletionItem> comparator) {
-        List<AutoCompletionItem> list = set.stream().collect(Collectors.toList());
+        List<AutoCompletionItem> list = new ArrayList<>(set);
         list.sort(comparator);
         return list;
     }

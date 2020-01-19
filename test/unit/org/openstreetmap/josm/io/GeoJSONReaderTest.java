@@ -128,8 +128,7 @@ public class GeoJSONReaderTest {
                     .getPrimitives(it -> true));
                 assertEquals(24, primitives.size());
                 assertTrue(primitives.stream()
-                        .filter(it -> areEqualNodes(it, new Node(new LatLon(52.5840213, 13.1724145))))
-                        .findAny().isPresent());
+                        .anyMatch(it -> areEqualNodes(it, new Node(new LatLon(52.5840213, 13.1724145)))));
         }
     }
 

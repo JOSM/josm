@@ -91,8 +91,9 @@ public class UrlBasedQueryPanel extends JPanel {
                 + tr("Please enter or paste an URL to retrieve changesets from the OSM API.")
                 + "<p><strong>" + tr("Examples") + "</strong></p>"
                 + "<ul>"
-                + String.join("", getExamples().stream().map(
-                        s -> "<li><a href=\""+s+"\">"+s+"</a></li>").collect(Collectors.toList()))
+                + getExamples().stream()
+                        .map(s -> "<li><a href=\""+s+"\">"+s+"</a></li>")
+                        .collect(Collectors.joining(""))
                 + "</ul>"
                 + tr("Note that changeset queries are currently always submitted to ''{0}'', regardless of the "
                         + "host, port and path of the URL entered below.", apiUrl)
