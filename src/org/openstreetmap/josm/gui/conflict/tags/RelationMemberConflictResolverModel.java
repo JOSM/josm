@@ -114,7 +114,8 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         case 1: /* pos */ return Integer.toString(d.getPos() + 1); // position in "user space" starting at 1
         case 2: /* role */ return d.getRole();
         case 3: /* original */ return d.getOriginalPrimitive();
-        case 4: /* decision */ return d.getDecision();
+        case 4: /* decision keep */ return RelationMemberConflictDecisionType.KEEP.equals(d.getDecision());
+        case 5: /* decision remove */ return RelationMemberConflictDecisionType.REMOVE.equals(d.getDecision());
         }
         return null;
     }
@@ -126,9 +127,17 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         case 2: /* role */
             d.setRole((String) value);
             break;
-        case 4: /* decision */
-            d.decide((RelationMemberConflictDecisionType) value);
-            refresh(false);
+        case 4: /* decision keep */
+            if (Boolean.TRUE.equals(value)) {
+                d.decide(RelationMemberConflictDecisionType.KEEP);
+                refresh(false);
+            }
+            break;
+        case 5: /* decision remove */
+            if (Boolean.TRUE.equals(value)) {
+                d.decide(RelationMemberConflictDecisionType.REMOVE);
+                refresh(false);
+            }
             break;
         default: // Do nothing
         }

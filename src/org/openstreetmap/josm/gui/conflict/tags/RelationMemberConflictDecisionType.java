@@ -3,8 +3,6 @@ package org.openstreetmap.josm.gui.conflict.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.JLabel;
-
 /**
  * This represents the decision a user can make regarding a relation conflict
  */
@@ -25,25 +23,27 @@ public enum RelationMemberConflictDecisionType {
      */
     UNDECIDED;
 
-    /**
-     * Sets the label according to the current decision.
-     * @param decision The decision
-     * @param label The label to set
-     */
-    public static void prepareLabel(RelationMemberConflictDecisionType decision, JLabel label) {
-        switch(decision) {
-        case REMOVE:
-            label.setText(tr("Remove"));
-            label.setToolTipText(tr("Remove this relation member from the relation"));
-            break;
-        case KEEP:
-            label.setText(tr("Keep"));
-            label.setToolTipText(tr("Keep this relation member for the target object"));
-            break;
-        case UNDECIDED:
-            label.setText(tr("Undecided"));
-            label.setToolTipText(tr("Not decided yet"));
-            break;
+    String getLabelText() {
+        switch (this) {
+            case REMOVE:
+                return tr("Remove");
+            case KEEP:
+                return tr("Keep");
+            case UNDECIDED:
+            default:
+                return tr("Undecided");
+        }
+    }
+
+    String getLabelToolTipText() {
+        switch (this) {
+            case REMOVE:
+                return tr("Remove this relation member from the relation");
+            case KEEP:
+                return tr("Keep this relation member for the target object");
+            case UNDECIDED:
+            default:
+                return tr("Not decided yet");
         }
     }
 }

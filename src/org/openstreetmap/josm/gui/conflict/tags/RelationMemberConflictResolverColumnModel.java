@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.conflict.tags;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.util.EnumSet;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -14,6 +15,7 @@ import javax.swing.table.TableColumn;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberTable;
+import org.openstreetmap.josm.gui.history.VersionTable;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 
 /**
@@ -72,8 +74,6 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
     protected final void createColumns() {
 
         AutoCompletingTextField roleEditor = new AutoCompletingTextField(0, false);
-        RelationMemberConflictDecisionRenderer decisionRenderer = new RelationMemberConflictDecisionRenderer();
-        RelationMemberConflictDecisionEditor decisionEditor = new RelationMemberConflictDecisionEditor();
 
         // column 0 - Relation
         TableColumn col = new TableColumn(0);
@@ -113,15 +113,23 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
         col.setPreferredWidth(100);
         addColumn(col);
 
-        // column 4 - New Way
-        col = new TableColumn(4);
-        col.setHeaderValue(tr("Decision"));
-        col.setResizable(true);
-        col.setCellRenderer(decisionRenderer);
-        col.setCellEditor(decisionEditor);
-        col.setWidth(100);
-        col.setPreferredWidth(100);
-        col.setMaxWidth(100);
-        addColumn(col);
+        // column 4 - decision keep
+        // column 5 - decision remove
+        int index = 4;
+        for (RelationMemberConflictDecisionType type : EnumSet.of(
+                RelationMemberConflictDecisionType.KEEP, RelationMemberConflictDecisionType.REMOVE)) {
+            col = new TableColumn(index);
+            col.setHeaderValue(type.getLabelText());
+            col.setResizable(true);
+            final VersionTable.RadioButtonRenderer renderer = new VersionTable.RadioButtonRenderer();
+            renderer.setToolTipText(type.getLabelToolTipText());
+            col.setCellRenderer(renderer);
+            col.setCellEditor(new VersionTable.RadioButtonEditor());
+            col.setWidth(50);
+            col.setPreferredWidth(50);
+            col.setMaxWidth(50);
+            addColumn(col);
+            index++;
+        }
     }
 }
