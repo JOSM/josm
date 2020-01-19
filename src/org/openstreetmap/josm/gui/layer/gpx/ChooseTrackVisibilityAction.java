@@ -150,13 +150,13 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         );
         switch (answer) {
         case 0:
-            tracks.stream().forEach(t -> t.setColor(c.getColor()));
+            tracks.forEach(t -> t.setColor(c.getColor()));
             GPXSettingsPanel.putLayerPrefLocal(layer, "colormode", "0"); //set Colormode to none
             break;
         case 1:
             return;
         case 2:
-            tracks.stream().forEach(t -> t.setColor(null));
+            tracks.forEach(t -> t.setColor(null));
             break;
         }
         table.repaint();

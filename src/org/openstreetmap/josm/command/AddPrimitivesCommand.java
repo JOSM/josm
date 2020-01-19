@@ -96,7 +96,7 @@ public class AddPrimitivesCommand extends Command {
                     newPrimitives.get(i).load(data.get(i));
                 }
             }
-            newPrimitives.stream().forEach(p -> p.setModified(true));
+            newPrimitives.forEach(p -> p.setModified(true));
         } else { // redo
             // When redoing this command, we have to add the same objects, otherwise
             // a subsequent command (e.g. MoveCommand) cannot be redone.

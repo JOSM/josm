@@ -79,7 +79,7 @@ public class PluginServer {
             if (srcJar != null) {
                 try {
                     jarFile = new JarFile(srcJar, false);
-                    jarFile.getManifest().getMainAttributes().entrySet().stream().forEach(
+                    jarFile.getManifest().getMainAttributes().entrySet().forEach(
                         entry -> attrs.put(entry.getKey().toString(), entry.getValue().toString())
                     );
                 } catch (IOException e) {

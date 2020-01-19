@@ -91,7 +91,7 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
         }
         panel.savePreferences();
         MainApplication.getMainPanel().repaint();
-        layers.stream().forEach(Layer::invalidate);
+        layers.forEach(Layer::invalidate);
     }
 
 }

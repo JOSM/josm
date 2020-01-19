@@ -266,7 +266,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     }
 
     private static void setSelection(DataSet ds, Collection<OsmPrimitive> toSet) {
-        toSet.stream().forEach(x -> updatePreservedFlag(x, true));
+        toSet.forEach(x -> updatePreservedFlag(x, true));
         ds.setSelected(toSet);
     }
 
@@ -333,7 +333,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
         DataSet ds = getLayerManager().getEditDataSet();
         if (ds != null) {
-            ds.getSelected().stream().forEach(x -> updatePreservedFlag(x, false));
+            ds.getSelected().forEach(x -> updatePreservedFlag(x, false));
         }
 
         removeHighlighting(null);
@@ -386,8 +386,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
             finishDrawing();
         // Make sure helper line is computed later (causes deadlock in selection event chain otherwise)
         SwingUtilities.invokeLater(() -> {
-            event.getOldSelection().stream().forEach(x -> updatePreservedFlag(x, false));
-            event.getSelection().stream().forEach(x -> updatePreservedFlag(x, true));
+            event.getOldSelection().forEach(x -> updatePreservedFlag(x, false));
+            event.getSelection().forEach(x -> updatePreservedFlag(x, true));
             if (MainApplication.getMap() != null) {
                 computeHelperLine();
                 addHighlighting(event);

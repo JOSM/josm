@@ -266,7 +266,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
      */
     public void remove(Collection<Tag> tags) {
         if (tags != null) {
-            tags.stream().forEach(this::remove);
+            tags.forEach(this::remove);
         }
     }
 
@@ -278,7 +278,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
      */
     public void remove(TagCollection tags) {
         if (tags != null) {
-            tags.tags.keySet().stream().forEach(this::remove);
+            tags.tags.keySet().forEach(this::remove);
         }
     }
 

@@ -83,7 +83,7 @@ public class ValidatorErrorWriter extends XmlWriter {
                         list = new ArrayList<>();
                         map.put(errorClass, list);
                     }
-                    e2.getValue().values().stream().forEach(list::addAll);
+                    e2.getValue().values().forEach(list::addAll);
                 }
             }
             // Write classes

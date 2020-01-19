@@ -84,12 +84,12 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
         );
         switch (answer) {
         case 0:
-            colorLayers.stream().forEach(l -> l.setColor(c.getColor()));
+            colorLayers.forEach(l -> l.setColor(c.getColor()));
             break;
         case 1:
             return;
         case 2:
-            colorLayers.stream().forEach(l -> l.setColor(null));
+            colorLayers.forEach(l -> l.setColor(null));
             break;
         }
         // TODO: Make the layer dialog listen to property change events so that this is not needed any more.

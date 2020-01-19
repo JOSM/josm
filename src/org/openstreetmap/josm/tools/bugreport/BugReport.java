@@ -157,7 +157,7 @@ public final class BugReport implements Serializable {
     }
 
     private void fireChange() {
-        listeners.stream().forEach(l -> l.bugReportChanged(this));
+        listeners.forEach(l -> l.bugReportChanged(this));
     }
 
     /**

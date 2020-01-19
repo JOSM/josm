@@ -178,7 +178,7 @@ public class MapCSSRendererTest {
 
         // load the data
         DataSet dataSet = testConfig.getOsmDataSet();
-        dataSet.allPrimitives().stream().forEach(this::loadPrimitiveStyle);
+        dataSet.allPrimitives().forEach(this::loadPrimitiveStyle);
         dataSet.setSelected(dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("selected")).collect(Collectors.toList()));
 
         ProjectionBounds pb = new ProjectionBounds();
