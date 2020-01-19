@@ -99,18 +99,9 @@ public class SplitWayAction extends JosmAction {
             return;
         }
 
-        // If several ways have been found, remove ways that doesn't have selected
-        // node in the middle
+        // If several ways have been found, remove ways that do not have selected node in the middle
         if (applicableWays.size() > 1) {
-            for (Iterator<Way> it = applicableWays.iterator(); it.hasNext();) {
-                Way w = it.next();
-                for (Node n : selectedNodes) {
-                    if (!w.isInnerNode(n)) {
-                        it.remove();
-                        break;
-                    }
-                }
-            }
+             applicableWays.removeIf(w -> selectedNodes.stream().noneMatch(w::isInnerNode));
         }
 
         if (applicableWays.isEmpty()) {
