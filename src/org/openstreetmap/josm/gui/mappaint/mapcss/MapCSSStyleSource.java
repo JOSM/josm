@@ -48,8 +48,8 @@ import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting;
-import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.StyleSettingGroup;
+import org.openstreetmap.josm.gui.mappaint.StyleSettingFactory;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
@@ -623,20 +623,17 @@ public class MapCSSStyleSource extends StyleSource {
                 continue;
             }
             Cascade c = e.getValue();
-            String type = c.get("type", null, String.class);
-            StyleSetting set = null;
-            if ("boolean".equals(type)) {
-                set = BooleanStyleSetting.create(c, this, e.getKey());
-            } else {
-                Logging.warn("Unknown setting type: {0}", type);
-            }
+            StyleSetting set = StyleSettingFactory.create(c, this, e.getKey());
             if (set != null) {
                 settings.add(set);
                 settingValues.put(e.getKey(), set.getValue());
                 String groupId = c.get("group", null, String.class);
                 if (groupId != null) {
-                    settingGroups.get(settingGroups.keySet().stream().filter(g -> g.key.equals(groupId)).findAny()
-                            .orElseThrow(() -> new IllegalArgumentException("Unknown settings group: " + groupId))).add(set);
+                    final StyleSettingGroup group = settingGroups.keySet().stream()
+                            .filter(g -> g.key.equals(groupId))
+                            .findAny()
+                            .orElseThrow(() -> new IllegalArgumentException("Unknown settings group: " + groupId));
+                    settingGroups.get(group).add(set);
                 }
             }
         }

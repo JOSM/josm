@@ -120,17 +120,17 @@ public class RenderingHelper {
                     throw new IllegalDataException("Failed to load style file. Errors: " + source.getErrors());
                 }
                 for (String key : sd.settings.keySet()) {
-                    StyleSetting.BooleanStyleSetting match = source.settings.stream()
-                            .filter(s -> s instanceof StyleSetting.BooleanStyleSetting)
-                            .map(s -> (StyleSetting.BooleanStyleSetting) s)
-                            .filter(bs -> bs.prefKey.endsWith(":" + key))
+                    StyleSetting.PropertyStyleSetting<?> match = source.settings.stream()
+                            .filter(s -> s instanceof StyleSetting.PropertyStyleSetting)
+                            .map(s -> (StyleSetting.PropertyStyleSetting<?>) s)
+                            .filter(bs -> bs.getKey().endsWith(":" + key))
                             .findFirst().orElse(null);
                     if (match == null) {
                         Logging.warn(tr("Style setting not found: ''{0}''", key));
                     } else {
-                        boolean value = Boolean.parseBoolean(sd.settings.get(key));
+                        String value = sd.settings.get(key);
                         Logging.trace("setting applied: ''{0}:{1}''", key, value);
-                        match.setValue(value);
+                        match.setStringValue(value);
                     }
                 }
                 if (!sd.settings.isEmpty()) {

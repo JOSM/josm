@@ -63,7 +63,7 @@ public class StyleSettingGroupGui implements StyleSettingGui {
         }
         // Add individual settings
         for (StyleSetting s : settings) {
-            StyleSettingGuiFactory.getStyleSettingGui(s).addMenuEntry(submenu);
+            s.getStyleSettingGui().addMenuEntry(submenu);
         }
         menu.add(submenu);
     }

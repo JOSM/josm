@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultButtonModel;
@@ -62,10 +60,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
-import org.openstreetmap.josm.gui.mappaint.StyleSetting;
-import org.openstreetmap.josm.gui.mappaint.StyleSetting.StyleSettingGroup;
 import org.openstreetmap.josm.gui.mappaint.StyleSettingGroupGui;
-import org.openstreetmap.josm.gui.mappaint.StyleSettingGuiFactory;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -693,16 +688,11 @@ public class MapPaintDialog extends ToggleDialog {
                 setMenu.setEnabled(false);
             } else {
                 // Add settings groups
-                for (Entry<StyleSettingGroup, List<StyleSetting>> e : style.settingGroups.entrySet()) {
-                    new StyleSettingGroupGui(e.getKey(), e.getValue()).addMenuEntry(setMenu);
-                }
+                style.settingGroups.forEach((group, settings) -> new StyleSettingGroupGui(group, settings).addMenuEntry(setMenu));
                 // Add settings not in groups
-                final List<StyleSetting> allStylesInGroups = style.settingGroups.values().stream()
-                        .flatMap(List<StyleSetting>::stream).collect(Collectors.toList());
-                for (StyleSetting s : style.settings.stream()
-                        .filter(s -> !allStylesInGroups.contains(s)).collect(Collectors.toList())) {
-                    StyleSettingGuiFactory.getStyleSettingGui(s).addMenuEntry(setMenu);
-                }
+                style.settings.stream()
+                        .filter(s -> style.settingGroups.values().stream().flatMap(List::stream).noneMatch(s::equals))
+                        .forEach(s -> s.getStyleSettingGui().addMenuEntry(setMenu));
             }
 
             addSeparator();

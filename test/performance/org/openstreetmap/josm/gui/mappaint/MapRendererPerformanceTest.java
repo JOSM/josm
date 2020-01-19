@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -46,8 +47,6 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.tools.Logging;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Performance test of map renderer.
@@ -116,7 +115,7 @@ public class MapRendererPerformanceTest {
         Assert.assertEquals(Feature.values().length, filterStyle.settings.size());
         for (StyleSetting set : filterStyle.settings) {
             BooleanStyleSetting bset = (BooleanStyleSetting) set;
-            String prefKey = bset.prefKey;
+            String prefKey = bset.getKey();
             boolean found = false;
             for (Feature f : Feature.values()) {
                 if (prefKey.endsWith(":" + f.label() + "_off")) {
@@ -142,7 +141,7 @@ public class MapRendererPerformanceTest {
         for (StyleSetting set : defaultStyle.settings) {
             if (set instanceof BooleanStyleSetting) {
                 BooleanStyleSetting bset = (BooleanStyleSetting) set;
-                if (bset.prefKey.endsWith(":hide_icons")) {
+                if (bset.getKey().endsWith(":hide_icons")) {
                     hideIconsSetting = bset;
                 }
             }

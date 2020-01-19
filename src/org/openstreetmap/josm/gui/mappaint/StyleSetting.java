@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import javax.swing.Icon;
 
-import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
@@ -38,6 +38,15 @@ public interface StyleSetting {
      * @return The value the user selected
      */
     Object getValue();
+
+    /**
+     * Create a matching {@link StyleSettingGui} instances for a given {@link StyleSetting} object.
+     * @return matching {@code StyleSettingGui}
+     * @throws UnsupportedOperationException when class of {@link StyleSetting} is not supported
+     */
+    default StyleSettingGui getStyleSettingGui() {
+        throw new UnsupportedOperationException(getClass() + " not supported");
+    }
 
     /**
      * Superclass of style settings and groups.
@@ -83,7 +92,7 @@ public interface StyleSetting {
         /** group icon (optional) */
         public final Icon icon;
 
-        public StyleSettingGroup(StyleSource parentStyle, String label, String key, Icon icon) {
+        StyleSettingGroup(StyleSource parentStyle, String label, String key, Icon icon) {
             super(parentStyle, label);
             this.key = Objects.requireNonNull(key);
             this.icon = icon;
@@ -99,7 +108,7 @@ public interface StyleSetting {
         public static StyleSettingGroup create(Cascade c, StyleSource parentStyle, String key) {
             String label = c.get("label", null, String.class);
             if (label == null) {
-                Logging.warn("property 'label' required for boolean style setting");
+                Logging.warn("property 'label' required for StyleSettingGroup");
                 return null;
             }
             Icon icon = Optional.ofNullable(c.get("icon", null, String.class))
@@ -108,58 +117,62 @@ public interface StyleSetting {
         }
     }
 
-    /**
-     * A style setting for boolean value (yes / no).
-     */
-    class BooleanStyleSetting extends LabeledStyleSetting implements StyleSetting {
-        public final String prefKey;
-        public final boolean def;
+    class PropertyStyleSetting<T> extends LabeledStyleSetting implements StyleSetting {
+        private final Class<T> type;
+        private final AbstractToStringProperty<T> property;
 
-        public BooleanStyleSetting(StyleSource parentStyle, String prefKey, String label, boolean def) {
+        PropertyStyleSetting(StyleSource parentStyle, String label, Class<T> type, AbstractToStringProperty<T> property) {
             super(parentStyle, label);
-            this.prefKey = Objects.requireNonNull(prefKey);
-            this.def = def;
+            this.type = type;
+            this.property = property;
         }
 
         /**
-         * Creates a new {@code BooleanStyleSetting}.
-         * @param c cascade
-         * @param parentStyle parent style source
-         * @param key setting identifier
-         * @return newly created {@code BooleanStyleSetting}
+         * Replies the property key.
+         * @return The property key
          */
-        public static BooleanStyleSetting create(Cascade c, StyleSource parentStyle, String key) {
-            String label = c.get("label", null, String.class);
-            if (label == null) {
-                Logging.warn("property 'label' required for boolean style setting");
-                return null;
-            }
-            Boolean def = c.get("default", null, Boolean.class);
-            if (def == null) {
-                Logging.warn("property 'default' required for boolean style setting");
-                return null;
-            }
-            String prefKey = parentStyle.url + ":boolean:" + key;
-            return new BooleanStyleSetting(parentStyle, prefKey, label, def);
+        public String getKey() {
+            return property.getKey();
         }
 
         @Override
-        public Object getValue() {
-            String val = Config.getPref().get(prefKey, null);
-            if (val == null) return def;
-            return Boolean.valueOf(val);
+        public T getValue() {
+            return property.get();
         }
 
-        public void setValue(Object o) {
-            if (!(o instanceof Boolean)) {
-                throw new IllegalArgumentException();
-            }
-            boolean b = (Boolean) o;
-            if (b == def) {
-                Config.getPref().put(prefKey, null);
-            } else {
-                Config.getPref().putBoolean(prefKey, b);
-            }
+        /**
+         * Sets this property to the specified value.
+         * @param value The new value of this property
+         */
+        public void setValue(T value) {
+            property.put(value);
+        }
+
+        /**
+         * Sets this property to the specified string value.
+         * @param value The new string value of this property
+         */
+        public void setStringValue(String value) {
+            setValue(Cascade.convertTo(value, type));
+        }
+
+        @Override
+        public StyleSettingGui getStyleSettingGui() {
+            return new PropertyStyleSettingGui<>(this);
+        }
+    }
+
+    /**
+     * A style setting for boolean value (yes / no).
+     */
+    class BooleanStyleSetting extends PropertyStyleSetting<Boolean> {
+        BooleanStyleSetting(StyleSource parentStyle, String label, AbstractToStringProperty<Boolean> property) {
+            super(parentStyle, label, Boolean.class, property);
+        }
+
+        @Override
+        public StyleSettingGui getStyleSettingGui() {
+            return new BooleanStyleSettingGui(this);
         }
     }
 }
