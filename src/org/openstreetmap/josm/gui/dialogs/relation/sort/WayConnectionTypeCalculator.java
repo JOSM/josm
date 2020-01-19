@@ -7,12 +7,14 @@ import static org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
+import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -42,11 +44,9 @@ public class WayConnectionTypeCalculator {
      */
     public List<WayConnectionType> updateLinks(Relation r, List<RelationMember> members) {
         this.members = members;
-        final List<WayConnectionType> con = new ArrayList<>();
-
-        for (int i = 0; i < members.size(); ++i) {
-            con.add(null);
-        }
+        final List<WayConnectionType> con = members.stream()
+                .map(ignore -> (WayConnectionType) null)
+                .collect(Collectors.toList());
 
         firstGroupIdx = 0;
 
@@ -64,14 +64,38 @@ public class WayConnectionTypeCalculator {
                     .put("members", members).put("lastWct", lastWct).put("firstGroupIdx", firstGroupIdx);
             }
         }
-        makeLoopIfNeeded(con, members.size()-1);
+        if (!isSuperRoute(r)) {
+            makeLoopIfNeeded(con, members.size() - 1);
+        }
 
         return con;
     }
 
     private WayConnectionType updateLinksFor(Relation r, List<WayConnectionType> con, WayConnectionType lastWct, int i) {
         final RelationMember m = members.get(i);
-        if (isNoHandleableWay(m)) {
+        if (isSuperRoute(r)) {
+            final WayConnectionType wct;
+            if (!members.get(i).isRelation()) {
+                return new WayConnectionType(true);
+            } else if (i == 0) {
+                return new WayConnectionType(false);
+            } else {
+                final List<RelationMember> previousMembers = members.get(i - 1).getRelation().getMembers();
+                final Way previousLastWay = StreamUtils.reversedStream(previousMembers)
+                        .filter(x -> x.isWay() && !x.hasRole())
+                        .map(RelationMember::getWay)
+                        .findFirst().orElse(null);
+                final Way currentFirstWay = m.getRelation().getMembers().stream()
+                        .filter(x -> x.isWay() && !x.hasRole())
+                        .map(RelationMember::getWay)
+                        .findFirst().orElse(null);
+                final boolean isConnected = isConnected(previousLastWay, currentFirstWay);
+                wct = new WayConnectionType(false);
+                lastWct.linkNext = wct.linkPrev = isConnected;
+            }
+            con.set(i, wct);
+            return wct;
+        } else if (isNoHandleableWay(m)) {
             if (i > 0) {
                 makeLoopIfNeeded(con, i-1);
             }
@@ -138,6 +162,10 @@ public class WayConnectionTypeCalculator {
         }
         con.set(i, wct);
         return wct;
+    }
+
+    private boolean isSuperRoute(Relation r) {
+        return r != null && r.hasTag("type", "superroute");
     }
 
     private static boolean isOnewayIgnored(Relation r) {
@@ -370,5 +398,10 @@ public class WayConnectionTypeCalculator {
      */
     public void clear() {
         members = null;
+    }
+
+    private boolean isConnected(Way way1, Way way2) {
+        return way1 != null && way2 != null && way1.isUsable() && way2.isUsable()
+                && (way1.isFirstLastNode(way2.firstNode()) || way1.isFirstLastNode(way2.lastNode()));
     }
 }

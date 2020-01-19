@@ -79,16 +79,16 @@ public class WayConnectionType {
      * @param invalid {@code true} if the instance is invalid (i.e does not concern a complete way)
      */
     public WayConnectionType(boolean invalid) {
+        this.linkPrev = false;
+        this.linkNext = false;
+        this.isLoop = false;
+        this.direction = NONE;
         this.invalid = invalid;
     }
 
     /** construct invalid instance */
     public WayConnectionType() {
-        this.linkPrev = false;
-        this.linkNext = false;
-        this.isLoop = false;
-        this.direction = NONE;
-        invalid = true;
+        this(true);
     }
 
     /**

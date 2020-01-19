@@ -1,8 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.stream.Collector;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -28,6 +31,19 @@ public final class StreamUtils {
      */
     public static <T> Stream<T> toStream(Iterable<T> iterable) {
         return StreamSupport.stream(iterable.spliterator(), false);
+    }
+
+    /**
+     * Creqates a stream iterating the list in reversed order
+     * @param list the list to iterate over
+     * @param <T> the type of elements in the list
+     * @return a stream iterating the list in reversed order
+     * @since 15732
+     */
+    public static <T> Stream<T> reversedStream(List<T> list) {
+        Objects.requireNonNull(list, "list");
+        final int size = list.size();
+        return IntStream.range(0, size).mapToObj(i -> list.get(size - i - 1));
     }
 
     /**

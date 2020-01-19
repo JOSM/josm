@@ -5,6 +5,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
@@ -27,5 +32,14 @@ public class StreamUtilsTest {
     @Test
     public void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(StreamUtils.class);
+    }
+
+    /**
+     * Tests {@link StreamUtils#reversedStream(java.util.List)}
+     */
+    @Test
+    public void testReverseStream() {
+        assertEquals("baz/bar/foo",
+                StreamUtils.reversedStream(Arrays.asList("foo", "bar", "baz")).collect(Collectors.joining("/")));
     }
 }
