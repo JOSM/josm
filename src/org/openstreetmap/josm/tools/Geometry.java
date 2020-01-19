@@ -1042,14 +1042,33 @@ public final class Geometry {
 
     /**
      * Find all primitives in the given collection which are inside the given polygon.
+     *
+     * @param primitives the primitives
+     * @param polygon the closed way or multipolygon relation
+     * @return a new list containing the found primitives, empty if polygon is invalid or nothing was found.
+     * @see Geometry#filterInsidePolygon
+     * @see Geometry#filterInsideMultipolygon
+     * @since 15730
+     */
+    public static List<IPrimitive> filterInsideAnyPolygon(Collection<IPrimitive> primitives, IPrimitive polygon) {
+        if (polygon instanceof IWay<?>) {
+            return filterInsidePolygon(primitives, (IWay<?>) polygon);
+        } else if (polygon instanceof Relation && polygon.isMultipolygon()) {
+            return filterInsideMultipolygon(primitives, (Relation) polygon);
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Find all primitives in the given collection which are inside the given polygon.
      * Unclosed ways and multipolygon relations with unclosed outer rings are ignored.
+     *
      * @param primitives the primitives
      * @param polygon the polygon
      * @return a new list containing the found primitives, empty if polygon is invalid or nothing was found.
-     * @since 15069
+     * @since 15069 (for {@link List} of {@code primitives}, 15730 for a {@link Collection} of {@code primitives})
      */
-
-    public static List<IPrimitive> filterInsidePolygon(List<IPrimitive> primitives, IWay<?> polygon) {
+    public static List<IPrimitive> filterInsidePolygon(Collection<IPrimitive> primitives, IWay<?> polygon) {
         List<IPrimitive> res = new ArrayList<>();
         if (!polygon.isClosed() || polygon.getNodesCount() <= 3)
             return res;

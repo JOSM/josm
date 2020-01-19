@@ -342,15 +342,8 @@ public interface Selector {
             void execGeometryTests() {
                 if (toCheck == null || toCheck.isEmpty())
                     return;
-
-                if (e.osm instanceof IWay) {
-                    for (IPrimitive p : Geometry.filterInsidePolygon(toCheck, (IWay<?>) e.osm)) {
-                        addToChildren(e, p);
-                    }
-                } else if (e.osm instanceof Relation && e.osm.isMultipolygon()) {
-                    for (IPrimitive p : Geometry.filterInsideMultipolygon(toCheck, (Relation) e.osm)) {
-                        addToChildren(e, p);
-                    }
+                for (IPrimitive p : Geometry.filterInsideAnyPolygon(toCheck, e.osm)) {
+                    addToChildren(e, p);
                 }
             }
         }
