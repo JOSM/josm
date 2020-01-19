@@ -66,6 +66,7 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
     /** if layer should show errors on tiles */
     private boolean showErrors;
 
+    private OffsetBookmark previousOffsetBookmark;
     private OffsetBookmark offsetBookmark;
     /**
      * the displacement (basically caches the displacement from the offsetBookmark
@@ -215,6 +216,9 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
      * @param offsetBookmark the offset bookmark, may be null
      */
     public void setOffsetBookmark(OffsetBookmark offsetBookmark) {
+        if (this.offsetBookmark != null) {
+            this.previousOffsetBookmark = this.offsetBookmark;
+        }
         this.offsetBookmark = offsetBookmark;
         if (offsetBookmark == null) {
             setDisplacement(EastNorth.ZERO);
@@ -229,6 +233,14 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
      */
     public OffsetBookmark getOffsetBookmark() {
         return this.offsetBookmark;
+    }
+
+    /**
+     * Gets the offset bookmark previously in use.
+     * @return the previously used offset bookmark, may be null
+     */
+    public OffsetBookmark getPreviousOffsetBookmark() {
+        return previousOffsetBookmark;
     }
 
     private void setDisplacement(EastNorth displacement) {

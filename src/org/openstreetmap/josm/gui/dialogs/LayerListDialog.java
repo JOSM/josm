@@ -654,9 +654,11 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             if (layer instanceof AbstractTileSourceLayer<?>) {
                 final TileSourceDisplaySettings displaySettings = ((AbstractTileSourceLayer<?>) layer).getDisplaySettings();
                 if (EastNorth.ZERO.equals(displaySettings.getDisplacement())) {
+                    final boolean hasPreviousOffset = displaySettings.getPreviousOffsetBookmark() != null;
                     cb.setSelected(false);
-                    cb.setEnabled(false); // TODO: allow reselecting checkbox and thereby setting the old offset again
-                    cb.setToolTipText(tr("layer is without a user-defined offset"));
+                    cb.setEnabled(hasPreviousOffset);
+                    cb.setToolTipText(tr("layer is without a user-defined offset") +
+                            (hasPreviousOffset ? " " + tr("(click to activate previous offset)") : ""));
                 } else {
                     cb.setSelected(true);
                     cb.setEnabled(true);
@@ -1125,11 +1127,13 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                 case 2:
                     // reset layer offset
                     if (l instanceof AbstractTileSourceLayer<?>) {
-                        AbstractTileSourceLayer<?> abstractTileSourceLayer = (AbstractTileSourceLayer<?>) l;
-                        OffsetBookmark offsetBookmark = abstractTileSourceLayer.getDisplaySettings().getOffsetBookmark();
+                        final TileSourceDisplaySettings displaySettings = ((AbstractTileSourceLayer<?>) l).getDisplaySettings();
+                        final OffsetBookmark offsetBookmark = displaySettings.getOffsetBookmark();
                         if (offsetBookmark != null) {
-                            abstractTileSourceLayer.getDisplaySettings().setOffsetBookmark(null);
+                            displaySettings.setOffsetBookmark(null);
                             MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
+                        } else {
+                            displaySettings.setOffsetBookmark(displaySettings.getPreviousOffsetBookmark());
                         }
                     }
                     break;
