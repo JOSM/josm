@@ -80,6 +80,7 @@ public class LafPreference implements SubPreferenceSetting {
     private JosmComboBox<LookAndFeelInfo> lafCombo;
     VerticallyScrollablePanel panel;
     private final JCheckBox showSplashScreen = new JCheckBox(tr("Show splash screen at startup"));
+    private final JCheckBox showUser = new JCheckBox(tr("Show user name in title"));
     private final JCheckBox showID = new JCheckBox(tr("Show object ID in selection lists"));
     private final JCheckBox showVersion = new JCheckBox(tr("Show object version in selection lists"));
     private final JCheckBox showCoor = new JCheckBox(tr("Show node coordinates in selection lists"));
@@ -129,6 +130,10 @@ public class LafPreference implements SubPreferenceSetting {
         showSplashScreen.setSelected(Config.getPref().getBoolean("draw.splashscreen", true));
         panel.add(showSplashScreen, GBC.eop().insets(20, 0, 0, 0));
 
+        // Show user name in title
+        showUser.setToolTipText(tr("Show user name in title"));
+        showUser.setSelected(Config.getPref().getBoolean("draw.show-user", false));
+
         // Show ID in selection
         showID.setToolTipText(tr("Show object ID in selection lists"));
         showID.setSelected(Config.getPref().getBoolean("osm-primitives.showid", false));
@@ -150,6 +155,7 @@ public class LafPreference implements SubPreferenceSetting {
         modeless.setSelected(MapFrame.MODELESS.get());
         ExpertToggleAction.addVisibilitySwitcher(modeless);
 
+        panel.add(showUser, GBC.eop().insets(20, 0, 0, 0));
         panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
         panel.add(showVersion, GBC.eop().insets(20, 0, 0, 0));
         panel.add(showCoor, GBC.eop().insets(20, 0, 0, 0));
@@ -215,6 +221,7 @@ public class LafPreference implements SubPreferenceSetting {
     public boolean ok() {
         boolean mod = false;
         Config.getPref().putBoolean("draw.splashscreen", showSplashScreen.isSelected());
+        Config.getPref().putBoolean("draw.show-user", showUser.isSelected());
         Config.getPref().putBoolean("osm-primitives.showid", showID.isSelected());
         Config.getPref().putBoolean("osm-primitives.showversion", showVersion.isSelected());
         Config.getPref().putBoolean("osm-primitives.showcoor", showCoor.isSelected());

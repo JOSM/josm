@@ -21,6 +21,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -56,6 +57,7 @@ import org.openstreetmap.josm.tools.Logging;
 public final class UserIdentityManager implements PreferenceChangedListener {
 
     private static UserIdentityManager instance;
+    private final ListenerList<UserIdentityListener> listeners = ListenerList.create();
 
     /**
      * Replies the unique instance of the JOSM user identity manager
@@ -96,6 +98,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
     public void setAnonymous() {
         userName = null;
         userInfo = null;
+        fireUserIdentityChanged();
     }
 
     /**
@@ -114,6 +117,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
                     MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
         this.userName = trimmedUserName;
         userInfo = null;
+        fireUserIdentityChanged();
     }
 
     /**
@@ -134,6 +138,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
         CheckParameterUtil.ensureParameterNotNull(userInfo, "userInfo");
         this.userName = trimmedUserName;
         this.userInfo = userInfo;
+        fireUserIdentityChanged();
     }
 
     /**
@@ -208,14 +213,14 @@ public final class UserIdentityManager implements PreferenceChangedListener {
      * @see #initFromOAuth
      */
     public void initFromPreferences() {
-        String userName = CredentialsManager.getInstance().getUsername();
+        String credentialsUserName = CredentialsManager.getInstance().getUsername();
         if (isAnonymous()) {
-            if (userName != null && !userName.trim().isEmpty()) {
-                setPartiallyIdentified(userName);
+            if (credentialsUserName != null && !credentialsUserName.trim().isEmpty()) {
+                setPartiallyIdentified(credentialsUserName);
             }
         } else {
-            if (userName != null && !userName.equals(this.userName)) {
-                setPartiallyIdentified(userName);
+            if (credentialsUserName != null && !credentialsUserName.equals(this.userName)) {
+                setPartiallyIdentified(credentialsUserName);
             }
             // else: same name in the preferences as JOSM already knows about.
             // keep the state, be it partially or fully identified
@@ -310,5 +315,28 @@ public final class UserIdentityManager implements PreferenceChangedListener {
                 getInstance().initFromOAuth();
             }
         }
+    }
+
+    /**
+     * This listener is notified whenever the osm user is changed.
+     */
+    @FunctionalInterface
+    public interface UserIdentityListener {
+        /**
+         * The current user was changed.
+         */
+        void userIdentityChanged();
+    }
+
+    /**
+     * Add a listener that listens to changes of the current user.
+     * @param listener The listener
+     */
+    public void addListener(UserIdentityListener listener) {
+        listeners.addListener(listener);
+    }
+
+    private void fireUserIdentityChanged() {
+        listeners.fireEvent(UserIdentityListener::userIdentityChanged);
     }
 }

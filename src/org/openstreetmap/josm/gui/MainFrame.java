@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -102,7 +103,8 @@ public class MainFrame extends JFrame {
         // This listener is never removed, since the main frame exists forever.
         MainApplication.getLayerManager().addActiveLayerChangeListener(e -> refreshTitle());
         MainApplication.getLayerManager().addAndFireLayerChangeListener(new ManageLayerListeners());
-
+        UserIdentityManager.getInstance().addListener(this::refreshTitle);
+        Config.getPref().addKeyPreferenceChangeListener("draw.show-user", e -> refreshTitle());
         refreshTitle();
 
         getContentPane().add(panel, BorderLayout.CENTER);
@@ -165,7 +167,12 @@ public class MainFrame extends JFrame {
         OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         boolean dirty = editLayer != null && (editLayer.requiresSaveToFile()
                 || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
-        setTitle((dirty ? "* " : "") + tr("Java OpenStreetMap Editor"));
+        String userInfo = UserIdentityManager.getInstance().getUserName();
+        if (userInfo != null && Config.getPref().getBoolean("draw.show-user", false))
+            userInfo = tr(" ({0})", "@" + userInfo);
+        else
+            userInfo = "";
+        setTitle((dirty ? "* " : "") + tr("Java OpenStreetMap Editor") + userInfo);
         getRootPane().putClientProperty("Window.documentModified", dirty);
     }
 
