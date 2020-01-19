@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
@@ -102,6 +103,16 @@ public class SplitWayAction extends JosmAction {
         // If several ways have been found, remove ways that do not have selected node in the middle
         if (applicableWays.size() > 1) {
              applicableWays.removeIf(w -> selectedNodes.stream().noneMatch(w::isInnerNode));
+        }
+
+        // Smart way selection: if only one highway/railway/waterway is applicable, use that one
+        if (applicableWays.size() > 1) {
+            final List<Way> mainWays = applicableWays.stream()
+                    .filter(w -> w.hasKey("highway", "railway", "waterway"))
+                    .collect(Collectors.toList());
+            if (mainWays.size() == 1) {
+                applicableWays = mainWays;
+            }
         }
 
         if (applicableWays.isEmpty()) {

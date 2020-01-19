@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,8 +20,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Unit tests for class {@link SplitWayAction}.
  */
@@ -32,6 +31,13 @@ public final class SplitWayActionTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
+    private final DataSet dataSet = new DataSet();
+
+    private Node addNode(int east, int north) {
+        final Node node = new Node(new EastNorth(east, north));
+        dataSet.addPrimitive(node);
+        return node;
+    }
 
     /**
      * Test case: When node is share by multiple ways, split selected way.
@@ -39,22 +45,13 @@ public final class SplitWayActionTest {
      */
     @Test
     public void testTicket11184() {
-        DataSet dataSet = new DataSet();
-
-        Node n1 = new Node(new EastNorth(0, 0));
-        Node n2 = new Node(new EastNorth(-1, 1));
-        Node n3 = new Node(new EastNorth(1, 1));
-        Node n4 = new Node(new EastNorth(-1, -1));
-        Node n5 = new Node(new EastNorth(1, -1));
-        Node n6 = new Node(new EastNorth(-1, 0));
-        Node n7 = new Node(new EastNorth(1, 0));
-        dataSet.addPrimitive(n1);
-        dataSet.addPrimitive(n2);
-        dataSet.addPrimitive(n3);
-        dataSet.addPrimitive(n4);
-        dataSet.addPrimitive(n5);
-        dataSet.addPrimitive(n6);
-        dataSet.addPrimitive(n7);
+        Node n1 = addNode(0, 0);
+        Node n2 = addNode(-1, 1);
+        Node n3 = addNode(1, 1);
+        Node n4 = addNode(-1, -1);
+        Node n5 = addNode(1, -1);
+        Node n6 = addNode(-1, 0);
+        Node n7 = addNode(1, 0);
 
         Way w1 = new Way();
         Node[] w1NodesArray = new Node[] {n6, n1, n7};
@@ -95,7 +92,7 @@ public final class SplitWayActionTest {
         Way from = TestUtils.newWay("highway=residential", new Node(new LatLon(0.0, 0.0)),
                 new Node(new LatLon(0.00033, 0.00033)), new Node(new LatLon(0.00066, 0.00066)),
                 new Node(new LatLon(0.001, 0.001)));
-        from.getNodes().forEach(node -> dataSet.addPrimitive(node));
+        from.getNodes().forEach(dataSet::addPrimitive);
         dataSet.addPrimitive(from);
         Node via = from.lastNode();
         Way to = TestUtils.newWay("highway=residential", new Node(new LatLon(0.002, 0.001)), via);
@@ -117,5 +114,25 @@ public final class SplitWayActionTest {
                 Assert.assertTrue(member.getWay().containsNode(via));
             }
         }
+    }
+
+    /**
+     * Test case: smart way selection
+     * see #18477
+     */
+    @Test
+    public void testTicket18477() {
+        final Node n10 = addNode(1, 0);
+        final Node n21 = addNode(2, 1);
+        final Way highway = TestUtils.newWay("highway=residential",
+                addNode(0, 0), n10, n21, addNode(3, 1));
+        final Way bridge = TestUtils.newWay("man_made=bridge",
+                n10, addNode(2, 0), n21, addNode(1, 1), n10);
+        dataSet.addPrimitive(highway);
+        dataSet.addPrimitive(bridge);
+        dataSet.setSelected(n10, n21);
+        SplitWayAction.runOn(dataSet);
+        assertSame(String.format("Found %d ways after split action instead of 4.", dataSet.getWays().size()),
+                dataSet.getWays().size(), 4);
     }
 }
