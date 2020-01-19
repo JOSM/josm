@@ -1043,7 +1043,11 @@ public class MainApplication {
         AbstractCredentialsAgent.setCredentialsProvider(CredentialDialog::promptCredentials);
         MessageNotifier.setNotifierCallback(MainApplication::notifyNewMessages);
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
-        SplitWayCommand.setWarningNotifier(msg -> new Notification(msg).setIcon(JOptionPane.WARNING_MESSAGE).show());
+        SplitWayCommand.setWarningNotifier(msg -> new Notification(msg)
+                .setIcon(JOptionPane.WARNING_MESSAGE)
+                // Split-way warnings may contain references to multiple relations which may take a while to read.
+                .setDuration(Notification.TIME_VERY_LONG)
+                .show());
         FileWatcher.registerLoader(SourceType.MAP_PAINT_STYLE, MapPaintStyleLoader::reloadStyle);
         FileWatcher.registerLoader(SourceType.TAGCHECKER_RULE, MapCSSTagChecker::reloadRule);
         OsmUrlToBounds.setMapSizeSupplier(() -> {

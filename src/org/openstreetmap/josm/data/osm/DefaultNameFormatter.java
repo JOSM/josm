@@ -478,7 +478,15 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
     }
 
-    private static String getRelationName(IRelation<?> relation) {
+    /**
+     * Get the name for a relation by looking at a number of name-like tags (starting with {@code name} and {@code
+     * ref}). If the user has configured JOSM to display names in a localized language, the appropriate language tags
+     * are taken into consideration as well.
+     *
+     * @param relation Relation to find the name for.
+     * @return Relation name. This may be {@code null}.
+     */
+    public static String getRelationName(IRelation<?> relation) {
         String nameTag;
         for (String n : getNamingtagsForRelations()) {
             nameTag = getNameTagValue(relation, n);

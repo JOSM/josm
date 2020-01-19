@@ -53,6 +53,13 @@ public class SplitWayCommand extends SequenceCommand {
     private final List<? extends PrimitiveId> newSelection;
     private final Way originalWay;
     private final List<Way> newWays;
+
+    /**
+     * Display limit for the list of affected relations shown to the user in a warning when the order of the new way
+     * parts cannot be determined automatically.
+     */
+    private static final int NOT_ENOUGH_MEMBERS_WARNING_LIST_LIMIT = 15;
+
     /** Map&lt;Restriction type, type to treat it as&gt; */
     private static final Map<String, String> relationSpecialTypes = new HashMap<>();
     static {
@@ -301,7 +308,8 @@ public class SplitWayCommand extends SequenceCommand {
             commandList.add(new AddCommand(way.getDataSet(), wayToAdd));
         }
 
-        boolean warnmerole = false;
+        boolean warnmeRole = false;
+        List<String> warnmeNotEnoughMembersInRelation = new ArrayList<>();
         boolean warnme = false;
         // now copy all relations to new way also
 
@@ -309,20 +317,24 @@ public class SplitWayCommand extends SequenceCommand {
             if (!r.isUsable()) {
                 continue;
             }
+
             Relation c = null;
             String type = Optional.ofNullable(r.get("type")).orElse("");
+            boolean isRouteOrMultipolygon = type.equals("route") || type.equals("multipolygon");
 
             int ic = 0;
             int ir = 0;
             List<RelationMember> relationMembers = r.getMembers();
-            for (RelationMember rm: relationMembers) {
+            for (RelationMember rm : relationMembers) {
                 if (rm.isWay() && rm.getMember() == way) {
                     boolean insert = true;
                     if (relationSpecialTypes.containsKey(type) && "restriction".equals(relationSpecialTypes.get(type))) {
                         Map<String, Boolean> rValue = treatAsRestriction(r, rm, c, newWays, way, changedWay);
-                        warnme = rValue.containsKey("warnme") ? rValue.get("warnme") : warnme;
-                        insert = rValue.containsKey("insert") ? rValue.get("insert") : insert;
-                    } else if (!("route".equals(type)) && !("multipolygon".equals(type))) {
+                        warnme = rValue.getOrDefault("warnme", warnme);
+                        insert = rValue.getOrDefault("insert", true);
+                    } else if (!isRouteOrMultipolygon) {
+                        // Warn the user when relations that are not a route or multipolygon are modified as a result
+                        // of splitting up the way, because we can't tell if this might break anything.
                         warnme = true;
                     }
                     if (c == null) {
@@ -331,31 +343,48 @@ public class SplitWayCommand extends SequenceCommand {
 
                     if (insert) {
                         if (rm.hasRole() && !nowarnroles.contains(rm.getRole())) {
-                            warnmerole = true;
+                            warnmeRole = true;
                         }
 
+                        // Attempt to determine the direction the ways in the relation are ordered.
                         Boolean backwards = null;
                         int k = 1;
                         while (ir - k >= 0 || ir + k < relationMembers.size()) {
-                            if ((ir - k >= 0) && relationMembers.get(ir - k).isWay()) {
+                            if (ir - k >= 0 && relationMembers.get(ir - k).isWay()) {
                                 Way w = relationMembers.get(ir - k).getWay();
                                 if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
                                     backwards = Boolean.FALSE;
+                                    break;
                                 } else if ((w.firstNode() == way.lastNode()) || w.lastNode() == way.lastNode()) {
                                     backwards = Boolean.TRUE;
+                                    break;
                                 }
-                                break;
                             }
-                            if ((ir + k < relationMembers.size()) && relationMembers.get(ir + k).isWay()) {
+                            if (ir + k < relationMembers.size() && relationMembers.get(ir + k).isWay()) {
                                 Way w = relationMembers.get(ir + k).getWay();
-                                if ((w.lastNode() == way.firstNode()) || w.firstNode() == way.firstNode()) {
+                                if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
                                     backwards = Boolean.TRUE;
-                                } else if ((w.firstNode() == way.lastNode()) || w.lastNode() == way.lastNode()) {
+                                    break;
+                                } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
                                     backwards = Boolean.FALSE;
+                                    break;
                                 }
-                                break;
                             }
                             k++;
+                        }
+
+                        if (isRouteOrMultipolygon
+                                && backwards == null
+                                && relationMembers.size() > 1
+                                && r.hasIncompleteMembers()) {
+                            // We don't have enough information to determine the order of the new ways in the relation.
+                            // This may cause relations to be saved with the two new way sections in reverse order.
+                            //
+                            // This often breaks routes.
+                            //
+                            // The user should be advised to download the full relation membership first, and verify
+                            // that these relations are still valid after the split.
+                            warnmeNotEnoughMembersInRelation.add(formatRelationName(r));
                         }
 
                         int j = ic;
@@ -390,12 +419,46 @@ public class SplitWayCommand extends SequenceCommand {
                 commandList.add(new ChangeCommand(r.getDataSet(), r, c));
             }
         }
-        if (warnmerole) {
+        if (warnmeRole) {
             warningNotifier.accept(
                     tr("A role based relation membership was copied to all new ways.<br>You should verify this and correct it when necessary."));
         } else if (warnme) {
             warningNotifier.accept(
                     tr("A relation membership was copied to all new ways.<br>You should verify this and correct it when necessary."));
+        } else if (!warnmeNotEnoughMembersInRelation.isEmpty()) {
+            int n = warnmeNotEnoughMembersInRelation.size();
+
+            // Compose a textual representation of the names of all affected relations. To prevent the warning
+            // message from becoming impractically long, the list of names is limited to a fixed length.
+            StringBuilder members = new StringBuilder("<ul><li>");
+            int limit = n > NOT_ENOUGH_MEMBERS_WARNING_LIST_LIMIT
+                    ? NOT_ENOUGH_MEMBERS_WARNING_LIST_LIMIT - 1
+                    : NOT_ENOUGH_MEMBERS_WARNING_LIST_LIMIT;
+            for (int i = 0; i < n && i < limit; i++) {
+                if (i > 0) members.append("</li><li>");
+                members.append("<b>").append(warnmeNotEnoughMembersInRelation.get(i)).append("</b>");
+            }
+
+            if (n > NOT_ENOUGH_MEMBERS_WARNING_LIST_LIMIT) {
+                // Not all of the relations can be sensibly fit in a warning, so tell the user how many were omitted.
+                members
+                        .append("</li><li><i>")
+                        .append(tr("{0} more...", n - limit))
+                        .append("</i>");
+            }
+            members.append("</li></ul>");
+
+            warningNotifier.accept(trn(
+                    "The correct order for the new parts of the split way in a relation could " +
+                            "not be determined.<br>You may want to undo this action, download all members of " +
+                            "this relation, and then perform the split again. Affected relations: {1}",
+                    "The correct order for the new parts of the split way in {0} relations " +
+                            "could not be determined.<br>You may want to undo this action, download all " +
+                            "members of these relations, and then perform the split again. Affected relations: {1}",
+                    n,
+                    n,
+                    members.toString()
+            ));
         }
 
         return new SplitWayCommand(
@@ -407,6 +470,26 @@ public class SplitWayCommand extends SequenceCommand {
                     way,
                     newWays
             );
+    }
+
+    /**
+     * Get the name of a relation in a format suitable for warning messages. {@link DefaultNameFormatter} can be used,
+     * but includes some redundant information in the returned string (i.e., the 'incomplete' marker).
+     *
+     * @param relation Relation to get name for.
+     * @return The relation name.
+     */
+    private static String formatRelationName(Relation relation) {
+        String name = DefaultNameFormatter.getRelationName(relation);
+        if (name == null) {
+            // Fall back to primitive ID if no name was found.
+            name = Long.toString(relation.getId());
+        }
+
+        int memberCount = relation.getMembersCount();
+        String members = trn("{0} member", "{0} members", memberCount, memberCount);
+
+        return name + " (" + members + ")";
     }
 
     private static Map<String, Boolean> treatAsRestriction(Relation r,
