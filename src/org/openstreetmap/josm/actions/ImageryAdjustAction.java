@@ -14,7 +14,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.Formatter;
 import java.util.Locale;
 
 import javax.swing.JLabel;
@@ -315,15 +314,8 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
 
         private void updateOffsetIntl() {
             if (layer != null) {
-                // Support projections with very small numbers (e.g. 4326)
-                int precision = ProjectionRegistry.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
-                // US locale to force decimal separator to be '.'
-                try (Formatter us = new Formatter(Locale.US)) {
-                    EastNorth displacement = layer.getDisplaySettings().getDisplacement();
-                    tOffset.setText(us.format(new StringBuilder()
-                        .append("%1.").append(precision).append("f; %1.").append(precision).append('f').toString(),
-                        displacement.east(), displacement.north()).toString());
-                }
+                // ROOT locale to force decimal separator to be '.'
+                tOffset.setText(layer.getDisplaySettings().getDisplacementString(Locale.ROOT));
             }
         }
 

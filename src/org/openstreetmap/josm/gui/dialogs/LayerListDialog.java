@@ -20,6 +20,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
@@ -72,6 +73,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
+import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeEvent;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeListener;
 import org.openstreetmap.josm.gui.util.MultikeyActionsHandler;
@@ -650,14 +652,16 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Layer layer = (Layer) value;
             if (layer instanceof AbstractTileSourceLayer<?>) {
-                if (EastNorth.ZERO.equals(((AbstractTileSourceLayer<?>) layer).getDisplaySettings().getDisplacement())) {
+                final TileSourceDisplaySettings displaySettings = ((AbstractTileSourceLayer<?>) layer).getDisplaySettings();
+                if (EastNorth.ZERO.equals(displaySettings.getDisplacement())) {
                     cb.setSelected(false);
                     cb.setEnabled(false); // TODO: allow reselecting checkbox and thereby setting the old offset again
                     cb.setToolTipText(tr("layer is without a user-defined offset"));
                 } else {
                     cb.setSelected(true);
                     cb.setEnabled(true);
-                    cb.setToolTipText(tr("layer has a user-defined offset (click to remove offset)"));
+                    cb.setToolTipText(tr("layer has an offset of {0} (click to remove offset)",
+                            displaySettings.getDisplacementString(Locale.getDefault())));
                 }
 
             } else {

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.layer.imagery;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -193,6 +194,19 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
      */
     public EastNorth getDisplacement() {
         return displacement;
+    }
+
+    /**
+     * Gets the displacement of the image formatted as a string
+     * @param locale the locale used to format the decimals
+     * @return the displacement string
+     * @see #getDisplacement()
+     * @since 15733
+     */
+    public String getDisplacementString(final Locale locale) {
+        // Support projections with very small numbers (e.g. 4326)
+        int precision = ProjectionRegistry.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
+        return String.format(locale, "%1." + precision + "f; %1." + precision + "f", getDx(), getDy());
     }
 
     /**
