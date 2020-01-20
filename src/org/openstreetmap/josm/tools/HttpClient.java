@@ -63,7 +63,7 @@ public abstract class HttpClient {
     private long ifModifiedSince;
     private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private int maxRedirects = Config.getPref().getInt("socket.maxredirects", 5);
-    private boolean useCache;
+    private boolean useCache = true;
     private String reasonForRequest;
     private String outputMessage = tr("Uploading data ...");
     private Response response;
@@ -613,7 +613,9 @@ public abstract class HttpClient {
     }
 
     /**
-     * Determines whether not to set header {@code Cache-Control=no-cache}
+     * Determines whether not to set header {@code Cache-Control=no-cache}.
+     * By default, {@code useCache} is true, i.e., the header {@code Cache-Control=no-cache} is not sent.
+     *
      * @return whether not to set header {@code Cache-Control=no-cache}
      * @since 15229
      */
@@ -656,7 +658,8 @@ public abstract class HttpClient {
     }
 
     /**
-     * Sets whether not to set header {@code Cache-Control=no-cache}
+     * Sets whether not to set header {@code Cache-Control=no-cache}.
+     * By default, {@code useCache} is true, i.e., the header {@code Cache-Control=no-cache} is not sent.
      *
      * @param useCache whether not to set header {@code Cache-Control=no-cache}
      * @return {@code this}

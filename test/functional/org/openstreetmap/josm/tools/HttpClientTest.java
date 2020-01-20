@@ -116,6 +116,8 @@ public class HttpClientTest {
             final JsonObject root = json.readObject();
             assertThat(root.getJsonObject("args").getString("foo"), is("bar"));
             assertThat(root.getString("url"), is("https://httpbin.org/get?foo=bar"));
+            assertThat(root.getJsonObject("headers").get("Cache-Control"), nullValue());
+            assertThat(root.getJsonObject("headers").get("Pragma"), nullValue());
         }
     }
 
