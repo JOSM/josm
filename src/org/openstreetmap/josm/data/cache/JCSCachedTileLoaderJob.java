@@ -301,7 +301,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
 
             Logging.debug("JCS - starting HttpClient GET request for URL: {0}", getUrl());
-            final HttpClient request = getRequest("GET", true);
+            final HttpClient request = getRequest("GET");
 
             if (isObjectLoadable() &&
                     (now - attributes.getLastModification()) <= ABSOLUTE_EXPIRE_TIME_LIMIT) {
@@ -486,7 +486,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         return ret;
     }
 
-    private HttpClient getRequest(String requestMethod, boolean noCache) throws IOException {
+    private HttpClient getRequest(String requestMethod) throws IOException {
         final HttpClient urlConn = HttpClient.create(getUrl(), requestMethod);
         urlConn.setAccept("text/html, image/png, image/jpeg, image/gif, */*");
         urlConn.setReadTimeout(readTimeout); // 30 seconds read timeout
@@ -495,14 +495,17 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             urlConn.setHeaders(headers);
         }
 
-        if (force || noCache) {
-            urlConn.useCache(false);
-        }
+        final boolean noCache = force
+                // To remove when switching to Java 11
+                // Workaround for https://bugs.openjdk.java.net/browse/JDK-8146450
+                || (Utils.getJavaVersion() == 8 && Utils.isRunningJavaWebStart());
+        urlConn.useCache(!noCache);
+
         return urlConn;
     }
 
     private boolean isCacheValidUsingHead() throws IOException {
-        final HttpClient.Response urlConn = getRequest("HEAD", false).connect();
+        final HttpClient.Response urlConn = getRequest("HEAD").connect();
         long lastModified = urlConn.getLastModified();
         boolean ret = (attributes.getEtag() != null && attributes.getEtag().equals(urlConn.getHeaderField("ETag"))) ||
                 (lastModified != 0 && lastModified <= attributes.getLastModification());

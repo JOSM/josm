@@ -1800,6 +1800,20 @@ public final class Utils {
     }
 
     /**
+     * Determines whether JOSM has been started via Java Web Start.
+     * @return true if JOSM has been started via Java Web Start
+     * @since 15740
+     */
+    public static boolean isRunningJavaWebStart() {
+        try {
+            // See http://stackoverflow.com/a/16200769/2257172
+            return Class.forName("javax.jnlp.ServiceManager") != null;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
      * Get a function that converts an object to a singleton stream of a certain
      * class (or null if the object cannot be cast to that class).
      *

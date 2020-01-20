@@ -70,15 +70,6 @@ public final class ShowStatusReportAction extends JosmAction {
         MainApplication.getToolbar().register(this);
     }
 
-    private static boolean isRunningJavaWebStart() {
-        try {
-            // See http://stackoverflow.com/a/16200769/2257172
-            return Class.forName("javax.jnlp.ServiceManager") != null;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
     /**
      * Replies the report header (software and system info)
      * @return The report header (software and system info)
@@ -128,7 +119,7 @@ public final class ShowStatusReportAction extends JosmAction {
                     .append('\n');
             }
             // Add WebStart package details if run from JNLP
-            if (isRunningJavaWebStart()) {
+            if (Utils.isRunningJavaWebStart()) {
                 String webStartDetails = platform.getWebStartPackageDetails();
                 if (webStartDetails != null) {
                     text.append("WebStart package: ")
