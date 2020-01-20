@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tile Source handling WMS providers
@@ -29,8 +30,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * @since 8526
  */
 public class TemplatedWMSTileSource extends AbstractWMSTileSource implements TemplatedTileSource {
-    private final Map<String, String> headers = new ConcurrentHashMap<>();
-    private final Set<String> serverProjections;
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     private static final Pattern PATTERN_HEADER = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
     private static final Pattern PATTERN_PROJ   = Pattern.compile("\\{proj\\}");
@@ -42,16 +41,23 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
     private static final Pattern PATTERN_N      = Pattern.compile("\\{n\\}");
     private static final Pattern PATTERN_WIDTH  = Pattern.compile("\\{width\\}");
     private static final Pattern PATTERN_HEIGHT = Pattern.compile("\\{height\\}");
+    private static final Pattern PATTERN_TIME   = Pattern.compile("\\{time\\}"); // Sentinel-2
     private static final Pattern PATTERN_PARAM  = Pattern.compile("\\{([^}]+)\\}");
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private static final NumberFormat LATLON_FORMAT = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
 
     private static final Pattern[] ALL_PATTERNS = {
-        PATTERN_HEADER, PATTERN_PROJ, PATTERN_WKID, PATTERN_BBOX, PATTERN_W, PATTERN_S, PATTERN_E, PATTERN_N, PATTERN_WIDTH, PATTERN_HEIGHT
+            PATTERN_HEADER, PATTERN_PROJ, PATTERN_WKID, PATTERN_BBOX,
+            PATTERN_W, PATTERN_S, PATTERN_E, PATTERN_N,
+            PATTERN_WIDTH, PATTERN_HEIGHT, PATTERN_TIME,
     };
 
+    private final Set<String> serverProjections;
+    private final Map<String, String> headers = new ConcurrentHashMap<>();
+    private final String date;
     private final boolean switchLatLon;
+
     /**
      * Creates a tile source based on imagery info
      * @param info imagery info
@@ -61,6 +67,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
         super(info, tileProjection);
         this.serverProjections = new TreeSet<>(info.getServerProjections());
         this.headers.putAll(info.getCustomHttpHeaders());
+        this.date = info.getDate();
         handleTemplate();
         initProjection();
         // Bounding box coordinates have to be switched for WMS 1.3.0 EPSG:4326.
@@ -142,6 +149,9 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
             case "width":
             case "height":
                 replacement = String.valueOf(getTileSize());
+                break;
+            case "time":
+                replacement = Utils.encodeUrl(date);
                 break;
             default:
                 replacement = '{' + matcher.group(1) + '}';

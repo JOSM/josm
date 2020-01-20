@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.InvalidPathException;
+import java.time.Year;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -94,6 +96,19 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      */
     private static ImageryInfo convertImagery(ImageryInfo info) {
         try {
+            if (info.getUrl().contains("{time}")) {
+                final String instant = Year.now().atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant().toString();
+                final String example = String.join("/", instant, instant);
+                final String initialSelectionValue = info.getDate() != null ? info.getDate() : example;
+                final String userDate = JOptionPane.showInputDialog(MainApplication.getMainFrame(),
+                        tr("Time filter for \"{0}\" such as \"{1}\"", info.getName(), example),
+                        initialSelectionValue);
+                if (userDate == null) {
+                    return null;
+                }
+                info.setDate(userDate);
+                // TODO persist new {time} value (via ImageryLayerInfo.save?)
+            }
             switch(info.getImageryType()) {
             case WMS_ENDPOINT:
                 // convert to WMS type

@@ -276,7 +276,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String countryCode = "";
     /**
       * creation date of the imagery (in the form YYYY-MM-DD;YYYY-MM-DD, where
-      * DD and MM as well as a second date are optional)
+      * DD and MM as well as a second date are optional).
+      *
+      * Also used as time filter for WMS time={time} parameter (such as Sentinel-2)
       * @since 11570
       */
     private String date;
