@@ -318,6 +318,34 @@ public class HttpClientTest {
     }
 
     /**
+     * Test reading Deflate-encoded data.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testDeflate() throws IOException {
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/deflate")).connect(progress);
+        assertThat(response.getResponseCode(), is(200));
+        try (InputStream in = response.getContent();
+             JsonReader json = JsonProvider.provider().createReader(in)) {
+            assertThat(json.readObject().getBoolean("deflated"), is(true));
+        }
+    }
+
+    /**
+     * Test reading Gzip-encoded data.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testGzip() throws IOException {
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/gzip")).connect(progress);
+        assertThat(response.getResponseCode(), is(200));
+        try (InputStream in = response.getContent();
+             JsonReader json = JsonProvider.provider().createReader(in)) {
+            assertThat(json.readObject().getBoolean("gzipped"), is(true));
+        }
+    }
+
+    /**
      * Test of {@link HttpClient.Response#uncompress} method with Gzip compression.
      * @throws IOException if any I/O error occurs
      */

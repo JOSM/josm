@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.openstreetmap.josm.data.validation.routines.DomainValidator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -111,7 +112,7 @@ public abstract class HttpClient {
             throw new JosmRuntimeException(e);
         }
         this.requestMethod = requestMethod;
-        this.headers.put("Accept-Encoding", "gzip");
+        this.headers.put("Accept-Encoding", "gzip, deflate");
     }
 
     /**
@@ -375,7 +376,11 @@ public abstract class HttpClient {
         public final InputStream getContent() throws IOException {
             InputStream in = getInputStream();
             in = new ProgressInputStream(in, getContentLength(), monitor);
-            in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
+            in = "gzip".equalsIgnoreCase(getContentEncoding())
+                    ? new GZIPInputStream(in)
+                    : "deflate".equalsIgnoreCase(getContentEncoding())
+                    ? new InflaterInputStream(in)
+                    : in;
             Compression compression = Compression.NONE;
             if (uncompress) {
                 final String contentType = getContentType();
