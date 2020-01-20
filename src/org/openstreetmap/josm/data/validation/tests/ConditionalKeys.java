@@ -29,7 +29,7 @@ public class ConditionalKeys extends Test.TagTest {
     private final OpeningHourTest openingHourTest = new OpeningHourTest();
     private static final Set<String> RESTRICTION_TYPES = new HashSet<>(Arrays.asList("oneway", "toll", "noexit", "maxspeed", "minspeed",
             "maxstay", "maxweight", "maxaxleload", "maxheight", "maxwidth", "maxlength", "overtaking", "maxgcweight", "maxgcweightrating",
-            "fee", "restriction", "interval"));
+            "fee", "restriction", "interval", "duration"));
     private static final Set<String> RESTRICTION_VALUES = new HashSet<>(Arrays.asList("yes", "official", "designated", "destination",
             "delivery", "customers", "permissive", "private", "agricultural", "forestry", "no"));
     private static final Set<String> TRANSPORT_MODES = new HashSet<>(Arrays.asList("access", "foot", "ski", "inline_skates", "ice_skates",
