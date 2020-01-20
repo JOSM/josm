@@ -88,7 +88,7 @@ public final class PluginHandler {
     /**
      * Deprecated plugins that are removed on start
      */
-    static final Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
+    static final List<DeprecatedPlugin> DEPRECATED_PLUGINS;
     static {
         String inCore = tr("integrated into main program");
         String replacedByPlugin = marktr("replaced by new {0} plugin");
@@ -159,6 +159,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("tag2link", inCore),
             new DeprecatedPlugin("rapid", tr(replacedByPlugin, "MapWithAI"))
         );
+        Collections.sort(DEPRECATED_PLUGINS);
     }
 
     private PluginHandler() {
@@ -367,6 +368,15 @@ public final class PluginHandler {
 
         // notify user about removed deprecated plugins
         //
+        JOptionPane.showMessageDialog(
+                parent,
+                getRemovedPluginsMessage(removedPlugins),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
+
+    static String getRemovedPluginsMessage(Collection<DeprecatedPlugin> removedPlugins) {
         StringBuilder sb = new StringBuilder(32);
         sb.append("<html>")
           .append(trn(
@@ -382,12 +392,7 @@ public final class PluginHandler {
             sb.append("</li>");
         }
         sb.append("</ul></html>");
-        JOptionPane.showMessageDialog(
-                parent,
-                sb.toString(),
-                tr("Warning"),
-                JOptionPane.WARNING_MESSAGE
-        );
+        return sb.toString();
     }
 
     /**
@@ -405,15 +410,18 @@ public final class PluginHandler {
             if (!plugins.contains(unmaintained)) {
                 continue;
             }
-            String msg = tr("<html>Loading of the plugin \"{0}\" was requested."
-                    + "<br>This plugin is no longer developed and very likely will produce errors."
-                    +"<br>It should be disabled.<br>Delete from preferences?</html>",
-                    Utils.escapeReservedCharactersHTML(unmaintained));
-            if (confirmDisablePlugin(parent, msg, unmaintained)) {
+            if (confirmDisablePlugin(parent, getUnmaintainedPluginMessage(unmaintained), unmaintained)) {
                 PreferencesUtils.removeFromList(Config.getPref(), "plugins", unmaintained);
                 plugins.remove(unmaintained);
             }
         }
+    }
+
+    static String getUnmaintainedPluginMessage(String unmaintained) {
+        return tr("<html>Loading of the plugin \"{0}\" was requested."
+                + "<br>This plugin is no longer developed and very likely will produce errors."
+                +"<br>It should be disabled.<br>Delete from preferences?</html>",
+                Utils.escapeReservedCharactersHTML(unmaintained));
     }
 
     /**

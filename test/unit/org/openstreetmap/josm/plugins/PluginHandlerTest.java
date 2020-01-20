@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 import org.junit.Rule;
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.plugins.PluginHandler.PluginInformationAction;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
+
 import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -57,16 +59,14 @@ public class PluginHandlerTest {
     @Test
     public void testBuildListOfPluginsToLoad() {
         TestUtils.assumeWorkingJMockit();
-        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker() {
-            @Override
-            public String getStringFromMessage(final Object message) {
-                return ((String) message).substring(0, 66);
-            }
-        };
-        haMocker.getMockResultMap().put(
-            "<html>JOSM could not find information about the following plugins:",
-            "OK"
-        );
+        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
+                PluginHandler.UNMAINTAINED_PLUGINS.stream().collect(
+                Collectors.toMap(PluginHandler::getUnmaintainedPluginMessage, p -> "Disable plugin")));
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker();
+        jopsMocker.getMockResultMap().put(
+                PluginHandler.getRemovedPluginsMessage(PluginHandler.DEPRECATED_PLUGINS),
+                JOptionPane.OK_OPTION
+            );
         final String old = System.getProperty("josm.plugins");
         try {
             final String plugins = Stream.concat(
@@ -85,10 +85,15 @@ public class PluginHandlerTest {
             }
         }
 
-        assertEquals(1, haMocker.getInvocationLog().size());
-        Object[] invocationLogEntry = haMocker.getInvocationLog().get(0);
+        assertEquals(1, jopsMocker.getInvocationLog().size());
+        Object[] invocationLogEntry = jopsMocker.getInvocationLog().get(0);
         assertEquals(0, (int) invocationLogEntry[0]);
         assertEquals("Warning", invocationLogEntry[2]);
+
+        assertEquals(PluginHandler.UNMAINTAINED_PLUGINS.size(), haMocker.getInvocationLog().size());
+        invocationLogEntry = haMocker.getInvocationLog().get(0);
+        assertEquals(0, (int) invocationLogEntry[0]);
+        assertEquals("Disable plugin", invocationLogEntry[2]);
     }
 
     /**
