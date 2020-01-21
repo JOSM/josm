@@ -57,31 +57,27 @@ public class AddressesTest {
      */
     @Test
     public void testHouseNumberWithoutStreet() {
-        assertNull(doTestHouseNumberWithoutStreet(
-                "", null, null));
-        assertNotNull(doTestHouseNumberWithoutStreet(
-                "addr:housenumber=1", null, null));
-        assertNull(doTestHouseNumberWithoutStreet(
-                "addr:housenumber=1 addr:street=Foo", null, null));
-        assertNull(doTestHouseNumberWithoutStreet(
-                "addr:housenumber=1 addr:place=Foo", null, null));
-        assertNull(doTestHouseNumberWithoutStreet(
-                "addr:housenumber=1 addr:neighbourhood=Foo", null, null));
-        assertNotNull(doTestHouseNumberWithoutStreet(
-                "addr:housenumber=1", null, "type=enforcement"));
-        assertNull(doTestHouseNumberWithoutStreet(
-                "addr:housenumber=1", null, "type=associatedStreet"));
-        assertNotNull(doTestHouseNumberWithoutStreet(
-                "addr:housenumber=1", "building=yes", null));
-        assertNull(doTestHouseNumberWithoutStreet(
-                "addr:housenumber=1", "addr:interpolation=odd addr:street=Foo", null));
+        assertNull(doTestHouseNumberWithoutStreet("", null, null));
+        assertNotNull(doTestHouseNumberWithoutStreet("addr:housenumber=1", null, null));
+        assertNull(doTestHouseNumberWithoutStreet("addr:housenumber=1 addr:street=Foo", null, null));
+        assertNull(doTestHouseNumberWithoutStreet("addr:housenumber=1 addr:place=Foo", null, null));
+        assertNull(doTestHouseNumberWithoutStreet("addr:housenumber=1 addr:neighbourhood=Foo", null, null));
+        assertNotNull(doTestHouseNumberWithoutStreet("addr:housenumber=1", null, "type=enforcement"));
+        assertNull(doTestHouseNumberWithoutStreet("addr:housenumber=1", null, "type=associatedStreet"));
+        assertNotNull(doTestHouseNumberWithoutStreet("addr:housenumber=1", "building=yes", null));
+        assertNull(
+                doTestHouseNumberWithoutStreet("addr:housenumber=1", "addr:interpolation=odd addr:street=Foo", null));
     }
 
-    private static void doTestDuplicateHouseNumber(
-            String tags1, LatLon ll1, String tags2, LatLon ll2, Severity expected) {
+    private static void doTestDuplicateHouseNumber(String tags1, LatLon ll1, String tags2, LatLon ll2,
+            Severity expected) {
         DataSet ds = new DataSet();
-        Node n1 = TestUtils.newNode(tags1); n1.setCoor(ll1); ds.addPrimitive(n1);
-        Node n2 = TestUtils.newNode(tags2); n2.setCoor(ll2); ds.addPrimitive(n2);
+        Node n1 = TestUtils.newNode(tags1);
+        n1.setCoor(ll1);
+        ds.addPrimitive(n1);
+        Node n2 = TestUtils.newNode(tags2);
+        n2.setCoor(ll2);
+        ds.addPrimitive(n2);
         List<TestError> errors = new Addresses().checkForDuplicate(n2);
         assertEquals(expected != null ? 1 : 0, errors.size());
         if (expected != null) {
@@ -107,10 +103,32 @@ public class AddressesTest {
         // Nothing for different addresses
         doTestDuplicateHouseNumber(num1, ZERO, num2, ZERO, null);
         // Info for same address in different cities, warning if same city
-        doTestDuplicateHouseNumber(num1+city1, ZERO, num1+city2, ZERO, Severity.OTHER);
-        doTestDuplicateHouseNumber(num1+city1, ZERO, num1+city1, ZERO, Severity.WARNING);
-        // Info for same address in same city but different suburbs, warning if same suburb
-        doTestDuplicateHouseNumber(num1+city1+suburb1, ZERO, num1+city1+suburb2, ZERO, Severity.OTHER);
-        doTestDuplicateHouseNumber(num1+city1+suburb1, ZERO, num1+city1+suburb1, ZERO, Severity.WARNING);
+        doTestDuplicateHouseNumber(num1 + city1, ZERO, num1 + city2, ZERO, Severity.OTHER);
+        doTestDuplicateHouseNumber(num1 + city1, ZERO, num1 + city1, ZERO, Severity.WARNING);
+        // Info for same address in same city but different suburbs, warning if same
+        // suburb
+        doTestDuplicateHouseNumber(num1 + city1 + suburb1, ZERO, num1 + city1 + suburb2, ZERO, Severity.OTHER);
+        doTestDuplicateHouseNumber(num1 + city1 + suburb1, ZERO, num1 + city1 + suburb1, ZERO, Severity.WARNING);
+    }
+
+    /**
+     * Unit test of {@link Addresses#expandHouseNumber}
+     */
+    @Test
+    public void testMultiAddressDuplicates() {
+        String num1 = "addr:housenumber=1,3 addr:street=Foo";
+        String num2 = "addr:housenumber=1 addr:street=Foo";
+        String num3 = "addr:housenumber=3 addr:street=Foo";
+        String num4 = "addr:housenumber=4 addr:street=Foo";
+
+        doTestDuplicateHouseNumber(num1, ZERO, num2, ZERO, Severity.WARNING);
+        doTestDuplicateHouseNumber(num1, ZERO, num3, ZERO, Severity.WARNING);
+        doTestDuplicateHouseNumber(num1, ZERO, num4, ZERO, null);
+
+        num1 = num1.replace(",", ";");
+
+        doTestDuplicateHouseNumber(num1, ZERO, num2, ZERO, Severity.WARNING);
+        doTestDuplicateHouseNumber(num1, ZERO, num3, ZERO, Severity.WARNING);
+        doTestDuplicateHouseNumber(num1, ZERO, num4, ZERO, null);
     }
 }

@@ -140,9 +140,10 @@ public class Addresses extends Test {
      */
     private void collectAddress(OsmPrimitive p) {
         if (!isPOI(p)) {
-            String simplifiedAddress = getSimplifiedAddress(p);
-            if (!ignoredAddresses.contains(simplifiedAddress)) {
-                knownAddresses.computeIfAbsent(simplifiedAddress, x -> new ArrayList<>()).add(p);
+            for (String simplifiedAddress : getSimplifiedAddresses(p)) {
+                if (!ignoredAddresses.contains(simplifiedAddress)) {
+                    knownAddresses.computeIfAbsent(simplifiedAddress, x -> new ArrayList<>()).add(p);
+                }
             }
         }
     }
@@ -156,11 +157,12 @@ public class Addresses extends Test {
                     if (hasAddress(r)) {
                         // ignore addresses of buildings that are connected to addr:unit nodes
                         // it's quite reasonable that there are more buildings with this address
-                        String simplifiedAddress = getSimplifiedAddress(r);
-                        if (!ignoredAddresses.contains(simplifiedAddress)) {
-                            ignoredAddresses.add(simplifiedAddress);
-                        } else if (knownAddresses.containsKey(simplifiedAddress)) {
-                            knownAddresses.remove(simplifiedAddress);
+                        for (String simplifiedAddress : getSimplifiedAddresses(r)) {
+                            if (!ignoredAddresses.contains(simplifiedAddress)) {
+                                ignoredAddresses.add(simplifiedAddress);
+                            } else if (knownAddresses.containsKey(simplifiedAddress)) {
+                                knownAddresses.remove(simplifiedAddress);
+                            }
                         }
                     }
                 }
@@ -184,55 +186,59 @@ public class Addresses extends Test {
         }
         if (!isPOI(p) && hasAddress(p)) {
             List<TestError> result = new ArrayList<>();
-            String simplifiedAddress = getSimplifiedAddress(p);
-            if (!ignoredAddresses.contains(simplifiedAddress) && knownAddresses.containsKey(simplifiedAddress)) {
-                double maxDistance = MAX_DUPLICATE_DISTANCE.get();
-                for (OsmPrimitive p2 : knownAddresses.get(simplifiedAddress)) {
-                    if (p == p2) {
-                        continue;
-                    }
-                    Severity severityLevel;
-                    String city1 = p.get(ADDR_CITY);
-                    String city2 = p2.get(ADDR_CITY);
-                    double distance = getDistance(p, p2);
-                    if (city1 != null && city2 != null) {
-                        if (city1.equals(city2)) {
-                            if ((!p.hasKey(ADDR_POSTCODE) || !p2.hasKey(ADDR_POSTCODE) || p.get(ADDR_POSTCODE).equals(p2.get(ADDR_POSTCODE)))
-                             && (!p.hasKey(ADDR_SUBURB) || !p2.hasKey(ADDR_SUBURB) || p.get(ADDR_SUBURB).equals(p2.get(ADDR_SUBURB)))) {
-                                severityLevel = Severity.WARNING;
+            for (String simplifiedAddress : getSimplifiedAddresses(p)) {
+                if (!ignoredAddresses.contains(simplifiedAddress) && knownAddresses.containsKey(simplifiedAddress)) {
+                    double maxDistance = MAX_DUPLICATE_DISTANCE.get();
+                    for (OsmPrimitive p2 : knownAddresses.get(simplifiedAddress)) {
+                        if (p == p2) {
+                            continue;
+                        }
+                        Severity severityLevel;
+                        String city1 = p.get(ADDR_CITY);
+                        String city2 = p2.get(ADDR_CITY);
+                        double distance = getDistance(p, p2);
+                        if (city1 != null && city2 != null) {
+                            if (city1.equals(city2)) {
+                                if ((!p.hasKey(ADDR_POSTCODE) || !p2.hasKey(ADDR_POSTCODE)
+                                        || p.get(ADDR_POSTCODE).equals(p2.get(ADDR_POSTCODE)))
+                                        && (!p.hasKey(ADDR_SUBURB) || !p2.hasKey(ADDR_SUBURB)
+                                                || p.get(ADDR_SUBURB).equals(p2.get(ADDR_SUBURB)))) {
+                                    severityLevel = Severity.WARNING;
+                                } else {
+                                    // address including city identical but postcode or suburb differs
+                                    // most likely perfectly fine
+                                    severityLevel = Severity.OTHER;
+                                }
                             } else {
-                                // address including city identical but postcode or suburb differs
-                                // most likely perfectly fine
-                                severityLevel = Severity.OTHER;
+                                // address differs only by city - notify if very close, otherwise ignore
+                                if (distance < maxDistance) {
+                                    severityLevel = Severity.OTHER;
+                                } else {
+                                    continue;
+                                }
                             }
                         } else {
-                            // address differs only by city - notify if very close, otherwise ignore
-                            if (distance < maxDistance) {
-                                severityLevel = Severity.OTHER;
-                            } else {
-                                continue;
-                            }
-                        }
-                    } else {
-                        // at least one address has no city specified
-                        if (p.hasKey(ADDR_POSTCODE) && p2.hasKey(ADDR_POSTCODE) && p.get(ADDR_POSTCODE).equals(p2.get(ADDR_POSTCODE))) {
-                            // address including postcode identical
-                            severityLevel = Severity.WARNING;
-                        } else {
-                            // city/postcode unclear - warn if very close, otherwise only notify
-                            // TODO: get city from surrounding boundaries?
-                            if (distance < maxDistance) {
+                            // at least one address has no city specified
+                            if (p.hasKey(ADDR_POSTCODE) && p2.hasKey(ADDR_POSTCODE)
+                                    && p.get(ADDR_POSTCODE).equals(p2.get(ADDR_POSTCODE))) {
+                                // address including postcode identical
                                 severityLevel = Severity.WARNING;
                             } else {
-                                severityLevel = Severity.OTHER;
+                                // city/postcode unclear - warn if very close, otherwise only notify
+                                // TODO: get city from surrounding boundaries?
+                                if (distance < maxDistance) {
+                                    severityLevel = Severity.WARNING;
+                                } else {
+                                    severityLevel = Severity.OTHER;
+                                }
                             }
                         }
+                        result.add(TestError.builder(this, severityLevel, DUPLICATE_HOUSE_NUMBER)
+                                .message(tr("Duplicate house numbers"), marktr("''{0}'' ({1}m)"), simplifiedAddress, (int) distance)
+                                .primitives(Arrays.asList(p, p2)).build());
                     }
-                    result.add(TestError.builder(this, severityLevel, DUPLICATE_HOUSE_NUMBER)
-                            .message(tr("Duplicate house numbers"), marktr("''{0}'' ({1}m)"), simplifiedAddress, (int) distance)
-                            .primitives(Arrays.asList(p, p2)).build());
+                    knownAddresses.get(simplifiedAddress).remove(p); // otherwise we would get every warning two times
                 }
-                knownAddresses.get(simplifiedAddress).remove(p); // otherwise we would get every warning two times
             }
             errors.addAll(result);
             return result;
@@ -240,18 +246,28 @@ public class Addresses extends Test {
         return Collections.emptyList();
     }
 
-    static String getSimplifiedAddress(OsmPrimitive p) {
+    static List<String> getSimplifiedAddresses(OsmPrimitive p) {
         String simplifiedStreetName = p.hasKey(ADDR_STREET) ? p.get(ADDR_STREET) : p.get(ADDR_PLACE);
         // ignore whitespaces and dashes in street name, so that "Mozart-Gasse", "Mozart Gasse" and "Mozartgasse" are all seen as equal
-        return Utils.strip(Stream.of(
+        return expandHouseNumber(p.get(ADDR_HOUSE_NUMBER)).stream().map(addrHouseNumber -> Utils.strip(Stream.of(
                 simplifiedStreetName.replaceAll("[ -]", ""),
-                p.get(ADDR_HOUSE_NUMBER),
+                addrHouseNumber,
                 p.get(ADDR_HOUSE_NAME),
                 p.get(ADDR_UNIT),
                 p.get(ADDR_FLATS))
             .filter(Objects::nonNull)
             .collect(Collectors.joining(" ")))
-                .toUpperCase(Locale.ENGLISH);
+                .toUpperCase(Locale.ENGLISH)).collect(Collectors.toList());
+    }
+
+    /**
+     * Split addr:housenumber on , and ; (common separators)
+     *
+     * @param houseNumber The housenumber to be split
+     * @return A list of addr:housenumber equivalents
+     */
+    static List<String> expandHouseNumber(String houseNumber) {
+        return Arrays.asList(houseNumber.split(",|;"));
     }
 
     @Override
