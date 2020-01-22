@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,6 +61,8 @@ public class BasicUploadSettingsPanel extends JPanel {
     /** the history combo box for the upload comment */
     private final HistoryComboBox hcbUploadComment = new HistoryComboBox();
     private final HistoryComboBox hcbUploadSource = new HistoryComboBox();
+    private final transient JCheckBox obtainSourceAutomatically = new JCheckBox(
+            tr("Automatically obtain source from current layers"));
     /** the panel with a summary of the upload parameters */
     private final UploadParameterSummaryPanel pnlUploadParameterSummary = new UploadParameterSummaryPanel();
     /** the checkbox to request feedback from other users */
@@ -93,7 +94,6 @@ public class BasicUploadSettingsPanel extends JPanel {
                 automaticallyAddSource();
             }
         });
-        JCheckBox obtainSourceAutomatically = new JCheckBox(tr("Automatically obtain source from current layers"));
         obtainSourceAutomatically.setSelected(Config.getPref().getBoolean("upload.source.obtainautomatically", false));
         obtainSourceAutomatically.addActionListener(e -> {
             if (obtainSourceAutomatically.isSelected())
@@ -176,11 +176,11 @@ public class BasicUploadSettingsPanel extends JPanel {
     }
 
     protected void build() {
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        add(buildUploadCommentPanel(), BorderLayout.NORTH);
-        add(pnlUploadParameterSummary, BorderLayout.CENTER);
-        add(cbRequestReview, BorderLayout.SOUTH);
+        add(buildUploadCommentPanel(), GBC.eol().fill(GBC.BOTH));
+        add(pnlUploadParameterSummary, GBC.eol().fill(GBC.HORIZONTAL));
+        add(cbRequestReview, GBC.eol().fill(GBC.HORIZONTAL));
         cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
     }
 
@@ -227,6 +227,9 @@ public class BasicUploadSettingsPanel extends JPanel {
         // store the history of sources
         hcbUploadSource.addCurrentItemToHistory();
         Config.getPref().putList(SOURCE_HISTORY_KEY, hcbUploadSource.getHistory());
+
+        // store current value of obtaining source automatically
+        Config.getPref().putBoolean("upload.source.obtainautomatically", obtainSourceAutomatically.isSelected());
     }
 
     /**
