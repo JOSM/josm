@@ -75,10 +75,10 @@ public class WayConnectionTypeCalculator {
         final RelationMember m = members.get(i);
         if (isSuperRoute(r)) {
             final WayConnectionType wct;
-            if (!members.get(i).isRelation()) {
-                return new WayConnectionType(true);
-            } else if (i == 0) {
-                return new WayConnectionType(false);
+            if (i == 0) {
+                wct = new WayConnectionType(false);
+            } else if (!members.get(i).isRelation() || !members.get(i - 1).isRelation()) {
+                wct = new WayConnectionType(true);
             } else {
                 final List<RelationMember> previousMembers = members.get(i - 1).getRelation().getMembers();
                 final Way previousLastWay = StreamUtils.reversedStream(previousMembers)
