@@ -180,8 +180,8 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Return id of really downloaded primitives.
-     * @return List of primitives id or null if no primitives was downloaded
+     * Return ids of really downloaded primitives.
+     * @return List of primitives id or null if no primitives were downloaded
      */
     public List<PrimitiveId> getDownloadedId() {
         synchronized (this) {
