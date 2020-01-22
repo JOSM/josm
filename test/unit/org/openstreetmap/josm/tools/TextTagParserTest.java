@@ -161,4 +161,15 @@ public class TextTagParserTest {
                 "type=boundary\n" +
                 "url=http://faktaark.naturbase.no/?id=VV00003273"));
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/8384#comment:58">ticket:8384#comment:58</a>
+     */
+    @Test
+    public void testTicket8384Comment58() {
+        Map<String, String> expected = new HashMap<>();
+        expected.put("name", "Main street");
+        expected.put("url", "https://example.com/?id=1");
+        assertEquals(expected, TextTagParser.readTagsFromText("name=Main street\nurl=https://example.com/?id=1"));
+    }
 }
