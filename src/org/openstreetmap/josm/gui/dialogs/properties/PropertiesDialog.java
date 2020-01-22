@@ -446,6 +446,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagMenu.add(pasteValueAction);
         tagMenu.add(copyValueAction);
         tagMenu.add(copyKeyValueAction);
+        tagMenu.addPopupMenuListener(copyKeyValueAction);
         tagMenu.add(copyAllKeyValueAction);
         tagMenu.addSeparator();
         tagMenu.add(searchActionAny);

@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.JTable;
@@ -39,17 +40,20 @@ public abstract class AbstractCopyAction extends AbstractAction {
 
     protected abstract Collection<String> getString(Tagged p, String key);
 
-    @Override
-    public void actionPerformed(ActionEvent ae) {
+    protected Stream<String> valueStream() {
         int[] rows = tagTable.getSelectedRows();
         Collection<? extends Tagged> sel = objectSupplier.get();
-        if (rows.length == 0 || sel == null || sel.isEmpty()) return;
-
-        final String values = Arrays.stream(rows)
+        if (rows.length == 0 || sel == null || sel.isEmpty()) return Stream.empty();
+        return Arrays.stream(rows)
                 .mapToObj(keySupplier)
                 .flatMap(key -> sel.stream().map(p -> getString(p, key)))
                 .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
+                .flatMap(Collection::stream);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        final String values = valueStream()
                 .sorted()
                 .collect(Collectors.joining("\n"));
         if (!values.isEmpty()) {
