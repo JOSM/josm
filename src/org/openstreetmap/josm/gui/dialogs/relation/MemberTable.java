@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -223,7 +223,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
             return getMemberTableModel().getWayConnection(getSelectedRows()[0]);
         }
 
-        private final Collection<Direction> connectionTypesOfInterest = Arrays.asList(
+        private final Collection<Direction> connectionTypesOfInterest = EnumSet.of(
                 WayConnectionType.Direction.FORWARD, WayConnectionType.Direction.BACKWARD);
 
         private boolean hasGap() {
