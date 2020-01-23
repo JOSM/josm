@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,19 +70,13 @@ public abstract class SourcePrefHelper {
      * @return The list of sources
      */
     public List<SourceEntry> get() {
-
         List<Map<String, String>> src = Config.getPref().getListOfMaps(pref, null);
         if (src == null)
             return new ArrayList<>(getDefault());
-
-        List<SourceEntry> entries = new ArrayList<>();
-        for (Map<String, String> sourcePref : src) {
-            SourceEntry e = deserialize(new HashMap<>(sourcePref));
-            if (e != null) {
-                entries.add(e);
-            }
-        }
-        return entries;
+        return src.stream()
+                .map(sourcePref -> deserialize(new HashMap<>(sourcePref)))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -109,12 +104,9 @@ public abstract class SourcePrefHelper {
      * @return The set of active source URLs.
      */
     public final Set<String> getActiveUrls() {
-        Set<String> urls = new LinkedHashSet<>(); // retain order
-        for (SourceEntry e : get()) {
-            if (e.active) {
-                urls.add(e.url);
-            }
-        }
-        return urls;
+        return get().stream()
+                .filter(e -> e.active)
+                .map(e -> e.url)
+                .collect(Collectors.toCollection(LinkedHashSet::new)); // LinkedHashSet to retain order
     }
 }
