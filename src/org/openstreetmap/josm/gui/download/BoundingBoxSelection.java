@@ -3,9 +3,11 @@ package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -96,14 +98,16 @@ public class BoundingBoxSelection implements DownloadSelection {
         tfOsmUrl.setLineWrap(true);
         tfOsmUrl.setBorder(latlon[0].getBorder());
 
-        dlg.add(new JLabel(tr("min lat")), GBC.std().insets(10, 20, 5, 0));
-        dlg.add(latlon[0], GBC.std().insets(0, 20, 0, 0));
-        dlg.add(new JLabel(tr("min lon")), GBC.std().insets(10, 20, 5, 0));
-        dlg.add(latlon[1], GBC.eol().insets(0, 20, 0, 0));
-        dlg.add(new JLabel(tr("max lat")), GBC.std().insets(10, 0, 5, 0));
-        dlg.add(latlon[2], GBC.std());
-        dlg.add(new JLabel(tr("max lon")), GBC.std().insets(10, 0, 5, 0));
-        dlg.add(latlon[3], GBC.eol());
+        final Panel latlonPanel = new Panel(new BorderLayout());
+        final String[] labels = new String[]{tr("min lat"), tr("min lon"), tr("max lat"), tr("max lon")};
+        final String[] positions = new String[]{BorderLayout.SOUTH, BorderLayout.WEST, BorderLayout.NORTH, BorderLayout.EAST};
+        for (int i = 0; i < latlon.length; i++) {
+            final Panel panel = new Panel(new GridBagLayout());
+            panel.add(new JLabel(labels[i]), GBC.std().insets(10, 0, 3, 0));
+            panel.add(latlon[i]);
+            latlonPanel.add(panel, positions[i]);
+        }
+        dlg.add(latlonPanel, GBC.eop().insets(0, 20, 0, 0));
 
         final JButton btnClear = new JButton(tr("Clear textarea"));
         btnClear.addMouseListener(new MouseAdapter() {
