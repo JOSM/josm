@@ -28,6 +28,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -320,7 +321,7 @@ public final class MapPaintStyles {
     }
 
     private static void loadStyleForFirstTime(StyleSource source) {
-        final long startTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         source.loadStyleSource();
         if (Config.getPref().getBoolean("mappaint.auto_reload_local_styles", true) && source.isLocal()) {
             try {
@@ -330,8 +331,7 @@ public final class MapPaintStyles {
             }
         }
         if (Logging.isDebugEnabled() || !source.isValid()) {
-            final long elapsedTime = System.currentTimeMillis() - startTime;
-            String message = "Initializing map style " + source.url + " completed in " + Utils.getDurationString(elapsedTime);
+            String message = "Initializing map style " + source.url + " completed in " + stopwatch;
             if (!source.isValid()) {
                 Logging.warn(message + " (" + source.getErrors().size() + " errors, " + source.getWarnings().size() + " warnings)");
             } else {

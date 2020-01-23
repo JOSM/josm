@@ -78,7 +78,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Stopwatch;
 
 /**
  * A OSM data validator.
@@ -608,13 +608,10 @@ public final class OsmValidator {
     public static synchronized void initializeTests() {
         if (!testsInitialized) {
             Logging.debug("Initializing validator tests");
-            final long startTime = System.currentTimeMillis();
+            final Stopwatch stopwatch = Stopwatch.createStarted();
             initializeTests(getTests());
             testsInitialized = true;
-            if (Logging.isDebugEnabled()) {
-                final long elapsedTime = System.currentTimeMillis() - startTime;
-                Logging.debug("Initializing validator tests completed in {0}", Utils.getDurationString(elapsedTime));
-            }
+            Logging.debug("Initializing validator tests completed in {0}", stopwatch);
         }
     }
 

@@ -9,7 +9,7 @@ import java.io.Writer;
 
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Stopwatch;
 
 /**
  * This class can be used to run consistency tests on dataset. Any errors found will be written to provided PrintWriter.
@@ -45,7 +45,7 @@ public class DatasetConsistencyTest {
      * Checks that parent primitive is referred from its child members
      */
     public void checkReferrers() {
-        long startTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         // It's also error when referred primitive's dataset is null but it's already covered by referredPrimitiveNotInDataset check
         for (Way way : dataSet.getWays()) {
             if (!way.isDeleted()) {
@@ -66,14 +66,14 @@ public class DatasetConsistencyTest {
                 }
             }
         }
-        printElapsedTime(startTime);
+        printElapsedTime(stopwatch);
     }
 
     /**
      * Checks for womplete ways with incomplete nodes.
      */
     public void checkCompleteWaysWithIncompleteNodes() {
-        long startTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         for (Way way : dataSet.getWays()) {
             if (way.isUsable()) {
                 for (Node node : way.getNodes()) {
@@ -83,27 +83,27 @@ public class DatasetConsistencyTest {
                 }
             }
         }
-        printElapsedTime(startTime);
+        printElapsedTime(stopwatch);
     }
 
     /**
      * Checks for complete nodes without coordinates.
      */
     public void checkCompleteNodesWithoutCoordinates() {
-        long startTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         for (Node node : dataSet.getNodes()) {
             if (!node.isIncomplete() && node.isVisible() && !node.isLatLonKnown()) {
                 printError("COMPLETE WITHOUT COORDINATES", "%s is not incomplete but has null coordinates", node);
             }
         }
-        printElapsedTime(startTime);
+        printElapsedTime(stopwatch);
     }
 
     /**
      * Checks that nodes can be retrieved through their coordinates.
      */
     public void searchNodes() {
-        long startTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         dataSet.getReadLock().lock();
         try {
             for (Node n : dataSet.getNodes()) {
@@ -115,14 +115,14 @@ public class DatasetConsistencyTest {
         } finally {
             dataSet.getReadLock().unlock();
         }
-        printElapsedTime(startTime);
+        printElapsedTime(stopwatch);
     }
 
     /**
      * Checks that ways can be retrieved through their bounding box.
      */
     public void searchWays() {
-        long startTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         dataSet.getReadLock().lock();
         try {
             for (Way w : dataSet.getWays()) {
@@ -133,7 +133,7 @@ public class DatasetConsistencyTest {
         } finally {
             dataSet.getReadLock().unlock();
         }
-        printElapsedTime(startTime);
+        printElapsedTime(stopwatch);
     }
 
     private void checkReferredPrimitive(OsmPrimitive primitive, OsmPrimitive parent) {
@@ -154,7 +154,7 @@ public class DatasetConsistencyTest {
      * Checks that referred primitives are present in dataset.
      */
     public void referredPrimitiveNotInDataset() {
-        long startTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         for (Way way : dataSet.getWays()) {
             for (Node node : way.getNodes()) {
                 checkReferredPrimitive(node, way);
@@ -166,14 +166,14 @@ public class DatasetConsistencyTest {
                 checkReferredPrimitive(member.getMember(), relation);
             }
         }
-        printElapsedTime(startTime);
+        printElapsedTime(stopwatch);
     }
 
     /**
      * Checks for zero and one-node ways.
      */
     public void checkZeroNodesWays() {
-        long startTime = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
         for (Way way : dataSet.getWays()) {
             if (way.isUsable() && way.getNodesCount() == 0) {
                 printError("WARN - ZERO NODES", "Way %s has zero nodes", way);
@@ -181,16 +181,15 @@ public class DatasetConsistencyTest {
                 printError("WARN - NO NODES", "Way %s has only one node", way);
             }
         }
-        printElapsedTime(startTime);
+        printElapsedTime(stopwatch);
     }
 
-    private void printElapsedTime(long startTime) {
+    private void printElapsedTime(Stopwatch stopwatch) {
         if (Logging.isDebugEnabled()) {
             StackTraceElement item = Thread.currentThread().getStackTrace()[2];
             String operation = getClass().getSimpleName() + '.' + item.getMethodName();
-            long elapsedTime = System.currentTimeMillis() - startTime;
             Logging.debug(tr("Test ''{0}'' completed in {1}",
-                    operation, Utils.getDurationString(elapsedTime)));
+                    operation, stopwatch));
         }
     }
 
@@ -199,7 +198,7 @@ public class DatasetConsistencyTest {
      */
     public void runTest() {
         try {
-            long startTime = System.currentTimeMillis();
+            final Stopwatch stopwatch = Stopwatch.createStarted();
             referredPrimitiveNotInDataset();
             checkReferrers();
             checkCompleteWaysWithIncompleteNodes();
@@ -207,7 +206,7 @@ public class DatasetConsistencyTest {
             searchNodes();
             searchWays();
             checkZeroNodesWays();
-            printElapsedTime(startTime);
+            printElapsedTime(stopwatch);
             if (errorCount > MAX_ERRORS) {
                 writer.println((errorCount - MAX_ERRORS) + " more...");
             }

@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -149,21 +150,20 @@ public class SplashScreen extends JFrame implements ChangeListener {
      */
     private static class MeasurableTask extends Task {
         private final String name;
-        private final long start;
+        private final Stopwatch stopwatch;
         private String duration = "";
 
         MeasurableTask(String name) {
             this.name = name;
-            this.start = System.currentTimeMillis();
+            this.stopwatch = Stopwatch.createStarted();
         }
 
         public void finish() {
             if (isFinished()) {
                 throw new IllegalStateException("This task has already been finished: " + name);
             }
-            long time = System.currentTimeMillis() - start;
-            if (time >= 0) {
-                duration = tr(" ({0})", Utils.getDurationString(time));
+            if (stopwatch.elapsed() >= 0) {
+                duration = tr(" ({0})", stopwatch);
             }
         }
 

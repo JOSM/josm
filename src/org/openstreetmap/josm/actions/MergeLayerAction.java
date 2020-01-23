@@ -23,6 +23,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -80,7 +81,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                 final List<GpxLayer> sortedLayers = d.getSortedLayers();
 
                 return MainApplication.worker.submit(() -> {
-                    final long start = System.currentTimeMillis();
+                    final Stopwatch stopwatch = Stopwatch.createStarted();
 
                     for (int i = sortedLayers.size() - 2; i >= 0; i--) {
                         final GpxLayer lower = sortedLayers.get(i + 1);
@@ -88,13 +89,13 @@ public class MergeLayerAction extends AbstractMergeAction {
                         GuiHelper.runInEDTAndWait(() -> getLayerManager().removeLayer(lower));
                     }
 
-                    Logging.info(tr("{0} completed in {1}", actionName, Utils.getDurationString(System.currentTimeMillis() - start)));
+                    Logging.info(tr("{0} completed in {1}", actionName, stopwatch));
                 });
             }
         }
 
         return MainApplication.worker.submit(() -> {
-            final long start = System.currentTimeMillis();
+            final Stopwatch stopwatch = Stopwatch.createStarted();
             boolean layerMerged = false;
             for (final Layer sourceLayer: sourceLayers) {
                 if (sourceLayer != null && !sourceLayer.equals(targetLayer)) {
@@ -112,7 +113,7 @@ public class MergeLayerAction extends AbstractMergeAction {
 
             if (layerMerged) {
                 getLayerManager().setActiveLayer(targetLayer);
-                Logging.info(tr("{0} completed in {1}", actionName, Utils.getDurationString(System.currentTimeMillis() - start)));
+                Logging.info(tr("{0} completed in {1}", actionName, stopwatch));
             }
         });
     }

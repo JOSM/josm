@@ -83,12 +83,10 @@ public final class XmlUtils {
      * @throws SAXException for SAX errors.
      */
     public static Document parseSafeDOM(InputStream is) throws ParserConfigurationException, IOException, SAXException {
-        long start = System.currentTimeMillis();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Logging.debug("Starting DOM parsing of {0}", is);
         Document result = newSafeDOMBuilder().parse(is);
-        if (Logging.isDebugEnabled()) {
-            Logging.debug("DOM parsing done in {0}", Utils.getDurationString(System.currentTimeMillis() - start));
-        }
+        Logging.debug("DOM parsing done in {0}", stopwatch);
         return result;
     }
 
@@ -116,12 +114,10 @@ public final class XmlUtils {
      * @throws IOException if any IO errors occur.
      */
     public static void parseSafeSAX(InputSource is, DefaultHandler dh) throws ParserConfigurationException, SAXException, IOException {
-        long start = System.currentTimeMillis();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         Logging.debug("Starting SAX parsing of {0} using {1}", is, dh);
         newSafeSAXParser().parse(is, dh);
-        if (Logging.isDebugEnabled()) {
-            Logging.debug("SAX parsing done in {0}", Utils.getDurationString(System.currentTimeMillis() - start));
-        }
+        Logging.debug("SAX parsing done in {0}", stopwatch);
     }
 
     /**

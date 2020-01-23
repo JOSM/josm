@@ -57,6 +57,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorScale;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -419,7 +420,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      */
     public void drawAll(Graphics2D g, MapView mv, List<WayPoint> visibleSegments, Bounds clipBounds) {
 
-        final long timeStart = System.currentTimeMillis();
+        final Stopwatch stopwatch = Stopwatch.createStarted();
 
         checkCache();
 
@@ -486,13 +487,11 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
 
         // show some debug info
         if (Logging.isDebugEnabled() && !visibleSegments.isEmpty()) {
-            final long timeDiff = System.currentTimeMillis() - timeStart;
-
             Logging.debug("gpxdraw::draw takes " +
-                         Utils.getDurationString(timeDiff) +
+                         stopwatch +
                          "(" +
                          "segments= " + visibleSegments.size() +
-                         ", per 10000 = " + Utils.getDurationString(10_000 * timeDiff / visibleSegments.size()) +
+                         ", per 10000 = " + Utils.getDurationString(10_000 * stopwatch.elapsed() / visibleSegments.size()) +
                          ")"
               );
         }

@@ -13,7 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Stopwatch;
 
 /**
  * Unit tests of {@link AudioPlayer} class.
@@ -45,7 +45,7 @@ public class AudioPlayerTest {
         for (File w : new File[] {wav1, wav2}) {
             System.out.println("Playing " + w.toPath());
             URL url = w.toURI().toURL();
-            long start = System.currentTimeMillis();
+            final Stopwatch stopwatch = Stopwatch.createStarted();
             AudioPlayer.play(url);
             assertTrue(AudioPlayer.playing());
             assertFalse(AudioPlayer.paused());
@@ -53,12 +53,11 @@ public class AudioPlayerTest {
             assertFalse(AudioPlayer.playing());
             assertTrue(AudioPlayer.paused());
             AudioPlayer.play(url, AudioPlayer.position());
-            while (AudioPlayer.playing() && (System.currentTimeMillis() - start) < MAX_DURATION) {
+            while (AudioPlayer.playing() && stopwatch.elapsed() < MAX_DURATION) {
                 Thread.sleep(500);
             }
-            long duration = System.currentTimeMillis() - start;
-            System.out.println("Play finished after " + Utils.getDurationString(duration));
-            assertTrue(duration < MAX_DURATION);
+            System.out.println("Play finished after " + stopwatch);
+            assertTrue(stopwatch.elapsed() < MAX_DURATION);
             AudioPlayer.reset();
             Thread.sleep(1000); // precaution, see #13809
         }

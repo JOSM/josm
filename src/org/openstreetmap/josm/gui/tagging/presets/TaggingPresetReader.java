@@ -46,6 +46,7 @@ import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
@@ -352,7 +353,7 @@ public final class TaggingPresetReader {
             throws SAXException, IOException {
         Collection<TaggingPreset> tp;
         Logging.debug("Reading presets from {0}", source);
-        long startTime = System.currentTimeMillis();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         try (
             CachedFile cf = new CachedFile(source).setHttpAccept(PRESET_MIME_TYPES);
             // zip may be null, but Java 7 allows it: https://blogs.oracle.com/darcy/entry/project_coin_null_try_with
@@ -367,7 +368,7 @@ public final class TaggingPresetReader {
             }
         }
         if (Logging.isDebugEnabled()) {
-            Logging.debug("Presets read in {0}", Utils.getDurationString(System.currentTimeMillis() - startTime));
+            Logging.debug("Presets read in {0}", stopwatch);
         }
         return tp;
     }

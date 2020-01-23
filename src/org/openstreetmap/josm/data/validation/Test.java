@@ -27,7 +27,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Stopwatch;
 
 /**
  * Parent class for all validation tests.
@@ -74,7 +74,7 @@ public class Test implements OsmPrimitiveVisitor {
     protected ProgressMonitor progressMonitor;
 
     /** the start time to compute elapsed time when test finishes */
-    protected long startTime;
+    protected Stopwatch stopwatch;
 
     private boolean showElementCount;
 
@@ -153,7 +153,7 @@ public class Test implements OsmPrimitiveVisitor {
      * @throws Exception When cannot initialize the test
      */
     public void initialize() throws Exception {
-        this.startTime = -1;
+        this.stopwatch = Stopwatch.createStarted();
     }
 
     /**
@@ -167,7 +167,7 @@ public class Test implements OsmPrimitiveVisitor {
         this.progressMonitor.beginTask(startMessage);
         Logging.debug(startMessage);
         this.errors = new ArrayList<>(30);
-        this.startTime = System.currentTimeMillis();
+        this.stopwatch = Stopwatch.createStarted();
     }
 
     /**
@@ -196,10 +196,8 @@ public class Test implements OsmPrimitiveVisitor {
     public void endTest() {
         progressMonitor.finishTask();
         progressMonitor = null;
-        if (startTime > 0) {
-            // fix #11567 where elapsedTime is < 0
-            long elapsedTime = Math.max(0, System.currentTimeMillis() - startTime);
-            Logging.debug(tr("Test ''{0}'' completed in {1}", getName(), Utils.getDurationString(elapsedTime)));
+        if (stopwatch.elapsed() > 0) {
+            Logging.debug(tr("Test ''{0}'' completed in {1}", getName(), stopwatch));
         }
     }
 
