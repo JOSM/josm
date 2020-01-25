@@ -131,13 +131,27 @@ public class CredentialsManager implements CredentialsAgent {
                 UserIdentityManager.getInstance().setPartiallyIdentified(username);
             }
         }
+        // see #11914: clear cache before we store new value
+        purgeCredentialsCache(requestorType);
         delegate.store(requestorType, host, credentials);
     }
 
     @Override
     public CredentialsAgentResponse getCredentials(RequestorType requestorType, String host, boolean noSuccessWithLastResponse)
             throws CredentialsAgentException {
-        return delegate.getCredentials(requestorType, host, noSuccessWithLastResponse);
+        CredentialsAgentResponse credentials = delegate.getCredentials(requestorType, host, noSuccessWithLastResponse);
+        if (requestorType == RequestorType.SERVER) {
+            // see #11914 : Keep UserIdentityManager up to date
+            String userName = credentials.getUsername();
+            userName = userName == null ? "" : userName.trim();
+            if (!Objects.equals(UserIdentityManager.getInstance().getUserName(), userName)) {
+                if (userName.isEmpty())
+                    UserIdentityManager.getInstance().setAnonymous();
+                else
+                    UserIdentityManager.getInstance().setPartiallyIdentified(userName);
+            }
+        }
+        return credentials;
     }
 
     @Override
