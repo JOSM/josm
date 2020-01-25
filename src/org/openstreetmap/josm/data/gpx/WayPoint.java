@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
@@ -264,10 +265,14 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
 
     @Override
     public Object getTemplateValue(String name, boolean special) {
-        if (!special)
-            return get(name);
-        else
+        if (special) {
             return null;
+        } else if ("desc".equals(name)) {
+            final Object value = get(name);
+            return value instanceof String ? Utils.stripHtml(((String) value)) : value;
+        } else {
+            return get(name);
+        }
     }
 
     @Override

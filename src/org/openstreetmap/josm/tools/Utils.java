@@ -1989,4 +1989,20 @@ public final class Utils {
             return null;
         }
     }
+
+    /**
+     * Strips all HTML characters and return the result.
+     *
+     * @param rawString The raw HTML string
+     * @return the plain text from the HTML string
+     * @since 15760
+     */
+    public static String stripHtml(String rawString) {
+        // remove HTML tags
+        rawString = rawString.replaceAll("<.*?>", " ");
+        // consolidate multiple spaces between a word to a single space
+        rawString = rawString.replaceAll("\\b\\s{2,}\\b", " ");
+        // remove extra whitespaces
+        return rawString.trim();
+    }
 }

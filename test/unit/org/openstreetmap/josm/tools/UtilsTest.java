@@ -316,4 +316,15 @@ public class UtilsTest {
         assertTrue(Utils.isSimilar("bar", "baz"));
         assertTrue(Utils.isSimilar("Rua São João", "Rua SAO Joao"));
     }
+
+    /**
+     * Test of {@link Utils#stripHtml(String)}
+     */
+    @Test
+    public void testStripHtml() {
+        assertEquals("Hoogte 55 m", Utils.stripHtml(
+                "<table width=\"100%\"><tr>" +
+                        "<td align=\"left\" valign=\"center\"><small><b>Hoogte</b></small></td>" +
+                        "<td align=\"center\" valign=\"center\">55 m</td></tr></table>"));
+    }
 }

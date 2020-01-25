@@ -78,7 +78,7 @@ public class GpxData extends WithAttributes implements Data {
      */
     private final ArrayList<GpxRoute> privateRoutes = new ArrayList<>();
     /**
-     * Addidionaly waypoints for this file.
+     * Additional waypoints for this file.
      */
     private final ArrayList<WayPoint> privateWaypoints = new ArrayList<>();
     /**
