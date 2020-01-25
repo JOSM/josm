@@ -19,6 +19,8 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.osm.BBox;
@@ -26,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.FilterModel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
@@ -37,6 +40,8 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.MatchSupplier;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -74,6 +79,11 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
      * Property to determine the current auto filter rule.
      */
     public static final StringProperty PROP_AUTO_FILTER_RULE = new StringProperty("auto.filter.rule", "level");
+
+    /**
+     * Property to determine if the auto filter should assume sensible defaults for values (such as layer=1 for bridge=yes).
+     */
+    private static final BooleanProperty PROP_AUTO_FILTER_DEFAULTS = new BooleanProperty("auto.filter.defaults", true);
 
     /**
      * The unique instance.
@@ -147,15 +157,35 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         }
     }
 
+    static class CompiledFilter extends Filter implements MatchSupplier {
+        final String key;
+        final String value;
+
+        CompiledFilter(String key, String value) {
+            this.key = key;
+            this.value = value;
+            this.enable = true;
+            this.inverted = true;
+            this.text = key + "=" + value;
+        }
+
+        @Override
+        public SearchCompiler.Match get() {
+            return new SearchCompiler.Match() {
+                @Override
+                public boolean match(OsmPrimitive osm) {
+                    return getTagValuesForPrimitive(key, osm).anyMatch(value::equals);
+                }
+            };
+        }
+    }
+
     private synchronized void addNewButtons(NavigableSet<String> values) {
         int i = 0;
         int maxWidth = 16;
         MapView mapView = MainApplication.getMap().mapView;
         for (final String value : values.descendingSet()) {
-            Filter filter = new Filter();
-            filter.enable = true;
-            filter.inverted = true;
-            filter.text = enabledRule.getKey() + "=" + value;
+            Filter filter = new CompiledFilter(enabledRule.getKey(), value);
             String label = enabledRule.getValueFormatter().apply(value);
             AutoFilter autoFilter = new AutoFilter(label, filter.text, filter);
             AutoFilterButton button = new AutoFilterButton(autoFilter);
@@ -197,7 +227,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         Set<String> values = new TreeSet<>();
         if (ds != null) {
             BBox bbox = MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
-            Consumer<OsmPrimitive> consumer = getTagValuesConsumer(key, values);
+            Consumer<OsmPrimitive> consumer = o -> getTagValuesForPrimitive(key, o).forEach(values::add);
             ds.searchNodes(bbox).forEach(consumer);
             ds.searchWays(bbox).forEach(consumer);
             ds.searchRelations(bbox).forEach(consumer);
@@ -205,25 +235,32 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         return values;
     }
 
-    static Consumer<OsmPrimitive> getTagValuesConsumer(String key, Set<String> values) {
-        return o -> {
-            String value = o.get(key);
-            if (value != null) {
-                Pattern p = Pattern.compile("(-?[0-9]+)-(-?[0-9]+)");
-                for (String v : value.split(";")) {
-                    Matcher m = p.matcher(v);
-                    if (m.matches()) {
-                        int a = Integer.parseInt(m.group(1));
-                        int b = Integer.parseInt(m.group(2));
-                        for (int i = Math.min(a, b); i <= Math.max(a, b); i++) {
-                            values.add(Integer.toString(i));
-                        }
-                    } else {
-                        values.add(v);
-                    }
+    static Stream<String> getTagValuesForPrimitive(String key, OsmPrimitive osm) {
+        String value = osm.get(key);
+        if (value != null) {
+            Pattern p = Pattern.compile("(-?[0-9]+)-(-?[0-9]+)");
+            return OsmUtils.splitMultipleValues(value).flatMap(v -> {
+                Matcher m = p.matcher(v);
+                if (m.matches()) {
+                    int a = Integer.parseInt(m.group(1));
+                    int b = Integer.parseInt(m.group(2));
+                    return IntStream.rangeClosed(Math.min(a, b), Math.max(a, b))
+                            .mapToObj(Integer::toString);
+                } else {
+                    return Stream.of(v);
                 }
+            });
+        } else if (PROP_AUTO_FILTER_DEFAULTS.get() && "layer".equals(key)) {
+            // assume sensible defaults, see #17496
+            if (osm.hasTag("bridge") || osm.hasTag("power", "line") || osm.hasTag("location", "overhead")) {
+                return Stream.of("1");
+            } else if (osm.isKeyTrue("tunnel") || osm.hasTag("tunnel", "culvert") || osm.hasTag("location", "underground")) {
+                return Stream.of("-1");
+            } else if (osm.hasTag("tunnel", "building_passage") || osm.hasKey("highway", "railway", "waterway")) {
+                return Stream.of("0");
             }
-        };
+        }
+        return Stream.empty();
     }
 
     @Override

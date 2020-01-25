@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -260,6 +261,17 @@ public class SearchCompiler {
 
     public interface BinaryMatchFactory extends MatchFactory {
         AbstractBinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws SearchParseError;
+    }
+
+    /**
+     * Classes implementing this interface can provide Match instances themselves and do not rely on {@link #compile(String)}.
+     *
+     * @since 15764
+     */
+    @FunctionalInterface
+    public interface MatchSupplier extends Supplier<Match> {
+        @Override
+        Match get();
     }
 
     /**
@@ -1943,6 +1955,9 @@ public class SearchCompiler {
      * @see #compile(String)
      */
     public static Match compile(SearchSetting setting) throws SearchParseError {
+        if (setting instanceof MatchSupplier) {
+            return ((MatchSupplier) setting).get();
+        }
         if (setting.mapCSSSearch) {
             return compileMapCSS(setting.text);
         }
