@@ -43,7 +43,7 @@ public final class TextTagParser {
     /**
      * Try to find tag-value pairs in given text
      * @param text - text in which tags are looked for
-     * @param splitRegex - text is splitted into parts with this delimiter
+     * @param splitRegex - text is split into parts with this delimiter
      * @param tagRegex - each part is matched against this regex
      * @param unescapeTextInQuotes - if true, matched tag and value will be analyzed more thoroughly
      * @return map of tags
@@ -105,7 +105,7 @@ public final class TextTagParser {
 
         // Format
         // a=b \n c=d \n "a b"=hello
-        // SORRY: "a=b" = c is not supported fror now, only first = will be considered
+        // SORRY: "a=b" = c is not supported for now, only first = will be considered
         // a = "b=c" is OK
         // a = b=c  - this method of parsing fails intentionally
         tags = readTagsByRegexp(buf, "[\\n\\t\\r]+", "(.*?)=(.*?)", true);
