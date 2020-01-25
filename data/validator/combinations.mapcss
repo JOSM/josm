@@ -669,12 +669,10 @@ way[construction][construction!=yes][construction!=minor][highway][highway!=cons
   throwWarning: tr("{0} together with {1}. Probably {2} is meant.", "{1.key}", "{0.tag}", "{2.key}");
   group: tr("suspicious tag combination");
   fixChangeKey: "collection_times => opening_hours";
-  /* spaces in asserts are not yet supported
-  assertMatch: "node amenity=recycling collection_times=Mo-Fr 06:00-20:00";
-  assertNoMatch: "node amenity=recycling collection_times=Mo-Fr 15:00";
-  assertNoMatch: "node amenity=recycling collection_times=Mo 08:00-11:00";
-  assertNoMatch: "node amenity=recycling collection_times=Sa[2,4] 8:00-11:00";
-  */
+  assertMatch: "node amenity=recycling collection_times=\"Mo-Fr 06:00-20:00\"";
+  assertNoMatch: "node amenity=recycling collection_times=\"Mo-Fr 15:00\"";
+  assertNoMatch: "node amenity=recycling collection_times=\"Mo 08:00-11:00\"";
+  assertNoMatch: "node amenity=recycling collection_times=\"Sa[2,4] 8:00-11:00\"";
 }
 *[amenity=recycling][collection_times="24/7"][opening_hours],
 *[amenity=recycling][collection_times       ][opening_hours][collection_times=~/[a-z]-[A-Z].*[0-9]-[0-9]/] {
