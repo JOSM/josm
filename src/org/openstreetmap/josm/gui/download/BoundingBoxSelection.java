@@ -99,8 +99,8 @@ public class BoundingBoxSelection implements DownloadSelection {
         tfOsmUrl.setBorder(latlon[0].getBorder());
 
         final Panel latlonPanel = new Panel(new BorderLayout());
-        final String[] labels = new String[]{tr("min lat"), tr("min lon"), tr("max lat"), tr("max lon")};
-        final String[] positions = new String[]{BorderLayout.SOUTH, BorderLayout.WEST, BorderLayout.NORTH, BorderLayout.EAST};
+        final String[] labels = {tr("min lat"), tr("min lon"), tr("max lat"), tr("max lon")};
+        final String[] positions = {BorderLayout.SOUTH, BorderLayout.WEST, BorderLayout.NORTH, BorderLayout.EAST};
         for (int i = 0; i < latlon.length; i++) {
             final Panel panel = new Panel(new GridBagLayout());
             panel.add(new JLabel(labels[i]), GBC.std().insets(10, 0, 3, 0));
