@@ -201,13 +201,9 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
 
             for (IGpxTrack trk : data.getTracks()) {
                 info.append("<tr><td>");
-                if (trk.getAttributes().containsKey(GpxConstants.GPX_NAME)) {
-                    info.append(trk.get(GpxConstants.GPX_NAME));
-                }
+                info.append(trk.getAttributes().getOrDefault(GpxConstants.GPX_NAME, ""));
                 info.append("</td><td>");
-                if (trk.getAttributes().containsKey(GpxConstants.GPX_DESC)) {
-                    info.append(' ').append(trk.get(GpxConstants.GPX_DESC));
-                }
+                info.append(trk.getAttributes().getOrDefault(GpxConstants.GPX_DESC, ""));
                 info.append("</td><td>");
                 info.append(getTimespanForTrack(trk));
                 info.append("</td><td>");
