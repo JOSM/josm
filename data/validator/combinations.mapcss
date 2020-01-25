@@ -659,7 +659,7 @@ node[emergency_ward_entrance][emergency!=emergency_ward_entrance] {
 
 /* #18203 */
 way[construction][construction!=yes][construction!=minor][highway][highway!=construction] {
-  throwWarning: tr("{0} together with {1}", "{2.tag}", "{0.tag}");
+  throwWarning: tr("{0} together with {1}", "{3.tag}", "{0.tag}");
   group: tr("suspicious tag combination");
 }
 

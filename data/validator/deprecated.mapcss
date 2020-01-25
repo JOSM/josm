@@ -1293,7 +1293,7 @@ way[direction=down][incline][incline!=down] {
   fixAdd: "building=yes";
 }
 
-/* #17786 */
+/* #17786, #18612 */
 *[building=abandoned],
 *[building=address],
 *[building=bing],
@@ -1303,14 +1303,18 @@ way[direction=down][incline][incline!=down] {
 *[building=disused],
 *[building=fixme],
 *[building=occupied],
+*[building=razed] {
+  throwWarning: tr("{0} is not a building type.", "{0.tag}");
+  group: tr("deprecated tagging");
+}
 *[building=other],
-*[building=razed],
 *[building=unclassified],
 *[building=undefined],
 *[building=unknown],
 *[building=unidentified] {
   throwWarning: tr("{0} is not a building type.", "{0.tag}");
   group: tr("deprecated tagging");
+  fixAdd: "building=yes";
 }
 
 /* #15675 */
@@ -1890,4 +1894,26 @@ way[landuse=churchyard] {
 node[segregated][segregated!=yes][segregated!=no],
 way[segregated ][segregated!=yes][segregated!=no] {
   throwWarning: tr("unusual value of {0}", "{0.key}");
+}
+
+/* #18603 */
+way[bicycle:oneway] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "oneway:bicycle";
+  fixChangeKey: "bicycle:oneway => oneway:bicycle";
+  group: tr("deprecated tagging");
+}
+
+/* #18605 */
+*[building:height] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "height";
+  fixChangeKey: "building:height => height";
+  group: tr("deprecated tagging");
+}
+*[building:min_height] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "min_height";
+  fixChangeKey: "building:min_height => min_height";
+  group: tr("deprecated tagging");
 }
