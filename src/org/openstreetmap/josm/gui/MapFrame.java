@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -26,7 +25,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -37,9 +35,11 @@ import javax.swing.JSplitPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
@@ -138,13 +138,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
     private final ListAllButtonsAction listAllDialogsAction = new ListAllButtonsAction(allDialogButtons);
     private final ListAllButtonsAction listAllMapModesAction = new ListAllButtonsAction(allMapModeButtons);
-    private final JButton listAllToggleDialogsButton = new JButton(listAllDialogsAction);
-    private final JButton listAllMapModesButton = new JButton(listAllMapModesAction);
-
-    {
-        listAllDialogsAction.setButton(listAllToggleDialogsButton);
-        listAllMapModesAction.setButton(listAllMapModesButton);
-    }
 
     // Toggle dialogs
 
@@ -520,11 +513,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             toolBarActions.setBorder(null);
             toolBarActions.setInheritsPopupMenu(true);
             sideToolBar.add(toolBarActions);
-            listAllMapModesButton.setAlignmentX(0.5f);
-            listAllMapModesButton.setBorder(null);
-            listAllMapModesButton.setFont(listAllMapModesButton.getFont().deriveFont(Font.PLAIN));
-            listAllMapModesButton.setInheritsPopupMenu(true);
-            sideToolBar.add(listAllMapModesButton);
+            sideToolBar.add(listAllMapModesAction.createButton());
         }
 
         /**
@@ -536,11 +525,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             toolBarToggle.setBorder(null);
             toolBarToggle.setInheritsPopupMenu(true);
             sideToolBar.add(toolBarToggle);
-            listAllToggleDialogsButton.setAlignmentX(0.5f);
-            listAllToggleDialogsButton.setBorder(null);
-            listAllToggleDialogsButton.setFont(listAllToggleDialogsButton.getFont().deriveFont(Font.PLAIN));
-            listAllToggleDialogsButton.setInheritsPopupMenu(true);
-            sideToolBar.add(listAllToggleDialogsButton);
+            sideToolBar.add(listAllDialogsAction.createButton());
         }
 
         /**
@@ -660,11 +645,20 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             this.buttons = buttons;
         }
 
-        public void setButton(JButton button) {
-            this.button = button;
-            final ImageIcon icon = ImageProvider.get("audio-fwd");
-            putValue(SMALL_ICON, icon);
-            button.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight() + 64));
+        JButton createButton() {
+            button = new BasicArrowButton(SwingConstants.EAST) {
+
+                @Override
+                public Dimension getMaximumSize() {
+                    final Dimension dimension = ImageProvider.ImageSizes.TOOLBAR.getImageDimension();
+                    dimension.width = Integer.MAX_VALUE;
+                    return dimension;
+                }
+            };
+            button.setAction(this);
+            button.setAlignmentX(0.5f);
+            button.setInheritsPopupMenu(true);
+            return button;
         }
 
         @Override
