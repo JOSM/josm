@@ -326,8 +326,10 @@ public abstract class AbstractReader {
             throw new IllegalDataException(e);
         } finally {
             OptionalLong minId = externalIdMap.values().stream().mapToLong(AbstractPrimitive::getUniqueId).min();
-            if (minId.isPresent() && minId.getAsLong() < AbstractPrimitive.currentUniqueId()) {
-                AbstractPrimitive.advanceUniqueId(minId.getAsLong());
+            synchronized (AbstractPrimitive.class) {
+                if (minId.isPresent() && minId.getAsLong() < AbstractPrimitive.currentUniqueId()) {
+                    AbstractPrimitive.advanceUniqueId(minId.getAsLong());
+                }
             }
             progressMonitor.finishTask();
             progressMonitor.removeCancelListener(cancelListener);
