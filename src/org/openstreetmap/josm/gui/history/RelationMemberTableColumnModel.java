@@ -22,13 +22,13 @@ public class RelationMemberTableColumnModel extends DefaultTableColumnModel {
     protected void createColumns() {
         RelationMemberListTableCellRenderer renderer = new RelationMemberListTableCellRenderer();
 
-        // column 0 - Version
+        // column 0 - Role
         TableColumn col = new TableColumn(0);
         col.setHeaderValue(tr("Role"));
         col.setCellRenderer(renderer);
         addColumn(col);
 
-        // column 0 - Version
+        // column 1 - Object
         col = new TableColumn(1);
         col.setHeaderValue(tr("Object"));
         col.setCellRenderer(renderer);

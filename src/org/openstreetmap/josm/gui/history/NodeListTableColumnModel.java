@@ -22,7 +22,7 @@ public class NodeListTableColumnModel extends DefaultTableColumnModel {
     protected void createColumns() {
         NodeListTableCellRenderer renderer = new NodeListTableCellRenderer();
 
-        // column 0 - Version
+        // column 0 - Nodes
         TableColumn col = new TableColumn(0);
         col.setHeaderValue(tr("Nodes"));
         col.setCellRenderer(renderer);
