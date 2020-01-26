@@ -70,7 +70,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
     private JTable buildTable(PointInTimeType pointInTime) {
         TagTableModel tagTableModel = model.getTagTableModel(pointInTime);
         JTable table = new JTable(tagTableModel, new TagTableColumnModel());
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.setTransferHandler(new TagInfoTransferHandler());
         table.addFocusListener(new RepaintOnFocusChange());
@@ -87,7 +87,9 @@ public class TagInfoViewer extends HistoryViewerPanel {
         Supplier<Collection<? extends Tagged>> objectSp = () -> Collections.singletonList(model.getPointInTime(pointInTime));
 
         tagMenu.add(trackJosmAction(new CopyValueAction(table, tagKeyFn, objectSp)));
-        tagMenu.add(trackJosmAction(new CopyKeyValueAction(table, tagKeyFn, objectSp)));
+        final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction(table, tagKeyFn, objectSp);
+        tagMenu.add(trackJosmAction(copyKeyValueAction));
+        tagMenu.addPopupMenuListener(copyKeyValueAction);
         tagMenu.add(trackJosmAction(new CopyAllKeyValueAction(table, tagKeyFn, objectSp)));
         tagMenu.addSeparator();
         tagMenu.add(trackJosmAction(new HelpTagAction(table, tagKeyFn, tagValuesFn)));

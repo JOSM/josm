@@ -51,11 +51,12 @@ public class SelectionSynchronizer implements ListSelectionListener {
         preventRecursion = true;
         DefaultListSelectionModel referenceModel = (DefaultListSelectionModel) e.getSource();
         int i = referenceModel.getMinSelectionIndex();
+        int j = referenceModel.getMaxSelectionIndex();
         for (ListSelectionModel model : participants) {
             if (model == e.getSource()) {
                 continue;
             }
-            model.setSelectionInterval(i, i);
+            model.setSelectionInterval(i, j);
         }
         preventRecursion = false;
     }
