@@ -5,8 +5,6 @@ import java.awt.Rectangle;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 /**
  * RelationMemberListViewer is a UI component which displays the  list of relation members of two
@@ -20,20 +18,6 @@ import javax.swing.event.TableModelListener;
  */
 public class RelationMemberListViewer extends HistoryViewerPanel {
 
-    protected static class MemberModelChanged implements TableModelListener {
-        private final JTable table;
-
-        protected MemberModelChanged(JTable table) {
-            this.table = table;
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            Rectangle rect = table.getCellRect(((DiffTableModel) e.getSource()).getFirstChange(), 0, true);
-            table.scrollRectToVisible(rect);
-        }
-    }
-
     @Override
     protected JTable buildTable(PointInTimeType pointInTimeType) {
         JTable table = new JTable(
@@ -41,7 +25,10 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
                 new RelationMemberTableColumnModel());
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
-        table.getModel().addTableModelListener(new MemberModelChanged(table));
+        table.getModel().addTableModelListener(e -> {
+            Rectangle rect = table.getCellRect(((DiffTableModel) e.getSource()).getFirstChange(), 0, true);
+            table.scrollRectToVisible(rect);
+        });
         return table;
     }
 
