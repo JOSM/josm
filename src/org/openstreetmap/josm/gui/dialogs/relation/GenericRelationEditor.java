@@ -861,7 +861,7 @@ public class GenericRelationEditor extends RelationEditor {
                 MainApplication.getMainFrame(),
                 msg,
                 tr("Multiple members referring to same object."),
-                JOptionPane.YES_NO_OPTION,
+                JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.WARNING_MESSAGE,
                 null,
                 null
