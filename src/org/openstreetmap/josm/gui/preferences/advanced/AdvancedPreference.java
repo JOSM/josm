@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -160,11 +161,13 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
     public void addGui(final PreferenceTabbedPane gui) {
         JPanel p = gui.createPreferenceTab(this);
 
+        final JPanel txtFilterPanel = new JPanel(new GridBagLayout());
+        p.add(txtFilterPanel, GBC.eol().fill(GBC.HORIZONTAL));
         txtFilter = new JosmTextField();
         JLabel lbFilter = new JLabel(tr("Search:"));
         lbFilter.setLabelFor(txtFilter);
-        p.add(lbFilter);
-        p.add(txtFilter, GBC.eol().fill(GBC.HORIZONTAL));
+        txtFilterPanel.add(lbFilter, GBC.std().insets(0, 0, 5, 0));
+        txtFilterPanel.add(txtFilter, GBC.eol().fill(GBC.HORIZONTAL));
         txtFilter.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
