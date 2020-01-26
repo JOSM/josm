@@ -179,8 +179,8 @@ public class BasicUploadSettingsPanel extends JPanel {
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         add(buildUploadCommentPanel(), GBC.eol().fill(GBC.BOTH));
-        add(pnlUploadParameterSummary, GBC.eol().fill(GBC.HORIZONTAL));
-        add(cbRequestReview, GBC.eol().fill(GBC.HORIZONTAL));
+        add(pnlUploadParameterSummary, GBC.eol().fill(GBC.BOTH));
+        add(cbRequestReview, GBC.eol().fill(GBC.BOTH));
         cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
     }
 
