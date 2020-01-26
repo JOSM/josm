@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -475,19 +476,27 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             Setting<?> valueSetting = e.getValue();
             String prefValue = valueSetting.getValue() == null ? "" : valueSetting.getValue().toString();
 
-            String[] input = txtFilter.getText().split("\\s+");
-            boolean canHas = true;
 
             // Make 'wmsplugin cache' search for e.g. 'cache.wmsplugin'
             final String prefKeyLower = prefKey.toLowerCase(Locale.ENGLISH);
             final String prefValueLower = prefValue.toLowerCase(Locale.ENGLISH);
-            for (String bit : input) {
-                bit = bit.toLowerCase(Locale.ENGLISH);
-                if (!prefKeyLower.contains(bit) && !prefValueLower.contains(bit)) {
-                    canHas = false;
-                    break;
-                }
-            }
+            final boolean canHas = Pattern.compile("\\s+").splitAsStream(txtFilter.getText())
+                    .map(bit -> bit.toLowerCase(Locale.ENGLISH))
+                    .anyMatch(bit -> {
+                        switch (bit) {
+                            // syntax inspired by SearchCompiler
+                            case "changed":
+                                return e.isChanged();
+                            case "modified":
+                            case "-default":
+                                return !e.isDefault();
+                            case "-modified":
+                            case "default":
+                                return e.isDefault();
+                            default:
+                                return prefKeyLower.contains(bit) || prefValueLower.contains(bit);
+                        }
+                    });
             if (canHas) {
                 displayData.add(e);
             }
