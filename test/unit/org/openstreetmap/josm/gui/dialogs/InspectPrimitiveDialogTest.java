@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -47,20 +48,38 @@ public class InspectPrimitiveDialogTest {
     public void testBuildDataText() {
         DataSet ds = new DataSet();
         assertEquals("", InspectPrimitiveDialog.buildDataText(ds, new ArrayList<>(ds.allPrimitives())));
-        Node n = new Node(LatLon.ZERO);
-        n.setOsmId(1, 1);
-        ds.addPrimitive(n);
+        final Way way = new Way();
+        way.addNode(new Node(new LatLon(47.2687921, 11.390525)));
+        way.addNode(new Node(new LatLon(47.2689194, 11.3907301)));
+        way.addNode(new Node(new LatLon(47.2684158, 11.3914047)));
+        way.addNode(new Node(new LatLon(47.2682898, 11.3912034)));
+        way.setOsmId(1, 1);
+        int id = 2;
+        for (Node node : way.getNodes()) {
+            node.setOsmId(id, id);
+            id++;
+        }
+        way.getNodes().forEach(ds::addPrimitive);
+        ds.addPrimitive(way);
+        way.addNode(way.firstNode()); // close way
         assertEquals(
-                "Node: 1\n" +
+            "Way: 1\n" +
                 "  Data Set: "+Integer.toHexString(ds.hashCode())+"\n" +
                 "  Edited at: <new object>\n" +
                 "  Edited by: <new object>\n" +
                 "  Version: 1\n" +
                 "  In changeset: 0\n" +
-                "  Coordinates: 0.0, 0.0\n" +
-                "  Coordinates (projected): 0.0, -7.081154551613622E-10\n" +
-                "  UTM Zone: 31S\n" +
-                "\n", InspectPrimitiveDialog.buildDataText(ds, new ArrayList<>(ds.allPrimitives())));
+                "  Bounding box: 47.2682898, 11.3914047, 47.2689194, 11.390525\n" +
+                "  Bounding box (projected): 5985976.274977, 1268085.3706241, 5986079.5621105, 1267987.4428681\n" +
+                "  Center of bounding box: 47.2686046, 11.3909648\n" +
+                "  Centroid: 47.2686049, 11.3909649\n" +
+                "  5 Nodes: \n" +
+                "    2\n" +
+                "    3\n" +
+                "    4\n" +
+                "    5\n" +
+                "    2\n" +
+                "\n", InspectPrimitiveDialog.buildDataText(ds, new ArrayList<>(ds.getWays())));
     }
 
     /**

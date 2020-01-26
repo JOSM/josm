@@ -4,12 +4,17 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.AbstractCoordinateFormat;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.ProjectedCoordinateFormat;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
@@ -167,9 +172,8 @@ public class InspectPrimitiveDataText {
             addCoordinates((INode) o);
         } else if (o instanceof IWay) {
             addBbox(o);
-            add(tr("Centroid: "),
-                    toStringCSV(", ", ProjectionRegistry.getProjection().eastNorth2latlon(
-                            Geometry.getCentroid(((IWay<?>) o).getNodes()))));
+            add(tr("Centroid: "), toStringCSV(false,
+                    ProjectionRegistry.getProjection().eastNorth2latlon(Geometry.getCentroid(((IWay<?>) o).getNodes()))));
             addWayNodes((IWay<?>) o);
         } else if (o instanceof IRelation) {
             addBbox(o);
@@ -199,27 +203,18 @@ public class InspectPrimitiveDataText {
     void addBbox(IPrimitive o) {
         BBox bbox = o.getBBox();
         if (bbox != null) {
-            add(tr("Bounding box: "), bbox.toStringCSV(", "));
-            EastNorth bottomRigth = bbox.getBottomRight().getEastNorth(ProjectionRegistry.getProjection());
-            EastNorth topLeft = bbox.getTopLeft().getEastNorth(ProjectionRegistry.getProjection());
-            add(tr("Bounding box (projected): "),
-                    Double.toString(topLeft.east()), ", ",
-                    Double.toString(bottomRigth.north()), ", ",
-                    Double.toString(bottomRigth.east()), ", ",
-                    Double.toString(topLeft.north()));
-            add(tr("Center of bounding box: "), toStringCSV(", ", bbox.getCenter()));
+            final LatLon bottomRight = bbox.getBottomRight();
+            final LatLon topLeft = bbox.getTopLeft();
+            add(tr("Bounding box: "), toStringCSV(false, bottomRight, topLeft));
+            add(tr("Bounding box (projected): "), toStringCSV(true, bottomRight, topLeft));
+            add(tr("Center of bounding box: "), toStringCSV(false, bbox.getCenter()));
         }
     }
 
     void addCoordinates(INode n) {
         if (n.isLatLonKnown()) {
-            add(tr("Coordinates:"), " ",
-                    Double.toString(n.lat()), ", ",
-                    Double.toString(n.lon()));
-            EastNorth en = n.getEastNorth();
-            add(tr("Coordinates (projected): "),
-                    Double.toString(en.east()), ", ",
-                    Double.toString(en.north()));
+            add(tr("Coordinates:"), " ", toStringCSV(false, n));
+            add(tr("Coordinates (projected): "), toStringCSV(true, n));
             Pair<Integer, Hemisphere> utmZone = TransverseMercator.locateUtmZone(n.getCoor());
             String utmLabel = tr("UTM Zone");
             add(utmLabel, utmLabel.endsWith(":") ? " " : ": ", Integer.toString(utmZone.a), utmZone.b.name().substring(0, 1));
@@ -247,16 +242,18 @@ public class InspectPrimitiveDataText {
     }
 
     /**
-     * Returns lat/lon coordinate in human-readable format separated by {@code separator}.
-     * @param separator values separator
-     * @param ll the lat/lon
-     * @return String in the format {@code "1.23456[separator]2.34567"}
+     * Returns the coordinates in human-readable format.
+     * @param projected whether to use projected coordinates
+     * @param coordinates the coordinates to format
+     * @return String in the format {@code "1.23456, 2.34567"}
      */
-    private static String toStringCSV(String separator, ILatLon ll) {
-        return String.join(separator,
-                DecimalDegreesCoordinateFormat.INSTANCE.latToString(ll),
-                DecimalDegreesCoordinateFormat.INSTANCE.lonToString(ll)
-        );
+    private static String toStringCSV(boolean projected, ILatLon... coordinates) {
+        final AbstractCoordinateFormat format = projected
+                ? ProjectedCoordinateFormat.INSTANCE
+                : DecimalDegreesCoordinateFormat.INSTANCE;
+        return Arrays.stream(coordinates)
+                .flatMap(ll -> Stream.of(format.latToString(ll), format.lonToString(ll)))
+                .collect(Collectors.joining(", "));
     }
 
     @Override
