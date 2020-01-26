@@ -3,9 +3,8 @@ package org.openstreetmap.josm.gui.history;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -15,7 +14,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.data.osm.Tagged;
-import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyAllKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyValueAction;
@@ -61,18 +59,17 @@ public class TagInfoViewer extends HistoryViewerPanel {
 
     @Override
     protected JTable buildReferenceTable() {
-        return buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME, "table.referencetagtable", model::getReferencePointInTime);
+        return buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME);
     }
 
     @Override
     protected JTable buildCurrentTable() {
-        return buildTable(PointInTimeType.CURRENT_POINT_IN_TIME, "table.currenttagtable", model::getCurrentPointInTime);
+        return buildTable(PointInTimeType.CURRENT_POINT_IN_TIME);
     }
 
-    private JTable buildTable(PointInTimeType pointInTime, String name, Supplier<HistoryOsmPrimitive> histoSp) {
+    private JTable buildTable(PointInTimeType pointInTime) {
         TagTableModel tagTableModel = model.getTagTableModel(pointInTime);
         JTable table = new JTable(tagTableModel, new TagTableColumnModel());
-        table.setName(name);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.setTransferHandler(new TagInfoTransferHandler());
@@ -81,14 +78,13 @@ public class TagInfoViewer extends HistoryViewerPanel {
 
         IntFunction<String> tagKeyFn = x -> (String) table.getValueAt(x, 0);
         IntFunction<Map<String, Integer>> tagValuesFn = x -> {
-            Map<String, Integer> map = new HashMap<>();
             String key = tagTableModel.getValue((String) table.getValueAt(x, 0));
             if (key != null) {
-                map.put(key, 1);
+                return Collections.singletonMap(key, 1);
             }
-            return map;
+            return Collections.emptyMap();
         };
-        Supplier<Collection<? extends Tagged>> objectSp = () -> Arrays.asList(histoSp.get());
+        Supplier<Collection<? extends Tagged>> objectSp = () -> Collections.singletonList(model.getPointInTime(pointInTime));
 
         tagMenu.add(trackJosmAction(new CopyValueAction(table, tagKeyFn, objectSp)));
         tagMenu.add(trackJosmAction(new CopyKeyValueAction(table, tagKeyFn, objectSp)));
