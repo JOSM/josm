@@ -492,7 +492,8 @@
     <text key="network" text="Network" />
     <text key="description" text="Description" />
     <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
-    <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120" values_no_i18n="true" />
+    <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
+    <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
   </chunk>
   <chunk id="climbing_styles">
     <label text="Climbing styles:" />
@@ -2492,16 +2493,16 @@
             <link wiki="Public_transport#Service_routes" />
             <space />
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="bus,trolleybus" values_searchable="true" match="keyvalue!" />
+            <combo key="route" text="Route type" values="bus,share_taxi,trolleybus" values_searchable="true" match="keyvalue!" />
             <key key="public_transport:version" value="2" /> <!-- only validate marked relations in order to avoid false positives -->
             <reference ref="name_ref" />
             <optional>
                 <reference ref="public_transport_route_optionals" />
             </optional>
             <roles>
-                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR trolleybus=yes)" />
-                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR trolleybus=yes)" />
-                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR trolleybus=yes)" />
+                <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR share_taxi=yes OR trolleybus=yes)" />
+                <role key="stop_exit_only" text="stop position (exit only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR share_taxi=yes OR trolleybus=yes)" />
+                <role key="stop_entry_only" text="stop position (entry only)" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR share_taxi=yes OR trolleybus=yes)" />
                 <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
                 <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
                 <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway" member_expression="public_transport=platform" />
@@ -2513,7 +2514,7 @@
             <link wiki="Public_transport#Route_Master_relations" />
             <space />
             <key key="type" value="route_master" />
-            <combo key="route_master" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" />
+            <combo key="route_master" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,share_taxi,aerialway,ferry" />
             <reference ref="name_ref" />
             <optional>
                 <text key="operator" text="Operator" />
@@ -2618,7 +2619,7 @@
     <group name="Public Transport (Legacy)" icon="presets/transport/bus_old.svg">
         <item name="Public transport route (Legacy)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
             <key key="type" value="route" />
-            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,aerialway,ferry" values_searchable="true" match="keyvalue!" />
+            <combo key="route" text="Route type" values="train,subway,monorail,tram,bus,trolleybus,share_taxi,aerialway,ferry" values_searchable="true" match="keyvalue!" />
             <key key="public_transport:version" value="1" /> <!-- only validate marked relations in order to avoid false positives -->
             <reference ref="name_ref" />
             <optional>
