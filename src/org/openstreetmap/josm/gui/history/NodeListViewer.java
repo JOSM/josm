@@ -51,21 +51,11 @@ public class NodeListViewer extends HistoryViewerPanel {
     }
 
     @Override
-    protected JTable buildReferenceTable() {
-        return buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME, "table.referencenodelisttable");
-    }
-
-    @Override
-    protected JTable buildCurrentTable() {
-        return buildTable(PointInTimeType.CURRENT_POINT_IN_TIME, "table.currentnodelisttable");
-    }
-
-    private JTable buildTable(PointInTimeType pointInTimeType, String name) {
+    protected JTable buildTable(PointInTimeType pointInTimeType) {
         final DiffTableModel tableModel = model.getNodeListTableModel(pointInTimeType);
         final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
         tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel));
-        table.setName(name);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.addMouseListener(new InternalPopupMenuLauncher());

@@ -58,16 +58,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
     }
 
     @Override
-    protected JTable buildReferenceTable() {
-        return buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME);
-    }
-
-    @Override
-    protected JTable buildCurrentTable() {
-        return buildTable(PointInTimeType.CURRENT_POINT_IN_TIME);
-    }
-
-    private JTable buildTable(PointInTimeType pointInTime) {
+    protected JTable buildTable(PointInTimeType pointInTime) {
         TagTableModel tagTableModel = model.getTagTableModel(pointInTime);
         JTable table = new JTable(tagTableModel, new TagTableColumnModel());
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

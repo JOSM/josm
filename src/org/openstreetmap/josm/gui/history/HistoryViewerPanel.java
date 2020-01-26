@@ -29,9 +29,7 @@ public abstract class HistoryViewerPanel extends HistoryBrowserPanel {
         return pane;
     }
 
-    protected abstract JTable buildReferenceTable();
-
-    protected abstract JTable buildCurrentTable();
+    protected abstract JTable buildTable(PointInTimeType pointInTimeType);
 
     private void build() {
         GridBagConstraints gc = new GridBagConstraints();
@@ -72,7 +70,7 @@ public abstract class HistoryViewerPanel extends HistoryBrowserPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embedInScrollPane(buildReferenceTable()), gc);
+        add(embedInScrollPane(buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME)), gc);
 
         gc.gridx = 1;
         gc.gridy = 1;
@@ -82,6 +80,6 @@ public abstract class HistoryViewerPanel extends HistoryBrowserPanel {
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
-        add(embedInScrollPane(buildCurrentTable()), gc);
+        add(embedInScrollPane(buildTable(PointInTimeType.CURRENT_POINT_IN_TIME)), gc);
     }
 }
