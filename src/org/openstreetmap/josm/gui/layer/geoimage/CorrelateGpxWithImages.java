@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -993,7 +994,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         final JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         statusBar.setBorder(BorderFactory.createLoweredBevelBorder());
         statusBarText = new JLabel(" ");
-        statusBarText.setFont(statusBarText.getFont().deriveFont(8));
+        statusBarText.setFont(statusBarText.getFont().deriveFont(Font.PLAIN, 8));
         statusBar.add(statusBarText);
 
         tfTimezone.addFocusListener(repaintTheMap);

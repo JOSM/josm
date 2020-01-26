@@ -82,7 +82,7 @@ public class StrokePropertyTest {
         assertEquals(12, bs.getLineWidth(), 1e-10);
         assertEquals(null, bs.getDashArray());
 
-        property.put(new BasicStroke(2, 0, 0, 1, new float[] {0.1f, 1, 10}, 0));
+        property.put(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[] {0.1f, 1, 10}, 0));
         bs = property.get();
         assertWide(bs);
         assertEquals(2, bs.getLineWidth(), 1e-10);

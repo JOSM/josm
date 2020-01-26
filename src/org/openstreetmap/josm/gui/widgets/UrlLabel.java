@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.widgets;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -84,7 +85,7 @@ public class UrlLabel extends JLabel implements MouseListener {
         setUrl(url);
         setDescription(description);
         if (fontPlus != 0) {
-            setFont(getFont().deriveFont(0, (float) getFont().getSize()+fontPlus));
+            setFont(getFont().deriveFont(Font.PLAIN, (float) getFont().getSize()+fontPlus));
         }
         refresh();
     }

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
@@ -38,7 +39,7 @@ public class LogShowDialog extends ExtendedDialog {
         JPanel p = new JPanel(new GridBagLayout());
         JLabel lbl = new JLabel(msg);
 
-        lbl.setFont(lbl.getFont().deriveFont(0, 14));
+        lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN, 14));
 
         p.add(lbl, GBC.eol().insets(5, 0, 5, 0));
         JosmEditorPane txt = new JosmEditorPane();

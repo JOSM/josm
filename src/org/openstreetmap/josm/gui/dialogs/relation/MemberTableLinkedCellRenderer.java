@@ -223,7 +223,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         ((Graphics2D) g).setStroke(new BasicStroke(
                 1f,
                 BasicStroke.CAP_BUTT,
-                BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER,
                 5f,
                 new float[] {1f, 2f},
                 0f));

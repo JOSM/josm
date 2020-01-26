@@ -62,7 +62,7 @@ public final class FakeGraphics extends Graphics2D {
 
     @Override
     public Font getFont() {
-        return new Font(null, 0, 0);
+        return new Font(null, Font.PLAIN, 0);
     }
 
     @Override
