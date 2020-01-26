@@ -11,7 +11,7 @@ relation[!type] {
 relation[type=route][!route],
 relation[type=route_master][!route_master],
 relation[type=restriction][!/^restriction/], /* see #11586 */
-relation[type=boundary][!boundary],
+relation[type=boundary][!boundary][!disused:boundary],
 relation[type=public_transport][!public_transport],
 relation[type=waterway][!waterway],
 relation[type=enforcement][!enforcement] {
