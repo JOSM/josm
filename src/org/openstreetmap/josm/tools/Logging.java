@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,6 +88,12 @@ public final class Logging {
             this.outputStreamSupplier = outputStreamSupplier;
             this.prioritizedHandler = prioritizedHandler;
 
+            try {
+                // Make sure we use the correct console encoding on Windows
+                this.setEncoding(System.getProperty("sun.stdout.encoding"));
+            } catch (SecurityException | UnsupportedEncodingException e) {
+                System.err.println(e);
+            }
             this.reacquireOutputStream();
         }
 
