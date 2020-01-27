@@ -132,6 +132,7 @@ public class JosmImageView extends ImageView {
             String urlStr = src.toExternalForm();
             if (urlStr.endsWith(".svg") || urlStr.endsWith(".svg?format=raw")) {
                 ImageIcon imgIcon = new ImageProvider(urlStr).setOptional(true).get();
+                setLoadsSynchronously(true); // make sure width/height are properly updated
                 imageField.set(this, imgIcon != null ? imgIcon.getImage() : null);
             } else {
                 Method loadImage = ImageView.class.getDeclaredMethod("loadImage");
