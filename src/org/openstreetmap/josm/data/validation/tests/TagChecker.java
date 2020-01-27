@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,6 +80,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     private static volatile HashSet<String> additionalPresetsValueData;
     /** often used tags which are not in presets */
     private static volatile MultiMap<String, String> oftenUsedTags = new MultiMap<>();
+    private static final Map<TaggingPreset, List<TaggingPresetItem>> presetIndex = new LinkedHashMap<>();
 
     private static final Pattern UNWANTED_NON_PRINTING_CONTROL_CHARACTERS = Pattern.compile(
             "[\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F\\u200e-\\u200f\\u202a-\\u202e]");
@@ -243,6 +246,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         harmonizedKeys.clear();
         ignoreForLevenshtein.clear();
         oftenUsedTags.clear();
+        presetIndex.clear();
 
         StringBuilder errorSources = new StringBuilder();
         for (String source : Config.getPref().getList(PREF_SOURCES, DEFAULT_SOURCES)) {
@@ -364,14 +368,20 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (!presets.isEmpty()) {
             initAdditionalPresetsValueData();
             for (TaggingPreset p : presets) {
+                List<TaggingPresetItem> minData = new ArrayList<>();
                 for (TaggingPresetItem i : p.data) {
                     if (i instanceof KeyedItem) {
+                        if (!"none".equals(((KeyedItem) i).match))
+                            minData.add(i);
                         addPresetValue((KeyedItem) i);
                     } else if (i instanceof CheckGroup) {
                         for (Check c : ((CheckGroup) i).checks) {
                             addPresetValue(c);
                         }
                     }
+                }
+                if (!minData.isEmpty()) {
+                    presetIndex .put(p, minData);
                 }
             }
         }
@@ -621,7 +631,13 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             TagMap tags = p.getKeys();
             TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
             EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
-            Collection<TaggingPreset> matchingPresets = TaggingPresets.getMatchingPresets(null, tags, false);
+
+            Collection<TaggingPreset> matchingPresets = new LinkedHashSet<>();
+            for (Entry<TaggingPreset, List<TaggingPresetItem>> e : presetIndex.entrySet()) {
+                if (TaggingPresetItem.matches(e.getValue(), tags)) {
+                    matchingPresets.add(e.getKey());
+                }
+            }
             Collection<TaggingPreset> matchingPresetsOK = matchingPresets.stream().filter(
                     tp -> tp.typeMatches(presetTypes)).collect(Collectors.toList());
             Collection<TaggingPreset> matchingPresetsKO = matchingPresets.stream().filter(
