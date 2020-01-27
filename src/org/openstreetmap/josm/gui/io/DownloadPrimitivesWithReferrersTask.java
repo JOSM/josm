@@ -113,18 +113,14 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         }
         currentTask.run();
         // Then, download referrers for each primitive
-        if (downloadReferrers)
-            for (PrimitiveId id : ids) {
-                synchronized (this) {
-                    if (canceled) {
-                        currentTask = null;
-                        return;
-                    }
-                    currentTask = new DownloadReferrersTask(
-                            tmpLayer, id, getProgressMonitor().createSubTaskMonitor(1, false));
-                }
-                currentTask.run();
+        if (downloadReferrers) {
+            currentTask = new DownloadReferrersTask(tmpLayer, ids);
+            currentTask.run();
+            synchronized (this) {
+                if (currentTask.getProgressMonitor().isCanceled())
+                    cancel();
             }
+        }
         currentTask = null;
     }
 

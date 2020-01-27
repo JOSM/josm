@@ -7,9 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     /** the target layer */
     private final OsmDataLayer targetLayer;
     /** the collection of child primitives */
-    private final Map<Long, OsmPrimitiveType> children;
+    private final Set<PrimitiveId> children;
     /** the parents */
     private final DataSet parents;
 
@@ -56,22 +54,20 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
      *
      * @param targetLayer  the target layer for the downloaded primitives. Must not be null.
      * @param children the collection of child primitives for which parents are to be downloaded
+     * @since 15787 (modified interface)
      */
-    public DownloadReferrersTask(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) {
+    public DownloadReferrersTask(OsmDataLayer targetLayer, Collection<? extends PrimitiveId> children) {
         super("Download referrers", false /* don't ignore exception*/);
         CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
         if (!targetLayer.isDownloadable()) {
             throw new IllegalArgumentException("Non-downloadable layer: " + targetLayer);
         }
         canceled = false;
-        this.children = new HashMap<>();
+        this.children = new LinkedHashSet<>();
         if (children != null) {
-            for (OsmPrimitive p: children) {
-                if (!p.isNew()) {
-                    this.children.put(p.getId(), OsmPrimitiveType.from(p));
-                }
-            }
+            children.stream().filter(p -> !p.isNew()).forEach(this.children::add);
         }
+
         this.targetLayer = targetLayer;
         parents = new DataSet();
     }
@@ -93,8 +89,8 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             throw new IllegalArgumentException(MessageFormat.format(
                     "Cannot download referrers for new primitives (ID {0})", primitiveId.getUniqueId()));
         canceled = false;
-        this.children = new HashMap<>();
-        this.children.put(primitiveId.getUniqueId(), primitiveId.getType());
+        this.children = new LinkedHashSet<>();
+        this.children.add(primitiveId);
         this.targetLayer = targetLayer;
         parents = new DataSet();
     }
@@ -140,27 +136,13 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     }
 
     protected void downloadParents(long id, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException {
-        reader = new OsmServerBackreferenceReader(id, type);
+        reader = new OsmServerBackreferenceReader(id, type, false).setAllowIncompleteParentWays(true);
+
         DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
         synchronized (this) { // avoid race condition in cancel()
             reader = null;
-        }
-        Collection<Way> ways = ds.getWays();
-
-        if (!ways.isEmpty()) {
-            // Ensure each node is only listed once
-            Set<Node> nodes = ways.stream().flatMap(w -> w.getNodes().stream()).collect(Collectors.toSet());
-            // Don't retrieve any nodes we've already grabbed
-            nodes.removeAll(targetLayer.data.getNodes());
-            if (!nodes.isEmpty()) {
-                reader = MultiFetchServerObjectReader.create();
-                ((MultiFetchServerObjectReader) reader).append(nodes);
-                DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
-                synchronized (this) { // avoid race condition in cancel()
-                    reader = null;
-                }
-                new DataSetMerger(ds, wayNodes).merge();
-            }
+            if (canceled)
+                return;
         }
         new DataSetMerger(parents, ds).merge();
     }
@@ -170,19 +152,36 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         try {
             progressMonitor.setTicksCount(children.size());
             int i = 1;
-            for (Entry<Long, OsmPrimitiveType> entry: children.entrySet()) {
+            for (PrimitiveId p : children) {
                 if (canceled)
                     return;
                 String msg;
-                switch(entry.getValue()) {
-                case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i+1, children.size(), entry.getKey()); break;
-                case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i+1, children.size(), entry.getKey()); break;
-                case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i+1, children.size(), entry.getKey()); break;
+                String id = Long.toString(p.getUniqueId());
+                switch(p.getType()) {
+                case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i, children.size(), id); break;
+                case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i, children.size(), id); break;
+                case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i, children.size(), id); break;
                 default: throw new AssertionError();
                 }
                 progressMonitor.subTask(msg);
-                downloadParents(entry.getKey(), entry.getValue(), progressMonitor);
+                downloadParents(p.getUniqueId(), p.getType(), progressMonitor);
                 i++;
+            }
+            Collection<Way> ways = parents.getWays();
+
+            if (!ways.isEmpty()) {
+                // Collect incomplete nodes of parent ways
+                Set<Node> nodes = ways.stream().flatMap(w -> w.getNodes().stream().filter(OsmPrimitive::isIncomplete))
+                        .collect(Collectors.toSet());
+                if (!nodes.isEmpty()) {
+                    reader = MultiFetchServerObjectReader.create();
+                    ((MultiFetchServerObjectReader) reader).append(nodes);
+                    DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
+                    synchronized (this) { // avoid race condition in cancel()
+                        reader = null;
+                    }
+                    new DataSetMerger(parents, wayNodes).merge();
+                }
             }
         } catch (OsmTransferException e) {
             if (canceled)
