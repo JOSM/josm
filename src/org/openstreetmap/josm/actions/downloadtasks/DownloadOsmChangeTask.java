@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.regex.Matcher;
@@ -64,8 +65,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
     @Override
     public Future<?> loadUrl(DownloadParams settings, final String url, ProgressMonitor progressMonitor) {
-        OsmChangeUrlPattern urlPattern = Arrays.stream(OsmChangeUrlPattern.values()).filter(p -> p.matches(url)).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("URL does not match any OSM URL pattern: " + url));
+        Optional<OsmChangeUrlPattern> urlPattern = Arrays.stream(OsmChangeUrlPattern.values()).filter(p -> p.matches(url)).findFirst();
         String newUrl = url;
         final Matcher matcher = OsmChangeUrlPattern.OSM_WEBSITE.matcher(url);
         if (matcher.matches()) {
@@ -74,7 +74,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
         downloadTask = new DownloadTask(settings, new OsmServerLocationReader(newUrl), progressMonitor, true,
                 Compression.byExtension(newUrl));
         // Extract .osc filename from URL to set the new layer name
-        extractOsmFilename(settings, urlPattern.pattern(), newUrl);
+        extractOsmFilename(settings, urlPattern.orElse(OsmChangeUrlPattern.EXTERNAL_OSC_FILE).pattern(), newUrl);
         return MainApplication.worker.submit(downloadTask);
     }
 

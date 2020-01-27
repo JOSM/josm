@@ -158,12 +158,11 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
     @Override
     public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         String newUrl = modifyUrlBeforeLoad(url);
-        OsmUrlPattern urlPattern = Arrays.stream(OsmUrlPattern.values()).filter(p -> p.matches(newUrl)).findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("URL does not match any OSM URL pattern: " + newUrl));
+        Optional<OsmUrlPattern> urlPattern = Arrays.stream(OsmUrlPattern.values()).filter(p -> p.matches(newUrl)).findFirst();
         downloadTask = new DownloadTask(settings, getOsmServerReader(newUrl), progressMonitor, true, Compression.byExtension(newUrl));
         currentBounds = null;
         // Extract .osm filename from URL to set the new layer name
-        extractOsmFilename(settings, urlPattern.pattern(), newUrl);
+        extractOsmFilename(settings, urlPattern.orElse(OsmUrlPattern.EXTERNAL_OSM_FILE).pattern(), newUrl);
         return MainApplication.worker.submit(downloadTask);
     }
 
@@ -189,7 +188,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         newLayerName = settings.getLayerName();
         if (newLayerName == null || newLayerName.isEmpty()) {
             Matcher matcher = Pattern.compile(pattern).matcher(url);
-            newLayerName = matcher.matches() ? matcher.group(1) : null;
+            newLayerName = matcher.matches() && matcher.groupCount() > 0 ? matcher.group(1) : null;
         }
     }
 
