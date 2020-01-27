@@ -51,7 +51,7 @@ public class MergeLayerAction extends AbstractMergeAction {
      * @return a Future representing pending completion of the merge task, or {@code null}
      * @since 11885 (return type)
      */
-    protected Future<?> doMerge(List<Layer> targetLayers, final Collection<Layer> sourceLayers) {
+    protected Future<?> doMerge(List<? extends Layer> targetLayers, final Collection<? extends Layer> sourceLayers) {
         final boolean onlygpx = targetLayers.stream().noneMatch(l -> !(l instanceof GpxLayer));
         final TargetLayerDialogResult<Layer> res = askTargetLayer(targetLayers, onlygpx,
                 tr("Cut timewise overlapping parts of tracks"),
@@ -124,7 +124,7 @@ public class MergeLayerAction extends AbstractMergeAction {
      * @return a Future representing pending completion of the merge task, or {@code null}
      * @since 11885 (return type)
      */
-    public Future<?> merge(List<Layer> sourceLayers) {
+    public Future<?> merge(List<? extends Layer> sourceLayers) {
         return doMerge(sourceLayers, sourceLayers);
     }
 

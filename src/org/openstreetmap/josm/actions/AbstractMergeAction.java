@@ -120,30 +120,6 @@ public abstract class AbstractMergeAction extends JosmAction {
     }
 
     /**
-     * Ask user to choose the target layer.
-     * @param targetLayers list of candidate target layers.
-     * @return the chosen layer
-     * @deprecated to be removed
-     */
-    @Deprecated
-    protected static Layer askTargetLayer(List<Layer> targetLayers) {
-        return askTargetLayer(targetLayers, false, null, false, tr("Merge")).selectedTargetLayer;
-    }
-
-    /**
-     * Ask user to choose the target layer and shows a checkbox.
-     * @param targetLayers list of candidate target layers.
-     * @param checkbox The text of the checkbox shown to the user.
-     * @param checkboxDefault whether the checkbox is ticked by default
-     * @return The {@link TargetLayerDialogResult} containing the chosen target layer and the state of the checkbox
-     * @deprecated to be removed
-     */
-    @Deprecated
-    protected static TargetLayerDialogResult<Layer> askTargetLayer(List<Layer> targetLayers, String checkbox, boolean checkboxDefault) {
-        return askTargetLayer(targetLayers, true, checkbox, checkboxDefault, tr("Merge"));
-    }
-
-    /**
      * Ask user to choose the target layer and shows a checkbox.
      * @param targetLayers list of candidate target layers.
      * @param showCheckbox whether the checkbox is shown
@@ -153,7 +129,7 @@ public abstract class AbstractMergeAction extends JosmAction {
      * @return The {@link TargetLayerDialogResult} containing the chosen target layer and the state of the checkbox
      * @since 15450
      */
-    protected static TargetLayerDialogResult<Layer> askTargetLayer(List<Layer> targetLayers, boolean showCheckbox,
+    protected static TargetLayerDialogResult<Layer> askTargetLayer(List<? extends Layer> targetLayers, boolean showCheckbox,
             String checkbox, boolean checkboxDefault, String buttonText) {
         return askTargetLayer(targetLayers.toArray(new Layer[0]),
                 tr("Please select the target layer."), checkbox,
