@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.importexport.AllFormatsImporter;
 import org.openstreetmap.josm.gui.io.importexport.FileImporter;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -330,8 +330,10 @@ public class OpenFileAction extends DiskAccessAction {
                                 MainApplication.getMenu().openLocation.openUrl(false, url);
                             }
                         }
-                    } catch (IOException | PatternSyntaxException | IllegalStateException | IndexOutOfBoundsException e) {
+                    } catch (IOException | RuntimeException | LinkageError e) {
                         Logging.error(e);
+                        GuiHelper.runInEDT(
+                                () -> new Notification(Utils.getRootCause(e).getMessage()).setIcon(JOptionPane.ERROR_MESSAGE).show());
                     }
                 }
             }

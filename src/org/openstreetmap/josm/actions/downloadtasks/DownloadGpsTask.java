@@ -5,11 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -29,11 +28,10 @@ import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
-import org.openstreetmap.josm.io.OsmServerLocationReader.GpxUrlPattern;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.io.UrlPatterns.GpxUrlPattern;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -49,7 +47,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
     @Override
     public String[] getPatterns() {
-        return Arrays.stream(GpxUrlPattern.values()).map(GpxUrlPattern::pattern).toArray(String[]::new);
+        return patterns(GpxUrlPattern.class);
     }
 
     @Override
@@ -68,10 +66,9 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
     @Override
     public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
-        CheckParameterUtil.ensureParameterNotNull(url, "url");
-        this.url = url;
+        this.url = Objects.requireNonNull(url);
         final Optional<String> mappedUrl = Stream.of(GpxUrlPattern.USER_TRACE_ID, GpxUrlPattern.EDIT_TRACE_ID)
-                .map(p -> Pattern.compile(p.pattern()).matcher(url))
+                .map(p -> p.matcher(url))
                 .filter(Matcher::matches)
                 .map(m -> "https://www.openstreetmap.org/trace/" + m.group(2) + "/data")
                 .findFirst();
@@ -80,14 +77,14 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         }
         if (Stream.of(GpxUrlPattern.TRACE_ID, GpxUrlPattern.EXTERNAL_GPX_SCRIPT,
                       GpxUrlPattern.EXTERNAL_GPX_FILE, GpxUrlPattern.TASKING_MANAGER)
-                .anyMatch(p -> url.matches(p.pattern()))) {
+                .anyMatch(p -> p.matches(url))) {
             downloadTask = new DownloadTask(settings,
                     new OsmServerLocationReader(url), progressMonitor);
             // We need submit instead of execute so we can wait for it to finish and get the error
             // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
             return MainApplication.worker.submit(downloadTask);
 
-        } else if (url.matches(GpxUrlPattern.TRACKPOINTS_BBOX.pattern())) {
+        } else if (GpxUrlPattern.TRACKPOINTS_BBOX.matches(url)) {
             String[] table = url.split("\\?|=|&");
             for (int i = 0; i < table.length; i++) {
                 if ("bbox".equals(table[i]) && i < table.length-1)
@@ -152,7 +149,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
         private String getLayerName() {
             // Extract .gpx filename from URL to set the new layer name
-            final Matcher matcher = url != null ? Pattern.compile(GpxUrlPattern.EXTERNAL_GPX_FILE.pattern()).matcher(url) : null;
+            final Matcher matcher = url != null ? GpxUrlPattern.EXTERNAL_GPX_FILE.matcher(url) : null;
             final String newLayerName = matcher != null && matcher.matches() ? matcher.group(1) : null;
             final String metadataName = rawData != null ? rawData.getString(GpxConstants.META_NAME) : null;
             final String defaultName = tr("Downloaded GPX Data");

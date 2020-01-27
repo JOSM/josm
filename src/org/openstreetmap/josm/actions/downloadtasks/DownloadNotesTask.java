@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -28,9 +27,9 @@ import org.openstreetmap.josm.io.BoundingBoxDownloader.MoreNotesException;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
-import org.openstreetmap.josm.io.OsmServerLocationReader.NoteUrlPattern;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.io.UrlPatterns.NoteUrlPattern;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
@@ -106,7 +105,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
 
     @Override
     public String[] getPatterns() {
-        return Arrays.stream(NoteUrlPattern.values()).map(NoteUrlPattern::pattern).toArray(String[]::new);
+        return patterns(NoteUrlPattern.class);
     }
 
     @Override

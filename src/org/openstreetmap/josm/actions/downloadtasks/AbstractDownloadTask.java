@@ -2,9 +2,11 @@
 package org.openstreetmap.josm.actions.downloadtasks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.io.UrlPattern;
 import org.openstreetmap.josm.io.XmlWriter;
 
 /**
@@ -56,6 +58,11 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
      */
     public void setFailed(boolean failed) {
         this.failed = failed;
+    }
+
+    protected static <T extends Enum<T> & UrlPattern> String[] patterns(Class<T> urlPatternEnum) {
+        // Do not use a method reference until we switch to Java 11, as we face JDK-8141508 with Java 8
+        return Arrays.stream(urlPatternEnum.getEnumConstants()).map(/* JDK-8141508 */ t -> t.pattern()).toArray(String[]::new);
     }
 
     protected final void rememberErrorMessage(String message) {
@@ -115,14 +122,7 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
      * @return {@code true} if this URL is accepted
      */
     public boolean acceptsUrl(String url) {
-        if (url == null)
-            return false;
-        for (String p: getPatterns()) {
-            if (url.matches(p)) {
-                return true;
-            }
-        }
-        return false;
+        return url != null && Arrays.stream(getPatterns()).anyMatch(url::matches);
     }
 
     /**

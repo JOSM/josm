@@ -11,7 +11,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.GeoJSONServerReader;
+import org.openstreetmap.josm.io.UrlPatterns.GeoJsonUrlPattern;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -21,12 +23,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class DownloadGeoJsonTask extends DownloadOsmTask {
 
-    private static final String PATTERN_COMPRESS = "https?://.*/(.*\\.(json|geojson)(\\.(gz|xz|bz2?|zip))?)";
-    private static final String PATTERN_FORMAT_GEOJSON = "https?://.*format=geojson.*";
-
     @Override
     public String[] getPatterns() {
-        return new String[]{PATTERN_COMPRESS, PATTERN_FORMAT_GEOJSON};
+        return patterns(GeoJsonUrlPattern.class);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class DownloadGeoJsonTask extends DownloadOsmTask {
         private final String url;
 
         InternalDownloadTask(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
-            super(settings, new GeoJSONServerReader(url), progressMonitor);
+            super(settings, new GeoJSONServerReader(url), progressMonitor, true, Compression.byExtension(url));
             this.url = url;
         }
 

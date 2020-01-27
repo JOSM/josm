@@ -37,12 +37,13 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
-import org.openstreetmap.josm.io.OsmServerLocationReader.OsmUrlPattern;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.OverpassDownloadReader;
+import org.openstreetmap.josm.io.UrlPatterns.OsmUrlPattern;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -71,7 +72,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
     @Override
     public String[] getPatterns() {
         if (this.getClass() == DownloadOsmTask.class) {
-            return Arrays.stream(OsmUrlPattern.values()).map(OsmUrlPattern::pattern).toArray(String[]::new);
+            return patterns(OsmUrlPattern.class);
         } else {
             return super.getPatterns();
         }
@@ -157,10 +158,12 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
     @Override
     public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
         String newUrl = modifyUrlBeforeLoad(url);
-        downloadTask = new DownloadTask(settings, getOsmServerReader(newUrl), progressMonitor);
+        OsmUrlPattern urlPattern = Arrays.stream(OsmUrlPattern.values()).filter(p -> p.matches(newUrl)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("URL does not match any OSM URL pattern: " + newUrl));
+        downloadTask = new DownloadTask(settings, getOsmServerReader(newUrl), progressMonitor, true, Compression.byExtension(newUrl));
         currentBounds = null;
         // Extract .osm filename from URL to set the new layer name
-        extractOsmFilename(settings, "https?://.*/(.*\\.osm)", newUrl);
+        extractOsmFilename(settings, urlPattern.pattern(), newUrl);
         return MainApplication.worker.submit(downloadTask);
     }
 
@@ -412,6 +415,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
     protected class DownloadTask extends AbstractInternalTask {
         protected final OsmServerReader reader;
+        protected final Compression compression;
 
         /**
          * Constructs a new {@code DownloadTask}.
@@ -433,12 +437,30 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          * @since 13927
          */
         public DownloadTask(DownloadParams settings, OsmServerReader reader, ProgressMonitor progressMonitor, boolean zoomAfterDownload) {
+            this(settings, reader, progressMonitor, zoomAfterDownload, Compression.NONE);
+        }
+
+        /**
+         * Constructs a new {@code DownloadTask}.
+         * @param settings download settings
+         * @param reader OSM data reader
+         * @param progressMonitor progress monitor
+         * @param zoomAfterDownload If true, the map view will zoom to download area after download
+         * @param compression compression to use
+         * @since 15784
+         */
+        public DownloadTask(DownloadParams settings, OsmServerReader reader, ProgressMonitor progressMonitor, boolean zoomAfterDownload,
+                Compression compression) {
             super(settings, tr("Downloading data"), progressMonitor, false, zoomAfterDownload);
-            this.reader = reader;
+            this.reader = Objects.requireNonNull(reader);
+            this.compression = compression;
         }
 
         protected DataSet parseDataSet() throws OsmTransferException {
-            return reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            ProgressMonitor subTaskMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
+            // Don't call parseOsm signature with compression if not needed, too many implementations to update before to avoid side effects
+            return compression != null && compression != Compression.NONE ?
+                    reader.parseOsm(subTaskMonitor, compression) : reader.parseOsm(subTaskMonitor);
         }
 
         @Override
@@ -499,19 +521,14 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
     @Override
     public String getConfirmationMessage(URL url) {
-        if (url != null) {
-            String urlString = url.toExternalForm();
-            if (urlString.matches(OsmUrlPattern.OSM_API_URL.pattern())) {
-                // TODO: proper i18n after stabilization
-                Collection<String> items = new ArrayList<>();
-                items.add(tr("OSM Server URL:") + ' ' + url.getHost());
-                items.add(tr("Command")+": "+url.getPath());
-                if (url.getQuery() != null) {
-                    items.add(tr("Request details: {0}", url.getQuery().replaceAll(",\\s*", ", ")));
-                }
-                return Utils.joinAsHtmlUnorderedList(items);
+        if (OsmUrlPattern.OSM_API_URL.matches(url)) {
+            Collection<String> items = new ArrayList<>();
+            items.add(tr("OSM Server URL:") + ' ' + url.getHost());
+            items.add(tr("Command")+": "+url.getPath());
+            if (url.getQuery() != null) {
+                items.add(tr("Request details: {0}", url.getQuery().replaceAll(",\\s*", ", ")));
             }
-            // TODO: other APIs
+            return Utils.joinAsHtmlUnorderedList(items);
         }
         return null;
     }

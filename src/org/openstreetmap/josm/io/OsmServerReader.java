@@ -260,7 +260,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @since 13352
      */
     public DataSet parseOsm(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -282,7 +282,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @since 13352
      */
     public DataSet parseOsmChange(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -304,7 +304,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @since 13352
      */
     public GpxData parseRawGps(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -371,7 +371,7 @@ public abstract class OsmServerReader extends OsmConnection {
      * @since 13352
      */
     public List<Note> parseRawNotes(ProgressMonitor progressMonitor, Compression compression) throws OsmTransferException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**

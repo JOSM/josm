@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,7 +12,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -33,10 +33,12 @@ import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.io.UrlPatterns.OsmChangeUrlPattern;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -45,14 +47,9 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class DownloadOsmChangeTask extends DownloadOsmTask {
 
-    private static final String OSM_WEBSITE_PATTERN = "https?://www\\.(osm|openstreetmap)\\.org/changeset/(\\p{Digit}+).*";
-
     @Override
     public String[] getPatterns() {
-        return new String[]{"https?://.*/api/0.6/changeset/\\p{Digit}+/download", // OSM API 0.6 changesets
-            OSM_WEBSITE_PATTERN, // OSM changesets
-            "https?://.*/.*\\.osc" // Remote .osc files
-        };
+        return patterns(OsmChangeUrlPattern.class);
     }
 
     @Override
@@ -66,14 +63,18 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
     }
 
     @Override
-    public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
-        final Matcher matcher = Pattern.compile(OSM_WEBSITE_PATTERN).matcher(url);
+    public Future<?> loadUrl(DownloadParams settings, final String url, ProgressMonitor progressMonitor) {
+        OsmChangeUrlPattern urlPattern = Arrays.stream(OsmChangeUrlPattern.values()).filter(p -> p.matches(url)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("URL does not match any OSM URL pattern: " + url));
+        String newUrl = url;
+        final Matcher matcher = OsmChangeUrlPattern.OSM_WEBSITE.matcher(url);
         if (matcher.matches()) {
-            url = OsmApi.getOsmApi().getBaseUrl() + "changeset/" + Long.parseLong(matcher.group(2)) + "/download";
+            newUrl = OsmApi.getOsmApi().getBaseUrl() + "changeset/" + Long.parseLong(matcher.group(2)) + "/download";
         }
-        downloadTask = new DownloadTask(settings, new OsmServerLocationReader(url), progressMonitor);
+        downloadTask = new DownloadTask(settings, new OsmServerLocationReader(newUrl), progressMonitor, true,
+                Compression.byExtension(newUrl));
         // Extract .osc filename from URL to set the new layer name
-        extractOsmFilename(settings, "https?://.*/(.*\\.osc)", url);
+        extractOsmFilename(settings, urlPattern.pattern(), newUrl);
         return MainApplication.worker.submit(downloadTask);
     }
 
@@ -87,14 +88,18 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
          * @param settings download settings
          * @param reader OSM data reader
          * @param progressMonitor progress monitor
+         * @param zoomAfterDownload If true, the map view will zoom to download area after download
+         * @param compression compression to use
          */
-        public DownloadTask(DownloadParams settings, OsmServerReader reader, ProgressMonitor progressMonitor) {
-            super(settings, reader, progressMonitor);
+        public DownloadTask(DownloadParams settings, OsmServerReader reader, ProgressMonitor progressMonitor,
+                boolean zoomAfterDownload, Compression compression) {
+            super(settings, reader, progressMonitor, zoomAfterDownload, compression);
         }
 
         @Override
         protected DataSet parseDataSet() throws OsmTransferException {
-            return reader.parseOsmChange(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            return reader.parseOsmChange(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false),
+                    compression);
         }
 
         @Override
