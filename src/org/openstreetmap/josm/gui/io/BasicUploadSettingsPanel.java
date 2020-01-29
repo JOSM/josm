@@ -88,7 +88,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         JEditorPane sourceLabel = new JMultilineLabel("<html><b>" + tr("Specify the data source for the changes") + ":</b>");
         pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 0).fill(GBC.HORIZONTAL));
         JEditorPane obtainSourceOnce = new JMultilineLabel(
-                "<html><a href=\"urn:changeset-source\">" + tr("just once") + "</a></html>");
+                "<html>(<a href=\"urn:changeset-source\">" + tr("just once") + "</a>)</html>");
         obtainSourceOnce.addHyperlinkListener(e -> {
             if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
                 automaticallyAddSource();
