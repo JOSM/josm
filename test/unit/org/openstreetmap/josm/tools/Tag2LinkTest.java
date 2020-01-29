@@ -27,6 +27,21 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
+    public void testWebsite() {
+        Tag2Link.getLinksForTag("website", "http://www.openstreetmap.org/", this::addLink);
+        checkLinks("Open www.openstreetmap.org // http://www.openstreetmap.org/");
+        links.clear();
+        Tag2Link.getLinksForTag("website", "https://www.openstreetmap.org/", this::addLink);
+        checkLinks("Open www.openstreetmap.org // https://www.openstreetmap.org/");
+        links.clear();
+        Tag2Link.getLinksForTag("website", "www.openstreetmap.org", this::addLink);
+        checkLinks("Open www.openstreetmap.org // http://www.openstreetmap.org");
+    }
+
+    /**
+     * Unit test of function {@link Tag2Link#getLinksForTag}.
+     */
+    @Test
     public void testImageCommonsImage() {
         Tag2Link.getLinksForTag("image", "File:Witten Brücke Gasstraße.jpg", this::addLink);
         checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Witten Brücke Gasstraße.jpg");

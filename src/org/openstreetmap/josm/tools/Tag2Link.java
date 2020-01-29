@@ -136,18 +136,22 @@ public final class Tag2Link {
         }
 
         // Common
-        final boolean valueIsURL = value.matches("^(http:|https:|www\\.).*");
-        if (key.matches("^(.+[:_])?website([:_].+)?$") && valueIsURL) {
-            linkConsumer.acceptLink(getLinkName(value, key), value);
+        final String validURL = value.startsWith("http:") || value.startsWith("https:")
+                ? value
+                : value.startsWith("www.")
+                ? "http://" + value
+                : null;
+        if (key.matches("^(.+[:_])?website([:_].+)?$") && validURL != null) {
+            linkConsumer.acceptLink(getLinkName(validURL, key), validURL);
         }
-        if (key.matches("^(.+[:_])?source([:_].+)?$") && valueIsURL) {
-            linkConsumer.acceptLink(getLinkName(value, key), value);
+        if (key.matches("^(.+[:_])?source([:_].+)?$") && validURL != null) {
+            linkConsumer.acceptLink(getLinkName(validURL, key), validURL);
         }
-        if (key.matches("^(.+[:_])?url([:_].+)?$") && valueIsURL) {
-            linkConsumer.acceptLink(getLinkName(value, key), value);
+        if (key.matches("^(.+[:_])?url([:_].+)?$") && validURL != null) {
+            linkConsumer.acceptLink(getLinkName(validURL, key), validURL);
         }
-        if (key.matches("image") && valueIsURL) {
-            linkConsumer.acceptLink(tr("View image"), value);
+        if (key.matches("image") && validURL != null) {
+            linkConsumer.acceptLink(tr("View image"), validURL);
         }
 
         // Wikimedia
