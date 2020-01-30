@@ -1003,8 +1003,7 @@ Build-Date: ${build.tstamp}
     <target name="run" depends="dist">
         <java jar="${dist.jar}" fork="true">
             <arg value="--set=expert=true"/>
-            <arg value="--set=remotecontrol.enabled=true"/>
-            <arg value="--set=debug.edt-checker.enable=false"/>
+            <arg value="--set=iso.dates=true"/>
             <jvmarg value="-Djosm.home=/tmp/.josm/"/>
         </java>
     </target>
