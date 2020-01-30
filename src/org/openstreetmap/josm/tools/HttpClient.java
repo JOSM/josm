@@ -139,15 +139,17 @@ public abstract class HttpClient {
 
         boolean successfulConnection = false;
         try {
+            Stopwatch stopwatch = Stopwatch.createStarted();
             ConnectionResponse cr;
             try {
                 cr = performConnection();
                 final boolean hasReason = reasonForRequest != null && !reasonForRequest.isEmpty();
-                logRequest("{0} {1}{2} -> {3} {4}{5}",
+                logRequest("{0} {1}{2} -> {3} {4} ({5}{6})",
                         getRequestMethod(), getURL(), hasReason ? (" (" + reasonForRequest + ')') : "",
                         cr.getResponseVersion(), cr.getResponseCode(),
+                        stopwatch,
                         cr.getContentLengthLong() > 0
-                                ? (" (" + Utils.getSizeString(cr.getContentLengthLong(), Locale.getDefault()) + ')')
+                                ? ("; " + Utils.getSizeString(cr.getContentLengthLong(), Locale.getDefault()))
                                 : ""
                 );
                 if (Logging.isDebugEnabled()) {
@@ -161,7 +163,7 @@ public abstract class HttpClient {
                     DefaultAuthenticator.getInstance().addFailedCredentialHost(url.getHost());
                 }
             } catch (IOException | RuntimeException e) {
-                logRequest("{0} {1} -> !!!", requestMethod, url);
+                logRequest("{0} {1} -> !!! ({2})", requestMethod, url, stopwatch);
                 Logging.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
                 NetworkManager.addNetworkError(url, Utils.getRootCause(e));
