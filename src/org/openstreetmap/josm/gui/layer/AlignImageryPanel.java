@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 
@@ -54,6 +55,7 @@ public class AlignImageryPanel extends JPanel {
         closeButton.setContentAreaFilled(false);
         closeButton.setRolloverEnabled(true);
         closeButton.setBorderPainted(false);
+        closeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         closeButton.setToolTipText(tr("Hide this message"));
         closeButton.addActionListener(e -> {
             if (MainApplication.isDisplayingMapView()) {
