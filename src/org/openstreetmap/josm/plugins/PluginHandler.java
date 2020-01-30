@@ -1658,6 +1658,15 @@ public final class PluginHandler {
             lblMessage.setText(message);
         }
 
+        /**
+         * Returns the text. Useful for logging in {@link HelpAwareOptionPane#showOptionDialog}
+         * @return the text
+         */
+        @Override
+        public String toString() {
+            return Utils.stripHtml(lblMessage.getText());
+        }
+
         public void initDontShowAgain(String preferencesKey) {
             String policy = Config.getPref().get(preferencesKey, "ask");
             policy = policy.trim().toLowerCase(Locale.ENGLISH);
