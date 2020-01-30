@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -176,11 +177,11 @@ public class BasicUploadSettingsPanel extends JPanel {
     }
 
     protected void build() {
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        add(buildUploadCommentPanel(), GBC.eol().fill(GBC.BOTH));
-        add(pnlUploadParameterSummary, GBC.eol().fill(GBC.BOTH));
-        add(cbRequestReview, GBC.eol().fill(GBC.BOTH));
+        add(buildUploadCommentPanel(), BorderLayout.NORTH);
+        add(pnlUploadParameterSummary, BorderLayout.CENTER);
+        add(cbRequestReview, BorderLayout.SOUTH);
         cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
     }
 

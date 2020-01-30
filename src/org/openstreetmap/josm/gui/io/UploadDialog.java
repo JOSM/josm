@@ -432,6 +432,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     static final class CompactTabbedPane extends JTabbedPane {
         @Override
         public Dimension getPreferredSize() {
+            // This probably fixes #18523. Don't know why. Don't know how. It just does.
+            super.getPreferredSize();
             // make sure the tabbed pane never grabs more space than necessary
             return super.getMinimumSize();
         }
