@@ -82,7 +82,11 @@ public final class Http1Client extends HttpClient {
         return new ConnectionResponse() {
             @Override
             public String getResponseVersion() {
-                return "HTTP_1";
+                String headerField = connection.getHeaderField(0);
+                if (headerField != null && headerField.startsWith("HTTP")) {
+                    return headerField.replaceFirst(" .*", "");
+                }
+                return "HTTP/1";
             }
 
             @Override
