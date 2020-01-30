@@ -80,9 +80,6 @@ public class SelectionTableModel extends AbstractTableModel implements DataSelec
         if (e.getPreviousActiveLayer() == layer) {
             cache.clear();
         }
-        if (e.getSource().getActiveLayer() == layer) {
-            cache.addAll(layer.data.getAllSelected());
-        }
         fireTableDataChanged();
     }
 
