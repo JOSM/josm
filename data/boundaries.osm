@@ -6996,7 +6996,7 @@
   <node id='-14012' lat='47.58196' lon='7.84167' />
   <node id='-14014' lat='47.55031' lon='7.91251' />
   <node id='-14016' lat='47.57674' lon='7.90673' />
-  <node id='-14018' lat='47.54360' lon='7.94614' />
+  <node id='-14018' lat='47.5436' lon='7.94614' />
   <node id='-14020' lat='47.55789' lon='7.95682' />
   <node id='-14022' lat='47.55096' lon='8.02136' />
   <node id='-14024' lat='47.55616' lon='8.00113' />
@@ -14376,13 +14376,13 @@
   <node id='-28844' lat='54.80602' lon='9.32771' />
   <node id='-28846' lat='54.90518' lon='8.81178' />
   <node id='-30000' lat='47.56946' lon='7.811279' />
-  <node id='-30001' lat='47.56335' lon='7.800980' />
+  <node id='-30001' lat='47.56335' lon='7.80098' />
   <node id='-30002' lat='47.58663' lon='7.833466' />
   <node id='-30003' lat='47.58808' lon='7.862692' />
   <node id='-30004' lat='47.58408' lon='7.898354' />
   <node id='-30005' lat='47.56686' lon='7.911615' />
   <node id='-30006' lat='47.56037' lon='7.906809' />
-  <node id='-30007' lat='47.54690' lon='7.920585' />
+  <node id='-30007' lat='47.5469' lon='7.920585' />
   <node id='-30008' lat='47.54704' lon='7.932644' />
   <node id='-56086' lat='49.5533' lon='5.84143' />
   <node id='-56105' lat='49.49608' lon='5.94224' />
@@ -43735,7 +43735,6 @@
     <nd ref='-11868' />
     <tag k='ISO3166-1:alpha2' v='IM' />
     <tag k='name:en' v='Isle of Man' />
-    <tag k='note' v='not in EU' />
   </way>
   <way id='-29346'>
     <nd ref='-12224' />
@@ -49217,14 +49216,6 @@
     <nd ref='-22622' />
   </way>
   <way id='-29584'>
-    <nd ref='-26266' />
-    <nd ref='-9062' />
-    <nd ref='-11866' />
-    <nd ref='-6180' />
-    <nd ref='-6182' />
-    <nd ref='-6184' />
-    <nd ref='-11872' />
-    <nd ref='-11874' />
     <nd ref='-6904' />
     <nd ref='-8482' />
     <nd ref='-8484' />
@@ -50060,8 +50051,9 @@
     <nd ref='-11862' />
     <nd ref='-11864' />
     <nd ref='-8992' />
-    <nd ref='-22442' />
-    <nd ref='-26266' />
+    <nd ref='-8994' />
+    <nd ref='-6902' />
+    <nd ref='-6904' />
   </way>
   <way id='-29586'>
     <nd ref='-12064' />
@@ -58581,6 +58573,7 @@
   </relation>
   <relation id='-29642'>
     <member type='way' ref='-29584' role='outer' />
+    <member type='way' ref='-28898' role='outer' />
     <member type='way' ref='-29426' role='outer' />
     <member type='way' ref='-29026' role='outer' />
     <member type='way' ref='-29028' role='outer' />
@@ -58601,7 +58594,7 @@
     <member type='way' ref='-29180' role='inner' />
     <member type='way' ref='-29118' role='inner' />
     <member type='way' ref='-29106' role='inner' />
-    <member type='way' ref='-29344' role='inner' />
+    <member type='way' ref='-29044' role='inner' />
     <tag k='ISO3166-1:alpha2' v='EU' />
     <tag k='name:en' v='European Union' />
     <tag k='type' v='multipolygon' />
