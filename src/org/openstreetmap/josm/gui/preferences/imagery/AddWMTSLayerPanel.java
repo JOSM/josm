@@ -72,7 +72,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
                 layerPanel.removeAll();
                 layerPanel.add(layerTable, GBC.eol().fill());
                 layerPanel.revalidate();
-            } catch (IOException | WMTSGetCapabilitiesException ex) {
+            } catch (IOException | RuntimeException | WMTSGetCapabilitiesException ex) {
                 Logging.trace(ex);
                 JOptionPane.showMessageDialog(
                         getParent(),
