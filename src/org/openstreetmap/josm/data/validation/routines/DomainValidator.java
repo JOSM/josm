@@ -295,7 +295,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2019120700, Last Updated Sat Dec  7 07:07:01 2019 UTC
+        // Taken from Version 2020020101, Last Updated Sat Feb  1 07:07:01 2020 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -1465,6 +1465,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
         "xn--mgbbh1a", // بارت National Internet eXchange of India
         "xn--mgbca7dzdo", // ابوظبي Abu Dhabi Systems and Information Centre
+        "xn--mgbcpq6gpa1a", // البحرين Telecommunications Regulatory Authority (TRA)
         "xn--mgbgu82a", // ڀارت National Internet eXchange of India
         "xn--mgbi4ecexp", // كاثوليك Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
         "xn--mgbt3dhd", // همراه Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
@@ -1480,6 +1481,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--p1acf", // рус Rusnames Limited
         "xn--pbt977c", // 珠宝 Richemont DNS Inc.
         "xn--pssy2u", // 大拿 VeriSign Sarl
+        "xn--q7ce6a", // ລາວ Lao National Internet Center (LANIC)
         "xn--q9jyb4c", // みんな Charleston Road Registry Inc.
         "xn--qcka1pmc", // グーグル Charleston Road Registry Inc.
         "xn--qxa6a", // ευ EURid vzw/asbl
