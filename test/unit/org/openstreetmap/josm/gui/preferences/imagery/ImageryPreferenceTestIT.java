@@ -313,6 +313,9 @@ public class ImageryPreferenceTestIT {
         }
         checkLinkUrl(info, info.getPermissionReferenceURL());
         checkLinkUrl(info, info.getTermsOfUseURL());
+        if (info.getUrl().contains("{time}")) {
+            info.setDate("2020-01-01T00:00:00Z/2020-01-02T00:00:00Z");
+        }
 
         try {
             ImageryBounds bounds = info.getBounds();
