@@ -3362,6 +3362,12 @@
             <space />
             <reference ref="link_contact_address" />
         </item> <!-- Hackerspace -->
+        <item name="Outdoor seating" icon="presets/leisure/outdoor_seating.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:leisure=outdoor_seating" />
+            <space />
+            <key key="leisure" value="outdoor_seating" />
+            <reference ref="name_operator_oh_wheelchair" />
+        </item> <!-- Outdoor seating -->
         <separator/>
         <item name="Playground" icon="presets/leisure/playground.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:leisure=playground" />

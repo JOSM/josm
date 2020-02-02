@@ -1745,6 +1745,7 @@ area[leisure=fitness_centre],
 area[leisure=stadium],
 area[leisure=horse_riding],
 area[leisure=hackerspace],
+area[leisure=outdoor_seating],
 area[leisure=resort],
 area[leisure=beach_resort],
 area[leisure=water_park] {
@@ -1772,6 +1773,10 @@ node[leisure=horse_riding] {
 }
 node[leisure=hackerspace] {
     icon-image: "presets/leisure/hackerspace.svg";
+    set icon_z17;
+}
+node[leisure=outdoor_seating] {
+    icon-image: "presets/leisure/outdoor_seating.svg";
     set icon_z17;
 }
 node[leisure=resort] {
