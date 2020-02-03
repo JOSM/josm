@@ -12,13 +12,10 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -37,7 +34,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
@@ -47,10 +43,10 @@ import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.OsmApiException;
-import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -339,13 +335,35 @@ public class ChildRelationBrowser extends JPanel {
             OsmApi.getOsmApi().cancel();
         }
 
-        protected void refreshView(Relation relation) {
-            for (int i = 0; i < childTree.getRowCount(); i++) {
-                Relation reference = (Relation) childTree.getPathForRow(i).getLastPathComponent();
-                if (reference == relation) {
-                    model.refreshNode(childTree.getPathForRow(i));
+        protected MultiFetchServerObjectReader createReader() {
+            return MultiFetchServerObjectReader.create().setRecurseDownAppended(false).setRecurseDownRelations(true);
+        }
+
+        /**
+         * Merges the primitives in <code>ds</code> to the dataset of the edit layer
+         *
+         * @param ds the data set
+         */
+        protected void mergeDataSet(DataSet ds) {
+            if (ds != null) {
+                final DataSetMerger visitor = new DataSetMerger(getLayer().getDataSet(), ds);
+                visitor.merge();
+                if (!visitor.getConflicts().isEmpty()) {
+                    getLayer().getConflicts().add(visitor.getConflicts());
+                    conflictsCount += visitor.getConflicts().size();
                 }
             }
+        }
+
+        protected void refreshView(Relation relation) {
+            GuiHelper.runInEDT(() -> {
+                for (int i = 0; i < childTree.getRowCount(); i++) {
+                    Relation reference = (Relation) childTree.getPathForRow(i).getLastPathComponent();
+                    if (reference == relation) {
+                        model.refreshNode(childTree.getPathForRow(i));
+                    }
+                }
+            });
         }
 
         @Override
@@ -374,14 +392,11 @@ public class ChildRelationBrowser extends JPanel {
      * The asynchronous task for downloading relation members.
      */
     class DownloadAllChildrenTask extends DownloadTask {
-        private final Stack<Relation> relationsToDownload;
-        private final Set<Long> downloadedRelationIds;
+        private final Relation relation;
 
         DownloadAllChildrenTask(Dialog parent, Relation r) {
             super(tr("Download relation members"), parent);
-            relationsToDownload = new Stack<>();
-            downloadedRelationIds = new HashSet<>();
-            relationsToDownload.push(r);
+            relation = r;
         }
 
         /**
@@ -405,64 +420,16 @@ public class ChildRelationBrowser extends JPanel {
             );
         }
 
-        /**
-         * Remembers the child relations to download
-         *
-         * @param parent the parent relation
-         */
-        protected void rememberChildRelationsToDownload(Relation parent) {
-            downloadedRelationIds.add(parent.getId());
-            for (RelationMember member: parent.getMembers()) {
-                if (member.isRelation()) {
-                    Relation child = member.getRelation();
-                    if (!downloadedRelationIds.contains(child.getId())) {
-                        relationsToDownload.push(child);
-                    }
-                }
-            }
-        }
-
-        /**
-         * Merges the primitives in <code>ds</code> to the dataset of the edit layer
-         *
-         * @param ds the data set
-         */
-        protected void mergeDataSet(DataSet ds) {
-            if (ds != null) {
-                final DataSetMerger visitor = new DataSetMerger(getLayer().getDataSet(), ds);
-                visitor.merge();
-                if (!visitor.getConflicts().isEmpty()) {
-                    getLayer().getConflicts().add(visitor.getConflicts());
-                    conflictsCount += visitor.getConflicts().size();
-                }
-            }
-        }
-
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                while (!relationsToDownload.isEmpty() && !canceled) {
-                    Relation r = relationsToDownload.pop();
-                    if (r.isNew()) {
-                        continue;
-                    }
-                    rememberChildRelationsToDownload(r);
-                    progressMonitor.setCustomText(tr("Downloading relation {0}", r.getDisplayName(DefaultNameFormatter.getInstance())));
-                    OsmServerObjectReader reader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION,
-                            true);
-                    DataSet dataSet = null;
-                    try {
-                        dataSet = reader.parseOsm(progressMonitor
-                                .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    } catch (OsmApiException e) {
-                        if (e.getResponseCode() == HttpURLConnection.HTTP_GONE) {
-                            warnBecauseOfDeletedRelation(r);
-                            continue;
-                        }
-                        throw e;
-                    }
-                    mergeDataSet(dataSet);
-                    refreshView(r);
+                MultiFetchServerObjectReader reader = createReader();
+                reader.append(relation.getMemberPrimitives());
+                DataSet dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                mergeDataSet(dataSet);
+                Utils.filteredCollection(reader.getMissingPrimitives(), Relation.class).forEach(this::warnBecauseOfDeletedRelation);
+                for (Relation rel : dataSet.getRelations()) {
+                    refreshView((Relation) getLayer().getDataSet().getPrimitiveById(rel));
                 }
                 SwingUtilities.invokeLater(MainApplication.getMap()::repaint);
             } catch (OsmTransferException e) {
@@ -486,34 +453,18 @@ public class ChildRelationBrowser extends JPanel {
             this.relations = relations;
         }
 
-        protected void mergeDataSet(DataSet dataSet) {
-            if (dataSet != null) {
-                final DataSetMerger visitor = new DataSetMerger(getLayer().getDataSet(), dataSet);
-                visitor.merge();
-                if (!visitor.getConflicts().isEmpty()) {
-                    getLayer().getConflicts().add(visitor.getConflicts());
-                    conflictsCount += visitor.getConflicts().size();
-                }
-            }
-        }
-
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                Iterator<Relation> it = relations.iterator();
-                while (it.hasNext() && !canceled) {
-                    Relation r = it.next();
-                    if (r.isNew()) {
-                        continue;
-                    }
-                    progressMonitor.setCustomText(tr("Downloading relation {0}", r.getDisplayName(DefaultNameFormatter.getInstance())));
-                    OsmServerObjectReader reader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION,
-                            true);
-                    DataSet dataSet = reader.parseOsm(progressMonitor
-                            .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    mergeDataSet(dataSet);
-                    refreshView(r);
+                MultiFetchServerObjectReader reader = createReader();
+                reader.append(relations);
+                DataSet dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                mergeDataSet(dataSet);
+
+                for (Relation rel : dataSet.getRelations()) {
+                    refreshView((Relation) getLayer().getDataSet().getPrimitiveById(rel));
                 }
+
             } catch (OsmTransferException e) {
                 if (canceled) {
                     Logging.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));

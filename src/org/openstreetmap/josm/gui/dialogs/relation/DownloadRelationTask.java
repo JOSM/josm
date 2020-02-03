@@ -11,13 +11,14 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
-import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.io.OsmServerObjectReader;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
+import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -33,7 +34,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
     private Exception lastException;
     private final Collection<Relation> relations;
     private final OsmDataLayer layer;
-    private OsmServerObjectReader objectReader;
+    private OsmServerReader objectReader;
 
     /**
      * Creates the download task
@@ -77,30 +78,23 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             final DataSet allDownloads = new DataSet();
-            int i = 0;
             getProgressMonitor().setTicksCount(relations.size());
-            for (Relation relation: relations) {
-                i++;
-                getProgressMonitor().setCustomText(tr("({0}/{1}): Downloading relation ''{2}''...", i, relations.size(),
-                        relation.getDisplayName(DefaultNameFormatter.getInstance())));
-                synchronized (this) {
-                    if (canceled) return;
-                    objectReader = new OsmServerObjectReader(relation.getPrimitiveId(), true /* full download */);
-                }
-                DataSet dataSet = objectReader.parseOsm(
-                        getProgressMonitor().createSubTaskMonitor(0, false)
-                );
-                if (dataSet == null)
+            MultiFetchServerObjectReader multiObjectReader;
+            synchronized (this) {
+                if (canceled)
                     return;
-                synchronized (this) {
-                    if (canceled) return;
-                    objectReader = null;
-                }
-                DataSetMerger merger = new DataSetMerger(allDownloads, dataSet);
-                merger.merge();
-                getProgressMonitor().worked(1);
+                multiObjectReader = MultiFetchServerObjectReader.create();
             }
-
+            multiObjectReader.setRecurseDownRelations(true).setRecurseDownAppended(false);
+            multiObjectReader.append(relations);
+            DataSet dataSet = multiObjectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            if (dataSet == null)
+                return;
+            synchronized (this) {
+                if (canceled)
+                    return;
+            }
+            new DataSetMerger(allDownloads, dataSet).merge();
             SwingUtilities.invokeAndWait(() -> {
                 layer.mergeFrom(allDownloads);
                 layer.onPostDownloadFromServer();

@@ -11,7 +11,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -41,8 +40,7 @@ public abstract class AbstractPrimitiveTask extends PleaseWaitRunnable {
     protected OsmServerObjectReader objectReader;
 
     private boolean zoom;
-    private boolean downloadRelations;
-    private boolean fullRelation;
+    protected boolean fullRelation;
 
     protected AbstractPrimitiveTask(String title, OsmDataLayer layer) {
         this(title, new PleaseWaitProgressMonitor(title), layer);
@@ -70,14 +68,13 @@ public abstract class AbstractPrimitiveTask extends PleaseWaitRunnable {
     }
 
     /**
-     * Sets whether .
-     * @param downloadRelations {@code true} if
+     * Sets whether all members of the relation should be downloaded completely.
      * @param fullRelation {@code true} if a full download is required,
      *                     i.e., a download including the immediate children of a relation.
      * @return {@code this}
+     * since 15811 (changed parameter list)
      */
-    public final AbstractPrimitiveTask setDownloadRelations(boolean downloadRelations, boolean fullRelation) {
-        this.downloadRelations = downloadRelations;
+    public final AbstractPrimitiveTask setDownloadRelations(boolean fullRelation) {
         this.fullRelation = fullRelation;
         return this;
     }
@@ -100,7 +97,7 @@ public abstract class AbstractPrimitiveTask extends PleaseWaitRunnable {
             synchronized (this) {
                 if (canceled)
                     return;
-                multiObjectReader = MultiFetchServerObjectReader.create();
+                multiObjectReader = MultiFetchServerObjectReader.create().setRecurseDownRelations(fullRelation);
             }
             initMultiFetchReader(multiObjectReader);
             theirDataSet = multiObjectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
@@ -110,37 +107,11 @@ public abstract class AbstractPrimitiveTask extends PleaseWaitRunnable {
             }
             new DataSetMerger(ds, theirDataSet).merge();
 
-            if (downloadRelations) {
-                loadIncompleteRelationMembers();
-            }
-
             loadIncompleteNodes();
         } catch (OsmTransferException e) {
             if (canceled)
                 return;
             lastException = e;
-        }
-    }
-
-    protected void loadIncompleteRelationMembers() throws OsmTransferException {
-        // if incomplete relation members exist, download them too
-        for (Relation r : ds.getRelations()) {
-            if (canceled)
-                return;
-            // Relations may be incomplete in case of nested relations if child relations are accessed before their parent
-            // (it may happen because "relations" has no deterministic sort order, see #10388)
-            if (r.isIncomplete() || r.hasIncompleteMembers()) {
-                synchronized (this) {
-                    if (canceled)
-                        return;
-                    objectReader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION, fullRelation);
-                }
-                DataSet theirDataSet = objectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                synchronized (this) {
-                    objectReader = null;
-                }
-                new DataSetMerger(ds, theirDataSet).merge();
-            }
         }
     }
 

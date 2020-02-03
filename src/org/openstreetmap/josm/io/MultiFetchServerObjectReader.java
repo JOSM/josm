@@ -12,8 +12,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -24,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Node;
@@ -63,15 +67,19 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * the max. number of primitives retrieved in one step. Assuming IDs with 10 digits,
      * this leads to a max. request URL of ~ 1900 Bytes ((10 digits +  1 Separator) * 170),
      * which should be safe according to the
-     * <a href="http://www.boutell.com/newfaq/misc/urllength.html">WWW FAQ</a>.
+     * <a href="https://web.archive.org/web/20190902193246/https://boutell.com/newfaq/misc/urllength.html">WWW FAQ</a>.
      */
     private static final int MAX_IDS_PER_REQUEST = 170;
 
     private final Set<Long> nodes;
     private final Set<Long> ways;
     private final Set<Long> relations;
-    private Set<PrimitiveId> missingPrimitives;
+    private final Set<PrimitiveId> missingPrimitives;
     private final DataSet outputDataSet;
+    protected final Map<OsmPrimitiveType, Set<Long>> primitivesMap;
+
+    protected boolean recurseDownRelations;
+    private boolean recurseDownAppended = true;
 
     /**
      * Constructs a {@code MultiFetchServerObjectReader}.
@@ -82,6 +90,10 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         relations = new LinkedHashSet<>();
         this.outputDataSet = new DataSet();
         this.missingPrimitives = new LinkedHashSet<>();
+        primitivesMap = new LinkedHashMap<>();
+        primitivesMap.put(OsmPrimitiveType.RELATION, relations);
+        primitivesMap.put(OsmPrimitiveType.WAY, ways);
+        primitivesMap.put(OsmPrimitiveType.NODE, nodes);
     }
 
     /**
@@ -159,7 +171,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @return this
      */
     public MultiFetchServerObjectReader appendNode(Node node) {
-        if (node == null) return this;
+        if (node == null || node.isNew()) return this;
         remember(node.getPrimitiveId());
         return this;
     }
@@ -171,11 +183,12 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @return this
      */
     public MultiFetchServerObjectReader appendWay(Way way) {
-        if (way == null) return this;
-        if (way.isNew()) return this;
-        for (Node node: !recursesDown() ? way.getNodes() : Collections.<Node>emptyList()) {
-            if (!node.isNew()) {
-                remember(node.getPrimitiveId());
+        if (way == null || way.isNew()) return this;
+        if (recurseDownAppended) {
+            for (Node node : way.getNodes()) {
+                if (!node.isNew()) {
+                    remember(node.getPrimitiveId());
+                }
             }
         }
         remember(way.getPrimitiveId());
@@ -189,17 +202,18 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @return this
      */
     protected MultiFetchServerObjectReader appendRelation(Relation relation) {
-        if (relation == null) return this;
-        if (relation.isNew()) return this;
+        if (relation == null || relation.isNew()) return this;
         remember(relation.getPrimitiveId());
-        for (RelationMember member : !recursesDown() ? relation.getMembers() : Collections.<RelationMember>emptyList()) {
-            // avoid infinite recursion in case of cyclic dependencies in relations
-            if (OsmPrimitiveType.from(member.getMember()) == OsmPrimitiveType.RELATION
-                    && relations.contains(member.getMember().getId())) {
-                continue;
-            }
-            if (!member.getMember().isIncomplete()) {
-                append(member.getMember());
+        if (recurseDownAppended) {
+            for (RelationMember member : relation.getMembers()) {
+                // avoid infinite recursion in case of cyclic dependencies in relations
+                if (OsmPrimitiveType.from(member.getMember()) == OsmPrimitiveType.RELATION
+                        && relations.contains(member.getMember().getId())) {
+                    continue;
+                }
+                if (!member.getMember().isIncomplete()) {
+                    append(member.getMember());
+                }
             }
         }
         return this;
@@ -233,6 +247,38 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         if (primitives == null) return this;
         for (OsmPrimitive primitive : primitives) {
             append(primitive);
+        }
+        return this;
+    }
+
+    /**
+     * appends a list of {@link PrimitiveId} to the list of ids which will be fetched from the server.
+     *
+     * @param ids the list of primitive Ids (ignored, if null)
+     * @return this
+     * @since 15811
+     *
+     */
+    public MultiFetchServerObjectReader appendIds(Collection<PrimitiveId> ids) {
+        if (ids == null)
+            return this;
+        for (PrimitiveId id : ids) {
+            if (id.isNew()) continue;
+            switch (id.getType()) {
+            case NODE:
+                nodes.add(id.getUniqueId());
+                break;
+            case WAY:
+            case CLOSEDWAY:
+                ways.add(id.getUniqueId());
+                break;
+            case MULTIPOLYGON:
+            case RELATION:
+                relations.add(id.getUniqueId());
+                break;
+            default:
+                throw new AssertionError();
+            }
         }
         return this;
     }
@@ -275,11 +321,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
 
     protected void rememberNodesOfIncompleteWaysToLoad(DataSet from) {
         for (Way w: from.getWays()) {
-            if (w.hasIncompleteNodes()) {
-                for (Node n: w.getNodes()) {
-                    if (n.isIncomplete()) {
-                        nodes.add(n.getId());
-                    }
+            for (Node n: w.getNodes()) {
+                if (n.isIncomplete()) {
+                    nodes.add(n.getId());
                 }
             }
         }
@@ -372,29 +416,105 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * found on  the server (the server response code was 404)
      *
      * @return the parsed data
+     * @param progressMonitor progress monitor
      * @throws OsmTransferException if an error occurs while communicating with the API server
      * @see #getMissingPrimitives()
      *
      */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
+        missingPrimitives.clear();
         int n = nodes.size() + ways.size() + relations.size();
         progressMonitor.beginTask(trn("Downloading {0} object from ''{1}''",
-                "Downloading {0} objects from ''{1}''", n, n, OsmApi.getOsmApi().getBaseUrl()));
+                "Downloading {0} objects from ''{1}''", n, n, getBaseUrl()));
         try {
-            missingPrimitives = new HashSet<>();
-            if (isCanceled()) return null;
-            fetchPrimitives(ways, OsmPrimitiveType.WAY, progressMonitor);
-            if (isCanceled()) return null;
-            fetchPrimitives(nodes, OsmPrimitiveType.NODE, progressMonitor);
-            if (isCanceled()) return null;
-            fetchPrimitives(relations, OsmPrimitiveType.RELATION, progressMonitor);
-            if (outputDataSet != null) {
-                outputDataSet.deleteInvisible();
+            if (this instanceof MultiFetchOverpassObjectReader) {
+                // calculate a single request for all the objects
+                String request = ((MultiFetchOverpassObjectReader) this).buildComplexRequestString();
+                if (isCanceled())
+                    return null;
+                OverpassDownloadReader reader = new OverpassDownloadReader(new Bounds(0, 0, 0, 0), getBaseUrl(), request);
+                DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(n, false));
+                new DataSetMerger(outputDataSet, ds).merge();
+                checkMissing(outputDataSet, progressMonitor);
+            } else {
+                downloadRelations(progressMonitor);
+                if (isCanceled())
+                    return null;
+                fetchPrimitives(ways, OsmPrimitiveType.WAY, progressMonitor);
+                if (isCanceled())
+                    return null;
+                fetchPrimitives(nodes, OsmPrimitiveType.NODE, progressMonitor);
             }
+            outputDataSet.deleteInvisible();
             return outputDataSet;
         } finally {
             progressMonitor.finishTask();
+        }
+    }
+
+    /**
+     * Workaround for difference in Oerpass API.
+     * As of now (version 7.55) Overpass api doesn't return invisible objects.
+     * Check if we have objects which do not appear in the dataset and fetch them from OSM instead.
+     * @param ds the dataset
+     * @param progressMonitor progress monitor
+     * @throws OsmTransferException if an error occurs while communicating with the API server
+     */
+    private void checkMissing(DataSet ds, ProgressMonitor progressMonitor) throws OsmTransferException {
+        Set<OsmPrimitive> missing = new LinkedHashSet<>();
+        for (Entry<OsmPrimitiveType, Set<Long>> e : primitivesMap.entrySet()) {
+            for (long id : e.getValue()) {
+                if (ds.getPrimitiveById(id, e.getKey()) == null)
+                    missing.add(e.getKey().newInstance(id, true));
+            }
+        }
+        if (isCanceled() || missing.isEmpty())
+            return;
+
+        MultiFetchServerObjectReader missingReader = MultiFetchServerObjectReader.create(false);
+        missingReader.setRecurseDownAppended(false);
+        missingReader.setRecurseDownRelations(false);
+        missingReader.append(missing);
+        DataSet mds = missingReader.parseOsm(progressMonitor.createSubTaskMonitor(missing.size(), false));
+        new DataSetMerger(ds, mds).merge();
+        missingPrimitives.addAll(missingReader.getMissingPrimitives());
+    }
+
+    /**
+     * Finds best way to download a set of relations.
+     * @param progressMonitor progress monitor
+     * @throws OsmTransferException if an error occurs while communicating with the API server
+     * @see #getMissingPrimitives()
+     */
+    private void downloadRelations(ProgressMonitor progressMonitor) throws OsmTransferException {
+        Set<Long> toDownload = new LinkedHashSet<>(relations);
+        fetchPrimitives(toDownload, OsmPrimitiveType.RELATION, progressMonitor);
+        if (!recurseDownRelations) {
+            return;
+        }
+        // OSM multi-fetch api may return invisible objects
+        for (Relation r : outputDataSet.getRelations()) {
+            if (!r.isVisible())
+                toDownload.remove(r.getUniqueId());
+        }
+        while (!toDownload.isEmpty()) {
+            if (isCanceled())
+                return;
+            final Set<Long> addedRelations = new LinkedHashSet<>();
+
+            for (long id : toDownload) {
+                OsmServerObjectReader reader = new OsmServerObjectReader(id, OsmPrimitiveType.RELATION, true /* full*/);
+                DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
+                if (ds != null) {
+                    ds.getRelations().stream().map(OsmPrimitive::getUniqueId).filter(uid -> uid != id)
+                            .forEach(addedRelations::add);
+                }
+                merge(ds);
+            }
+            if (addedRelations.isEmpty())
+                break;
+            toDownload = addedRelations;
         }
     }
 
@@ -410,12 +530,25 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
     }
 
     /**
-     * Whether this reader fetches nodes when loading ways, or members when loading relations.
-     *
-     * @return {@code true} if the reader recurses down
+     * Should downloaded relations be complete?
+     * @param recurseDownRelations true: yes, recurse down to retrieve the complete relation
+     * @return this
+     * @since 15811
      */
-    protected boolean recursesDown() {
-        return false;
+    public MultiFetchServerObjectReader setRecurseDownRelations(boolean recurseDownRelations) {
+        this.recurseDownRelations = recurseDownRelations;
+        return this;
+    }
+
+    /**
+     * Determine how appended objects are treated. By default, all children of an appended object are also appended.
+     * @param recurseAppended false: do not append known children of appended objects, i.e. all nodes of way and all members of a relation
+     * @return this
+     * @since 15811
+     */
+    public MultiFetchServerObjectReader setRecurseDownAppended(boolean recurseAppended) {
+        this.recurseDownAppended = recurseAppended;
+        return this;
     }
 
     /**
@@ -538,6 +671,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 }
             } catch (IOException ex) {
                 Logging.warn(ex);
+                throw new OsmTransferException(ex);
             }
             return result;
         }

@@ -129,6 +129,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
                 if (canceled) return;
                 objectReader = MultiFetchServerObjectReader.create();
             }
+            objectReader.setRecurseDownAppended(false).setRecurseDownRelations(true);
             objectReader.append(children);
             progressMonitor.indeterminateSubTask(
                     buildDownloadFeedbackMessage()

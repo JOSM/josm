@@ -5,11 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.List;
 
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
@@ -52,29 +48,13 @@ public class DownloadPrimitivesTask extends AbstractPrimitiveTask {
         super(tr("Download objects"), progressMonitor, layer);
         this.ids = ids;
         setZoom(true);
-        setDownloadRelations(true, fullRelation);
+        setDownloadRelations(fullRelation);
     }
 
     @Override
     protected void initMultiFetchReader(MultiFetchServerObjectReader reader) {
         getProgressMonitor().indeterminateSubTask(tr("Initializing nodes to download ..."));
-        for (PrimitiveId id : ids) {
-            OsmPrimitive osm = layer.data.getPrimitiveById(id);
-            if (osm == null) {
-                switch (id.getType()) {
-                    case NODE:
-                        osm = new Node(id.getUniqueId());
-                        break;
-                    case WAY:
-                        osm = new Way(id.getUniqueId());
-                        break;
-                    case RELATION:
-                        osm = new Relation(id.getUniqueId());
-                        break;
-                    default: throw new AssertionError();
-                }
-            }
-            reader.append(osm);
-        }
+        reader.setRecurseDownRelations(fullRelation);
+        reader.appendIds(ids);
     }
 }
