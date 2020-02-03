@@ -48,7 +48,8 @@ public abstract class AbstractCopyAction extends AbstractAction {
                 .mapToObj(keySupplier)
                 .flatMap(key -> sel.stream().map(p -> getString(p, key)))
                 .filter(Objects::nonNull)
-                .flatMap(Collection::stream);
+                .flatMap(Collection::stream)
+                .distinct();
     }
 
     @Override
