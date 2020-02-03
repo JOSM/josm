@@ -18,7 +18,6 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
-import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -34,7 +33,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
     private Exception lastException;
     private final Collection<Relation> relations;
     private final OsmDataLayer layer;
-    private OsmServerReader objectReader;
+    private MultiFetchServerObjectReader multiObjectReader;
 
     /**
      * Creates the download task
@@ -59,8 +58,8 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
     protected void cancel() {
         canceled = true;
         synchronized (this) {
-            if (objectReader != null) {
-                objectReader.cancel();
+            if (multiObjectReader != null) {
+                multiObjectReader.cancel();
             }
         }
     }
@@ -79,15 +78,15 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
         try {
             final DataSet allDownloads = new DataSet();
             getProgressMonitor().setTicksCount(relations.size());
-            MultiFetchServerObjectReader multiObjectReader;
+            DataSet dataSet = null;
             synchronized (this) {
                 if (canceled)
                     return;
                 multiObjectReader = MultiFetchServerObjectReader.create();
+                multiObjectReader.setRecurseDownRelations(true).setRecurseDownAppended(false);
+                multiObjectReader.append(relations);
+                dataSet = multiObjectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             }
-            multiObjectReader.setRecurseDownRelations(true).setRecurseDownAppended(false);
-            multiObjectReader.append(relations);
-            DataSet dataSet = multiObjectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             if (dataSet == null)
                 return;
             synchronized (this) {
