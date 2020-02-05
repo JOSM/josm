@@ -47864,6 +47864,7 @@
     <nd ref='-7512' />
     <nd ref='-25542' />
     <tag k='ISO3166-2' v='US-NY' />
+    <tag k='name:en' v='New York' />
   </way>
   <way id='-29556'>
     <nd ref='-25570' />
