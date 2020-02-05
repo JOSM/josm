@@ -148,7 +148,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             NavigableSet<String> values = getNumericValues(enabledRule.getKey(), enabledRule.getValueComparator());
             // Make sure current auto filter button remains visible even if no data is found, to allow user to disable it
             if (currentAutoFilter != null) {
-                values.add(currentAutoFilter.getFilter().text.split("=")[1]);
+                values.add(currentAutoFilter.getFilter().value);
             }
             if (!values.equals(buttons.keySet())) {
                 removeAllButtons();
@@ -185,7 +185,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         int maxWidth = 16;
         MapView mapView = MainApplication.getMap().mapView;
         for (final String value : values.descendingSet()) {
-            Filter filter = new CompiledFilter(enabledRule.getKey(), value);
+            CompiledFilter filter = new CompiledFilter(enabledRule.getKey(), value);
             String label = enabledRule.getValueFormatter().apply(value);
             AutoFilter autoFilter = new AutoFilter(label, filter.text, filter);
             AutoFilterButton button = new AutoFilterButton(autoFilter);

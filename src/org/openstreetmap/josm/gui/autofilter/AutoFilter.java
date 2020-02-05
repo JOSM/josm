@@ -3,8 +3,6 @@ package org.openstreetmap.josm.gui.autofilter;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.data.osm.Filter;
-
 /**
  * An auto filter is a graphical shortcut to enable a filter for a specific tag.
  * @since 12400
@@ -12,7 +10,7 @@ import org.openstreetmap.josm.data.osm.Filter;
 public class AutoFilter {
     private final String label;
     private final String description;
-    private final Filter filter;
+    private final AutoFilterManager.CompiledFilter filter;
 
     /**
      * Constructs a new {@code AutoFilter}.
@@ -20,7 +18,7 @@ public class AutoFilter {
      * @param description button tooltip
      * @param filter associated filter
      */
-    public AutoFilter(String label, String description, Filter filter) {
+    public AutoFilter(String label, String description, AutoFilterManager.CompiledFilter filter) {
         this.label = label;
         this.description = description;
         this.filter = filter;
@@ -46,7 +44,7 @@ public class AutoFilter {
      * Returns the filter.
      * @return the filter
      */
-    public Filter getFilter() {
+    public AutoFilterManager.CompiledFilter getFilter() {
         return filter;
     }
 
