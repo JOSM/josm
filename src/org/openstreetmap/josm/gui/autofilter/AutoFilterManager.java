@@ -181,9 +181,13 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     }
 
     private synchronized void addNewButtons(NavigableSet<String> values) {
+        if (values.isEmpty()) {
+            return;
+        }
         int i = 0;
         int maxWidth = 16;
-        MapView mapView = MainApplication.getMap().mapView;
+        final AutoFilterButton keyButton = AutoFilterButton.forOsmKey(enabledRule.getKey());
+        addButton(keyButton, Integer.toString(Integer.MIN_VALUE), i++);
         for (final String value : values.descendingSet()) {
             CompiledFilter filter = new CompiledFilter(enabledRule.getKey(), value);
             String label = enabledRule.getValueFormatter().apply(value);
@@ -192,14 +196,19 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             if (autoFilter.equals(currentAutoFilter)) {
                 button.getModel().setPressed(true);
             }
-            buttons.put(value, button);
             maxWidth = Math.max(maxWidth, button.getPreferredSize().width);
-            mapView.add(button).setLocation(3, 60 + 22*i++);
+            addButton(button, value, i++);
         }
         for (AutoFilterButton b : buttons.values()) {
-            b.setSize(maxWidth, 20);
+            b.setSize(b == keyButton ? b.getPreferredSize().width : maxWidth, 20);
         }
-        mapView.validate();
+        MainApplication.getMap().mapView.validate();
+    }
+
+    private void addButton(AutoFilterButton button, String value, int i) {
+        MapView mapView = MainApplication.getMap().mapView;
+        buttons.put(value, button);
+        mapView.add(button).setLocation(3, 60 + 22*i);
     }
 
     private void removeAllButtons() {

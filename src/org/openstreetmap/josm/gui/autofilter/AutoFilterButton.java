@@ -7,12 +7,15 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
 
 /**
  * A button associated to an auto filter. If clicked twice, the filter is reset.
@@ -61,5 +64,17 @@ public class AutoFilterButton extends JButton {
         }
         g.fillRoundRect(0, 0, getWidth(), getHeight(), 3, 3);
         super.paintComponent(g);
+    }
+
+    static AutoFilterButton forOsmKey(String key) {
+        final String name = key + ":";
+        final AutoFilterButton button = new AutoFilterButton(new AutoFilter(key, "", null));
+        button.setAction(new AbstractAction(name) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PreferencesAction.forPreferenceSubTab("", "null", DrawingPreference.class).actionPerformed(e);
+            }
+        });
+        return button;
     }
 }
