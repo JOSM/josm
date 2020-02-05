@@ -91,10 +91,11 @@ public class OpeningHourTestTest {
         final String key = "opening_hours";
         final List<OpeningHourTest.OpeningHoursTestError> errors = openingHourTest.checkOpeningHourSyntax(key, "Mo-Tue");
         assertThat(errors, hasSize(2));
-        assertEquals(key + " - Mo-Tue <--- (Please use the abbreviation \"Tu\" for \"tue\".)", errors.get(0).getMessage());
+        assertEquals(key + " - Mo-Tue <--- (Please use the English abbreviation \"Tu\" for \"tue\".)", errors.get(0).getMessage());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
         assertEquals(key +
                 " - Mo-Tue <--- (This rule is not very explicit because there is no time selector being used."+
+                " A time selector is the part specifying hours when the object is opened, for example \"10:00-19:00\"."+
                 " Please add a time selector to this rule or use a comment to make it more explicit.)", errors.get(1).getMessage());
         assertEquals(Severity.WARNING, errors.get(1).getSeverity());
     }
@@ -242,8 +243,5 @@ public class OpeningHourTestTest {
     public void testTicket17932() {
         Logging.clearLastErrorAndWarnings();
         assertTrue(openingHourTest.checkOpeningHourSyntax("opening_hours", "SH off").isEmpty());
-        List<String> errors = Logging.getLastErrorAndWarnings();
-        assertFalse(errors.isEmpty());
-        assertTrue(errors.get(0), errors.get(0).contains("no SH definition"));
     }
 }

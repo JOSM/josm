@@ -56,13 +56,12 @@ public class OpeningHourTest extends TagTest {
                  Reader reader = cf.getContentReader()) {
                 ENGINE.eval("var console={};console.debug=print;console.log=print;console.warn=print;console.error=print;");
                 ENGINE.eval(reader);
-                ENGINE.eval("var opening_hours = require('opening_hours');");
                 // fake country/state to not get errors on holidays
-                ENGINE.eval("var nominatimJSON = {address: {state: 'Bayern', country_code: 'de'}};");
+                ENGINE.eval("var nominatimJSON = {address: {country_code: 'xa'}};");
                 ENGINE.eval(
                         "var oh = function (value, tag_key, mode, locale) {" +
                         " try {" +
-                        "    var conf = {tag_key: tag_key, locale: locale};" +
+                        "    var conf = {tag_key: tag_key, locale: locale, additional_rule_separator: false};" +
                         "    if (mode > -1) {" +
                         "      conf.mode = mode;" +
                         "    }" +
