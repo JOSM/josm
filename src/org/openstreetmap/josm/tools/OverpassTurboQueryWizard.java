@@ -42,8 +42,8 @@ public final class OverpassTurboQueryWizard {
                 engine.eval("var console = {error: " + Logging.class.getCanonicalName() + ".warn};");
                 engine.eval("var global = {};");
                 engine.eval(reader);
-                engine.eval("var overpassWizard = function(query) {" +
-                        "  return global.overpassWizard(query, {" +
+                engine.eval("var overpassWizardJOSM = function(query) {" +
+                        "  return overpassWizard(query, {" +
                         "    comment: false," +
                         "    timeout: " + Config.getPref().getInt("overpass.wizard.timeout", 90) + "," +
                         "    outputFormat: 'xml'," +
@@ -67,7 +67,7 @@ public final class OverpassTurboQueryWizard {
             throw new IllegalStateException("Failed to retrieve JavaScript engine");
         }
         try {
-            final Object result = ((Invocable) engine).invokeFunction("overpassWizard", search);
+            final Object result = ((Invocable) engine).invokeFunction("overpassWizardJOSM", search);
             if (Boolean.FALSE.equals(result)) {
                 throw new UncheckedParseException();
             }

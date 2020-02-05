@@ -30,9 +30,7 @@ public class OverpassTurboQueryWizardTest {
         assertEquals("" +
                 "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
-                "  node[\"amenity\"=\"drinking_water\"];\n" +
-                "  way[\"amenity\"=\"drinking_water\"];\n" +
-                "  relation[\"amenity\"=\"drinking_water\"];\n" +
+                "  nwr[\"amenity\"=\"drinking_water\"];\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
@@ -47,9 +45,7 @@ public class OverpassTurboQueryWizardTest {
         assertEquals("" +
                 "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
-                "  node[\"amenity\"!=\"drinking_water\"];\n" +
-                "  way[\"amenity\"!=\"drinking_water\"];\n" +
-                "  relation[\"amenity\"!=\"drinking_water\"];\n" +
+                "  nwr[\"amenity\"!=\"drinking_water\"];\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
@@ -63,9 +59,7 @@ public class OverpassTurboQueryWizardTest {
         final String expected = "" +
                 "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
-                "  node[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n" +
-                "  way[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n" +
-                "  relation[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n" +
+                "  nwr[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;";
@@ -82,12 +76,8 @@ public class OverpassTurboQueryWizardTest {
         final String expected = "" +
                 "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
-                "  node[\"foo\"=\"bar\"];\n" +
-                "  way[\"foo\"=\"bar\"];\n" +
-                "  relation[\"foo\"=\"bar\"];\n" +
-                "  node[\"baz\"=\"42\"];\n" +
-                "  way[\"baz\"=\"42\"];\n" +
-                "  relation[\"baz\"=\"42\"];\n" +
+                "  nwr[\"foo\"=\"bar\"];\n" +
+                "  nwr[\"baz\"=\"42\"];\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;";
@@ -105,18 +95,10 @@ public class OverpassTurboQueryWizardTest {
         assertEquals("" +
                 "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
-                "  node[\"foo\"][\"asd\"];\n" +
-                "  way[\"foo\"][\"asd\"];\n" +
-                "  relation[\"foo\"][\"asd\"];\n" +
-                "  node[\"foo\"][\"fasd\"];\n" +
-                "  way[\"foo\"][\"fasd\"];\n" +
-                "  relation[\"foo\"][\"fasd\"];\n" +
-                "  node[\"bar\"][\"asd\"];\n" +
-                "  way[\"bar\"][\"asd\"];\n" +
-                "  relation[\"bar\"][\"asd\"];\n" +
-                "  node[\"bar\"][\"fasd\"];\n" +
-                "  way[\"bar\"][\"fasd\"];\n" +
-                "  relation[\"bar\"][\"fasd\"];\n" +
+                "  nwr[\"foo\"][\"asd\"];\n" +
+                "  nwr[\"foo\"][\"fasd\"];\n" +
+                "  nwr[\"bar\"][\"asd\"];\n" +
+                "  nwr[\"bar\"][\"fasd\"];\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
@@ -147,12 +129,8 @@ public class OverpassTurboQueryWizardTest {
         assertEquals("" +
                 "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
-                "  node(user:\"foo\");\n" +
-                "  way(user:\"foo\");\n" +
-                "  relation(user:\"foo\");\n" +
-                "  node(uid:42);\n" +
-                "  way(uid:42);\n" +
-                "  relation(uid:42);\n" +
+                "  nwr(user:\"foo\");\n" +
+                "  nwr(uid:42);\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
@@ -183,9 +161,7 @@ public class OverpassTurboQueryWizardTest {
                 "[out:xml][timeout:90];\n" +
                 "{{geocodeArea:Josmland}}->.searchArea;\n" +
                 "(\n" +
-                "  node[\"foo\"=\"bar\"](area.searchArea);\n" +
-                "  way[\"foo\"=\"bar\"](area.searchArea);\n" +
-                "  relation[\"foo\"=\"bar\"](area.searchArea);\n" +
+                "  nwr[\"foo\"=\"bar\"](area.searchArea);\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
@@ -201,9 +177,7 @@ public class OverpassTurboQueryWizardTest {
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
                 "(\n" +
-                "  node[\"amenity\"=\"hospital\"];\n" +
-                "  way[\"amenity\"=\"hospital\"];\n" +
-                "  relation[\"amenity\"=\"hospital\"];\n" +
+                "  nwr[\"amenity\"=\"hospital\"];\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
