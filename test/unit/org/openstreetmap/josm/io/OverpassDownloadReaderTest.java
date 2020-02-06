@@ -74,9 +74,7 @@ public class OverpassDownloadReaderTest {
         assertEquals("" +
                 "[out:xml][timeout:90][bbox:2.0,1.0,4.0,3.0];\n" +
                 "(\n" +
-                "  node[\"amenity\"=\"drinking_water\"];\n" +
-                "  way[\"amenity\"=\"drinking_water\"];\n" +
-                "  relation[\"amenity\"=\"drinking_water\"];\n" +
+                "  nwr[\"amenity\"=\"drinking_water\"];\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
@@ -137,9 +135,7 @@ public class OverpassDownloadReaderTest {
                 "[out:xml][timeout:90];\n" +
                 "area(3600065606)->.searchArea;\n" +
                 "(\n" +
-                "  node[\"amenity\"=\"drinking_water\"](area.searchArea);\n" +
-                "  way[\"amenity\"=\"drinking_water\"](area.searchArea);\n" +
-                "  relation[\"amenity\"=\"drinking_water\"](area.searchArea);\n" +
+                "  nwr[\"amenity\"=\"drinking_water\"](area.searchArea);\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
