@@ -4,16 +4,13 @@ package org.openstreetmap.josm.gui.dialogs.properties;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -31,9 +28,7 @@ public class PropertiesDialogTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    private static String createSearchSetting(DataSet ds, boolean sameType) {
-        List<OsmPrimitive> sel = new ArrayList<>(ds.allPrimitives());
-        Collections.sort(sel, OsmPrimitiveComparator.comparingUniqueId());
+    private static String createSearchSetting(List<OsmPrimitive> sel, boolean sameType) {
         return PropertiesDialog.createSearchSetting("foo", sel, sameType).text;
     }
 
@@ -42,29 +37,29 @@ public class PropertiesDialogTest {
      */
     @Test
     public void testTicket12504() {
-        DataSet ds = new DataSet();
+        List<OsmPrimitive> sel = new ArrayList<>();
         // 160 objects with foo=bar, 400 objects without foo
         for (int i = 0; i < 160+400; i++) {
             Node n = new Node(LatLon.ZERO);
             if (i < 160) {
                 n.put("foo", "bar");
             }
-            ds.addPrimitive(n);
+            sel.add(n);
         }
-        assertEquals("(\"foo\"=\"bar\")", createSearchSetting(ds, false));
+        assertEquals("(\"foo\"=\"bar\")", createSearchSetting(sel, false));
 
         Node n = new Node(LatLon.ZERO);
         n.put("foo", "baz");
-        ds.addPrimitive(n);
+        sel.add(0, n);
 
-        assertEquals("(\"foo\"=\"baz\") OR (\"foo\"=\"bar\")", createSearchSetting(ds, false));
+        assertEquals("(\"foo\"=\"baz\") OR (\"foo\"=\"bar\")", createSearchSetting(sel, false));
 
-        ds.removePrimitive(n);
+        sel.remove(0);
 
         Way w = new Way();
         w.put("foo", "bar");
-        ds.addPrimitive(w);
+        sel.add(0, w);
 
-        assertEquals("(type:way \"foo\"=\"bar\") OR (type:node \"foo\"=\"bar\")", createSearchSetting(ds, true));
+        assertEquals("(type:way \"foo\"=\"bar\") OR (type:node \"foo\"=\"bar\")", createSearchSetting(sel, true));
     }
 }
