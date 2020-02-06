@@ -714,17 +714,22 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         p.add(new JLabel(relationText, ImageProvider.get("data", "relation"), JLabel.HORIZONTAL), GBC.eop().insets(15, 0, 0, 0));
         p.add(new JLabel(tr("API version: {0}", (data.getVersion() != null) ? data.getVersion() : tr("unset"))),
                 GBC.eop().insets(15, 0, 0, 0));
-        if (isUploadDiscouraged()) {
-            p.add(new JLabel(tr("Upload is discouraged")), GBC.eop().insets(15, 0, 0, 0));
-        }
-        if (data.getUploadPolicy() == UploadPolicy.BLOCKED) {
-            p.add(new JLabel(tr("Upload is blocked")), GBC.eop().insets(15, 0, 0, 0));
-        }
+        addConditionalInformation(p, tr("Layer is locked"), isLocked());
+        addConditionalInformation(p, tr("Download is blocked"), data.getDownloadPolicy() == DownloadPolicy.BLOCKED);
+        addConditionalInformation(p, tr("Upload is discouraged"), isUploadDiscouraged());
+        addConditionalInformation(p, tr("Upload is blocked"), data.getUploadPolicy() == UploadPolicy.BLOCKED);
 
         return p;
     }
 
-    @Override public Action[] getMenuEntries() {
+    private static void addConditionalInformation(JPanel p, String text, boolean condition) {
+        if (condition) {
+            p.add(new JLabel(text), GBC.eop().insets(15, 0, 0, 0));
+        }
+    }
+
+    @Override
+    public Action[] getMenuEntries() {
         List<Action> actions = new ArrayList<>();
         actions.addAll(Arrays.asList(
                 LayerListDialog.getInstance().createActivateLayerAction(this),
