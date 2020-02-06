@@ -42,8 +42,7 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
 
     @Override
     protected PleaseWaitRunnable createTask() {
-        Collection<Way> selectedWays = getLayerManager().getEditDataSet().getSelectedWays();
-
+        Collection<Way> selectedWays = getLayerManager().getActiveDataSet().getSelectedWays();
         if (selectedWays.isEmpty()) {
             JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("Please select 1 or more ways to download along"));
             return null;

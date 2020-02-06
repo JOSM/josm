@@ -151,9 +151,10 @@ public class DownloadAlongPanel extends JPanel {
      * Adds a change listener to comboboxes
      * @param listener The listener that will be notified of each combobox change
      */
-    protected final void addChangeListener(ChangeListener listener) {
+    protected final void addAndFireChangeListener(ChangeListener listener) {
         cbDownloadGpxData.addChangeListener(listener);
         cbDownloadOsmData.addChangeListener(listener);
+        listener.stateChanged(null);
     }
 
     /**
@@ -184,7 +185,11 @@ public class DownloadAlongPanel extends JPanel {
                 )
         };
 
-        addChangeListener(e -> options[0].setEnabled(isDownloadOsmData() || isDownloadGpxData()));
+        addAndFireChangeListener(e -> {
+            boolean somethingToDownload = isDownloadOsmData() || isDownloadGpxData();
+            options[0].setEnabled(somethingToDownload && MainApplication.getLayerManager().getEditLayer() != null);
+            options[1].setEnabled(somethingToDownload);
+        });
 
         int ret = HelpAwareOptionPane.showOptionDialog(MainApplication.getMainFrame(), this, title,
                     JOptionPane.QUESTION_MESSAGE, null, options, options[0], helpTopic);
