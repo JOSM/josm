@@ -26,6 +26,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public final class Node extends OsmPrimitive implements INode {
 
+    static final UniqueIdGenerator idGenerator = new UniqueIdGenerator();
+
     /*
      * We "inline" lat/lon rather than using a LatLon-object => reduces memory footprint
      */
@@ -421,5 +423,10 @@ public final class Node extends OsmPrimitive implements INode {
             }
         }
         return false;
+    }
+
+    @Override
+    public UniqueIdGenerator getIdGenerator() {
+        return idGenerator;
     }
 }

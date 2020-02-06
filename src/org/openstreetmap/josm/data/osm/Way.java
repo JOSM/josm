@@ -28,6 +28,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class Way extends OsmPrimitive implements IWay<Node> {
 
+    static final UniqueIdGenerator idGenerator = new UniqueIdGenerator();
+
     /**
      * All way nodes in this way
      */
@@ -747,5 +749,10 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
                 nodes[1].getEastNorth())), nodes[0]));
 
         return angles;
+    }
+
+    @Override
+    public UniqueIdGenerator getIdGenerator() {
+        return idGenerator;
     }
 }

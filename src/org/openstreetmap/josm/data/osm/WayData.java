@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 public class WayData extends PrimitiveData implements IWay<NodeData> {
 
     private static final long serialVersionUID = 106944939313286415L;
+    private static final UniqueIdGenerator idGenerator = Way.idGenerator;
     private List<Long> nodes = new ArrayList<>();
 
     /**
@@ -20,6 +21,7 @@ public class WayData extends PrimitiveData implements IWay<NodeData> {
      */
     public WayData() {
         // contents can be set later with setters
+        this(idGenerator.generateUniqueId());
     }
 
     /**
@@ -128,5 +130,10 @@ public class WayData extends PrimitiveData implements IWay<NodeData> {
     @Override
     public boolean isInnerNode(INode n) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public UniqueIdGenerator getIdGenerator() {
+        return idGenerator;
     }
 }

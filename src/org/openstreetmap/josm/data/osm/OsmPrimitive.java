@@ -111,7 +111,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
             if (id < 0)
                 throw new IllegalArgumentException(MessageFormat.format("Expected ID >= 0. Got {0}.", id));
             else if (id == 0) {
-                this.id = generateUniqueId();
+                this.id = getIdGenerator().generateUniqueId();
             } else {
                 this.id = id;
             }

@@ -17,7 +17,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiPredicate;
 
 import org.openstreetmap.josm.data.gpx.GpxConstants;
@@ -30,38 +29,6 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 4099
  */
 public abstract class AbstractPrimitive implements IPrimitive {
-
-    private static final AtomicLong idCounter = new AtomicLong(0);
-
-    /**
-     * Generates a new primitive unique id.
-     * @return new primitive unique (negative) id
-     */
-    static long generateUniqueId() {
-        return idCounter.decrementAndGet();
-    }
-
-    /**
-     * Returns the current primitive unique id.
-     * @return the current primitive unique (negative) id (last generated)
-     * @since 12536
-     */
-    public static long currentUniqueId() {
-        return idCounter.get();
-    }
-
-    /**
-     * Advances the current primitive unique id to skip a range of values.
-     * @param newId new unique id
-     * @throws IllegalArgumentException if newId is greater than current unique id
-     * @since 12536
-     */
-    public static void advanceUniqueId(long newId) {
-        if (newId > currentUniqueId()) {
-            throw new IllegalArgumentException("Cannot modify the id counter backwards");
-        }
-        idCounter.set(newId);
-    }
 
     /**
      * This flag shows, that the properties have been changed by the user
@@ -283,7 +250,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     public void clearOsmMetadata() {
         // Not part of dataset - no lock necessary
-        this.id = generateUniqueId();
+        this.id = getIdGenerator().generateUniqueId();
         this.version = 0;
         this.user = null;
         this.changesetId = 0; // reset changeset id on a new object
@@ -292,6 +259,13 @@ public abstract class AbstractPrimitive implements IPrimitive {
         this.setDeleted(false);
         this.setVisible(true);
     }
+
+    /**
+     * Returns the unique identifier generator.
+     * @return the unique identifier generator
+     * @since 15820
+     */
+    public abstract UniqueIdGenerator getIdGenerator();
 
     @Override
     public User getUser() {

@@ -27,13 +27,6 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
     private static final long serialVersionUID = -1044837092478109138L;
 
     /**
-     * Constructs a new {@code PrimitiveData}.
-     */
-    public PrimitiveData() {
-        this(OsmPrimitive.generateUniqueId());
-    }
-
-    /**
      * Constructs a new {@code PrimitiveData} with given id.
      * @param id id
      * @since 12017

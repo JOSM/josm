@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 public class RelationData extends PrimitiveData implements IRelation<RelationMemberData> {
 
     private static final long serialVersionUID = 1163664954890478565L;
+    private static final UniqueIdGenerator idGenerator = Relation.idGenerator;
     private List<RelationMemberData> members = new ArrayList<>();
 
     /**
@@ -20,6 +21,7 @@ public class RelationData extends PrimitiveData implements IRelation<RelationMem
      */
     public RelationData() {
         // contents can be set later with setters
+        this(idGenerator.generateUniqueId());
     }
 
     /**
@@ -98,5 +100,10 @@ public class RelationData extends PrimitiveData implements IRelation<RelationMem
     @Override
     public BBox getBBox() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public UniqueIdGenerator getIdGenerator() {
+        return idGenerator;
     }
 }

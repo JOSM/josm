@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 public class NodeData extends PrimitiveData implements INode {
 
     private static final long serialVersionUID = 5626323599550908773L;
+    private static final UniqueIdGenerator idGenerator = Node.idGenerator;
     /*
      * we "inline" lat/lon coordinates instead of using a LatLon => reduces memory footprint
      */
@@ -23,6 +24,7 @@ public class NodeData extends PrimitiveData implements INode {
      */
     public NodeData() {
         // contents can be set later with setters
+        this(idGenerator.generateUniqueId());
     }
 
     /**
@@ -107,5 +109,10 @@ public class NodeData extends PrimitiveData implements INode {
     @Override
     public boolean isReferredByWays(int n) {
         return false;
+    }
+
+    @Override
+    public UniqueIdGenerator getIdGenerator() {
+        return idGenerator;
     }
 }

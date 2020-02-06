@@ -15,27 +15,30 @@ import java.util.Collection;
 public enum OsmPrimitiveType {
 
     /** Node type */
-    NODE(marktr(/* ICON(data/) */"node"), Node.class, NodeData.class),
+    NODE(marktr(/* ICON(data/) */"node"), Node.class, NodeData.class, Node.idGenerator),
     /** Way type */
-    WAY(marktr(/* ICON(data/) */"way"), Way.class, WayData.class),
+    WAY(marktr(/* ICON(data/) */"way"), Way.class, WayData.class, Way.idGenerator),
     /** Relation type */
-    RELATION(marktr(/* ICON(data/) */"relation"), Relation.class, RelationData.class),
+    RELATION(marktr(/* ICON(data/) */"relation"), Relation.class, RelationData.class, Relation.idGenerator),
 
     /** Closed way: only for display, no real type */
-    CLOSEDWAY(marktr(/* ICON(data/) */"closedway"), null, WayData.class),
+    CLOSEDWAY(marktr(/* ICON(data/) */"closedway"), null, WayData.class, Way.idGenerator),
     /** Multipolygon: only for display, no real type */
-    MULTIPOLYGON(marktr(/* ICON(data/) */"multipolygon"), null, RelationData.class);
+    MULTIPOLYGON(marktr(/* ICON(data/) */"multipolygon"), null, RelationData.class, Relation.idGenerator);
 
     private static final Collection<OsmPrimitiveType> DATA_VALUES = Arrays.asList(NODE, WAY, RELATION);
 
     private final String apiTypeName;
     private final Class<? extends OsmPrimitive> osmClass;
     private final Class<? extends PrimitiveData> dataClass;
+    private final UniqueIdGenerator idGenerator;
 
-    OsmPrimitiveType(String apiTypeName, Class<? extends OsmPrimitive> osmClass, Class<? extends PrimitiveData> dataClass) {
+    OsmPrimitiveType(String apiTypeName, Class<? extends OsmPrimitive> osmClass, Class<? extends PrimitiveData> dataClass,
+            UniqueIdGenerator idGenerator) {
         this.apiTypeName = apiTypeName;
         this.osmClass = osmClass;
         this.dataClass = dataClass;
+        this.idGenerator = idGenerator;
     }
 
     /**
@@ -151,6 +154,15 @@ public enum OsmPrimitiveType {
         default:
             throw new AssertionError();
         }
+    }
+
+    /**
+     * Returns the unique identifier generator.
+     * @return the unique identifier generator
+     * @since 15820
+     */
+    public final UniqueIdGenerator getIdGenerator() {
+        return idGenerator;
     }
 
     @Override

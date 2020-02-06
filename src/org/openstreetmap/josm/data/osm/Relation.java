@@ -28,6 +28,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class Relation extends OsmPrimitive implements IRelation<RelationMember> {
 
+    static final UniqueIdGenerator idGenerator = new UniqueIdGenerator();
+
     private RelationMember[] members = new RelationMember[0];
 
     private BBox bbox;
@@ -548,5 +550,10 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
         return IRelation.super.findRelationMembers(role).stream()
                 .filter(m -> m instanceof OsmPrimitive)
                 .map(m -> (OsmPrimitive) m).collect(Collectors.toList());
+    }
+
+    @Override
+    public UniqueIdGenerator getIdGenerator() {
+        return idGenerator;
     }
 }

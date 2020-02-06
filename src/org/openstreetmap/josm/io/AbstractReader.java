@@ -325,10 +325,14 @@ public abstract class AbstractReader {
         } catch (IOException e) {
             throw new IllegalDataException(e);
         } finally {
-            OptionalLong minId = externalIdMap.values().stream().mapToLong(AbstractPrimitive::getUniqueId).min();
-            synchronized (AbstractPrimitive.class) {
-                if (minId.isPresent() && minId.getAsLong() < AbstractPrimitive.currentUniqueId()) {
-                    AbstractPrimitive.advanceUniqueId(minId.getAsLong());
+            for (OsmPrimitiveType dataType : OsmPrimitiveType.dataValues()) {
+                OptionalLong minId = externalIdMap.entrySet().parallelStream()
+                        .filter(e -> e.getKey().getType() == dataType)
+                        .mapToLong(e -> e.getValue().getUniqueId()).min();
+                synchronized (dataType.getDataClass()) {
+                    if (minId.isPresent() && minId.getAsLong() < dataType.getIdGenerator().currentUniqueId()) {
+                        dataType.getIdGenerator().advanceUniqueId(minId.getAsLong());
+                    }
                 }
             }
             progressMonitor.finishTask();
@@ -614,9 +618,9 @@ public abstract class AbstractReader {
 
     protected OsmPrimitive buildPrimitive(PrimitiveData pd) {
         OsmPrimitive p;
-        if (pd.getUniqueId() < AbstractPrimitive.currentUniqueId()) {
+        if (pd.getUniqueId() < pd.getIdGenerator().currentUniqueId()) {
             p = pd.getType().newInstance(pd.getUniqueId(), true);
-            AbstractPrimitive.advanceUniqueId(pd.getUniqueId());
+            pd.getIdGenerator().advanceUniqueId(pd.getUniqueId());
         } else {
             p = pd.getType().newVersionedInstance(pd.getId(), pd.getVersion());
         }
@@ -654,7 +658,7 @@ public abstract class AbstractReader {
 
     protected final Node parseNode(String lat, String lon, CommonReader commonReader, NodeReader nodeReader)
             throws IllegalDataException {
-        NodeData nd = new NodeData();
+        NodeData nd = new NodeData(0);
         LatLon ll = null;
         if (areLatLonDefined(lat, lon)) {
             try {
