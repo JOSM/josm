@@ -996,8 +996,8 @@
             <link wiki="Bicycle" />
             <space />
             <combo key="cycleway" text="Cycleway" values_context="cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" match="key" />
-            <combo key="cycleway:left" text="Cycleway left" values_context="cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
-            <combo key="cycleway:right" text="Cycleway right" values_context="cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
+            <combo key="cycleway:left" text="Cycleway left" values_context="cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" match="key" />
+            <combo key="cycleway:right" text="Cycleway right" values_context="cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" match="key" />
             <check key="oneway:bicycle" text="Oneway (bicycle)" />
             <space />
             <optional text="Edit Highway Attributes:">
