@@ -1013,6 +1013,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     @Override
     public String getChangesetSourceTag() {
-        return getName();
+        return "Geotagged Images";
     }
 }
