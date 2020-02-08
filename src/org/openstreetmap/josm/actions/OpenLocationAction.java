@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -291,11 +292,13 @@ public class OpenLocationAction extends JosmAction {
      * @return the selected tasks from the user or an empty list if the dialog has been canceled
      */
     Collection<DownloadTask> askWhichTasksToLoad(final Collection<DownloadTask> tasks) {
-        final JList<DownloadTask> list = new JList<>(tasks.toArray(new DownloadTask[0]));
-        list.addSelectionInterval(0, tasks.size() - 1);
-        final ExtendedDialog dialog = new WhichTasksToPerformDialog(list);
-        dialog.showDialog();
-        return dialog.getValue() == 1 ? list.getSelectedValuesList() : Collections.<DownloadTask>emptyList();
+        return GuiHelper.runInEDTAndWaitAndReturn(() -> {
+            final JList<DownloadTask> list = new JList<>(tasks.toArray(new DownloadTask[0]));
+            list.addSelectionInterval(0, tasks.size() - 1);
+            final ExtendedDialog dialog = new WhichTasksToPerformDialog(list);
+            dialog.showDialog();
+            return dialog.getValue() == 1 ? list.getSelectedValuesList() : Collections.<DownloadTask>emptyList();
+        });
     }
 
     /**
