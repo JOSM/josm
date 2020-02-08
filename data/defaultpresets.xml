@@ -1851,8 +1851,16 @@
             <link wiki="Tag:route=ferry" />
             <key key="route" value="ferry" />
             <optional>
-                <text key="name" text="Name" />
+                <reference ref="name_ref_operator" />
+                <reference ref="oh_wheelchair" />
+                <space />
+                <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
+                <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
+                <reference ref="fee" />
+                <combo key="ferry" text="Highway type the ferry connects" values="trunk,primary,secondary,tertiary,unclassified" values_context="Highway" />
+                <check key="ferry:cable" text="Reaction ferry" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Ferry Route -->
         <separator/>
         <item name="Marina" icon="presets/nautical/marina.svg" type="node,closedway,multipolygon" preset_name_label="true">
