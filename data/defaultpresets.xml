@@ -737,7 +737,14 @@
                 <check key="noname" text="Street has no name" disable_off="true" />
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <checkgroup columns="2">
+                    <check key="oneway" text="Oneway" />
+                    <check key="oneway:bicycle" text="Oneway for bicycle" />
+                </checkgroup>
+                <reference ref="highway_yesno_incline" />
+                <check key="lit" text="Lit" />
+                <text key="width" text="Width (meters)" />
+                <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
                 <check key="narrow" text="Narrow" disable_off="true" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
             </optional>

@@ -1085,6 +1085,7 @@ way[prop("trackLeft","core_cycleway")]::core_cycleway2 {
     modifier: true;
 }
     /* render opposite */
+way[oneway:bicycle=no][oneway][oneway!=no]::core_cycleway,
 way[cycleway=opposite][oneway][oneway!=no]::core_cycleway {
     z-index: 1;
     width: +0;
