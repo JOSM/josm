@@ -1919,3 +1919,11 @@ way[bicycle:oneway] {
   fixChangeKey: "building:min_height => min_height";
   group: tr("deprecated tagging");
 }
+
+/* #11232 */
+way[highway][construction=yes][highway!=construction] {
+  throwWarning: tr("{0} is deprecated", "{1.tag}");
+  suggestAlternative: "construction=minor";
+  suggestAlternative: concat("highway=construction + construction=", "{0.value}");
+  group: tr("deprecated tagging");
+}
