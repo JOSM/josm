@@ -689,15 +689,17 @@ area[roof:color][roof:colour]["roof:color"=*"roof:colour"] {
   group: tr("key with uncommon character");
 }
 
-/* see #11330 */
+/* see #11330, #18642 */
 *[/^.$/],
 node[/^..$/],
-way[/^..$/],
+way[/^..$/][route=ferry][!to],
+way[/^..$/][route!=ferry],
 relation[/^..$/][!to] {
   throwWarning: tr("uncommon short key");
   assertNoMatch: "relation to=Berlin";
   assertMatch: "relation fo=bar";
   assertMatch: "way to=bar";
+  assertNoMatch: "way to=Zuidschermer;Akersloot route=ferry";
   assertMatch: "node fo=bar";
   assertMatch: "node f=b";
 }

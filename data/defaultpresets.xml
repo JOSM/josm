@@ -948,6 +948,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <reference ref="general_access" />
+                <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
