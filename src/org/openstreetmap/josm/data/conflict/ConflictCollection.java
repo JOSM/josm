@@ -5,12 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -68,15 +68,11 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     protected void fireConflictAdded() {
-        for (IConflictListener listener : listeners) {
-            listener.onConflictsAdded(this);
-        }
+        listeners.forEach(listener -> listener.onConflictsAdded(this));
     }
 
     protected void fireConflictRemoved() {
-        for (IConflictListener listener : listeners) {
-            listener.onConflictsRemoved(this);
-        }
+        listeners.forEach(listener -> listener.onConflictsRemoved(this));
     }
 
     /**
@@ -113,9 +109,7 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      */
     public void add(Collection<Conflict<?>> otherConflicts) {
         if (otherConflicts == null) return;
-        for (Conflict<?> c : otherConflicts) {
-            addConflict(c);
-        }
+        otherConflicts.forEach(this::addConflict);
         fireConflictAdded();
     }
 
@@ -145,15 +139,11 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * removes the conflict registered for {@link OsmPrimitive} <code>my</code> if any
      *
      * @param my  the primitive
+     * @deprecated use {@link #removeForMy(OsmPrimitive)}
      */
+    @Deprecated
     public void remove(OsmPrimitive my) {
-        Iterator<Conflict<?>> it = iterator();
-        while (it.hasNext()) {
-            if (it.next().isMatchingMy(my)) {
-                it.remove();
-            }
-        }
-        fireConflictRemoved();
+        removeForMy(my);
     }
 
     /**
@@ -165,11 +155,10 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * if no such conflict exists.
      */
     public Conflict<?> getConflictForMy(OsmPrimitive my) {
-        for (Conflict<?> c : conflicts) {
-            if (c.isMatchingMy(my))
-                return c;
-        }
-        return null;
+        return conflicts.stream()
+                .filter(c -> c.isMatchingMy(my))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -181,11 +170,10 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * if no such conflict exists.
      */
     public Conflict<?> getConflictForTheir(OsmPrimitive their) {
-        for (Conflict<?> c : conflicts) {
-            if (c.isMatchingTheir(their))
-                return c;
-        }
-        return null;
+        return conflicts.stream()
+                .filter(c -> c.isMatchingTheir(their))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -224,11 +212,8 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * @param my the primitive
      */
     public void removeForMy(OsmPrimitive my) {
-        Iterator<Conflict<?>> it = iterator();
-        while (it.hasNext()) {
-            if (it.next().isMatchingMy(my)) {
-                it.remove();
-            }
+        if (conflicts.removeIf(c -> c.isMatchingMy(my))) {
+            fireConflictRemoved();
         }
     }
 
@@ -238,11 +223,8 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * @param their the primitive
      */
     public void removeForTheir(OsmPrimitive their) {
-        Iterator<Conflict<?>> it = iterator();
-        while (it.hasNext()) {
-            if (it.next().isMatchingTheir(their)) {
-                it.remove();
-            }
+        if (conflicts.removeIf(c -> c.isMatchingTheir(their))) {
+            fireConflictRemoved();
         }
     }
 
@@ -289,11 +271,9 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * @param other The other collection of conflicts to add
      */
     public void add(ConflictCollection other) {
-        for (Conflict<?> c : other) {
-            if (!hasConflict(c)) {
-                add(c);
-            }
-        }
+        other.conflicts.stream()
+                .filter(c -> !hasConflict(c))
+                .forEach(this::add);
     }
 
     /**
@@ -304,11 +284,9 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * of "my" in the conflicts managed by this collection.
      */
     public Set<OsmPrimitive> getMyConflictParties() {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (Conflict<?> c: conflicts) {
-            ret.add(c.getMy());
-        }
-        return ret;
+        return conflicts.stream()
+                .map(Conflict::getMy)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -319,11 +297,9 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      * of "their" in the conflicts managed by this collection.
      */
     public Set<OsmPrimitive> getTheirConflictParties() {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (Conflict<?> c: conflicts) {
-            ret.add(c.getTheir());
-        }
-        return ret;
+        return conflicts.stream()
+                .map(Conflict::getTheir)
+                .collect(Collectors.toSet());
     }
 
     /**
