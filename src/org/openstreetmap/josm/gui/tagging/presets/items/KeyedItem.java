@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
  */
 public abstract class KeyedItem extends TaggingPresetItem {
 
-    /** Translatation of "&lt;different&gt;". Use in combo boxes to display an entry matching several different values. */
+    /** Translation of "&lt;different&gt;". Use in combo boxes to display an entry matching several different values. */
     protected static final String DIFFERENT = tr("<different>");
 
     protected static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
