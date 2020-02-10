@@ -88,13 +88,13 @@ import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -500,6 +500,8 @@ public class TagEditHelper {
             values.getEditor().addActionListener(e -> buttonAction(0, null));
             addFocusAdapter(autocomplete, usedValuesAwareComparator);
 
+            addUpdateIconListener();
+
             setContent(mainPanel, false);
 
             addWindowListener(new WindowAdapter() {
@@ -516,12 +518,12 @@ public class TagEditHelper {
 
         @Override
         public void performTagEdit() {
-            String value = Utils.removeWhiteSpaces(values.getEditor().getItem().toString());
+            String value = values.getEditItem();
             value = Normalizer.normalize(value, Normalizer.Form.NFC);
             if (value.isEmpty()) {
                 value = null; // delete the key
             }
-            String newkey = Utils.removeWhiteSpaces(keys.getEditor().getItem().toString());
+            String newkey = keys.getEditItem();
             newkey = Normalizer.normalize(newkey, Normalizer.Form.NFC);
             if (newkey.isEmpty()) {
                 newkey = key;
@@ -609,6 +611,7 @@ public class TagEditHelper {
                     rememberWindowGeometry(geometry);
                 }
                 keys.setFixedLocale(PROPERTY_FIX_TAG_LOCALE.get());
+                updateOkButtonIcon();
             }
             super.setVisible(visible);
         }
@@ -671,17 +674,27 @@ public class TagEditHelper {
            return focus;
         }
 
-        private Optional<ImageIcon> findIcon(Tag tag) {
-            // Find and display icon
-            ImageIcon icon = MapPaintStyles.getNodeIcon(tag, false); // Filters deprecated icon
-            if (icon != null) {
-                return Optional.of(icon);
+        protected void addUpdateIconListener() {
+            keys.addActionListener(ignore -> updateOkButtonIcon());
+            values.addActionListener(ignore -> updateOkButtonIcon());
+        }
+
+        private void updateOkButtonIcon() {
+            if (buttons.isEmpty()) {
+                return;
             }
-            // If no icon found in map style look at presets
-            return TaggingPresets.getMatchingPresets(null, tag.getKeys(), false).stream()
-                    .map(TaggingPreset::getIcon)
+            final Tag tag = new Tag(keys.getSelectedOrEditItem(), values.getSelectedOrEditItem());
+            buttons.get(0).setIcon(findIcon(tag)
+                    .orElse(ImageProvider.get("ok", ImageProvider.ImageSizes.LARGEICON)));
+        }
+
+        protected Optional<ImageIcon> findIcon(Tag tag) {
+            final Optional<ImageIcon> taggingPresetIcon = TaggingPresets.getMatchingPresets(null, tag.getKeys(), false).stream()
+                    .map(preset -> preset.getIcon(Action.LARGE_ICON_KEY))
                     .filter(Objects::nonNull)
                     .findFirst();
+            // Java 9: use Optional.or
+            return taggingPresetIcon.isPresent() ? taggingPresetIcon : Optional.ofNullable(MapPaintStyles.getNodeIcon(tag, false));
         }
 
         protected JPopupMenu popupMenu = new JPopupMenu() {
@@ -754,6 +767,8 @@ public class TagEditHelper {
             focus = addFocusAdapter(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
             // fire focus event in advance or otherwise the popup list will be too small at first
             focus.focusGained(null);
+
+            addUpdateIconListener();
 
             // Add tag on Shift-Enter
             mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
@@ -1077,8 +1092,8 @@ public class TagEditHelper {
          * Read tags from comboboxes and add it to all selected objects
          */
         public final void performTagAdding() {
-            String key = Utils.removeWhiteSpaces(keys.getEditor().getItem().toString());
-            String value = Utils.removeWhiteSpaces(values.getEditor().getItem().toString());
+            String key = keys.getEditItem();
+            String value = values.getEditItem();
             if (key.isEmpty() || value.isEmpty())
                 return;
             for (OsmPrimitive osm : sel) {

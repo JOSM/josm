@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Auto-completing ComboBox.
@@ -382,6 +383,33 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
             return privateInputContext;
         }
         return super.getInputContext();
+    }
+
+    /**
+     * Returns the edited item with whitespaces removed
+     * @return the edited item with whitespaces removed
+     * @since 15835
+     */
+    public String getEditItem() {
+        return Utils.removeWhiteSpaces(getEditor().getItem().toString());
+    }
+
+    /**
+     * Returns the selected item or the edited item as string
+     * @return the selected item or the edited item as string
+     * @see #getSelectedItem()
+     * @see #getEditItem()
+     * @since 15835
+     */
+    public String getSelectedOrEditItem() {
+        final Object selectedItem = getSelectedItem();
+        if (selectedItem instanceof AutoCompletionItem) {
+            return ((AutoCompletionItem) selectedItem).getValue();
+        } else if (selectedItem instanceof String) {
+            return (String) selectedItem;
+        } else {
+            return getEditItem();
+        }
     }
 
     /**
