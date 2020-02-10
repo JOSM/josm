@@ -7,9 +7,14 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.ToIntFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * An auto filter rule determines how auto filter can be built from visible map data.
@@ -19,6 +24,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  * @since 12400
  */
 public class AutoFilterRule {
+
+    /**
+     * Property to determine if the auto filter should assume sensible defaults for values (such as layer=1 for bridge=yes).
+     */
+    private static final BooleanProperty PROP_AUTO_FILTER_DEFAULTS = new BooleanProperty("auto.filter.defaults", true);
 
     private final String key;
 
@@ -57,11 +67,12 @@ public class AutoFilterRule {
     }
 
     /**
-     * Returns the OSM value formatter that defines the associated button label.
-     * @return the OSM value formatter that defines the associated button label (identity by default)
+     * Formats the numeric value
+     * @param value the numeric value to format
+     * @return the formatted value
      */
-    public IntFunction<String> getValueFormatter() {
-        return valueFormatter;
+    public String formatValue(int value) {
+        return valueFormatter.apply(value);
     }
 
     /**
@@ -73,14 +84,6 @@ public class AutoFilterRule {
     public AutoFilterRule setValueFormatter(IntFunction<String> valueFormatter) {
         this.valueFormatter = Objects.requireNonNull(valueFormatter);
         return this;
-    }
-
-    /**
-     * Returns a function which yields default values for the given OSM primitive
-     * @return a function which yields default values for the given OSM primitive
-     */
-    public Function<OsmPrimitive, IntStream> getDefaultValueSupplier() {
-        return defaultValueSupplier;
     }
 
     /**
@@ -96,14 +99,6 @@ public class AutoFilterRule {
     }
 
     /**
-     * Returns a function which extracts a numeric value from an OSM value
-     * @return a function which extracts a numeric value from an OSM value
-     */
-    public ToIntFunction<String> getValueExtractor() {
-        return valueExtractor;
-    }
-
-    /**
      * Sets the function which extracts a numeric value from an OSM value
      * @param valueExtractor the function which extracts a numeric value from an OSM value
      * @return {@code this}
@@ -112,6 +107,34 @@ public class AutoFilterRule {
     public AutoFilterRule setValueExtractor(ToIntFunction<String> valueExtractor) {
         this.valueExtractor = Objects.requireNonNull(valueExtractor);
         return this;
+    }
+
+    /**
+     * Returns the numeric values for the given OSM primitive
+     * @param osm the primitive
+     * @return a stream of numeric values
+     */
+    public IntStream getTagValuesForPrimitive(OsmPrimitive osm) {
+        String value = osm.get(key);
+        if (value != null) {
+            Pattern p = Pattern.compile("(-?[0-9]+)-(-?[0-9]+)");
+            return OsmUtils.splitMultipleValues(value).flatMapToInt(v -> {
+                Matcher m = p.matcher(v);
+                if (m.matches()) {
+                    int a = Integer.parseInt(m.group(1));
+                    int b = Integer.parseInt(m.group(2));
+                    return IntStream.rangeClosed(Math.min(a, b), Math.max(a, b));
+                } else {
+                    try {
+                        return IntStream.of(valueExtractor.applyAsInt(v));
+                    } catch (NumberFormatException e) {
+                        Logging.trace(e);
+                        return IntStream.empty();
+                    }
+                }
+            });
+        }
+        return PROP_AUTO_FILTER_DEFAULTS.get() ? defaultValueSupplier.apply(osm) : IntStream.empty();
     }
 
     /**

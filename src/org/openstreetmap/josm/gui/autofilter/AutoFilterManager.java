@@ -15,9 +15,6 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.osm.BBox;
@@ -25,7 +22,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.FilterModel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
@@ -57,7 +53,6 @@ import org.openstreetmap.josm.gui.widgets.OSDLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * The auto filter manager keeps track of registered auto filter rules and applies the active one on the fly,
@@ -76,11 +71,6 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
      * Property to determine the current auto filter rule.
      */
     public static final StringProperty PROP_AUTO_FILTER_RULE = new StringProperty("auto.filter.rule", "level");
-
-    /**
-     * Property to determine if the auto filter should assume sensible defaults for values (such as layer=1 for bridge=yes).
-     */
-    private static final BooleanProperty PROP_AUTO_FILTER_DEFAULTS = new BooleanProperty("auto.filter.defaults", true);
 
     /**
      * The unique instance.
@@ -110,7 +100,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     /**
      * The currently enabled rule, if any.
      */
-    private AutoFilterRule enabledRule;
+    AutoFilterRule enabledRule;
 
     /**
      * The currently selected auto filter, if any.
@@ -142,7 +132,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         if (enabledRule != null && map != null
                 && enabledRule.getMinZoomLevel() <= Selector.GeneralSelector.scale2level(map.mapView.getDist100Pixel())) {
             // Retrieve the values from current rule visible on screen
-            NavigableSet<Integer> values = getNumericValues(enabledRule.getKey());
+            NavigableSet<Integer> values = getNumericValues();
             // Make sure current auto filter button remains visible even if no data is found, to allow user to disable it
             if (currentAutoFilter != null) {
                 values.add(currentAutoFilter.getFilter().value);
@@ -154,16 +144,16 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         }
     }
 
-    class CompiledFilter extends Filter implements MatchSupplier {
-        final String key;
+    static class CompiledFilter extends Filter implements MatchSupplier {
+        final AutoFilterRule rule;
         final int value;
 
-        CompiledFilter(String key, int value) {
-            this.key = key;
+        CompiledFilter(AutoFilterRule rule, int value) {
+            this.rule = rule;
             this.value = value;
             this.enable = true;
             this.inverted = true;
-            this.text = key + "=" + value;
+            this.text = rule.getKey() + "=" + value;
         }
 
         @Override
@@ -171,7 +161,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             return new SearchCompiler.Match() {
                 @Override
                 public boolean match(OsmPrimitive osm) {
-                    return getTagValuesForPrimitive(key, osm).anyMatch(v -> v == value);
+                    return rule.getTagValuesForPrimitive(osm).anyMatch(v -> v == value);
                 }
             };
         }
@@ -186,8 +176,8 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         final AutoFilterButton keyButton = AutoFilterButton.forOsmKey(enabledRule.getKey());
         addButton(keyButton, Integer.MIN_VALUE, i++);
         for (final Integer value : values.descendingSet()) {
-            CompiledFilter filter = new CompiledFilter(enabledRule.getKey(), value);
-            String label = enabledRule.getValueFormatter().apply(value);
+            CompiledFilter filter = new CompiledFilter(enabledRule, value);
+            String label = enabledRule.formatValue(value);
             AutoFilter autoFilter = new AutoFilter(label, filter.text, filter);
             AutoFilterButton button = new AutoFilterButton(autoFilter);
             if (autoFilter.equals(currentAutoFilter)) {
@@ -213,44 +203,18 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         buttons.clear();
     }
 
-    private NavigableSet<Integer> getNumericValues(String key) {
+    private NavigableSet<Integer> getNumericValues() {
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (ds == null) {
             return Collections.emptyNavigableSet();
         }
         BBox bbox = MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
         NavigableSet<Integer> values = new TreeSet<>();
-        Consumer<OsmPrimitive> consumer = o -> getTagValuesForPrimitive(key, o).forEach(values::add);
+        Consumer<OsmPrimitive> consumer = o -> enabledRule.getTagValuesForPrimitive(o).forEach(values::add);
         ds.searchNodes(bbox).forEach(consumer);
         ds.searchWays(bbox).forEach(consumer);
         ds.searchRelations(bbox).forEach(consumer);
         return values;
-    }
-
-    protected IntStream getTagValuesForPrimitive(String key, OsmPrimitive osm) {
-        if (enabledRule == null) {
-            return IntStream.empty();
-        }
-        String value = osm.get(key);
-        if (value != null) {
-            Pattern p = Pattern.compile("(-?[0-9]+)-(-?[0-9]+)");
-            return OsmUtils.splitMultipleValues(value).flatMapToInt(v -> {
-                Matcher m = p.matcher(v);
-                if (m.matches()) {
-                    int a = Integer.parseInt(m.group(1));
-                    int b = Integer.parseInt(m.group(2));
-                    return IntStream.rangeClosed(Math.min(a, b), Math.max(a, b));
-                } else {
-                    try {
-                        return IntStream.of(enabledRule.getValueExtractor().applyAsInt(v));
-                    } catch (NumberFormatException e) {
-                        Logging.trace(e);
-                        return IntStream.empty();
-                    }
-                }
-            });
-        }
-        return enabledRule.getDefaultValueSupplier().apply(osm);
     }
 
     @Override
