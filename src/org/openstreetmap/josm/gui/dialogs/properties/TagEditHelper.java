@@ -31,11 +31,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
@@ -546,22 +547,11 @@ public class TagEditHelper {
                 Collection<Command> commands = new ArrayList<>();
                 commands.add(new ChangePropertyCommand(sel, key, null));
                 if (value.equals(tr("<different>"))) {
-                    Map<String, List<OsmPrimitive>> map = new HashMap<>();
-                    for (OsmPrimitive osm: sel) {
-                        String val = osm.get(key);
-                        if (val != null) {
-                            if (map.containsKey(val)) {
-                                map.get(val).add(osm);
-                            } else {
-                                List<OsmPrimitive> v = new ArrayList<>();
-                                v.add(osm);
-                                map.put(val, v);
-                            }
-                        }
-                    }
-                    for (Map.Entry<String, List<OsmPrimitive>> e: map.entrySet()) {
-                        commands.add(new ChangePropertyCommand(e.getValue(), newkey, e.getKey()));
-                    }
+                    String newKey = newkey;
+                    sel.stream()
+                            .filter(osm -> osm.hasKey(key))
+                            .collect(Collectors.groupingBy(osm -> osm.get(key)))
+                            .forEach((newValue, osmPrimitives) -> commands.add(new ChangePropertyCommand(osmPrimitives, newKey, newValue)));
                 } else {
                     commands.add(new ChangePropertyCommand(sel, newkey, value));
                     AutoCompletionManager.rememberUserInput(newkey, value, false);
@@ -666,10 +656,8 @@ public class TagEditHelper {
                    List<AutoCompletionItem> correctItems = autocomplete.getTagValues(getAutocompletionKeys(key), comparator);
                    ComboBoxModel<AutoCompletionItem> currentModel = values.getModel();
                    final int size = correctItems.size();
-                   boolean valuesOK = size == currentModel.getSize();
-                   for (int i = 0; valuesOK && i < size; i++) {
-                       valuesOK = Objects.equals(currentModel.getElementAt(i), correctItems.get(i));
-                   }
+                   boolean valuesOK = size == currentModel.getSize()
+                           && IntStream.range(0, size).allMatch(i -> Objects.equals(currentModel.getElementAt(i), correctItems.get(i)));
                    if (!valuesOK) {
                        values.setPossibleAcItems(correctItems);
                    }
@@ -681,6 +669,19 @@ public class TagEditHelper {
            };
            editor.addFocusListener(focus);
            return focus;
+        }
+
+        private Optional<ImageIcon> findIcon(Tag tag) {
+            // Find and display icon
+            ImageIcon icon = MapPaintStyles.getNodeIcon(tag, false); // Filters deprecated icon
+            if (icon != null) {
+                return Optional.of(icon);
+            }
+            // If no icon found in map style look at presets
+            return TaggingPresets.getMatchingPresets(null, tag.getKeys(), false).stream()
+                    .map(TaggingPreset::getIcon)
+                    .filter(Objects::nonNull)
+                    .findFirst();
         }
 
         protected JPopupMenu popupMenu = new JPopupMenu() {
@@ -946,23 +947,10 @@ public class TagEditHelper {
                 if (keyExists && PROPERTY_RECENT_EXISTING.get() == RecentExisting.DISABLE) {
                     action.setEnabled(false);
                 }
-                // Find and display icon
-                ImageIcon icon = MapPaintStyles.getNodeIcon(t, false); // Filters deprecated icon
-                if (icon == null) {
-                    // If no icon found in map style look at presets
-                    Map<String, String> map = new HashMap<>();
-                    map.put(t.getKey(), t.getValue());
-                    for (TaggingPreset tp : TaggingPresets.getMatchingPresets(null, map, false)) {
-                        icon = tp.getIcon();
-                        if (icon != null) {
-                            break;
-                        }
-                    }
-                    // If still nothing display an empty icon
-                    if (icon == null) {
-                        icon = new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB));
-                    }
-                }
+                ImageIcon icon = findIcon(t)
+                        // If still nothing display an empty icon
+
+                        .orElseGet(() -> new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)));
                 GridBagConstraints gbc = new GridBagConstraints();
                 gbc.ipadx = 5;
                 recentTagsPanel.add(new JLabel(action.isEnabled() ? icon : GuiHelper.getDisabledIcon(icon)), gbc);
