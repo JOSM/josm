@@ -91,16 +91,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
      * Inspired by <a href="http://www.orbital-computer.de/JComboBox">Thomas Bierhance example</a>.
      */
     class AutoCompletingComboBoxDocument extends PlainDocument {
-        private final JosmComboBox<AutoCompletionItem> comboBox;
         private boolean selecting;
-
-        /**
-         * Constructs a new {@code AutoCompletingComboBoxDocument}.
-         * @param comboBox the combobox
-         */
-        AutoCompletingComboBoxDocument(final JosmComboBox<AutoCompletionItem> comboBox) {
-            this.comboBox = comboBox;
-        }
 
         @Override
         public void remove(int offs, int len) throws BadLocationException {
@@ -180,7 +171,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
                     end = getLength();
                 }
             }
-            final JTextComponent editorComponent = comboBox.getEditorComponent();
+            final JTextComponent editorComponent = getEditorComponent();
             // save unix system selection (middle mouse paste)
             Clipboard sysSel = ClipboardUtils.getSystemSelection();
             if (sysSel != null) {
@@ -196,12 +187,12 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
 
         private void setSelectedItem(Object item) {
             selecting = true;
-            comboBox.setSelectedItem(item);
+            AutoCompletingComboBox.this.setSelectedItem(item);
             selecting = false;
         }
 
         private Object lookupItem(String pattern, boolean match) {
-            ComboBoxModel<AutoCompletionItem> model = comboBox.getModel();
+            ComboBoxModel<AutoCompletionItem> model = getModel();
             AutoCompletionItem bestItem = null;
             for (int i = 0, n = model.getSize(); i < n; i++) {
                 AutoCompletionItem currentItem = model.getElementAt(i);
@@ -233,7 +224,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
         super(new AutoCompletionItem(prototype));
         setRenderer(new AutoCompleteListCellRenderer());
         final JTextComponent editorComponent = this.getEditorComponent();
-        editorComponent.setDocument(new AutoCompletingComboBoxDocument(this));
+        editorComponent.setDocument(new AutoCompletingComboBoxDocument());
         editorComponent.addFocusListener(new InnerFocusListener(editorComponent));
     }
 
