@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.gui.autofilter;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.OptionalInt;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,7 +33,8 @@ public class AutoFilterManagerTest {
      */
     @Test
     public void testTagValuesForPrimitive() {
-        final TreeSet<String> values = Stream.of(
+        AutoFilterManager.getInstance().setCurrentAutoFilter(null);
+        final TreeSet<Integer> values = Stream.of(
                 OsmUtils.createPrimitive("way level=-4--5"),
                 OsmUtils.createPrimitive("way level=-2"),
                 OsmUtils.createPrimitive("node level=0"),
@@ -41,9 +42,10 @@ public class AutoFilterManagerTest {
                 OsmUtils.createPrimitive("way level=2;3"),
                 OsmUtils.createPrimitive("way level=6-9"),
                 OsmUtils.createPrimitive("way level=10;12-13"))
-                .flatMap(o -> AutoFilterManager.getTagValuesForPrimitive("level", o))
+                .flatMapToInt(o -> AutoFilterManager.getInstance().getTagValuesForPrimitive("level", o))
+                .boxed()
                 .collect(Collectors.toCollection(TreeSet::new));
-        assertEquals(new TreeSet<>(Arrays.asList("-5", "-4", "-2", "0", "1", "2", "3", "6", "7", "8", "9", "10", "12", "13")), values);
+        assertEquals(new TreeSet<>(Arrays.asList(-5, -4, -2, 0, 1, 2, 3, 6, 7, 8, 9, 10, 12, 13)), values);
 
     }
 
@@ -52,19 +54,22 @@ public class AutoFilterManagerTest {
      */
     @Test
     public void testTagValuesForPrimitivesDefaults() {
-        assertNull(getLayer("way foo=bar"));
-        assertEquals("1", getLayer("way bridge=yes"));
-        assertEquals("1", getLayer("way power=line"));
-        assertEquals("-1", getLayer("way tunnel=yes"));
-        assertEquals("0", getLayer("way tunnel=building_passage"));
-        assertEquals("0", getLayer("way highway=residential"));
-        assertEquals("0", getLayer("way railway=rail"));
-        assertEquals("0", getLayer("way waterway=canal"));
+        AutoFilterManager.getInstance().setCurrentAutoFilter(null);
+        assertEquals(OptionalInt.empty(), getLayer("way foo=bar"));
+        AutoFilterRule.getDefaultRule("layer").ifPresent(AutoFilterManager.getInstance()::enableAutoFilterRule);
+        assertEquals(OptionalInt.empty(), getLayer("way foo=bar"));
+        assertEquals(OptionalInt.of(1), getLayer("way bridge=yes"));
+        assertEquals(OptionalInt.of(1), getLayer("way power=line"));
+        assertEquals(OptionalInt.of(-1), getLayer("way tunnel=yes"));
+        assertEquals(OptionalInt.of(0), getLayer("way tunnel=building_passage"));
+        assertEquals(OptionalInt.of(0), getLayer("way highway=residential"));
+        assertEquals(OptionalInt.of(0), getLayer("way railway=rail"));
+        assertEquals(OptionalInt.of(0), getLayer("way waterway=canal"));
     }
 
-    private String getLayer(final String assertion) {
-        return AutoFilterManager.getTagValuesForPrimitive("layer", OsmUtils.createPrimitive(assertion))
-                .findFirst()
-                .orElse(null);
+    private OptionalInt getLayer(final String assertion) {
+        return AutoFilterManager.getInstance()
+                .getTagValuesForPrimitive("layer", OsmUtils.createPrimitive(assertion))
+                .findFirst();
     }
 }

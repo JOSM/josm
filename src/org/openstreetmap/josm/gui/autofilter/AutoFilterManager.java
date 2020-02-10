@@ -7,20 +7,17 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.osm.BBox;
@@ -93,7 +90,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     /**
      * The buttons currently displayed in map view.
      */
-    private final Map<String, AutoFilterButton> buttons = new TreeMap<>();
+    private final Map<Integer, AutoFilterButton> buttons = new TreeMap<>();
 
     /**
      * The list of registered auto filter rules.
@@ -145,7 +142,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         if (enabledRule != null && map != null
                 && enabledRule.getMinZoomLevel() <= Selector.GeneralSelector.scale2level(map.mapView.getDist100Pixel())) {
             // Retrieve the values from current rule visible on screen
-            NavigableSet<String> values = getNumericValues(enabledRule.getKey(), enabledRule.getValueComparator());
+            NavigableSet<Integer> values = getNumericValues(enabledRule.getKey());
             // Make sure current auto filter button remains visible even if no data is found, to allow user to disable it
             if (currentAutoFilter != null) {
                 values.add(currentAutoFilter.getFilter().value);
@@ -157,11 +154,11 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         }
     }
 
-    static class CompiledFilter extends Filter implements MatchSupplier {
+    class CompiledFilter extends Filter implements MatchSupplier {
         final String key;
-        final String value;
+        final int value;
 
-        CompiledFilter(String key, String value) {
+        CompiledFilter(String key, int value) {
             this.key = key;
             this.value = value;
             this.enable = true;
@@ -174,21 +171,21 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             return new SearchCompiler.Match() {
                 @Override
                 public boolean match(OsmPrimitive osm) {
-                    return getTagValuesForPrimitive(key, osm).anyMatch(value::equals);
+                    return getTagValuesForPrimitive(key, osm).anyMatch(v -> v == value);
                 }
             };
         }
     }
 
-    private synchronized void addNewButtons(NavigableSet<String> values) {
+    private synchronized void addNewButtons(NavigableSet<Integer> values) {
         if (values.isEmpty()) {
             return;
         }
         int i = 0;
         int maxWidth = 16;
         final AutoFilterButton keyButton = AutoFilterButton.forOsmKey(enabledRule.getKey());
-        addButton(keyButton, Integer.toString(Integer.MIN_VALUE), i++);
-        for (final String value : values.descendingSet()) {
+        addButton(keyButton, Integer.MIN_VALUE, i++);
+        for (final Integer value : values.descendingSet()) {
             CompiledFilter filter = new CompiledFilter(enabledRule.getKey(), value);
             String label = enabledRule.getValueFormatter().apply(value);
             AutoFilter autoFilter = new AutoFilter(label, filter.text, filter);
@@ -205,71 +202,55 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         MainApplication.getMap().mapView.validate();
     }
 
-    private void addButton(AutoFilterButton button, String value, int i) {
+    private void addButton(AutoFilterButton button, int value, int i) {
         MapView mapView = MainApplication.getMap().mapView;
         buttons.put(value, button);
         mapView.add(button).setLocation(3, 60 + 22*i);
     }
 
     private void removeAllButtons() {
-        for (Iterator<String> it = buttons.keySet().iterator(); it.hasNext();) {
-            MainApplication.getMap().mapView.remove(buttons.get(it.next()));
-            it.remove();
-        }
+        buttons.values().forEach(MainApplication.getMap().mapView::remove);
+        buttons.clear();
     }
 
-    private static NavigableSet<String> getNumericValues(String key, Comparator<String> comparator) {
-        NavigableSet<String> values = new TreeSet<>(comparator);
-        for (String s : getTagValues(key)) {
-            try {
-                Integer.parseInt(s);
-                values.add(s);
-            } catch (NumberFormatException e) {
-                Logging.trace(e);
-            }
-        }
-        return values;
-    }
-
-    private static Set<String> getTagValues(String key) {
+    private NavigableSet<Integer> getNumericValues(String key) {
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-        Set<String> values = new TreeSet<>();
-        if (ds != null) {
-            BBox bbox = MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
-            Consumer<OsmPrimitive> consumer = o -> getTagValuesForPrimitive(key, o).forEach(values::add);
-            ds.searchNodes(bbox).forEach(consumer);
-            ds.searchWays(bbox).forEach(consumer);
-            ds.searchRelations(bbox).forEach(consumer);
+        if (ds == null) {
+            return Collections.emptyNavigableSet();
         }
+        BBox bbox = MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
+        NavigableSet<Integer> values = new TreeSet<>();
+        Consumer<OsmPrimitive> consumer = o -> getTagValuesForPrimitive(key, o).forEach(values::add);
+        ds.searchNodes(bbox).forEach(consumer);
+        ds.searchWays(bbox).forEach(consumer);
+        ds.searchRelations(bbox).forEach(consumer);
         return values;
     }
 
-    static Stream<String> getTagValuesForPrimitive(String key, OsmPrimitive osm) {
+    protected IntStream getTagValuesForPrimitive(String key, OsmPrimitive osm) {
+        if (enabledRule == null) {
+            return IntStream.empty();
+        }
         String value = osm.get(key);
         if (value != null) {
             Pattern p = Pattern.compile("(-?[0-9]+)-(-?[0-9]+)");
-            return OsmUtils.splitMultipleValues(value).flatMap(v -> {
+            return OsmUtils.splitMultipleValues(value).flatMapToInt(v -> {
                 Matcher m = p.matcher(v);
                 if (m.matches()) {
                     int a = Integer.parseInt(m.group(1));
                     int b = Integer.parseInt(m.group(2));
-                    return IntStream.rangeClosed(Math.min(a, b), Math.max(a, b))
-                            .mapToObj(Integer::toString);
+                    return IntStream.rangeClosed(Math.min(a, b), Math.max(a, b));
                 } else {
-                    return Stream.of(v);
+                    try {
+                        return IntStream.of(enabledRule.getValueExtractor().applyAsInt(v));
+                    } catch (NumberFormatException e) {
+                        Logging.trace(e);
+                        return IntStream.empty();
+                    }
                 }
             });
-        } else if (PROP_AUTO_FILTER_DEFAULTS.get() && "layer".equals(key)) {
-            // assume sensible defaults, see #17496
-            if (osm.hasTag("bridge") || osm.hasTag("power", "line") || osm.hasTag("location", "overhead")) {
-                return Stream.of("1");
-            } else if (osm.isKeyTrue("tunnel") || osm.hasTag("tunnel", "culvert") || osm.hasTag("location", "underground")) {
-                return Stream.of("-1");
-            } else if (osm.hasTag("tunnel", "building_passage") || osm.hasKey("highway", "railway", "waterway")) {
-                return Stream.of("0");
-            }
         }
-        return Stream.empty();
+        return enabledRule.getDefaultValueSupplier().apply(osm);
     }
 
     @Override
