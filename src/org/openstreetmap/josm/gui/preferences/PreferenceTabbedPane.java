@@ -11,11 +11,16 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -65,6 +70,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -303,42 +309,45 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         return p;
     }
 
-    @FunctionalInterface
-    private interface TabIdentifier {
-        boolean identify(TabPreferenceSetting tps, Object param);
+    private void selectTabBy(Predicate<TabPreferenceSetting> predicate) {
+        IntStream.range(0, getTabCount())
+                .filter(i -> getComponentAt(i) instanceof PreferenceTab
+                        && predicate.test(((PreferenceTab) getComponentAt(i)).getTabPreferenceSetting()))
+                .findFirst()
+                .ifPresent(this::setSelectedIndex);
     }
 
-    private void selectTabBy(TabIdentifier method, Object param) {
-        for (int i = 0; i < getTabCount(); i++) {
-            Component c = getComponentAt(i);
-            if (c instanceof PreferenceTab) {
-                PreferenceTab tab = (PreferenceTab) c;
-                if (method.identify(tab.getTabPreferenceSetting(), param)) {
-                    setSelectedIndex(i);
-                    return;
-                }
-            }
-        }
-    }
-
+    /**
+     * Selects a {@link TabPreferenceSetting} by its icon name
+     * @param name the icon name
+     */
     public void selectTabByName(String name) {
-        selectTabBy((tps, name1) -> name1 != null && tps != null && tps.getIconName() != null && name1.equals(tps.getIconName()), name);
+        Objects.requireNonNull(name);
+        selectTabBy(tps -> Objects.equals(name, tps.getIconName()));
     }
 
+    /**
+     * Selects a {@link TabPreferenceSetting} by class
+     * @param clazz preferences tab class
+     */
     public void selectTabByPref(Class<? extends TabPreferenceSetting> clazz) {
-        selectTabBy((tps, clazz1) -> tps.getClass().isAssignableFrom((Class<?>) clazz1), clazz);
+        selectTabBy(clazz::isInstance);
     }
 
+    /**
+     * Selects a {@link SubPreferenceSetting} by class
+     * @param clazz sub preferences tab class
+     * @return true if the specified preference settings have been selected, false otherwise.
+     */
     public boolean selectSubTabByPref(Class<? extends SubPreferenceSetting> clazz) {
-        for (PreferenceSetting setting : settings) {
-            if (clazz.isInstance(setting)) {
-                final SubPreferenceSetting sub = (SubPreferenceSetting) setting;
-                final TabPreferenceSetting tab = sub.getTabPreferenceSetting(this);
-                selectTabBy((tps, unused) -> tps.equals(tab), null);
-                return tab.selectSubTab(sub);
-            }
+        try {
+            final SubPreferenceSetting sub = getSetting(clazz);
+            final TabPreferenceSetting tab = sub.getTabPreferenceSetting(this);
+            selectTabBy(tps -> tps.equals(tab));
+            return tab.selectSubTab(sub);
+        } catch (NoSuchElementException ignore) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -518,17 +527,23 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         addGUITabs(true);
     }
 
+    /**
+     * Returns a list of all preferences settings
+     * @return a list of all preferences settings
+     */
     public List<PreferenceSetting> getSettings() {
-        return settings;
+        return Collections.unmodifiableList(settings);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getSetting(Class<? extends T> clazz) {
-        for (PreferenceSetting setting:settings) {
-            if (clazz.isAssignableFrom(setting.getClass()))
-                return (T) setting;
-        }
-        return null;
+    /**
+     * Returns the preferences setting for the given class
+     * @param clazz the preference setting class
+     * @param <T> the preference setting type
+     * @return the preferences setting for the given class
+     * @throws NoSuchElementException if there is no such value
+     */
+    public <T extends PreferenceSetting> T getSetting(Class<? extends T> clazz) {
+        return Utils.filteredCollection(settings, clazz).iterator().next();
     }
 
     static {
