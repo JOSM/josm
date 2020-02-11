@@ -24,21 +24,23 @@ public class AutoFilterRuleTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().i18n();
 
     /**
      * Unit test of {@link AutoFilterRule#getTagValuesForPrimitive}.
      */
     @Test
     public void testTagValuesForPrimitive() {
+        // #17109, support values like 0.5 or 1.5 - level values are multiplied by 2 when parsing, values are divided by 2 for formatting
         final AutoFilterRule level = AutoFilterRule.getDefaultRule("level").orElseThrow(NoSuchElementException::new);
-        assertTagValuesForPrimitive(level, "way level=-4--5", -5, -4);
-        assertTagValuesForPrimitive(level, "way level=-2", -2);
+        assertTagValuesForPrimitive(level, "way level=-4--5", -10, -9, -8);
+        assertTagValuesForPrimitive(level, "way level=-2", -4);
         assertTagValuesForPrimitive(level, "node level=0", 0);
-        assertTagValuesForPrimitive(level, "way level=1", 1);
-        assertTagValuesForPrimitive(level, "way level=2;3", 2, 3);
-        assertTagValuesForPrimitive(level, "way level=6-9", 6, 7, 8, 9);
-        assertTagValuesForPrimitive(level, "way level=10;12-13", 10, 12, 13);
+        assertTagValuesForPrimitive(level, "way level=1", 2);
+        assertTagValuesForPrimitive(level, "way level=2;3", 4, 6);
+        assertTagValuesForPrimitive(level, "way level=6-9", 12, 13, 14, 15, 16, 17, 18);
+        assertTagValuesForPrimitive(level, "way level=10;12-13", 20, 24, 25, 26);
+        assertTagValuesForPrimitive(level, "way level=0;0.5;1;1.5;2;2.5;3", 0, 1, 2, 3, 4, 5, 6);
     }
 
     /**

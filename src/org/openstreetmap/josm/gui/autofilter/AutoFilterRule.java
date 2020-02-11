@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.autofilter;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -121,8 +122,8 @@ public class AutoFilterRule {
             return OsmUtils.splitMultipleValues(value).flatMapToInt(v -> {
                 Matcher m = p.matcher(v);
                 if (m.matches()) {
-                    int a = Integer.parseInt(m.group(1));
-                    int b = Integer.parseInt(m.group(2));
+                    int a = valueExtractor.applyAsInt(m.group(1));
+                    int b = valueExtractor.applyAsInt(m.group(2));
                     return IntStream.rangeClosed(Math.min(a, b), Math.max(a, b));
                 } else {
                     try {
@@ -143,7 +144,10 @@ public class AutoFilterRule {
      */
     public static AutoFilterRule[] defaultRules() {
         return new AutoFilterRule[]{
-            new AutoFilterRule("level", 17),
+            new AutoFilterRule("level", 17)
+                // #17109, support values like 0.5 or 1.5 - level values are multiplied by 2 when parsing, values are divided by 2 for formatting
+                .setValueExtractor(s -> (int) (Double.parseDouble(s) * 2.))
+                .setValueFormatter(v -> DecimalFormat.getInstance().format(v / 2.)),
             new AutoFilterRule("layer", 16)
                     .setDefaultValueSupplier(AutoFilterRule::defaultLayer),
             new AutoFilterRule("maxspeed", 16)
