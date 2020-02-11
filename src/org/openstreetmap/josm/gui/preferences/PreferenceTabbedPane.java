@@ -78,7 +78,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  *
  * @author imi
  */
-public final class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener, ExpertModeChangeListener, ChangeListener {
+public final class PreferenceTabbedPane extends JTabbedPane implements ExpertModeChangeListener, ChangeListener {
 
     private final class PluginDownloadAfterTask implements Runnable {
         private final PluginPreference preference;
@@ -445,7 +445,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
      */
     public PreferenceTabbedPane() {
         super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
-        super.addMouseWheelListener(this);
+        super.addMouseWheelListener(new WheelListener(this));
         super.getModel().addChangeListener(this);
         ExpertToggleAction.addExpertModeChangeListener(this);
     }
@@ -577,21 +577,26 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
      * This mouse wheel listener reacts when a scroll is carried out over the
      * tab strip and scrolls one tab/down or up, selecting it immediately.
      */
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent wev) {
-        // Ensure the cursor is over the tab strip
-        if (super.indexAtLocation(wev.getPoint().x, wev.getPoint().y) < 0)
-            return;
+    static final class WheelListener implements MouseWheelListener {
 
-        // Get currently selected tab
-        int newTab = super.getSelectedIndex() + wev.getWheelRotation();
+        final JTabbedPane tabbedPane;
 
-        // Ensure the new tab index is sound
-        newTab = newTab < 0 ? 0 : newTab;
-        newTab = newTab >= super.getTabCount() ? super.getTabCount() - 1 : newTab;
+        WheelListener(JTabbedPane tabbedPane) {
+            this.tabbedPane = tabbedPane;
+        }
 
-        // select new tab
-        super.setSelectedIndex(newTab);
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent wev) {
+            // Ensure the cursor is over the tab strip
+            if (tabbedPane.indexAtLocation(wev.getPoint().x, wev.getPoint().y) < 0)
+                return;
+
+            // Get currently selected tab && ensure the new tab index is sound
+            int newTab = Utils.clamp(tabbedPane.getSelectedIndex() + wev.getWheelRotation(),
+                    0, tabbedPane.getTabCount() - 1);
+
+            tabbedPane.setSelectedIndex(newTab);
+        }
     }
 
     @Override

@@ -48,6 +48,9 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
         this.title = title;
         this.tabpane = tabpane;
         this.subSettingMap = tabpane != null ? new HashMap<>() : null;
+        if (tabpane != null) {
+            tabpane.addMouseWheelListener(new PreferenceTabbedPane.WheelListener(tabpane));
+        }
     }
 
     @Override
