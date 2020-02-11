@@ -79,7 +79,7 @@ public final class JCSCacheManager {
                         // Pending upstream patch: https://issues.apache.org/jira/projects/JCS/issues/JCS-200
                         // Pending upstream patch: https://issues.apache.org/jira/projects/JCS/issues/JCS-201
                         if (msg.equals("No configuration settings found.  Using hardcoded default values for all pools.")
-                                || msg.startsWith("Region") && msg.endsWith("Resetting cache")) { // "Region [TMS_BLOCK_v2] Resetting cache"
+                                || (msg.startsWith("Region") && msg.endsWith("Resetting cache"))) { // "Region [TMS_BLOCK_v2] Resetting cache"
                             Logging.debug(msg);
                         } else {
                             Logging.warn(msg);
