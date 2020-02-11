@@ -5,6 +5,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,6 +43,8 @@ public class AutoFilterRuleTest {
         assertTagValuesForPrimitive(level, "way level=6-9", 12, 13, 14, 15, 16, 17, 18);
         assertTagValuesForPrimitive(level, "way level=10;12-13", 20, 24, 25, 26);
         assertTagValuesForPrimitive(level, "way level=0;0.5;1;1.5;2;2.5;3", 0, 1, 2, 3, 4, 5, 6);
+        assertEquals("0 0.5 1 1.5 2 2.5 3",
+                IntStream.of(0, 1, 2, 3, 4, 5, 6).mapToObj(level::formatValue).collect(Collectors.joining(" ")));
     }
 
     /**

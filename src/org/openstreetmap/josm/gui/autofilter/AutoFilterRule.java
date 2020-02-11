@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.autofilter;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -147,7 +148,7 @@ public class AutoFilterRule {
             new AutoFilterRule("level", 17)
                 // #17109, support values like 0.5 or 1.5 - level values are multiplied by 2 when parsing, values are divided by 2 for formatting
                 .setValueExtractor(s -> (int) (Double.parseDouble(s) * 2.))
-                .setValueFormatter(v -> DecimalFormat.getInstance().format(v / 2.)),
+                .setValueFormatter(v -> DecimalFormat.getInstance(Locale.ROOT).format(v / 2.)),
             new AutoFilterRule("layer", 16)
                     .setDefaultValueSupplier(AutoFilterRule::defaultLayer),
             new AutoFilterRule("maxspeed", 16)
