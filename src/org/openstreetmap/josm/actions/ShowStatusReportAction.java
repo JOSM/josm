@@ -157,7 +157,7 @@ public final class ShowStatusReportAction extends JosmAction {
             for (ListIterator<String> it = vmArguments.listIterator(); it.hasNext();) {
                 String value = it.next();
                 if (value.contains("=")) {
-                    String[] param = value.split("=");
+                    String[] param = value.split("=", 2);
                     // Hide some parameters for privacy concerns
                     if (param[0].toLowerCase(Locale.ENGLISH).startsWith("-dproxy")) {
                         it.set(param[0]+"=xxx");
