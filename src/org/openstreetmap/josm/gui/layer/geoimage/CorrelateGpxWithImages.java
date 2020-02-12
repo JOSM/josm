@@ -737,7 +737,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE
                 );
-                if (answer == JOptionPane.CANCEL_OPTION)
+                if (answer != JOptionPane.OK_OPTION)
                     return;
 
                 long delta;
