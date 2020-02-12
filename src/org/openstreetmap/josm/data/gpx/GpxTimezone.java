@@ -22,7 +22,7 @@ public final class GpxTimezone {
     private final double timezone;
 
     /**
-     * Construcs a new {@code GpxTimezone}.
+     * Constructs a new {@code GpxTimezone}.
      * @param hours timezone in hours
      */
     public GpxTimezone(double hours) {
