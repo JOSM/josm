@@ -55,6 +55,8 @@ public class DownloadPrimitivesTask extends AbstractPrimitiveTask {
     protected void initMultiFetchReader(MultiFetchServerObjectReader reader) {
         getProgressMonitor().indeterminateSubTask(tr("Initializing nodes to download ..."));
         reader.setRecurseDownRelations(fullRelation);
-        reader.appendIds(ids);
+        if (ids != null) {
+            ids.forEach(reader::append);
+        }
     }
 }

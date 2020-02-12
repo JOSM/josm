@@ -51,7 +51,6 @@ import org.openstreetmap.josm.tools.Utils;
  * Usage:
  * <pre>
  *    MultiFetchServerObjectReader reader = MultiFetchServerObjectReader()
- *         .append(2345,2334,4444)
  *         .append(new Node(72343));
  *    reader.parseOsm();
  *    if (!reader.getMissingPrimitives().isEmpty()) {
@@ -131,7 +130,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      *
      * @param id  the id
      */
-    protected void remember(PrimitiveId id) {
+    public void append(PrimitiveId id) {
         if (id.isNew()) return;
         switch(id.getType()) {
         case NODE: nodes.add(id.getUniqueId()); break;
@@ -152,16 +151,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      */
     public MultiFetchServerObjectReader append(DataSet ds, long id, OsmPrimitiveType type) {
         OsmPrimitive p = ds.getPrimitiveById(id, type);
-        switch(type) {
-        case NODE:
-            return appendNode((Node) p);
-        case WAY:
-            return appendWay((Way) p);
-        case RELATION:
-            return appendRelation((Relation) p);
-        default:
-            return this;
-        }
+        return append(p);
     }
 
     /**
@@ -172,7 +162,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      */
     public MultiFetchServerObjectReader appendNode(Node node) {
         if (node == null || node.isNew()) return this;
-        remember(node.getPrimitiveId());
+        append(node.getPrimitiveId());
         return this;
     }
 
@@ -185,13 +175,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
     public MultiFetchServerObjectReader appendWay(Way way) {
         if (way == null || way.isNew()) return this;
         if (recurseDownAppended) {
-            for (Node node : way.getNodes()) {
-                if (!node.isNew()) {
-                    remember(node.getPrimitiveId());
-                }
-            }
+            append(way.getNodes());
         }
-        remember(way.getPrimitiveId());
+        append(way.getPrimitiveId());
         return this;
     }
 
@@ -203,7 +189,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      */
     protected MultiFetchServerObjectReader appendRelation(Relation relation) {
         if (relation == null || relation.isNew()) return this;
-        remember(relation.getPrimitiveId());
+        append(relation.getPrimitiveId());
         if (recurseDownAppended) {
             for (RelationMember member : relation.getMembers()) {
                 // avoid infinite recursion in case of cyclic dependencies in relations
@@ -245,41 +231,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      */
     public MultiFetchServerObjectReader append(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null) return this;
-        for (OsmPrimitive primitive : primitives) {
-            append(primitive);
-        }
-        return this;
-    }
-
-    /**
-     * appends a list of {@link PrimitiveId} to the list of ids which will be fetched from the server.
-     *
-     * @param ids the list of primitive Ids (ignored, if null)
-     * @return this
-     * @since 15811
-     *
-     */
-    public MultiFetchServerObjectReader appendIds(Collection<PrimitiveId> ids) {
-        if (ids == null)
-            return this;
-        for (PrimitiveId id : ids) {
-            if (id.isNew()) continue;
-            switch (id.getType()) {
-            case NODE:
-                nodes.add(id.getUniqueId());
-                break;
-            case WAY:
-            case CLOSEDWAY:
-                ways.add(id.getUniqueId());
-                break;
-            case MULTIPOLYGON:
-            case RELATION:
-                relations.add(id.getUniqueId());
-                break;
-            default:
-                throw new AssertionError();
-            }
-        }
+        primitives.forEach(this::append);
         return this;
     }
 
