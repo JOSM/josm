@@ -109,6 +109,7 @@ public class SyncEditorLayerIndex {
     private static String optionEncoding;
     private static boolean optionNoEli;
     private Map<String, String> skip = new HashMap<>();
+    private Map<String, String> skipStart = new HashMap<>();
 
     /**
      * Main method.
@@ -248,10 +249,23 @@ public class SyncEditorLayerIndex {
             while ((line = fr.readLine()) != null) {
                 Matcher res = pattern.matcher(line);
                 if (res.matches()) {
-                    if ("Ignore".equals(res.group(1))) {
-                        skip.put(res.group(2), "green");
-                    } else {
-                        skip.put(res.group(2), "darkgoldenrod");
+                    String s = res.group(2);
+                    if(s.endsWith("..."))
+                    {
+                        s = s.substring(0, s.length() - 3);
+                        if ("Ignore".equals(res.group(1))) {
+                            skipStart.put(s, "green");
+                        } else {
+                            skipStart.put(s, "darkgoldenrod");
+                        }
+                    }
+                    else
+                    {
+                        if ("Ignore".equals(res.group(1))) {
+                            skip.put(s, "green");
+                        } else {
+                            skip.put(s, "darkgoldenrod");
+                        }
                     }
                 }
             }
@@ -270,9 +284,19 @@ public class SyncEditorLayerIndex {
         }
     }
 
+    String isSkipString(String s) {
+        if (skip.containsKey(s))
+            return skip.get(s);
+        for (Entry<String, String> str : skipStart.entrySet()) {
+            if (s.startsWith(str.getKey()))
+                return str.getValue();
+        }
+        return null;
+    }
+    
     void myprintln(String s) {
-        if (skip.containsKey(s)) {
-            String color = skip.get(s);
+        String color;
+        if ((color = isSkipString(s)) != null) {
             skip.remove(s);
             if (optionXhtmlBody || optionXhtml) {
                 s = "<pre style=\"margin:3px;color:"+color+"\">"
@@ -282,7 +306,7 @@ public class SyncEditorLayerIndex {
                 return;
             }
         } else if (optionXhtmlBody || optionXhtml) {
-            String color =
+            color =
                     s.startsWith("***") ? "black" :
                         ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :
                             (s.startsWith("#") ? "indigo" :
