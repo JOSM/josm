@@ -250,17 +250,14 @@ public class SyncEditorLayerIndex {
                 Matcher res = pattern.matcher(line);
                 if (res.matches()) {
                     String s = res.group(2);
-                    if(s.endsWith("..."))
-                    {
+                    if (s.endsWith("...")) {
                         s = s.substring(0, s.length() - 3);
                         if ("Ignore".equals(res.group(1))) {
                             skipStart.put(s, "green");
                         } else {
                             skipStart.put(s, "darkgoldenrod");
                         }
-                    }
-                    else
-                    {
+                    } else {
                         if ("Ignore".equals(res.group(1))) {
                             skip.put(s, "green");
                         } else {
@@ -293,7 +290,7 @@ public class SyncEditorLayerIndex {
         }
         return null;
     }
-    
+
     void myprintln(String s) {
         String color;
         if ((color = isSkipString(s)) != null) {

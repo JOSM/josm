@@ -44,7 +44,7 @@ public abstract class AbstractMergeAction extends JosmAction {
     }
 
     /**
-     * <code>TargetLayerDialogResult</code> returned by {@link #askTargetLayer(List, String, boolean)}
+     * <code>TargetLayerDialogResult</code> returned by {@link #askTargetLayer}
      * containing the selectedTargetLayer and whether the checkbox is ticked
      * @param <T> type of layer
      * @since 14338

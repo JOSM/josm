@@ -203,7 +203,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         buttons.clear();
     }
 
-    private NavigableSet<Integer> getNumericValues() {
+    private synchronized NavigableSet<Integer> getNumericValues() {
         DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
         if (ds == null) {
             return Collections.emptyNavigableSet();
