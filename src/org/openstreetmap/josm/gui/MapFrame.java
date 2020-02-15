@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -646,7 +647,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         }
 
         JButton createButton() {
-            button = new BasicArrowButton(SwingConstants.EAST) {
+            button = new BasicArrowButton(SwingConstants.EAST, null, null, Color.BLACK, null) {
 
                 @Override
                 public Dimension getMaximumSize() {
