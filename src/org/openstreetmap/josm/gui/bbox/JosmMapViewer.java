@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.bbox;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +24,7 @@ import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
@@ -75,11 +74,10 @@ public class JosmMapViewer extends JMapViewer {
                     sources.add(source);
                 }
             } catch (IllegalArgumentException ex) {
-                Logging.warn(ex);
+                Logging.trace(ex);
+                Logging.warn(ex.getMessage());
                 if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-                    JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                            ex.getMessage(), tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE);
+                    new Notification(ex.getMessage()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                 }
             }
         }
