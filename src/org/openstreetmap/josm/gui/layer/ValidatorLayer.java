@@ -191,6 +191,6 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     @Override
     public String getChangesetSourceTag() {
-        return "Validator";
+        return "JOSM Validator";
     }
 }
