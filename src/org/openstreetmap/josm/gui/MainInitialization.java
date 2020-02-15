@@ -29,6 +29,7 @@ import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
+import org.openstreetmap.josm.io.imagery.ApiKeyProvider;
 import org.openstreetmap.josm.spi.lifecycle.InitializationSequence;
 import org.openstreetmap.josm.spi.lifecycle.InitializationTask;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -142,6 +143,7 @@ public class MainInitialization implements InitializationSequence {
         return Arrays.asList(
             new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
                 // hooks for the jmapviewer component
+                FeatureAdapter.registerApiKeyAdapter(ApiKeyProvider::retrieveApiKey);
                 FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
                 FeatureAdapter.registerImageAdapter(ImageProvider::read);
                 FeatureAdapter.registerTranslationAdapter(I18n::tr);
