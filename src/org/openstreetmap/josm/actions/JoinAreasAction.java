@@ -609,7 +609,7 @@ public class JoinAreasAction extends JosmAction {
      * @param areas list of areas to join
      * @return new area formed.
      * @throws UserCancelException if user cancels the operation
-     * @since xxx : visibility changed from public to private
+     * @since 15852 : visibility changed from public to private
      */
     private JoinAreasResult joinAreas(List<Multipolygon> areas) throws UserCancelException {
 
