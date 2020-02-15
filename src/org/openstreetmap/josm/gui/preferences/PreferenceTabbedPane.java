@@ -217,11 +217,16 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
 
         private void buildPanel() {
             setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            add(new JLabel(preferenceSetting.getTitle()), GBC.eol().insets(0, 5, 0, 10).anchor(GBC.NORTHWEST));
+            add(buildHtmlPanel(preferenceSetting.getTitle(), Font.BOLD),
+                    GBC.eol().insets(0, 5, 0, 10).anchor(GBC.NORTHWEST).fill(GBC.HORIZONTAL));
+            add(buildHtmlPanel(preferenceSetting.getDescription(), Font.ITALIC),
+                    GBC.eol().insets(5, 0, 5, 20).fill(GBC.HORIZONTAL));
+        }
 
-            JLabel descLabel = new JLabel("<html>"+preferenceSetting.getDescription()+"</html>");
-            descLabel.setFont(descLabel.getFont().deriveFont(Font.ITALIC));
-            add(descLabel, GBC.eol().insets(5, 0, 5, 20).fill(GBC.HORIZONTAL));
+        private static JLabel buildHtmlPanel(String text, int fontStyle) {
+            JLabel label = new JLabel("<html>" + text + "</html>");
+            label.setFont(label.getFont().deriveFont(fontStyle));
+            return label;
         }
 
         @Override
