@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -49,7 +48,7 @@ public class JoinAreasActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection();
+    public JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
 
     /**
      * Non-regression test for bug #10511.
@@ -57,7 +56,6 @@ public class JoinAreasActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    @Ignore("disable this test, needs further working") // XXX
     public void testTicket10511() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(10511, "10511_mini.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
@@ -65,6 +63,8 @@ public class JoinAreasActionTest {
             MainApplication.getLayerManager().addLayer(layer);
             try {
                 new JoinAreasAction(false).join(ds.getWays());
+                Collection<IPrimitive> found = SearchAction.searchAndReturn("type:way", SearchMode.replace);
+                assertEquals(1, found.size());
             } finally {
                 // Ensure we clean the place before leaving, even if test fails.
                 MainApplication.getLayerManager().removeLayer(layer);

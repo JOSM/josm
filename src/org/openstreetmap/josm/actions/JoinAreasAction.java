@@ -182,6 +182,11 @@ public class JoinAreasAction extends JosmAction {
             return insideToTheRight == that.insideToTheRight &&
                     Objects.equals(way, that.way);
         }
+
+        @Override
+        public String toString() {
+            return "w" + way.getUniqueId() + " " + way.getNodesCount() + " nodes";
+        }
     }
 
     /**
@@ -253,7 +258,7 @@ public class JoinAreasAction extends JosmAction {
          * @param ways available ways
          */
         WayTraverser(Collection<WayInPolygon> ways) {
-            availableWays = new HashSet<>(ways);
+            availableWays = new LinkedHashSet<>(ways);
             lastWay = null;
         }
 
@@ -481,6 +486,7 @@ public class JoinAreasAction extends JosmAction {
      * @since 7534
      */
     public void join(Collection<Way> ways) {
+        cmdsCount = 0;
         addedRelations.clear();
 
         if (ways.isEmpty()) {
@@ -547,6 +553,8 @@ public class JoinAreasAction extends JosmAction {
                 }
                 commitCommands(tr("Move tags from ways to relations"));
 
+                makeCommitsOneAction(marktr("Joined overlapping areas"));
+
                 if (result.polygons != null && ds != null) {
                     List<Way> allWays = new ArrayList<>();
                     for (Multipolygon pol : result.polygons) {
@@ -568,7 +576,12 @@ public class JoinAreasAction extends JosmAction {
             makeCommitsOneAction(tr("Reverting changes"));
             if (addUndoRedo) {
                 UndoRedoHandler.getInstance().undo();
-                UndoRedoHandler.getInstance().getRedoCommands().clear();
+                // add no-change commands to the stack to remove the half-done commands
+                Way w = ways.iterator().next();
+                cmds.add(new ChangeCommand(w, w));
+                cmds.add(new ChangeCommand(w, w));
+                commitCommands(tr("Reverting changes"));
+                UndoRedoHandler.getInstance().undo();
             }
         }
     }
@@ -596,8 +609,9 @@ public class JoinAreasAction extends JosmAction {
      * @param areas list of areas to join
      * @return new area formed.
      * @throws UserCancelException if user cancels the operation
+     * @since xxx : visibility changed from public to private
      */
-    public JoinAreasResult joinAreas(List<Multipolygon> areas) throws UserCancelException {
+    private JoinAreasResult joinAreas(List<Multipolygon> areas) throws UserCancelException {
 
         // see #11026 - Because <ways> is a dynamic filtered (on ways) of a filtered (on selected objects) collection,
         // retrieve effective dataset before joining the ways (which affects the selection, thus, the <ways> collection)
@@ -704,8 +718,6 @@ public class JoinAreasAction extends JosmAction {
                 commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
             }
         }
-
-        makeCommitsOneAction(marktr("Joined overlapping areas"));
 
         if (warnAboutRelations) {
             new Notification(
@@ -1007,7 +1019,33 @@ public class JoinAreasAction extends JosmAction {
             curWay = nextWay;
         }
 
+        revertDuplicateTwoNodeWays(result);
+
         return result;
+    }
+
+    /**
+     * Correct possible error in markWayInsideSide result when splitting a self-intersecting way.
+     * If we have two ways with the same two nodes and the same direction there must be a self intersection.
+     * Change the direction flag for the latter of the two ways. The result is that difference between the number
+     * of ways with insideToTheRight = {@code true} and those with insideToTheRight = {@code false}
+     * differs by 0 or 1, not more.
+     * <p>See #10511
+     * @param parts the parts of a single closed way
+     */
+    private static void revertDuplicateTwoNodeWays(List<WayInPolygon> parts) {
+        for (int i = 0; i < parts.size(); i++) {
+            WayInPolygon w1 = parts.get(i);
+            if (w1.way.getNodesCount() != 2)
+                continue;
+            for (int j = i + 1; j < parts.size(); j++) {
+                WayInPolygon w2 = parts.get(j);
+                if (w2.way.getNodesCount() == 2 && w1.insideToTheRight == w2.insideToTheRight
+                        && w1.way.firstNode() == w2.way.firstNode() && w1.way.lastNode() == w2.way.lastNode()) {
+                    w2.insideToTheRight = !w2.insideToTheRight;
+                }
+            }
+        }
     }
 
     /**
@@ -1161,7 +1199,6 @@ public class JoinAreasAction extends JosmAction {
             if (way.way.getNodesCount() != 2 || !way.way.isClosed())
                 cleanMultigonWays.add(way);
         }
-
         WayTraverser traverser = new WayTraverser(cleanMultigonWays);
         List<AssembledPolygon> result = new ArrayList<>();
 
