@@ -71,8 +71,8 @@ public final class Tag2Link {
     public static void initialize() {
         try {
             wikidataRules.clear();
-            fetchRulesViaSPARQL("resource://data/tag2link.wikidata.sparql", "https://query.wikidata.org/sparql");
-            fetchRulesViaSPARQL("resource://data/tag2link.sophox.sparql", "https://sophox.org/sparql");
+            fetchRulesViaSPARQL("resource://data/tag2link.wikidata.sparql", "https://josm.openstreetmap.de/remote/wikidata-sparql");
+            fetchRulesViaSPARQL("resource://data/tag2link.sophox.sparql", "https://josm.openstreetmap.de/remote/sophox-sparql");
         } catch (Exception e) {
             Logging.error("Failed to initialize tag2link rules");
             Logging.error(e);
