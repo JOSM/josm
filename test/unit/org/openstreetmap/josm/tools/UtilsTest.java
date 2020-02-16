@@ -6,11 +6,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -130,6 +133,7 @@ public class UtilsTest {
     @Test
     public void testPositionListString() {
         assertEquals("1", Utils.getPositionListString(Arrays.asList(1)));
+        assertEquals("1-2", Utils.getPositionListString(Arrays.asList(1, 2)));
         assertEquals("1-3", Utils.getPositionListString(Arrays.asList(1, 2, 3)));
         assertEquals("1-3", Utils.getPositionListString(Arrays.asList(3, 1, 2)));
         assertEquals("1-3,6-8", Utils.getPositionListString(Arrays.asList(1, 2, 3, 6, 7, 8)));
@@ -142,13 +146,26 @@ public class UtilsTest {
     @Test
     public void testDurationString() {
         I18n.set("en");
+        assertEquals("0 ms", Utils.getDurationString(0));
         assertEquals("123 ms", Utils.getDurationString(123));
+        assertEquals("1.0 s", Utils.getDurationString(1000));
         assertEquals("1.2 s", Utils.getDurationString(1234));
         assertEquals("57.0 s", Utils.getDurationString(57 * 1000));
+        assertEquals("1 min 0 s", Utils.getDurationString(60 * 1000));
         assertEquals("8 min 27 s", Utils.getDurationString(507 * 1000));
+        assertEquals("1 h 0 min", Utils.getDurationString(60 * 60 * 1000));
         assertEquals("8 h 24 min", Utils.getDurationString((long) (8.4 * 60 * 60 * 1000)));
+        assertEquals("1 day 0 h", Utils.getDurationString(24 * 60 * 60 * 1000));
         assertEquals("1 day 12 h", Utils.getDurationString((long) (1.5 * 24 * 60 * 60 * 1000)));
         assertEquals("8 days 12 h", Utils.getDurationString((long) (8.5 * 24 * 60 * 60 * 1000)));
+    }
+
+    /**
+     * Test of {@link Utils#getDurationString} method.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testDurationStringNegative() {
+        Utils.getDurationString(-1);
     }
 
     /**
@@ -160,13 +177,48 @@ public class UtilsTest {
     }
 
     /**
+     * Test of {@link Utils#shortenString} method.
+     */
+    @Test
+    public void testShortenString() {
+        assertNull(Utils.shortenString(null, 3));
+        assertEquals("...", Utils.shortenString("123456789", 3));
+        assertEquals("1...", Utils.shortenString("123456789", 4));
+        assertEquals("12...", Utils.shortenString("123456789", 5));
+        assertEquals("123...", Utils.shortenString("123456789", 6));
+        assertEquals("1234...", Utils.shortenString("123456789", 7));
+        assertEquals("12345...", Utils.shortenString("123456789", 8));
+        assertEquals("123456789", Utils.shortenString("123456789", 9));
+    }
+
+    /**
+     * Test of {@link Utils#shortenString} method.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testShortenStringTooShort() {
+        Utils.shortenString("123456789", 2);
+    }
+
+    /**
      * Test of {@link Utils#restrictStringLines} method.
      */
     @Test
     public void testRestrictStringLines() {
+        assertNull(Utils.restrictStringLines(null, 2));
         assertEquals("1\n...", Utils.restrictStringLines("1\n2\n3", 2));
         assertEquals("1\n2\n3", Utils.restrictStringLines("1\n2\n3", 3));
         assertEquals("1\n2\n3", Utils.restrictStringLines("1\n2\n3", 4));
+    }
+
+    /**
+     * Test of {@link Utils#limit} method.
+     */
+    @Test
+    public void testLimit() {
+        assertNull(Utils.limit(null, 2, "..."));
+        assertEquals(Arrays.asList("1", "..."), Utils.limit(Arrays.asList("1", "2", "3"), 2, "..."));
+        assertEquals(Arrays.asList("1", "2", "3"), Utils.limit(Arrays.asList("1", "2", "3"), 3, "..."));
+        assertEquals(Arrays.asList("1", "2", "3"), Utils.limit(Arrays.asList("1", "2", "3"), 4, "..."));
     }
 
     /**
@@ -178,7 +230,15 @@ public class UtilsTest {
         assertEquals("123 B", Utils.getSizeString(123, Locale.ENGLISH));
         assertEquals("1023 B", Utils.getSizeString(1023, Locale.ENGLISH));
         assertEquals("1.00 kB", Utils.getSizeString(1024, Locale.ENGLISH));
+        assertEquals("10.00 kB", Utils.getSizeString(10 * 1024, Locale.ENGLISH));
+        assertEquals("10.0 kB", Utils.getSizeString(10 * 1024 + 1, Locale.ENGLISH));
+        assertEquals("100.0 kB", Utils.getSizeString(100 * 1024, Locale.ENGLISH));
+        assertEquals("100 kB", Utils.getSizeString(100 * 1024 + 1, Locale.ENGLISH));
         assertEquals("11.7 kB", Utils.getSizeString(12024, Locale.ENGLISH));
+        assertEquals("1024 kB", Utils.getSizeString(1024 * 1024 - 1, Locale.ENGLISH));
+        assertEquals("1.00 MB", Utils.getSizeString(1024 * 1024, Locale.ENGLISH));
+        assertEquals("1024 MB", Utils.getSizeString(1024 * 1024 * 1024 - 1, Locale.ENGLISH));
+        assertEquals("1.00 GB", Utils.getSizeString(1024 * 1024 * 1024, Locale.ENGLISH));
         assertEquals("8.00 EB", Utils.getSizeString(Long.MAX_VALUE, Locale.ENGLISH));
     }
 
@@ -309,6 +369,9 @@ public class UtilsTest {
         assertEquals(0, Utils.getLevenshteinDistance("foo", "foo"));
         assertEquals(3, Utils.getLevenshteinDistance("foo", "bar"));
         assertEquals(1, Utils.getLevenshteinDistance("bar", "baz"));
+        assertEquals(3, Utils.getLevenshteinDistance("foo", ""));
+        assertEquals(3, Utils.getLevenshteinDistance("", "baz"));
+        assertEquals(2, Utils.getLevenshteinDistance("ABjoYZ", "ABsmYZ"));
     }
 
     /**
@@ -332,5 +395,165 @@ public class UtilsTest {
                 "<table width=\"100%\"><tr>" +
                         "<td align=\"left\" valign=\"center\"><small><b>Hoogte</b></small></td>" +
                         "<td align=\"center\" valign=\"center\">55 m</td></tr></table>"));
+    }
+
+    /**
+     * Test of {@link Utils#firstNonNull}
+     */
+    @Test
+    public void testFirstNonNull() {
+        assertNull(Utils.firstNonNull());
+        assertNull(Utils.firstNonNull(null, null));
+        assertEquals("foo", Utils.firstNonNull(null, "foo", null));
+    }
+
+    /**
+     * Test of {@link Utils#toString}
+     */
+    @Test
+    public void testToString() {
+        assertEquals("null", Utils.toString(null));
+        assertEquals("#ff0000", Utils.toString(Color.red));
+        assertEquals("#345678(alpha=18)", Utils.toString(new Color(0x12345678, true)));
+    }
+
+    /**
+     * Test of {@link Utils#colorFloat2int}
+     */
+    @Test
+    public void testColorFloat2int() {
+        assertNull(Utils.colorFloat2int(null));
+        assertEquals(255, (int) Utils.colorFloat2int(-1.0f));
+        assertEquals(0, (int) Utils.colorFloat2int(-0.0f));
+        assertEquals(0, (int) Utils.colorFloat2int(0.0f));
+        assertEquals(64, (int) Utils.colorFloat2int(0.25f));
+        assertEquals(128, (int) Utils.colorFloat2int(0.5f));
+        assertEquals(255, (int) Utils.colorFloat2int(1.0f));
+        assertEquals(255, (int) Utils.colorFloat2int(2.0f));
+    }
+
+    /**
+     * Test of {@link Utils#colorInt2float}
+     */
+    @Test
+    public void testColorInt2float() {
+        assertNull(Utils.colorInt2float(null));
+        assertEquals(1.0f, Utils.colorInt2float(-1), 1e-3);
+        assertEquals(0.0f, Utils.colorInt2float(0), 1e-3);
+        assertEquals(0.25f, Utils.colorInt2float(64), 1e-3);
+        assertEquals(0.502f, Utils.colorInt2float(128), 1e-3);
+        assertEquals(0.753f, Utils.colorInt2float(192), 1e-3);
+        assertEquals(1.0f, Utils.colorInt2float(255), 1e-3);
+        assertEquals(1.0f, Utils.colorInt2float(1024), 1e-3);
+    }
+
+    /**
+     * Test of {@link Utils#alphaMultiply}
+     */
+    @Test
+    public void testAlphaMultiply() {
+        final Color color = new Color(0x12345678, true);
+        assertEquals(new Color(0x12345678, true), Utils.alphaMultiply(color, 1f));
+        assertEquals(new Color(0x24345678, true), Utils.alphaMultiply(color, 2f));
+    }
+
+    /**
+     * Test of {@link Utils#complement}
+     */
+    @Test
+    public void testComplement() {
+        assertEquals(Color.cyan, Utils.complement(Color.red));
+        assertEquals(Color.red, Utils.complement(Color.cyan));
+        assertEquals(Color.magenta, Utils.complement(Color.green));
+        assertEquals(Color.green, Utils.complement(Color.magenta));
+        assertEquals(Color.yellow, Utils.complement(Color.blue));
+        assertEquals(Color.blue, Utils.complement(Color.yellow));
+    }
+
+    /**
+     * Test of {@link Utils#getMatches}
+     */
+    @Test
+    public void testGetMatches() {
+        final Pattern pattern = Pattern.compile("(foo)x(bar)y(baz)");
+        assertNull(Utils.getMatches(pattern.matcher("")));
+        assertEquals(Arrays.asList("fooxbarybaz", "foo", "bar", "baz"), Utils.getMatches(pattern.matcher("fooxbarybaz")));
+    }
+
+    /**
+     * Test of {@link Utils#encodeUrl}
+     */
+    @Test
+    public void testEncodeUrl() {
+        assertEquals("%C3%A4%C3%B6%C3%BC%C3%9F", Utils.encodeUrl("äöüß"));
+    }
+
+    /**
+     * Test of {@link Utils#encodeUrl}
+     */
+    @Test(expected = NullPointerException.class)
+    public void testEncodeUrlNull() {
+        Utils.encodeUrl(null);
+    }
+
+    /**
+     * Test of {@link Utils#decodeUrl}
+     */
+    @Test
+    public void testDecodeUrl() {
+        assertEquals("äöüß", Utils.decodeUrl("%C3%A4%C3%B6%C3%BC%C3%9F"));
+    }
+
+    /**
+     * Test of {@link Utils#decodeUrl}
+     */
+    @Test(expected = NullPointerException.class)
+    public void testDecodeUrlNull() {
+        Utils.decodeUrl(null);
+    }
+
+    /**
+     * Test of {@link Utils#clamp}
+     */
+    @Test
+    public void testClamp() {
+        assertEquals(3, Utils.clamp(2, 3, 5));
+        assertEquals(3, Utils.clamp(3, 3, 5));
+        assertEquals(4, Utils.clamp(4, 3, 5));
+        assertEquals(5, Utils.clamp(5, 3, 5));
+        assertEquals(5, Utils.clamp(6, 3, 5));
+        assertEquals(3., Utils.clamp(2., 3., 5.), 1e-3);
+        assertEquals(3., Utils.clamp(3., 3., 5.), 1e-3);
+        assertEquals(4., Utils.clamp(4., 3., 5.), 1e-3);
+        assertEquals(5., Utils.clamp(5., 3., 5.), 1e-3);
+        assertEquals(5., Utils.clamp(6., 3., 5.), 1e-3);
+    }
+
+    /**
+     * Test of {@link Utils#clamp}
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testClampIAE1() {
+        Utils.clamp(0, 5, 4);
+    }
+
+    /**
+     * Test of {@link Utils#clamp}
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testClampIAE2() {
+        Utils.clamp(0., 5., 4.);
+    }
+
+    /**
+     * Test of {@link Utils#hasExtension}
+     */
+    @Test
+    public void testHasExtension() {
+        assertFalse(Utils.hasExtension("JOSM.txt"));
+        assertFalse(Utils.hasExtension("JOSM.txt", "jpg"));
+        assertFalse(Utils.hasExtension("JOSM.txt", ".jpg", ".txt"));
+        assertTrue(Utils.hasExtension("JOSM.txt", "jpg", "txt"));
+        assertTrue(Utils.hasExtension(new File("JOSM.txt"), "jpg", "txt"));
     }
 }

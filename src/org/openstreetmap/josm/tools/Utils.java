@@ -1075,10 +1075,13 @@ public final class Utils {
      * @param s String to shorten
      * @param maxLength maximum number of characters to keep (not including the "...")
      * @return the shortened string
+     * @throws IllegalArgumentException if maxLength is less than the length of "..."
      */
     public static String shortenString(String s, int maxLength) {
+        final String ellipses = "...";
+        CheckParameterUtil.ensureThat(maxLength >= ellipses.length(), "maxLength is shorter than " + ellipses.length());
         if (s != null && s.length() > maxLength) {
-            return s.substring(0, maxLength - 3) + "...";
+            return s.substring(0, maxLength - ellipses.length()) + ellipses;
         } else {
             return s;
         }
