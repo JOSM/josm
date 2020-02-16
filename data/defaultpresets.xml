@@ -2306,6 +2306,7 @@
             <checkgroup columns="4">
                 <check key="bicycle" text="Bicycle" />
                 <check key="scooter" text="Scooter" />
+                <check key="motorcycle" text="Motorcycle" />
                 <check key="motorcar" text="Car" />
                 <check key="truck" text="Truck" />
             </checkgroup>

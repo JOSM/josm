@@ -1927,3 +1927,11 @@ way[highway][construction=yes][highway!=construction] {
   suggestAlternative: concat("highway=construction + construction=", "{0.value}");
   group: tr("deprecated tagging");
 }
+
+/* #18659 */
+*[car][amenity=charging_station] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "motorcar";
+  group: tr("deprecated tagging");
+  fixChangeKey: "car => motorcar";
+}
