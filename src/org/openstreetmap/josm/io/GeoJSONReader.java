@@ -73,7 +73,8 @@ public class GeoJSONReader extends AbstractReader {
 
     private void parseRoot(final JsonObject object) throws IllegalDataException {
         parseCrs(object.getJsonObject(CRS));
-        switch (object.getString(TYPE)) {
+        switch (Optional.ofNullable(object.getJsonString(TYPE))
+                .orElseThrow(() -> new IllegalDataException("No type")).getString()) {
             case "FeatureCollection":
                 parseFeatureCollection(object.getJsonArray(FEATURES));
                 break;

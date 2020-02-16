@@ -6,7 +6,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -130,6 +132,15 @@ public class GeoJSONReaderTest {
                 assertTrue(primitives.stream()
                         .anyMatch(it -> areEqualNodes(it, new Node(new LatLon(52.5840213, 13.1724145)))));
         }
+    }
+
+    /**
+     * Test reading a JSON file which is not a proper GeoJSON (type missing).
+     * @throws IllegalDataException always
+     */
+    @Test(expected = IllegalDataException.class)
+    public void testReadGeoJsonWithoutType() throws IllegalDataException {
+        new GeoJSONReader().doParseDataSet(new ByteArrayInputStream("{}".getBytes(StandardCharsets.UTF_8)), null);
     }
 
     private static boolean areEqualNodes(final OsmPrimitive p1, final OsmPrimitive p2) {
