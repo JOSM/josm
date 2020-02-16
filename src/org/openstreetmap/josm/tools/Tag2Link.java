@@ -21,6 +21,7 @@ import javax.json.JsonValue;
 
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Extracts web links from OSM tags.
@@ -71,8 +72,8 @@ public final class Tag2Link {
     public static void initialize() {
         try {
             wikidataRules.clear();
-            fetchRulesViaSPARQL("resource://data/tag2link.wikidata.sparql", "https://josm.openstreetmap.de/remote/wikidata-sparql");
-            fetchRulesViaSPARQL("resource://data/tag2link.sophox.sparql", "https://josm.openstreetmap.de/remote/sophox-sparql");
+            fetchRulesViaSPARQL("resource://data/tag2link.wikidata.sparql", Config.getUrls().getJOSMWebsite() + "/remote/wikidata-sparql");
+            fetchRulesViaSPARQL("resource://data/tag2link.sophox.sparql", Config.getUrls().getJOSMWebsite() + "/remote/sophox-sparql");
         } catch (Exception e) {
             Logging.error("Failed to initialize tag2link rules");
             Logging.error(e);
