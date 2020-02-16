@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -18,6 +20,8 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 15855
  */
 public final class ApiKeyProvider {
+
+    private static final Map<String, String> CACHE = new HashMap<>();
 
     private ApiKeyProvider() {
         // Hide public constructor
@@ -35,11 +39,16 @@ public final class ApiKeyProvider {
      * @throws IOException in case of I/O error
      */
     public static String retrieveApiKey(String imageryId) throws IOException {
+        if (CACHE.containsKey(imageryId)) {
+            return CACHE.get(imageryId);
+        }
         for (String siteUrl : getApiKeySites()) {
             Response response = HttpClient.create(new URL(siteUrl + imageryId)).connect();
             try {
                 if (response.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    return Utils.strip(response.fetchContent());
+                    String key = Utils.strip(response.fetchContent());
+                    CACHE.put(imageryId, key);
+                    return key;
                 }
             } finally {
                 response.disconnect();
