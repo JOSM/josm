@@ -120,9 +120,7 @@ public class MultiMap<A, B> {
      * @return the set of values to which the specified key is mapped, or an empty set if this map contains no mapping for the key
      */
     public Set<B> getValues(A key) {
-        if (!map.containsKey(key))
-            return new LinkedHashSet<>();
-        return map.get(key);
+        return map.getOrDefault(key, Collections.emptySet());
     }
 
     /**
