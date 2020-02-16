@@ -1750,7 +1750,7 @@ public final class Utils {
             String[] versions = HttpClient.create(
                     new URL(Config.getPref().get(
                             "java.baseline.version.url",
-                            "http://javadl-esd-secure.oracle.com/update/baseline.version")))
+                            Config.getUrls().getJOSMWebsite() + "/remote/oracle-java-update-baseline.version")))
                     .connect().fetchContent().split("\n");
             if (getJavaVersion() <= 8) {
                 for (String version : versions) {
