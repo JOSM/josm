@@ -61,6 +61,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
@@ -239,18 +240,9 @@ public final class Utils {
         CheckParameterUtil.ensureParameterNotNull(sep, "sep");
         if (values == null)
             return null;
-        StringBuilder s = null;
-        for (Object a : values) {
-            if (a == null) {
-                a = "";
-            }
-            if (s != null) {
-                s.append(sep).append(a);
-            } else {
-                s = new StringBuilder(a.toString());
-            }
-        }
-        return s != null ? s.toString() : "";
+        return values.stream()
+                .map(v -> v != null ? v.toString() : "")
+                .collect(Collectors.joining(sep));
     }
 
     /**
@@ -1022,11 +1014,9 @@ public final class Utils {
      */
     public static List<String> getMatches(final Matcher m) {
         if (m.matches()) {
-            List<String> result = new ArrayList<>(m.groupCount() + 1);
-            for (int i = 0; i <= m.groupCount(); i++) {
-                result.add(m.group(i));
-            }
-            return result;
+            return IntStream.rangeClosed(0, m.groupCount())
+                    .mapToObj(m::group)
+                    .collect(Collectors.toList());
         } else {
             return null;
         }
@@ -1444,11 +1434,8 @@ public final class Utils {
      */
     public static boolean hasExtension(String filename, String... extensions) {
         String name = filename.toLowerCase(Locale.ENGLISH).replace("?format=raw", "");
-        for (String ext : extensions) {
-            if (name.endsWith('.' + ext.toLowerCase(Locale.ENGLISH)))
-                return true;
-        }
-        return false;
+        return Arrays.stream(extensions)
+                .anyMatch(ext -> name.endsWith('.' + ext.toLowerCase(Locale.ENGLISH)));
     }
 
     /**
