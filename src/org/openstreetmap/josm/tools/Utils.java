@@ -89,7 +89,7 @@ public final class Utils {
 
     private static final Pattern REMOVE_DIACRITICS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
-    private static final char[] DEFAULT_STRIP = {'\u200B', '\uFEFF'};
+    private static final String DEFAULT_STRIP = "\uFEFF\u200B";
 
     private static final String[] SIZE_UNITS = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
 
@@ -780,7 +780,7 @@ public final class Utils {
     public static boolean isStripEmpty(String str) {
         if (str != null) {
             for (int i = 0; i < str.length(); i++) {
-                if (!isStrippedChar(str.charAt(i), DEFAULT_STRIP)) {
+                if (!isStrippedChar(str.charAt(i), null)) {
                     return false;
                 }
             }
@@ -819,10 +819,6 @@ public final class Utils {
         if (str == null || str.isEmpty()) {
             return str;
         }
-        return strip(str, stripChars(skipChars));
-    }
-
-    private static String strip(final String str, final char... skipChars) {
 
         int start = 0;
         int end = str.length();
@@ -834,7 +830,7 @@ public final class Utils {
             }
         }
         boolean trailingSkipChar = true;
-        while (trailingSkipChar && end > start + 1) {
+        while (trailingSkipChar && end > start) {
             trailingSkipChar = isStrippedChar(str.charAt(end - 1), skipChars);
             if (trailingSkipChar) {
                 end--;
@@ -844,29 +840,10 @@ public final class Utils {
         return str.substring(start, end);
     }
 
-    private static boolean isStrippedChar(char c, final char... skipChars) {
-        return Character.isWhitespace(c) || Character.isSpaceChar(c) || stripChar(skipChars, c);
-    }
-
-    private static char[] stripChars(final String skipChars) {
-        if (skipChars == null || skipChars.isEmpty()) {
-            return DEFAULT_STRIP;
-        }
-
-        char[] chars = new char[DEFAULT_STRIP.length + skipChars.length()];
-        System.arraycopy(DEFAULT_STRIP, 0, chars, 0, DEFAULT_STRIP.length);
-        skipChars.getChars(0, skipChars.length(), chars, DEFAULT_STRIP.length);
-
-        return chars;
-    }
-
-    private static boolean stripChar(final char[] strip, char c) {
-        for (char s : strip) {
-            if (c == s) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean isStrippedChar(char c, final String skipChars) {
+        return Character.isWhitespace(c) || Character.isSpaceChar(c)
+                || DEFAULT_STRIP.indexOf(c) >= 0
+                || (skipChars != null && skipChars.indexOf(c) >= 0);
     }
 
     /**

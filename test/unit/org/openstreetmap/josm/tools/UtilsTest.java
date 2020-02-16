@@ -70,6 +70,8 @@ public class UtilsTest {
         assertEquals("", Utils.strip("  "));
         assertEquals("", Utils.strip("   "));
         assertEquals("", Utils.strip(someWhite));
+        assertEquals("", Utils.strip("\u200B"));
+        assertEquals("", Utils.strip("\uFEFF"));
         assertEquals("a", Utils.strip("a"));
         assertEquals("ab", Utils.strip("ab"));
         assertEquals("abc", Utils.strip("abc"));
@@ -84,7 +86,11 @@ public class UtilsTest {
         assertEquals("abc", Utils.strip(someWhite+"abc"+someWhite));
 
         // extended skip
+        assertNull(Utils.strip(null, "abc"));
+        assertEquals("", Utils.strip("", "b"));
+        assertEquals("", Utils.strip("abbbb", "ab"));
         assertEquals("a", Utils.strip("a", "b"));
+        assertEquals("a", Utils.strip("abbbb", "b"));
         assertEquals("b", Utils.strip("acbcac", "ac"));
     }
 
