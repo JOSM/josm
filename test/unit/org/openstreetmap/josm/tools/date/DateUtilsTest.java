@@ -2,8 +2,11 @@
 package org.openstreetmap.josm.tools.date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -163,6 +166,7 @@ public class DateUtilsTest {
     @Test
     public void testTsFromString() {
         // UTC times
+        assertEquals(1459641600000L, DateUtils.tsFromString("2016-04-03"));
         assertEquals(1459695600000L, DateUtils.tsFromString("2016-04-03T15:00:00Z"));
         assertEquals(1459695600000L, DateUtils.tsFromString("2016-04-03T15:00:00"));
         assertEquals(1459695600000L, DateUtils.tsFromString("2016-04-03 15:00:00 UTC"));
@@ -176,10 +180,36 @@ public class DateUtilsTest {
         assertEquals(1459695600000L, DateUtils.tsFromString("2016-04-03T15:00:00.000"));
         assertEquals(1459695600000L, DateUtils.tsFromString("2016-04-03T15:00:00.000+00:00"));
         assertEquals(1459695600000L, DateUtils.tsFromString("2016-04-03T15:00:00.000-00:00"));
+        assertEquals(1459695600123L, DateUtils.tsFromString("2016-04-03T15:00:00.123+00:00"));
+        assertEquals(1459695600123L, DateUtils.tsFromString("2016-04-03T15:00:00.123-00:00"));
+
+        // Offset times
+        assertEquals(1459695600000L - 3 * 3600 * 1000, DateUtils.tsFromString("2016-04-03T15:00:00+03"));
+        assertEquals(1459695600000L + 5 * 3600 * 1000, DateUtils.tsFromString("2016-04-03T15:00:00-05"));
+        assertEquals(1459695600000L - 3 * 3600 * 1000, DateUtils.tsFromString("2016-04-03T15:00:00+03:00"));
+        assertEquals(1459695600000L + 5 * 3600 * 1000, DateUtils.tsFromString("2016-04-03T15:00:00-05:00"));
+        assertEquals(1459695600123L - 3 * 3600 * 1000, DateUtils.tsFromString("2016-04-03T15:00:00.123+03:00"));
+        assertEquals(1459695600123L + 5 * 3600 * 1000, DateUtils.tsFromString("2016-04-03T15:00:00.123-05:00"));
 
         // Local time
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         assertEquals(1459688400000L, DateUtils.tsFromString("03-APR-16 15:00:00"));
+    }
+
+    /**
+     * Unit test of {@link DateUtils#tsFromString} method.
+     */
+    @Test(expected = UncheckedParseException.class)
+    public void testTsFromStringInvalid1() {
+        DateUtils.tsFromString("foobar");
+    }
+
+    /**
+     * Unit test of {@link DateUtils#tsFromString} method.
+     */
+    @Test(expected = UncheckedParseException.class)
+    public void testTsFromStringInvalid2() {
+        DateUtils.tsFromString("2016/04/03");
     }
 
     /**
@@ -216,5 +246,13 @@ public class DateUtilsTest {
         } finally {
             DateUtils.PROP_ISO_DATES.put(iso);
         }
+    }
+
+    @Test
+    public void testCloneDate() {
+        assertNull(DateUtils.cloneDate(null));
+        final Date date = new Date(1453694709000L);
+        assertEquals(date, DateUtils.cloneDate(date));
+        assertNotSame(date, DateUtils.cloneDate(date));
     }
 }

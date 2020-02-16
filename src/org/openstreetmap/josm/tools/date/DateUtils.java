@@ -103,8 +103,7 @@ public final class DateUtils {
             );
             if (str.length() == 22 || str.length() == 25) {
                 final int plusHr = parsePart2(str, 20);
-                final long mul = str.charAt(19) == '+' ? -1 : 1;
-                return local.plusHours(plusHr * mul).toInstant().toEpochMilli();
+                return local.plusHours(str.charAt(19) == '+' ? -plusHr : plusHr).toInstant().toEpochMilli();
             }
             return local.toInstant().toEpochMilli();
         } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
@@ -124,8 +123,7 @@ public final class DateUtils {
             );
             if (str.length() == 29) {
                 final int plusHr = parsePart2(str, 24);
-                final long mul = str.charAt(23) == '+' ? -1 : 1;
-                return local.plusHours(plusHr * mul).toInstant().toEpochMilli();
+                return local.plusHours(str.charAt(23) == '+' ? -plusHr : plusHr).toInstant().toEpochMilli();
             }
             return local.toInstant().toEpochMilli();
         } else {
