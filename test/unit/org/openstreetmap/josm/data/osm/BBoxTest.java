@@ -126,6 +126,18 @@ public class BBoxTest {
     }
 
     /**
+     * Unit test of {@link BBox#addLatLon} method.
+     */
+    @Test
+    public void testAddLatLonBuffer() {
+        BBox b = new BBox();
+        b.addLatLon(LatLon.NORTH_POLE, 0.5);
+        assertEquals(LatLon.NORTH_POLE, b.getCenter());
+        assertEquals(new LatLon(90.5, -0.5), b.getTopLeft());
+        assertEquals(new LatLon(89.5, +0.5), b.getBottomRight());
+    }
+
+    /**
      * Unit test of {@link BBox#add(double, double)} method.
      */
     @Test

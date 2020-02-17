@@ -178,6 +178,19 @@ public class BBox {
     }
 
     /**
+     * Extends this bbox to include the bbox of the primitive extended by extraSpace.
+     * @param latLon a LatLon
+     * @param extraSpace the value to extend the primitives bbox. Unit is in LatLon degrees.
+     * @since 15877
+     */
+    public void addLatLon(LatLon latLon, double extraSpace) {
+        Objects.requireNonNull(latLon, "LatLon cannot be null");
+        add(latLon);
+        add(latLon.getX() - extraSpace, latLon.getY() - extraSpace);
+        add(latLon.getX() + extraSpace, latLon.getY() + extraSpace);
+    }
+
+    /**
      * Gets the height of the bbox.
      * @return The difference between ymax and ymin. 0 for invalid bboxes.
      */
