@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -44,6 +47,10 @@ public final class Tag2Link {
      * Maps OSM keys to formatter URLs from Wikidata and OSM Sophox where {@code "$1"} has to be replaced by a value.
      */
     static final MultiMap<String, String> wikidataRules = new MultiMap<>();
+
+    static final Map<String, UnaryOperator<String>> valueFormatter = Collections.singletonMap(
+            "ref:bag", v -> String.format("%16s", v).replace(' ', '0')
+    );
 
     static final String languagePattern = LanguageInfo.getLanguageCodes(null).stream()
             .map(Pattern::quote)
@@ -178,7 +185,8 @@ public final class Tag2Link {
         }
 
         wikidataRules.getValues(key).forEach(urlFormatter -> {
-            final String url = urlFormatter.replace("$1", value);
+            final String formattedValue = valueFormatter.getOrDefault(key, x -> x).apply(value);
+            final String url = urlFormatter.replace("$1", formattedValue);
             linkConsumer.acceptLink(getLinkName(url, key), url);
         });
     }
