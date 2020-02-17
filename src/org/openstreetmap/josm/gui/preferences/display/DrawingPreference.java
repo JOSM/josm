@@ -73,6 +73,11 @@ public class DrawingPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
+        addOsmPane(gui);
+        addGpxPane(gui);
+    }
+
+    private void addGpxPane(PreferenceTabbedPane gui) {
         gpxPanel = new GPXSettingsPanel();
         gui.addValidationListener(gpxPanel);
         JPanel panel = gpxPanel;
@@ -81,7 +86,10 @@ public class DrawingPreference implements SubPreferenceSetting {
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         GuiHelper.setDefaultIncrement(scrollpane);
         gui.getDisplayPreference().addSubTab(this, tr("GPS Points"), scrollpane);
-        panel = new JPanel(new GridBagLayout());
+    }
+
+    private void addOsmPane(PreferenceTabbedPane gui) {
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // directionHint
@@ -200,7 +208,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         ExpertToggleAction.addVisibilitySwitcher(discardableKeys);
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
-        scrollpane = new JScrollPane(panel);
+        JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         GuiHelper.setDefaultIncrement(scrollpane);
         gui.getDisplayPreference().addSubTab(this, tr("OSM Data"), scrollpane);
