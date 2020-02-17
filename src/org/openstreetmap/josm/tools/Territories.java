@@ -6,14 +6,26 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonValue;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParser.Event;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -23,6 +35,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Look up territories ISO3166 codes at a certain place.
@@ -34,12 +47,15 @@ public final class Territories {
 
     private static final String ISO3166_1 = "ISO3166-1:alpha2";
     private static final String ISO3166_2 = "ISO3166-2";
+    private static final String ISO3166_1_LC = ISO3166_1.toLowerCase(Locale.ENGLISH);
+    private static final String ISO3166_2_LC = ISO3166_2.toLowerCase(Locale.ENGLISH);
     private static final String TAGINFO = "taginfo";
 
     private static DataSet dataSet;
 
     private static volatile Map<String, GeoPropertyIndex<Boolean>> iso3166Cache;
-    private static volatile Map<String, String> taginfoCache;
+    private static volatile Map<String, TaginfoRegionalInstance> taginfoCache;
+    private static volatile Map<String, TaginfoRegionalInstance> taginfoGeofabrikCache;
 
     private Territories() {
         // Hide implicit public constructor for utility classes
@@ -103,6 +119,11 @@ public final class Territories {
      * TODO: Synchronization can be refined inside the {@link GeoPropertyIndex} as most look-ups are read-only.
      */
     public static synchronized void initialize() {
+        initializeInternalData();
+        initializeExternalData();
+    }
+
+    private static void initializeInternalData() {
         iso3166Cache = new HashMap<>();
         taginfoCache = new TreeMap<>();
         try (CachedFile cf = new CachedFile("resource://data/" + FILENAME);
@@ -125,7 +146,7 @@ public final class Territories {
                         iso3166Cache.put(iso1, gpi);
                         String taginfo = osm.get(TAGINFO);
                         if (taginfo != null) {
-                            taginfoCache.put(iso1, taginfo);
+                            taginfoCache.put(iso1, new TaginfoRegionalInstance(taginfo, Collections.singleton(iso1)));
                         }
                     }
                     if (iso2 != null) {
@@ -138,22 +159,60 @@ public final class Territories {
         }
     }
 
+    private static void initializeExternalData() {
+        taginfoGeofabrikCache = new TreeMap<>();
+        try (CachedFile cf = new CachedFile(Config.getUrls().getJOSMWebsite() + "/remote/geofabrik-index-v1-nogeom.json");
+                InputStream is = cf.getInputStream();
+                JsonParser json = Json.createParser(is)) {
+            while (json.hasNext()) {
+                Event event = json.next();
+                if (event == Event.START_OBJECT) {
+                    for (JsonValue feature : json.getObject().getJsonArray("features")) {
+                        JsonObject props = feature.asJsonObject().getJsonObject("properties");
+                        if (props != null) {
+                            JsonObject urls = props.getJsonObject("urls");
+                            if (urls != null) {
+                                String taginfo = urls.getString(TAGINFO);
+                                if (taginfo != null) {
+                                    JsonArray iso1 = props.getJsonArray(ISO3166_1_LC);
+                                    JsonArray iso2 = props.getJsonArray(ISO3166_2_LC);
+                                    if (iso1 != null) {
+                                        readExternalTaginfo(taginfo, iso1);
+                                    } else if (iso2 != null) {
+                                        readExternalTaginfo(taginfo, iso2);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new JosmRuntimeException(e);
+        }
+    }
+
+    private static void readExternalTaginfo(String taginfo, JsonArray jsonCodes) {
+        Set<String> isoCodes = jsonCodes.getValuesAs(JsonString.class).stream().map(JsonString::getString).collect(Collectors.toSet());
+        isoCodes.forEach(s -> taginfoGeofabrikCache.put(s, new TaginfoRegionalInstance(taginfo, isoCodes, "Geofabrik")));
+    }
+
     /**
-     * Returns a map of national taginfo instances for the given location.
+     * Returns a map of regional taginfo instances for the given location.
      * @param ll lat/lon where to look.
-     * @return a map of national taginfo instances for the given location (code / url)
-     * @since 15565
+     * @return a map of regional taginfo instances for the given location (code / url)
+     * @since 15876
      */
-    public static Map<String, String> getNationalTaginfoUrls(LatLon ll) {
-        Map<String, String> result = new TreeMap<>();
+    public static Map<String, List<TaginfoRegionalInstance>> getRegionalTaginfoUrls(LatLon ll) {
+        Map<String, List<TaginfoRegionalInstance>> result = new TreeMap<>();
         if (iso3166Cache != null) {
             for (String code : iso3166Cache.entrySet().parallelStream().distinct()
                 .filter(e -> Boolean.TRUE.equals(e.getValue().get(ll)))
                 .map(Entry<String, GeoPropertyIndex<Boolean>>::getKey)
                 .collect(Collectors.toSet())) {
-                String taginfo = taginfoCache.get(code);
-                if (taginfo != null) {
-                    result.put(code, taginfo);
+                for (Map<String, TaginfoRegionalInstance> cache : Arrays.asList(taginfoCache, taginfoGeofabrikCache)) {
+                    Optional.ofNullable(cache.get(code)).ifPresent(
+                            taginfo -> result.computeIfAbsent(code, c -> new ArrayList<>()).add(taginfo));
                 }
             }
         }

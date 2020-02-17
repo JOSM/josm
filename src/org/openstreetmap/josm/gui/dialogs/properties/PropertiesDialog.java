@@ -369,11 +369,13 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private void setupTaginfoNationalActions(Collection<? extends IPrimitive> newSel) {
         destroyTaginfoNationalActions();
         if (!newSel.isEmpty()) {
-            for (Entry<String, String> e : Territories.getNationalTaginfoUrls(
-                    newSel.iterator().next().getBBox().getCenter()).entrySet()) {
-                taginfoNationalActions.add(new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
-                        membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), e.getValue(), e.getKey()));
-            }
+            Territories.getRegionalTaginfoUrls(
+                    newSel.iterator().next().getBBox().getCenter()).values().stream().flatMap(List::stream).forEach(
+                taginfo -> taginfoNationalActions.add(new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
+                        membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0),
+                        taginfo.getUrl(), String.join("/", taginfo.getIsoCodes())
+                            + (taginfo.getSuffix() == null ? "" : " (" + taginfo.getSuffix() + ")")))
+            );
             taginfoNationalActions.stream().map(membershipMenu::add).forEach(membershipMenuTagInfoNatItems::add);
             taginfoNationalActions.stream().map(tagMenu::add).forEach(tagMenuTagInfoNatItems::add);
         }
