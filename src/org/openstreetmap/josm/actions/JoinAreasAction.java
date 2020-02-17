@@ -650,7 +650,7 @@ public class JoinAreasAction extends JosmAction {
                     .collect(Collectors.toList());
             if (!toRemove.isEmpty()) {
                 cmds.add(new DeleteCommand(toRemove));
-                commitCommands("Removed  nodes");
+                commitCommands(marktr("Removed now unreferrenced nodes"));
             }
         }
 
@@ -1648,10 +1648,7 @@ public class JoinAreasAction extends JosmAction {
             for (; i < commands.size(); i++) {
                 cmds.add(commands.get(i));
             }
-
-            for (i = 0; i < cmds.size(); i++) {
-                ur.undo();
-            }
+            ur.undo(cmds.size());
         }
 
         commitCommands(message == null ? marktr("Join Areas Function") : message);
