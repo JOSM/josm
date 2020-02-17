@@ -285,8 +285,10 @@ public class SyncEditorLayerIndex {
         if (skip.containsKey(s))
             return skip.get(s);
         for (Entry<String, String> str : skipStart.entrySet()) {
-            if (s.startsWith(str.getKey()))
+            if (s.startsWith(str.getKey())) {
+                skipStart.remove(str.getKey());
                 return str.getValue();
+            }
         }
         return null;
     }
@@ -330,6 +332,9 @@ public class SyncEditorLayerIndex {
         for (String s : skip.keySet()) {
             myprintln("+++ Obsolete skip entry: " + s);
         }
+        for (String s : skipStart.keySet()) {
+            myprintln("+++ Obsolete skip entry: " + s + "...");
+        }
         if (optionXhtml) {
             myprintlnfinal("</body></html>\n");
         }
@@ -343,7 +348,7 @@ public class SyncEditorLayerIndex {
         for (JsonValue e : eliEntries) {
             String url = getUrlStripped(e);
             if (url.contains("{z}")) {
-                myprintln("+++ ELI-URL uses {z} instead of {zoom}: "+url);
+                myprintln("+++ ELI-URL uses {z} instead of {zoom}: "+getDescription(e));
                 url = url.replace("{z}", "{zoom}");
             }
             if (eliUrls.containsKey(url)) {
@@ -506,7 +511,7 @@ public class SyncEditorLayerIndex {
             }
             String url = getUrlStripped(e);
             if (url.contains("{z}")) {
-                myprintln("+++ JOSM-URL uses {z} instead of {zoom}: "+url);
+                myprintln("+++ JOSM-URL uses {z} instead of {zoom}: "+getDescription(e));
                 url = url.replace("{z}", "{zoom}");
             }
             if (josmUrls.containsKey(url)) {
@@ -1493,7 +1498,16 @@ public class SyncEditorLayerIndex {
         } else {
             cc = "["+cc+"] ";
         }
-        String d = cc + getName(o) + " - " + getUrl(o);
+        String name = getName(o);
+        String id = getId(o);
+        String d = cc;
+        if(name != null && !name.isEmpty()) {
+            d += name;
+            if(id != null && !id.isEmpty())
+              d += " ["+id+"]";
+        }
+        else if(url != null && !url.isEmpty())
+            d += url;
         if (optionShorten) {
             if (d.length() > MAXLEN) d = d.substring(0, MAXLEN-1) + "...";
         }
