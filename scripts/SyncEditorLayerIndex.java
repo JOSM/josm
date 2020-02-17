@@ -1501,12 +1501,11 @@ public class SyncEditorLayerIndex {
         String name = getName(o);
         String id = getId(o);
         String d = cc;
-        if(name != null && !name.isEmpty()) {
+        if (name != null && !name.isEmpty()) {
             d += name;
-            if(id != null && !id.isEmpty())
+            if (id != null && !id.isEmpty())
               d += " ["+id+"]";
-        }
-        else if(url != null && !url.isEmpty())
+        } else if (url != null && !url.isEmpty())
             d += url;
         if (optionShorten) {
             if (d.length() > MAXLEN) d = d.substring(0, MAXLEN-1) + "...";
