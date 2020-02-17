@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -640,7 +641,17 @@ public class JoinAreasAction extends JosmAction {
 
         if (removedDuplicates) {
             hasChanges = true;
+            Set<Node> oldNodes = new LinkedHashSet<>();
+            allStartingWays.forEach(w -> oldNodes.addAll(w.getNodes()));
             commitCommands(marktr("Removed duplicate nodes"));
+            // remove now unconnected nodes without tags
+            List<Node> toRemove = oldNodes.stream().filter(
+                    n -> (n.isNew() || !n.isOutsideDownloadArea()) && !n.hasKeys() && n.getReferrers().isEmpty())
+                    .collect(Collectors.toList());
+            if (!toRemove.isEmpty()) {
+                cmds.add(new DeleteCommand(toRemove));
+                commitCommands("Removed  nodes");
+            }
         }
 
         //find intersection points
@@ -760,53 +771,45 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * This method removes duplicate points (if any) from the input way.
+     * This method removes duplicate points (if any) from the input ways.
      * @param ways the ways to process
      * @return {@code true} if any changes where made
      */
     private boolean removeDuplicateNodes(List<Way> ways) {
-        //TODO: maybe join nodes with JoinNodesAction, rather than reconnect the ways.
-
         Map<Node, Node> nodeMap = new TreeMap<>(new NodePositionComparator());
-        int totalNodesRemoved = 0;
+        int totalWaysModified = 0;
 
         for (Way way : ways) {
             if (way.getNodes().size() < 2) {
                 continue;
             }
 
-            int nodesRemoved = 0;
             List<Node> newNodes = new ArrayList<>();
             Node prevNode = null;
+            boolean modifyWay = false;
 
             for (Node node : way.getNodes()) {
-                if (!nodeMap.containsKey(node)) {
+                Node representator = nodeMap.get(node);
+                if (representator == null) {
                     //new node
                     nodeMap.put(node, node);
-
-                    //avoid duplicate nodes
-                    if (prevNode != node) {
-                        newNodes.add(node);
-                    } else {
-                        nodesRemoved++;
-                    }
+                    representator = node;
                 } else {
                     //node with same coordinates already exists, substitute with existing node
-                    Node representator = nodeMap.get(node);
-
                     if (representator != node) {
-                        nodesRemoved++;
-                    }
-
-                    //avoid duplicate node
-                    if (prevNode != representator) {
-                        newNodes.add(representator);
+                        modifyWay = true;
                     }
                 }
-                prevNode = node;
+                //avoid duplicate node
+                if (prevNode != representator) {
+                    newNodes.add(representator);
+                    prevNode = representator;
+                } else {
+                    modifyWay = true;
+                }
             }
 
-            if (nodesRemoved > 0) {
+            if (modifyWay) {
 
                 if (newNodes.size() == 1) { //all nodes in the same coordinate - add one more node, to have closed way.
                     newNodes.add(newNodes.get(0));
@@ -815,11 +818,10 @@ public class JoinAreasAction extends JosmAction {
                 Way newWay = new Way(way);
                 newWay.setNodes(newNodes);
                 cmds.add(new ChangeCommand(way, newWay));
-                totalNodesRemoved += nodesRemoved;
+                ++totalWaysModified;
             }
         }
-
-        return totalNodesRemoved > 0;
+        return totalWaysModified > 0;
     }
 
     /**
