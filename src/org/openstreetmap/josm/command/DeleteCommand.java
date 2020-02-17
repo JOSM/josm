@@ -440,9 +440,10 @@ public class DeleteCommand extends Command {
                 .collect(Collectors.toSet());
 
         Collection<Command> cmds = new LinkedList<>();
+        Set<Node> nodesToRemove = new HashSet<>(Utils.filteredCollection(primitivesToDelete, Node.class));
         for (Way w : waysToBeChanged) {
             Way wnew = new Way(w);
-            wnew.removeNodes(new HashSet<>(Utils.filteredCollection(primitivesToDelete, Node.class)));
+            wnew.removeNodes(nodesToRemove);
             if (wnew.getNodesCount() < 2) {
                 primitivesToDelete.add(w);
             } else {
