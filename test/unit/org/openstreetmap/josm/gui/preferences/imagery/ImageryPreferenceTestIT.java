@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
@@ -56,6 +57,7 @@ import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesExc
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.io.imagery.ApiKeyProvider;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.ParallelParameterized;
@@ -100,6 +102,7 @@ public class ImageryPreferenceTestIT {
      */
     @BeforeClass
     public static void beforeClass() throws IOException {
+        FeatureAdapter.registerApiKeyAdapter(ApiKeyProvider::retrieveApiKey);
         helper = new TMSCachedTileLoaderJob(null, null, new CacheAccess<>(null), new TileJobOptions(0, 0, null, 0), null);
         errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(ImageryPreferenceTestIT.class));
         notIgnoredErrors.addAll(errorsToIgnore);
