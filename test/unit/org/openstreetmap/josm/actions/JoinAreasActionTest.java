@@ -51,6 +51,52 @@ public class JoinAreasActionTest {
     public JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
 
     /**
+     * Non-regression test for bug #9599.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if OSM parsing fails
+     */
+    @Test
+    public void testTicket9599() throws IOException, IllegalDataException {
+        try (InputStream is = TestUtils.getRegressionDataStream(9599, "ex5.osm")) {
+            DataSet ds = OsmReader.parseDataSet(is, null);
+            Layer layer = new OsmDataLayer(ds, null, null);
+            MainApplication.getLayerManager().addLayer(layer);
+            try {
+                new JoinAreasAction(false).join(ds.getWays());
+                Collection<IPrimitive> found = SearchAction.searchAndReturn("type:way", SearchMode.replace);
+                assertEquals(1, found.size());
+                assertEquals(257786939, found.iterator().next().getUniqueId());
+            } finally {
+                // Ensure we clean the place before leaving, even if test fails.
+                MainApplication.getLayerManager().removeLayer(layer);
+            }
+        }
+    }
+
+    /**
+     * Non-regression test for bug #9599.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if OSM parsing fails
+     */
+    @Test
+    public void testTicket9599Simple() throws IOException, IllegalDataException {
+        try (InputStream is = TestUtils.getRegressionDataStream(9599, "three_old.osm")) {
+            DataSet ds = OsmReader.parseDataSet(is, null);
+            Layer layer = new OsmDataLayer(ds, null, null);
+            MainApplication.getLayerManager().addLayer(layer);
+            try {
+                new JoinAreasAction(false).join(ds.getWays());
+                Collection<IPrimitive> found = SearchAction.searchAndReturn("type:way", SearchMode.replace);
+                assertEquals(1, found.size());
+                assertEquals(31567319, found.iterator().next().getUniqueId());
+            } finally {
+                // Ensure we clean the place before leaving, even if test fails.
+                MainApplication.getLayerManager().removeLayer(layer);
+            }
+        }
+    }
+
+    /**
      * Non-regression test for bug #10511.
      * @throws IOException if any I/O error occurs
      * @throws IllegalDataException if OSM parsing fails

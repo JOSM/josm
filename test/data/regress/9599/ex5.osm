@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='true' generator='JOSM'>
+  <bounds minlat='43.3280894' minlon='6.5462664' maxlat='43.3282713' maxlon='6.5464564' origin='CGImap 0.3.1 (29703 thorn-02.openstreetmap.org)' />
+  <node id='2632536012' timestamp='2014-01-22T17:11:29Z' uid='875219' user='Maxime DIVO' visible='true' version='1' changeset='20145216' lat='43.3281651' lon='6.546396' />
+  <node id='2632536021' timestamp='2014-01-22T17:11:30Z' uid='875219' user='Maxime DIVO' visible='true' version='1' changeset='20145216' lat='43.3281697' lon='6.5463519' />
+  <node id='2632536045' timestamp='2014-01-22T17:11:30Z' uid='875219' user='Maxime DIVO' visible='true' version='1' changeset='20145216' lat='43.3281937' lon='6.5463563' />
+  <node id='2632536051' timestamp='2014-01-22T17:11:30Z' uid='875219' user='Maxime DIVO' visible='true' version='1' changeset='20145216' lat='43.3281998' lon='6.5462943' />
+  <node id='2632536055' timestamp='2014-01-22T17:11:30Z' uid='875219' user='Maxime DIVO' visible='true' version='1' changeset='20145216' lat='43.3282134' lon='6.5464038' />
+  <node id='2632536063' timestamp='2014-01-22T17:11:31Z' uid='875219' user='Maxime DIVO' visible='true' version='1' changeset='20145216' lat='43.3282302' lon='6.5464066' />
+  <node id='2632536064' timestamp='2014-01-22T17:11:31Z' uid='875219' user='Maxime DIVO' visible='true' version='1' changeset='20145216' lat='43.328232' lon='6.5463556' />
+  <node id='2632536067' timestamp='2014-01-22T17:11:31Z' uid='875219' user='Maxime DIVO' visible='true' version='1' changeset='20145216' lat='43.328234' lon='6.5463002' />
+  <way id='257786939' timestamp='2014-01-23T06:39:25Z' uid='870861' user='botdidier2020' visible='true' version='2' changeset='20154690'>
+    <nd ref='2632536064' />
+    <nd ref='2632536055' />
+    <nd ref='2632536063' />
+    <nd ref='2632536064' />
+    <tag k='building' v='yes' />
+    <tag k='source' v='cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2013' />
+  </way>
+  <way id='257789043' timestamp='2014-01-23T06:44:02Z' uid='870861' user='botdidier2020' visible='true' version='2' changeset='20154690'>
+    <nd ref='2632536055' />
+    <nd ref='2632536064' />
+    <nd ref='2632536067' />
+    <nd ref='2632536051' />
+    <nd ref='2632536045' />
+    <nd ref='2632536021' />
+    <nd ref='2632536012' />
+    <nd ref='2632536055' />
+    <tag k='building' v='yes' />
+    <tag k='source' v='cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2013' />
+  </way>
+</osm>

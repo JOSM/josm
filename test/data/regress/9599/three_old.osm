@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='never' generator='JOSM'>
+  <node id='353225239' timestamp='2009-02-27T13:45:58Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8972935' lon='8.4027792' />
+  <node id='353225241' timestamp='2009-02-27T13:45:58Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8972734' lon='8.402951' />
+  <node id='353225244' timestamp='2009-02-27T13:45:58Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8972311' lon='8.4027592' />
+  <node id='353225247' timestamp='2009-02-27T13:45:58Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.897211' lon='8.402931' />
+  <node id='353225249' timestamp='2009-02-27T13:45:58Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8972161' lon='8.4028895' />
+  <node id='353225252' timestamp='2009-02-27T13:45:58Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8971916' lon='8.4027464' />
+  <node id='353225257' timestamp='2009-02-27T13:45:58Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8971763' lon='8.4028767' />
+  <node id='353225260' timestamp='2009-02-27T13:45:59Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8971682' lon='8.4028638' />
+  <node id='353225263' timestamp='2009-02-27T13:45:59Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8971543' lon='8.4029921' />
+  <node id='353225267' timestamp='2009-02-27T13:45:59Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8971322' lon='8.4028531' />
+  <node id='353225269' timestamp='2009-02-27T13:45:59Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8971182' lon='8.4029813' />
+  <node id='353225273' timestamp='2009-02-27T13:45:59Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8971772' lon='8.4028662' />
+  <node id='353225277' timestamp='2009-02-27T13:45:59Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159' lat='52.8971669' lon='8.4028741' />
+  <way id='31567319' timestamp='2009-02-27T13:46:00Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159'>
+    <nd ref='353225239' />
+    <nd ref='353225244' />
+    <nd ref='353225252' />
+    <nd ref='353225273' />
+    <nd ref='353225257' />
+    <nd ref='353225249' />
+    <nd ref='353225247' />
+    <nd ref='353225241' />
+    <nd ref='353225239' />
+    <tag k='building' v='yes' />
+  </way>
+  <way id='31567320' timestamp='2009-02-27T13:46:00Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159'>
+    <nd ref='353225260' />
+    <nd ref='353225267' />
+    <nd ref='353225269' />
+    <nd ref='353225263' />
+    <nd ref='353225277' />
+    <nd ref='353225260' />
+    <tag k='building' v='yes' />
+  </way>
+  <way id='31567321' timestamp='2009-02-27T13:46:00Z' uid='64197' user='Lothar Schiborr_1' visible='true' version='1' changeset='684159'>
+    <nd ref='353225260' />
+    <nd ref='353225273' />
+    <nd ref='353225257' />
+    <nd ref='353225277' />
+    <nd ref='353225260' />
+    <tag k='building' v='yes' />
+  </way>
+</osm>

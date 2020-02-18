@@ -479,6 +479,14 @@ public class JoinAreasAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         join(getLayerManager().getEditDataSet().getSelectedWays());
+        clearFields();
+    }
+
+    private void clearFields() {
+        ds = null;
+        cmdsCount = 0;
+        cmds.clear();
+        addedRelations.clear();
     }
 
     /**
@@ -487,8 +495,7 @@ public class JoinAreasAction extends JosmAction {
      * @since 7534
      */
     public void join(Collection<Way> ways) {
-        cmdsCount = 0;
-        addedRelations.clear();
+        clearFields();
 
         if (ways.isEmpty()) {
             new Notification(
@@ -674,8 +681,23 @@ public class JoinAreasAction extends JosmAction {
 
         List<WayInPolygon> preparedWays = new ArrayList<>();
 
+        // maps oldest way referring to start of each part
+        Map<Node, Way> oldestWayMap = new HashMap<>();
+
         for (Way way : outerStartingWays) {
             List<Way> splitWays = splitWayOnNodes(way, nodes);
+
+            // see #9599
+            if (!way.isNew() && splitWays.size() > 1) {
+                for (Way part : splitWays) {
+                    Node n = part.firstNode();
+                    Way old = oldestWayMap.get(n);
+                    if (old == null || old.getUniqueId() > way.getUniqueId()) {
+                        oldestWayMap.put(n, way);
+                    }
+                }
+            }
+
             preparedWays.addAll(markWayInsideSide(splitWays, false));
         }
 
@@ -721,6 +743,27 @@ public class JoinAreasAction extends JosmAction {
 
         commitCommands(marktr("Delete relations"));
 
+        // see #9599: result should contain original way(s) where possible
+        if (discardedWays.stream().anyMatch(w -> !w.isNew())) {
+            for (int i = 0; i < polygons.size(); i++) {
+                Multipolygon mp = polygons.get(i);
+                for (int k = 0; k < mp.getInnerWays().size(); k++) {
+                    Way inner = mp.getInnerWays().get(k);
+                    Way older = keepOlder(inner, oldestWayMap, discardedWays);
+                    if (inner != older) {
+                        mp.getInnerWays().set(k, older);
+                    }
+                }
+                Way older = keepOlder(mp.outerWay, oldestWayMap, discardedWays);
+                if (older != mp.outerWay) {
+                    Multipolygon mpNew = new Multipolygon(older);
+                    mpNew.innerWays.addAll(mp.getInnerWays());
+                    polygons.set(i, mpNew);
+                }
+            }
+            commitCommands(marktr("Keep older versions"));
+        }
+
         // Delete the discarded inner ways
         if (!discardedWays.isEmpty()) {
             Command deleteCmd = DeleteCommand.delete(discardedWays, true);
@@ -739,6 +782,33 @@ public class JoinAreasAction extends JosmAction {
         }
 
         return new JoinAreasResult(true, polygons);
+    }
+
+    /**
+     * Create copy of given way using an older id so that we don't create a new way instead of a modified old one.
+     * @param way the way to check
+     * @param oldestWayMap  nodes from old ways
+     * @param discardedWays collection of ways which will be deleted (modified)
+     * @return a copy of the way with an older id or the way itself
+     */
+    private Way keepOlder(Way way, Map<Node, Way> oldestWayMap, List<Way> discardedWays) {
+        Way oldest = null;
+        for (Node n : way.getNodes()) {
+            Way orig = oldestWayMap .get(n);
+            if (orig != null && (oldest == null || oldest.getUniqueId() > orig.getUniqueId())
+                    && discardedWays.contains(orig)) {
+                oldest = orig;
+            }
+        }
+        if (oldest != null) {
+            discardedWays.remove(oldest);
+            discardedWays.add(way);
+            Way copy = new Way(oldest);
+            copy.setNodes(way.getNodes());
+            cmds.add(new ChangeCommand(oldest, copy));
+            return copy;
+        }
+        return way;
     }
 
     /**
@@ -1055,7 +1125,7 @@ public class JoinAreasAction extends JosmAction {
      * Uses {@link SplitWayCommand#splitWay} for the heavy lifting.
      * @param way way to split
      * @param nodes split points
-     * @return list of split ways (or original ways if no splitting is done).
+     * @return list of split ways (or original way if no splitting is done).
      */
     private List<Way> splitWayOnNodes(Way way, Set<Node> nodes) {
 
@@ -1372,9 +1442,14 @@ public class JoinAreasAction extends JosmAction {
 
         //TODO: ReverseWay and Combine way are really slow and we use them a lot here. This slows down large joins.
         List<Way> actionWays = new ArrayList<>(ways.size());
-
+        int oldestPos = 0;
+        Way oldest = ways.get(0).way;
         for (WayInPolygon way : ways) {
             actionWays.add(way.way);
+            if (oldest.isNew() || !way.way.isNew() && oldest.getUniqueId() > way.way.getUniqueId()) {
+                oldest = way.way;
+                oldestPos = actionWays.size() - 1;
+            }
 
             if (!way.insideToTheRight) {
                 ReverseWayResult res = ReverseWayAction.reverseWay(way.way);
@@ -1382,6 +1457,9 @@ public class JoinAreasAction extends JosmAction {
                 cmdsCount++;
             }
         }
+
+        // see #9599: Help CombineWayAction to use the oldest way
+        Collections.rotate(actionWays, actionWays.size() - oldestPos);
 
         Pair<Way, Command> result = CombineWayAction.combineWaysWorker(actionWays);
         if (result == null) {
