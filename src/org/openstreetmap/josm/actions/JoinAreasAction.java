@@ -1446,7 +1446,7 @@ public class JoinAreasAction extends JosmAction {
         Way oldest = ways.get(0).way;
         for (WayInPolygon way : ways) {
             actionWays.add(way.way);
-            if (oldest.isNew() || !way.way.isNew() && oldest.getUniqueId() > way.way.getUniqueId()) {
+            if (oldest.isNew() || (!way.way.isNew() && oldest.getUniqueId() > way.way.getUniqueId())) {
                 oldest = way.way;
                 oldestPos = actionWays.size() - 1;
             }
