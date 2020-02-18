@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 import javax.swing.ComboBoxEditor;
 import javax.swing.ComboBoxModel;
@@ -256,10 +257,25 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
 
     /**
      * Selects a given item in the ComboBox model
-     * @param item      excepts AutoCompletionItem, String and null
+     * @param item the item of type AutoCompletionItem, String or null
      */
     @Override
     public void setSelectedItem(Object item) {
+        setSelectedItem(item, false);
+    }
+
+    /**
+     * Selects a given item in the ComboBox model
+     * @param item the item of type AutoCompletionItem, String or null
+     * @param disableAutoComplete if true, autocomplete {@linkplain #setAutocompleteEnabled is disabled} during the operation
+     * @since 15885
+     */
+    public void setSelectedItem(Object item, final boolean disableAutoComplete) {
+        final boolean previousState = isAutocompleteEnabled();
+        if (disableAutoComplete) {
+            // disable autocomplete to prevent unnecessary actions in AutoCompletingComboBoxDocument#insertString
+            setAutocompleteEnabled(false);
+        }
         if (item == null) {
             super.setSelectedItem(null);
         } else if (item instanceof AutoCompletionItem) {
@@ -267,17 +283,17 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
         } else if (item instanceof String) {
             String s = (String) item;
             // find the string in the model or create a new item
-            for (int i = 0; i < getModel().getSize(); i++) {
-                AutoCompletionItem acItem = getModel().getElementAt(i);
-                if (s.equals(acItem.getValue())) {
-                    super.setSelectedItem(acItem);
-                    return;
-                }
-            }
-            super.setSelectedItem(new AutoCompletionItem(s, AutoCompletionPriority.UNKNOWN));
+            AutoCompletionItem acItem = IntStream.range(0, getModel().getSize())
+                    .mapToObj(i -> getModel().getElementAt(i))
+                    .filter(i -> s.equals(i.getValue()))
+                    .findFirst()
+                    .orElseGet(() -> new AutoCompletionItem(s, AutoCompletionPriority.UNKNOWN));
+            super.setSelectedItem(acItem);
         } else {
+            setAutocompleteEnabled(previousState);
             throw new IllegalArgumentException("Unsupported item: "+item);
         }
+        setAutocompleteEnabled(previousState);
     }
 
     /**
@@ -292,10 +308,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
             model.addElement(new AutoCompletionItem(elem, AutoCompletionPriority.UNKNOWN));
         }
         this.setSelectedItem(null);
-        // disable autocomplete to prevent unnecessary actions in AutoCompletingComboBoxDocument#insertString
-        autocompleteEnabled = false;
-        this.setSelectedItem(oldValue);
-        autocompleteEnabled = true;
+        this.setSelectedItem(oldValue, true);
     }
 
     /**

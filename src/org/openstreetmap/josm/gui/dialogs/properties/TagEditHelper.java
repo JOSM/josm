@@ -937,10 +937,10 @@ public class TagEditHelper {
                         tr("Choose recent tag {0}", count), null, tr("Use this tag again"), sc, false) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        keys.setSelectedItem(t.getKey());
+                        keys.setSelectedItem(t.getKey(), true);
                         // fix #7951, #8298 - update list of values before setting value (?)
                         focus.focusGained(null);
-                        values.setSelectedItem(t.getValue());
+                        values.setSelectedItem(t.getValue(), true);
                         selectValuesCombobox();
                     }
                 };
