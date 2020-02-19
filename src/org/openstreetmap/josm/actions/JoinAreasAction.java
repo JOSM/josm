@@ -698,6 +698,23 @@ public class JoinAreasAction extends JosmAction {
         List<Way> discardedWays = new ArrayList<>();
         List<AssembledPolygon> boundaries = findBoundaryPolygons(preparedWays, discardedWays);
 
+        //  see #9599
+        if (discardedWays.stream().anyMatch(w -> !w.isNew())) {
+            for (int i = 0; i < boundaries.size(); i++) {
+                AssembledPolygon ring = boundaries.get(i);
+                for (int k = 0; k < ring.ways.size(); k++) {
+                    WayInPolygon ringWay = ring.ways.get(k);
+                    Way older = keepOlder(ringWay.way, oldestWayMap, discardedWays);
+
+                    if (ringWay.way != older) {
+                        WayInPolygon repl = new WayInPolygon(older, ringWay.insideToTheRight);
+                        ring.ways.set(k, repl);
+                    }
+                }
+            }
+            commitCommands(marktr("Keep older versions"));
+        }
+
         //find polygons
         List<AssembledMultipolygon> preparedPolygons = findPolygons(boundaries);
 
@@ -730,27 +747,6 @@ public class JoinAreasAction extends JosmAction {
         }
 
         commitCommands(marktr("Delete relations"));
-
-        // see #9599: result should contain original way(s) where possible
-        if (discardedWays.stream().anyMatch(w -> !w.isNew())) {
-            for (int i = 0; i < polygons.size(); i++) {
-                Multipolygon mp = polygons.get(i);
-                for (int k = 0; k < mp.getInnerWays().size(); k++) {
-                    Way inner = mp.getInnerWays().get(k);
-                    Way older = keepOlder(inner, oldestWayMap, discardedWays);
-                    if (inner != older) {
-                        mp.getInnerWays().set(k, older);
-                    }
-                }
-                Way older = keepOlder(mp.outerWay, oldestWayMap, discardedWays);
-                if (older != mp.outerWay) {
-                    Multipolygon mpNew = new Multipolygon(older);
-                    mpNew.innerWays.addAll(mp.getInnerWays());
-                    polygons.set(i, mpNew);
-                }
-            }
-            commitCommands(marktr("Keep older versions"));
-        }
 
         // Delete the discarded inner ways
         if (!discardedWays.isEmpty()) {
@@ -794,7 +790,7 @@ public class JoinAreasAction extends JosmAction {
             Way copy = new Way(oldest);
             copy.setNodes(way.getNodes());
             cmds.add(new ChangeCommand(oldest, copy));
-            return copy;
+            return oldest;
         }
         return way;
     }
