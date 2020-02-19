@@ -685,24 +685,12 @@ public class JoinAreasAction extends JosmAction {
         Map<Node, Way> oldestWayMap = new HashMap<>();
 
         for (Way way : outerStartingWays) {
-            List<Way> splitWays = splitWayOnNodes(way, nodes);
-
-            // see #9599
-            if (!way.isNew() && splitWays.size() > 1) {
-                for (Way part : splitWays) {
-                    Node n = part.firstNode();
-                    Way old = oldestWayMap.get(n);
-                    if (old == null || old.getUniqueId() > way.getUniqueId()) {
-                        oldestWayMap.put(n, way);
-                    }
-                }
-            }
-
+            List<Way> splitWays = splitWayOnNodes(way, nodes, oldestWayMap);
             preparedWays.addAll(markWayInsideSide(splitWays, false));
         }
 
         for (Way way : innerStartingWays) {
-            List<Way> splitWays = splitWayOnNodes(way, nodes);
+            List<Way> splitWays = splitWayOnNodes(way, nodes, oldestWayMap);
             preparedWays.addAll(markWayInsideSide(splitWays, true));
         }
 
@@ -1125,9 +1113,10 @@ public class JoinAreasAction extends JosmAction {
      * Uses {@link SplitWayCommand#splitWay} for the heavy lifting.
      * @param way way to split
      * @param nodes split points
+     * @param oldestWayMap  nodes from old ways (modified here)
      * @return list of split ways (or original way if no splitting is done).
      */
-    private List<Way> splitWayOnNodes(Way way, Set<Node> nodes) {
+    private List<Way> splitWayOnNodes(Way way, Set<Node> nodes, Map<Node, Way> oldestWayMap) {
 
         List<Way> result = new ArrayList<>();
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
@@ -1143,13 +1132,23 @@ public class JoinAreasAction extends JosmAction {
 
                 result.add(split.getOriginalWay());
                 result.addAll(split.getNewWays());
+
+                // see #9599
+                if (!way.isNew() && result.size() > 1) {
+                    for (Way part : result) {
+                        Node n = part.firstNode();
+                        Way old = oldestWayMap.get(n);
+                        if (old == null || old.getUniqueId() > way.getUniqueId()) {
+                            oldestWayMap.put(n, way);
+                        }
+                    }
+                }
             }
         }
         if (result.isEmpty()) {
             //nothing to split
             result.add(way);
         }
-
         return result;
     }
 
