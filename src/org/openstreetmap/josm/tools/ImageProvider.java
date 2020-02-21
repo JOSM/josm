@@ -34,7 +34,9 @@ import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -42,7 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeSet;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -62,6 +64,9 @@ import javax.imageio.stream.ImageInputStream;
 import javax.swing.ImageIcon;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGException;
+import com.kitfox.svg.SVGUniverse;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -84,10 +89,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGException;
-import com.kitfox.svg.SVGUniverse;
 
 /**
  * Helper class to support the application with images.
@@ -307,7 +308,7 @@ public class ImageProvider {
     private static final Map<OsmPrimitiveType, ImageIcon> osmPrimitiveTypeCache = new EnumMap<>(OsmPrimitiveType.class);
 
     /** larger cache of critical padded image icons used in many parts of the application */
-    private static final Map<Dimension, Map<MapImage, ImageIcon>> paddedImageCache = new HashMap<>();
+    private static final Map<Dimension, Map<Image, ImageIcon>> paddedImageCache = new HashMap<>();
 
     private static final ExecutorService IMAGE_FETCHER =
             Executors.newSingleThreadExecutor(Utils.newThreadFactory("image-fetcher-%d", Thread.NORM_PRIORITY));
@@ -1492,37 +1493,71 @@ public class ImageProvider {
     }
 
     /**
+     * Options used in {@link #getPadded(OsmPrimitive, Dimension, Collection)}.
+     * @since 15889
+     */
+    public enum GetPaddedOptions {
+        /**
+         * Exclude icon indicating deprecated tag usage.
+         */
+        NO_DEPRECATED,
+        /**
+         * Exclude default icon for {@link OsmPrimitiveType} from {@link #get(OsmPrimitiveType)}
+         */
+        NO_DEFAULT,
+        /**
+         * Exclude tagging preset icons.
+         */
+        NO_PRESETS,
+        /**
+         * Exclude tagging preset icons for {@linkplain OsmPrimitiveType#WAY ways}.
+         */
+        NO_WAY_PRESETS,
+    }
+
+    /**
      * @param primitive Object for which an icon shall be fetched. The icon is chosen based on tags.
      * @param iconSize Target size of icon. Icon is padded if required.
      * @return Icon for {@code primitive} that fits in cell.
      * @since 8903
      */
     public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize) {
+        return getPadded(primitive, iconSize, EnumSet.of(GetPaddedOptions.NO_WAY_PRESETS));
+    }
+
+    /**
+     * @param primitive Object for which an icon shall be fetched. The icon is chosen based on tags.
+     * @param iconSize Target size of icon. Icon is padded if required.
+     * @param options zero or more {@linkplain GetPaddedOptions options}.
+     * @return Icon for {@code primitive} that fits in cell or {@code null}.
+     * @since 15889
+     */
+    public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize, Collection<GetPaddedOptions> options) {
         // Check if the current styles have special icon for tagged objects.
         if (primitive.isTagged()) {
-            ImageIcon icon = getTaggedPadded(primitive, iconSize);
+            ImageIcon icon = getTaggedPadded(primitive, iconSize, options);
             if (icon != null) {
                 return icon;
             }
         }
 
         // Check if the presets have icons for nodes/relations.
-        if (OsmPrimitiveType.WAY != primitive.getType()) {
-            final Collection<TaggingPreset> presets = new TreeSet<>((o1, o2) -> {
-                final int o1TypesSize = o1.types == null || o1.types.isEmpty() ? Integer.MAX_VALUE : o1.types.size();
-                final int o2TypesSize = o2.types == null || o2.types.isEmpty() ? Integer.MAX_VALUE : o2.types.size();
-                return Integer.compare(o1TypesSize, o2TypesSize);
-            });
-            presets.addAll(TaggingPresets.getMatchingPresets(primitive));
-            for (final TaggingPreset preset : presets) {
-                if (preset.getIcon() != null) {
-                    return preset.getIcon();
-                }
+        if (!options.contains(GetPaddedOptions.NO_WAY_PRESETS) || OsmPrimitiveType.WAY != primitive.getType()) {
+            final Optional<ImageIcon> icon = TaggingPresets.getMatchingPresets(primitive).stream()
+                    .sorted(Comparator.comparing(p -> p.types == null || p.types.isEmpty() ? Integer.MAX_VALUE : p.types.size()))
+                    .map(TaggingPreset::getIcon)
+                    .filter(Objects::nonNull)
+                    .map(imageIcon -> getPaddedIcon(imageIcon.getImage(), iconSize))
+                    .findFirst();
+            if (icon.isPresent()) {
+                return icon.get();
             }
         }
 
         // Use generic default icon.
-        return ImageProvider.get(primitive.getDisplayType());
+        return options.contains(GetPaddedOptions.NO_DEFAULT)
+                ? null
+                : getPaddedIcon(get(primitive.getDisplayType()).getImage(), iconSize);
     }
 
     /**
@@ -1530,9 +1565,10 @@ public class ImageProvider {
      * This is a slow operation.
      * @param primitive tagged OSM primitive
      * @param iconSize icon size in pixels
+     * @param options zero or more {@linkplain GetPaddedOptions options}.
      * @return a new padded icon for the given tagged primitive, or null
      */
-    private static ImageIcon getTaggedPadded(OsmPrimitive primitive, Dimension iconSize) {
+    private static ImageIcon getTaggedPadded(OsmPrimitive primitive, Dimension iconSize, Collection<GetPaddedOptions> options) {
         Pair<StyleElementList, Range> nodeStyles;
         DataSet ds = primitive.getDataSet();
         if (ds != null) {
@@ -1549,7 +1585,8 @@ public class ImageProvider {
             if (style instanceof NodeElement) {
                 NodeElement nodeStyle = (NodeElement) style;
                 MapImage icon = nodeStyle.mapImage;
-                if (icon != null) {
+                if (icon != null &&
+                        (icon.name == null || !options.contains(GetPaddedOptions.NO_DEPRECATED) || !icon.name.contains("deprecated"))) {
                     return getPaddedIcon(icon, iconSize);
                 }
             }
@@ -1567,17 +1604,20 @@ public class ImageProvider {
      * @since 14284
      */
     public static ImageIcon getPaddedIcon(MapImage mapImage, Dimension iconSize) {
+        return getPaddedIcon(mapImage.getImage(false), iconSize);
+    }
+
+    private static ImageIcon getPaddedIcon(Image mapImage, Dimension iconSize) {
         synchronized (paddedImageCache) {
             return paddedImageCache.computeIfAbsent(iconSize, x -> new HashMap<>()).computeIfAbsent(mapImage, icon -> {
                 int backgroundRealWidth = GuiSizesHelper.getSizeDpiAdjusted(iconSize.width);
                 int backgroundRealHeight = GuiSizesHelper.getSizeDpiAdjusted(iconSize.height);
-                int iconRealWidth = icon.getWidth();
-                int iconRealHeight = icon.getHeight();
+                int iconRealWidth = icon.getWidth(null);
+                int iconRealHeight = icon.getHeight(null);
                 BufferedImage image = new BufferedImage(backgroundRealWidth, backgroundRealHeight, BufferedImage.TYPE_INT_ARGB);
                 double scaleFactor = Math.min(
                         backgroundRealWidth / (double) iconRealWidth,
                         backgroundRealHeight / (double) iconRealHeight);
-                Image iconImage = icon.getImage(false);
                 Image scaledIcon;
                 final int scaledWidth;
                 final int scaledHeight;
@@ -1585,12 +1625,12 @@ public class ImageProvider {
                     // Scale icon such that it fits on background.
                     scaledWidth = (int) (iconRealWidth * scaleFactor);
                     scaledHeight = (int) (iconRealHeight * scaleFactor);
-                    scaledIcon = iconImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+                    scaledIcon = icon.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
                 } else {
                     // Use original size, don't upscale.
                     scaledWidth = iconRealWidth;
                     scaledHeight = iconRealHeight;
-                    scaledIcon = iconImage;
+                    scaledIcon = icon;
                 }
                 image.getGraphics().drawImage(scaledIcon,
                         (backgroundRealWidth - scaledWidth) / 2,

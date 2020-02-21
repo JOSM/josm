@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -71,6 +73,7 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
@@ -85,10 +88,8 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.IExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -683,18 +684,18 @@ public class TagEditHelper {
             if (buttons.isEmpty()) {
                 return;
             }
-            final Tag tag = new Tag(keys.getSelectedOrEditItem(), values.getSelectedOrEditItem());
-            buttons.get(0).setIcon(findIcon(tag)
+            buttons.get(0).setIcon(findIcon(keys.getSelectedOrEditItem(), values.getSelectedOrEditItem())
                     .orElse(ImageProvider.get("ok", ImageProvider.ImageSizes.LARGEICON)));
         }
 
-        protected Optional<ImageIcon> findIcon(Tag tag) {
-            final Optional<ImageIcon> taggingPresetIcon = TaggingPresets.getMatchingPresets(null, tag.getKeys(), false).stream()
-                    .map(preset -> preset.getIcon(Action.LARGE_ICON_KEY))
-                    .filter(Objects::nonNull)
-                    .findFirst();
-            // Java 9: use Optional.or
-            return taggingPresetIcon.isPresent() ? taggingPresetIcon : Optional.ofNullable(MapPaintStyles.getNodeIcon(tag, false));
+        protected Optional<ImageIcon> findIcon(String key, String value) {
+            final Iterator<OsmPrimitive> osmPrimitiveIterator = sel.iterator();
+            final OsmPrimitive virtual = (osmPrimitiveIterator.hasNext() ? osmPrimitiveIterator.next().getType() : OsmPrimitiveType.NODE)
+                    .newInstance(0, false);
+            virtual.put(key, value);
+            final ImageIcon padded = ImageProvider.getPadded(virtual, ImageProvider.ImageSizes.LARGEICON.getImageDimension(),
+                    EnumSet.of(ImageProvider.GetPaddedOptions.NO_DEFAULT, ImageProvider.GetPaddedOptions.NO_DEPRECATED));
+            return Optional.ofNullable(padded);
         }
 
         protected JPopupMenu popupMenu = new JPopupMenu() {
@@ -962,7 +963,7 @@ public class TagEditHelper {
                 if (keyExists && PROPERTY_RECENT_EXISTING.get() == RecentExisting.DISABLE) {
                     action.setEnabled(false);
                 }
-                ImageIcon icon = findIcon(t)
+                ImageIcon icon = findIcon(t.getKey(), t.getValue())
                         // If still nothing display an empty icon
 
                         .orElseGet(() -> new ImageIcon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)));

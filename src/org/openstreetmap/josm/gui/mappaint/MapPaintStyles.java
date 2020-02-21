@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,9 +20,6 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.sources.MapPaintPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
-import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
-import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -214,45 +212,23 @@ public final class MapPaintStyles {
      * Returns the node icon that would be displayed for the given tag.
      * @param tag The tag to look an icon for
      * @return {@code null} if no icon found
+     * @deprecated use {@link ImageProvider#getPadded}
      */
+    @Deprecated
     public static ImageIcon getNodeIcon(Tag tag) {
-        return getNodeIcon(tag, true);
-    }
-
-    /**
-     * Returns the node icon that would be displayed for the given tag.
-     * @param tag The tag to look an icon for
-     * @param includeDeprecatedIcon if {@code true}, the special deprecated icon will be returned if applicable
-     * @return {@code null} if no icon found, or if the icon is deprecated and not wanted
-     */
-    public static ImageIcon getNodeIcon(Tag tag, boolean includeDeprecatedIcon) {
         if (tag != null) {
             DataSet ds = new DataSet();
             Node virtualNode = new Node(LatLon.ZERO);
             virtualNode.put(tag.getKey(), tag.getValue());
-            StyleElementList styleList;
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
             try {
                 // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
                 ds.addPrimitive(virtualNode);
-                styleList = getStyles().generateStyles(virtualNode, 0.5, false).a;
-                ds.removePrimitive(virtualNode);
+                return ImageProvider.getPadded(virtualNode, ImageProvider.ImageSizes.SMALLICON.getImageDimension(),
+                        EnumSet.of(ImageProvider.GetPaddedOptions.NO_PRESETS, ImageProvider.GetPaddedOptions.NO_DEFAULT));
             } finally {
+                ds.removePrimitive(virtualNode);
                 MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
-            }
-            if (styleList != null) {
-                for (StyleElement style : styleList) {
-                    if (style instanceof NodeElement) {
-                        MapImage mapImage = ((NodeElement) style).mapImage;
-                        if (mapImage != null) {
-                            if (includeDeprecatedIcon || mapImage.name == null || !DEPRECATED_IMAGE_NAMES.contains(mapImage.name)) {
-                                return new ImageIcon(mapImage.getImage(false));
-                            } else {
-                                return null; // Deprecated icon found but not wanted
-                            }
-                        }
-                    }
-                }
             }
         }
         return null;
