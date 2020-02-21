@@ -465,7 +465,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     private static boolean isAllowedPhoneticCharacter(String key, int c) {
-        return c == 0x0259                                          // U+0259 is used as a standard character in azerbaidjani
+        return c == 0x0259 || c == 0x018F // U+0259 is paired with the capital letter U+018F in Azeri, see #18740
+            || c == 0x0254 || c == 0x0186 // U+0254 is paired with the capital letter U+0186 in several African languages, see #18740
+            || c == 0x025B || c == 0x0190 // U+025B is paired with the capital letter U+0190 in several African languages, see #18740
             || (key.endsWith("ref") && 0x1D2C <= c && c <= 0x1D42); // allow uppercase superscript latin characters in *ref tags
     }
 

@@ -342,6 +342,14 @@ public class TagCheckerTest {
     }
 
     /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18740">Bug #18740</a>.
+     */
+    @Test
+    public void testTicket18740() {
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:ak", "Frɛnkyeman"));
+    }
+
+    /**
      * Detects objects with types not supported by their presets.
      * @throws IOException in case of I/O error
      */
