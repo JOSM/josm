@@ -585,7 +585,7 @@ public class QuadBuckets<T extends IPrimitive> implements Collection<T> {
      */
     public List<T> search(BBox searchBbox) {
         List<T> ret = new ArrayList<>();
-        if (!searchBbox.isValid()) {
+        if (searchBbox == null || !searchBbox.isValid()) {
             return ret;
         }
 

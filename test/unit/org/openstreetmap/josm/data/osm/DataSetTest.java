@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -64,6 +65,33 @@ public class DataSetTest {
         List<Relation> result = ds.searchRelations(bbox);
         Assert.assertEquals("We should have found only one item.", 1, result.size());
         Assert.assertTrue("The item found is relation r.", result.contains(r));
+    }
+
+    /**
+     * Unit test for {@link DataSet#searchPrimitives}
+     */
+    @Test
+    public void testSearchPrimitives() {
+        final DataSet ds = new DataSet();
+        // null bbox => empty list
+        Assert.assertTrue("Empty data set should produce an empty list.", ds.searchPrimitives(null).isEmpty());
+
+        // empty data set, any bbox => empty list
+        BBox bbox = new BBox(new LatLon(-180, -90), new LatLon(180, 90));
+        Assert.assertTrue("Empty data set should produce an empty list.", ds.searchPrimitives(bbox).isEmpty());
+        // data set with elements in the given bbox => these elements
+        Node node = new Node(LatLon.ZERO);
+        Node node2 = new Node(new LatLon(-0.01, -0.01));
+        Way way = TestUtils.newWay("", node, node2);
+        Relation r = new Relation(1);
+        RelationMember rm = new RelationMember("role", node);
+        r.addMember(rm);
+        way.getNodes().forEach(ds::addPrimitive);
+        ds.addPrimitive(way);
+        ds.addPrimitive(r);
+        bbox = new BBox(new LatLon(-1.0, -1.0), new LatLon(1.0, 1.0));
+        List<OsmPrimitive> result = ds.searchPrimitives(bbox);
+        Assert.assertEquals("We should have found four items.", 4, result.size());
     }
 
     /**

@@ -429,6 +429,21 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
         }
     }
 
+    /**
+     * Searches for all primitives in the given bounding box
+     *
+     * @param bbox the bounding box
+     * @return List of primitives in the given bbox. Can be empty but not null
+     * @since 15891
+     */
+    public List<OsmPrimitive> searchPrimitives(BBox bbox) {
+        List<OsmPrimitive> primitiveList = new ArrayList<>();
+        primitiveList.addAll(searchNodes(bbox));
+        primitiveList.addAll(searchWays(bbox));
+        primitiveList.addAll(searchRelations(bbox));
+        return primitiveList;
+    }
+
     @Override
     public Collection<Relation> getRelations() {
         return getPrimitives(Relation.class::isInstance);
