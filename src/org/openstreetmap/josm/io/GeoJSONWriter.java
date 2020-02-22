@@ -5,7 +5,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -79,8 +79,7 @@ public class GeoJSONWriter {
      */
     public String write(boolean pretty) {
         StringWriter stringWriter = new StringWriter();
-        Map<String, Object> config = new HashMap<>(1);
-        config.put(JsonGenerator.PRETTY_PRINTING, pretty);
+        Map<String, Object> config = Collections.singletonMap(JsonGenerator.PRETTY_PRINTING, pretty);
         try (JsonWriter writer = Json.createWriterFactory(config).createWriter(stringWriter)) {
             JsonObjectBuilder object = Json.createObjectBuilder()
                     .add("type", "FeatureCollection")

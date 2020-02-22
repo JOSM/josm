@@ -5,10 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -106,8 +104,7 @@ public class ChangePropertyCommand extends Command {
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, String key, String value) {
         super(objects.iterator().next().getDataSet());
-        this.tags = new HashMap<>(1);
-        this.tags.put(key, value);
+        this.tags = Collections.singletonMap(key, value);
         init(objects);
     }
 
@@ -120,7 +117,7 @@ public class ChangePropertyCommand extends Command {
      * @throws NullPointerException if object is null
      */
     public ChangePropertyCommand(OsmPrimitive object, String key, String value) {
-        this(Arrays.asList(object), key, value);
+        this(Collections.singleton(object), key, value);
     }
 
     /**
