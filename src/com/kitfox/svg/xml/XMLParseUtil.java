@@ -301,30 +301,18 @@ public class XMLParseUtil
      *     "font-size:12;fill:#d32c27;fill-rule:evenodd;stroke-width:1pt;"
      * @param map - A map to which these styles will be added
      */
-    public static HashMap<String, StyleAttribute> parseStyle(String styleString, HashMap<String, StyleAttribute> map) {
+    public static void parseStyle(String styleString, HashMap<String, String> map) {
         final Pattern patSemi = Pattern.compile(";");
 
-        String[] styles = patSemi.split(styleString);
-
-        for (int i = 0; i < styles.length; i++)
-        {
-            if (styles[i].length() == 0)
-            {
-                continue;
-            }
-
-            int colon = styles[i].indexOf(':');
-            if (colon == -1)
-            {
-                continue;
-            }
-
-            String key = styles[i].substring(0, colon).trim().intern();
-            String value = quoteMatch.reset(styles[i].substring(colon + 1).trim()).replaceAll("").intern();
-
-            map.put(key, new StyleAttribute(key, value));
-        }
-
-        return map;
+        // com.kitfox.svg.xml.StyleAttribute	58,595 (3.6%)	1,992,230 B (1.4%)	n/a
+        patSemi.splitAsStream(styleString)
+                .filter(style -> !style.isEmpty())
+                .forEach(style  -> {
+                    int colon = style.indexOf(':');
+                    if (colon == -1) return;
+                    String key = style.substring(0, colon).trim().intern();
+                    String value = quoteMatch.reset(style.substring(colon + 1).trim()).replaceAll("").intern();
+                    map.put(key, value);
+                });
     }
 }

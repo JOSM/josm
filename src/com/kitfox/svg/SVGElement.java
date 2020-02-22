@@ -88,12 +88,12 @@ abstract public class SVGElement implements Serializable
     /**
      * Styles defined for this elemnt via the <b>style</b> attribute.
      */
-    protected final HashMap<String, StyleAttribute> inlineStyles = new HashMap<>();
+    protected final HashMap<String, String> inlineStyles = new HashMap<>();
     /**
      * Presentation attributes set for this element. Ie, any attribute other
      * than the <b>style</b> attribute.
      */
-    protected final HashMap<String, StyleAttribute> presAttribs = new HashMap<>();
+    protected final HashMap<String, String> presAttributes = new HashMap<>();
     /**
      * A list of presentation attributes to not include in the presentation
      * attribute set.
@@ -272,7 +272,7 @@ abstract public class SVGElement implements Serializable
         String style = attrs.getValue("style");
         if (style != null)
         {
-            HashMap<?, ?> map = XMLParseUtil.parseStyle(style, inlineStyles);
+            XMLParseUtil.parseStyle(style, inlineStyles);
         }
 
         String base = attrs.getValue("xml:base");
@@ -298,7 +298,7 @@ abstract public class SVGElement implements Serializable
             }
             String value = attrs.getValue(i);
 
-            presAttribs.put(name, new StyleAttribute(name, value == null ? null : value.intern()));
+            presAttributes.put(name, value == null ? null : value.intern());
         }
     }
 
@@ -315,7 +315,7 @@ abstract public class SVGElement implements Serializable
      */
     public Set<String> getPresentationAttributes()
     {
-        return presAttribs.keySet();
+        return presAttributes.keySet();
     }
 
     /**
@@ -485,9 +485,9 @@ abstract public class SVGElement implements Serializable
         String styName = attrib.getName();
 
         //Check for local inline styles
-        StyleAttribute styAttr = inlineStyles.get(styName);
+        String styAttr = inlineStyles.get(styName);
 
-        attrib.setStringValue(styAttr == null ? "" : styAttr.getStringValue());
+        attrib.setStringValue(styAttr == null ? "" : styAttr);
 
         //Return if we've found a non animated style
         if (styAttr != null)
@@ -497,9 +497,9 @@ abstract public class SVGElement implements Serializable
 
 
         //Check for presentation attribute
-        StyleAttribute presAttr = presAttribs.get(styName);
+        String presAttr = presAttributes.get(styName);
 
-        attrib.setStringValue(presAttr == null ? "" : presAttr.getStringValue());
+        attrib.setStringValue(presAttr == null ? "" : presAttr);
 
         //Return if we've found a presentation attribute instead
         if (presAttr != null)
@@ -545,7 +545,8 @@ abstract public class SVGElement implements Serializable
     public StyleAttribute getStyleAbsolute(String styName)
     {
         //Check for local inline styles
-        return inlineStyles.get(styName);
+        final String value = inlineStyles.get(styName);
+        return value != null ? new StyleAttribute(styName, value) : null;
     }
 
     /**
@@ -560,18 +561,13 @@ abstract public class SVGElement implements Serializable
         String presName = attrib.getName();
 
         //Make sure we have a coresponding presentation attribute
-        StyleAttribute presAttr = presAttribs.get(presName);
+        String presAttr = presAttributes.get(presName);
 
         //Copy presentation value directly
-        attrib.setStringValue(presAttr == null ? "" : presAttr.getStringValue());
+        attrib.setStringValue(presAttr == null ? "" : presAttr);
 
         //Return if we found presentation attribute
-        if (presAttr != null)
-        {
-            return true;
-        }
-
-        return false;
+        return presAttr != null;
     }
 
     /**
@@ -583,7 +579,8 @@ abstract public class SVGElement implements Serializable
     public StyleAttribute getPresAbsolute(String styName)
     {
         //Check for local inline styles
-        return presAttribs.get(styName);
+        final String value = presAttributes.get(styName);
+        return value != null ? new StyleAttribute(styName, value) : null;
     }
 
     private static final Pattern TRANSFORM_PATTERN = Pattern.compile("\\w+\\([^)]*\\)");
