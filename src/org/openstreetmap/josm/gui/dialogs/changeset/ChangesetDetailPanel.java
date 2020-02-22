@@ -296,7 +296,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     class UpdateChangesetAction extends AbstractAction {
         UpdateChangesetAction() {
             putValue(NAME, tr("Update changeset"));
-            new ImageProvider("dialogs/changeset", "updatechangesetcontent").getResource().attachImageIcon(this);
+            new ImageProvider("dialogs/changeset", "updatechangeset").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Update the changeset from the OSM server"));
         }
 
