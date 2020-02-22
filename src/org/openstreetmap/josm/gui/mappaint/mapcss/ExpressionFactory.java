@@ -181,13 +181,9 @@ public final class ExpressionFactory {
 
         @Override
         public Object evaluate(Environment env) {
-            for (Expression arg : args) {
-                Boolean b = Cascade.convertTo(arg.evaluate(env), boolean.class);
-                if (b == null || !b) {
-                    return Boolean.FALSE;
-                }
-            }
-            return Boolean.TRUE;
+            return args.stream()
+                    .map(arg -> Cascade.convertTo(arg.evaluate(env), boolean.class))
+                    .allMatch(Boolean.TRUE::equals);
         }
     }
 
@@ -208,13 +204,9 @@ public final class ExpressionFactory {
 
         @Override
         public Object evaluate(Environment env) {
-            for (Expression arg : args) {
-                Boolean b = Cascade.convertTo(arg.evaluate(env), boolean.class);
-                if (b != null && b) {
-                    return Boolean.TRUE;
-                }
-            }
-            return Boolean.FALSE;
+            return args.stream()
+                    .map(arg -> Cascade.convertTo(arg.evaluate(env), boolean.class))
+                    .anyMatch(Boolean.TRUE::equals);
         }
     }
 
