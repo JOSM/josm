@@ -69,14 +69,13 @@ public class StyleAttribute implements Serializable
     
     public StyleAttribute(String name) 
     {
-        this.name = name;
-        stringValue = null;
+        this(name, null);
     }
 
     public StyleAttribute(String name, String stringValue) 
     {
-        this.name = name;
-        this.stringValue = stringValue;
+        setName(name);
+        setStringValue(stringValue);
     }
 
     public String getName() {
@@ -85,7 +84,7 @@ public class StyleAttribute implements Serializable
     
     public StyleAttribute setName(String name)
     {
-        this.name = name;
+        this.name = name == null ? null : name.intern();
         return this;
     }
     
@@ -101,7 +100,7 @@ public class StyleAttribute implements Serializable
 
     public void setStringValue(String value)
     {
-        stringValue = value;
+        stringValue = value == null ? null : value.intern();
     }
 
     public boolean getBooleanValue() {
