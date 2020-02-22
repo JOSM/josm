@@ -84,7 +84,7 @@ public final class Projections {
 
     private static final Set<String> allCodes = new HashSet<>();
     private static final Map<String, Supplier<Projection>> projectionSuppliersByCode = new HashMap<>();
-    private static final Map<String, Projection> projectionsByCode_cache = new HashMap<>();
+    private static final Map<String, Projection> projectionsByCodeCache = new HashMap<>();
 
     /*********************************
      * Registry for custom projection
@@ -360,9 +360,11 @@ public final class Projections {
      * @return the corresponding projection, if the code is known, null otherwise
      */
     public static Projection getProjectionByCode(String code) {
-        Projection proj = projectionsByCode_cache.get(code);
-        if (proj != null) return proj;
+        return projectionsByCodeCache.computeIfAbsent(code, Projections::computeProjectionByCode);
+    }
 
+    private static Projection computeProjectionByCode(String code) {
+        Projection proj = null;
         ProjectionDefinition pd = inits.get(code);
         if (pd != null) {
             CustomProjection cproj = new CustomProjection(pd.name, code, null);
@@ -378,9 +380,6 @@ public final class Projections {
             if (ps != null) {
                 proj = ps.get();
             }
-        }
-        if (proj != null) {
-            projectionsByCode_cache.put(code, proj);
         }
         return proj;
     }
