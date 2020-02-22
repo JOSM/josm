@@ -1970,19 +1970,36 @@ public class SearchCompiler {
     static Match compileMapCSS(String mapCSS) throws SearchParseError {
         try {
             final List<Selector> selectors = new MapCSSParser(new StringReader(mapCSS)).selectors_for_search();
-            return new Match() {
-                @Override
-                public boolean match(OsmPrimitive osm) {
-                    for (Selector selector : selectors) {
-                        if (selector.matches(new Environment(osm))) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            };
+            return new MapCSSMatch(selectors);
         } catch (ParseException | IllegalArgumentException e) {
             throw new SearchParseError(tr("Failed to parse MapCSS selector"), e);
+        }
+    }
+
+    private static class MapCSSMatch extends Match {
+        private final List<Selector> selectors;
+
+        MapCSSMatch(List<Selector> selectors) {
+            this.selectors = selectors;
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            return selectors.stream()
+                    .anyMatch(selector -> selector.matches(new Environment(osm)));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            MapCSSMatch that = (MapCSSMatch) o;
+            return Objects.equals(selectors, that.selectors);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(selectors);
         }
     }
 

@@ -158,12 +158,36 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
 
         @Override
         public SearchCompiler.Match get() {
-            return new SearchCompiler.Match() {
-                @Override
-                public boolean match(OsmPrimitive osm) {
-                    return rule.getTagValuesForPrimitive(osm).anyMatch(v -> v == value);
-                }
-            };
+            return new Match(rule, value);
+        }
+    }
+
+    static class Match extends SearchCompiler.Match {
+        final AutoFilterRule rule;
+        final int value;
+
+        Match(AutoFilterRule rule, int value) {
+            this.rule = rule;
+            this.value = value;
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            return rule.getTagValuesForPrimitive(osm).anyMatch(v -> v == value);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Match match = (Match) o;
+            return value == match.value &&
+                    Objects.equals(rule, match.rule);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(rule, value);
         }
     }
 
