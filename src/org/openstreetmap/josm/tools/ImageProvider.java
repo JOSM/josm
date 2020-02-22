@@ -1533,6 +1533,10 @@ public class ImageProvider {
      * @since 15889
      */
     public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize, Collection<GetPaddedOptions> options) {
+        if (iconSize.width <= 0 || iconSize.height <= 0) {
+            return null;
+        }
+
         // Check if the current styles have special icon for tagged objects.
         if (primitive.isTagged()) {
             ImageIcon icon = getTaggedPadded(primitive, iconSize, options);
