@@ -6,18 +6,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -198,24 +197,20 @@ public final class Territories {
     }
 
     /**
-     * Returns a map of regional taginfo instances for the given location.
+     * Returns regional taginfo instances for the given location.
      * @param ll lat/lon where to look.
-     * @return a map of regional taginfo instances for the given location (code / url)
+     * @return regional taginfo instances for the given location (code / url)
      * @since 15876
      */
-    public static Map<String, List<TaginfoRegionalInstance>> getRegionalTaginfoUrls(LatLon ll) {
-        Map<String, List<TaginfoRegionalInstance>> result = new TreeMap<>();
-        if (iso3166Cache != null) {
-            for (String code : iso3166Cache.entrySet().parallelStream().distinct()
+    public static Stream<TaginfoRegionalInstance> getRegionalTaginfoUrls(LatLon ll) {
+        if (iso3166Cache == null) {
+            return Stream.empty();
+        }
+        return iso3166Cache.entrySet().parallelStream().distinct()
                 .filter(e -> Boolean.TRUE.equals(e.getValue().get(ll)))
                 .map(Entry<String, GeoPropertyIndex<Boolean>>::getKey)
-                .collect(Collectors.toSet())) {
-                for (Map<String, TaginfoRegionalInstance> cache : Arrays.asList(taginfoCache, taginfoGeofabrikCache)) {
-                    Optional.ofNullable(cache.get(code)).ifPresent(
-                            taginfo -> result.computeIfAbsent(code, c -> new ArrayList<>()).add(taginfo));
-                }
-            }
-        }
-        return result;
+                .distinct()
+                .flatMap(code -> Stream.of(taginfoCache, taginfoGeofabrikCache).map(cache -> cache.get(code)))
+                .filter(Objects::nonNull);
     }
 }

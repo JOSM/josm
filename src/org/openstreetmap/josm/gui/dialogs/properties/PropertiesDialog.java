@@ -58,6 +58,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -369,13 +370,13 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private void setupTaginfoNationalActions(Collection<? extends IPrimitive> newSel) {
         destroyTaginfoNationalActions();
         if (!newSel.isEmpty()) {
-            Territories.getRegionalTaginfoUrls(
-                    newSel.iterator().next().getBBox().getCenter()).values().stream().flatMap(List::stream).forEach(
-                taginfo -> taginfoNationalActions.add(new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
-                        membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0),
-                        taginfo.getUrl(), String.join("/", taginfo.getIsoCodes())
-                            + (taginfo.getSuffix() == null ? "" : " (" + taginfo.getSuffix() + ")")))
-            );
+            final LatLon center = newSel.iterator().next().getBBox().getCenter();
+            Territories.getRegionalTaginfoUrls(center)
+                    .map(taginfo -> new TaginfoAction(
+                            tagTable, editHelper::getDataKey, editHelper::getDataValues,
+                            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), taginfo.getUrl(),
+                            String.join("/", taginfo.getIsoCodes()) + (taginfo.getSuffix() == null ? "" : " (" + taginfo.getSuffix() + ")"))
+                    ).forEach(taginfoNationalActions::add);
             taginfoNationalActions.stream().map(membershipMenu::add).forEach(membershipMenuTagInfoNatItems::add);
             taginfoNationalActions.stream().map(tagMenu::add).forEach(tagMenuTagInfoNatItems::add);
         }
