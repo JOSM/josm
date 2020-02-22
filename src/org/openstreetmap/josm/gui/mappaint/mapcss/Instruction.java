@@ -51,7 +51,7 @@ public interface Instruction extends StyleKeys {
         public final boolean isSetInstruction;
 
         public AssignmentInstruction(String key, Object val, boolean isSetInstruction) {
-            this.key = key;
+            this.key = key.intern();
             this.isSetInstruction = isSetInstruction;
             if (val instanceof LiteralExpression) {
                 Object litValue = ((LiteralExpression) val).evaluate(null);

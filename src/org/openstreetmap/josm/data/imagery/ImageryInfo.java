@@ -396,7 +396,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             max_zoom = i.defaultMaxZoom;
             min_zoom = i.defaultMinZoom;
             cookies = i.cookies;
-            icon = i.icon;
+            icon = i.icon == null ? null : i.icon.intern();
             description = i.description;
             category = i.category != null ? i.category.getCategoryString() : null;
             if (i.bounds != null) {
@@ -567,7 +567,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
-        icon = e.icon;
+        icon = e.icon == null ? null : e.icon.intern();
         if (e.noTileHeaders != null) {
             noTileHeaders = e.noTileHeaders.toMap();
         }
@@ -632,7 +632,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.bestMarked = i.bestMarked;
         this.overlay = i.overlay;
         // do not copy field {@code mirrors}
-        this.icon = i.icon;
+        this.icon = i.icon == null ? null : i.icon.intern();
         this.isGeoreferenceValid = i.isGeoreferenceValid;
         this.defaultLayers = i.defaultLayers;
         this.customHttpHeaders = i.customHttpHeaders;
@@ -1189,7 +1189,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param icon The entry icon
      */
     public void setIcon(String icon) {
-        this.icon = icon;
+        this.icon = icon == null ? null : icon.intern();
     }
 
     /**

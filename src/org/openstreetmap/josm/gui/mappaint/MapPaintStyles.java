@@ -95,7 +95,7 @@ public final class MapPaintStyles {
          * @param key The tag name
          */
         public TagKeyReference(String key) {
-            this.key = key;
+            this.key = key.intern();
         }
 
         @Override

@@ -23,7 +23,7 @@ public class Keyword {
      * @param val The string value that is written in the MapCSS file
      */
     public Keyword(String val) {
-        this.val = val.toLowerCase(Locale.ENGLISH);
+        this.val = val.toLowerCase(Locale.ENGLISH).intern();
     }
 
     @Override

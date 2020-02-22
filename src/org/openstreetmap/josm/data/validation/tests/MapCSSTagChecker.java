@@ -330,7 +330,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                     }
                     try {
                         final String val = ai.val instanceof Expression
-                                ? Optional.ofNullable(((Expression) ai.val).evaluate(new Environment())).map(Object::toString).orElse(null)
+                                ? Optional.ofNullable(((Expression) ai.val).evaluate(new Environment()))
+                                        .map(Object::toString).map(String::intern).orElse(null)
                                 : ai.val instanceof String
                                 ? (String) ai.val
                                 : ai.val instanceof Keyword

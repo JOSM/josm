@@ -76,9 +76,9 @@ public final class Projections {
          * @param definition projection definition (EPSG format)
          */
         public ProjectionDefinition(String code, String name, String definition) {
-            this.code = code;
-            this.name = name;
-            this.definition = definition;
+            this.code = code.intern();
+            this.name = name.intern();
+            this.definition = definition.intern();
         }
     }
 

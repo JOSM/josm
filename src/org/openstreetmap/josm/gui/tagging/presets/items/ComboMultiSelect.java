@@ -484,13 +484,15 @@ public abstract class ComboMultiSelect extends KeyedItem {
         final List<PresetListEntry> entries = new ArrayList<>(valueArray.length);
         for (int i = 0; i < valueArray.length; i++) {
             final PresetListEntry e = new PresetListEntry(valueArray[i]);
-            e.locale_display_value = locale_display_values != null || values_no_i18n
+            final String value = locale_display_values != null || values_no_i18n
                     ? displayArray[i]
                     : trc(values_context, fixPresetString(displayArray[i]));
+            e.locale_display_value = value == null ? null : value.intern();
             if (shortDescriptionsArray != null) {
-                e.locale_short_description = locale_short_descriptions != null
+                final String description = locale_short_descriptions != null
                         ? shortDescriptionsArray[i]
                         : tr(fixPresetString(shortDescriptionsArray[i]));
+                e.locale_short_description = description == null ? null : description.intern();
             }
 
             entries.add(e);
