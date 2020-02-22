@@ -88,12 +88,15 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         public final TaggingPreset preset;
         public int classification;
         public int favoriteIndex;
-        private final Collection<String> groups = new HashSet<>();
-        private final Collection<String> names = new HashSet<>();
-        private final Collection<String> tags = new HashSet<>();
+        private final Collection<String> groups;
+        private final Collection<String> names;
+        private final Collection<String> tags;
 
         PresetClassification(TaggingPreset preset) {
             this.preset = preset;
+            Set<String> groups = new HashSet<>();
+            Set<String> names = new HashSet<>();
+            Set<String> tags = new HashSet<>();
             TaggingPreset group = preset.group;
             while (group != null) {
                 addLocaleNames(groups, group);
@@ -118,6 +121,9 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                     }
                 }
             }
+            this.groups = Utils.toUnmodifiableList(groups);
+            this.names = Utils.toUnmodifiableList(names);
+            this.tags = Utils.toUnmodifiableList(tags);
         }
 
         private static void addLocaleNames(Collection<String> collection, TaggingPreset preset) {

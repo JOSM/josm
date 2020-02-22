@@ -4,13 +4,16 @@ package org.openstreetmap.josm.tools;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -555,5 +558,19 @@ public class UtilsTest {
         assertFalse(Utils.hasExtension("JOSM.txt", ".jpg", ".txt"));
         assertTrue(Utils.hasExtension("JOSM.txt", "jpg", "txt"));
         assertTrue(Utils.hasExtension(new File("JOSM.txt"), "jpg", "txt"));
+    }
+
+    /**
+     * Test of {@link Utils#toUnmodifiableList}
+     */
+    @Test
+    public void testToUnmodifiableList() {
+        assertSame(Collections.emptyList(), Utils.toUnmodifiableList(null));
+        assertSame(Collections.emptyList(), Utils.toUnmodifiableList(Collections.emptyList()));
+        assertSame(Collections.emptyList(), Utils.toUnmodifiableList(new ArrayList<>()));
+        assertEquals(Collections.singletonList("foo"), Utils.toUnmodifiableList(new ArrayList<>(Collections.singletonList("foo"))));
+        assertEquals(Arrays.asList("foo", "bar", "baz"), Utils.toUnmodifiableList(Arrays.asList("foo", "bar", "baz")));
+        assertEquals(Arrays.asList("foo", "bar", "baz"), Utils.toUnmodifiableList(new ArrayList<>(Arrays.asList("foo", "bar", "baz"))));
+        assertEquals(Arrays.asList("foo", "bar", "baz"), Utils.toUnmodifiableList(new LinkedList<>(Arrays.asList("foo", "bar", "baz"))));
     }
 }

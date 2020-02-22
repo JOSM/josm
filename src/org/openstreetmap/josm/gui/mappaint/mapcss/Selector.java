@@ -536,11 +536,7 @@ public interface Selector {
         protected final List<Condition> conds;
 
         protected AbstractSelector(List<Condition> conditions) {
-            if (conditions == null || conditions.isEmpty()) {
-                this.conds = null;
-            } else {
-                this.conds = conditions;
-            }
+            this.conds = Utils.toUnmodifiableList(conditions);
         }
 
         /**
@@ -551,7 +547,6 @@ public interface Selector {
         @Override
         public boolean matches(Environment env) {
             CheckParameterUtil.ensureParameterNotNull(env, "env");
-            if (conds == null) return true;
             for (Condition c : conds) {
                 try {
                     if (!c.applies(env)) return false;
@@ -568,10 +563,7 @@ public interface Selector {
          * @return the list of conditions
          */
         public List<Condition> getConditions() {
-            if (conds == null) {
-                return Collections.emptyList();
-            }
-            return Collections.unmodifiableList(conds);
+            return conds;
         }
     }
 

@@ -747,6 +747,27 @@ public final class Utils {
     }
 
     /**
+     * Returns an unmodifiable list for the given collection.
+     * Makes use of {@link Collections#emptySet()} and {@link Collections#singleton} and {@link Arrays#asList} to save memory.
+     * @param  collection the collection for which an unmodifiable collection is to be returned
+     * @param <T> the class of the objects in the array
+     * @return an unmodifiable list
+     * @see <a href="https://dzone.com/articles/preventing-your-java-collections-from-wasting-memo">
+     *     How to Prevent Your Java Collections From Wasting Memory</a>
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> toUnmodifiableList(Collection<T> collection) {
+        // Java 9: use List.of(...)
+        if (collection == null || collection.isEmpty()) {
+            return Collections.emptyList();
+        } else if (collection.size() == 1) {
+            return Collections.singletonList(collection.iterator().next());
+        } else {
+            return (List<T>) Arrays.asList(collection.toArray());
+        }
+    }
+
+    /**
      * Returns the first not empty string in the given candidates, otherwise the default string.
      * @param defaultString default string returned if all candidates would be empty if stripped
      * @param candidates string candidates to consider

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A MapCSS rule.
@@ -47,7 +48,7 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
          * @param idx The index in the {@link StyleSource}
          */
         public Declaration(List<Instruction> instructions, int idx) {
-            this.instructions = instructions;
+            this.instructions = Utils.toUnmodifiableList(instructions);
             this.idx = idx;
         }
 
