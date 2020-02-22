@@ -6525,6 +6525,8 @@
             <check key="payment:visa" text="Visa" match="keyvalue" />
         </checkgroup>
         <space />
+        <check key="payment:contactless" text="Contactless payment" match="keyvalue" />
+        <space />
         <combo key="payment:electronic_purses" text="Electronic purses and Charge cards" values="no" match="keyvalue" />
         <checkgroup columns="4">
             <check key="payment:ep_avant" text="Avant (fi)" match="keyvalue" />
