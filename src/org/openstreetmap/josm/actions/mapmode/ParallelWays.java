@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.NodeGraph;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Helper for {@link ParallelWayAction}.
@@ -47,7 +48,7 @@ public class ParallelWays {
 
         // Make a deep copy of the ways, keeping the copied ways connected
         // TODO: This assumes the first/last nodes of the ways are the only possible shared nodes.
-        Map<Node, Node> splitNodeMap = new HashMap<>(sourceWays.size());
+        Map<Node, Node> splitNodeMap = new HashMap<>(Utils.hashMapInitialCapacity(sourceWays.size()));
         for (Way w : sourceWays) {
             copyNodeInMap(splitNodeMap, w.firstNode(), copyTags);
             copyNodeInMap(splitNodeMap, w.lastNode(), copyTags);

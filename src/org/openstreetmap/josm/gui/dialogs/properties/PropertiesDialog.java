@@ -1084,7 +1084,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
         protected void deleteTags(int... rows) {
             // convert list of rows to HashMap (and find gap for nextKey)
-            Map<String, String> tags = new HashMap<>(rows.length);
+            Map<String, String> tags = new HashMap<>(Utils.hashMapInitialCapacity(rows.length));
             int nextKeyIndex = rows[0];
             for (int row : rows) {
                 String key = editHelper.getDataKey(row);

@@ -33,6 +33,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.ReflectionUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Utility methods to convert struct-like classes to a string map and back.
@@ -269,7 +270,7 @@ public final class StructUtils {
         Map ret = null;
         try (JsonReader reader = Json.createReader(new StringReader(s))) {
             JsonObject object = reader.readObject();
-            ret = new HashMap(object.size());
+            ret = new HashMap(Utils.hashMapInitialCapacity(object.size()));
             for (Map.Entry<String, JsonValue> e: object.entrySet()) {
                 JsonValue value = e.getValue();
                 if (value instanceof JsonString) {
