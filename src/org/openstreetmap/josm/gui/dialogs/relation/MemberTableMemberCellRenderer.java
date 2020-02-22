@@ -20,7 +20,7 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
      */
     public MemberTableMemberCellRenderer() {
         super();
-        // Explicit default constructor is needed for intantiation via reflection
+        // Explicit default constructor is needed for instantiation via reflection
     }
 
     protected void renderPrimitive(OsmPrimitive primitive, Dimension cellSize) {
