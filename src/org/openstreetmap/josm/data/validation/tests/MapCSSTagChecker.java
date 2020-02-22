@@ -286,7 +286,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         protected final GroupedMapCSSRule rule;
         /** Commands to apply in order to fix a matching primitive */
         protected final List<FixCommand> fixCommands = new ArrayList<>();
-        /** Tags (or arbitraty strings) of alternatives to be presented to the user */
+        /** Tags (or arbitrary strings) of alternatives to be presented to the user */
         protected final List<String> alternatives = new ArrayList<>();
         /** An {@link org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruction}-{@link Severity} pair.
          * Is evaluated on the matching primitive to give the error message. Map is checked to contain exactly one element. */
