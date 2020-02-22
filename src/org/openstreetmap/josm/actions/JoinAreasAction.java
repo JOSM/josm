@@ -57,8 +57,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
+    private final transient LinkedList<Command> executedCmds = new LinkedList<>();
     private final transient LinkedList<Command> cmds = new LinkedList<>();
-    private int cmdsCount;
     private DataSet ds;
     private final transient List<Relation> addedRelations = new LinkedList<>();
     private final boolean addUndoRedo;
@@ -484,7 +484,6 @@ public class JoinAreasAction extends JosmAction {
 
     private void clearFields() {
         ds = null;
-        cmdsCount = 0;
         cmds.clear();
         addedRelations.clear();
     }
@@ -561,7 +560,7 @@ public class JoinAreasAction extends JosmAction {
                 }
                 commitCommands(tr("Move tags from ways to relations"));
 
-                makeCommitsOneAction(marktr("Joined overlapping areas"));
+                commitExecuted();
 
                 if (result.polygons != null && ds != null) {
                     List<Way> allWays = new ArrayList<>();
@@ -579,18 +578,24 @@ public class JoinAreasAction extends JosmAction {
             }
         } catch (UserCancelException exception) {
             Logging.trace(exception);
-            //revert changes
-            //FIXME: this is dirty hack
-            makeCommitsOneAction(tr("Reverting changes"));
-            if (addUndoRedo) {
-                UndoRedoHandler.getInstance().undo();
-                // add no-change commands to the stack to remove the half-done commands
-                Way w = ways.iterator().next();
-                cmds.add(new ChangeCommand(w, w));
-                cmds.add(new ChangeCommand(w, w));
-                commitCommands(tr("Reverting changes"));
-                UndoRedoHandler.getInstance().undo();
+            tryUndo();
+        } catch (JosmRuntimeException | IllegalArgumentException exception) {
+            Logging.trace(exception);
+            tryUndo();
+            throw exception;
+        }
+    }
+
+    private void tryUndo() {
+        cmds.clear();
+        if (!executedCmds.isEmpty()) {
+            // revert all executed commands
+            ds = executedCmds.getFirst().getAffectedDataSet();
+            ds.beginUpdate();
+            while (!executedCmds.isEmpty()) {
+                executedCmds.removeLast().undoCommand();
             }
+            ds.endUpdate();
         }
     }
 
@@ -895,15 +900,27 @@ public class JoinAreasAction extends JosmAction {
         }
 
         cmds.clear();
-        cmdsCount++;
     }
 
     private void commitCommand(Command c) {
-        if (addUndoRedo) {
-            UndoRedoHandler.getInstance().add(c);
-        } else {
-            c.executeCommand();
+        c.executeCommand();
+        executedCmds.add(c);
+    }
+
+    /**
+     * Add all executed commands as one command to the undo stack without executing them again.
+     */
+    private void commitExecuted() {
+        cmds.clear();
+        if (addUndoRedo && !executedCmds.isEmpty()) {
+            UndoRedoHandler ur = UndoRedoHandler.getInstance();
+            if (executedCmds.size() == 1) {
+                ur.add(executedCmds.getFirst(), false);
+            } else {
+                ur.add(new JoinAreaCommand(executedCmds), false);
+            }
         }
+        executedCmds.clear();
     }
 
     /**
@@ -1435,7 +1452,6 @@ public class JoinAreasAction extends JosmAction {
         // This will turn ways so all of them point in the same direction and CombineAction won't bug
         // the user about this.
 
-        //TODO: ReverseWay and Combine way are really slow and we use them a lot here. This slows down large joins.
         List<Way> actionWays = new ArrayList<>(ways.size());
         int oldestPos = 0;
         Way oldest = ways.get(0).way;
@@ -1449,7 +1465,6 @@ public class JoinAreasAction extends JosmAction {
             if (!way.insideToTheRight) {
                 ReverseWayResult res = ReverseWayAction.reverseWay(way.way);
                 commitCommand(res.getReverseCommand());
-                cmdsCount++;
             }
         }
 
@@ -1461,7 +1476,6 @@ public class JoinAreasAction extends JosmAction {
             throw new JosmRuntimeException("Join areas internal error.");
         }
         commitCommand(result.b);
-        cmdsCount++;
 
         return result.a;
     }
@@ -1707,27 +1721,6 @@ public class JoinAreasAction extends JosmAction {
         commitCommands(marktr("Remove tags from inner ways"));
     }
 
-    /**
-     * Takes the last cmdsCount actions back and combines them into a single action
-     * (for when the user wants to undo the join action)
-     * @param message The commit message to display
-     */
-    private void makeCommitsOneAction(String message) {
-        cmds.clear();
-        if (addUndoRedo) {
-            UndoRedoHandler ur = UndoRedoHandler.getInstance();
-            List<Command> commands = ur.getUndoCommands();
-            int i = Math.max(commands.size() - cmdsCount, 0);
-            for (; i < commands.size(); i++) {
-                cmds.add(commands.get(i));
-            }
-            ur.undo(cmds.size());
-        }
-
-        commitCommands(message == null ? marktr("Join Areas Function") : message);
-        cmdsCount = 0;
-    }
-
     @Override
     protected void updateEnabledState() {
         updateEnabledStateOnCurrentSelection();
@@ -1736,5 +1729,27 @@ public class JoinAreasAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         updateEnabledStateOnModifiableSelection(selection);
+    }
+
+    private static class JoinAreaCommand extends SequenceCommand {
+        JoinAreaCommand(Collection<Command> sequenz) {
+            super(tr("Joined overlapping areas"), sequenz, true);
+            setSequenceComplete(true);
+        }
+
+        @Override
+        public void undoCommand() {
+            getAffectedDataSet().beginUpdate();
+            super.undoCommand();
+            getAffectedDataSet().endUpdate();
+        }
+
+        @Override
+        public boolean executeCommand() {
+            getAffectedDataSet().beginUpdate();
+            boolean rc = super.executeCommand();
+            getAffectedDataSet().endUpdate();
+            return rc;
+        }
     }
 }
