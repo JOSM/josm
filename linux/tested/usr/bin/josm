@@ -18,12 +18,13 @@ if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null \
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java"
 	# Released versions in decreased order
+	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-14-openjdk/bin/java /usr/lib/jvm/java-14-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-13-openjdk/bin/java /usr/lib/jvm/java-13-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-12-openjdk/bin/java /usr/lib/jvm/java-12-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-10-openjdk/bin/java /usr/lib/jvm/java-10-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-9-openjdk/bin/java /usr/lib/jvm/java-9-openjdk-$ARCH/bin/java"
 	# Development version
-	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-14-openjdk/bin/java /usr/lib/jvm/java-14-openjdk-$ARCH/bin/java"
+	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-15-openjdk/bin/java /usr/lib/jvm/java-15-openjdk-$ARCH/bin/java"
 fi
 # Undetermined version
 JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/default-java/bin/java /usr/bin/java"
