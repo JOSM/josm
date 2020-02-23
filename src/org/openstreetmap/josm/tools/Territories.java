@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -202,15 +203,16 @@ public final class Territories {
      * @return regional taginfo instances for the given location (code / url)
      * @since 15876
      */
-    public static Stream<TaginfoRegionalInstance> getRegionalTaginfoUrls(LatLon ll) {
+    public static List<TaginfoRegionalInstance> getRegionalTaginfoUrls(LatLon ll) {
         if (iso3166Cache == null) {
-            return Stream.empty();
+            return Collections.emptyList();
         }
         return iso3166Cache.entrySet().parallelStream().distinct()
                 .filter(e -> Boolean.TRUE.equals(e.getValue().get(ll)))
                 .map(Entry<String, GeoPropertyIndex<Boolean>>::getKey)
                 .distinct()
                 .flatMap(code -> Stream.of(taginfoCache, taginfoGeofabrikCache).map(cache -> cache.get(code)))
-                .filter(Objects::nonNull);
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

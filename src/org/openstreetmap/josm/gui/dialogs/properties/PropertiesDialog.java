@@ -371,7 +371,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         destroyTaginfoNationalActions();
         if (!newSel.isEmpty()) {
             final LatLon center = newSel.iterator().next().getBBox().getCenter();
-            Territories.getRegionalTaginfoUrls(center)
+            Territories.getRegionalTaginfoUrls(center).stream()
                     .map(taginfo -> new TaginfoAction(
                             tagTable, editHelper::getDataKey, editHelper::getDataValues,
                             membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), taginfo.getUrl(),
