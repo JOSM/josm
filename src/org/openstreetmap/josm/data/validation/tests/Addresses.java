@@ -400,7 +400,7 @@ public class Addresses extends Test {
                         return;
                     }
                 } else {
-                    Logging.warn("Addresses test skipped chunck "+chunk+" for street part "+streetPart+" because p1 or p2 is null");
+                    Logging.warn("Addresses test skipped chunk "+chunk+" for street part "+streetPart+" because p1 or p2 is null");
                 }
             }
             if (!hasIncompleteWays && streetPart.isIncomplete()) {
