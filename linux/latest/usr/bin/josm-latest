@@ -1,19 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 # Simple wrapper script used to start JOSM in Debian
 set -e
 
 # First, the alternative (if known to work) or users preference as defined by $JAVA_HOME. Next, use OpenJDK.
 # Override to a specific one using $JAVACMD
-ALTERNATIVE_JDK="`readlink -n -f /etc/alternatives/java`"
+ALTERNATIVE_JDK=$(readlink -n -f /etc/alternatives/java)
 
 # Let's get the current architecture -- needed for multiarchified Java
-ARCH="`dpkg --print-architecture 2> /dev/null || true`"
+ARCH=$(dpkg --print-architecture 2> /dev/null || true)
 
 JAVA_CMDS="$JAVA_HOME/bin/java"
 
 # If OpenJDK is only available headless, do not try it
-if dpkg --get-selections 'openjdk-*-jre' | grep install$ > /dev/null \
-|| dpkg --get-selections 'openjdk-*-jre:$ARCH' | grep install$ > /dev/null ; then
+if dpkg --get-selections "openjdk-*-jre" | grep install$ > /dev/null \
+|| dpkg --get-selections "openjdk-*-jre:$ARCH" | grep install$ > /dev/null ; then
 	# LTS versions in decreased order
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-11-openjdk/bin/java /usr/lib/jvm/java-11-openjdk-$ARCH/bin/java"
 	JAVA_CMDS="${JAVA_CMDS} /usr/lib/jvm/java-8-openjdk/bin/java /usr/lib/jvm/java-8-openjdk-$ARCH/bin/java"
@@ -37,7 +37,7 @@ JAVA_OPTS="-Djosm.restart=true -Djosm.dir.name=JOSM-latest -Djava.net.useSystemP
 
 if [ -z "${JAVACMD}" ]; then
     for jcmd in $JAVA_CMDS; do
-        if [ "z$ALTERNATIVE_JDK" = "z`readlink -n -f $jcmd`" ] && [ -z "${JAVACMD}" ]; then
+        if [ "z$ALTERNATIVE_JDK" = "z$(readlink -n -f "$jcmd")" ] && [ -z "${JAVACMD}" ]; then
             JAVACMD="$jcmd"
             break
         fi
@@ -46,7 +46,7 @@ fi
 
 if [ -z "${JAVACMD}" ]; then
     for jcmd in $JAVA_CMDS; do
-        if [ -x "$jcmd" -a -z "${JAVACMD}" ]; then
+        if [ -x "$jcmd" ] && [ -z "${JAVACMD}" ]; then
             JAVACMD="$jcmd"
             break
         fi
@@ -55,14 +55,14 @@ fi
 
 if [ "$JAVACMD" ]; then
     echo "Using $JAVACMD to execute josm-latest." || true
-    if [ "`expr match \"${JAVACMD}\" 'java-9'`" != "0" ] || [ "`expr match \"${JAVACMD}\" 'java-10'`" != "0" ]; then
+    if [[ "${JAVACMD}" =~ 'java-9' ]] || [[ "${JAVACMD}" =~ 'java-10' ]]; then
         JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
-    elif [ "`expr match \"${JAVACMD}\" 'java-1'`" != "0" ]; then
+    elif [[ "${JAVACMD}" =~ 'java-1' ]]; then
         JAVA_OPTS="--add-modules java.scripting,java.sql $JAVA_OPTS"
     fi
     set +e
     while true; do
-        $JAVACMD $JAVA_OPTS -jar /usr/share/josm-latest/josm-latest.jar "$@"
+        $JAVACMD "$JAVA_OPTS" -jar /usr/share/josm-latest/josm-latest.jar "$@"
         if [ "z$?" != "z9" ]; then
             break
         fi

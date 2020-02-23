@@ -1,6 +1,5 @@
 #!/bin/sh
 
-for x in $(find images/ -name "*.png"); do
-    echo "Processing ${x}"
-    optipng -o7 -quiet "${x}"
-done
+find images/ -name "*.png" \
+  -exec echo "Processing {}" \; \
+  -exec optipng -o7 -quiet "{}" \;
