@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
+        <mime-type type="application/x-osm+xml">
+                <sub-class-of type="application/xml"/>
+                <comment>OSM XML file</comment>
+                <glob pattern="*.osm"/>
+        </mime-type>
+        <mime-type type="application/x-josm-session+xml">
+                <sub-class-of type="application/xml"/>
+                <comment>JOSM session file</comment>
+                <glob pattern="*.jos"/>
+        </mime-type>
+        <mime-type type="application/x-josm-session+zip">
+                <sub-class-of type="application/zip"/>
+                <comment>JOSM session archive</comment>
+                <glob pattern="*.joz"/>
+        </mime-type>
+</mime-info>

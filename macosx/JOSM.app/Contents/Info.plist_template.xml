@@ -30,6 +30,30 @@
             <string>application/x-osm+xml</string>
         </dict>
     </dict>
+    <!-- Export JOSM session file format UTI (*.jos) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>org.openstreetmap.josm.jos</string>
+        <key>UTTypeDescription</key>
+        <string>JOS File</string>
+        <key>UTTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.xml</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>com.apple.ostype</key>
+            <string>JOSM</string>
+            <key>public.filename-extension</key>
+            <array>
+                <string>jos</string>
+            </array>
+            <key>public.mime-type</key>
+            <string>application/x-josm-session+xml</string>
+        </dict>
+    </dict>
     <!-- Export JOSM session file format UTI (*.joz) -->
     <dict>
         <key>UTTypeIdentifier</key>
@@ -50,6 +74,8 @@
             <array>
                 <string>joz</string>
             </array>
+            <key>public.mime-type</key>
+            <string>application/x-josm-session+zip</string>
         </dict>
     </dict>
     <!-- Export GeoJSON file format UTI (*.geojson) -->
@@ -145,6 +171,21 @@
             <string>com.pkware.zip-archive</string>
             <string>org.gnu.gnu-zip-archive</string>
             <string>public.archive.bzip2</string>
+        </array>
+    </dict>
+    <!-- Registers opening *.jos files -->
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>JOS Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>org.openstreetmap.josm.jos</string>
         </array>
     </dict>
     <!-- Registers opening *.joz files -->

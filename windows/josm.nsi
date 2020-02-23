@@ -343,7 +343,13 @@ WriteRegStr HKCR "${OSM_ASSOC}\DefaultIcon" "" '"$INSTDIR\${DEST}.exe",0'
 push $R0
 	StrCpy $R0 ".osm"
   	Call Associate
+	StrCpy $R0 ".geojson"
+  	Call Associate
 	StrCpy $R0 ".gpx"
+  	Call Associate
+	StrCpy $R0 ".jos"
+  	Call Associate
+	StrCpy $R0 ".joz"
   	Call Associate
 ; if somethings added here, add it also to the uninstall section
 pop $R0
@@ -401,7 +407,13 @@ DeleteRegKey HKCU "Software/JOSM" ;${MUI_LANGDLL_REGISTRY_ROOT} ${MUI_LANGDLL_RE
 push $R0
 	StrCpy $R0 ".osm"
   	Call un.unlink
+	StrCpy $R0 ".geojson"
+  	Call un.unlink
 	StrCpy $R0 ".gpx"
+  	Call un.unlink
+	StrCpy $R0 ".jos"
+  	Call un.unlink
+	StrCpy $R0 ".joz"
   	Call un.unlink
 pop $R0
 
