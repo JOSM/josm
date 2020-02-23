@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
+import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory;
@@ -41,7 +42,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Subpart;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -727,7 +727,7 @@ Selector selector() :
 {
     Token base;
     Condition c;
-    Pair<Integer, Integer> r = null;
+    Range r = Range.ZERO_TO_INFINITY;
     List<Condition> conditions = new ArrayList<Condition>();
     Subpart sub = null;
 }
@@ -739,7 +739,7 @@ Selector selector() :
     { return new GeneralSelector(base.image, r, conditions, sub); }
 }
 
-Pair<Integer, Integer> zoom() :
+Range zoom() :
 {
     Integer min = 0;
     Integer max = Integer.MAX_VALUE;
@@ -754,7 +754,7 @@ Pair<Integer, Integer> zoom() :
         |
             min=uint() { max = min; }
     )
-    { return new Pair<Integer, Integer>(min, max); }
+    { return GeneralSelector.fromLevel(min, max); }
 }
 
 Condition condition(Context context) :

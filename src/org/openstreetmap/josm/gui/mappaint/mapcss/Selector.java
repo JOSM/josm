@@ -31,7 +31,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.OpenEndPseudo
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -609,7 +608,7 @@ public interface Selector {
      */
     class GeneralSelector extends OptimizedGeneralSelector {
 
-        public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
+        public GeneralSelector(String base, Range zoom, List<Condition> conds, Subpart subpart) {
             super(base, zoom, conds, subpart);
         }
 
@@ -637,27 +636,10 @@ public interface Selector {
         public final Range range;
         public final Subpart subpart;
 
-        public OptimizedGeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
-            super(conds);
-            this.base = checkBase(base);
-            if (zoom != null) {
-                int a = zoom.a == null ? 0 : zoom.a;
-                int b = zoom.b == null ? Integer.MAX_VALUE : zoom.b;
-                if (a <= b) {
-                    range = fromLevel(a, b);
-                } else {
-                    range = Range.ZERO_TO_INFINITY;
-                }
-            } else {
-                range = Range.ZERO_TO_INFINITY;
-            }
-            this.subpart = subpart != null ? subpart : Subpart.DEFAULT_SUBPART;
-        }
-
         public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, Subpart subpart) {
             super(conds);
             this.base = checkBase(base);
-            this.range = range;
+            this.range = Objects.requireNonNull(range, "range");
             this.subpart = subpart != null ? subpart : Subpart.DEFAULT_SUBPART;
         }
 
