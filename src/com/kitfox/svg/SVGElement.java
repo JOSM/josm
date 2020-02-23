@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,12 +89,12 @@ abstract public class SVGElement implements Serializable
     /**
      * Styles defined for this elemnt via the <b>style</b> attribute.
      */
-    protected final HashMap<String, String> inlineStyles = new HashMap<>();
+    private Map<String, String> inlineStyles = Collections.emptyMap();
     /**
      * Presentation attributes set for this element. Ie, any attribute other
      * than the <b>style</b> attribute.
      */
-    protected final HashMap<String, String> presAttributes = new HashMap<>();
+    private Map<String, String> presAttributes = Collections.emptyMap();
     /**
      * A list of presentation attributes to not include in the presentation
      * attribute set.
@@ -272,7 +273,7 @@ abstract public class SVGElement implements Serializable
         String style = attrs.getValue("style");
         if (style != null)
         {
-            XMLParseUtil.parseStyle(style, inlineStyles);
+            inlineStyles = XMLParseUtil.parseStyle(style);
         }
 
         String base = attrs.getValue("xml:base");
@@ -298,8 +299,13 @@ abstract public class SVGElement implements Serializable
             }
             String value = attrs.getValue(i);
 
+            if (i == 0)
+            {
+                presAttributes = new HashMap<>();
+            }
             presAttributes.put(name, value == null ? null : value.intern());
         }
+        presAttributes = XMLParseUtil.toUnmodifiableMap(presAttributes);
     }
 
     /**

@@ -37,9 +37,12 @@
 package com.kitfox.svg.xml;
 
 import java.awt.Toolkit;
+import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -56,6 +59,19 @@ public class XMLParseUtil
     static final Matcher fpMatch = Pattern.compile("([-+]?((\\d*\\.\\d+)|(\\d+))([eE][+-]?\\d+)?)(\\%|in|cm|mm|pt|pc|px|em|ex)?").matcher("");
     static final Matcher intMatch = Pattern.compile("[-+]?\\d+").matcher("");
     static final Matcher quoteMatch = Pattern.compile("^'|'$").matcher("");
+
+    /**
+     * A reference to {@link Map#ofEntries(Map.Entry[])} available since Java 9
+     */
+    static final Method mapOfEntries = mapOfEntriesMethod();
+
+    private static Method mapOfEntriesMethod() {
+        try {
+            return Map.class.getMethod("ofEntries", Map.Entry[].class);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
 
     /** Creates a new instance of XMLParseUtil */
     private XMLParseUtil()
@@ -299,9 +315,10 @@ public class XMLParseUtil
      * Takes a CSS style string and returns a hash of them.
      * @param styleString - A CSS formatted string of styles.  Eg,
      *     "font-size:12;fill:#d32c27;fill-rule:evenodd;stroke-width:1pt;"
-     * @param map - A map to which these styles will be added
+     * @return the map with the added styles
      */
-    public static void parseStyle(String styleString, HashMap<String, String> map) {
+    public static Map<String, String> parseStyle(String styleString) {
+        final Map<String, String> map = new HashMap<>();
         final Pattern patSemi = Pattern.compile(";");
 
         // com.kitfox.svg.xml.StyleAttribute	58,595 (3.6%)	1,992,230 B (1.4%)	n/a
@@ -314,5 +331,35 @@ public class XMLParseUtil
                     String value = quoteMatch.reset(style.substring(colon + 1).trim()).replaceAll("").intern();
                     map.put(key, value);
                 });
+        return toUnmodifiableMap(map);
     }
+
+    /**
+     * Returns an unmodifiable map for the given map.
+     * Makes use of {@link Collections#emptyMap()} and {@link Collections#singletonMap} and {@link Map#ofEntries(Map.Entry[])} to save memory.
+     *
+     * @param map the map for which an unmodifiable map is to be returned
+     * @param <K> the type of keys maintained by this map
+     * @param <V> the type of mapped values
+     * @return an unmodifiable map
+     * @see <a href="https://dzone.com/articles/preventing-your-java-collections-from-wasting-memo">
+     * How to Prevent Your Java Collections From Wasting Memory</a>
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> Map<K, V> toUnmodifiableMap(Map<K, V> map) {
+        if (map == null || map.isEmpty()) {
+            return Collections.emptyMap();
+        } else if (map.size() == 1) {
+            final Map.Entry<K, V> entry = map.entrySet().iterator().next();
+            return Collections.singletonMap(entry.getKey(), entry.getValue());
+        } else if (mapOfEntries != null) {
+            try {
+                // Java 9: use Map.ofEntries(...)
+                return (Map<K, V>) mapOfEntries.invoke(null, new Object[]{map.entrySet().toArray(new Map.Entry[0])});
+            } catch (Exception ignore) {
+            }
+        }
+        return Collections.unmodifiableMap(map);
+    }
+
 }
