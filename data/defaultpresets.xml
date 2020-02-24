@@ -2307,7 +2307,7 @@
                 <check key="bicycle" text="Bicycle" />
                 <check key="scooter" text="Scooter" />
                 <check key="motorcycle" text="Motorcycle" />
-                <check key="motorcar" text="Car" />
+                <check key="motorcar" text="Motorcar" />
                 <check key="truck" text="Truck" />
             </checkgroup>
             <space />
