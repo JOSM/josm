@@ -143,7 +143,8 @@ public interface PlatformHook {
      */
     default boolean isHighDpiDisplay() {
         // https://stackoverflow.com/a/49770313
-        return !GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
+        return !GraphicsEnvironment.isHeadless() &&
+                !GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
                 .getDefaultTransform().isIdentity();
     }
 
