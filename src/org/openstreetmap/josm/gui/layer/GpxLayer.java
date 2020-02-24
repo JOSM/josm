@@ -544,6 +544,6 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
     @Override
     public String getChangesetSourceTag() {
         // no i18n for international values
-        return "survey";
+        return isLocalFile ? "survey" : null;
     }
 }

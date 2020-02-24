@@ -238,4 +238,13 @@ public class GpxLayerTest {
             MainApplication.getLayerManager().removeLayer(layer);
         }
     }
+
+    /**
+     * Unit test of {@link GpxLayer#getChangesetSourceTag}.
+     */
+    @Test
+    public void testGetChangesetSourceTag() {
+        assertEquals("survey", new GpxLayer(new GpxData(), "", true).getChangesetSourceTag());
+        assertNull(new GpxLayer(new GpxData(), "", false).getChangesetSourceTag());
+    }
 }
