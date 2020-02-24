@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,6 +35,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -96,6 +98,10 @@ public class TagEditHelperTest {
     @Test
     public void testTicket18764() throws NoSuchMethodException, SecurityException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
+        TestUtils.assumeWorkingJMockit();
+        if (GraphicsEnvironment.isHeadless()) {
+            new WindowMocker();
+        }
         MapCSSStyleSource css = new MapCSSStyleSource(
                 "*[building] ⧉ *[highway] { text: tr(\"Building crossing highway\"); }");
         css.loadStyleSource();
