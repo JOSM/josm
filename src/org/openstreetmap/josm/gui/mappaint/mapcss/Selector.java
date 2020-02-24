@@ -378,7 +378,9 @@ public interface Selector {
 
         private void visitBBox(Environment e, AbstractFinder finder) {
             boolean withNodes = finder instanceof ContainsFinder;
-            if (left instanceof OptimizedGeneralSelector) {
+            if (e.osm.getDataSet() == null) {
+                // do nothing
+            } else if (left instanceof OptimizedGeneralSelector) {
                 if (withNodes && ((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
                     finder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
                 }
@@ -437,6 +439,7 @@ public interface Selector {
             } else if (ChildOrParentSelectorType.CROSSING == type && e.osm instanceof IWay) {
                 e.parent = e.osm;
                 if (right instanceof OptimizedGeneralSelector
+                        && e.osm.getDataSet() != null
                         && ((OptimizedGeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
                     final CrossingFinder crossingFinder = new CrossingFinder(e);
                     crossingFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
