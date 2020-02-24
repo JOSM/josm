@@ -137,6 +137,17 @@ public interface PlatformHook {
     }
 
     /**
+     * Determines if the default screen is a high-dpi device such as a mac Retina display.
+     * @return {@code true} if the default screen is a high-dpi device such as a mac Retina display
+     * @since 15918
+     */
+    default boolean isHighDpiDisplay() {
+        // https://stackoverflow.com/a/49770313
+        return !GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration()
+                .getDefaultTransform().isIdentity();
+    }
+
+    /**
      * Renames a file.
      * @param from Source file
      * @param to Target file
