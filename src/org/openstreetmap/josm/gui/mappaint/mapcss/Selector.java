@@ -724,8 +724,7 @@ public interface Selector {
         }
 
         public static Range fromLevel(int a, int b) {
-            if (a > b)
-                throw new AssertionError();
+            // for input validation in Range constructor below
             double lower = 0;
             double upper = Double.POSITIVE_INFINITY;
             if (b != Integer.MAX_VALUE) {

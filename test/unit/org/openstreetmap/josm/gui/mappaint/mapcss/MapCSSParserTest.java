@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context.PRIMITIVE;
@@ -624,5 +625,26 @@ public class MapCSSParserTest {
             "}");
         sheet.loadStyleSource();
         assertTrue(sheet.getErrors().toString(), sheet.getErrors().isEmpty());
+    }
+
+    /**
+     * Test parsing zoom expressions
+     * @throws ParseException if a parsing error occurs
+     */
+    @Test
+    public void testZoom() throws ParseException {
+        assertNotNull(getParser("|z12").zoom());
+        assertNotNull(getParser("|z12-").zoom());
+        assertNotNull(getParser("|z-12").zoom());
+        assertNotNull(getParser("|z12-16").zoom());
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18759">Bug #18759</a>.
+     * @throws ParseException if a parsing error occurs
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testZoomIAE() throws ParseException {
+        assertNotNull(getParser("|z16-15").zoom());
     }
 }
