@@ -1516,6 +1516,8 @@ public class ImageProvider {
     }
 
     /**
+     * Returns an {@link ImageIcon} for the given OSM object, at the specified size.
+     * This is a slow operation.
      * @param primitive Object for which an icon shall be fetched. The icon is chosen based on tags.
      * @param iconSize Target size of icon. Icon is padded if required.
      * @return Icon for {@code primitive} that fits in cell.
@@ -1526,6 +1528,8 @@ public class ImageProvider {
     }
 
     /**
+     * Returns an {@link ImageIcon} for the given OSM object, at the specified size.
+     * This is a slow operation.
      * @param primitive Object for which an icon shall be fetched. The icon is chosen based on tags.
      * @param iconSize Target size of icon. Icon is padded if required.
      * @param options zero or more {@linkplain GetPaddedOptions options}.

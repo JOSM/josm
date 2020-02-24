@@ -351,6 +351,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
             selectTabBy(tps -> tps.equals(tab));
             return tab.selectSubTab(sub);
         } catch (NoSuchElementException ignore) {
+            Logging.trace(ignore);
             return false;
         }
     }

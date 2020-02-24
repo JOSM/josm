@@ -94,36 +94,36 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
         PresetClassification(TaggingPreset preset) {
             this.preset = preset;
-            Set<String> groups = new HashSet<>();
-            Set<String> names = new HashSet<>();
-            Set<String> tags = new HashSet<>();
+            Set<String> groupSet = new HashSet<>();
+            Set<String> nameSet = new HashSet<>();
+            Set<String> tagSet = new HashSet<>();
             TaggingPreset group = preset.group;
             while (group != null) {
-                addLocaleNames(groups, group);
+                addLocaleNames(groupSet, group);
                 group = group.group;
             }
-            addLocaleNames(names, preset);
+            addLocaleNames(nameSet, preset);
             for (TaggingPresetItem item: preset.data) {
                 if (item instanceof KeyedItem) {
-                    tags.add(((KeyedItem) item).key);
+                    tagSet.add(((KeyedItem) item).key);
                     if (item instanceof ComboMultiSelect) {
                         final ComboMultiSelect cms = (ComboMultiSelect) item;
                         if (Boolean.parseBoolean(cms.values_searchable)) {
-                            tags.addAll(cms.getDisplayValues());
+                            tagSet.addAll(cms.getDisplayValues());
                         }
                     }
                     if (item instanceof Key && ((Key) item).value != null) {
-                        tags.add(((Key) item).value);
+                        tagSet.add(((Key) item).value);
                     }
                 } else if (item instanceof Roles) {
                     for (Role role : ((Roles) item).roles) {
-                        tags.add(role.key);
+                        tagSet.add(role.key);
                     }
                 }
             }
-            this.groups = Utils.toUnmodifiableList(groups);
-            this.names = Utils.toUnmodifiableList(names);
-            this.tags = Utils.toUnmodifiableList(tags);
+            this.groups = Utils.toUnmodifiableList(groupSet);
+            this.names = Utils.toUnmodifiableList(nameSet);
+            this.tags = Utils.toUnmodifiableList(tagSet);
         }
 
         private static void addLocaleNames(Collection<String> collection, TaggingPreset preset) {

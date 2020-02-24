@@ -78,7 +78,7 @@ public final class JCSCacheManager {
                         // Get rid of useless JCS warnings, see #18644
                         // Pending upstream patch: https://issues.apache.org/jira/projects/JCS/issues/JCS-200
                         // Pending upstream patch: https://issues.apache.org/jira/projects/JCS/issues/JCS-201
-                        if (msg.equals("No configuration settings found.  Using hardcoded default values for all pools.")
+                        if ("No configuration settings found.  Using hardcoded default values for all pools.".equals(msg)
                                 || (msg.startsWith("Region") && msg.endsWith("Resetting cache"))) { // "Region [TMS_BLOCK_v2] Resetting cache"
                             Logging.debug(msg);
                         } else {

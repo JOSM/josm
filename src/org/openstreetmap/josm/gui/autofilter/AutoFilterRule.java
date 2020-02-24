@@ -136,7 +136,7 @@ public class AutoFilterRule {
                 }
             });
         }
-        return PROP_AUTO_FILTER_DEFAULTS.get() ? defaultValueSupplier.apply(osm) : IntStream.empty();
+        return Boolean.TRUE.equals(PROP_AUTO_FILTER_DEFAULTS.get()) ? defaultValueSupplier.apply(osm) : IntStream.empty();
     }
 
     /**
