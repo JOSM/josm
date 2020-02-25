@@ -206,11 +206,7 @@ public abstract class CrossingWays extends Test {
                         return new MessageHelper(tr("Crossing railway/way"), 631);
                     }
                 case RESIDENTIAL_AREA:
-                    switch (types[1]) {
-                    case WAY:
-                    default:
-                        return new MessageHelper(tr("Crossing residential area/way"), 641);
-                    }
+                    return new MessageHelper(tr("Crossing residential area/way"), 641);
                 case WATERWAY:
                 default:
                     return new MessageHelper(tr("Crossing waterway/way"), 651);
