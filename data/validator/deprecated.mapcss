@@ -1935,3 +1935,12 @@ way[highway][construction=yes][highway!=construction] {
   group: tr("deprecated tagging");
   fixChangeKey: "car => motorcar";
 }
+
+/* #18767 */
+*[navigationaid=approach_light],
+*[navigationaid="ALS (Approach lighting system)"] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "navigationaid=als";
+  group: tr("deprecated tagging");
+  fixAdd: "navigationaid=als";
+}

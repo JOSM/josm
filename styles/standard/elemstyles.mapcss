@@ -3913,6 +3913,14 @@ node[aeroway=navigationaid] {
     icon-image: "presets/transport/airport/navigationaid.svg";
     set icon_z17;
 }
+node[aeroway=navigationaid][navigationaid=papi] {
+    icon-image: "presets/transport/airport/papi.svg";
+    set icon_z17;
+}
+node[aeroway=navigationaid][navigationaid=vasi] {
+    icon-image: "presets/transport/airport/vasi.svg";
+    set icon_z17;
+}
 node[aeroway=windsock] {
     icon-image: "presets/transport/airport/windsock.svg";
     set icon_z17;

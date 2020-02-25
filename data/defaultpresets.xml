@@ -2786,6 +2786,11 @@
         <item name="Navigation aid" icon="presets/transport/airport/navigationaid.svg" type="node" preset_name_label="true">
             <link wiki="Tag:aeroway=navigationaid" />
             <key key="aeroway" value="navigationaid" />
+            <combo key="navigationaid" text="Type" values_searchable="true">
+                <list_entry value="als" icon="presets/transport/airport/navigationaid.svg" short_description="Approach lighting system" />
+                <list_entry value="papi" icon="presets/transport/airport/papi.svg" short_description="Precision approach path indicator" />
+                <list_entry value="vasi" icon="presets/transport/airport/vasi.svg" short_description="Visual approach slope indicator" />
+            </combo>
         </item> <!-- Navigation aid -->
         <item name="Windsock" icon="presets/transport/airport/windsock.svg" type="node" preset_name_label="true">
             <link wiki="Tag:aeroway=windsock" />
