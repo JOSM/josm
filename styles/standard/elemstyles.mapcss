@@ -3203,8 +3203,8 @@ node[craft=painter] {
     icon-image: "presets/craft/painter.svg";
     set icon_z17;
 }
-node[craft=stonemason][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=stonemason] {
+    icon-image: "presets/craft/stonemason.svg";
     set icon_z17;
 }
 node[craft=handicraft][!is_prop_set(icon-image)] {
@@ -3412,6 +3412,7 @@ node[tourism=information][information=board] {
 /*****************/
 
 area[historic=castle],
+area[historic=fort],
 area[historic=monument],
 area[historic=memorial],
 area[historic=tomb],
@@ -3423,6 +3424,10 @@ area[historic=wayside_cross],
 area[historic=wayside_shrine],
 area[historic=boundary_stone] {
     fill-color: historic#663300;
+}
+node[historic=fort] {
+    icon-image: "presets/sightseeing/fort.svg";
+    set icon_z17;
 }
 node[historic=castle] {
     icon-image: "presets/sightseeing/castle.svg";

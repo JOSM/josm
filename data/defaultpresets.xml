@@ -5668,6 +5668,14 @@
             <check key="ruins" text="Ruins" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Castle -->
+        <item name="Fort" icon="presets/sightseeing/fort.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=fort" />
+            <space />
+            <key key="historic" value="fort" />
+            <reference ref="name_wikipedia" />
+            <check key="ruins" text="Ruins" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Fort -->
         <item name="Ruins" icon="presets/sightseeing/ruins.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:historic=ruins" />
             <space />
@@ -6856,7 +6864,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Sawmill -->
-    <item name="Stonemason" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Stonemason" icon="presets/craft/stonemason.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=stonemason" />
         <space />
         <key key="craft" value="stonemason" />
