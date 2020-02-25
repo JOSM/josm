@@ -54,6 +54,8 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.layer.ActivateLayerAction;
+import org.openstreetmap.josm.gui.dialogs.layer.CycleLayerDownAction;
+import org.openstreetmap.josm.gui.dialogs.layer.CycleLayerUpAction;
 import org.openstreetmap.josm.gui.dialogs.layer.DeleteLayerAction;
 import org.openstreetmap.josm.gui.dialogs.layer.DuplicateAction;
 import org.openstreetmap.josm.gui.dialogs.layer.LayerListTransferHandler;
@@ -140,6 +142,9 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
 
     private final ActivateLayerAction activateLayerAction;
     private final ShowHideLayerAction showHideLayerAction;
+
+    private final CycleLayerUpAction cycleLayerUpAction;
+    private final CycleLayerDownAction cycleLayerDownAction;
 
     //TODO This duplicates ShowHide actions functionality
     /** stores which layer index to toggle and executes the ShowHide action if the layer is present */
@@ -329,6 +334,10 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         // Show/Activate layer on Enter key press
         InputMapUtils.addSpacebarAction(layerList, showHideLayerAction);
 
+        // Cycle layer actions
+        cycleLayerUpAction = new CycleLayerUpAction();
+        cycleLayerDownAction = new CycleLayerDownAction();
+
         createLayout(layerList, true, Arrays.asList(
                 new SideButton(moveUpAction, false),
                 new SideButton(moveDownAction, false),
@@ -388,6 +397,8 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         DISPLAY_NUMBERS.removeListener(visibilityWidthListener);
         ExpertToggleAction.removeExpertModeChangeListener(visibilityWidthListener);
         layerManager.removeLayerChangeListener(visibilityWidthListener);
+        cycleLayerUpAction.destroy();
+        cycleLayerDownAction.destroy();
         super.destroy();
         instance = null;
     }
