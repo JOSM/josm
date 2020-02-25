@@ -942,11 +942,11 @@
             <link wiki="Tag:highway=track" />
             <space />
             <combo key="tracktype" text="Tracktype" values_searchable="true" values_sort="false">
-                <list_entry value="grade1" short_description="Solid: paved or heavily compacted hardcore surface" />
-                <list_entry value="grade2" short_description="Mostly Solid: gravel/rock with some soft material mixed in" />
-                <list_entry value="grade3" short_description="Even mixture of hard and soft materials" />
-                <list_entry value="grade4" short_description="Mostly Soft: soil/sand/grass with some hard material mixed in" />
-                <list_entry value="grade5" short_description="Soft: soil/sand/grass" />
+                <list_entry value="grade1" icon="presets/transport/way/tracktype_grade1.svg" short_description="Solid: paved or heavily compacted hardcore surface" />
+                <list_entry value="grade2" icon="presets/transport/way/tracktype_grade2.svg" short_description="Mostly Solid: gravel/rock with some soft material mixed in" />
+                <list_entry value="grade3" icon="presets/transport/way/tracktype_grade3.svg" short_description="Even mixture of hard and soft materials" />
+                <list_entry value="grade4" icon="presets/transport/way/tracktype_grade4.svg" short_description="Mostly Soft: soil/sand/grass with some hard material mixed in" />
+                <list_entry value="grade5" icon="presets/transport/way/tracktype_grade5.svg" short_description="Soft: soil/sand/grass" />
             </combo>
             <key key="highway" value="track" />
             <optional>
