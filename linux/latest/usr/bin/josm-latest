@@ -62,7 +62,7 @@ if [ "$JAVACMD" ]; then
     fi
     set +e
     while true; do
-        $JAVACMD "$JAVA_OPTS" -jar /usr/share/josm-latest/josm-latest.jar "$@"
+        $JAVACMD $JAVA_OPTS -jar /usr/share/josm-latest/josm-latest.jar "$@"
         if [ "z$?" != "z9" ]; then
             break
         fi
