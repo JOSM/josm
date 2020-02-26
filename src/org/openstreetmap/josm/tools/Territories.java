@@ -26,6 +26,7 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
+import javax.json.stream.JsonParsingException;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -187,8 +188,9 @@ public final class Territories {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new JosmRuntimeException(e);
+        } catch (IOException |JsonParsingException e) {
+            Logging.trace(e);
+            Logging.warn(tr("Failed to parse taginfo data geofabrik-index-v1-nogeom.json"));
         }
     }
 
