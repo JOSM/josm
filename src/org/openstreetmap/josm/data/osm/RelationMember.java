@@ -83,7 +83,7 @@ public class RelationMember implements IRelationMember<OsmPrimitive> {
      */
     public RelationMember(String role, OsmPrimitive member) {
         CheckParameterUtil.ensureParameterNotNull(member, "member");
-        this.role = Optional.ofNullable(role).orElse("");
+        this.role = Optional.ofNullable(role).orElse("").intern();
         this.member = member;
     }
 

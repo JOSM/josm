@@ -396,7 +396,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             max_zoom = i.defaultMaxZoom;
             min_zoom = i.defaultMinZoom;
             cookies = i.cookies;
-            icon = i.icon == null ? null : i.icon.intern();
+            icon = intern(i.icon);
             description = i.description;
             category = i.category != null ? i.category.getCategoryString() : null;
             if (i.bounds != null) {
@@ -554,9 +554,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
         if (e.projections != null && !e.projections.isEmpty()) {
             // split generates null element on empty string which gives one element Array[null]
-            serverProjections = Arrays.asList(e.projections.split(","));
+            setServerProjections(Arrays.asList(e.projections.split(",")));
         }
-        attributionText = e.attribution_text;
+        attributionText = intern(e.attribution_text);
         attributionLinkURL = e.attribution_url;
         permissionReferenceURL = e.permission_reference_url;
         attributionImage = e.logo_image;
@@ -566,8 +566,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         overlay = e.overlay;
         termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
-        countryCode = e.country_code;
-        icon = e.icon == null ? null : e.icon.intern();
+        countryCode = intern(e.country_code);
+        icon = intern(e.icon);
         if (e.noTileHeaders != null) {
             noTileHeaders = e.noTileHeaders.toMap();
         }
@@ -632,13 +632,13 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.bestMarked = i.bestMarked;
         this.overlay = i.overlay;
         // do not copy field {@code mirrors}
-        this.icon = i.icon == null ? null : i.icon.intern();
+        this.icon = intern(i.icon);
         this.isGeoreferenceValid = i.isGeoreferenceValid;
         this.defaultLayers = i.defaultLayers;
         this.customHttpHeaders = i.customHttpHeaders;
         this.transparent = i.transparent;
         this.minimumTileExpire = i.minimumTileExpire;
-        this.categoryOriginalString = i.categoryOriginalString;
+        this.categoryOriginalString = intern(i.categoryOriginalString);
         this.category = i.category;
     }
 
@@ -867,7 +867,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @see #getAttributionText(int, ICoordinate, ICoordinate)
      */
     public void setAttributionText(String text) {
-        attributionText = text;
+        attributionText = intern(text);
     }
 
     /**
@@ -954,12 +954,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
 
         if (serverProjections.isEmpty()) {
-            serverProjections = new ArrayList<>();
             Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase(Locale.ENGLISH));
             if (m.matches()) {
-                for (String p : m.group(1).split(",")) {
-                    serverProjections.add(p);
-                }
+                setServerProjections(Arrays.asList(m.group(1).split(",")));
             }
         }
     }
@@ -1063,7 +1060,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
         if (LanguageInfo.isBetterLanguage(langDescription, language)) {
             this.description = isdefault ? tr(description) : description;
-            this.langDescription = language;
+            this.langDescription = intern(language);
         }
     }
 
@@ -1154,7 +1151,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param countryCode The country code (2 letters)
      */
     public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+        this.countryCode = intern(countryCode);
     }
 
     /**
@@ -1189,7 +1186,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param icon The entry icon
      */
     public void setIcon(String icon) {
-        this.icon = icon == null ? null : icon.intern();
+        this.icon = intern(icon);
     }
 
     /**
@@ -1208,7 +1205,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setServerProjections(Collection<String> serverProjections) {
         CheckParameterUtil.ensureParameterNotNull(serverProjections, "serverProjections");
-        this.serverProjections = new ArrayList<>(serverProjections);
+        this.serverProjections = serverProjections.stream()
+                .map(String::intern)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Utils::toUnmodifiableList));
     }
 
     /**
@@ -1354,7 +1353,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 13792
      */
     public void setImageryCategoryOriginalString(String categoryOriginalString) {
-        this.categoryOriginalString = categoryOriginalString;
+        this.categoryOriginalString = intern(categoryOriginalString);
     }
 
     /**
@@ -1643,5 +1642,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             }
             return getOriginalName();
         }
+    }
+
+    private static String intern(String string) {
+        return string == null ? null : string.intern();
     }
 }

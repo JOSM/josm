@@ -258,8 +258,8 @@ public final class ConditionFactory {
          * @param v The value.
          */
         public SimpleKeyValueCondition(String k, String v) {
-            this.k = k;
-            this.v = v;
+            this.k = k.intern();
+            this.v = v.intern();
         }
 
         @Override
@@ -310,8 +310,8 @@ public final class ConditionFactory {
          * @param considerValAsKey whether to consider {@code v} as another key and compare the values of key {@code k} and key {@code v}.
          */
         public KeyValueCondition(String k, String v, Op op, boolean considerValAsKey) {
-            this.k = k;
-            this.v = v;
+            this.k = k.intern();
+            this.v = v.intern();
             this.op = op;
             this.considerValAsKey = considerValAsKey;
         }

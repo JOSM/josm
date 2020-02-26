@@ -19,7 +19,7 @@ public class LiteralExpression implements Expression {
      */
     public LiteralExpression(Object literal) {
         CheckParameterUtil.ensureParameterNotNull(literal);
-        this.literal = literal;
+        this.literal = literal instanceof String ? ((String) literal).intern() : literal;
     }
 
     /**
