@@ -1,7 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation;
 
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +14,7 @@ import java.util.TreeSet;
 import java.util.function.Supplier;
 
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -184,6 +188,18 @@ public class TestError implements Comparable<TestError> {
         public Builder highlightNodePairs(Collection<List<Node>> highlighted) {
             CheckParameterUtil.ensureParameterNotNull(highlighted, "highlighted");
             this.highlighted = highlighted;
+            return this;
+        }
+
+        /**
+         * Sets an area to highlight when selecting this error.
+         *
+         * @param highlighted the area to highlight
+         * @return {@code this}
+         */
+        public Builder highlight(Area highlighted) {
+            CheckParameterUtil.ensureParameterNotNull(highlighted, "highlighted");
+            this.highlighted = Collections.singleton(highlighted);
             return this;
         }
 
@@ -421,9 +437,56 @@ public class TestError implements Comparable<TestError> {
                 v.visit((WaySegment) o);
             } else if (o instanceof List<?>) {
                 v.visit((List<Node>) o);
+            } else if (o instanceof Area) {
+                for (List<Node> l : getHiliteNodesForArea((Area) o)) {
+                    v.visit(l);
+                }
             }
         }
     }
+
+    /**
+     * Calculate list of node pairs describing the area.
+     * @param area the area
+     * @return list of node pairs describing the area
+     */
+    private  static List<List<Node>> getHiliteNodesForArea(Area area) {
+        List<List<Node>> hilite = new ArrayList<>();
+        PathIterator pit = area.getPathIterator(null);
+        double[] res = new double[6];
+        List<Node> nodes = new ArrayList<>();
+        while (!pit.isDone()) {
+            int type = pit.currentSegment(res);
+            Node n = new Node(new EastNorth(res[0], res[1]));
+            switch (type) {
+            case PathIterator.SEG_MOVETO:
+                if (!nodes.isEmpty()) {
+                    hilite.add(nodes);
+                }
+                nodes = new ArrayList<>();
+                nodes.add(n);
+                break;
+            case PathIterator.SEG_LINETO:
+                nodes.add(n);
+                break;
+            case PathIterator.SEG_CLOSE:
+                if (!nodes.isEmpty()) {
+                    nodes.add(nodes.get(0));
+                    hilite.add(nodes);
+                    nodes = new ArrayList<>();
+                }
+                break;
+            default:
+                break;
+            }
+            pit.next();
+        }
+        if (nodes.size() > 1) {
+            hilite.add(nodes);
+        }
+        return hilite;
+    }
+
 
     /**
      * Returns the selection flag of this error

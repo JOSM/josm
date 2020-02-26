@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.geom.Area;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -618,6 +619,12 @@ public class MapCSSTagChecker extends Test.TagTest {
                             if (fix != null) {
                                 errorBuilder = errorBuilder.fix(() -> fix);
                             }
+                            if (env.intersections != null) {
+                                Area is = env.intersections.get(c);
+                                if (is != null) {
+                                    errorBuilder = errorBuilder.highlight(is);
+                                }
+                            }
                             res.add(errorBuilder.primitives(p, (OsmPrimitive) c).build());
                         }
                     }
@@ -742,8 +749,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 if (e.getCode() == toAdd.getCode() && e.getMessage().equals(toAdd.getMessage())
                         && e.getPrimitives().size() == toAdd.getPrimitives().size()
                         && e.getPrimitives().containsAll(toAdd.getPrimitives())
-                        && e.getHighlighted().size() == toAdd.getHighlighted().size()
-                        && e.getHighlighted().containsAll(toAdd.getHighlighted())) {
+                        && highlightedIsEqual(e.getHighlighted(), toAdd.getHighlighted())) {
                     isDup = true;
                     break;
                 }
@@ -751,6 +757,21 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
         if (!isDup)
             errors.add(toAdd);
+    }
+
+    private static boolean highlightedIsEqual(Collection<?> highlighted, Collection<?> highlighted2) {
+        if (highlighted.size() == highlighted2.size()) {
+            if (!highlighted.isEmpty()) {
+                Object h1 = highlighted.iterator().next();
+                Object h2 = highlighted2.iterator().next();
+                if (h1 instanceof Area && h2 instanceof Area) {
+                    return ((Area) h1).equals((Area) h2);
+                }
+                return highlighted.containsAll(highlighted2);
+            }
+            return true;
+        }
+        return false;
     }
 
     private static Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity,

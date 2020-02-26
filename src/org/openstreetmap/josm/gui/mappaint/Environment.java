@@ -1,7 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.awt.geom.Area;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -68,6 +71,11 @@ public class Environment {
     public Set<IPrimitive> children;
 
     /**
+     * Intersection areas (only filled with CrossingFinder if children is not null)
+     */
+    public Map<IPrimitive, Area> intersections;
+
+    /**
      * Creates a new uninitialized environment.
      */
     public Environment() {
@@ -117,6 +125,7 @@ public class Environment {
         this.count = other.count;
         this.context = other.getContext();
         this.children = other.children == null ? null : new LinkedHashSet<>(other.children);
+        this.intersections = other.intersections == null ? null : new HashMap<>(other.intersections);
     }
 
     /**
@@ -283,6 +292,7 @@ public class Environment {
         index = null;
         count = null;
         children = null;
+        intersections = null;
     }
 
     /**

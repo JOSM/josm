@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
@@ -552,6 +553,28 @@ public final class Geometry {
     }
 
     /**
+     * Calculate area in east/north space for given primitive. Uses {@link MultipolygonCache} for multipolygon relations.
+     * @param p the primitive
+     * @return the area in east/north space, might be empty if the primitive is incomplete or not closed or a node
+     * since 15938
+     */
+    public static Area getAreaEastNorth(IPrimitive p) {
+        if (p instanceof Way && ((Way) p).isClosed()) {
+            return Geometry.getArea(((Way) p).getNodes());
+        }
+        if (p.isMultipolygon() && !p.isIncomplete() && !((IRelation<?>) p).hasIncompleteMembers()) {
+            Multipolygon mp = MultipolygonCache.getInstance().get((Relation) p);
+            Path2D path = new Path2D.Double();
+            path.setWindingRule(Path2D.WIND_EVEN_ODD);
+            for (PolyData pd : mp.getCombinedPolygons()) {
+                path.append(pd.get(), false);
+            }
+            return new Area(path);
+        }
+        return new Area();
+    }
+
+    /**
      * Returns the Area of a polygon, from the multipolygon relation.
      * @param multipolygon the multipolygon relation
      * @return Area for the multipolygon (LatLon coordinates)
@@ -600,18 +623,29 @@ public final class Geometry {
      * @return intersection kind
      */
     public static PolygonIntersection polygonIntersection(Area a1, Area a2, double eps) {
+        return polygonIntersectionResult(a1, a2, eps).a;
+    }
 
+    /**
+     * Calculate intersection area and kind of intersection between two polygons.
+     * @param a1 Area of first polygon
+     * @param a2 Area of second polygon
+     * @param eps an area threshold, everything below is considered an empty intersection
+     * @return pair with intersection kind and intersection area (never null, but maybe empty)
+     * @since 15938
+     */
+    public static Pair<PolygonIntersection, Area> polygonIntersectionResult(Area a1, Area a2, double eps) {
         Area inter = new Area(a1);
         inter.intersect(a2);
 
         if (inter.isEmpty() || !checkIntersection(inter, eps)) {
-            return PolygonIntersection.OUTSIDE;
+            return new Pair<>(PolygonIntersection.OUTSIDE, inter);
         } else if (a2.getBounds2D().contains(a1.getBounds2D()) && inter.equals(a1)) {
-            return PolygonIntersection.FIRST_INSIDE_SECOND;
+            return new Pair<>(PolygonIntersection.FIRST_INSIDE_SECOND, inter);
         } else if (a1.getBounds2D().contains(a2.getBounds2D()) && inter.equals(a2)) {
-            return PolygonIntersection.SECOND_INSIDE_FIRST;
+            return new Pair<>(PolygonIntersection.SECOND_INSIDE_FIRST, inter);
         } else {
-            return PolygonIntersection.CROSSING;
+            return new Pair<>(PolygonIntersection.CROSSING, inter);
         }
     }
 

@@ -3,10 +3,12 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
 
+import java.awt.geom.Area;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +32,9 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.OpenEndPseudoClassCondition;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -297,6 +301,7 @@ public interface Selector {
         private final class CrossingFinder extends AbstractFinder {
 
             private final String layer;
+            private Area area;
 
             private CrossingFinder(Environment e) {
                 super(e);
@@ -308,9 +313,20 @@ public interface Selector {
             public void visit(IWay<?> w) {
                 if (Objects.equals(layer, OsmUtils.getLayer(w))
                     && left.matches(new Environment(w).withParent(e.osm))
-                    && e.osm instanceof IWay && Geometry.PolygonIntersection.CROSSING.equals(
-                            Geometry.polygonIntersection(w.getNodes(), ((IWay<?>) e.osm).getNodes()))) {
-                    addToChildren(e, w);
+                    && e.osm instanceof IWay) {
+                    if (area == null) {
+                        area = Geometry.getAreaEastNorth(e.osm);
+                    }
+                    Pair<PolygonIntersection, Area> is = Geometry.polygonIntersectionResult(
+                            Geometry.getAreaEastNorth(w), area, Geometry.INTERSECTION_EPS_EAST_NORTH);
+                    if (Geometry.PolygonIntersection.CROSSING == is.a) {
+                        addToChildren(e, w);
+                        // store intersection area to improve highlight and zoom to problem
+                        if (e.intersections == null) {
+                            e.intersections = new HashMap<>();
+                        }
+                        e.intersections.put(w, is.b);
+                    }
                 }
             }
         }
