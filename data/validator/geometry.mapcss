@@ -166,12 +166,6 @@ area[building][building!~/no|entrance/] {
   throwWarning: tr("Building inside building");
 }
 
-/* Building overlapping building (spatial test) */
-area[building][building!~/no|entrance/][any(tag("layer"),"0") = any(parent_tag("layer"),"0")] ⧉
-area[building][building!~/no|entrance/] {
-  throwWarning: tr("Overlapping buildings");
-}
-
 /* Overlapping areas (spatial test) */
 area[natural =~ /^(water|wetland|coastline)$/], area[landuse=reservoir] {
   set water_area;
