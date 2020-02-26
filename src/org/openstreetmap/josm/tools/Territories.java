@@ -188,7 +188,7 @@ public final class Territories {
                     }
                 }
             }
-        } catch (IOException |JsonParsingException e) {
+        } catch (IOException | JsonParsingException e) {
             Logging.trace(e);
             Logging.warn(tr("Failed to parse taginfo data geofabrik-index-v1-nogeom.json"));
         }

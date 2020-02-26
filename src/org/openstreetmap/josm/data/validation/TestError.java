@@ -450,7 +450,7 @@ public class TestError implements Comparable<TestError> {
      * @param area the area
      * @return list of node pairs describing the area
      */
-    private  static List<List<Node>> getHiliteNodesForArea(Area area) {
+    private static List<List<Node>> getHiliteNodesForArea(Area area) {
         List<List<Node>> hilite = new ArrayList<>();
         PathIterator pit = area.getPathIterator(null);
         double[] res = new double[6];
@@ -486,7 +486,6 @@ public class TestError implements Comparable<TestError> {
         }
         return hilite;
     }
-
 
     /**
      * Returns the selection flag of this error
