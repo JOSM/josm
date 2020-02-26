@@ -647,4 +647,17 @@ public class MapCSSParserTest {
     public void testZoomIAE() throws ParseException {
         assertNotNull(getParser("|z16-15").zoom());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/16183">Bug #16183</a>.
+     */
+    @Test
+    public void testTicket16183() {
+        MapCSSStyleSource sheet = new MapCSSStyleSource(
+                "area:closed:areaStyle ⧉ area:closed:areaStyle {throwOther: \"xxx\";}");
+        sheet.loadStyleSource();
+        final String rule = sheet.rules.get(0).toString();
+        assertTrue(rule.contains("closed"));
+        assertFalse(rule.contains("areaStyle"));
+    }
 }

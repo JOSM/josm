@@ -54,9 +54,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyValueCondition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.PseudoClassCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
@@ -117,6 +115,8 @@ public class MapCSSStyleSource extends StyleSource {
     private Color backgroundColorOverride;
     private String css;
     private ZipFile zipFile;
+
+    private boolean removeAreaStylePseudoClass;
 
     /**
      * This lock prevents concurrent execution of {@link MapCSSRuleIndex#clear() } /
@@ -429,6 +429,8 @@ public class MapCSSStyleSource extends StyleSource {
             relationRules.clear();
             multipolygonRules.clear();
             canvasRules.clear();
+            // remove "areaStyle" pseudo classes intended only for validator (causes StackOverflowError otherwise), see #16183
+            removeAreaStylePseudoClass = true;
             try (InputStream in = getSourceInputStream()) {
                 try (Reader reader = new BufferedReader(UTFInputStreamReader.create(in))) {
                     // evaluate @media { ... } blocks
@@ -444,8 +446,6 @@ public class MapCSSStyleSource extends StyleSource {
                         loadCanvas();
                         loadSettings();
                     }
-                    // remove "areaStyle" pseudo classes intended only for validator (causes StackOverflowError otherwise)
-                    removeAreaStyleClasses();
                 } finally {
                     closeSourceInputStream(in);
                 }
@@ -769,41 +769,11 @@ public class MapCSSStyleSource extends StyleSource {
     }
 
     /**
-     * Removes "areaStyle" pseudo-classes. Only needed for validator.
-     * @since 13633
+     * Whether to remove "areaStyle" pseudo classes. Only for use in MapCSSParser!
+     * @return whether to remove "areaStyle" pseudo classes
      */
-    public void removeAreaStyleClasses() {
-        for (Iterator<MapCSSRule> it = rules.iterator(); it.hasNext();) {
-            removeAreaStyleClasses(it.next().selector);
-        }
-    }
-
-    private static void removeAreaStyleClasses(Selector sel) {
-        if (sel instanceof ChildOrParentSelector) {
-            removeAreaStyleClasses((ChildOrParentSelector) sel);
-        } else if (sel instanceof AbstractSelector) {
-            removeAreaStyleClasses((AbstractSelector) sel);
-        }
-    }
-
-    private static void removeAreaStyleClasses(ChildOrParentSelector sel) {
-        removeAreaStyleClasses(sel.left);
-        removeAreaStyleClasses(sel.right);
-    }
-
-    private static void removeAreaStyleClasses(AbstractSelector sel) {
-        if (sel.conds != null) {
-            for (Iterator<Condition> it = sel.conds.iterator(); it.hasNext();) {
-                Condition c = it.next();
-                if (c instanceof PseudoClassCondition) {
-                    PseudoClassCondition cc = (PseudoClassCondition) c;
-                    if ("areaStyle".equals(cc.method.getName())) {
-                        Logging.warn("Removing 'areaStyle' pseudo-class from "+sel+". This class is only meant for validator");
-                        it.remove();
-                    }
-                }
-            }
-        }
+    public boolean isRemoveAreaStylePseudoClass() {
+        return removeAreaStylePseudoClass;
     }
 
     @Override

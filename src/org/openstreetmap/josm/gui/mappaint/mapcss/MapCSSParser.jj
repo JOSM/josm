@@ -701,7 +701,7 @@ Selector child_selector() :
                 |
                     <PLUS> { type = Selector.ChildOrParentSelectorType.SIBLING; }
                 )
-                ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { conditions.add(c); } )*
+                ( ( c=condition(Context.LINK) | c=class_or_pseudoclass(Context.LINK) ) { if (c!= null) conditions.add(c); } )*
             |
                 <SUBSET_OR_EQUAL> { type = Selector.ChildOrParentSelectorType.SUBSET_OR_EQUAL; }
             |
@@ -734,7 +734,7 @@ Selector selector() :
 {
     ( base=<IDENT> | base=<STAR> )
     ( r=zoom() )?
-    ( ( c=condition(Context.PRIMITIVE) | c=class_or_pseudoclass(Context.PRIMITIVE) ) { conditions.add(c); } )*
+    ( ( c=condition(Context.PRIMITIVE) | c=class_or_pseudoclass(Context.PRIMITIVE) ) { if (c!= null) conditions.add(c); } )*
     ( sub=subpart() )?
     { return new GeneralSelector(base.image, r, conditions, sub); }
 }
@@ -886,9 +886,16 @@ Condition class_or_pseudoclass(Context context) :
         <COLON> { pseudo = true; }
     )
     s=ident()
-    { return pseudo
-        ? ConditionFactory.createPseudoClassCondition(s, not, context)
-        : ConditionFactory.createClassCondition(s, not, context); }
+    {
+        if (pseudo && sheet != null && sheet.isRemoveAreaStylePseudoClass() && s.matches("areaStyle|area-style|area_style")) {
+            Logging.warn("Removing 'areaStyle' pseudo-class. This class is only meant for validator");
+            return null;
+        } else if (pseudo) {
+            return ConditionFactory.createPseudoClassCondition(s, not, context);
+        } else {
+            return ConditionFactory.createClassCondition(s, not, context);
+        }
+    }
 }
 
 Subpart subpart() :
