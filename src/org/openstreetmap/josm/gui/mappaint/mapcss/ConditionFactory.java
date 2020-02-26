@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
@@ -827,15 +828,15 @@ public final class ConditionFactory {
         }
 
         protected static Method getMethod(String id) {
-            String cleanId = id.replaceAll("-|_", "");
-            for (Method method : PseudoClasses.class.getDeclaredMethods()) {
-                // for backwards compatibility, consider :sameTags == :same-tags == :same_tags (#11150)
-                final String methodName = method.getName().replaceAll("-|_", "");
-                if (methodName.equalsIgnoreCase(cleanId)) {
-                    return method;
-                }
-            }
-            return null;
+            String cleanId = clean(id);
+            return Arrays.stream(PseudoClasses.class.getDeclaredMethods())
+                    .filter(method -> clean(method.getName()).equalsIgnoreCase(cleanId))
+                    .findFirst().orElse(null);
+        }
+
+        private static String clean(String id) {
+            // for backwards compatibility, consider :sameTags == :same-tags == :same_tags (#11150)
+            return id.replaceAll("[-_]", "");
         }
 
         @Override
