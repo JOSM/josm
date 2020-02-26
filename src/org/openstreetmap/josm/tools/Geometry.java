@@ -29,7 +29,6 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
@@ -562,7 +561,8 @@ public final class Geometry {
         if (p instanceof Way && ((Way) p).isClosed()) {
             return Geometry.getArea(((Way) p).getNodes());
         }
-        if (p.isMultipolygon() && !p.isIncomplete() && !((IRelation<?>) p).hasIncompleteMembers()) {
+        if (p instanceof Relation && p.isMultipolygon() && !p.isIncomplete()
+                && !((Relation) p).hasIncompleteMembers()) {
             Multipolygon mp = MultipolygonCache.getInstance().get((Relation) p);
             Path2D path = new Path2D.Double();
             path.setWindingRule(Path2D.WIND_EVEN_ODD);
