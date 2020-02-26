@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM' upload='never' download='never'>
+  <node id='1001' version='1' visible='true' lat='53.18916486972' lon='5.79536381868' />
+  <node id='1002' version='1' visible='true' lat='53.19109032103' lon='5.79066925796' />
+  <node id='1003' version='1' visible='true' lat='53.18576597652' lon='5.79492806044' />
+  <node id='1234' version='1' visible='true' lat='53.18769158045' lon='5.79023349972'>
+    <tag k='name' v='Hexagon' />
+    <tag k='place' v='quarter' />
+  </node>
+  <node id='100001' version='1' visible='true' lat='53.1874654568' lon='5.79514593956' />
+  <node id='100002' version='1' visible='true' lat='53.19012760619' lon='5.79301653832' />
+  <way id='5' version='1' visible='true'>
+    <nd ref='1001' />
+    <nd ref='100002' />
+    <nd ref='1002' />
+    <tag k='boundary' v='place' />
+  </way>
+  <way id='6' version='1' visible='true'>
+    <nd ref='1003' />
+    <nd ref='100001' />
+    <nd ref='1001' />
+    <tag k='boundary' v='place' />
+  </way>
+  <relation id='8888' version='1' visible='true'>
+    <member type='way' ref='1' role='outer' />
+    <member type='way' ref='2' role='outer' />
+    <member type='way' ref='3' role='outer' />
+    <member type='way' ref='4' role='outer' />
+    <member type='way' ref='5' role='outer' />
+    <member type='way' ref='6' role='outer' />
+    <member type='node' ref='1234' role='label' />
+    <tag k='boundary' v='place' />
+    <tag k='name' v='Hexagon' />
+    <tag k='place' v='quarter' />
+    <tag k='type' v='boundary' />
+  </relation>
+</osm>

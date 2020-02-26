@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -219,7 +220,7 @@ public class SplitWayAction extends JosmAction {
                 DISPLAY_COUNT.incrementAndGet();
                 list.setSelectedValue(wayToKeep, true);
             } else {
-                setHighlightedWaySegments(Collections.<WaySegment>emptyList());
+                setHighlightedWaySegments(Collections.emptyList());
                 DISPLAY_COUNT.decrementAndGet();
             }
         }
@@ -286,12 +287,22 @@ public class SplitWayAction extends JosmAction {
     static void doSplitWay(Way way, Way wayToKeep, List<Way> newWays, List<OsmPrimitive> newSelection) {
         final MapFrame map = MainApplication.getMap();
         final boolean isMapModeDraw = map != null && map.mapMode == map.mapModeDraw;
-        final SplitWayCommand result = SplitWayCommand.doSplitWay(way, wayToKeep, newWays, !isMapModeDraw ? newSelection : null);
-        UndoRedoHandler.getInstance().add(result);
-        List<? extends PrimitiveId> newSel = result.getNewSelection();
-        if (newSel != null && !newSel.isEmpty()) {
-            way.getDataSet().setSelected(newSel);
-        }
+
+        Optional<SplitWayCommand> splitWayCommand = SplitWayCommand.doSplitWay(
+                way,
+                wayToKeep,
+                newWays,
+                !isMapModeDraw ? newSelection : null,
+                SplitWayCommand.WhenRelationOrderUncertain.ASK_USER_FOR_CONSENT_TO_DOWNLOAD
+        );
+
+        splitWayCommand.ifPresent(result -> {
+            UndoRedoHandler.getInstance().add(result);
+            List<? extends PrimitiveId> newSel = result.getNewSelection();
+            if (newSel != null && !newSel.isEmpty()) {
+                way.getDataSet().setSelected(newSel);
+            }
+        });
     }
 
     @Override
