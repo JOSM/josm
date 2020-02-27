@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.swing.JTable;
@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -36,7 +37,6 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
-import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -50,7 +50,7 @@ public class TagEditHelperTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().territories().projection();
+    public JOSMTestRules test = new JOSMTestRules().territories().rlTraffic().projection();
 
     private static TagEditHelper newTagEditHelper() {
         DefaultTableModel propertyData = new DefaultTableModel();
@@ -88,78 +88,50 @@ public class TagEditHelperTest {
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18764>#18764</a>
      *
-     * @throws InvocationTargetException Check logs -- if caused by NPE, a
-     *                                   regression probably occurred.
-     * @throws IllegalArgumentException  Check source code
-     * @throws IllegalAccessException    Check source code
-     * @throws NoSuchFieldException      Check source code
-     * @throws SecurityException         Probably shouldn't happen for tests
-     * @throws NoSuchMethodException     Check source code
+     * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket18764() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
-        TestUtils.assumeWorkingJMockit();
-        if (GraphicsEnvironment.isHeadless()) {
-            new WindowMocker();
-        }
-        MapCSSStyleSource css = new MapCSSStyleSource(
-                "*[building] ⧉ *[highway] { text: tr(\"Building crossing highway\"); }");
-        css.loadStyleSource();
-        MapPaintStyles.addStyle(css);
-        DataSet ds = new DataSet();
-        // This does require a way
-        Way way = TestUtils.newWay("", new Node(LatLon.NORTH_POLE), new Node(LatLon.SOUTH_POLE));
-        way.getNodes().forEach(ds::addPrimitive);
-        ds.addPrimitive(way);
-        OsmDataManager.getInstance().setActiveDataSet(ds);
-        MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "Test Layer", null));
-        TagEditHelper helper = newTagEditHelper();
-        Field sel = TagEditHelper.class.getDeclaredField("sel");
-        sel.set(helper, Collections.singletonList(way));
-        AddTagsDialog addTagsDialog = helper.getAddTagsDialog();
-        Method findIcon = TagEditHelper.AbstractTagsDialog.class.getDeclaredMethod("findIcon", String.class,
-                String.class);
-        findIcon.setAccessible(true);
-        Object val = findIcon.invoke(addTagsDialog, "highway", "");
-        assertNotNull(val);
+    public void testTicket18764() throws Exception {
+        testIcon("*[building] ⧉ *[highway] { text: tr(\"Building crossing highway\"); }", ds -> {
+            Way way = TestUtils.newWay("", new Node(LatLon.NORTH_POLE), new Node(LatLon.SOUTH_POLE));
+            way.getNodes().forEach(ds::addPrimitive);
+            return way;
+        }, "highway", "");
     }
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18798>#18798</a>
      *
-     * @throws InvocationTargetException Check logs -- if caused by NPE, a
-     *                                   regression probably occurred.
-     * @throws IllegalArgumentException  Check source code
-     * @throws IllegalAccessException    Check source code
-     * @throws NoSuchFieldException      Check source code
-     * @throws SecurityException         Probably shouldn't happen for tests
-     * @throws NoSuchMethodException     Check source code
+     * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket18798() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
+    public void testTicket18798() throws Exception {
+        testIcon("node:righthandtraffic[junction=roundabout] { text: tr(\"Roundabout node\"); }", ds -> {
+            Node node = new Node(LatLon.NORTH_POLE);
+            ds.addPrimitive(node);
+            return node;
+        }, "junction", "roundabout");
+    }
+
+    void testIcon(String cssString, Function<DataSet, OsmPrimitive> prepare, String key, String value) throws Exception {
         TestUtils.assumeWorkingJMockit();
         if (GraphicsEnvironment.isHeadless()) {
             new WindowMocker();
         }
-        RightAndLefthandTraffic.initialize();
-        MapCSSStyleSource css = new MapCSSStyleSource(
-                "node:righthandtraffic[junction=roundabout] { text: tr(\"Roundabout node\"); }");
+        MapCSSStyleSource css = new MapCSSStyleSource(cssString);
         css.loadStyleSource();
         MapPaintStyles.addStyle(css);
-        Node node = new Node(LatLon.NORTH_POLE);
-        DataSet ds = new DataSet(node);
+        DataSet ds = new DataSet();
+        final OsmPrimitive primitive = prepare.apply(ds);
         OsmDataManager.getInstance().setActiveDataSet(ds);
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "Test Layer", null));
         TagEditHelper helper = newTagEditHelper();
         Field sel = TagEditHelper.class.getDeclaredField("sel");
-        sel.set(helper, Collections.singletonList(node));
+        sel.set(helper, Collections.singletonList(primitive));
         AddTagsDialog addTagsDialog = helper.getAddTagsDialog();
-        Method findIcon = TagEditHelper.AbstractTagsDialog.class.getDeclaredMethod("findIcon", String.class,
-                String.class);
+        Method findIcon = TagEditHelper.AbstractTagsDialog.class.getDeclaredMethod("findIcon", String.class, String.class);
         findIcon.setAccessible(true);
-        Object val = findIcon.invoke(addTagsDialog, "junction", "roundabout");
+        Object val = findIcon.invoke(addTagsDialog, key, value);
         assertNotNull(val);
     }
 }
