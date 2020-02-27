@@ -698,9 +698,15 @@ public class TagEditHelper {
                 ((INode) virtual).setCoor(LatLon.ZERO);
             }
             virtual.put(key, value);
-            final ImageIcon padded = ImageProvider.getPadded(virtual, ImageProvider.ImageSizes.LARGEICON.getImageDimension(),
-                    EnumSet.of(ImageProvider.GetPaddedOptions.NO_DEFAULT, ImageProvider.GetPaddedOptions.NO_DEPRECATED));
-            return Optional.ofNullable(padded);
+            try {
+                final ImageIcon padded = ImageProvider.getPadded(virtual, ImageProvider.ImageSizes.LARGEICON.getImageDimension(),
+                        EnumSet.of(ImageProvider.GetPaddedOptions.NO_DEFAULT, ImageProvider.GetPaddedOptions.NO_DEPRECATED));
+                return Optional.ofNullable(padded);
+            } catch (Exception e) {
+                Logging.warn("Failed to find icon for {0} {1}={2}", virtual.getType(), key, value);
+                Logging.warn(e);
+                return Optional.empty();
+            }
         }
 
         protected JPopupMenu popupMenu = new JPopupMenu() {
