@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
+import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -49,7 +50,7 @@ public class TagEditHelperTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().territories().projection();
 
     private static TagEditHelper newTagEditHelper() {
         DefaultTableModel propertyData = new DefaultTableModel();
@@ -121,6 +122,44 @@ public class TagEditHelperTest {
                 String.class);
         findIcon.setAccessible(true);
         Object val = findIcon.invoke(addTagsDialog, "highway", "");
+        assertNotNull(val);
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18798>#18798</a>
+     *
+     * @throws InvocationTargetException Check logs -- if caused by NPE, a
+     *                                   regression probably occurred.
+     * @throws IllegalArgumentException  Check source code
+     * @throws IllegalAccessException    Check source code
+     * @throws NoSuchFieldException      Check source code
+     * @throws SecurityException         Probably shouldn't happen for tests
+     * @throws NoSuchMethodException     Check source code
+     */
+    @Test
+    public void testTicket18798() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
+        TestUtils.assumeWorkingJMockit();
+        if (GraphicsEnvironment.isHeadless()) {
+            new WindowMocker();
+        }
+        RightAndLefthandTraffic.initialize();
+        MapCSSStyleSource css = new MapCSSStyleSource(
+                "node:righthandtraffic[junction=roundabout] { text: tr(\"Roundabout node\"); }");
+        css.loadStyleSource();
+        MapPaintStyles.addStyle(css);
+        Node node = new Node(LatLon.NORTH_POLE);
+        DataSet ds = new DataSet(node);
+        OsmDataManager.getInstance().setActiveDataSet(ds);
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, "Test Layer", null));
+        TagEditHelper helper = newTagEditHelper();
+        Field sel = TagEditHelper.class.getDeclaredField("sel");
+        sel.set(helper, Collections.singletonList(node));
+        AddTagsDialog addTagsDialog = helper.getAddTagsDialog();
+        Method findIcon = TagEditHelper.AbstractTagsDialog.class.getDeclaredMethod("findIcon", String.class,
+                String.class);
+        findIcon.setAccessible(true);
+        Object val = findIcon.invoke(addTagsDialog, "junction", "roundabout");
         assertNotNull(val);
     }
 }

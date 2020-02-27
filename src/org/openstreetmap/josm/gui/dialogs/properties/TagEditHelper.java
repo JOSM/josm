@@ -70,7 +70,9 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -692,6 +694,9 @@ public class TagEditHelper {
             final Iterator<OsmPrimitive> osmPrimitiveIterator = sel.iterator();
             final OsmPrimitive virtual = (osmPrimitiveIterator.hasNext() ? osmPrimitiveIterator.next().getType() : OsmPrimitiveType.NODE)
                     .newInstance(0, false);
+            if (virtual instanceof INode) {
+                ((INode) virtual).setCoor(LatLon.ZERO);
+            }
             virtual.put(key, value);
             final ImageIcon padded = ImageProvider.getPadded(virtual, ImageProvider.ImageSizes.LARGEICON.getImageDimension(),
                     EnumSet.of(ImageProvider.GetPaddedOptions.NO_DEFAULT, ImageProvider.GetPaddedOptions.NO_DEPRECATED));
