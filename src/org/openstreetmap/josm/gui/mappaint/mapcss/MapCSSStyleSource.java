@@ -430,7 +430,7 @@ public class MapCSSStyleSource extends StyleSource {
             multipolygonRules.clear();
             canvasRules.clear();
             // remove "areaStyle" pseudo classes intended only for validator (causes StackOverflowError otherwise), see #16183
-            removeAreaStylePseudoClass = true;
+            removeAreaStylePseudoClass = url == null || !url.contains("validator"); // resource://data/validator/ or xxx.validator.mapcss
             try (InputStream in = getSourceInputStream()) {
                 try (Reader reader = new BufferedReader(UTFInputStreamReader.create(in))) {
                     // evaluate @media { ... } blocks
