@@ -1,12 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -18,13 +15,6 @@ import org.openstreetmap.josm.tools.TextTagParser;
  * Utility methods/constants that are useful for generic OSM tag handling.
  */
 public final class OsmUtils {
-
-    private static final Set<String> TRUE_VALUES = new HashSet<>(Arrays
-            .asList("true", "yes", "1", "on"));
-    private static final Set<String> FALSE_VALUES = new HashSet<>(Arrays
-            .asList("false", "no", "0", "off"));
-    private static final Set<String> REVERSE_VALUES = new HashSet<>(Arrays
-            .asList("reverse", "-1"));
 
     /**
      * A value that should be used to indicate true
@@ -69,8 +59,8 @@ public final class OsmUtils {
     public static Boolean getOsmBoolean(String value) {
         if (value == null) return null;
         String lowerValue = value.toLowerCase(Locale.ENGLISH);
-        if (TRUE_VALUES.contains(lowerValue)) return Boolean.TRUE;
-        if (FALSE_VALUES.contains(lowerValue)) return Boolean.FALSE;
+        if (isTrue(lowerValue)) return Boolean.TRUE;
+        if (isFalse(lowerValue)) return Boolean.FALSE;
         return null;
     }
 
@@ -92,7 +82,13 @@ public final class OsmUtils {
      * @return true if it is reversed.
      */
     public static boolean isReversed(String value) {
-        return REVERSE_VALUES.contains(value);
+        switch (value) {
+            case "reverse":
+            case "-1":
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -101,7 +97,15 @@ public final class OsmUtils {
      * @return true if it is a true value.
      */
     public static boolean isTrue(String value) {
-        return TRUE_VALUES.contains(value);
+        switch (value) {
+            case "true":
+            case "yes":
+            case "1":
+            case "on":
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -110,7 +114,15 @@ public final class OsmUtils {
      * @return true if it is a true value.
      */
     public static boolean isFalse(String value) {
-        return FALSE_VALUES.contains(value);
+        switch (value) {
+            case "false":
+            case "no":
+            case "0":
+            case "off":
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
