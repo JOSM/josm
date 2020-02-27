@@ -74,6 +74,9 @@ public class OsmUtilsTest {
      */
     @Test
     public void testTrueFalse() {
+        assertFalse(OsmUtils.isTrue(null));
+        assertFalse(OsmUtils.isFalse(null));
+        assertNull(OsmUtils.getOsmBoolean(null));
         assertTrue(OsmUtils.isTrue("yes"));
         assertFalse(OsmUtils.isFalse("yes"));
         assertEquals(Boolean.TRUE, OsmUtils.getOsmBoolean("yes"));

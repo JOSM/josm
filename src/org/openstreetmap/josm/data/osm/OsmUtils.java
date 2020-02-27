@@ -82,6 +82,9 @@ public final class OsmUtils {
      * @return true if it is reversed.
      */
     public static boolean isReversed(String value) {
+        if (value == null) {
+            return false;
+        }
         switch (value) {
             case "reverse":
             case "-1":
@@ -97,6 +100,9 @@ public final class OsmUtils {
      * @return true if it is a true value.
      */
     public static boolean isTrue(String value) {
+        if (value == null) {
+            return false;
+        }
         switch (value) {
             case "true":
             case "yes":
@@ -114,6 +120,9 @@ public final class OsmUtils {
      * @return true if it is a true value.
      */
     public static boolean isFalse(String value) {
+        if (value == null) {
+            return false;
+        }
         switch (value) {
             case "false":
             case "no":
