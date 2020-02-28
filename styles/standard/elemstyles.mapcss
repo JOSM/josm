@@ -3231,8 +3231,8 @@ node[craft=beekeeper] {
     icon-image: "presets/craft/beekeeper.svg";
     set icon_z17;
 }
-node[craft=blacksmith][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=blacksmith] {
+    icon-image: "presets/craft/blacksmith.svg";
     set icon_z17;
 }
 node[craft=locksmith] {

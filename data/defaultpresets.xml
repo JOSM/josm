@@ -6871,7 +6871,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Stonemason -->
-    <item name="Blacksmith" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Blacksmith" icon="presets/craft/blacksmith.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=blacksmith" />
         <space />
         <key key="craft" value="blacksmith" />
