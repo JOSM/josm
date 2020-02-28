@@ -85,9 +85,9 @@ public class TerritoriesTest {
         Logging.clearLastErrorAndWarnings();
         Territories.initializeExternalData(cache, "foo", TestUtils.getTestDataRoot() + "taginfo/geofabrik-index-v1-nogeom-broken.json");
         assertTrue(cache.isEmpty());
-        assertEquals("W: Failed to parse external taginfo data at test/data/taginfo/geofabrik-index-v1-nogeom-broken.json: " +
-                "Invalid token=EOF at (line no=3, column no=49, offset=97). Expected tokens are: " +
-                "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL, SQUARECLOSE]",
-                Logging.getLastErrorAndWarnings().get(0));
+        String error = Logging.getLastErrorAndWarnings().get(0);
+        assertTrue(error.startsWith("W: Failed to parse external taginfo data at "));
+        assertTrue(error.endsWith(": Invalid token=EOF at (line no=3, column no=49, offset=97). Expected tokens are: " +
+                "[CURLYOPEN, SQUAREOPEN, STRING, NUMBER, TRUE, FALSE, NULL, SQUARECLOSE]"));
     }
 }
