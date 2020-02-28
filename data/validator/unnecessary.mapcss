@@ -112,7 +112,6 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 *[name][name=~/^(?i)(silo)$/][building=silo],
 *[name][name=~/^(?i)(cemetery|cementerio|cimetière|cmentarz|friedhof)$/][amenity=grave_yard],
 *[name][name=~/^(?i)(cemetery|cementerio|cimetière|cmentarz|friedhof)$/][landuse=cemetery],
-*[name][name=~/^(?i)(mairie|rathaus)$/][amenity=townhall],
 *[name][name=~/^(?i)(monument aux morts|war memorial)$/][historic=memorial][memorial=war_memorial],
 *[name][name=~/^(?i)(school|école|Школа)$/][building=school],
 *[name][name=~/^(?i)(school|école|Школа)$/][amenity=school],

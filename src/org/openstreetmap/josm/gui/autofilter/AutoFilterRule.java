@@ -145,24 +145,24 @@ public class AutoFilterRule {
      */
     public static AutoFilterRule[] defaultRules() {
         return new AutoFilterRule[]{
-            new AutoFilterRule("level", 17)
-                // #17109, support values like 0.5 or 1.5 - level values are multiplied by 2 when parsing, values are divided by 2 for formatting
-                .setValueExtractor(s -> (int) (Double.parseDouble(s) * 2.))
-                .setValueFormatter(v -> DecimalFormat.getInstance(Locale.ROOT).format(v / 2.)),
-            new AutoFilterRule("layer", 16)
-                    .setDefaultValueSupplier(AutoFilterRule::defaultLayer),
-            new AutoFilterRule("maxspeed", 16)
-                    .setValueExtractor(s -> Integer.parseInt(s.replace(" mph", ""))),
-            new AutoFilterRule("voltage", 5)
-                    .setValueFormatter(s -> s % 1000 == 0 ? (s / 1000) + "kV" : s + "V"),
+            new AutoFilterRule("admin_level", 11),
             new AutoFilterRule("building:levels", 17),
-            new AutoFilterRule("gauge", 5),
             new AutoFilterRule("frequency", 5),
+            new AutoFilterRule("gauge", 5),
             new AutoFilterRule("incline", 13)
                     .setValueExtractor(s -> Integer.parseInt(s.replaceAll("%$", "")))
                     .setValueFormatter(v -> v + "\u2009%"),
             new AutoFilterRule("lanes", 13),
-            new AutoFilterRule("admin_level", 11)
+            new AutoFilterRule("layer", 16)
+                    .setDefaultValueSupplier(AutoFilterRule::defaultLayer),
+            new AutoFilterRule("level", 17)
+                // #17109, support values like 0.5 or 1.5 - level values are multiplied by 2 when parsing, values are divided by 2 for formatting
+                .setValueExtractor(s -> (int) (Double.parseDouble(s) * 2.))
+                .setValueFormatter(v -> DecimalFormat.getInstance(Locale.ROOT).format(v / 2.)),
+            new AutoFilterRule("maxspeed", 16)
+                    .setValueExtractor(s -> Integer.parseInt(s.replace(" mph", ""))),
+            new AutoFilterRule("voltage", 5)
+                    .setValueFormatter(s -> s % 1000 == 0 ? (s / 1000) + "kV" : s + "V")
         };
     }
 
@@ -205,6 +205,6 @@ public class AutoFilterRule {
 
     @Override
     public String toString() {
-        return key + '[' + minZoomLevel + ']';
+        return key + " [" + minZoomLevel + ']';
     }
 }
