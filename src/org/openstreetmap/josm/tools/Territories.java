@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static java.util.Optional.ofNullable;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
@@ -21,7 +22,6 @@ import java.util.stream.Stream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser;
@@ -162,41 +162,39 @@ public final class Territories {
 
     private static void initializeExternalData() {
         taginfoGeofabrikCache = new TreeMap<>();
-        try (CachedFile cf = new CachedFile(Config.getUrls().getJOSMWebsite() + "/remote/geofabrik-index-v1-nogeom.json");
-                InputStream is = cf.getInputStream();
-                JsonParser json = Json.createParser(is)) {
+        initializeExternalData(taginfoGeofabrikCache, "Geofabrik",
+                Config.getUrls().getJOSMWebsite() + "/remote/geofabrik-index-v1-nogeom.json");
+    }
+
+    static void initializeExternalData(Map<String, TaginfoRegionalInstance> cache, String source, String path) {
+        try (CachedFile cf = new CachedFile(path); InputStream is = cf.getInputStream(); JsonParser json = Json.createParser(is)) {
             while (json.hasNext()) {
                 Event event = json.next();
                 if (event == Event.START_OBJECT) {
                     for (JsonValue feature : json.getObject().getJsonArray("features")) {
-                        JsonObject props = feature.asJsonObject().getJsonObject("properties");
-                        if (props != null) {
-                            JsonObject urls = props.getJsonObject("urls");
-                            if (urls != null) {
-                                String taginfo = urls.getString(TAGINFO);
-                                if (taginfo != null) {
-                                    JsonArray iso1 = props.getJsonArray(ISO3166_1_LC);
-                                    JsonArray iso2 = props.getJsonArray(ISO3166_2_LC);
-                                    if (iso1 != null) {
-                                        readExternalTaginfo(taginfo, iso1);
-                                    } else if (iso2 != null) {
-                                        readExternalTaginfo(taginfo, iso2);
-                                    }
-                                }
+                        ofNullable(feature.asJsonObject().getJsonObject("properties")).ifPresent(props ->
+                        ofNullable(props.getJsonObject("urls")).ifPresent(urls ->
+                        ofNullable(urls.getString(TAGINFO)).ifPresent(taginfo -> {
+                            JsonArray iso1 = props.getJsonArray(ISO3166_1_LC);
+                            JsonArray iso2 = props.getJsonArray(ISO3166_2_LC);
+                            if (iso1 != null) {
+                                readExternalTaginfo(cache, taginfo, iso1, source);
+                            } else if (iso2 != null) {
+                                readExternalTaginfo(cache, taginfo, iso2, source);
                             }
-                        }
+                        })));
                     }
                 }
             }
         } catch (IOException | JsonParsingException e) {
-            Logging.trace(e);
-            Logging.warn(tr("Failed to parse taginfo data geofabrik-index-v1-nogeom.json"));
+            Logging.debug(e);
+            Logging.warn(tr("Failed to parse external taginfo data at {0}: {1}", path, e.getMessage()));
         }
     }
 
-    private static void readExternalTaginfo(String taginfo, JsonArray jsonCodes) {
+    private static void readExternalTaginfo(Map<String, TaginfoRegionalInstance> cache, String taginfo, JsonArray jsonCodes, String source) {
         Set<String> isoCodes = jsonCodes.getValuesAs(JsonString.class).stream().map(JsonString::getString).collect(Collectors.toSet());
-        isoCodes.forEach(s -> taginfoGeofabrikCache.put(s, new TaginfoRegionalInstance(taginfo, isoCodes, "Geofabrik")));
+        isoCodes.forEach(s -> cache.put(s, new TaginfoRegionalInstance(taginfo, isoCodes, source)));
     }
 
     /**
