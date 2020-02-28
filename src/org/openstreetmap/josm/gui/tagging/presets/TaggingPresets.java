@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,10 +15,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 
+import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
@@ -60,6 +65,16 @@ public final class TaggingPresets {
      * Initialize the tagging presets (load and may display error)
      */
     public static void initialize() {
+        MainMenu mainMenu = MainApplication.getMenu();
+        JMenu presetsMenu = mainMenu.presetsMenu;
+        if (presetsMenu.getComponentCount() == 0) {
+            MainMenu.add(presetsMenu, mainMenu.presetSearchAction);
+            MainMenu.add(presetsMenu, mainMenu.presetSearchPrimitiveAction);
+            MainMenu.add(presetsMenu, PreferencesAction.forPreferenceSubTab(tr("Preset preferences"),
+                    tr("Click to open the tagging presets tab in the preferences"), TaggingPresetPreference.class));
+            presetsMenu.addSeparator();
+        }
+
         readFromPreferences();
         for (TaggingPreset tp: taggingPresets) {
             if (!(tp instanceof TaggingPresetSeparator)) {
@@ -67,11 +82,11 @@ public final class TaggingPresets {
             }
         }
         if (taggingPresets.isEmpty()) {
-            MainApplication.getMenu().presetsMenu.setVisible(false);
+            presetsMenu.setVisible(false);
         } else {
             Map<TaggingPresetMenu, JMenu> submenus = new HashMap<>();
             for (final TaggingPreset p : taggingPresets) {
-                JMenu m = p.group != null ? submenus.get(p.group) : MainApplication.getMenu().presetsMenu;
+                JMenu m = p.group != null ? submenus.get(p.group) : presetsMenu;
                 if (m == null && p.group != null) {
                     Logging.error("No tagging preset submenu for " + p.group);
                 } else if (m == null) {
@@ -97,7 +112,7 @@ public final class TaggingPresets {
             }
         }
         if (Config.getPref().getBoolean("taggingpreset.sortmenu")) {
-            TaggingPresetMenu.sortMenu(MainApplication.getMenu().presetsMenu);
+            TaggingPresetMenu.sortMenu(presetsMenu);
         }
         listeners.forEach(TaggingPresetListener::taggingPresetsModified);
     }

@@ -128,7 +128,6 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.PlatformManager;
@@ -837,12 +836,6 @@ public class MainMenu extends JMenuBar {
         final JCheckBoxMenuItem expertItem = new JCheckBoxMenuItem(ExpertToggleAction.getInstance());
         viewMenu.add(expertItem);
         ExpertToggleAction.getInstance().addButtonModel(expertItem.getModel());
-
-        add(presetsMenu, presetSearchAction);
-        add(presetsMenu, presetSearchPrimitiveAction);
-        add(presetsMenu, PreferencesAction.forPreferenceSubTab(tr("Preset preferences"),
-                tr("Click to open the tagging presets tab in the preferences"), TaggingPresetPreference.class));
-        presetsMenu.addSeparator();
 
         add(imageryMenu, reorderImageryLayersAction);
         add(imageryMenu, PreferencesAction.forPreferenceTab(tr("Imagery preferences..."),
