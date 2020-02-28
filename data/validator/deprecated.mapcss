@@ -1095,7 +1095,8 @@ way[barrier=wall][type=noise_barrier][wall][wall!=noise_barrier] {
   fixAdd: "service=drive-through";
 }
 
-/* #12771 */
+/* #12771, #9895 */
+*[noexit][noexit!=yes][noexit!=no], /* noexit=no has an own warning */
 way[highway=service][service][service !~ /^(alley|drive-through|drive_through|driveway|emergency_access|parking_aisle|rest_area|slipway|yes)$/], /* drive_through and yes have special warnings */
 way[railway=rail][service][service !~ /^(crossover|siding|spur|yard)$/],
 way[waterway=canal][service][service !~ /^(irrigation|transportation|water_power)$/] {
