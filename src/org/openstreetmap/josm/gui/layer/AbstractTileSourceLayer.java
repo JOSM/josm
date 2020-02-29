@@ -11,7 +11,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -993,8 +992,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     private void drawImageInside(Graphics2D g, BufferedImage toDrawImg, TileAnchor anchorImage, TileAnchor anchorScreen, Shape clip) {
         AffineTransform imageToScreen = anchorImage.convert(anchorScreen);
-        Point2D screen0 = imageToScreen.transform(new Point.Double(0, 0), null);
-        Point2D screen1 = imageToScreen.transform(new Point.Double(
+        Point2D screen0 = imageToScreen.transform(new Point2D.Double(0, 0), null);
+        Point2D screen1 = imageToScreen.transform(new Point2D.Double(
                 toDrawImg.getWidth(), toDrawImg.getHeight()), null);
 
         Shape oldClip = null;
@@ -1112,7 +1111,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (tile instanceof ReprojectionTile) {
             return ((ReprojectionTile) tile).getAnchor();
         } else if (image != null) {
-            return new TileAnchor(new Point.Double(0, 0), new Point.Double(image.getWidth(), image.getHeight()));
+            return new TileAnchor(new Point2D.Double(0, 0), new Point2D.Double(image.getWidth(), image.getHeight()));
         } else {
             return null;
         }

@@ -42,6 +42,7 @@
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="error_prone_core.jar" location="${tools.dir}/error_prone_core.jar"/>
         <property name="error_prone_javac.jar" location="${tools.dir}/error_prone_javac.jar"/>
+        <property name="auto-value-annotations.jar" location="${tools.dir}/auto-value-annotations.jar"/>
         <property name="dataflow.jar" location="${tools.dir}/dataflow.jar"/>
         <property name="javacutil.jar" location="${tools.dir}/javacutil.jar"/>
         <property name="failureaccess.jar" location="${tools.dir}/failureaccess.jar"/>
@@ -101,6 +102,7 @@
             <pathelement location="${failureaccess.jar}"/>
             <pathelement location="${guava.jar}"/>
             <pathelement location="${jformatstring.jar}"/>
+            <pathelement location="${auto-value-annotations.jar}"/>
         </path>
     </target>
 
@@ -356,7 +358,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xlint:unchecked"/>
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
-            <compilerarg value="-Xplugin:ErrorProne -Xep:CatchAndPrintStackTrace:OFF -Xep:ReferenceEquality:OFF -Xep:StringSplitter:OFF"/>
+            <compilerarg value="-Xplugin:ErrorProne -Xep:CatchAndPrintStackTrace:OFF -Xep:ReferenceEquality:OFF -Xep:StringSplitter:OFF -Xep:BadImport:OFF"/>
             <compilerarg line="-Xmaxwarns 1000"/>
         </javac>
     </target>
@@ -382,7 +384,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xlint:unchecked"/>
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
-            <compilerarg value="-Xplugin:ErrorProne -Xep:ReferenceEquality:OFF -Xep:ImmutableEnumChecker:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:FloatingPointLiteralPrecision:OFF -Xep:ShortCircuitBoolean:OFF -Xep:StringSplitter:OFF -Xep:JdkObsolete:OFF -Xep:UnnecessaryParentheses:OFF -Xep:EqualsGetClass:OFF -Xep:ThreadPriorityCheck:OFF -Xep:UndefinedEquals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:OverrideThrowableToString:OFF -Xep:JavaTimeDefaultTimeZone:OFF -Xep:UnusedVariable:OFF -Xep:EqualsUsingHashCode:OFF"/>
+            <compilerarg value="-Xplugin:ErrorProne -Xep:ReferenceEquality:OFF -Xep:ImmutableEnumChecker:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:FloatingPointLiteralPrecision:OFF -Xep:ShortCircuitBoolean:OFF -Xep:StringSplitter:OFF -Xep:JdkObsolete:OFF -Xep:UnnecessaryParentheses:OFF -Xep:EqualsGetClass:OFF -Xep:ThreadPriorityCheck:OFF -Xep:UndefinedEquals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:OverrideThrowableToString:OFF -Xep:JavaTimeDefaultTimeZone:OFF -Xep:UnusedVariable:OFF -Xep:EqualsUsingHashCode:OFF -Xep:BadImport:OFF -Xep:UnnecessaryLambda:OFF -Xep:AnnotateFormatMethod:OFF -Xep:MutablePublicArray:OFF"/>
             <compilerarg line="-Xmaxwarns 1000"/>
             <exclude name="org/openstreetmap/josm/io/audio/fx/*.java" if:set="noJavaFX"/>
         </javac>

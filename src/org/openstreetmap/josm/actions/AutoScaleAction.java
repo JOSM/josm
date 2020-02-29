@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
@@ -443,7 +444,7 @@ public class AutoScaleAction extends JosmAction {
     /**
      * Adapter for zoom change events
      */
-    private class ZoomChangeAdapter implements MapView.ZoomChangeListener {
+    private class ZoomChangeAdapter implements ZoomChangeListener {
         @Override
         public void zoomChanged() {
             updateEnabledState();

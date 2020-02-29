@@ -35,15 +35,19 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This panel displays a map and lets the user chose a {@link BBox}.
  */
-public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, ChangeListener,
-    MainLayerManager.ActiveLayerChangeListener, MainLayerManager.LayerChangeListener {
+public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, ChangeListener, ActiveLayerChangeListener, LayerChangeListener {
 
     /**
      * Plugins that wish to add custom tile sources to slippy map choose should call this method
@@ -334,21 +338,21 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
     }
 
     @Override
-    public void layerAdded(MainLayerManager.LayerAddEvent e) {
+    public void layerAdded(LayerAddEvent e) {
         if (e.getAddedLayer() instanceof ImageryLayer) {
             this.refreshTileSources();
         }
     }
 
     @Override
-    public void layerRemoving(MainLayerManager.LayerRemoveEvent e) {
+    public void layerRemoving(LayerRemoveEvent e) {
         if (e.getRemovedLayer() instanceof ImageryLayer) {
             this.refreshTileSources();
         }
     }
 
     @Override
-    public void layerOrderChanged(MainLayerManager.LayerOrderChangeEvent e) {
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
         // Do nothing
     }
 }
