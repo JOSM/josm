@@ -120,6 +120,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                 String d = error.getDescription();
                 if (d != null)
                     res += "<br>" + d;
+                res += "<br>" + tr("Test: {0}",error.getTester().getName());
                 res += "</html>";
             } else {
                 res = node.toString();
