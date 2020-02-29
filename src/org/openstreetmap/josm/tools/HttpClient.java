@@ -142,6 +142,9 @@ public abstract class HttpClient {
             Stopwatch stopwatch = Stopwatch.createStarted();
             ConnectionResponse cr;
             try {
+                if (Logging.isDebugEnabled()) {
+                    Logging.debug("REQUEST HEADERS: {0}", headers);
+                }
                 cr = performConnection();
                 final boolean hasReason = reasonForRequest != null && !reasonForRequest.isEmpty();
                 logRequest("{0} {1}{2} -> {3} {4} ({5}{6})",
@@ -154,7 +157,7 @@ public abstract class HttpClient {
                 );
                 if (Logging.isDebugEnabled()) {
                     try {
-                        Logging.debug("RESPONSE: {0}", cr.getHeaderFields());
+                        Logging.debug("RESPONSE HEADERS: {0}", cr.getHeaderFields());
                     } catch (IllegalArgumentException e) {
                         Logging.warn(e);
                     }
