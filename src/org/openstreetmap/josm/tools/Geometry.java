@@ -561,15 +561,16 @@ public final class Geometry {
         if (p instanceof Way && ((Way) p).isClosed()) {
             return Geometry.getArea(((Way) p).getNodes());
         }
-        if (p instanceof Relation && p.isMultipolygon() && !p.isIncomplete()
-                && !((Relation) p).hasIncompleteMembers()) {
+        if (p instanceof Relation && p.isMultipolygon() && !p.isIncomplete()) {
             Multipolygon mp = MultipolygonCache.getInstance().get((Relation) p);
-            Path2D path = new Path2D.Double();
-            path.setWindingRule(Path2D.WIND_EVEN_ODD);
-            for (PolyData pd : mp.getCombinedPolygons()) {
-                path.append(pd.get(), false);
+            if (mp.getOpenEnds().isEmpty()) {
+                Path2D path = new Path2D.Double();
+                path.setWindingRule(Path2D.WIND_EVEN_ODD);
+                for (PolyData pd : mp.getCombinedPolygons()) {
+                    path.append(pd.get(), false);
+                }
+                return new Area(path);
             }
-            return new Area(path);
         }
         return new Area();
     }

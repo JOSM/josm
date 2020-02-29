@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -92,8 +93,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 6506
  */
 public class MapCSSTagChecker extends Test.TagTest {
-    MapCSSTagCheckerIndex indexData;
-    final Set<OsmPrimitive> tested = new HashSet<>();
+    private MapCSSTagCheckerIndex indexData;
+    private final Set<OsmPrimitive> tested = new HashSet<>();
+    final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
 
     /**
     * A grouped MapCSSRule with multiple selectors for a single declaration.
@@ -201,7 +203,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             return new FixCommand() {
                 @Override
                 public Command createCommand(OsmPrimitive p, Selector matchingSelector) {
-                    final Tag tag = Tag.ofString(evaluateObject(obj, p, matchingSelector));
+                    final Tag tag = Tag.ofString(FixCommand.evaluateObject(obj, p, matchingSelector));
                     return new ChangePropertyCommand(p, tag.getKey(), tag.getValue());
                 }
 
@@ -222,7 +224,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             return new FixCommand() {
                 @Override
                 public Command createCommand(OsmPrimitive p, Selector matchingSelector) {
-                    final String key = evaluateObject(obj, p, matchingSelector);
+                    final String key = FixCommand.evaluateObject(obj, p, matchingSelector);
                     return new ChangePropertyCommand(p, key, "");
                 }
 
@@ -619,10 +621,23 @@ public class MapCSSTagChecker extends Test.TagTest {
                             if (fix != null) {
                                 errorBuilder = errorBuilder.fix(() -> fix);
                             }
+                            // check if we have special information about highlighted objects */
+                            boolean hiliteFound = false;
                             if (env.intersections != null) {
                                 Area is = env.intersections.get(c);
                                 if (is != null) {
                                     errorBuilder = errorBuilder.highlight(is);
+                                    hiliteFound = true;
+                                }
+                            }
+                            if (env.crossingWaysMap != null && !hiliteFound) {
+                                Map<List<Way>, List<WaySegment>> is = env.crossingWaysMap.get(c);
+                                if (is != null) {
+                                    Set<WaySegment> toHilite = new HashSet<>();
+                                    for (List<WaySegment> wsList : is.values()) {
+                                        toHilite.addAll(wsList);
+                                    }
+                                    errorBuilder = errorBuilder.highlightWaySegments(toHilite);
                                 }
                             }
                             res.add(errorBuilder.primitives(p, (OsmPrimitive) c).build());
@@ -708,6 +723,8 @@ public class MapCSSTagChecker extends Test.TagTest {
         MapCSSRuleIndex matchingRuleIndex = indexData.get(p);
 
         Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        env.mpAreaCache = mpAreaCache;
+
         // the declaration indices are sorted, so it suffices to save the last used index
         Declaration lastDeclUsed = null;
 
@@ -774,10 +791,12 @@ public class MapCSSTagChecker extends Test.TagTest {
         return false;
     }
 
-    private static Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity,
+    private Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity,
             Collection<Set<TagCheck>> checksCol) {
+        // this variant is only used by the assertion tests
         final List<TestError> r = new ArrayList<>();
         final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        env.mpAreaCache = mpAreaCache;
         for (Set<TagCheck> schecks : checksCol) {
             for (TagCheck check : schecks) {
                 boolean ignoreError = Severity.OTHER == check.getSeverity() && !includeOtherSeverity;
@@ -991,6 +1010,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             indexData = new MapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ALL_TESTS);
         }
         tested.clear();
+        mpAreaCache.clear();
     }
 
     @Override
@@ -1022,8 +1042,10 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
             tested.clear();
         }
-        super.endTest();
         // no need to keep the index, it is quickly build and doubles the memory needs
         indexData = null;
+        // always clear the cache to make sure that we catch changes in geometry
+        mpAreaCache.clear();
+        super.endTest();
     }
 }

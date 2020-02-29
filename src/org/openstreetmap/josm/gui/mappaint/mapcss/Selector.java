@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
 
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
@@ -25,8 +27,11 @@ import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.validation.tests.CrossingWays;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.OpenEndPseudoClassCondition;
@@ -302,30 +307,92 @@ public interface Selector {
 
             private final String layer;
             private Area area;
+            /** Will contain all way segments, grouped by cells */
+            Map<Point2D, List<WaySegment>> cellSegments;
 
             private CrossingFinder(Environment e) {
                 super(e);
-                CheckParameterUtil.ensureThat(e.osm instanceof IWay, "Only ways are supported");
+                CheckParameterUtil.ensureThat(isArea(e.osm), "Only areas are supported");
                 layer = OsmUtils.getLayer(e.osm);
             }
 
-            @Override
-            public void visit(IWay<?> w) {
-                if (Objects.equals(layer, OsmUtils.getLayer(w))
-                    && left.matches(new Environment(w).withParent(e.osm))
-                    && e.osm instanceof IWay) {
-                    if (area == null) {
-                        area = Geometry.getAreaEastNorth(e.osm);
+            private Area getAreaEastNorth(IPrimitive p, Environment e) {
+                if (e.mpAreaCache != null && p.isMultipolygon()) {
+                    Area a = e.mpAreaCache.get(p);
+                    if (a == null) {
+                        a = Geometry.getAreaEastNorth(p);
+                        e.mpAreaCache.put(p, a);
                     }
-                    Pair<PolygonIntersection, Area> is = Geometry.polygonIntersectionResult(
-                            Geometry.getAreaEastNorth(w), area, Geometry.INTERSECTION_EPS_EAST_NORTH);
-                    if (Geometry.PolygonIntersection.CROSSING == is.a) {
-                        addToChildren(e, w);
-                        // store intersection area to improve highlight and zoom to problem
-                        if (e.intersections == null) {
-                            e.intersections = new HashMap<>();
+                    return a;
+                }
+                return Geometry.getAreaEastNorth(p);
+            }
+
+            private Map<List<Way>, List<WaySegment>> findCrossings(IPrimitive area,
+                    Map<Point2D, List<WaySegment>> cellSegments) {
+                /** The detected crossing ways */
+                Map<List<Way>, List<WaySegment>> crossingWays = new HashMap<>(50);
+                if (area instanceof Way) {
+                    CrossingWays.findIntersectingWay((Way) area, cellSegments, crossingWays, false);
+                } else if (area instanceof Relation && area.isMultipolygon()) {
+                    Relation r = (Relation) area;
+                    for (Way w : r.getMemberPrimitives(Way.class)) {
+                        if (!w.hasIncompleteNodes()) {
+                            CrossingWays.findIntersectingWay(w, cellSegments, crossingWays, false);
                         }
-                        e.intersections.put(w, is.b);
+                    }
+                }
+                return crossingWays;
+            }
+
+            @Override
+            public void visit(Collection<? extends IPrimitive> primitives) {
+                List<? extends IPrimitive> toIgnore;
+                if (e.osm instanceof Relation) {
+                    toIgnore = ((IRelation<?>) e.osm).getMemberPrimitivesList();
+                } else {
+                    toIgnore = null;
+                }
+
+                for (IPrimitive p : primitives) {
+                    if (isPrimitiveUsable(p) && Objects.equals(layer, OsmUtils.getLayer(p))
+                            && left.matches(new Environment(p).withParent(e.osm)) && isArea(p)
+                            && (toIgnore == null || !toIgnore.contains(p))) {
+                        if (area == null) {
+                            area = getAreaEastNorth(e.osm, e);
+                        }
+                        Area otherArea = getAreaEastNorth(p, e);
+                        if (area.isEmpty() || otherArea.isEmpty()) {
+                            if (cellSegments == null) {
+                                // lazy initialisation
+                                cellSegments = new HashMap<>();
+                                findCrossings(e.osm, cellSegments); // ignore self intersections etc. here
+                            }
+                            // need a copy
+                            final Map<Point2D, List<WaySegment>> tmpCellSegments = new HashMap<>(cellSegments);
+                            // calculate all crossings between e.osm and p
+                            Map<List<Way>, List<WaySegment>> crossingWays = findCrossings(p, tmpCellSegments);
+                            if (!crossingWays.isEmpty()) {
+                                addToChildren(e, p);
+                                if (e.crossingWaysMap == null) {
+                                    e.crossingWaysMap = new HashMap<>();
+                                }
+                                e.crossingWaysMap.put(p, crossingWays);
+                            }
+                        } else {
+                            // we have complete data. This allows to find intersections with shared nodes
+                            // See #16707
+                            Pair<PolygonIntersection, Area> is = Geometry.polygonIntersectionResult(
+                                    otherArea, area, Geometry.INTERSECTION_EPS_EAST_NORTH);
+                            if (Geometry.PolygonIntersection.CROSSING == is.a) {
+                                addToChildren(e, p);
+                                // store intersection area to improve highlight and zoom to problem
+                                if (e.intersections == null) {
+                                    e.intersections = new HashMap<>();
+                                }
+                                e.intersections.put(p, is.b);
+                            }
+                        }
                     }
                 }
             }
@@ -452,13 +519,12 @@ public interface Selector {
                 visitBBox(e, insideOrEqualFinder);
                 return ChildOrParentSelectorType.SUPERSET_OR_EQUAL == type ? e.children != null : e.children == null;
 
-            } else if (ChildOrParentSelectorType.CROSSING == type && e.osm instanceof IWay) {
+            } else if (ChildOrParentSelectorType.CROSSING == type) {
                 e.parent = e.osm;
-                if (right instanceof OptimizedGeneralSelector
-                        && e.osm.getDataSet() != null
-                        && ((OptimizedGeneralSelector) right).matchesBase(OsmPrimitiveType.WAY)) {
+                if (e.osm.getDataSet() != null && isArea(e.osm)) {
                     final CrossingFinder crossingFinder = new CrossingFinder(e);
-                    crossingFinder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
+                    visitBBox(e, crossingFinder);
+                    return e.children != null;
                 }
                 return e.children != null;
             } else if (ChildOrParentSelectorType.SIBLING == type) {

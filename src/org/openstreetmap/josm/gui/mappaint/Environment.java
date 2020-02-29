@@ -2,13 +2,15 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.geom.Area;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -71,9 +73,19 @@ public class Environment {
     public Set<IPrimitive> children;
 
     /**
+     * Crossing ways result from CrossingFinder, filled for incomplete ways/relations
+    */
+    public Map<IPrimitive, Map<List<Way>, List<WaySegment>>> crossingWaysMap;
+
+    /**
      * Intersection areas (only filled with CrossingFinder if children is not null)
      */
     public Map<IPrimitive, Area> intersections;
+
+    /**
+     * Cache for multipolygon areas, can be null, used with CrossingFinder
+     */
+    public Map<IPrimitive, Area> mpAreaCache;
 
     /**
      * Creates a new uninitialized environment.
@@ -125,7 +137,9 @@ public class Environment {
         this.count = other.count;
         this.context = other.getContext();
         this.children = other.children == null ? null : new LinkedHashSet<>(other.children);
-        this.intersections = other.intersections == null ? null : new HashMap<>(other.intersections);
+        this.intersections = other.intersections;
+        this.crossingWaysMap = other.crossingWaysMap;
+        this.mpAreaCache = other.mpAreaCache;
     }
 
     /**
@@ -293,6 +307,7 @@ public class Environment {
         count = null;
         children = null;
         intersections = null;
+        crossingWaysMap = null;
     }
 
     /**

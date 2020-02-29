@@ -427,4 +427,48 @@ public abstract class CrossingWays extends Test {
         }
         return cells;
     }
+
+    /**
+     * Find ways which are crossing without sharing a node.
+     * @param w way that is to be checked
+     * @param cellSegments map with already collected way segments
+     * @param crossingWays map to collect crossing ways and related segments
+     * @param findSharedWaySegments true: find shared way segments instead of crossings
+     */
+    public static void findIntersectingWay(Way w, Map<Point2D, List<WaySegment>> cellSegments,
+            Map<List<Way>, List<WaySegment>> crossingWays, boolean findSharedWaySegments) {
+        int nodesSize = w.getNodesCount();
+        for (int i = 0; i < nodesSize - 1; i++) {
+            final WaySegment es1 = new WaySegment(w, i);
+            final EastNorth en1 = es1.getFirstNode().getEastNorth();
+            final EastNorth en2 = es1.getSecondNode().getEastNorth();
+            if (en1 == null || en2 == null) {
+                Logging.warn("Crossing ways test skipped " + es1);
+                continue;
+            }
+            for (List<WaySegment> segments : CrossingWays.getSegments(cellSegments, en1, en2)) {
+                for (WaySegment es2 : segments) {
+
+                    List<WaySegment> highlight;
+                    if (es2.way == w // reported by CrossingWays.SelfIntersection
+                            || (findSharedWaySegments && !es1.isSimilar(es2))
+                            || (!findSharedWaySegments && !es1.intersects(es2)))
+                        continue;
+
+                    List<Way> prims = Arrays.asList(es1.way, es2.way);
+                    if ((highlight = crossingWays.get(prims)) == null) {
+                        highlight = new ArrayList<>();
+                        highlight.add(es1);
+                        highlight.add(es2);
+                        crossingWays.put(prims, highlight);
+                    } else {
+                        highlight.add(es1);
+                        highlight.add(es2);
+                    }
+                }
+                segments.add(es1);
+            }
+        }
+    }
+
 }

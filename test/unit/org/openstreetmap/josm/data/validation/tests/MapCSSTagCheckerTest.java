@@ -356,4 +356,38 @@ public class MapCSSTagCheckerTest {
         }
     }
 
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13165">Bug #13165</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket13165() throws Exception {
+        final MapCSSTagChecker test = buildTagChecker(
+                "area:closed[tag(\"landuse\") = parent_tag(\"landuse\")] ⧉ area:closed[landuse] {"
+                        + "throwWarning: tr(\"Overlapping Identical Landuses\");"
+                        + "}");
+        try (InputStream is = TestUtils.getRegressionDataStream(13165, "13165.osm")) {
+            test.visit(OsmReader.parseDataSet(is, null).allPrimitives());
+            List<TestError> errors = test.getErrors();
+            assertEquals(3, errors.size());
+        }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13165">Bug #13165</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket13165IncompleteMP() throws Exception {
+        final MapCSSTagChecker test = buildTagChecker(
+                "area:closed[tag(\"landuse\") = parent_tag(\"landuse\")] ⧉ area:closed[landuse] {"
+                        + "throwWarning: tr(\"Overlapping Identical Landuses\");"
+                        + "}");
+        try (InputStream is = TestUtils.getRegressionDataStream(13165, "13165-incomplete.osm.bz2")) {
+            test.visit(OsmReader.parseDataSet(is, null).allPrimitives());
+            List<TestError> errors = test.getErrors();
+            assertEquals(3, errors.size());
+        }
+    }
+
 }
