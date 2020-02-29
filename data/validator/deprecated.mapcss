@@ -1945,3 +1945,10 @@ way[highway][construction=yes][highway!=construction] {
   group: tr("deprecated tagging");
   fixAdd: "navigationaid=als";
 }
+
+/* #18819 */
+node[exit_to] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "destination";
+  group: tr("deprecated tagging");
+}
