@@ -304,6 +304,12 @@ way[highway] > node[tourism][!entrance][tourism!=viewpoint]!.guidepost!.first_la
   throwWarning: tr("{0} node connected to a highway", "{0.key}");
 }
 
+/* #18817 */
+way[man_made=pipeline][location=underground] > node[marker],
+way[power=cable      ][location=underground] > node[marker] {
+  throwWarning: tr("{0} node connected to an underground object", "{0.key}");
+}
+
 way[junction=roundabout]:righthandtraffic:clockwise,
 way[junction=roundabout]!:righthandtraffic:anticlockwise {
   throwWarning: tr("suspicious roundabout direction");
