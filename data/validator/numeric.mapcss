@@ -278,7 +278,7 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
 /* #14989 */
 *[direction][direction<0],
 *[direction][direction>=360],
-*[direction][direction !~ /^([0-9][0-9]?[0-9]?|north|east|south|west|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW|forward|backward|both|clockwise|anti-clockwise|anticlockwise|up|down)(-([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW))?(;([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW)-([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW))*$/] {
+*[direction][direction !~ /^([0-9][0-9]?[0-9]?|north|east|south|west|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW|forward|backward|both|clockwise|anti-clockwise|anticlockwise|up|down)((-|;)([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW))*$/] {
   throwWarning: tr("unusual value of {0}", "{0.key}");
   assertMatch: "node direction=north-down";
   assertMatch: "node direction=rome";
@@ -290,7 +290,9 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertMatch: "node direction=north-east"; /* if range use N-E, if single direcion use NE */
   assertNoMatch: "node direction=0-360"; /* complete panorama view */
   assertNoMatch: "node direction=45-100;190-250;300-360";
-  assertMatch: "node direction=45-100;190-250;300";
+  assertMatch: "node direction=45-100;190-250;300-";
+  assertNoMatch: "node direction=45-100;190-250;300";
+  assertNoMatch: "node direction=90;270";
   assertNoMatch: "node direction=up"; 
   assertNoMatch: "node direction=down"; /* up/down are replaced by incline tag, has separate warning */
   assertMatch: "node direction=-10";
