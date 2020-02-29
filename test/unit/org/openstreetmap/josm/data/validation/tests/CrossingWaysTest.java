@@ -125,7 +125,6 @@ public class CrossingWaysTest {
         assertTrue(test.isPrimitiveUsable(newUsableWay("landuse=residential")));
         // createMessage
         testMessage(601, test, "amenity=restaurant", "amenity=restaurant");
-        testMessage(610, test, "building=yes", "building=yes");
         testMessage(611, test, "building=yes", "amenity=restaurant");
         testMessage(612, test, "building=yes", "highway=road");
         testMessage(613, test, "building=yes", "railway=rail");
@@ -138,7 +137,6 @@ public class CrossingWaysTest {
         testMessage(630, test, "railway=rail", "railway=rail");
         testMessage(631, test, "railway=rail", "amenity=restaurant");
         testMessage(632, test, "railway=rail", "waterway=river");
-        testMessage(640, test, "landuse=residential", "landuse=residential");
         testMessage(641, test, "landuse=residential", "amenity=restaurant");
         testMessage(650, test, "waterway=river", "waterway=river");
         testMessage(651, test, "waterway=river", "amenity=restaurant");

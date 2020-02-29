@@ -166,6 +166,11 @@ area[building][building!~/no|entrance/] {
   throwWarning: tr("Building inside building");
 }
 
+/* Building overlapping building (spatial test) */
+area[building][building!~/no|entrance/] ⧉ area[building][building!~/no|entrance/] {
+  throwWarning: tr("Overlapping buildings");
+}
+
 /* Overlapping areas (spatial test) */
 area[natural =~ /^(water|wetland|coastline)$/], area[landuse=reservoir] {
   set water_area;
@@ -192,7 +197,7 @@ area:closed:areaStyle[tag("natural") = parent_tag("natural")] ⧉ area:closed:ar
   throwWarning: tr("Overlapping Identical Natural Areas");
 }
 
-area:closed:areaStyle[landuse!=residential][tag("landuse") = parent_tag("landuse")] ⧉ area:closed:areaStyle[landuse][landuse!=residential] {
+area:closed:areaStyle[tag("landuse") = parent_tag("landuse")] ⧉ area:closed:areaStyle[landuse] {
   throwWarning: tr("Overlapping Identical Landuses");
 }
 

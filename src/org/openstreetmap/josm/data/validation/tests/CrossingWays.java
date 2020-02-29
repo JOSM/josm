@@ -115,11 +115,13 @@ public abstract class CrossingWays extends Test {
             if (areLayerOrLevelDifferent(w1, w2)) {
                 return true;
             }
+            if (isBuilding(w1) && isBuilding(w2))
+                return true;
             if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
                 return true;
             }
-            if ((w1.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY) && isResidentialArea(w2))
-             || (w2.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY) && isResidentialArea(w1)))
+            if (((isResidentialArea(w1) || w1.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY)) && isResidentialArea(w2))
+             || ((isResidentialArea(w2) || w2.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY)) && isResidentialArea(w1)))
                 return true;
             if (isSubwayOrTramOrRazed(w2)) {
                 return true;
@@ -141,16 +143,13 @@ public abstract class CrossingWays extends Test {
 
             if (types[0] == types[1]) {
                 switch (types[0]) {
+                // 610 and 640 where removed for #16707
                 case BARRIER:
                     return new MessageHelper(tr("Crossing barriers"), 603);
-                case BUILDING:
-                    return new MessageHelper(tr("Crossing buildings"), 610);
                 case HIGHWAY:
                     return new MessageHelper(tr("Crossing highways"), 620);
                 case RAILWAY:
                     return new MessageHelper(tr("Crossing railways"), 630);
-                case RESIDENTIAL_AREA:
-                    return new MessageHelper(tr("Crossing residential areas"), 640);
                 case WATERWAY:
                     return new MessageHelper(tr("Crossing waterways"), 650);
                 case WAY:
