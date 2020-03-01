@@ -75,6 +75,7 @@ public class ValidateUploadHook implements UploadHook {
                 }
             }
             test.clear();
+            test.setBeforeUpload(false);
         }
 
         if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
