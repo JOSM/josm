@@ -47,6 +47,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -68,6 +69,7 @@ import java.util.zip.ZipFile;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import com.kitfox.svg.xml.XMLParseUtil;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
@@ -765,6 +767,21 @@ public final class Utils {
         } else {
             return (List<T>) Arrays.asList(collection.toArray());
         }
+    }
+
+    /**
+     * Returns an unmodifiable map for the given map.
+     * Makes use of {@link Collections#emptyMap()} and {@link Collections#singletonMap} and {@link Map#ofEntries(Map.Entry[])} to save memory.
+     *
+     * @param map the map for which an unmodifiable map is to be returned
+     * @param <K> the type of keys maintained by this map
+     * @param <V> the type of mapped values
+     * @return an unmodifiable map
+     * @see <a href="https://dzone.com/articles/preventing-your-java-collections-from-wasting-memo">
+     *     How to Prevent Your Java Collections From Wasting Memory</a>
+     */
+    public static <K, V> Map<K, V> toUnmodifiableMap(Map<K, V> map) {
+        return XMLParseUtil.toUnmodifiableMap(map);
     }
 
     /**

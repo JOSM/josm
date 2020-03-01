@@ -13,9 +13,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.junit.Rule;
@@ -572,5 +575,24 @@ public class UtilsTest {
         assertEquals(Arrays.asList("foo", "bar", "baz"), Utils.toUnmodifiableList(Arrays.asList("foo", "bar", "baz")));
         assertEquals(Arrays.asList("foo", "bar", "baz"), Utils.toUnmodifiableList(new ArrayList<>(Arrays.asList("foo", "bar", "baz"))));
         assertEquals(Arrays.asList("foo", "bar", "baz"), Utils.toUnmodifiableList(new LinkedList<>(Arrays.asList("foo", "bar", "baz"))));
+    }
+
+    /**
+     * Test of {@link Utils#toUnmodifiableMap}
+     */
+    @Test
+    public void testToUnmodifiableMap() {
+        assertSame(Collections.emptyMap(), Utils.toUnmodifiableMap(null));
+        assertSame(Collections.emptyMap(), Utils.toUnmodifiableMap(Collections.emptyMap()));
+        assertSame(Collections.emptyMap(), Utils.toUnmodifiableMap(new HashMap<>()));
+        assertSame(Collections.emptyMap(), Utils.toUnmodifiableMap(new TreeMap<>()));
+        assertEquals(Collections.singletonMap("foo", "bar"), Utils.toUnmodifiableMap(new HashMap<>(Collections.singletonMap("foo", "bar"))));
+        assertEquals(Collections.singletonMap("foo", "bar"), Utils.toUnmodifiableMap(new TreeMap<>(Collections.singletonMap("foo", "bar"))));
+        final Map<String, String> map4 = new HashMap<>();
+        map4.put("jjj", "foo");
+        map4.put("ooo", "bar");
+        map4.put("sss", "baz");
+        map4.put("mmm", ":-)");
+        assertEquals(map4, Utils.toUnmodifiableMap(map4));
     }
 }

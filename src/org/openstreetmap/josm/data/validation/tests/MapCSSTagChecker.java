@@ -282,14 +282,14 @@ public class MapCSSTagChecker extends Test.TagTest {
         /** The selector of this {@code TagCheck} */
         protected final GroupedMapCSSRule rule;
         /** Commands to apply in order to fix a matching primitive */
-        protected final List<FixCommand> fixCommands = new ArrayList<>();
+        protected final List<FixCommand> fixCommands;
         /** Tags (or arbitrary strings) of alternatives to be presented to the user */
-        protected final List<String> alternatives = new ArrayList<>();
+        protected final List<String> alternatives;
         /** An {@link org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruction}-{@link Severity} pair.
          * Is evaluated on the matching primitive to give the error message. Map is checked to contain exactly one element. */
-        protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
+        protected final Map<Instruction.AssignmentInstruction, Severity> errors;
         /** MapCSS Classes to set on matching primitives */
-        protected final Set<String> setClassExpressions = new HashSet<>();
+        protected final Collection<String> setClassExpressions;
         /** Denotes whether the object should be deleted for fixing it */
         protected boolean deletion;
         /** A string used to group similar tests */
@@ -297,6 +297,24 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         TagCheck(GroupedMapCSSRule rule) {
             this.rule = rule;
+            this.fixCommands = new ArrayList<>();
+            this.alternatives = new ArrayList<>();
+            this.errors = new HashMap<>();
+            this.setClassExpressions = new HashSet<>();
+        }
+
+        TagCheck(TagCheck check) {
+            this.rule = check.rule;
+            this.fixCommands = Utils.toUnmodifiableList(check.fixCommands);
+            this.alternatives = Utils.toUnmodifiableList(check.alternatives);
+            this.errors = Utils.toUnmodifiableMap(check.errors);
+            this.setClassExpressions = Utils.toUnmodifiableList(check.setClassExpressions);
+            this.deletion = check.deletion;
+            this.group = check.group;
+        }
+
+        TagCheck toImmutable() {
+            return new TagCheck(this);
         }
 
         private static final String POSSIBLE_THROWS = "throwError/throwWarning/throwOther";
@@ -371,7 +389,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             if (assertionConsumer != null) {
                 MapCSSTagCheckerAsserts.checkAsserts(check, assertions, assertionConsumer);
             }
-            return check;
+            return check.toImmutable();
         }
 
         static ParseResult readMapCSS(Reader css) throws ParseException {
