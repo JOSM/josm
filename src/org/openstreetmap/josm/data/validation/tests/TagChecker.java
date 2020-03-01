@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -450,7 +451,13 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     static boolean containsUnusualUnicodeCharacter(String key, String value) {
-        return value != null && value.chars().anyMatch(c -> isUnusualUnicodeBlock(key, c));
+        return getUnusualUnicodeCharacter(key, value).isPresent();
+    }
+
+    static OptionalInt getUnusualUnicodeCharacter(String key, String value) {
+        return value == null
+                ? OptionalInt.empty()
+                : value.chars().filter(c -> isUnusualUnicodeBlock(key, c)).findFirst();
     }
 
     /**
@@ -677,9 +684,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .build());
             withErrors.put(p, "ICV");
         }
-        if ((containsUnusualUnicodeCharacter(key, value)) && !withErrors.contains(p, "UUCV")) {
+        final OptionalInt unusualUnicodeCharacter = getUnusualUnicodeCharacter(key, value);
+        if (unusualUnicodeCharacter.isPresent() && !withErrors.contains(p, "UUCV")) {
+            final String codepoint = String.format(Locale.ROOT, "U+%04X", unusualUnicodeCharacter.getAsInt());
             errors.add(TestError.builder(this, Severity.WARNING, UNUSUAL_UNICODE_CHAR_VALUE)
-                    .message(tr("Tag value contains unusual Unicode character"), s, key)
+                    .message(tr("Tag value contains unusual Unicode character {0}", codepoint), s, key)
                     .primitives(p)
                     .build());
             withErrors.put(p, "UUCV");
