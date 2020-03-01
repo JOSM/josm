@@ -184,7 +184,7 @@ public class MapCSSTagCheckerTest {
 
         Set<String> assertionErrors = new LinkedHashSet<>();
         for (Set<TagCheck> schecks : c.checks.values()) {
-            assertionErrors.addAll(c.checkAsserts(schecks));
+            assertionErrors.addAll(MapCSSTagCheckerAsserts.checkAsserts(schecks));
         }
         for (String msg : assertionErrors) {
             Logging.error(msg);
@@ -204,7 +204,7 @@ public class MapCSSTagCheckerTest {
                 "  assertMatch: \"node amenity=parking\";\n" +
                 "  assertNoMatch: \"node amenity=restaurant\";\n" +
                 "}");
-        Set<String> errors = test.checkAsserts(test.checks.get("test"));
+        Set<String> errors = MapCSSTagCheckerAsserts.checkAsserts(test.checks.get("test"));
         assertTrue(errors.toString(), errors.isEmpty());
     }
 
@@ -220,7 +220,7 @@ public class MapCSSTagCheckerTest {
                 "  assertMatch: \"way name=Hauptstraße\";\n" +
                 "  assertNoMatch: \"way name=Hauptstrasse\";\n" +
                 "}");
-        Set<String> errors = test.checkAsserts(test.checks.get("test"));
+        Set<String> errors = MapCSSTagCheckerAsserts.checkAsserts(test.checks.get("test"));
         assertTrue(errors.toString(), errors.isEmpty());
     }
 

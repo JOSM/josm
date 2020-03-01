@@ -9,16 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.Method;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -35,12 +31,8 @@ import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -54,20 +46,13 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ClassCondition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ExpressionCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory.ParameterFunction;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Functions;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
-import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource.MapCSSRuleIndex;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
@@ -79,13 +64,9 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.DefaultGeoProperty;
-import org.openstreetmap.josm.tools.GeoProperty;
-import org.openstreetmap.josm.tools.GeoPropertyIndex;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
-import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -95,7 +76,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class MapCSSTagChecker extends Test.TagTest {
     private MapCSSTagCheckerIndex indexData;
     private final Set<OsmPrimitive> tested = new HashSet<>();
-    final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
+    private static final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
 
     /**
     * A grouped MapCSSRule with multiple selectors for a single declaration.
@@ -667,49 +648,6 @@ public class MapCSSTagChecker extends Test.TagTest {
             return res;
         }
 
-        /**
-         * Returns the set of tagchecks on which this check depends on.
-         * @param schecks the collection of tagcheks to search in
-         * @return the set of tagchecks on which this check depends on
-         * @since 7881
-         */
-        public Set<TagCheck> getTagCheckDependencies(Collection<TagCheck> schecks) {
-            Set<TagCheck> result = new HashSet<>();
-            Set<String> classes = getClassesIds();
-            if (schecks != null && !classes.isEmpty()) {
-                for (TagCheck tc : schecks) {
-                    if (this.equals(tc)) {
-                        continue;
-                    }
-                    for (String id : tc.setClassExpressions) {
-                        if (classes.contains(id)) {
-                            result.add(tc);
-                            break;
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-
-        /**
-         * Returns the list of ids of all MapCSS classes referenced in the rule selectors.
-         * @return the list of ids of all MapCSS classes referenced in the rule selectors
-         * @since 7881
-         */
-        public Set<String> getClassesIds() {
-            Set<String> result = new HashSet<>();
-            for (Selector s : rule.selectors) {
-                if (s instanceof AbstractSelector) {
-                    for (Condition c : ((AbstractSelector) s).getConditions()) {
-                        if (c instanceof ClassCondition) {
-                            result.add(((ClassCondition) c).id);
-                        }
-                    }
-                }
-            }
-            return result;
-        }
     }
 
     static class MapCSSTagCheckerAndRule extends MapCSSTagChecker {
@@ -813,7 +751,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         return false;
     }
 
-    private Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity,
+    static Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity,
             Collection<Set<TagCheck>> checksCol) {
         // this variant is only used by the assertion tests
         final List<TestError> r = new ArrayList<>();
@@ -876,7 +814,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             indexData = null;
             // Check assertions, useful for development of local files
             if (Config.getPref().getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url)) {
-                for (String msg : checkAsserts(result.parseChecks)) {
+                for (String msg : MapCSSTagCheckerAsserts.checkAsserts(result.parseChecks)) {
                     Logging.warn(msg);
                 }
             }
@@ -911,101 +849,6 @@ public class MapCSSTagChecker extends Test.TagTest {
                 Logging.warn(ex);
             }
         }
-    }
-
-    private static Method getFunctionMethod(String method) {
-        try {
-            return Functions.class.getDeclaredMethod(method, Environment.class, String.class);
-        } catch (NoSuchMethodException | SecurityException e) {
-            Logging.error(e);
-            return null;
-        }
-    }
-
-    private static Optional<String> getFirstInsideCountry(TagCheck check, Method insideMethod) {
-        return check.rule.selectors.stream()
-                .filter(s -> s instanceof GeneralSelector)
-                .flatMap(s -> ((GeneralSelector) s).getConditions().stream())
-                .filter(c -> c instanceof ExpressionCondition)
-                .map(c -> ((ExpressionCondition) c).getExpression())
-                .filter(c -> c instanceof ParameterFunction)
-                .map(c -> (ParameterFunction) c)
-                .filter(c -> c.getMethod().equals(insideMethod))
-                .flatMap(c -> c.getArgs().stream())
-                .filter(e -> e instanceof LiteralExpression)
-                .map(e -> ((LiteralExpression) e).getLiteral())
-                .filter(l -> l instanceof String)
-                .map(l -> ((String) l).split(",")[0])
-                .findFirst();
-    }
-
-    private static LatLon getLocation(TagCheck check, Method insideMethod) {
-        Optional<String> inside = getFirstInsideCountry(check, insideMethod);
-        if (inside.isPresent()) {
-            GeoPropertyIndex<Boolean> index = Territories.getGeoPropertyIndex(inside.get());
-            if (index != null) {
-                GeoProperty<Boolean> prop = index.getGeoProperty();
-                if (prop instanceof DefaultGeoProperty) {
-                    return ((DefaultGeoProperty) prop).getRandomLatLon();
-                }
-            }
-        }
-        return LatLon.ZERO;
-    }
-
-    /**
-     * Checks that rule assertions are met for the given set of TagChecks.
-     * @param schecks The TagChecks for which assertions have to be checked
-     * @return A set of error messages, empty if all assertions are met
-     * @since 7356
-     */
-    public Set<String> checkAsserts(final Collection<TagCheck> schecks) {
-        Set<String> assertionErrors = new LinkedHashSet<>();
-        final Method insideMethod = getFunctionMethod("inside");
-        final DataSet ds = new DataSet();
-        for (final TagCheck check : schecks) {
-            Logging.debug("Check: {0}", check);
-            for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
-                Logging.debug("- Assertion: {0}", i);
-                final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey(), getLocation(check, insideMethod), true);
-                // Build minimal ordered list of checks to run to test the assertion
-                List<Set<TagCheck>> checksToRun = new ArrayList<>();
-                Set<TagCheck> checkDependencies = check.getTagCheckDependencies(schecks);
-                if (!checkDependencies.isEmpty()) {
-                    checksToRun.add(checkDependencies);
-                }
-                checksToRun.add(Collections.singleton(check));
-                // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
-                addPrimitive(ds, p);
-                final Collection<TestError> pErrors = getErrorsForPrimitive(p, true, checksToRun);
-                Logging.debug("- Errors: {0}", pErrors);
-                final boolean isError = pErrors.stream().anyMatch(e -> e.getTester() instanceof MapCSSTagCheckerAndRule
-                        && ((MapCSSTagCheckerAndRule) e.getTester()).rule.equals(check.rule));
-                if (isError != i.getValue()) {
-                    assertionErrors.add(MessageFormat.format("Expecting test ''{0}'' (i.e., {1}) to {2} {3} (i.e., {4})",
-                            check.getMessage(p), check.rule.selectors, i.getValue() ? "match" : "not match", i.getKey(), p.getKeys()));
-                }
-                if (isError) {
-                    // Check that autofix works as expected
-                    Command fix = check.fixPrimitive(p);
-                    if (fix != null && fix.executeCommand() && !getErrorsForPrimitive(p, true, checksToRun).isEmpty()) {
-                        assertionErrors.add(MessageFormat.format("Autofix does not work for test ''{0}'' (i.e., {1})",
-                                check.getMessage(p), check.rule.selectors));
-                    }
-                }
-                ds.removePrimitive(p);
-            }
-        }
-        return assertionErrors;
-    }
-
-    private static void addPrimitive(DataSet ds, OsmPrimitive p) {
-        if (p instanceof Way) {
-            ((Way) p).getNodes().forEach(n -> addPrimitive(ds, n));
-        } else if (p instanceof Relation) {
-            ((Relation) p).getMembers().forEach(m -> addPrimitive(ds, m.getMember()));
-        }
-        ds.addPrimitive(p);
     }
 
     /**
