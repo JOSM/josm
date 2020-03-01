@@ -15,7 +15,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleKeys;
  *
  * For example a simple assignment like <code>width: 3;</code>, but may also
  * be a set instruction (<code>set highway;</code>).
- * A MapCSS {@link MapCSSRule.Declaration} is a list of instructions.
+ * A MapCSS {@link Declaration} is a list of instructions.
  */
 @FunctionalInterface
 public interface Instruction extends StyleKeys {
