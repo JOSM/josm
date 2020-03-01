@@ -57,7 +57,6 @@ import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
@@ -342,11 +341,7 @@ public class TagInfoExtract {
          */
         private List<TagInfoTag> convertStyleSheet() {
             return styleSource.rules.stream()
-                    .map(rule -> rule.selector)
-                    .filter(Selector.GeneralSelector.class::isInstance)
-                    .map(Selector.GeneralSelector.class::cast)
-                    .map(Selector.AbstractSelector::getConditions)
-                    .flatMap(Collection::stream)
+                    .flatMap(rule -> rule.selector.getConditions().stream())
                     .filter(ConditionFactory.SimpleKeyValueCondition.class::isInstance)
                     .map(ConditionFactory.SimpleKeyValueCondition.class::cast)
                     .map(condition -> condition.asTag(null))

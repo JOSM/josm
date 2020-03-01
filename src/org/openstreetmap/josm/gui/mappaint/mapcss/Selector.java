@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.OpenEndPseudoClassCondition;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 import org.openstreetmap.josm.tools.Logging;
@@ -125,6 +126,12 @@ public interface Selector {
     Selector optimizedBaseCheck();
 
     /**
+     * Returns the list of conditions.
+     * @return the list of conditions
+     */
+    List<Condition> getConditions();
+
+    /**
      * The type of child of parent selector.
      * @see ChildOrParentSelector
      */
@@ -169,6 +176,11 @@ public interface Selector {
             this.link = link;
             this.right = b;
             this.type = type;
+        }
+
+        @Override
+        public List<Condition> getConditions() {
+            return new CompositeList<>(left.getConditions(), right.getConditions());
         }
 
         /**
@@ -642,10 +654,7 @@ public interface Selector {
             return true;
         }
 
-        /**
-         * Returns the list of conditions.
-         * @return the list of conditions
-         */
+        @Override
         public List<Condition> getConditions() {
             return conds;
         }
