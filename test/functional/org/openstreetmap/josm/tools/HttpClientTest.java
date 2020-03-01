@@ -84,7 +84,7 @@ public class HttpClientTest {
         final HttpClient client = HttpClient.create(new URL("https://httpbin.org/"));
         assertThat(client.getURL(), is(new URL("https://httpbin.org/")));
         assertThat(client.getRequestMethod(), is("GET"));
-        assertThat(client.getRequestHeader("Accept"), nullValue());
+        assertThat(client.getRequestHeader("Accept"), is("*/*"));
         client.setAccept("text/html");
         assertThat(client.getRequestHeader("Accept"), is("text/html"));
         assertThat(client.getRequestHeader("ACCEPT"), is("text/html"));
@@ -118,6 +118,21 @@ public class HttpClientTest {
             assertThat(root.getString("url"), is("https://httpbin.org/get?foo=bar"));
             assertThat(root.getJsonObject("headers").get("Cache-Control"), nullValue());
             assertThat(root.getJsonObject("headers").get("Pragma"), nullValue());
+        }
+    }
+
+    /**
+     * Test JOSM User-Agent
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void testHeaders() throws IOException {
+        try (InputStream in = HttpClient.create(new URL("https://httpbin.org/headers")).connect(progress).getContent();
+             JsonReader json = JsonProvider.provider().createReader(in)) {
+            final JsonObject headers = json.readObject().getJsonObject("headers");
+            assertThat(headers.getString("Accept"), is("*/*"));
+            assertThat(headers.getString("Accept-Encoding"), is("gzip, deflate"));
+            assertThat(headers.getString("User-Agent"), is(Version.getInstance().getFullAgentString()));
         }
     }
 
