@@ -161,6 +161,7 @@ public class ValidateAction extends JosmAction {
                     return;
                 testCounter++;
                 getProgressMonitor().setCustomText(tr("Test {0}/{1}: Starting {2}", testCounter, tests.size(), test.getName()));
+                test.setBeforeUpload(false);
                 test.setPartialSelection(formerValidatedPrimitives != null);
                 test.startTest(getProgressMonitor().createSubTaskMonitor(validatedPrimitives.size(), false));
                 test.visit(validatedPrimitives);
