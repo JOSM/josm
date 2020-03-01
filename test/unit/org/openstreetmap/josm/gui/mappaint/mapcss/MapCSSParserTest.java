@@ -451,7 +451,7 @@ public class MapCSSParserTest {
         source.loadStyleSource();
         assertEquals(1, source.rules.size());
         Environment e = new Environment(n, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertTrue(source.rules.get(0).selector.matches(e));
+        assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
         assertEquals("x2;x10", e.getCascade(Environment.DEFAULT_LAYER).get("refs", null, String.class));
     }
@@ -466,14 +466,14 @@ public class MapCSSParserTest {
         source.loadStyleSource();
         assertEquals(1, source.rules.size());
         Environment e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertTrue(source.rules.get(0).selector.matches(e));
+        assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
         assertEquals(Functions.join(",", "Alpha", "Beta"), e.getCascade(Environment.DEFAULT_LAYER).get("sorted", null, String.class));
 
         source = new MapCSSStyleSource("way[ref] {sorted: join_list(\",\", sort_list(split(\";\", tag(\"ref\"))));}");
         source.loadStyleSource();
         e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertTrue(source.rules.get(0).selector.matches(e));
+        assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
         assertEquals(Functions.join(",", "A8", "A9"), e.getCascade(Environment.DEFAULT_LAYER).get("sorted", null, String.class));
     }
@@ -531,7 +531,7 @@ public class MapCSSParserTest {
         source.loadStyleSource();
         assertEquals(1, source.rules.size());
         e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
-        assertTrue(source.rules.get(0).selector.matches(e));
+        assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
         assertEquals((Integer) 1, e.getCascade(Environment.DEFAULT_LAYER).get("roles", null, Integer.class));
     }

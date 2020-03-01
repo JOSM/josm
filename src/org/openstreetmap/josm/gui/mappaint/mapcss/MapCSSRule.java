@@ -34,9 +34,23 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
     }
 
     /**
+     * Test whether the selector of this rule applies to the primitive.
+     *
+     * @param env the Environment. env.mc and env.layer are read-only when matching a selector.
+     * env.source is not needed. This method will set the matchingReferrers field of env as
+     * a side effect! Make sure to clear it before invoking this method.
+     * @return true, if the selector applies
+     * @see Selector#matches
+     */
+    public boolean matches(Environment env) {
+        return selector.matches(env);
+    }
+
+    /**
      * <p>Executes the instructions against the environment {@code env}</p>
      *
      * @param env the environment
+     * @see Declaration#execute
      */
     public void execute(Environment env) {
         declaration.execute(env);

@@ -701,7 +701,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         while (candidates.hasNext()) {
             MapCSSRule r = candidates.next();
             env.clearSelectorMatchingInformation();
-            if (r.selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
+            if (r.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                 TagCheck check = indexData.getCheck(r);
                 if (check != null) {
                     if (r.declaration == lastDeclUsed)

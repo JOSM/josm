@@ -393,7 +393,7 @@ public class TagInfoExtract {
                 Environment env = new Environment(osm, mc, null, styleSource);
                 for (MapCSSRule r : styleSource.rules) {
                     env.clearSelectorMatchingInformation();
-                    if (r.selector.matches(env)) {
+                    if (r.matches(env)) {
                         // ignore selector range
                         if (env.layer == null) {
                             env.layer = "default";
