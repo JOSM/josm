@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -301,20 +300,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             this.rule = rule;
         }
 
-        private static final String POSSIBLE_THROWS = possibleThrows();
-
-        static final String possibleThrows() {
-            StringBuilder sb = new StringBuilder();
-            for (Severity s : Severity.values()) {
-                if (sb.length() > 0) {
-                    sb.append('/');
-                }
-                sb.append("throw")
-                .append(s.name().charAt(0))
-                .append(s.name().substring(1).toLowerCase(Locale.ENGLISH));
-            }
-            return sb.toString();
-        }
+        private static final String POSSIBLE_THROWS = "throwError/throwWarning/throwOther";
 
         static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule) throws IllegalDataException {
             final TagCheck check = new TagCheck(rule);
@@ -334,13 +320,15 @@ public class MapCSSTagChecker extends Test.TagTest {
                                 : ai.val instanceof Keyword
                                 ? ((Keyword) ai.val).val
                                 : null;
-                        if (ai.key.startsWith("throw")) {
-                            try {
-                                check.errors.put(ai, Severity.valueOf(ai.key.substring("throw".length()).toUpperCase(Locale.ENGLISH)));
-                            } catch (IllegalArgumentException e) {
-                                Logging.log(Logging.LEVEL_WARN,
-                                        "Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS+'.', e);
-                            }
+                        if ("throwError".equals(ai.key)) {
+                            check.errors.put(ai, Severity.ERROR);
+                        } else if ("throwWarning".equals(ai.key)) {
+                            check.errors.put(ai, Severity.WARNING);
+                        } else if ("throwOther".equals(ai.key)) {
+                            check.errors.put(ai, Severity.OTHER);
+                        } else if (ai.key.startsWith("throw")) {
+                            Logging.log(Logging.LEVEL_WARN,
+                                    "Unsupported " + ai.key + " instruction. Allowed instructions are " + POSSIBLE_THROWS + '.', null);
                         } else if ("fixAdd".equals(ai.key)) {
                             check.fixCommands.add(FixCommand.fixAdd(ai.val));
                         } else if ("fixRemove".equals(ai.key)) {
