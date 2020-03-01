@@ -116,17 +116,23 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
 
             if (nodeInfo instanceof TestError) {
                 TestError error = (TestError) nodeInfo;
-                res = "<html>" + error.getNameVisitor().getText() + "<br>" + error.getMessage();
+                res = error.getNameVisitor().getText() + "<br>" + error.getMessage();
                 String d = error.getDescription();
                 if (d != null)
                     res += "<br>" + d;
-                res += "<br>" + tr("Test: {0}", error.getTester().getName());
-                res += "</html>";
+                res += "<br>" + tr("Test: {0}", getTesterDetails(error));
             } else {
-                res = node.toString();
+                Set<String> tests = new HashSet<>();
+                visitTestErrors(node, err -> tests.add(getTesterDetails(err)), null);
+                String source = (tests.size() == 1) ? tr("Test: {0}", tests.iterator().next()) : tr("Different tests");
+                res = node.toString() + "<br>" + source;
             }
         }
-        return res;
+        return "<html>" + res + "</html>";
+    }
+
+    private static String getTesterDetails(TestError e) {
+        return e.getTester().getName() + "<br>" + e.getTester().getSource();
     }
 
     /** Constructor */

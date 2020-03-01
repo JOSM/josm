@@ -106,15 +106,28 @@ public class MapCSSTagChecker extends Test.TagTest {
         public final List<Selector> selectors;
         /** MapCSS declaration **/
         public final Declaration declaration;
+        /** MapCSS source **/
+        public final String source;
+
+        /**
+         * Constructs a new {@code GroupedMapCSSRule} with empty source
+         * @param selectors MapCSS selectors
+         * @param declaration MapCSS declaration
+         */
+        public GroupedMapCSSRule(List<Selector> selectors, Declaration declaration) {
+            this(selectors, declaration, "");
+        }
 
         /**
          * Constructs a new {@code GroupedMapCSSRule}.
          * @param selectors MapCSS selectors
          * @param declaration MapCSS declaration
+         * @param source the source of the rule
          */
-        public GroupedMapCSSRule(List<Selector> selectors, Declaration declaration) {
+        public GroupedMapCSSRule(List<Selector> selectors, Declaration declaration, String source) {
             this.selectors = selectors;
             this.declaration = declaration;
+            this.source = source;
         }
 
         @Override
@@ -390,6 +403,10 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         static ParseResult readMapCSS(Reader css) throws ParseException {
+            return readMapCSS(css, "");
+        }
+
+        static ParseResult readMapCSS(Reader css, String url) throws ParseException {
             CheckParameterUtil.ensureParameterNotNull(css, "css");
 
             final MapCSSStyleSource source = new MapCSSStyleSource("");
@@ -414,7 +431,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             for (Map.Entry<Declaration, List<Selector>> map : g.entrySet()) {
                 try {
                     parseChecks.add(TagCheck.ofMapCSSRule(
-                            new GroupedMapCSSRule(map.getValue(), map.getKey())));
+                            new GroupedMapCSSRule(map.getValue(), map.getKey(), url)));
                 } catch (IllegalDataException e) {
                     Logging.error("Cannot add MapCss rule: "+e.getMessage());
                     source.logError(e);
@@ -706,6 +723,11 @@ public class MapCSSTagChecker extends Test.TagTest {
         public String toString() {
             return "MapCSSTagCheckerAndRule [rule=" + rule + ']';
         }
+
+        @Override
+        public String getSource() {
+            return tr("URL / File: {0}", rule.source);
+        }
     }
 
     /**
@@ -848,7 +870,7 @@ public class MapCSSTagChecker extends Test.TagTest {
              Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
             if (zip != null)
                 I18n.addTexts(cache.getFile());
-            result = TagCheck.readMapCSS(reader);
+            result = TagCheck.readMapCSS(reader, url);
             checks.remove(url);
             checks.putAll(url, result.parseChecks);
             indexData = null;

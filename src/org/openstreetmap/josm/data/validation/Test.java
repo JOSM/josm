@@ -381,4 +381,12 @@ public class Test implements OsmPrimitiveVisitor {
     protected void setShowElements(boolean b) {
         showElementCount = b;
     }
+
+    /**
+     * @return the name of this class (for ToolTip)
+     * since 15972
+     */
+    public Object getSource() {
+        return "Java: " + this.getClass().getName();
+    }
 }
