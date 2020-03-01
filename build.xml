@@ -425,6 +425,7 @@ Build-Date: ${build.tstamp}
     <target name="javadoc" depends="init-properties">
         <javadoc destdir="javadoc"
                 sourcepath="${src.dir}"
+                classpathref="compile.path"
                 encoding="UTF-8"
                 packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
                 excludepackagenames="org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.*"
