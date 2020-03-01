@@ -4,8 +4,10 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,9 +73,16 @@ public final class MapCSSStyleIndex {
         clear();
         // optimization: filter rules for different primitive types
         ruleStream.forEach(rule -> {
-            final Map<String, MapCSSRule> selectorsByBase = rule.selectors.stream()
-                    .collect(Collectors.groupingBy(Selector::getBase,
-                            Collectors.collectingAndThen(Collectors.toList(), selectors -> new MapCSSRule(selectors, rule.declaration))));
+            final Map<String, MapCSSRule> selectorsByBase;
+            final Set<String> bases = rule.selectors.stream().map(Selector::getBase).collect(Collectors.toSet());
+            if (bases.size() == 1) {
+                // reuse rule
+                selectorsByBase = Collections.singletonMap(bases.iterator().next(), rule);
+            } else {
+                selectorsByBase = rule.selectors.stream()
+                        .collect(Collectors.groupingBy(Selector::getBase,
+                                Collectors.collectingAndThen(Collectors.toList(), selectors -> new MapCSSRule(selectors, rule.declaration))));
+            }
             selectorsByBase.forEach((base, optRule) -> {
                 switch (base) {
                 case Selector.BASE_NODE:
