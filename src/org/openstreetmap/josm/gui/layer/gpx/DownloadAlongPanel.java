@@ -73,7 +73,7 @@ public class DownloadAlongPanel extends JPanel {
         add(new JLabel(tr("meters")), GBC.eol());
 
         add(new JLabel(tr("Maximum area per request:")), GBC.std());
-        maxRect = new JSpinner(new SpinnerNumberModel(Config.getPref().getDouble(prefArea, 20.0), 0.01, 25.0, 1.0)) {
+        maxRect = new JSpinner(new SpinnerNumberModel(Config.getPref().getDouble(prefArea, 20.0), 0.01, 25.0, 0.01)) {
             @Override
             public Dimension getPreferredSize() {
                 return buffer.getPreferredSize();
