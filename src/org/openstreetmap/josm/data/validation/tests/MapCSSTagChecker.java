@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -287,8 +288,6 @@ public class MapCSSTagChecker extends Test.TagTest {
         /** An {@link org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruction}-{@link Severity} pair.
          * Is evaluated on the matching primitive to give the error message. Map is checked to contain exactly one element. */
         protected final Map<Instruction.AssignmentInstruction, Severity> errors = new HashMap<>();
-        /** Unit tests */
-        protected final Map<String, Boolean> assertions = new HashMap<>();
         /** MapCSS Classes to set on matching primitives */
         protected final Set<String> setClassExpressions = new HashSet<>();
         /** Denotes whether the object should be deleted for fixing it */
@@ -302,8 +301,9 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         private static final String POSSIBLE_THROWS = "throwError/throwWarning/throwOther";
 
-        static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule) throws IllegalDataException {
+        static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule, AssertionConsumer assertionConsumer) throws IllegalDataException {
             final TagCheck check = new TagCheck(rule);
+            final Map<String, Boolean> assertions = new HashMap<>();
             for (Instruction i : rule.declaration.instructions) {
                 if (i instanceof Instruction.AssignmentInstruction) {
                     final Instruction.AssignmentInstruction ai = (Instruction.AssignmentInstruction) i;
@@ -345,9 +345,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                         } else if (val != null && "suggestAlternative".equals(ai.key)) {
                             check.alternatives.add(val);
                         } else if (val != null && "assertMatch".equals(ai.key)) {
-                            check.assertions.put(val, Boolean.TRUE);
+                            assertions.put(val, Boolean.TRUE);
                         } else if (val != null && "assertNoMatch".equals(ai.key)) {
-                            check.assertions.put(val, Boolean.FALSE);
+                            assertions.put(val, Boolean.FALSE);
                         } else if (val != null && "group".equals(ai.key)) {
                             check.group = val;
                         } else if (ai.key.startsWith("-")) {
@@ -368,14 +368,17 @@ public class MapCSSTagChecker extends Test.TagTest {
                         "More than one "+POSSIBLE_THROWS+" given! You should specify a single validation error message for "
                                 + rule.selectors);
             }
+            if (assertionConsumer != null) {
+                MapCSSTagCheckerAsserts.checkAsserts(check, assertions, assertionConsumer);
+            }
             return check;
         }
 
         static ParseResult readMapCSS(Reader css) throws ParseException {
-            return readMapCSS(css, "");
+            return readMapCSS(css, "", null);
         }
 
-        static ParseResult readMapCSS(Reader css, String url) throws ParseException {
+        static ParseResult readMapCSS(Reader css, String url, AssertionConsumer assertionConsumer) throws ParseException {
             CheckParameterUtil.ensureParameterNotNull(css, "css");
 
             final MapCSSStyleSource source = new MapCSSStyleSource("");
@@ -400,7 +403,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             for (Map.Entry<Declaration, List<Selector>> map : g.entrySet()) {
                 try {
                     parseChecks.add(TagCheck.ofMapCSSRule(
-                            new GroupedMapCSSRule(map.getValue(), map.getKey(), url)));
+                            new GroupedMapCSSRule(map.getValue(), map.getKey(), url), assertionConsumer));
                 } catch (IllegalDataException e) {
                     Logging.error("Cannot add MapCss rule: "+e.getMessage());
                     source.logError(e);
@@ -780,6 +783,13 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     /**
+     * A handler for assertion error messages (for not fulfilled "assertMatch", "assertNoMatch").
+     */
+    @FunctionalInterface
+    interface AssertionConsumer extends Consumer<String> {
+    }
+
+    /**
      * Adds a new MapCSS config file from the given URL.
      * @param url The unique URL of the MapCSS config file
      * @return List of tag checks and parsing errors, or null
@@ -788,6 +798,12 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @since 7275
      */
     public synchronized ParseResult addMapCSS(String url) throws ParseException, IOException {
+        // Check assertions, useful for development of local files
+        final boolean checkAssertions = Config.getPref().getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url);
+        return addMapCSS(url, checkAssertions ? Logging::warn : null);
+    }
+
+    synchronized ParseResult addMapCSS(String url, AssertionConsumer assertionConsumer) throws ParseException, IOException {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         ParseResult result;
         try (CachedFile cache = new CachedFile(url);
@@ -796,16 +812,10 @@ public class MapCSSTagChecker extends Test.TagTest {
              Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
             if (zip != null)
                 I18n.addTexts(cache.getFile());
-            result = TagCheck.readMapCSS(reader, url);
+            result = TagCheck.readMapCSS(reader, url, assertionConsumer);
             checks.remove(url);
             checks.putAll(url, result.parseChecks);
             indexData = null;
-            // Check assertions, useful for development of local files
-            if (Config.getPref().getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url)) {
-                for (String msg : MapCSSTagCheckerAsserts.checkAsserts(result.parseChecks)) {
-                    Logging.warn(msg);
-                }
-            }
         }
         return result;
     }
@@ -837,6 +847,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 Logging.warn(ex);
             }
         }
+        MapCSSTagCheckerAsserts.clear();
     }
 
     /**

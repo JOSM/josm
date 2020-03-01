@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -27,6 +28,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
@@ -52,9 +55,19 @@ public class MapCSSTagCheckerTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().territories().preferences();
 
+    /**
+     * Setup test.
+     */
+    @Before
+    public void setUp() {
+        MapCSSTagCheckerAsserts.clear();
+    }
+
     static MapCSSTagChecker buildTagChecker(String css) throws ParseException {
         final MapCSSTagChecker test = new MapCSSTagChecker();
-        test.checks.putAll("test", TagCheck.readMapCSS(new StringReader(css)).parseChecks);
+        Set<String> errors = new HashSet<>();
+        test.checks.putAll("test", TagCheck.readMapCSS(new StringReader(css), "", errors::add).parseChecks);
+        assertTrue(errors.toString(), errors.isEmpty());
         return test;
     }
 
@@ -181,11 +194,22 @@ public class MapCSSTagCheckerTest {
     public void testInit() throws Exception {
         MapCSSTagChecker c = new MapCSSTagChecker();
         c.initialize();
+    }
 
+    /**
+     * Unit test for all {@link MapCSSTagChecker.TagTest} assertions.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testAssertions() throws Exception {
+        MapCSSTagChecker c = new MapCSSTagChecker();
         Set<String> assertionErrors = new LinkedHashSet<>();
-        for (Set<TagCheck> schecks : c.checks.values()) {
-            assertionErrors.addAll(MapCSSTagCheckerAsserts.checkAsserts(schecks));
+
+        // initialize
+        for (ExtendedSourceEntry entry : ValidatorPrefHelper.INSTANCE.getDefault()) {
+            c.addMapCSS(entry.url, assertionErrors::add);
         }
+
         for (String msg : assertionErrors) {
             Logging.error(msg);
         }
@@ -204,8 +228,7 @@ public class MapCSSTagCheckerTest {
                 "  assertMatch: \"node amenity=parking\";\n" +
                 "  assertNoMatch: \"node amenity=restaurant\";\n" +
                 "}");
-        Set<String> errors = MapCSSTagCheckerAsserts.checkAsserts(test.checks.get("test"));
-        assertTrue(errors.toString(), errors.isEmpty());
+        assertNotNull(test);
     }
 
     /**
@@ -220,8 +243,7 @@ public class MapCSSTagCheckerTest {
                 "  assertMatch: \"way name=Hauptstraße\";\n" +
                 "  assertNoMatch: \"way name=Hauptstrasse\";\n" +
                 "}");
-        Set<String> errors = MapCSSTagCheckerAsserts.checkAsserts(test.checks.get("test"));
-        assertTrue(errors.toString(), errors.isEmpty());
+        assertNotNull(test);
     }
 
     /**
