@@ -111,6 +111,8 @@ public interface Selector {
      */
     Range getRange();
 
+    String getBase();
+
     /**
      * Create an "optimized" copy of this selector that omits the base check.
      *
@@ -176,6 +178,12 @@ public interface Selector {
             this.link = link;
             this.right = b;
             this.type = type;
+        }
+
+        @Override
+        public String getBase() {
+            // take the base from the rightmost selector
+            return right.getBase();
         }
 
         @Override
@@ -677,13 +685,18 @@ public interface Selector {
         }
 
         @Override
+        public String getBase() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public Subpart getSubpart() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public Range getRange() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -773,6 +786,7 @@ public interface Selector {
             }
         }
 
+        @Override
         public String getBase() {
             return base;
         }

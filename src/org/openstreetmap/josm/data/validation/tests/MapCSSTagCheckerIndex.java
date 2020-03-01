@@ -83,13 +83,7 @@ final class MapCSSTagCheckerIndex {
             }
 
             for (Selector s : c.rule.selectors) {
-                // find the rightmost selector, this must be a GeneralSelector
-                boolean hasLeftRightSel = false;
-                Selector selRightmost = s;
-                while (selRightmost instanceof Selector.ChildOrParentSelector) {
-                    hasLeftRightSel = true;
-                    selRightmost = ((Selector.ChildOrParentSelector) selRightmost).right;
-                }
+                boolean hasLeftRightSel = s instanceof Selector.ChildOrParentSelector;
                 if (!allTests && !hasLeftRightSel) {
                     continue;
                 }
@@ -97,7 +91,7 @@ final class MapCSSTagCheckerIndex {
                 MapCSSRule optRule = new MapCSSRule(s.optimizedBaseCheck(), c.rule.declaration);
 
                 ruleToCheckMap.put(optRule, c);
-                final String base = ((GeneralSelector) selRightmost).getBase();
+                final String base = s.getBase();
                 switch (base) {
                 case Selector.BASE_NODE:
                     nodeRules.add(optRule);

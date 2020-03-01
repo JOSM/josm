@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -55,9 +57,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
@@ -291,23 +291,17 @@ public class MapCSSStyleSource extends StyleSource {
             Collections.sort(rules);
             for (int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++) {
                 MapCSSRule r = rules.get(ruleIndex);
-                // find the rightmost selector, this must be a GeneralSelector
-                Selector selRightmost = r.selector;
-                while (selRightmost instanceof ChildOrParentSelector) {
-                    selRightmost = ((ChildOrParentSelector) selRightmost).right;
-                }
-                OptimizedGeneralSelector s = (OptimizedGeneralSelector) selRightmost;
-                if (s.conds == null) {
+                final List<Condition> conditions = r.selector.getConditions();
+                if (conditions == null || conditions.isEmpty()) {
                     remaining.set(ruleIndex);
                     continue;
                 }
-                List<SimpleKeyValueCondition> sk = new ArrayList<>(Utils.filteredCollection(s.conds,
-                        SimpleKeyValueCondition.class));
-                if (!sk.isEmpty()) {
-                    SimpleKeyValueCondition c = sk.get(sk.size() - 1);
-                    getEntryInIndex(c.k).addForKeyAndValue(c.v, ruleIndex);
+                Optional<SimpleKeyValueCondition> lastCondition = Utils.filteredCollection(conditions, SimpleKeyValueCondition.class).stream()
+                        .reduce((first, last) -> last);
+                if (lastCondition.isPresent()) {
+                    getEntryInIndex(lastCondition.get().k).addForKeyAndValue(lastCondition.get().v, ruleIndex);
                 } else {
-                    String key = findAnyRequiredKey(s.conds);
+                    String key = findAnyRequiredKey(conditions);
                     if (key != null) {
                         getEntryInIndex(key).addForKey(ruleIndex);
                     } else {
@@ -467,13 +461,8 @@ public class MapCSSStyleSource extends StyleSource {
             }
             // optimization: filter rules for different primitive types
             for (MapCSSRule r: rules) {
-                // find the rightmost selector, this must be a GeneralSelector
-                Selector selRightmost = r.selector;
-                while (selRightmost instanceof ChildOrParentSelector) {
-                    selRightmost = ((ChildOrParentSelector) selRightmost).right;
-                }
                 MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
-                final String base = ((GeneralSelector) selRightmost).getBase();
+                final String base = r.selector.getBase();
                 switch (base) {
                     case Selector.BASE_NODE:
                         nodeRules.add(optRule);
@@ -757,15 +746,7 @@ public class MapCSSStyleSource extends StyleSource {
      * @since 13633
      */
     public void removeMetaRules() {
-        for (Iterator<MapCSSRule> it = rules.iterator(); it.hasNext();) {
-            MapCSSRule x = it.next();
-            if (x.selector instanceof GeneralSelector) {
-                GeneralSelector gs = (GeneralSelector) x.selector;
-                if (Selector.BASE_META.equals(gs.base)) {
-                    it.remove();
-                }
-            }
-        }
+        rules.removeIf(x -> x.selector instanceof GeneralSelector && Selector.BASE_META.equals(x.selector.getBase()));
     }
 
     /**
