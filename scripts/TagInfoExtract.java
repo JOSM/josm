@@ -341,7 +341,8 @@ public class TagInfoExtract {
          */
         private List<TagInfoTag> convertStyleSheet() {
             return styleSource.rules.stream()
-                    .flatMap(rule -> rule.selector.getConditions().stream())
+                    .flatMap(rule -> rule.selectors.stream())
+                    .flatMap(selector -> selector.getConditions().stream())
                     .filter(ConditionFactory.SimpleKeyValueCondition.class::isInstance)
                     .map(ConditionFactory.SimpleKeyValueCondition.class::cast)
                     .map(condition -> condition.asTag(null))

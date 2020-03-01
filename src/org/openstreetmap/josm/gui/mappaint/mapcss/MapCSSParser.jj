@@ -649,10 +649,8 @@ void rule():
 {
     selectors=selectors()
     decl=declaration()
-    { 
-        for (Selector s : selectors) {
-            sheet.rules.add(new MapCSSRule(s, decl));
-        }
+    {
+        sheet.rules.add(new MapCSSRule(selectors, decl));
     }
 }
 

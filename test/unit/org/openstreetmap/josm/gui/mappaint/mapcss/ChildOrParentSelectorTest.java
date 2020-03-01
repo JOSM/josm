@@ -73,7 +73,7 @@ public class ChildOrParentSelectorTest {
          MapCSSStyleSource source = new MapCSSStyleSource(css);
          source.loadStyleSource();
          assertEquals(1, source.rules.size());
-         return (ChildOrParentSelector) source.rules.get(0).selector;
+         return (ChildOrParentSelector) source.rules.get(0).selectors.get(0);
     }
 
     @Test

@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
@@ -46,12 +46,10 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Declaration;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource.MapCSSRuleIndex;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
@@ -75,61 +73,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MapCSSTagChecker extends Test.TagTest {
     private MapCSSTagCheckerIndex indexData;
+    final Map<MapCSSRule, MapCSSTagCheckerAndRule> ruleToCheckMap = new HashMap<>();
     private final Set<OsmPrimitive> tested = new HashSet<>();
     private static final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
-
-    /**
-    * A grouped MapCSSRule with multiple selectors for a single declaration.
-    * @see MapCSSRule
-    */
-    public static class GroupedMapCSSRule {
-        /** MapCSS selectors **/
-        public final List<Selector> selectors;
-        /** MapCSS declaration **/
-        public final Declaration declaration;
-        /** MapCSS source **/
-        public final String source;
-
-        /**
-         * Constructs a new {@code GroupedMapCSSRule} with empty source
-         * @param selectors MapCSS selectors
-         * @param declaration MapCSS declaration
-         */
-        public GroupedMapCSSRule(List<Selector> selectors, Declaration declaration) {
-            this(selectors, declaration, "");
-        }
-
-        /**
-         * Constructs a new {@code GroupedMapCSSRule}.
-         * @param selectors MapCSS selectors
-         * @param declaration MapCSS declaration
-         * @param source the source of the rule
-         */
-        public GroupedMapCSSRule(List<Selector> selectors, Declaration declaration, String source) {
-            this.selectors = selectors;
-            this.declaration = declaration;
-            this.source = source;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(selectors, declaration);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            GroupedMapCSSRule that = (GroupedMapCSSRule) obj;
-            return Objects.equals(selectors, that.selectors) &&
-                    Objects.equals(declaration, that.declaration);
-        }
-
-        @Override
-        public String toString() {
-            return "GroupedMapCSSRule [selectors=" + selectors + ", declaration=" + declaration + ']';
-        }
-    }
 
     /**
      * The preference key for tag checker source entries.
@@ -280,7 +226,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     public static class TagCheck implements Predicate<OsmPrimitive> {
         /** The selector of this {@code TagCheck} */
-        protected final GroupedMapCSSRule rule;
+        protected final MapCSSRule rule;
         /** Commands to apply in order to fix a matching primitive */
         protected final List<FixCommand> fixCommands;
         /** Tags (or arbitrary strings) of alternatives to be presented to the user */
@@ -295,7 +241,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         /** A string used to group similar tests */
         protected String group;
 
-        TagCheck(GroupedMapCSSRule rule) {
+        TagCheck(MapCSSRule rule) {
             this.rule = rule;
             this.fixCommands = new ArrayList<>();
             this.alternatives = new ArrayList<>();
@@ -319,7 +265,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         private static final String POSSIBLE_THROWS = "throwError/throwWarning/throwOther";
 
-        static TagCheck ofMapCSSRule(final GroupedMapCSSRule rule, AssertionConsumer assertionConsumer) throws IllegalDataException {
+        static TagCheck ofMapCSSRule(final MapCSSRule rule, AssertionConsumer assertionConsumer) throws IllegalDataException {
             final TagCheck check = new TagCheck(rule);
             final Map<String, Boolean> assertions = new HashMap<>();
             for (Instruction i : rule.declaration.instructions) {
@@ -393,10 +339,10 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         static ParseResult readMapCSS(Reader css) throws ParseException {
-            return readMapCSS(css, "", null);
+            return readMapCSS(css, null);
         }
 
-        static ParseResult readMapCSS(Reader css, String url, AssertionConsumer assertionConsumer) throws ParseException {
+        static ParseResult readMapCSS(Reader css, AssertionConsumer assertionConsumer) throws ParseException {
             CheckParameterUtil.ensureParameterNotNull(css, "css");
 
             final MapCSSStyleSource source = new MapCSSStyleSource("");
@@ -406,22 +352,10 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
             // Ignore "meta" rule(s) from external rules of JOSM wiki
             source.removeMetaRules();
-            // group rules with common declaration block
-            Map<Declaration, List<Selector>> g = new LinkedHashMap<>();
-            for (MapCSSRule rule : source.rules) {
-                if (!g.containsKey(rule.declaration)) {
-                    List<Selector> sels = new ArrayList<>();
-                    sels.add(rule.selector);
-                    g.put(rule.declaration, sels);
-                } else {
-                    g.get(rule.declaration).add(rule.selector);
-                }
-            }
             List<TagCheck> parseChecks = new ArrayList<>();
-            for (Map.Entry<Declaration, List<Selector>> map : g.entrySet()) {
+            for (MapCSSRule rule : source.rules) {
                 try {
-                    parseChecks.add(TagCheck.ofMapCSSRule(
-                            new GroupedMapCSSRule(map.getValue(), map.getKey(), url), assertionConsumer));
+                    parseChecks.add(TagCheck.ofMapCSSRule(rule, assertionConsumer));
                 } catch (IllegalDataException e) {
                     Logging.error("Cannot add MapCss rule: "+e.getMessage());
                     source.logError(e);
@@ -660,10 +594,20 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     static class MapCSSTagCheckerAndRule extends MapCSSTagChecker {
-        public final GroupedMapCSSRule rule;
+        public final MapCSSRule rule;
+        private final TagCheck tagCheck;
+        private final String source;
 
-        MapCSSTagCheckerAndRule(GroupedMapCSSRule rule) {
+        MapCSSTagCheckerAndRule(MapCSSRule rule) {
             this.rule = rule;
+            this.tagCheck = null;
+            this.source = "";
+        }
+
+        MapCSSTagCheckerAndRule(TagCheck tagCheck, String source) {
+            this.rule = tagCheck.rule;
+            this.tagCheck = tagCheck;
+            this.source = source;
         }
 
         @Override
@@ -673,8 +617,20 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         @Override
         public String getSource() {
-            return tr("URL / File: {0}", rule.source);
+            return tr("URL / File: {0}", source);
         }
+    }
+
+    static MapCSSTagCheckerIndex createMapCSSTagCheckerIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
+        final MapCSSTagCheckerIndex index = new MapCSSTagCheckerIndex();
+        final Stream<MapCSSRule> ruleStream = checks.values().stream()
+                .flatMap(Collection::stream)
+                // Ignore "information" level checks if not wanted, unless they also set a MapCSS class
+                .filter(c -> includeOtherSeverity || Severity.OTHER != c.getSeverity() || !c.setClassExpressions.isEmpty())
+                .filter(c -> allTests || c.rule.selectors.stream().anyMatch(Selector.ChildOrParentSelector.class::isInstance))
+                .map(c -> c.rule);
+        index.buildIndex(ruleStream);
+        return index;
     }
 
     /**
@@ -686,31 +642,35 @@ public class MapCSSTagChecker extends Test.TagTest {
     public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
         final List<TestError> res = new ArrayList<>();
         if (indexData == null) {
-            indexData = new MapCSSTagCheckerIndex(checks, includeOtherSeverity, MapCSSTagCheckerIndex.ALL_TESTS);
+            indexData = MapCSSTagCheckerIndex.createMapCSSTagCheckerIndex(checks, includeOtherSeverity, MapCSSTagCheckerIndex.ALL_TESTS);
         }
-
-        MapCSSRuleIndex matchingRuleIndex = indexData.get(p);
 
         Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         env.mpAreaCache = mpAreaCache;
 
-        // the declaration indices are sorted, so it suffices to save the last used index
-        Declaration lastDeclUsed = null;
-
-        Iterator<MapCSSRule> candidates = matchingRuleIndex.getRuleCandidates(p);
+        Iterator<MapCSSRule> candidates = indexData.getRuleCandidates(p);
         while (candidates.hasNext()) {
             MapCSSRule r = candidates.next();
-            env.clearSelectorMatchingInformation();
-            if (r.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
-                TagCheck check = indexData.getCheck(r);
+            for (Selector selector : r.selectors) {
+                env.clearSelectorMatchingInformation();
+                if (!selector.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
+                    continue;
+                }
+                MapCSSTagCheckerAndRule test = ruleToCheckMap.computeIfAbsent(r, rule -> checks.entrySet().stream()
+                        .map(e -> e.getValue().stream()
+                                // rule.selectors might be different due to MapCSSStyleIndex, however, the declarations are the same object
+                                .filter(c -> c.rule.declaration == rule.declaration)
+                                .findFirst()
+                                .map(c -> new MapCSSTagCheckerAndRule(c, e.getKey()))
+                                .orElse(null))
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .orElse(null));
+                TagCheck check = test == null ? null : test.tagCheck;
                 if (check != null) {
-                    if (r.declaration == lastDeclUsed)
-                        continue; // don't apply one declaration more than once
-                    lastDeclUsed = r.declaration;
-
                     r.declaration.execute(env);
                     if (!check.errors.isEmpty()) {
-                        for (TestError e: check.getErrorsForPrimitive(p, r.selector, env, new MapCSSTagCheckerAndRule(check.rule))) {
+                        for (TestError e: check.getErrorsForPrimitive(p, selector, env, test)) {
                             addIfNotSimilar(e, res);
                         }
                     }
@@ -830,7 +790,7 @@ public class MapCSSTagChecker extends Test.TagTest {
              Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
             if (zip != null)
                 I18n.addTexts(cache.getFile());
-            result = TagCheck.readMapCSS(reader, url, assertionConsumer);
+            result = TagCheck.readMapCSS(reader, assertionConsumer);
             checks.remove(url);
             checks.putAll(url, result.parseChecks);
             indexData = null;
@@ -889,7 +849,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         super.startTest(progressMonitor);
         super.setShowElements(true);
         if (indexData == null) {
-            indexData = new MapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ALL_TESTS);
+            indexData = MapCSSTagCheckerIndex.createMapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ALL_TESTS);
         }
         tested.clear();
         mpAreaCache.clear();
@@ -903,7 +863,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
             // rebuild index with a reduced set of rules (those that use ChildOrParentSelector) and thus may have left selectors
             // matching the previously tested elements
-            indexData = new MapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ONLY_SELECTED_TESTS);
+            indexData = MapCSSTagCheckerIndex.createMapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ONLY_SELECTED_TESTS);
 
             Set<OsmPrimitive> surrounding = new HashSet<>();
             for (OsmPrimitive p : tested) {

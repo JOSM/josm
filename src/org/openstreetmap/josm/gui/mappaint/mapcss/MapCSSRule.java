@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A MapCSS rule.
@@ -17,7 +19,7 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
     /**
      * The selector. If it matches, this rule should be applied
      */
-    public final Selector selector;
+    public final List<Selector> selectors;
     /**
      * The instructions for this selector
      */
@@ -25,11 +27,11 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
 
     /**
      * Constructs a new {@code MapCSSRule}.
-     * @param selector The selector
+     * @param selectors The selectors
      * @param declaration The declaration
      */
-    public MapCSSRule(Selector selector, Declaration declaration) {
-        this.selector = selector;
+    public MapCSSRule(List<Selector> selectors, Declaration declaration) {
+        this.selectors = Utils.toUnmodifiableList(selectors);
         this.declaration = declaration;
     }
 
@@ -43,7 +45,7 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
      * @see Selector#matches
      */
     public boolean matches(Environment env) {
-        return selector.matches(env);
+        return selectors.stream().anyMatch(s -> s.matches(env));
     }
 
     /**
@@ -63,9 +65,12 @@ public class MapCSSRule implements Comparable<MapCSSRule> {
 
     @Override
     public String toString() {
-        return selector + declaration.instructions.stream()
+        final String selectorsString = selectors.stream().map(String::valueOf)
+                .collect(Collectors.joining(",\n"));
+        final String declarationString = declaration.instructions.stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining("\n  ", " {\n  ", "\n}"));
+        return selectorsString + declarationString;
     }
 }
 
