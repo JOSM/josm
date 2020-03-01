@@ -659,7 +659,9 @@ public class OsmApi extends OsmConnection {
         while (true) { // the retry loop
             try {
                 url = new URL(new URL(getBaseUrl()), urlSuffix);
-                final HttpClient client = HttpClient.create(url, requestMethod).keepAlive(false);
+                final HttpClient client = HttpClient.create(url, requestMethod)
+                        .keepAlive(false)
+                        .setAccept("application/xml, */*;q=0.8");
                 activeConnection = client;
                 if (fastFail) {
                     client.setConnectTimeout(1000);

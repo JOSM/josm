@@ -66,7 +66,8 @@ public final class NameFinder {
      * @throws IOException if any IO error occurs.
      */
     public static List<SearchResult> query(final URL url) throws IOException {
-        final HttpClient connection = HttpClient.create(url);
+        final HttpClient connection = HttpClient.create(url)
+                .setAccept("application/xml, */*;q=0.8");
         Response response = connection.connect();
         if (response.getResponseCode() >= 400) {
             throw new IOException(response.getResponseMessage() + ": " + response.fetchContent());

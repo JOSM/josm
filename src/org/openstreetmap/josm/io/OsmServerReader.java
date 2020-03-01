@@ -175,6 +175,7 @@ public abstract class OsmServerReader extends OsmConnection {
             }
 
             final HttpClient client = HttpClient.create(url, httpMethod)
+                    .setAccept("application/xml, */*;q=0.8")
                     .setFinishOnCloseOutput(false)
                     .setReasonForRequest(reason)
                     .setOutputMessage(tr("Downloading data..."))
