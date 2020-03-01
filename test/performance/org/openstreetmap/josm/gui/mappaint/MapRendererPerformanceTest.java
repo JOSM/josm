@@ -197,7 +197,7 @@ public class MapRendererPerformanceTest {
             }
             nc.zoomTo(ProjectionRegistry.getProjection().latlon2eastNorth(center), scale);
             if (checkScale) {
-                int lvl = Selector.OptimizedGeneralSelector.scale2level(nc.getDist100Pixel());
+                int lvl = Selector.GeneralSelector.scale2level(nc.getDist100Pixel());
                 Assert.assertEquals(17, lvl);
             }
 

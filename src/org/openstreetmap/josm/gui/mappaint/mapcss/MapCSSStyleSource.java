@@ -460,9 +460,8 @@ public class MapCSSStyleSource extends StyleSource {
                 return;
             }
             // optimization: filter rules for different primitive types
-            for (MapCSSRule r: rules) {
-                MapCSSRule optRule = new MapCSSRule(r.selector.optimizedBaseCheck(), r.declaration);
-                final String base = r.selector.getBase();
+            for (MapCSSRule optRule: rules) {
+                final String base = optRule.selector.getBase();
                 switch (base) {
                     case Selector.BASE_NODE:
                         nodeRules.add(optRule);
@@ -487,7 +486,7 @@ public class MapCSSStyleSource extends StyleSource {
                         multipolygonRules.add(optRule);
                         break;
                     case Selector.BASE_CANVAS:
-                        canvasRules.add(r);
+                        canvasRules.add(optRule);
                         break;
                     case Selector.BASE_META:
                     case Selector.BASE_SETTING:

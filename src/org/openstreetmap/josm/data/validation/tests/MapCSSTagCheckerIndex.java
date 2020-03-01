@@ -88,7 +88,7 @@ final class MapCSSTagCheckerIndex {
                     continue;
                 }
 
-                MapCSSRule optRule = new MapCSSRule(s.optimizedBaseCheck(), c.rule.declaration);
+                MapCSSRule optRule = new MapCSSRule(s, c.rule.declaration);
 
                 ruleToCheckMap.put(optRule, c);
                 final String base = s.getBase();

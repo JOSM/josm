@@ -53,7 +53,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource.MapCSSRuleIndex;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.OptimizedGeneralSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.TokenMgrError;
@@ -452,14 +452,14 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         /**
          * Determines the {@code index}-th key/value/tag (depending on {@code type}) of the
-         * {@link org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector}.
+         * {@link GeneralSelector}.
          * @param matchingSelector matching selector
          * @param index index
          * @param type selector type ("key", "value" or "tag")
          * @param p OSM primitive
          * @return argument value, can be {@code null}
          */
-        static String determineArgument(OptimizedGeneralSelector matchingSelector, int index, String type, OsmPrimitive p) {
+        static String determineArgument(GeneralSelector matchingSelector, int index, String type, OsmPrimitive p) {
             try {
                 final Condition c = matchingSelector.getConditions().get(index);
                 final Tag tag = c instanceof Condition.ToTagConvertable
@@ -491,13 +491,13 @@ public class MapCSSTagChecker extends Test.TagTest {
         static String insertArguments(Selector matchingSelector, String s, OsmPrimitive p) {
             if (s != null && matchingSelector instanceof Selector.ChildOrParentSelector) {
                 return insertArguments(((Selector.ChildOrParentSelector) matchingSelector).right, s, p);
-            } else if (s == null || !(matchingSelector instanceof Selector.OptimizedGeneralSelector)) {
+            } else if (s == null || !(matchingSelector instanceof GeneralSelector)) {
                 return s;
             }
             final Matcher m = Pattern.compile("\\{(\\d+)\\.(key|value|tag)\\}").matcher(s);
             final StringBuffer sb = new StringBuffer();
             while (m.find()) {
-                final String argument = determineArgument((Selector.OptimizedGeneralSelector) matchingSelector,
+                final String argument = determineArgument((GeneralSelector) matchingSelector,
                         Integer.parseInt(m.group(1)), m.group(2), p);
                 try {
                     // Perform replacement with null-safe + regex-safe handling

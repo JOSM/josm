@@ -114,20 +114,6 @@ public interface Selector {
     String getBase();
 
     /**
-     * Create an "optimized" copy of this selector that omits the base check.
-     *
-     * For the style source, the list of rules is preprocessed, such that
-     * there is a separate list of rules for nodes, ways, ...
-     *
-     * This means that the base check does not have to be performed
-     * for each rule, but only once for each primitive.
-     *
-     * @return a selector that is identical to this object, except the base of the
-     * "rightmost" selector is not checked
-     */
-    Selector optimizedBaseCheck();
-
-    /**
      * Returns the list of conditions.
      * @return the list of conditions
      */
@@ -483,14 +469,14 @@ public interface Selector {
             boolean withNodes = finder instanceof ContainsFinder;
             if (e.osm.getDataSet() == null) {
                 // do nothing
-            } else if (left instanceof OptimizedGeneralSelector) {
-                if (withNodes && ((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
+            } else if (left instanceof GeneralSelector) {
+                if (withNodes && ((GeneralSelector) left).matchesBase(OsmPrimitiveType.NODE)) {
                     finder.visit(e.osm.getDataSet().searchNodes(e.osm.getBBox()));
                 }
-                if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
+                if (((GeneralSelector) left).matchesBase(OsmPrimitiveType.WAY)) {
                     finder.visit(e.osm.getDataSet().searchWays(e.osm.getBBox()));
                 }
-                if (((OptimizedGeneralSelector) left).matchesBase(OsmPrimitiveType.RELATION)) {
+                if (((GeneralSelector) left).matchesBase(OsmPrimitiveType.RELATION)) {
                     finder.visit(e.osm.getDataSet().searchRelations(e.osm.getBBox()));
                 }
             } else {
@@ -620,11 +606,6 @@ public interface Selector {
         }
 
         @Override
-        public Selector optimizedBaseCheck() {
-            return new ChildOrParentSelector(left, link, right.optimizedBaseCheck(), type);
-        }
-
-        @Override
         public String toString() {
             return left.toString() + ' ' + (ChildOrParentSelectorType.PARENT == type ? '<' : '>') + link + ' ' + right;
         }
@@ -700,11 +681,6 @@ public interface Selector {
         }
 
         @Override
-        public Selector optimizedBaseCheck() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public String toString() {
             return "LinkSelector{conditions=" + conds + '}';
         }
@@ -713,45 +689,17 @@ public interface Selector {
     /**
      * General selector. See <a href="https://josm.openstreetmap.de/wiki/Help/Styles/MapCSSImplementation#Selectors">wiki</a>
      */
-    class GeneralSelector extends OptimizedGeneralSelector {
+    class GeneralSelector extends AbstractSelector {
 
-        public GeneralSelector(String base, Range zoom, List<Condition> conds, Subpart subpart) {
-            super(base, zoom, conds, subpart);
-        }
-
-        public boolean matchesConditions(Environment e) {
-            return super.matches(e);
-        }
-
-        @Override
-        public Selector optimizedBaseCheck() {
-            return new OptimizedGeneralSelector(this);
-        }
-
-        @Override
-        public boolean matches(Environment e) {
-            return matchesBase(e) && super.matches(e);
-        }
-    }
-
-    /**
-     * Superclass of {@link GeneralSelector}. Used to create an "optimized" copy of this selector that omits the base check.
-     * @see Selector#optimizedBaseCheck
-     */
-    class OptimizedGeneralSelector extends AbstractSelector {
         public final String base;
         public final Range range;
         public final Subpart subpart;
 
-        public OptimizedGeneralSelector(String base, Range range, List<Condition> conds, Subpart subpart) {
+        public GeneralSelector(String base, Range range, List<Condition> conds, Subpart subpart) {
             super(conds);
             this.base = checkBase(base);
             this.range = Objects.requireNonNull(range, "range");
             this.subpart = subpart != null ? subpart : Subpart.DEFAULT_SUBPART;
-        }
-
-        public OptimizedGeneralSelector(GeneralSelector s) {
-            this(s.base, s.range, s.conds, s.subpart);
         }
 
         @Override
@@ -762,6 +710,15 @@ public interface Selector {
         @Override
         public Range getRange() {
             return range;
+        }
+
+        public boolean matchesConditions(Environment e) {
+            return super.matches(e);
+        }
+
+        @Override
+        public boolean matches(Environment e) {
+            return matchesBase(e) && super.matches(e);
         }
 
         /**
@@ -821,11 +778,6 @@ public interface Selector {
 
         public boolean matchesBase(Environment e) {
             return matchesBase(e.osm);
-        }
-
-        @Override
-        public Selector optimizedBaseCheck() {
-            throw new UnsupportedOperationException();
         }
 
         public static Range fromLevel(int a, int b) {
