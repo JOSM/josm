@@ -16,5 +16,6 @@
         <conf name="test" description="Libraries only needed for testing" extends="compile,runtime"/>
     </configurations>
     <dependencies>
+        <dependency org="ch.poole" name="OpeningHoursParser" rev="0.21.0"/>
     </dependencies>
 </ivy-module>

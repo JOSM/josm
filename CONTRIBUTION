@@ -68,9 +68,9 @@ The JSON code (https://javaee.github.io/jsonp/)
 is from Oracle (RI for JSR 374: Java API for JSON Processing) 
 and licensed with GPL / classpath exception.
 
-The opening hour validation uses code from opening_hour.js
-(https://github.com/ypid/opening_hours.js) which is licensed
-with the New (2-clause) BSD license.
+The opening hour validation uses OpeningHoursParser
+(https://github.com/simonpoole/OpeningHoursParser) which is licensed
+with MIT.
 
 The XZ code (https://tukaani.org/xz/java.html)
 is from Lasse Collin and Igor Pavlov

@@ -67,8 +67,6 @@ This is an overview of the files and directories in the JOSM code repository:
     - validator/            data files used by the JOSM validator
       - *.cfg               files designed for the old tagchecker, still in use
       - *.mapcss            default validation rules for the MapCSS-based tagchecker
-      - opening_hours.js    Javascript code to validate opening hours tag
-                            (external library, see https://github.com/opening-hours/opening_hours.js)
     - boundaries.osm        OSM file containing boundary data for the states of the earth, including
                             data for right and left-hand traffic
     - defaultpresets.xml    data file for the core tagging presets
@@ -210,3 +208,5 @@ There are some third party libraries which are directly included in the source c
 * xz extractor
     src/org/tukaani
     -> https://tukaani.org/xz/java.html
+* OpeningHoursParser (MIT license)
+    -> https://github.com/simonpoole/OpeningHoursParser
