@@ -38,7 +38,6 @@ import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
-import org.openstreetmap.josm.data.validation.tests.MapCSSTagCheckerIndex;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
@@ -85,7 +84,7 @@ public class MapCSSStyleSource extends StyleSource {
     /**
      * Index of rules in this style file
      */
-    private final MapCSSTagCheckerIndex ruleIndex = new MapCSSTagCheckerIndex();
+    private final MapCSSStyleIndex ruleIndex = new MapCSSStyleIndex();
 
     private Color backgroundColorOverride;
     private String css;

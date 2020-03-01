@@ -1,11 +1,9 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.validation.tests;
+package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,26 +14,14 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.data.validation.Severity;
-import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Declaration;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource.MapCSSRuleIndex;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.MultiMap;
 
 /**
- * Helper class for {@link MapCSSTagChecker} to store indexes of rules
- * @author Gerd
- *
+ * Store indexes of {@link MapCSSRule}s using {@link MapCSSRuleIndex} differentiated by {@linkplain Selector#getBase() base}
  */
-public final class MapCSSTagCheckerIndex {
-    final Map<Declaration, TagCheck> ruleToCheckMap = new HashMap<>();
-
-    static final boolean ALL_TESTS = true;
-    static final boolean ONLY_SELECTED_TESTS = false;
+public final class MapCSSStyleIndex {
 
     /**
      * Rules for nodes
@@ -62,26 +48,12 @@ public final class MapCSSTagCheckerIndex {
      */
     final MapCSSRuleIndex canvasRules = new MapCSSRuleIndex();
 
-    static MapCSSTagCheckerIndex createMapCSSTagCheckerIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
-        final MapCSSTagCheckerIndex index = new MapCSSTagCheckerIndex();
-        final Stream<MapCSSRule> ruleStream = checks.values().stream()
-                .flatMap(Collection::stream)
-                // Ignore "information" level checks if not wanted, unless they also set a MapCSS class
-                .filter(c -> includeOtherSeverity || Severity.OTHER != c.getSeverity() || !c.setClassExpressions.isEmpty())
-                .filter(c -> allTests || c.rule.selectors.stream().anyMatch(Selector.ChildOrParentSelector.class::isInstance))
-                .peek(c -> index.ruleToCheckMap.put(c.rule.declaration, c))
-                .map(c -> c.rule);
-        index.buildIndex(ruleStream);
-        return index;
-    }
-
     /**
      * Clear the index.
      * <p>
      * You must own the write lock STYLE_SOURCE_LOCK when calling this method.
      */
     public void clear() {
-        ruleToCheckMap.clear();
         nodeRules.clear();
         wayRules.clear();
         wayNoAreaRules.clear();
@@ -190,14 +162,5 @@ public final class MapCSSTagCheckerIndex {
      */
     public Iterator<MapCSSRule> getRuleCandidates(IPrimitive osm) {
         return get(osm).getRuleCandidates(osm);
-    }
-
-    /**
-     * return the TagCheck for which the given indexed rule was created.
-     * @param rule an indexed rule
-     * @return the original TagCheck
-     */
-    public TagCheck getCheck(MapCSSRule rule) {
-        return ruleToCheckMap.get(rule.declaration);
     }
 }

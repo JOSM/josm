@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleIndex;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
@@ -72,10 +73,12 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 6506
  */
 public class MapCSSTagChecker extends Test.TagTest {
-    private MapCSSTagCheckerIndex indexData;
+    private MapCSSStyleIndex indexData;
     final Map<MapCSSRule, MapCSSTagCheckerAndRule> ruleToCheckMap = new HashMap<>();
     private final Set<OsmPrimitive> tested = new HashSet<>();
     private static final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
+    static final boolean ALL_TESTS = true;
+    static final boolean ONLY_SELECTED_TESTS = false;
 
     /**
      * The preference key for tag checker source entries.
@@ -621,8 +624,12 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
     }
 
-    static MapCSSTagCheckerIndex createMapCSSTagCheckerIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
-        final MapCSSTagCheckerIndex index = new MapCSSTagCheckerIndex();
+    private static boolean hasSameDeclaration(MapCSSRule rule1, final MapCSSRule rule2) {
+        return Objects.equals(rule1.declaration, rule2.declaration);
+    }
+
+    static MapCSSStyleIndex createMapCSSTagCheckerIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
+        final MapCSSStyleIndex index = new MapCSSStyleIndex();
         final Stream<MapCSSRule> ruleStream = checks.values().stream()
                 .flatMap(Collection::stream)
                 // Ignore "information" level checks if not wanted, unless they also set a MapCSS class
@@ -642,7 +649,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     public synchronized Collection<TestError> getErrorsForPrimitive(OsmPrimitive p, boolean includeOtherSeverity) {
         final List<TestError> res = new ArrayList<>();
         if (indexData == null) {
-            indexData = MapCSSTagCheckerIndex.createMapCSSTagCheckerIndex(checks, includeOtherSeverity, MapCSSTagCheckerIndex.ALL_TESTS);
+            indexData = createMapCSSTagCheckerIndex(checks, includeOtherSeverity, ALL_TESTS);
         }
 
         Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
@@ -849,7 +856,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         super.startTest(progressMonitor);
         super.setShowElements(true);
         if (indexData == null) {
-            indexData = MapCSSTagCheckerIndex.createMapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ALL_TESTS);
+            indexData = createMapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), ALL_TESTS);
         }
         tested.clear();
         mpAreaCache.clear();
@@ -863,7 +870,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
             // rebuild index with a reduced set of rules (those that use ChildOrParentSelector) and thus may have left selectors
             // matching the previously tested elements
-            indexData = MapCSSTagCheckerIndex.createMapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), MapCSSTagCheckerIndex.ONLY_SELECTED_TESTS);
+            indexData = createMapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), ONLY_SELECTED_TESTS);
 
             Set<OsmPrimitive> surrounding = new HashSet<>();
             for (OsmPrimitive p : tested) {
