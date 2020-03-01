@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+-->
+<ivy-module version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info organisation="org.apache.ivy" module="ivy" revision="2.5.0" status="release" publication="20191020104435">
+        <description homepage="http://ant.apache.org/ivy/">
+        Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies.
+        </description>
+    </info>
+    <configurations defaultconfmapping="*->default">
+        <conf name="core" description="only ivy jar, without any dependencies"/>
+        <conf name="httpclient" extends="core" description="core + optional httpclient for better http handling"/>
+        <conf name="oro" extends="core" description="to use optional glob matcher"/>
+        <conf name="vfs" extends="core" description="core + optional VirtualFileSystem(VFS) support"/>
+        <conf name="sftp" extends="core" description="core + optional SFTP support"/>
+        <conf name="standalone" extends="core" description="to launch in standalone mode (from command line)"/>
+        <conf name="ant" extends="core" description="core + ant jar provided as a dependency"/>
+        <conf name="default" extends="core" description="full ivy with all dependencies"/>
+        <conf name="test" description="dependencies used for junit testing ivy" visibility="private"/>
+        <conf name="source" description="ivy sources"/>
+    </configurations>
+    <publications>
+        <artifact name="ivy" type="jar" conf="core"/>
+        <artifact name="ivy" type="source" ext="jar" conf="source"/>
+    </publications>
+    <!-- Definition of the version is done in version.properties -->
+    <dependencies>
+        <dependency org="org.apache.ant" name="ant" rev="1.9.14" conf="default,ant"/>
+        <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.5.9" conf="default,httpclient->runtime,master"/>
+        <dependency org="oro" name="oro" rev="2.0.8" conf="default,oro"/>
+        <dependency org="org.apache.commons" name="commons-vfs2" rev="2.2" conf="default,vfs"/>
+        <dependency org="com.jcraft" name="jsch" rev="0.1.55" conf="default,sftp"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy" rev="0.0.9" conf="default,sftp"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="0.0.9" conf="default,sftp"/>
+        <dependency org="com.jcraft" name="jsch.agentproxy.jsch" rev="0.0.9" conf="default,sftp"/>
+        <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="1.62" conf="default"/>
+        <dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="1.62" conf="default"/>
+
+        <!-- Test dependencies -->
+        <dependency org="junit" name="junit" rev="4.12" conf="test"/>
+        <dependency org="org.hamcrest" name="hamcrest-core" rev="1.3" conf="test"/>
+        <dependency org="org.hamcrest" name="hamcrest-library" rev="1.3" conf="test"/>
+        <dependency org="org.apache.ant" name="ant-testutil" rev="1.9.14" conf="test" transitive="false"/>
+        <dependency org="org.apache.ant" name="ant-launcher" rev="1.9.14" conf="test" transitive="false"/>
+        <dependency org="org.apache.ant" name="ant-junit" rev="1.9.14" conf="test" transitive="false"/>
+        <dependency org="org.apache.ant" name="ant-junit4" rev="1.9.14" conf="test" transitive="false"/>
+        <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="test" transitive="false"/>
+        <dependency org="xmlunit" name="xmlunit" rev="1.6" conf="test" transitive="false"/>
+
+        <!-- Global excludes -->
+        <exclude org="junit" module="junit" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
+        <exclude org="org.hamcrest" module="hamcrest-core" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
+        <!-- Exclude the whole outdated commons-httpclient org -->
+        <exclude org="commons-httpclient" conf="*"/>
+    </dependencies>
+</ivy-module>

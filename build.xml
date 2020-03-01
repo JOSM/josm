@@ -8,15 +8,26 @@
 **   https://josm.openstreetmap.de/wiki/DevelopersGuide/CreateBuild
 **
 -->
-<project xmlns:as="antlib:org.codehaus.mojo.animal_sniffer" name="josm" default="dist" xmlns:jacoco="antlib:org.jacoco.ant" xmlns:if="ant:if" xmlns:unless="ant:unless">
-    <target name="init-properties">
+<project name="josm" default="dist"
+         xmlns:as="antlib:org.codehaus.mojo.animal_sniffer"
+         xmlns:if="ant:if"
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:jacoco="antlib:org.jacoco.ant"
+         xmlns:unless="ant:unless"
+>
+    <target name="init-ivy">
+        <dirname property="base.dir" file="${ant.file.josm}"/>
+        <property name="lib.dir"   location="${base.dir}/lib"/>
+        <property name="tools.dir" location="${base.dir}/tools"/>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${tools.dir}/ivy/ivy.jar"/>
+    </target>
+    <target name="init-properties" depends="resolve">
         <property environment="env"/>
         <!-- Load properties in a target and not at top level, so this build file can be
         imported from an IDE ant file (Netbeans) without messing up IDE properties.
         When imported from another file, ${basedir} will point to the parent directory
         of the importing ant file. Use ${base.dir} instead, which is always the parent
         directory of this file. -->
-        <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="test.dir" location="${base.dir}/test"/>
         <property name="src.dir" location="${base.dir}/src"/>
         <condition property="noJavaFX">
@@ -189,6 +200,14 @@ Build-Date: ${build.tstamp}
         <copy file="LICENSE" todir="${build.dir}"/>
         <!-- create josm-custom.jar -->
         <delete file="${dist.jar}"/>
+        <!-- extract libraries to build dir to create uber-jar -->
+        <unzip dest="${build.dir}">
+            <fileset refid="runtime.fileset"/>
+            <patternset>
+                <exclude name="META-INF/**"/>
+                <exclude name="*"/>
+            </patternset>
+        </unzip>
         <jar destfile="${dist.jar}" basedir="${build.dir}" level="${clevel}">
             <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
             <manifest>
@@ -387,6 +406,9 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xplugin:ErrorProne -Xep:ReferenceEquality:OFF -Xep:ImmutableEnumChecker:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:FloatingPointLiteralPrecision:OFF -Xep:ShortCircuitBoolean:OFF -Xep:StringSplitter:OFF -Xep:JdkObsolete:OFF -Xep:UnnecessaryParentheses:OFF -Xep:EqualsGetClass:OFF -Xep:ThreadPriorityCheck:OFF -Xep:UndefinedEquals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:OverrideThrowableToString:OFF -Xep:JavaTimeDefaultTimeZone:OFF -Xep:UnusedVariable:OFF -Xep:EqualsUsingHashCode:OFF -Xep:BadImport:OFF -Xep:UnnecessaryLambda:OFF -Xep:AnnotateFormatMethod:OFF -Xep:MutablePublicArray:OFF"/>
             <compilerarg line="-Xmaxwarns 1000"/>
             <exclude name="org/openstreetmap/josm/io/audio/fx/*.java" if:set="noJavaFX"/>
+            <classpath>
+                <path refid="runtime.path"/>
+            </classpath>
         </javac>
 
         <copy todir="build" failonerror="no" includeemptydirs="no">
@@ -980,6 +1002,10 @@ Build-Date: ${build.tstamp}
                 effort="max"
                 reportLevel="low"
                 >
+            <classpath>
+                <path refid="spotbugs-classpath"/>
+                <path refid="compile.path"/>
+            </classpath>
             <sourcePath path="${base.dir}/src" />
             <class location="${dist.jar}" />
         </spotbugs>
@@ -1106,5 +1132,19 @@ Build-Date: ${build.tstamp}
             <arg line="-O -Tpng summary.dot"/>
         </exec>
         <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-with-all-dependencies.png"/>
+    </target>
+    <target name="resolve" depends="init-ivy">
+        <ivy:resolve keep="true"/>
+        <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
+        <ivy:cachepath pathid="compile.path" conf="compile"/>
+        <ivy:cachepath pathid="runtime.path" conf="runtime"/>
+        <ivy:cachefileset setid="runtime.fileset" conf="runtime"/>
+        <ivy:cachepath pathid="test.path" conf="test"/>
+        <ivy:retrieve pattern="${tools.dir}/ivy/[artifact]-[type].[ext]" conf="ivy"/>
+    </target>
+    <target name="bootstrap-workspace" description="Copy libraries from ivy cache to workspace folders for IDE" depends="resolve">
+        <delete dir="${lib.dir}"/>
+        <ivy:retrieve pattern="${lib.dir}/compile/[artifact]-[type].[ext]" conf="compile"/>
+        <ivy:retrieve pattern="${lib.dir}/runtime/[artifact]-[type].[ext]" conf="runtime"/>
     </target>
 </project>

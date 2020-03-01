@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License: GPL. For details, see LICENSE file. -->
+<ivysettings>
+  <settings defaultResolver="chain"/>
+  <resolvers>
+    <chain name="chain">
+      <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
+      <ibiblio name="jcenter" m2compatible="true" root="https://jcenter.bintray.com/" />
+    </chain>
+  </resolvers>
+</ivysettings>

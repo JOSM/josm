@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License: GPL. For details, see LICENSE file. -->
+<ivy-module version="2.0">
+    <info organisation="org.openstreetmap" module="josm"/>
+    <configurations>
+        <conf name="ivy" description="Apache Ivy configuration for self-update"/>
+        <!--  configuration that should be used when specifying dependencies -->
+        <conf name="implementation" description="All libs JOSM uses that plugins should not use"/>
+        <conf name="api" description="All libs that JOSM uses and are available for plugins"/>
+        <conf name="runtimeOnly" description="The libs shipped with JOSM that we do not need during compilation"/>
+        <conf name="provided" description="The libs we need during compilation but not on application start"/>
+        <conf name="epsg" description="Everything epsg needs- which is currently all of JOSM."/>
+        <!--  Meta configuration used in build scripts -->
+        <conf name="runtime" description="Libraries only needed at runtime" extends="implementation,api,runtimeOnly"/>
+        <conf name="compile" description="Libraries needed only for compilation" extends="implementation,api,provided"/>
+        <conf name="test" description="Libraries only needed for testing" extends="compile,runtime"/>
+    </configurations>
+    <dependencies>
+    </dependencies>
+</ivy-module>

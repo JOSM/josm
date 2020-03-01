@@ -42,5 +42,6 @@
 		<nature>org.sonar.ide.eclipse.core.sonarNature</nature>
 		<nature>sf.eclipse.javacc.javaccnature</nature>
 		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
+		<nature>org.apache.ivyde.eclipse.ivynature</nature>
 	</natures>
 </projectDescription>
