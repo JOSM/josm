@@ -43,7 +43,7 @@
         <property name="error_prone_core.jar" location="${tools.dir}/error_prone_core.jar"/>
         <property name="error_prone_javac.jar" location="${tools.dir}/error_prone_javac.jar"/>
         <property name="auto-value-annotations.jar" location="${tools.dir}/auto-value-annotations.jar"/>
-        <property name="dataflow.jar" location="${tools.dir}/dataflow.jar"/>
+        <property name="dataflow.jar" location="${tools.dir}/dataflow-shaded.jar"/>
         <property name="javacutil.jar" location="${tools.dir}/javacutil.jar"/>
         <property name="failureaccess.jar" location="${tools.dir}/failureaccess.jar"/>
         <property name="guava.jar" location="${tools.dir}/guava.jar"/>
