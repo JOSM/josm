@@ -9,7 +9,7 @@ Documentation of MapCSS format:
 */
 
 meta {
-    icon: "logo_16x16x8.png";
+    icon: "logo_32x32x8.png";
 }
 
 canvas {
