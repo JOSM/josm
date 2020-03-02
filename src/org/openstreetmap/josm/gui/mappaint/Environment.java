@@ -299,8 +299,9 @@ public class Environment {
 
     /**
      * Clears all matching context information
+     * @return this
      */
-    public void clearSelectorMatchingInformation() {
+    public Environment clearSelectorMatchingInformation() {
         parent = null;
         child = null;
         index = null;
@@ -308,6 +309,7 @@ public class Environment {
         children = null;
         intersections = null;
         crossingWaysMap = null;
+        return this;
     }
 
     /**

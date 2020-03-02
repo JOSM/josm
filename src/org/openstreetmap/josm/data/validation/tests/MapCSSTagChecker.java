@@ -378,13 +378,10 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         Selector whichSelectorMatchesEnvironment(Environment env) {
-            for (Selector i : rule.selectors) {
-                env.clearSelectorMatchingInformation();
-                if (i.matches(env)) {
-                    return i;
-                }
-            }
-            return null;
+            return rule.selectors.stream()
+                    .filter(i -> i.matches(env.clearSelectorMatchingInformation()))
+                    .findFirst()
+                    .orElse(null);
         }
 
         /**
@@ -692,18 +689,12 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @param errors the list of errors
      */
     private static void addIfNotSimilar(TestError toAdd, List<TestError> errors) {
-        boolean isDup = false;
-        if (toAdd.getPrimitives().size() >= 2) {
-            for (TestError e : errors) {
-                if (e.getCode() == toAdd.getCode() && e.getMessage().equals(toAdd.getMessage())
+        final boolean isDup = toAdd.getPrimitives().size() >= 2 && errors.stream()
+                .anyMatch(e -> e.getCode() == toAdd.getCode()
+                        && e.getMessage().equals(toAdd.getMessage())
                         && e.getPrimitives().size() == toAdd.getPrimitives().size()
                         && e.getPrimitives().containsAll(toAdd.getPrimitives())
-                        && highlightedIsEqual(e.getHighlighted(), toAdd.getHighlighted())) {
-                    isDup = true;
-                    break;
-                }
-            }
-        }
+                        && highlightedIsEqual(e.getHighlighted(), toAdd.getHighlighted()));
         if (!isDup)
             errors.add(toAdd);
     }
