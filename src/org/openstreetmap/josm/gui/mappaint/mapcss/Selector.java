@@ -364,42 +364,51 @@ public interface Selector {
                     if (isPrimitiveUsable(p) && Objects.equals(layer, OsmUtils.getLayer(p))
                             && left.matches(new Environment(p).withParent(e.osm)) && isArea(p)
                             && (toIgnore == null || !toIgnore.contains(p))) {
-                        if (area == null) {
-                            area = getAreaEastNorth(e.osm, e);
-                        }
-                        Area otherArea = getAreaEastNorth(p, e);
-                        if (area.isEmpty() || otherArea.isEmpty()) {
-                            if (cellSegments == null) {
-                                // lazy initialisation
-                                cellSegments = new HashMap<>();
-                                findCrossings(e.osm, cellSegments); // ignore self intersections etc. here
-                            }
-                            // need a copy
-                            final Map<Point2D, List<WaySegment>> tmpCellSegments = new HashMap<>(cellSegments);
-                            // calculate all crossings between e.osm and p
-                            Map<List<Way>, List<WaySegment>> crossingWays = findCrossings(p, tmpCellSegments);
-                            if (!crossingWays.isEmpty()) {
-                                addToChildren(e, p);
-                                if (e.crossingWaysMap == null) {
-                                    e.crossingWaysMap = new HashMap<>();
-                                }
-                                e.crossingWaysMap.put(p, crossingWays);
-                            }
-                        } else {
-                            // we have complete data. This allows to find intersections with shared nodes
-                            // See #16707
-                            Pair<PolygonIntersection, Area> is = Geometry.polygonIntersectionResult(
-                                    otherArea, area, Geometry.INTERSECTION_EPS_EAST_NORTH);
-                            if (Geometry.PolygonIntersection.CROSSING == is.a) {
-                                addToChildren(e, p);
-                                // store intersection area to improve highlight and zoom to problem
-                                if (e.intersections == null) {
-                                    e.intersections = new HashMap<>();
-                                }
-                                e.intersections.put(p, is.b);
-                            }
-                        }
+                        visitArea(p);
                     }
+                }
+            }
+
+            private void visitArea(IPrimitive p) {
+                if (area == null) {
+                    area = getAreaEastNorth(e.osm, e);
+                }
+                Area otherArea = getAreaEastNorth(p, e);
+                if (area.isEmpty() || otherArea.isEmpty()) {
+                    useFindCrossings(p);
+                } else {
+                    // we have complete data. This allows to find intersections with shared nodes
+                    // See #16707
+                    Pair<PolygonIntersection, Area> is = Geometry.polygonIntersectionResult(
+                            otherArea, area, Geometry.INTERSECTION_EPS_EAST_NORTH);
+                    if (Geometry.PolygonIntersection.CROSSING == is.a) {
+                        addToChildren(e, p);
+                        // store intersection area to improve highlight and zoom to problem
+                        if (e.intersections == null) {
+                            e.intersections = new HashMap<>();
+                        }
+                        e.intersections.put(p, is.b);
+                    }
+                }
+
+            }
+
+            private void useFindCrossings(IPrimitive p) {
+                if (cellSegments == null) {
+                    // lazy initialisation
+                    cellSegments = new HashMap<>();
+                    findCrossings(e.osm, cellSegments); // ignore self intersections etc. here
+                }
+                // need a copy
+                final Map<Point2D, List<WaySegment>> tmpCellSegments = new HashMap<>(cellSegments);
+                // calculate all crossings between e.osm and p
+                Map<List<Way>, List<WaySegment>> crossingWays = findCrossings(p, tmpCellSegments);
+                if (!crossingWays.isEmpty()) {
+                    addToChildren(e, p);
+                    if (e.crossingWaysMap == null) {
+                        e.crossingWaysMap = new HashMap<>();
+                    }
+                    e.crossingWaysMap.put(p, crossingWays);
                 }
             }
         }
