@@ -266,7 +266,11 @@ public class MapCSSStyleSource extends StyleSource {
             for (int ruleIndex = 0; ruleIndex < rules.size(); ruleIndex++) {
                 MapCSSRule r = rules.get(ruleIndex);
                 for (Selector selector : r.selectors) {
-                    final List<Condition> conditions = selector.getConditions();
+                    Selector selRightmost = selector;
+                    while (selRightmost instanceof Selector.ChildOrParentSelector) {
+                        selRightmost = ((Selector.ChildOrParentSelector) selRightmost).right;
+                    }
+                    final List<Condition> conditions = selRightmost.getConditions();
                     if (conditions == null || conditions.isEmpty()) {
                         remaining.set(ruleIndex);
                         continue;
