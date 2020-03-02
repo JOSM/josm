@@ -771,7 +771,7 @@ public final class Utils {
 
     /**
      * Returns an unmodifiable map for the given map.
-     * Makes use of {@link Collections#emptyMap()} and {@link Collections#singletonMap} and {@link Map#ofEntries(Map.Entry[])} to save memory.
+     * Makes use of {@link Collections#emptyMap} and {@link Collections#singletonMap} and {@code Map#ofEntries} to save memory.
      *
      * @param map the map for which an unmodifiable map is to be returned
      * @param <K> the type of keys maintained by this map
