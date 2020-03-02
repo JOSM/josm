@@ -193,21 +193,13 @@ Build-Date: ${build.tstamp}
     <!--
       ** Main target that builds JOSM and checks XML against schemas
     -->
-    <target name="dist" depends="compile,create-revision,check-schemas,epsg">
+    <target name="dist" depends="compile,extract-libraries,create-revision,check-schemas,epsg">
         <echo>Revision ${version.entry.commit.revision}</echo>
         <copy file="CONTRIBUTION" todir="${build.dir}"/>
         <copy file="README" todir="${build.dir}"/>
         <copy file="LICENSE" todir="${build.dir}"/>
         <!-- create josm-custom.jar -->
         <delete file="${dist.jar}"/>
-        <!-- extract libraries to build dir to create uber-jar -->
-        <unzip dest="${build.dir}">
-            <fileset refid="runtime.fileset"/>
-            <patternset>
-                <exclude name="META-INF/**"/>
-                <exclude name="*"/>
-            </patternset>
-        </unzip>
         <jar destfile="${dist.jar}" basedir="${build.dir}" level="${clevel}">
             <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
             <manifest>
@@ -1134,7 +1126,7 @@ Build-Date: ${build.tstamp}
         </exec>
         <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-with-all-dependencies.png"/>
     </target>
-    <target name="resolve" depends="init-ivy">
+    <target name="resolve" depends="init-ivy" unless="resolve.notRequired">
         <ivy:resolve keep="true"/>
         <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
         <ivy:cachepath pathid="compile.path" conf="compile"/>
@@ -1142,6 +1134,15 @@ Build-Date: ${build.tstamp}
         <ivy:cachefileset setid="runtime.fileset" conf="runtime"/>
         <ivy:cachepath pathid="test.path" conf="test"/>
         <ivy:retrieve pattern="${tools.dir}/ivy/[artifact]-[type].[ext]" conf="ivy"/>
+    </target>
+    <target name="extract-libraries" depends="resolve" description="extract libraries to build dir">
+        <unzip dest="${build.dir}">
+            <fileset refid="runtime.fileset"/>
+            <patternset>
+                <exclude name="META-INF/**"/>
+                <exclude name="*"/>
+            </patternset>
+        </unzip>
     </target>
     <target name="bootstrap-workspace" description="Copy libraries from ivy cache to workspace folders for IDE" depends="resolve">
         <delete dir="${lib.dir}"/>
