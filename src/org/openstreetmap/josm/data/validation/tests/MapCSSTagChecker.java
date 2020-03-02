@@ -549,7 +549,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 TestError.Builder errorBuilder = TestError.builder(tester, getSeverity(), 3000)
                         .messageWithManuallyTranslatedDescription(description1, description2, matchingSelector.toString());
                 if (fix != null) {
-                    errorBuilder = errorBuilder.fix(() -> fix);
+                    errorBuilder.fix(() -> fix);
                 }
                 if (env.child instanceof OsmPrimitive) {
                     res.add(errorBuilder.primitives(p, (OsmPrimitive) env.child).build());
@@ -560,14 +560,14 @@ public class MapCSSTagChecker extends Test.TagTest {
                                     .messageWithManuallyTranslatedDescription(description1, description2,
                                             matchingSelector.toString());
                             if (fix != null) {
-                                errorBuilder = errorBuilder.fix(() -> fix);
+                                errorBuilder.fix(() -> fix);
                             }
                             // check if we have special information about highlighted objects */
                             boolean hiliteFound = false;
                             if (env.intersections != null) {
                                 Area is = env.intersections.get(c);
                                 if (is != null) {
-                                    errorBuilder = errorBuilder.highlight(is);
+                                    errorBuilder.highlight(is);
                                     hiliteFound = true;
                                 }
                             }
@@ -578,7 +578,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                                     for (List<WaySegment> wsList : is.values()) {
                                         toHilite.addAll(wsList);
                                     }
-                                    errorBuilder = errorBuilder.highlightWaySegments(toHilite);
+                                    errorBuilder.highlightWaySegments(toHilite);
                                 }
                             }
                             res.add(errorBuilder.primitives(p, (OsmPrimitive) c).build());
