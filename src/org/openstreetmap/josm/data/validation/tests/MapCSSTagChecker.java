@@ -624,10 +624,6 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
     }
 
-    private static boolean hasSameDeclaration(MapCSSRule rule1, final MapCSSRule rule2) {
-        return Objects.equals(rule1.declaration, rule2.declaration);
-    }
-
     static MapCSSStyleIndex createMapCSSTagCheckerIndex(MultiMap<String, TagCheck> checks, boolean includeOtherSeverity, boolean allTests) {
         final MapCSSStyleIndex index = new MapCSSStyleIndex();
         final Stream<MapCSSRule> ruleStream = checks.values().stream()
