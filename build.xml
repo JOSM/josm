@@ -318,11 +318,7 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/jcs/utils/net/**"/>
             <exclude name="org/apache/commons/jcs/utils/props/**"/>
             <exclude name="org/apache/commons/jcs/utils/servlet/**"/>
-            <exclude name="org/apache/commons/logging/impl/AvalonLogger.java"/>
-            <exclude name="org/apache/commons/logging/impl/Jdk13LumberjackLogger.java"/>
-            <exclude name="org/apache/commons/logging/impl/Log4JLogger.java"/>
-            <exclude name="org/apache/commons/logging/impl/LogKitLogger.java"/>
-            <exclude name="org/apache/commons/logging/impl/ServletContextCleaner.java"/>
+            <exclude name="org/apache/commons/logging/**"/>
         </javac>
     </target>
     <target name="compile-jmapviewer" depends="init">
@@ -1136,6 +1132,11 @@ Build-Date: ${build.tstamp}
                 <exclude name="org/apache/commons/compress/compressors/zstandard/**"/>
                 <exclude name="org/apache/commons/compress/parallel/**"/>
                 <exclude name="org/apache/commons/compress/utils/ArchiveUtils.class"/>
+                <exclude name="org/apache/commons/logging/impl/AvalonLogger.class"/>
+                <exclude name="org/apache/commons/logging/impl/Jdk13LumberjackLogger.class"/>
+                <exclude name="org/apache/commons/logging/impl/Log4JLogger.class"/>
+                <exclude name="org/apache/commons/logging/impl/LogKitLogger.class"/>
+                <exclude name="org/apache/commons/logging/impl/ServletContextCleaner.class"/>
             </patternset>
         </unzip>
     </target>
