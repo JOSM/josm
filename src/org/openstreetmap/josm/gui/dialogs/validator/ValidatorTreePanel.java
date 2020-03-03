@@ -128,7 +128,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                 res = node.toString() + "<br>" + source;
             }
         }
-        return "<html>" + res + "</html>";
+        return res == null ? null : "<html>" + res + "</html>";
     }
 
     private static String getTesterDetails(TestError e) {
