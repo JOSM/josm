@@ -62,7 +62,7 @@ public class StyleCacheTest {
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
         try (
-            InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
+            InputStream fisC = Compression.getUncompressedFileInputStream(new File("nodist/data/neubrandenburg.osm.bz2"));
         ) {
             dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
         }

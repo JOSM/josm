@@ -30,7 +30,7 @@ public class CoastlinesTest {
      */
     @Test
     public void testCoastlineFile() throws Exception {
-        ValidatorTestUtils.testSampleFile("data_nodist/coastlines.osm",
+        ValidatorTestUtils.testSampleFile("nodist/data/coastlines.osm",
                 ds -> ds.getWays().stream().filter(
                         w -> "coastline".equals(w.get("natural"))).collect(Collectors.toList()),
                 null, COASTLINES, WRONGLY_ORDERED_WAYS);

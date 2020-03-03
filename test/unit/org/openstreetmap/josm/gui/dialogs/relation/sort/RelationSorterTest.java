@@ -44,7 +44,7 @@ public class RelationSorterTest {
     @Before
     public void loadData() throws IllegalDataException, IOException {
         if (testDataset == null) {
-            try (InputStream fis = Files.newInputStream(Paths.get("data_nodist/relation_sort.osm"))) {
+            try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/relation_sort.osm"))) {
                 testDataset = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             }
         }

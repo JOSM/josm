@@ -37,7 +37,7 @@ public class MultipolygonTestTest {
     public void testMultipolygonFile() throws Exception {
         final MultipolygonTest MULTIPOLYGON_TEST = new MultipolygonTest();
         final RelationChecker RELATION_TEST = new RelationChecker();
-        ValidatorTestUtils.testSampleFile("data_nodist/multipolygon.osm",
+        ValidatorTestUtils.testSampleFile("nodist/data/multipolygon.osm",
                 ds -> ds.getRelations().stream().filter(Relation::isMultipolygon).collect(Collectors.toList()),
                 name -> name.startsWith("06") || name.startsWith("07") || name.startsWith("08"), MULTIPOLYGON_TEST, RELATION_TEST);
     }

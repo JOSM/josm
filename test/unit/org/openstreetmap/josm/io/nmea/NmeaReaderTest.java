@@ -61,7 +61,7 @@ public class NmeaReaderTest {
     @Test
     public void testReader() throws Exception {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
-        final NmeaReader in = new NmeaReader(Files.newInputStream(Paths.get("data_nodist/btnmeatrack_2016-01-25.nmea")));
+        final NmeaReader in = new NmeaReader(Files.newInputStream(Paths.get("nodist/data/btnmeatrack_2016-01-25.nmea")));
         in.parse(true);
         assertEquals(30, in.getNumberOfCoordinates());
         assertEquals(0, in.getParserMalformed());

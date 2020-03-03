@@ -34,12 +34,12 @@ public class MapCSSPerformanceTest {
     /**
      * The path to the style file used for rendering.
      */
-    static final String STYLE_FILE = "styles/standard/elemstyles.mapcss";
+    static final String STYLE_FILE = "resources/styles/standard/elemstyles.mapcss";
 
     /**
      * The data file to be rendered
      */
-    static final String DATA_FILE = "data_nodist/neubrandenburg.osm.bz2";
+    static final String DATA_FILE = "nodist/data/neubrandenburg.osm.bz2";
     /* ------------------------ / configuration section  ---------------------------- */
 
     DataSet ds;

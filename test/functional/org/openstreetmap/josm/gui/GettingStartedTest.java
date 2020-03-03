@@ -39,8 +39,8 @@ public class GettingStartedTest {
      */
     @Test
     public void testImageReplacementStatic() {
-        final String html = "the download button <img src=\"/browser/trunk/images/download.png?format=raw\" " +
-                "alt=\"source:trunk/images/download.png\" title=\"source:trunk/images/download.png\" />.";
+        final String html = "the download button <img src=\"/browser/trunk/resources/images/download.png?format=raw\" " +
+                "alt=\"source:trunk/resources/images/download.png\" title=\"source:trunk/resources/images/download.png\" />.";
         assertFalse(GettingStarted.fixImageLinks(html).equals(html));
 
     }

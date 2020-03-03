@@ -30,11 +30,11 @@ import org.openstreetmap.josm.data.projection.proj.Proj;
  */
 public final class BuildProjectionDefinitions {
 
-    private static final String PROJ_DIR = "data_nodist/projection";
+    private static final String PROJ_DIR = "nodist/data/projection";
     private static final String JOSM_EPSG_FILE = "josm-epsg";
     private static final String PROJ4_EPSG_FILE = "epsg";
     private static final String PROJ4_ESRI_FILE = "esri";
-    private static final String OUTPUT_EPSG_FILE = "data/projection/custom-epsg";
+    private static final String OUTPUT_EPSG_FILE = "resources/data/projection/custom-epsg";
 
     private static final Map<String, ProjectionDefinition> epsgProj4 = new LinkedHashMap<>();
     private static final Map<String, ProjectionDefinition> esriProj4 = new LinkedHashMap<>();

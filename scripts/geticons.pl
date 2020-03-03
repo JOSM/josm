@@ -3,9 +3,9 @@
 # when building release files
 
 my @default = (
-  "styles/standard/*.xml",
-  "styles/standard/*.mapcss",
-  "data/*.xml",
+  "resources/styles/standard/*.xml",
+  "resources/styles/standard/*.mapcss",
+  "resources/data/*.xml",
   "src/org/openstreetmap/josm/*.java",
   "src/org/openstreetmap/josm/*/*.java",
   "src/org/openstreetmap/josm/*/*/*.java",
@@ -133,11 +133,11 @@ for my $arg (@ARGV ? @ARGV : @default)
 
 my %haveicons;
 
-for($i = 1; my @ifiles = (glob("images".("/*" x $i).".png"), glob("images".("/*" x $i).".svg")); ++$i)
+for($i = 1; my @ifiles = (glob("resources/images".("/*" x $i).".png"), glob("resources/images".("/*" x $i).".svg")); ++$i)
 {
   for my $ifile (sort @ifiles)
   {
-    $ifile =~ s/^images\///;
+    $ifile =~ s/^resources\/images\///;
     # svg comes after png due to the glob, so only check for svg's
     if($ifile =~ /^(.*)\.svg$/)
     {
@@ -146,7 +146,7 @@ for($i = 1; my @ifiles = (glob("images".("/*" x $i).".png"), glob("images".("/*"
         print STDERR "$1: File exists twice as .svg and .png.\n";
       }
       # check for unwanted svg effects
-      if(open FILE, "<","images/$ifile")
+      if(open FILE, "<","resources/images/$ifile")
       {
         undef $/;
         my $f = <FILE>;
@@ -180,12 +180,12 @@ for my $img (sort keys %icons)
 {
   if($img =~ /\.(png|svg)/)
   {
-    print STDERR "$img: File does not exist!\n" if(!-f "images/$img");
+    print STDERR "$img: File does not exist!\n" if(!-f "resources/images/$img");
     delete $haveicons{$img};
   }
   else
   {
-    print STDERR "$img(.svg|.png): File does not exist!\n" if(!-f "images/$img.png" && !-f "images/$img.svg");
+    print STDERR "$img(.svg|.png): File does not exist!\n" if(!-f "resources/images/$img.png" && !-f "resources/images/$img.svg");
     delete $haveicons{"$img.svg"};
     delete $haveicons{"$img.png"};
   }

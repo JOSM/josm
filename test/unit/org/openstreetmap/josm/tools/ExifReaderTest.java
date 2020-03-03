@@ -41,8 +41,8 @@ public class ExifReaderTest {
      */
     @Before
     public void setUp() {
-        directionSampleFile = new File("data_nodist/exif-example_direction.jpg");
-        orientationSampleFile = new File("data_nodist/exif-example_orientation=6.jpg");
+        directionSampleFile = new File("nodist/data/exif-example_direction.jpg");
+        orientationSampleFile = new File("nodist/data/exif-example_orientation=6.jpg");
     }
 
     /**
@@ -61,7 +61,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testReadTimeSubSecond1() throws ParseException {
-        Date date = ExifReader.readTime(new File("data_nodist/IMG_20150711_193419.jpg"));
+        Date date = ExifReader.readTime(new File("nodist/data/IMG_20150711_193419.jpg"));
         doTest("2015-07-11T19:34:19.100", date);
     }
 
@@ -107,7 +107,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testReadSpeed() {
-        assertEquals(Double.valueOf(12.3), ExifReader.readSpeed(new File("data_nodist/exif-example_speed_ele.jpg")));
+        assertEquals(Double.valueOf(12.3), ExifReader.readSpeed(new File("nodist/data/exif-example_speed_ele.jpg")));
     }
 
     /**
@@ -115,7 +115,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testReadElevation() {
-        assertEquals(Double.valueOf(23.4), ExifReader.readElevation(new File("data_nodist/exif-example_speed_ele.jpg")));
+        assertEquals(Double.valueOf(23.4), ExifReader.readElevation(new File("nodist/data/exif-example_speed_ele.jpg")));
     }
 
     /**

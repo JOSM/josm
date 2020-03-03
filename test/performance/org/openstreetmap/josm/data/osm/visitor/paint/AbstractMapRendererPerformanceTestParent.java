@@ -80,10 +80,10 @@ public abstract class AbstractMapRendererPerformanceTestParent {
         StyledMapRenderer.PREFERENCE_ANTIALIASING_USE.put(true);
         StyledMapRenderer.PREFERENCE_TEXT_ANTIALIASING.put("gasp");
 
-        try (InputStream fisR = Files.newInputStream(Paths.get("data_nodist/restriction.osm"));
-             InputStream fisM = Files.newInputStream(Paths.get("data_nodist/multipolygon.osm"));
-             InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
-             InputStream fisO = Compression.getUncompressedFileInputStream(new File("data_nodist/overpass-download.osm.bz2"));) {
+        try (InputStream fisR = Files.newInputStream(Paths.get("nodist/data/restriction.osm"));
+             InputStream fisM = Files.newInputStream(Paths.get("nodist/data/multipolygon.osm"));
+             InputStream fisC = Compression.getUncompressedFileInputStream(new File("nodist/data/neubrandenburg.osm.bz2"));
+             InputStream fisO = Compression.getUncompressedFileInputStream(new File("nodist/data/overpass-download.osm.bz2"));) {
             dsRestriction = OsmReader.parseDataSet(fisR, NullProgressMonitor.INSTANCE);
             dsMultipolygon = OsmReader.parseDataSet(fisM, NullProgressMonitor.INSTANCE);
             dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);

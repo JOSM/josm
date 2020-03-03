@@ -28,7 +28,7 @@ public class TurnRestrictionTestTest {
      */
     @Test
     public void testTurnrestrictionFile() throws Exception {
-        ValidatorTestUtils.testSampleFile("data_nodist/restriction.osm",
+        ValidatorTestUtils.testSampleFile("nodist/data/restriction.osm",
                 ds -> ds.getRelations(),
                 name -> name.startsWith("E"), TURNRESTRICTION_TEST, RELATION_TEST);
     }

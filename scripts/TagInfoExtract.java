@@ -207,7 +207,7 @@ public class TagInfoExtract {
         private String findImageUrl(String path) {
             final Path f = baseDir.resolve("images").resolve(path);
             if (Files.exists(f)) {
-                return "https://josm.openstreetmap.de/export/" + josmSvnRevision + "/josm/trunk/images/" + path;
+                return "https://josm.openstreetmap.de/export/" + josmSvnRevision + "/josm/trunk/resources/images/" + path;
             }
             throw new IllegalStateException("Cannot find image url for " + path);
         }
@@ -225,7 +225,7 @@ public class TagInfoExtract {
                         .add("name", name)
                         .add("description", description)
                         .add("project_url", "https://josm.openstreetmap.de/")
-                        .add("icon_url", "https://josm.openstreetmap.de/export/7770/josm/trunk/images/logo_16x16x8.png")
+                        .add("icon_url", "https://josm.openstreetmap.de/export/7770/josm/trunk/resources/images/logo_16x16x8.png")
                         .add("contact_name", "JOSM developer team")
                         .add("contact_email", "josm-dev@openstreetmap.org");
                 final JsonArrayBuilder jsonTags = Json.createArrayBuilder();

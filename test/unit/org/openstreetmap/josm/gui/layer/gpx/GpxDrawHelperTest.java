@@ -59,7 +59,7 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testNone() throws IOException, SAXException {
-        final List<String> colors = calculateColors("data_nodist/2094047.gpx", ImmutableMap.of(), 10);
+        final List<String> colors = calculateColors("nodist/data/2094047.gpx", ImmutableMap.of(), 10);
         assertEquals("[#000000, #000000, #000000, #000000, #000000, #000000, #000000, #000000, #000000, #000000]", colors.toString());
     }
 
@@ -71,7 +71,7 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testVelocity() throws IOException, SAXException {
-        final List<String> colors = calculateColors("data_nodist/2094047.gpx",
+        final List<String> colors = calculateColors("nodist/data/2094047.gpx",
                 ImmutableMap.of("colormode", Integer.toString(ColorMode.VELOCITY.toIndex())), 10);
         assertEquals("[#000000, #FFAD00, #FFA800, #FFA800, #FF9E00, #FF9400, #FF7000, #FF7000, #FF8000, #FF9400]", colors.toString());
     }
@@ -84,7 +84,7 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testVelocityDynamic() throws IOException, SAXException {
-        final List<String> colors = calculateColors("data_nodist/2094047.gpx",
+        final List<String> colors = calculateColors("nodist/data/2094047.gpx",
                 ImmutableMap.of("colormode.dynamic-range", "true",
                         "colormode", Integer.toString(ColorMode.VELOCITY.toIndex())),
                 10);
@@ -99,7 +99,7 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testDirection() throws IOException, SAXException {
-        final List<String> colors = calculateColors("data_nodist/2094047.gpx",
+        final List<String> colors = calculateColors("nodist/data/2094047.gpx",
                 ImmutableMap.of("colormode", Integer.toString(ColorMode.DIRECTION.toIndex())), 10);
         assertEquals("[#000000, #EAEC25, #EDEA26, #EDE525, #ECD322, #EBB81D, #E85A0D, #E73708, #E84D0B, #EA8A15]", colors.toString());
     }
@@ -112,7 +112,7 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testTime() throws IOException, SAXException {
-        final List<String> colors = calculateColors("data_nodist/2094047.gpx",
+        final List<String> colors = calculateColors("nodist/data/2094047.gpx",
                 ImmutableMap.of("colormode", Integer.toString(ColorMode.TIME.toIndex())), 10);
         assertEquals("[#000000, #FF0000, #FF0000, #FF0500, #FF0500, #FF0A00, #FF0A00, #FF1F00, #FF2E00, #FF3300]", colors.toString());
     }

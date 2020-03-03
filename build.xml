@@ -50,7 +50,7 @@
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="script-build.dir" location="${base.dir}/build2"/>
         <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
-        <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
+        <property name="epsg.output" location="${base.dir}/resources/data/projection/custom-epsg"/>
         <property name="error_prone_core.jar" location="${tools.dir}/error_prone_core.jar"/>
         <property name="error_prone_javac.jar" location="${tools.dir}/error_prone_javac.jar"/>
         <property name="auto-value-annotations.jar" location="${tools.dir}/auto-value-annotations.jar"/>
@@ -96,6 +96,7 @@
                 <include name="**/*.jar"/>
             </fileset>
             <pathelement path="${build.dir}"/>
+            <pathelement path="${base.dir}/resources"/>
             <pathelement path="${failureaccess.jar}"/>
             <pathelement path="${guava.jar}"/>
             <pathelement path="${commons-lang3.jar}"/>
@@ -186,8 +187,8 @@ Build-Date: ${build.tstamp}
       ** Check internal XML files against their XSD
     -->
     <target name="check-schemas" unless="check-schemas.notRequired" depends="init-properties">
-        <schemavalidate file="data/defaultpresets.xml" >
-            <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="data/tagging-preset.xsd" />
+        <schemavalidate file="resources/data/defaultpresets.xml" >
+            <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="resources/data/tagging-preset.xsd" />
         </schemavalidate>
     </target>
     <!--
@@ -214,9 +215,6 @@ Build-Date: ${build.tstamp}
                 <attribute name="Add-Opens" value="java.base/java.lang java.base/java.nio java.base/jdk.internal.loader java.base/jdk.internal.ref java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
             </manifest>
             <service type="java.text.spi.DecimalFormatSymbolsProvider" provider="org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider" />
-            <zipfileset dir="images" prefix="images"/>
-            <zipfileset dir="data" prefix="data"/>
-            <zipfileset dir="styles" prefix="styles"/>
             <zipfileset dir="${src.dir}/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images"/>
         </jar>
     </target>
@@ -493,7 +491,7 @@ Build-Date: ${build.tstamp}
             </javac>
         </sequential>
     </macrodef>
-    <target name="test-compile" depends="test-init,compile">
+    <target name="test-compile" depends="test-init,compile,epsg">
         <call-javac testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>

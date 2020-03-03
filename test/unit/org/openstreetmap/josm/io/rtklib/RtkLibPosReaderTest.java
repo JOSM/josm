@@ -57,7 +57,7 @@ public class RtkLibPosReaderTest {
      */
     @Test
     public void testReader() throws Exception {
-        RtkLibPosReader in = read("data_nodist/rtklib_example.pos");
+        RtkLibPosReader in = read("nodist/data/rtklib_example.pos");
         assertEquals(137, in.getNumberOfCoordinates());
 
         List<WayPoint> wayPoints = new ArrayList<>(in.getGpxData().tracks.iterator().next().getSegments().iterator().next().getWayPoints());
@@ -83,7 +83,7 @@ public class RtkLibPosReaderTest {
      */
     @Test
     public void testReader2() throws Exception {
-        RtkLibPosReader in = read("data_nodist/rtklib_example2.pos");
+        RtkLibPosReader in = read("nodist/data/rtklib_example2.pos");
         assertEquals(6, in.getNumberOfCoordinates());
     }
 }

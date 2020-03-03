@@ -145,17 +145,17 @@ public class JoinAreasActionTest {
     }
 
     /**
-     * Non-regression test which checks example files in data_nodist
+     * Non-regression test which checks example files in nodist/data
      * @throws Exception if an error occurs
      */
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testExamples() throws Exception {
         DataSet dsToJoin, dsExpected;
-        try (InputStream is = Files.newInputStream(Paths.get("data_nodist/Join_Areas_Tests.osm"))) {
+        try (InputStream is = Files.newInputStream(Paths.get("nodist/data/Join_Areas_Tests.osm"))) {
             dsToJoin = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
         }
-        try (InputStream is = Files.newInputStream(Paths.get("data_nodist/Join_Areas_Tests_joined.osm"))) {
+        try (InputStream is = Files.newInputStream(Paths.get("nodist/data/Join_Areas_Tests_joined.osm"))) {
             dsExpected = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
         }
 

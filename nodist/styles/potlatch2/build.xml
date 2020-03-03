@@ -2,8 +2,8 @@
 <project name="potlatch2_patch_utils" basedir="." default="assemble">
     <!--    concatinate the files to one mapcss style file     -->
     <target name="assemble">
-        <concat destfile="../../styles/standard/potlatch2.mapcss">
-            <header trimleading="yes">/* THIS FILE IS AUTO-GENERATED (SEE styles_nodist/potlatch2/README) */
+        <concat destfile="../../../resources/styles/standard/potlatch2.mapcss">
+            <header trimleading="yes">/* THIS FILE IS AUTO-GENERATED (SEE nodist/styles/potlatch2/README) */
             </header>
             <filelist dir="." files="prelude.css"/>
             <filelist dir="patched" files="core_ways.css,core_pois.css,core_landuse.css,core_relations.css,potlatch.css"/>

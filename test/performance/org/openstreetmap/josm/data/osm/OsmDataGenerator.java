@@ -17,7 +17,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 public final class OsmDataGenerator {
     private static final int DEFAULT_KEY_VALUE_RATIO = 3;
     private static final int DEFAULT_NODE_COUNT = 1000;
-    private static final String DATA_DIR = "data_nodist" + File.separator + "osmfiles";
+    private static final String DATA_DIR = "nodist/data" + File.separator + "osmfiles";
 
     private OsmDataGenerator() {
         // private constructor for utility classes

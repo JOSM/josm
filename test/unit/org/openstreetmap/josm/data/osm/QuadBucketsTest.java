@@ -84,7 +84,7 @@ public class QuadBucketsTest {
     @Test
     public void testRemove() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        try (InputStream fis = Files.newInputStream(Paths.get("data_nodist/restriction.osm"))) {
+        try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/restriction.osm"))) {
             DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             removeAllTest(ds);
         }
@@ -97,7 +97,7 @@ public class QuadBucketsTest {
     @Test
     public void testMove() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        try (InputStream fis = Files.newInputStream(Paths.get("data_nodist/restriction.osm"))) {
+        try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/restriction.osm"))) {
             DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
 
             for (Node n: ds.getNodes()) {

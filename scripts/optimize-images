@@ -1,5 +1,5 @@
 #!/bin/sh
 
-find images/ -name "*.png" \
+find resources/images/ -name "*.png" \
   -exec echo "Processing {}" \; \
   -exec optipng -o7 -quiet "{}" \;

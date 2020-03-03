@@ -73,7 +73,7 @@ public class FilterTest {
     public void testFilter() throws Exception {
         for (int i : new int[] {1, 2, 3, 11, 12, 13, 14, 15}) {
             DataSet ds;
-            try (InputStream is = Files.newInputStream(Paths.get("data_nodist/filterTests.osm"))) {
+            try (InputStream is = Files.newInputStream(Paths.get("nodist/data/filterTests.osm"))) {
                 ds = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
             }
 

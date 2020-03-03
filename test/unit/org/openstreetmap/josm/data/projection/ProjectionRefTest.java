@@ -46,11 +46,11 @@ import org.openstreetmap.josm.tools.PlatformManager;
 /**
  * Test projections using reference data from external program.
  *
- * To update the reference data file <code>data_nodist/projection/projection-reference-data</code>,
+ * To update the reference data file <code>nodist/data/projection/projection-reference-data</code>,
  * run the main method of this class. For this, you need to have the cs2cs
  * program from the proj.4 library in path (or use <code>CS2CS_EXE</code> to set
  * the full path of the executable). Make sure the required *.gsb grid files
- * can be accessed, i.e. copy them from <code>data_nodist/projection</code> to <code>/usr/share/proj</code> or
+ * can be accessed, i.e. copy them from <code>nodist/data/projection</code> to <code>/usr/share/proj</code> or
  * wherever cs2cs expects them to be placed.
  *
  * The input parameter for the external library is <em>not</em> the projection code
@@ -62,8 +62,8 @@ public class ProjectionRefTest {
 
     private static final String CS2CS_EXE = "cs2cs";
 
-    private static final String REFERENCE_DATA_FILE = "data_nodist/projection/projection-reference-data";
-    private static final String PROJ_LIB_DIR = "data_nodist/projection";
+    private static final String REFERENCE_DATA_FILE = "nodist/data/projection/projection-reference-data";
+    private static final String PROJ_LIB_DIR = "nodist/data/projection";
 
     private static class RefEntry {
         String code;

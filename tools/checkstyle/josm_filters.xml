@@ -7,17 +7,12 @@
   <suppress checks="." files="\.project" />
   <suppress checks="." files="[\\/]build[\\/]" />
   <suppress checks="." files="[\\/]build2[\\/]" />
-  <suppress checks="." files="[\\/]data_nodist[\\/]" />
   <suppress checks="." files="[\\/]dist[\\/]" />
-  <suppress checks="." files="[\\/]eclipse[\\/]" />
   <suppress checks="." files="[\\/]foobar[\\/]" />
-  <suppress checks="." files="[\\/]images[\\/]" />
-  <suppress checks="." files="[\\/]images_nodist[\\/]" />
-  <suppress checks="." files="[\\/]linux[\\/]" />
-  <suppress checks="." files="[\\/]macosx[\\/]" />
-  <suppress checks="." files="[\\/]netbeans[\\/]" />
+  <suppress checks="." files="[\\/]ide[\\/]" />
+  <suppress checks="." files="[\\/]native[\\/]" />
+  <suppress checks="." files="[\\/]nodist[\\/]" />
   <suppress checks="." files="[\\/]patches[\\/]" />
-  <suppress checks="." files="[\\/]styles_nodist[\\/]" />
   <suppress checks="." files="[\\/]taginfo-img[\\/]" />
   <suppress checks="." files="[\\/]taginfo_.*\.json" />
   <suppress checks="." files="[\\/]test[\\/]config[\\/]" />
@@ -27,7 +22,6 @@
   <suppress checks="." files="[\\/]tools[\\/]findbugs[\\/]" />
   <suppress checks="." files="[\\/]tools[\\/]japicc[\\/]" />
   <suppress checks="." files="[\\/]tools[\\/]pmd[\\/]" />
-  <suppress checks="." files="[\\/]windows[\\/]" />
   <suppress checks="HeaderCheck" files="josm[\\/]tools[\\/]commons[\\/]" />
   <suppress checks="HeaderCheck" files="Ellipsoid\.java" />
   <suppress checks="HeaderCheck" files="NTV2GridShift\.java" />

@@ -73,7 +73,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
     @Override
     public String[] getUsageExamples() {
         return new String[] {"/import?url=" + Utils.encodeUrl(
-                Config.getUrls().getJOSMWebsite()+"/browser/josm/trunk/data_nodist/direction-arrows.osm?format=txt")};
+                Config.getUrls().getJOSMWebsite()+"/browser/josm/trunk/nodist/data/direction-arrows.osm?format=txt")};
     }
 
     @Override

@@ -60,7 +60,7 @@ public class GpxReaderTest {
      */
     @Test
     public void testMunich() throws Exception {
-        final GpxData result = parseGpxData("data_nodist/munich.gpx");
+        final GpxData result = parseGpxData("nodist/data/munich.gpx");
         assertEquals(2762, result.getTracks().size());
         assertEquals(0, result.getRoutes().size());
         assertEquals(903, result.getWaypoints().size());

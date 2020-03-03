@@ -48,7 +48,7 @@ public class UnconnectedWaysTest {
      */
     @Test
     public void testTicket6313() throws IOException, IllegalDataException, FileNotFoundException {
-        try (InputStream fis = Files.newInputStream(Paths.get("data_nodist/UnconnectedWaysTest.osm"))) {
+        try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/UnconnectedWaysTest.osm"))) {
             final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));
 

@@ -191,7 +191,7 @@ public class ChildOrParentSelectorTest {
      */
     @Test
     public void testContains() throws Exception {
-        ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get("data_nodist/amenity-in-amenity.osm")), null);
+        ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get("nodist/data/amenity-in-amenity.osm")), null);
         ChildOrParentSelector css = parse("node[tag(\"amenity\") = parent_tag(\"amenity\")] ∈ *[amenity] {}");
         assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.NODE))));
         assertTrue(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.WAY))));

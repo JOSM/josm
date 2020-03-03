@@ -2,16 +2,16 @@ The Potlatch 2 styles need to be patched in order to work with the JOSM MapCSS i
 
 Potlatch 2's repository is git://git.openstreetmap.org/potlatch2.git
 
- * styles_nodist/potlatch2/source
+ * nodist/styles/potlatch2/source
         contains the unmodified source files copied from git.openstreetmap.org/potlatch2.git/history/master:/resources/stylesheets
-        
- * styles_nodist/potlatch2/patched
+
+ * nodist/styles/potlatch2/patched
         contains the manually edited version
-        
- * images/icons
+
+ * resources/images/icons
         copy of git.openstreetmap.org/potlatch2.git/tree/HEAD:/resources/icons
-        
- * styles/standard/potlatch2.mapcss
+
+ * resources/styles/standard/potlatch2.mapcss
         concatination of the patched files; the ant task 'assemble' helps with this (use build.xml in the current folder)
 
 When updating from upstream, keep all 4 locations in sync.

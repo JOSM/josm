@@ -127,7 +127,7 @@ public class GeoJSONWriterTest {
      */
     @Test
     public void testMultipolygonRobustness() throws Exception {
-        try (InputStream in = Files.newInputStream(Paths.get("data_nodist/multipolygon.osm"))) {
+        try (InputStream in = Files.newInputStream(Paths.get("nodist/data/multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final GeoJSONWriter writer = new GeoJSONWriter(ds);
             assertTrue(writer.write().contains("MultiPolygon"));

@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -47,6 +46,8 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.tools.Logging;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Performance test of map renderer.
@@ -151,7 +152,7 @@ public class MapRendererPerformanceTest {
         MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
 
         try (
-            InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
+            InputStream fisC = Compression.getUncompressedFileInputStream(new File("nodist/data/neubrandenburg.osm.bz2"));
         ) {
             dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
         }

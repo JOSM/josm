@@ -57,26 +57,20 @@ Files & directories
 This is an overview of the files and directories in the JOSM code repository:
 - build.xml                 ant build file (standard way to create a JOSM binary)
 - CONTRIBUTION              list of major code contributors
-- data/                     data files that will be included in the JOSM jar file
-    - fonts/                font files used for map rendering
-    - gpx/                  different color gradients for gpx drawing
-    - projection/           projection files
-      - custom-epsg         list of projection definitions, auto-generated file created by ant task 'epsg'
-    - security/*.pem        certificates that we like to accept for TLS connections, but are missing in the
-                            default Java certificate store
-    - validator/            data files used by the JOSM validator
-      - *.cfg               files designed for the old tagchecker, still in use
-      - *.mapcss            default validation rules for the MapCSS-based tagchecker
-    - boundaries.osm        OSM file containing boundary data for the states of the earth, including
-                            data for right and left-hand traffic
-    - defaultpresets.xml    data file for the core tagging presets
-    - help-browser.css      CSS file for the help sites (HTML content is downloaded from the website
-                            on demand, but displayed inside the programm in a Java web browser component.)
-    - overpass-wizard.js    Javascript code to provide a wizard-GUI for creating Overpass requests
-                            (external library, see https://github.com/tyrasd/overpass-wizard)
-    - *.lang                translation data
-    - *.xsd                 xml schema files for validation of configuration files
-- data_nodist/              data files that are useful for development, but not distributed
+- gpl-2.0.txt, gpl-3.0.txt  full text of the GNU General Public License
+- ide                       IDE-specific files
+  - eclipse/                preconfigured Eclipse configuration files
+  - netbeans/               preconfigured Netbeans project
+- josm.jnlp                 Java Web Start launcher file (used on the website for the tested version)
+- josm-latest.jnlp          Java Web Start launcher file (used on the website for the latest version)
+- LICENSE                   the JOSM license terms
+- native/                   OS-specific files
+  - linux/                  files useful for Linux distributions, including Appdata files, .desktop
+                            files, Debian/Ubuntu scripts, man pages, icons, etc.
+  - macosx/                 files needed to create the MacOS X package
+  - windows/                files needed to create the Windows installer
+- nodist/                   files not included in JOSM binary
+  - data/                   data files that are useful for development, but not distributed
     - exif-direction-example.jpg
                             sample image, that contains direction information in the EXIF header
                             (keys: Exif.GPSInfo.GPSImgDirectionRef, Exif.GPSInfo.GPSImgDirection)
@@ -106,22 +100,36 @@ This is an overview of the files and directories in the JOSM code repository:
                             by the server for localization of the services;
                             currently contains plugin descriptions in order to include translations
                             in the downloaded plugin list
-- gpl-2.0.txt, gpl-3.0.txt  full text of the GNU General Public License
-- images/                   images distributed with the JOSM binary
-    - icons                 images for the Potlatch 2 style
-    - presets               images for the main mappaint style and the internal presets
-- images_nodist/            images, which are not for distribution, but may be useful later (e.g. high
+  - images/                 images, which are not for distribution, but may be useful later (e.g. high
                             resolution and vector versions)
-- josm.jnlp                 Java Web Start launcher file (used on the website for the tested version)
-- josm-latest.jnlp          Java Web Start launcher file (used on the website for the latest version)
-- LICENSE                   the JOSM license terms
-- linux/                    files useful for Linux distributions, including Appdata files, .desktop
-                            files, Debian/Ubuntu scripts, man pages, icons, etc.
-- macosx/                   files needed to create the MacOS X package
-- netbeans/                 preconfigured Netbeans project
+  - styles/                 files needed for map style maintenance
+    - potlatch2/README      infos on how to update the Potlatch 2 style from upstream sources
 - patches/                  patches for external libraries used in JOSM (see below)
 - README                    this file
 - resources/                resource files that will be included in the JOSM jar file
+  - data/                   data files that will be included in the JOSM jar file
+    - fonts/                font files used for map rendering
+    - gpx/                  different color gradients for gpx drawing
+    - projection/           projection files
+      - custom-epsg         list of projection definitions, auto-generated file created by ant task 'epsg'
+    - security/*.pem        certificates that we like to accept for TLS connections, but are missing in the
+                            default Java certificate store
+    - validator/            data files used by the JOSM validator
+      - *.cfg               files designed for the old tagchecker, still in use
+      - *.mapcss            default validation rules for the MapCSS-based tagchecker
+    - boundaries.osm        OSM file containing boundary data for the states of the earth, including
+                            data for right and left-hand traffic
+    - defaultpresets.xml    data file for the core tagging presets
+    - help-browser.css      CSS file for the help sites (HTML content is downloaded from the website
+                            on demand, but displayed inside the programm in a Java web browser component.)
+    - overpass-wizard.js    Javascript code to provide a wizard-GUI for creating Overpass requests
+                            (external library, see https://github.com/tyrasd/overpass-wizard)
+    - *.lang                translation data
+    - *.xsd                 xml schema files for validation of configuration files
+  - images/                 images distributed with the JOSM binary
+    - icons                 images for the Potlatch 2 style
+    - presets               images for the main mappaint style and the internal presets
+  - styles/                 map styles included in JOSM
 - scripts/                  various scripts used by JOSM developers
   - BuildProjectionDefinitions.java
                             called from the ant build file to combine the files epsg and josm-epsg
@@ -136,9 +144,6 @@ This is an overview of the files and directories in the JOSM code repository:
   - TagInfoExtract.java     extracts tag information for the taginfo project
 - src/                      the source code of the application
 - start.html                HTML page to run the applet version of JOSM
-- styles/                   map styles included in JOSM
-- sytles_nodist/            files needed for map style maintenance
-    - potlatch2/README      infos on how to update the Potlatch 2 style from upstream sources
 - test/                     automated software tests
     - data/                 resources used for some tests
     - functional/           functional tests (source code)
@@ -152,15 +157,15 @@ This is an overview of the files and directories in the JOSM code repository:
     - checkstyle/           libs and config files for checkstyle (automatically detects code style
                             problems in source code); can be launched as an ant target in build.xml
     - error_prone_ant.jar   used to detect code errors during compilation
-    - spotbugs/             libs and config files for spotbugs (automatically detects common bugs and potential
-                            problems in source code); can be launched as an ant target in build.xml
+    - ivy/                  Apache Ivy binary, configuration file, and downloaded dependencies 
     - jacocoant.jar         used to include coverage data into JUnit test reports
     - japicc/               used to generate a compatibility report between optimized jar and normal one
     - javacc.jar            used in the build process to generate some .java files from a javacc source file
                             (src/org/openstreetmap/josm/gui/mappaint/mapcss/MapCSSParser.jj)
     - proguard.jar          optimize final binary jar - see build.xml (not used in production so far)
+    - spotbugs/             libs and config files for spotbugs (automatically detects common bugs and potential
+                            problems in source code); can be launched as an ant target in build.xml
     - xmltask.jar           used to edit XML files from Ant for the OSX package
-- windows/                  files needed to create the Windows installer
 
 The 'patches' directory
 -----------------------
