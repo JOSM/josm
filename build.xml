@@ -977,7 +977,7 @@ Build-Date: ${build.tstamp}
         </checkstyle>
     </target>
 
-    <target name="spotbugs" depends="compile">
+    <target name="spotbugs" depends="dist">
         <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${spotbugs.dir}/spotbugs-ant.jar"/>
         <path id="spotbugs-classpath">
             <fileset dir="${spotbugs.dir}">
@@ -990,13 +990,11 @@ Build-Date: ${build.tstamp}
                 classpath="${spotbugs-classpath}"
                 pluginList=""
                 excludeFilter="${spotbugs.dir}/josm-filter.xml"
+        	    onlyAnalyze="org.openstreetmap.josm.-"
                 effort="max"
                 reportLevel="low"
                 >
-            <fileset dir="${build.dir}">
-                <include name="org/openstreetmap/josm/**/*.class"/>
-                <exclude name="org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/*.class"/>
-            </fileset>
+        	<class location="${dist.jar}" />
         </spotbugs>
     </target>
 
