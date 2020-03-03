@@ -29,10 +29,12 @@ public class VersionTest {
      */
     @Test
     public void testGetAgentString() {
-        String v = Version.getInstance().getAgentString(false);
-        assertTrue(v, v.matches("JOSM/1\\.5 \\([1-9][0-9]* SVN en\\)"));
-        v = Version.getInstance().getAgentString(true);
-        assertTrue(v, v.matches("JOSM/1\\.5 \\([1-9][0-9]* SVN en\\).*"));
+        Version version = new Version();
+        version.initFromRevisionInfo(null);
+        String v = version.getAgentString(false);
+        assertTrue(v, v.matches("JOSM/1\\.5 \\(UNKNOWN en\\)"));
+        v = version.getAgentString(true);
+        assertTrue(v, v.matches("JOSM/1\\.5 \\(UNKNOWN en\\).*"));
     }
 
     /**
