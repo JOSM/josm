@@ -1141,15 +1141,15 @@ Build-Date: ${build.tstamp}
                 <exclude name="com/drew/metadata/wav/**"/>
                 <exclude name="com/drew/metadata/webp/**"/>
                 <exclude name="com/drew/tools/**"/>
-                <exclude name="org/apache/commons/compress/PasswordRequiredException.class"/>
+                <exclude name="org/apache/commons/compress/PasswordRequiredException*"/>
                 <exclude name="org/apache/commons/compress/archivers/**"/>
                 <exclude name="org/apache/commons/compress/changes/**"/>
-                <exclude name="org/apache/commons/compress/compressors/bzip2/BZip2Utils.class"/>
+                <exclude name="org/apache/commons/compress/compressors/bzip2/BZip2Utils*"/>
                 <exclude name="org/apache/commons/compress/compressors/brotli/**"/>
-                <exclude name="org/apache/commons/compress/compressors/CompressorStreamFactory.class"/>
-                <exclude name="org/apache/commons/compress/compressors/CompressorStreamProvider.class"/>
-                <exclude name="org/apache/commons/compress/compressors/CompressorException.class"/>
-                <exclude name="org/apache/commons/compress/compressors/FileNameUtil.class"/>
+                <exclude name="org/apache/commons/compress/compressors/CompressorStreamFactory*"/>
+                <exclude name="org/apache/commons/compress/compressors/CompressorStreamProvider*"/>
+                <exclude name="org/apache/commons/compress/compressors/CompressorException*"/>
+                <exclude name="org/apache/commons/compress/compressors/FileNameUtil*"/>
                 <exclude name="org/apache/commons/compress/compressors/deflate/**"/>
                 <exclude name="org/apache/commons/compress/compressors/gzip/**"/>
                 <exclude name="org/apache/commons/compress/compressors/lz4/**"/>
@@ -1157,16 +1157,16 @@ Build-Date: ${build.tstamp}
                 <exclude name="org/apache/commons/compress/compressors/lz77support/**"/>
                 <exclude name="org/apache/commons/compress/compressors/pack200/**"/>
                 <exclude name="org/apache/commons/compress/compressors/snappy/**"/>
-                <exclude name="org/apache/commons/compress/compressors/xz/XZUtils.class"/>
+                <exclude name="org/apache/commons/compress/compressors/xz/XZUtils*"/>
                 <exclude name="org/apache/commons/compress/compressors/z/**"/>
                 <exclude name="org/apache/commons/compress/compressors/zstandard/**"/>
                 <exclude name="org/apache/commons/compress/parallel/**"/>
-                <exclude name="org/apache/commons/compress/utils/ArchiveUtils.class"/>
-                <exclude name="org/apache/commons/logging/impl/AvalonLogger.class"/>
-                <exclude name="org/apache/commons/logging/impl/Jdk13LumberjackLogger.class"/>
-                <exclude name="org/apache/commons/logging/impl/Log4JLogger.class"/>
-                <exclude name="org/apache/commons/logging/impl/LogKitLogger.class"/>
-                <exclude name="org/apache/commons/logging/impl/ServletContextCleaner.class"/>
+                <exclude name="org/apache/commons/compress/utils/ArchiveUtils*"/>
+                <exclude name="org/apache/commons/logging/impl/AvalonLogger*"/>
+                <exclude name="org/apache/commons/logging/impl/Jdk13LumberjackLogger*"/>
+                <exclude name="org/apache/commons/logging/impl/Log4JLogger*"/>
+                <exclude name="org/apache/commons/logging/impl/LogKitLogger*"/>
+                <exclude name="org/apache/commons/logging/impl/ServletContextCleaner*"/>
             </patternset>
         </unzip>
     </target>
