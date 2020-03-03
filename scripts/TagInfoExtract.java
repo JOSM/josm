@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -205,7 +207,7 @@ public class TagInfoExtract {
          * @return full image url
          */
         private String findImageUrl(String path) {
-            final Path f = baseDir.resolve("images").resolve(path);
+            final Path f = baseDir.resolve("resources").resolve("images").resolve(path);
             if (Files.exists(f)) {
                 return "https://josm.openstreetmap.de/export/" + josmSvnRevision + "/josm/trunk/resources/images/" + path;
             }
@@ -378,6 +380,8 @@ public class TagInfoExtract {
          * Check if a certain tag is supported by the style as node / way / area.
          */
         private abstract class Checker {
+            private final Pattern reservedChars = Pattern.compile("[<>:\"|\\?\\*]");
+
             Checker(Tag tag) {
                 this.tag = tag;
             }
@@ -416,7 +420,7 @@ public class TagInfoExtract {
                 StyledMapRenderer renderer = new StyledMapRenderer(g, nc, false);
                 renderer.getSettings(false);
                 element.paintPrimitive(osm, MapPaintSettings.INSTANCE, renderer, false, false, false);
-                final String imageName = type + "_" + tag + ".png";
+                final String imageName = type + "_" + normalize(tag.toString()) + ".png";
                 try (OutputStream out = Files.newOutputStream(options.imageDir.resolve(imageName))) {
                     ImageIO.write(img, "png", out);
                 } catch (IOException e) {
@@ -424,6 +428,16 @@ public class TagInfoExtract {
                 }
                 final String baseUrl = options.imageUrlPrefix != null ? options.imageUrlPrefix : options.imageDir.toString();
                 return baseUrl + "/" + imageName;
+            }
+
+            /**
+             * Normalizes tag so that it can used as a filename on all platforms, including Windows.
+             * @param tag OSM tag, that can contain illegal path characters
+             * @return OSM tag with all illegal path characters replaced by underscore ('_')
+             */
+            String normalize(String tag) {
+                Matcher m = reservedChars.matcher(tag);
+                return m.find() ? m.replaceAll("_") : tag;
             }
 
             /**

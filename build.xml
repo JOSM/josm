@@ -1044,7 +1044,7 @@ Build-Date: ${build.tstamp}
         <java classname="BuildProjectionDefinitions" failonerror="true" fork="true">
             <sysproperty key="java.awt.headless" value="true"/>
             <classpath>
-                <pathelement path="${base.dir}"/>
+                <pathelement path="${base.dir}/resources"/>
                 <pathelement path="${proj-classpath}"/>
                 <pathelement path="${proj-build.dir}"/>
             </classpath>
