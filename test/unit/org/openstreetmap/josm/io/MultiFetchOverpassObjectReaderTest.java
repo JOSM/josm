@@ -46,7 +46,7 @@ public class MultiFetchOverpassObjectReaderTest {
         reader.append(Arrays.asList(new Relation(123), new Relation(126), new Relation(130)));
         reader.setRecurseDownRelations(true);
         String requestString = reader.buildComplexRequestString();
-        assertEquals("relation(id:123,126,130);>>;out meta;", requestString);
+        assertEquals("(relation(id:123,126,130)->.r;.r;rel(r);.r;way(r);>;.r;node(r););out meta;", requestString);
         reader.setRecurseDownRelations(false);
         requestString = reader.buildComplexRequestString();
         assertEquals("relation(id:123,126,130);out meta;", requestString);
@@ -62,7 +62,9 @@ public class MultiFetchOverpassObjectReaderTest {
         reader.append(Arrays.asList(new Relation(123), new Relation(126), new Relation(130), new Way(88), new Way(99),
                 new Node(1)));
         String requestString = reader.buildComplexRequestString();
-        assertEquals("(relation(id:123,126,130);>>;(way(id:88,99);>;);node(1););out meta;", requestString);
+        assertEquals(
+                "((relation(id:123,126,130)->.r;.r;rel(r);.r;way(r);>;.r;node(r););(way(id:88,99);>;);node(1););out meta;",
+                requestString);
         reader.setRecurseDownRelations(false);
         requestString = reader.buildComplexRequestString();
         assertEquals("(relation(id:123,126,130);(way(id:88,99);>;);node(1););out meta;", requestString);
