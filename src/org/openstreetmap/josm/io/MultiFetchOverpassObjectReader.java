@@ -34,9 +34,14 @@ public class MultiFetchOverpassObjectReader extends MultiFetchServerObjectReader
                 switch (e.getKey()) {
                 case MULTIPOLYGON:
                 case RELATION:
-                    sb.append(list);
-                    if (recurseDownRelations)
-                        sb.append(">>;");
+                    if (recurseDownRelations) {
+                        sb.append('(').append(list);
+                        sb.setLength(sb.length()-1); // remove semicolon
+                        //recurse down only one level, see #18835
+                        sb.append("->.r;.r;rel(r);.r;way(r);>;.r;node(r););");
+                    } else {
+                        sb.append(list);
+                    }
                     break;
                 case CLOSEDWAY:
                 case WAY:

@@ -445,28 +445,18 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         if (!recurseDownRelations) {
             return;
         }
-        // OSM multi-fetch api may return invisible objects
+        // OSM multi-fetch api may return invisible objects, we don't try to get details for them
         for (Relation r : outputDataSet.getRelations()) {
             if (!r.isVisible())
                 toDownload.remove(r.getUniqueId());
         }
-        while (!toDownload.isEmpty()) {
+        // fetch full info for all visible relations
+        for (long id : toDownload) {
             if (isCanceled())
                 return;
-            final Set<Long> addedRelations = new LinkedHashSet<>();
-
-            for (long id : toDownload) {
-                OsmServerObjectReader reader = new OsmServerObjectReader(id, OsmPrimitiveType.RELATION, true /* full*/);
-                DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
-                if (ds != null) {
-                    ds.getRelations().stream().map(OsmPrimitive::getUniqueId).filter(uid -> uid != id)
-                            .forEach(addedRelations::add);
-                }
-                merge(ds);
-            }
-            if (addedRelations.isEmpty())
-                break;
-            toDownload = addedRelations;
+            OsmServerObjectReader reader = new OsmServerObjectReader(id, OsmPrimitiveType.RELATION, true/* full*/);
+            DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
+            merge(ds);
         }
     }
 
@@ -483,7 +473,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
 
     /**
      * Should downloaded relations be complete?
-     * @param recurseDownRelations true: yes, recurse down to retrieve the complete relation
+     * @param recurseDownRelations true: yes, recurse down to retrieve the members of the relation
+     * This will download sub relations, complete way members and nodes. Members of sub relations are not
+     * retrieved unless they are also members of the relations. See #18835.
      * @return this
      * @since 15811
      */
