@@ -293,7 +293,7 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile-cots" depends="init">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**" nowarn="on" encoding="iso-8859-1"
+        <javac srcdir="${src.dir}" includes="com/google/**,com/kitfox/**,oauth/**,org/apache/commons/**" nowarn="on" encoding="iso-8859-1"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
@@ -1111,6 +1111,36 @@ Build-Date: ${build.tstamp}
             <patternset>
                 <exclude name="META-INF/**"/>
                 <exclude name="*"/>
+                <exclude name="com/drew/imaging/avi/**"/>
+                <exclude name="com/drew/imaging/bmp/**"/>
+                <exclude name="com/drew/imaging/eps/**"/>
+                <exclude name="com/drew/imaging/gif/**"/>
+                <exclude name="com/drew/imaging/heif/**"/>
+                <exclude name="com/drew/imaging/ico/**"/>
+                <exclude name="com/drew/imaging/mp3/**"/>
+                <exclude name="com/drew/imaging/mp4/**"/>
+                <exclude name="com/drew/imaging/pcx/**"/>
+                <exclude name="com/drew/imaging/png/**"/>
+                <exclude name="com/drew/imaging/psd/**"/>
+                <exclude name="com/drew/imaging/quicktime/**"/>
+                <exclude name="com/drew/imaging/raf/**"/>
+                <exclude name="com/drew/imaging/riff/**"/>
+                <exclude name="com/drew/imaging/wav/**"/>
+                <exclude name="com/drew/imaging/webp/**"/>
+                <exclude name="com/drew/metadata/avi/**"/>
+                <exclude name="com/drew/metadata/bmp/**"/>
+                <exclude name="com/drew/metadata/eps/**"/>
+                <exclude name="com/drew/metadata/gif/**"/>
+                <exclude name="com/drew/metadata/heif/**"/>
+                <exclude name="com/drew/metadata/ico/**"/>
+                <exclude name="com/drew/metadata/mov/**"/>
+                <exclude name="com/drew/metadata/mp3/**"/>
+                <exclude name="com/drew/metadata/mp4/**"/>
+                <exclude name="com/drew/metadata/pcx/**"/>
+                <exclude name="com/drew/metadata/png/**"/>
+                <exclude name="com/drew/metadata/wav/**"/>
+                <exclude name="com/drew/metadata/webp/**"/>
+                <exclude name="com/drew/tools/**"/>
                 <exclude name="org/apache/commons/compress/PasswordRequiredException.class"/>
                 <exclude name="org/apache/commons/compress/archivers/**"/>
                 <exclude name="org/apache/commons/compress/changes/**"/>
