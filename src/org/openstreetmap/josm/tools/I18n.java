@@ -30,6 +30,9 @@ import java.util.zip.ZipFile;
  */
 public final class I18n {
 
+    private static final String CORE_TRANS_DIRECTORY = "/data/trans/";
+    private static final String PLUGIN_TRANS_DIRECTORY = "data/";
+
     /**
      * This annotates strings which do not permit a clean i18n. This is mostly due to strings
      * containing two nouns which can occur in singular or plural form.
@@ -340,7 +343,7 @@ public final class I18n {
     }
 
     private static URL getTranslationFile(String lang) {
-        return I18n.class.getResource("/data/"+lang.replace('@', '-')+".lang");
+        return I18n.class.getResource(CORE_TRANS_DIRECTORY + lang.replace('@', '-') + ".lang");
     }
 
     /**
@@ -416,8 +419,8 @@ public final class I18n {
     public static void addTexts(File source) {
         if ("en".equals(loadedCode))
             return;
-        final ZipEntry enfile = new ZipEntry("data/en.lang");
-        final ZipEntry langfile = new ZipEntry("data/"+loadedCode+".lang");
+        final ZipEntry enfile = new ZipEntry(PLUGIN_TRANS_DIRECTORY + "en.lang");
+        final ZipEntry langfile = new ZipEntry(PLUGIN_TRANS_DIRECTORY + loadedCode + ".lang");
         try (
             ZipFile zipFile = new ZipFile(source, StandardCharsets.UTF_8);
             InputStream orig = zipFile.getInputStream(enfile);
