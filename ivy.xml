@@ -16,6 +16,7 @@
         <conf name="test" description="Libraries only needed for testing" extends="compile,runtime"/>
     </configurations>
     <dependencies>
+        <dependency org="org.glassfish" name="javax.json" rev="1.1.4" conf="api->default"/>
         <dependency org="ch.poole" name="OpeningHoursParser" rev="0.21.0" conf="api->default"/>
     </dependencies>
 </ivy-module>

@@ -293,7 +293,7 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile-cots" depends="init">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/tukaani/**" nowarn="on" encoding="iso-8859-1"
+        <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/tukaani/**" nowarn="on" encoding="iso-8859-1"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
@@ -348,7 +348,7 @@ Build-Date: ${build.tstamp}
     <target name="compile-jmapviewer" depends="init">
         <!-- JMapViewer -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
-            excludes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**,org/tukaani/**"
+            excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**,org/tukaani/**"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-J-Xbootclasspath/p:${error_prone_javac.jar}" unless:set="isJava9"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
@@ -374,7 +374,7 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc,compile-cots,compile-jmapviewer" unless="compile.notRequired">
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
-            excludes="com/**,javax/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**,org/tukaani/**"
+            excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/**,org/tukaani/**"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerarg value="-J-Xbootclasspath/p:${error_prone_javac.jar}" unless:set="isJava9"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
