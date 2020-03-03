@@ -977,7 +977,7 @@ Build-Date: ${build.tstamp}
         </checkstyle>
     </target>
 
-    <target name="spotbugs" depends="dist">
+    <target name="spotbugs" depends="compile">
         <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${spotbugs.dir}/spotbugs-ant.jar"/>
         <path id="spotbugs-classpath">
             <fileset dir="${spotbugs.dir}">
@@ -993,12 +993,10 @@ Build-Date: ${build.tstamp}
                 effort="max"
                 reportLevel="low"
                 >
-            <classpath>
-                <path refid="spotbugs-classpath"/>
-                <path refid="compile.path"/>
-            </classpath>
-            <sourcePath path="${base.dir}/src" />
-            <class location="${dist.jar}" />
+            <fileset dir="${build.dir}">
+                <include name="org/openstreetmap/josm/**/*.class"/>
+                <exclude name="org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/*.class"/>
+            </fileset>
         </spotbugs>
     </target>
 
