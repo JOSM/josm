@@ -30,7 +30,7 @@ import java.util.zip.ZipFile;
  */
 public final class I18n {
 
-    private static final String CORE_TRANS_DIRECTORY = "/data/trans/";
+    private static final String CORE_TRANS_DIRECTORY = "/data/";
     private static final String PLUGIN_TRANS_DIRECTORY = "data/";
 
     /**
