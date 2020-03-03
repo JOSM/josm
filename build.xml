@@ -1111,6 +1111,8 @@ Build-Date: ${build.tstamp}
             <patternset>
                 <exclude name="META-INF/**"/>
                 <exclude name="*"/>
+                <exclude name="com/drew/imaging/FileTypeDetector*"/>
+                <exclude name="com/drew/imaging/ImageMetadataReader*"/>
                 <exclude name="com/drew/imaging/avi/**"/>
                 <exclude name="com/drew/imaging/bmp/**"/>
                 <exclude name="com/drew/imaging/eps/**"/>
