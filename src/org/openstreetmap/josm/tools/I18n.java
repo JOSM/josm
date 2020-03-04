@@ -62,8 +62,8 @@ public final class I18n {
         /** Plural = Greater than 1. For some latin languages (French, Brazilian Portuguese) */
         MODE_GREATERONE,
         /* Special mode for
-         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ar">Arabic</a>.*
-        MODE_AR,*/
+         * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#ar">Arabic</a>.*/
+        MODE_AR,
         /** Special mode for
          * <a href="http://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html#cs">Czech</a>. */
         MODE_CS,
@@ -98,7 +98,7 @@ public final class I18n {
     private static Map<String, PluralMode> languages = new HashMap<>();
     // NOTE: check also WikiLanguage handling in LanguageInfo.java when adding new languages
     static {
-        //languages.put("ar", PluralMode.MODE_AR);
+        languages.put("ar", PluralMode.MODE_AR);
         languages.put("ast", PluralMode.MODE_NOTONE);
         languages.put("bg", PluralMode.MODE_NOTONE);
         languages.put("be", PluralMode.MODE_RU);
@@ -632,9 +632,9 @@ public final class I18n {
             return (n > 1) ? 1 : 0;
         case MODE_CS:
             return (n == 1) ? 0 : (((n >= 2) && (n <= 4)) ? 1 : 2);
-        //case MODE_AR:
-        //    return ((n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? 2 : ((((n % 100) >= 3)
-        //            && ((n % 100) <= 10)) ? 3 : ((((n % 100) >= 11) && ((n % 100) <= 99)) ? 4 : 5)))));
+        case MODE_AR:
+            return ((n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? 2 : ((((n % 100) >= 3)
+                    && ((n % 100) <= 10)) ? 3 : ((((n % 100) >= 11) && ((n % 100) <= 99)) ? 4 : 5)))));
         case MODE_PL:
             return (n == 1) ? 0 : (((((n % 10) >= 2) && ((n % 10) <= 4))
                     && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2);
