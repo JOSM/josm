@@ -51,9 +51,9 @@ public class MultiLineFlowLayoutTest {
         fillOneLine();
 
         container.invalidate();
-        Dimension preffered = container.getPreferredSize();
-        assertEquals(TEST_WIDHT, preffered.width);
-        assertEquals(100, preffered.height);
+        Dimension preferredSize = container.getPreferredSize();
+        assertEquals(TEST_WIDHT, preferredSize.width);
+        assertEquals(100, preferredSize.height);
 
         Dimension minimum = container.getMinimumSize();
         assertEquals(TEST_WIDHT, minimum.width);
@@ -69,16 +69,16 @@ public class MultiLineFlowLayoutTest {
 
         container.setBorder(BorderFactory.createEmptyBorder(3, 0, 7, 0));
         container.invalidate();
-        Dimension preffered = container.getPreferredSize();
-        assertEquals(TEST_WIDHT, preffered.width);
-        assertEquals(110, preffered.height);
+        Dimension preferredSize = container.getPreferredSize();
+        assertEquals(TEST_WIDHT, preferredSize.width);
+        assertEquals(110, preferredSize.height);
 
         // This should force wrapping
         container.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 40));
         container.invalidate();
-        preffered = container.getPreferredSize();
-        assertEquals(TEST_WIDHT, preffered.width);
-        assertEquals(200, preffered.height);
+        preferredSize = container.getPreferredSize();
+        assertEquals(TEST_WIDHT, preferredSize.width);
+        assertEquals(200, preferredSize.height);
     }
 
     /**
@@ -90,9 +90,9 @@ public class MultiLineFlowLayoutTest {
 
         container.setLayout(new MultiLineFlowLayout(FlowLayout.LEADING, 20, 10));
         container.invalidate();
-        Dimension preffered = container.getPreferredSize();
-        assertEquals(TEST_WIDHT, preffered.width);
-        assertEquals(230, preffered.height);
+        Dimension preferredSize = container.getPreferredSize();
+        assertEquals(TEST_WIDHT, preferredSize.width);
+        assertEquals(230, preferredSize.height);
     }
 
     /**

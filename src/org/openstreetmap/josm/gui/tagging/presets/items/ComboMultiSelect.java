@@ -117,11 +117,11 @@ public abstract class ComboMultiSelect extends KeyedItem {
             }
 
             // Only return cached size, item is not shown
-            if (!list.isShowing() && item.prefferedWidth != -1 && item.prefferedHeight != -1) {
+            if (!list.isShowing() && item.preferredWidth != -1 && item.preferredHeight != -1) {
                 if (index == -1) {
-                    lbl.setPreferredSize(new Dimension(item.prefferedWidth, 10));
+                    lbl.setPreferredSize(new Dimension(item.preferredWidth, 10));
                 } else {
-                    lbl.setPreferredSize(new Dimension(item.prefferedWidth, item.prefferedHeight));
+                    lbl.setPreferredSize(new Dimension(item.preferredWidth, item.preferredHeight));
                 }
                 return lbl;
             }
@@ -143,8 +143,8 @@ public abstract class ComboMultiSelect extends KeyedItem {
             lbl.setEnabled(list.isEnabled());
 
             // Cache size
-            item.prefferedWidth = lbl.getPreferredSize().width;
-            item.prefferedHeight = lbl.getPreferredSize().height;
+            item.preferredWidth = lbl.getPreferredSize().width;
+            item.preferredHeight = lbl.getPreferredSize().height;
 
             // We do not want the editor to have the maximum height of all
             // entries. Return a dummy with bogus height.
@@ -228,9 +228,9 @@ public abstract class ComboMultiSelect extends KeyedItem {
         private final File zipIcons = TaggingPresetReader.getZipIcons();
 
         /** Cached width (currently only for Combo) to speed up preset dialog initialization */
-        public int prefferedWidth = -1; // NOSONAR
+        public int preferredWidth = -1; // NOSONAR
         /** Cached height (currently only for Combo) to speed up preset dialog initialization */
-        public int prefferedHeight = -1; // NOSONAR
+        public int preferredHeight = -1; // NOSONAR
 
         /**
          * Constructs a new {@code PresetListEntry}, uninitialized.

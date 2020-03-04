@@ -9,10 +9,10 @@ import java.awt.Insets;
 import java.util.function.Function;
 
 /**
- * This is an extension of the flow layout that preferes wrapping the text instead of increasing the component width
+ * This is an extension of the flow layout that prefers wrapping the text instead of increasing the component width
  * when there is not enough space.
  * <p>
- * This allows for a better preffered size computation.
+ * This allows for a better preferred size computation.
  * It should be used in all places where a flow layout fills the full width of the parent container.
  * <p>
  * This does not support baseline alignment.
