@@ -194,7 +194,7 @@ Build-Date: ${build.tstamp}
     <!--
       ** Main target that builds JOSM and checks XML against schemas
     -->
-    <target name="dist" depends="compile,extract-libraries,create-revision,check-schemas,epsg">
+    <target name="dist" depends="compile,extract-libraries,epsg,copy-resources,create-revision,check-schemas">
         <echo>Revision ${version.entry.commit.revision}</echo>
         <copy file="CONTRIBUTION" todir="${build.dir}"/>
         <copy file="README" todir="${build.dir}"/>
@@ -291,7 +291,7 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </java>
     </target>
-    <target name="compile-cots" depends="init">
+    <target name="compile-cots" depends="init" description="Compiles third-party dependencies not retrieved with Ivy">
         <!-- COTS -->
         <javac srcdir="${src.dir}" includes="com/google/**,com/kitfox/**,oauth/**,org/apache/commons/**" nowarn="on" encoding="iso-8859-1"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
@@ -321,7 +321,7 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/logging/**"/>
         </javac>
     </target>
-    <target name="compile-jmapviewer" depends="init">
+    <target name="compile-jmapviewer" depends="init" description="Compiles JMapViewer">
         <!-- JMapViewer -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
             excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**"
@@ -347,7 +347,7 @@ Build-Date: ${build.tstamp}
             <compilerarg line="-Xmaxwarns 1000"/>
         </javac>
     </target>
-    <target name="compile" depends="init,javacc,compile-cots,compile-jmapviewer" unless="compile.notRequired">
+    <target name="compile" depends="init,javacc,compile-cots,compile-jmapviewer" unless="compile.notRequired" description="Compiles JOSM">
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
             excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/**"
@@ -376,7 +376,8 @@ Build-Date: ${build.tstamp}
                 <path refid="runtime.path"/>
             </classpath>
         </javac>
-
+    </target>
+    <target name="copy-resources" description="Copy resource files to build directory">
         <copy todir="build" failonerror="no" includeemptydirs="no">
             <fileset dir="resources"/>
         </copy>
@@ -467,7 +468,7 @@ Build-Date: ${build.tstamp}
             </javac>
         </sequential>
     </macrodef>
-    <target name="test-compile" depends="test-init,compile,extract-libraries,epsg">
+    <target name="test-compile" depends="test-init,compile,extract-libraries,epsg,copy-resources" description="Compiles all tests">
         <call-javac testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
@@ -840,7 +841,7 @@ Build-Date: ${build.tstamp}
         </as:check-signature>
     </target>
 
-    <target name="script-compile" depends="dist, test-compile">
+    <target name="script-compile" depends="test-compile" description="Compiles all scripts">
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="*.java"
                destdir="${script-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
                includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
