@@ -467,7 +467,7 @@ Build-Date: ${build.tstamp}
             </javac>
         </sequential>
     </macrodef>
-    <target name="test-compile" depends="test-init,compile,extract-libraries,epsg,create-revision">
+    <target name="test-compile" depends="test-init,compile,extract-libraries,epsg">
         <call-javac testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>

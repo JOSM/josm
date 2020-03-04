@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
+import org.openstreetmap.josm.data.validation.Test.TagTest;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
@@ -179,9 +180,9 @@ public class MapCSSTagCheckerTest {
      */
     @Test
     public void testPreprocessing() throws ParseException {
-        final MapCSSTagChecker test = buildTagChecker("" +
-                "@supports (min-josm-version: 1) { *[foo] { throwWarning: \"!\"; } }\n" +
-                "@supports (min-josm-version: 2147483647) { *[bar] { throwWarning: \"!\"; } }\n");
+        final MapCSSTagChecker test = buildTagChecker(
+                "@supports (min-josm-version: 0) { *[foo] { throwWarning: \"!\"; } }\n" +
+                "@supports (min-josm-version: 2147483647) { *[bar] { throwWarning: \"!\"; } }");
         assertEquals(1, test.getErrorsForPrimitive(OsmUtils.createPrimitive("way foo=1"), false).size());
         assertEquals(0, test.getErrorsForPrimitive(OsmUtils.createPrimitive("way bar=1"), false).size());
     }
@@ -197,7 +198,7 @@ public class MapCSSTagCheckerTest {
     }
 
     /**
-     * Unit test for all {@link MapCSSTagChecker.TagTest} assertions.
+     * Unit test for all {@link TagTest} assertions.
      * @throws Exception if an error occurs
      */
     @Test
