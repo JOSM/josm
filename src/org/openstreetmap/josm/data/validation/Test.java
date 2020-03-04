@@ -65,7 +65,7 @@ public class Test implements OsmPrimitiveVisitor {
     protected boolean isBeforeUpload;
 
     /** The list of errors */
-    protected List<TestError> errors = new ArrayList<>(30);
+    protected List<TestError> errors = new ArrayList<>();
 
     /** Whether the test is run on a partial selection data */
     protected boolean partialSelection;
