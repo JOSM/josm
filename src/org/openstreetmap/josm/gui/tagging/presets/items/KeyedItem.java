@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 /**
  * Preset item associated to an OSM key.
  */
-public abstract class KeyedItem extends TaggingPresetItem {
+public abstract class KeyedItem extends TextItem {
 
     /** Translation of "&lt;different&gt;". Use in combo boxes to display an entry matching several different values. */
     protected static final String DIFFERENT = tr("<different>");
@@ -31,10 +31,6 @@ public abstract class KeyedItem extends TaggingPresetItem {
 
     /** This specifies the property key that will be modified by the item. */
     public String key; // NOSONAR
-    /** The text to display */
-    public String text; // NOSONAR
-    /** The context used for translating {@link #text} */
-    public String text_context; // NOSONAR
     /**
      * Allows to change the matching process, i.e., determining whether the tags of an OSM object fit into this preset.
      * If a preset fits then it is linked in the Tags/Membership dialog.<ul>

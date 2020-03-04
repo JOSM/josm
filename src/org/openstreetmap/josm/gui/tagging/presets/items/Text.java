@@ -39,8 +39,6 @@ public class Text extends KeyedItem {
 
     private static int auto_increment_selected; // NOSONAR
 
-    /** The localized version of {@link #text}. */
-    public String locale_text; // NOSONAR
     /** The default value for the item. If not specified, the current value of the key is chosen as default (if applicable). Defaults to "". */
     public String default_; // NOSONAR
     /** The original value */
@@ -114,9 +112,7 @@ public class Text extends KeyedItem {
             value = comboBox;
             originalValue = DIFFERENT;
         }
-        if (locale_text == null) {
-            locale_text = getLocaleText(text, text_context, null);
-        }
+        initializeLocaleText(null);
 
         // if there's an auto_increment setting, then wrap the text field
         // into a panel, appending a number of buttons.

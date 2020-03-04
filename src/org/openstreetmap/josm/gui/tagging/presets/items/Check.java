@@ -26,8 +26,6 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class Check extends KeyedItem {
 
-    /** The localized version of {@link #text}. */
-    public String locale_text; // NOSONAR
     /** the value to set when checked (default is "yes") */
     public String value_on = OsmUtils.TRUE_VALUE; // NOSONAR
     /** the value to set when unchecked (default is "no") */
@@ -53,9 +51,7 @@ public class Check extends KeyedItem {
         final String oneValue = usage.values.isEmpty() ? null : usage.values.last();
         def = "on".equals(default_) ? Boolean.TRUE : "off".equals(default_) ? Boolean.FALSE : null;
 
-        if (locale_text == null) {
-            locale_text = getLocaleText(text, text_context, null);
-        }
+        initializeLocaleText(null);
 
         if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
             if (def != null && !PROP_FILL_DEFAULT.get()) {

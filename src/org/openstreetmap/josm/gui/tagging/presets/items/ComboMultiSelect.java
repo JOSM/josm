@@ -47,8 +47,6 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
     private static final Renderer RENDERER = new Renderer();
 
-    /** The localized version of {@link #text}. */
-    public String locale_text; // NOSONAR
     /**
      * A list of entries.
      * The list has to be separated by commas (for the {@link Combo} box) or by the specified delimiter (for the {@link MultiSelect}).
@@ -421,9 +419,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
                 }
             }
         }
-        if (locale_text == null) {
-            locale_text = getLocaleText(text, text_context, null);
-        }
+        initializeLocaleText(null);
         initialized = true;
     }
 
