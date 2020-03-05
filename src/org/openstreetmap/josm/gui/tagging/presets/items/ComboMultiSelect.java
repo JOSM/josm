@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -223,7 +222,6 @@ public abstract class ComboMultiSelect extends KeyedItem {
         public String locale_display_value; // NOSONAR
         /** The localized version of {@link #short_description}. */
         public String locale_short_description; // NOSONAR
-        private final File zipIcons = TaggingPresetReader.getZipIcons();
 
         /** Cached width (currently only for Combo) to speed up preset dialog initialization */
         public int preferredWidth = -1; // NOSONAR
@@ -274,7 +272,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
          * @return the entry icon, or {@code null}
          */
         public ImageIcon getIcon() {
-            return icon == null ? null : loadImageIcon(icon, zipIcons, parseInteger(icon_size));
+            return icon == null ? null : loadImageIcon(icon, TaggingPresetReader.getZipIcons(), parseInteger(icon_size));
         }
 
         /**
