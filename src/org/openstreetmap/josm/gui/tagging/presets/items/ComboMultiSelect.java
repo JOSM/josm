@@ -140,8 +140,8 @@ public abstract class ComboMultiSelect extends KeyedItem {
             lbl.setEnabled(list.isEnabled());
 
             // Cache size
-            item.preferredWidth = lbl.getPreferredSize().width;
-            item.preferredHeight = lbl.getPreferredSize().height;
+            item.preferredWidth = (short) lbl.getPreferredSize().width;
+            item.preferredHeight = (short) lbl.getPreferredSize().height;
 
             // We do not want the editor to have the maximum height of all
             // entries. Return a dummy with bogus height.
@@ -224,9 +224,9 @@ public abstract class ComboMultiSelect extends KeyedItem {
         public String locale_short_description; // NOSONAR
 
         /** Cached width (currently only for Combo) to speed up preset dialog initialization */
-        public int preferredWidth = -1; // NOSONAR
+        public short preferredWidth = -1; // NOSONAR
         /** Cached height (currently only for Combo) to speed up preset dialog initialization */
-        public int preferredHeight = -1; // NOSONAR
+        public short preferredHeight = -1; // NOSONAR
 
         /**
          * Constructs a new {@code PresetListEntry}, uninitialized.
