@@ -33,7 +33,7 @@ public class MultiSelect extends ComboMultiSelect {
         if (usage.hasUniqueValue() && !usage.unused()) {
             originalValue = usage.getFirst();
             list.setSelectedItem(originalValue);
-        } else if ((def != null && !usage.hadKeys()) || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
+        } else if ((def != null && !usage.hadKeys()) || PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
             originalValue = DIFFERENT;
             list.setSelectedItem(def);
         } else if (usage.unused()) {

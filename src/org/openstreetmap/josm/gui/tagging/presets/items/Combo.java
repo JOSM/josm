@@ -73,7 +73,7 @@ public class Combo extends ComboMultiSelect {
             combobox.setSelectedItem(originalValue);
         } else if (def != null && usage.unused()) {
             // default is set and all items were unset
-            if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
+            if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
                 // selected osm primitives are untagged or filling default feature is enabled
                 combobox.setSelectedItem(lhm.get(def).getDisplayValue(true));
             } else {
@@ -84,7 +84,7 @@ public class Combo extends ComboMultiSelect {
         } else if (usage.unused()) {
             // all items were unset (and so is default)
             originalValue = lhm.get("");
-            if (!presetInitiallyMatches && "force".equals(use_last_as_default) && LAST_VALUES.containsKey(key)) {
+            if (!presetInitiallyMatches && isForceUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
                 combobox.setSelectedItem(lhm.get(LAST_VALUES.get(key)));
             } else {
                 combobox.setSelectedItem(originalValue);

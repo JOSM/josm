@@ -108,7 +108,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                     tagSet.add(((KeyedItem) item).key);
                     if (item instanceof ComboMultiSelect) {
                         final ComboMultiSelect cms = (ComboMultiSelect) item;
-                        if (Boolean.parseBoolean(cms.values_searchable)) {
+                        if (cms.values_searchable) {
                             tagSet.addAll(cms.getDisplayValues());
                         }
                     }
