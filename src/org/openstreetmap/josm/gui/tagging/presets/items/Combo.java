@@ -29,7 +29,7 @@ public class Combo extends ComboMultiSelect {
      * Constructs a new {@code Combo}.
      */
     public Combo() {
-        delimiter = ",";
+        delimiter = ',';
     }
 
     @Override

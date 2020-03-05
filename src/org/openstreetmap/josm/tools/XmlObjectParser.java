@@ -125,6 +125,8 @@ public class XmlObjectParser implements Iterable<Object> {
         private Object getValueForClass(Class<?> klass, String value) {
             if (boolean.class.equals(klass))
                 return parseBoolean(value);
+            else if (char.class.equals(klass))
+                return value.charAt(0);
             else if (Integer.class.equals(klass))
                 return Integer.valueOf(value);
             else if (Long.class.equals(klass))
@@ -153,7 +155,7 @@ public class XmlObjectParser implements Iterable<Object> {
                     f = entry.getField("locale_" + fieldName.substring(lang.length()));
                 }
                 if (f != null && Modifier.isPublic(f.getModifiers()) && (
-                        String.class.equals(f.getType()) || boolean.class.equals(f.getType()) ||
+                        String.class.equals(f.getType()) || boolean.class.equals(f.getType()) || char.class.equals(f.getType()) ||
                         Float.class.equals(f.getType()) || Double.class.equals(f.getType()) ||
                         Long.class.equals(f.getType()) || Integer.class.equals(f.getType()))) {
                     f.set(c, getValueForClass(f.getType(), value));

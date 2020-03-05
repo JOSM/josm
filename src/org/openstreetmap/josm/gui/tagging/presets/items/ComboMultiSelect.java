@@ -89,7 +89,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
      * In case of {@link Combo} the default is comma.
      * In case of {@link MultiSelect} the default is semicolon and this will also be used to separate selected values in the tag.
      */
-    public String delimiter = ";"; // NOSONAR
+    public char delimiter = ';'; // NOSONAR
     /** whether the last value is used as default. Using "force" enforces this behaviour also for already tagged objects. Default is "false".*/
     public String use_last_as_default = "false"; // NOSONAR
     /** whether to use values for search via {@link TaggingPresetSelector} */
@@ -157,9 +157,9 @@ public abstract class ComboMultiSelect extends KeyedItem {
      * string (extracted from TaggingPreset)
      */
     protected static class ConcatenatingJList extends JList<PresetListEntry> {
-        private final String delimiter;
+        private final char delimiter;
 
-        protected ConcatenatingJList(String del, PresetListEntry... o) {
+        protected ConcatenatingJList(char del, PresetListEntry... o) {
             super(o);
             delimiter = del;
         }
@@ -169,7 +169,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
                 clearSelection();
             } else {
                 String s = o.toString();
-                Set<String> parts = new TreeSet<>(Arrays.asList(s.split(delimiter)));
+                Set<String> parts = new TreeSet<>(Arrays.asList(s.split(String.valueOf(delimiter))));
                 ListModel<PresetListEntry> lm = getModel();
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
@@ -350,10 +350,6 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
     protected abstract void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches);
 
-    protected char getDelChar() {
-        return delimiter.isEmpty() ? ';' : delimiter.charAt(0);
-    }
-
     @Override
     public Collection<String> getValues() {
         initListEntries();
@@ -422,7 +418,6 @@ public abstract class ComboMultiSelect extends KeyedItem {
     }
 
     private void initListEntriesFromAttributes() {
-        char delChar = getDelChar();
 
         String[] valueArray = null;
 
@@ -449,17 +444,17 @@ public abstract class ComboMultiSelect extends KeyedItem {
         }
 
         if (valueArray == null) {
-            valueArray = splitEscaped(delChar, values);
+            valueArray = splitEscaped(delimiter, values);
         }
 
         String[] displayArray = valueArray;
         if (!values_no_i18n) {
             final String displ = Utils.firstNonNull(locale_display_values, display_values);
-            displayArray = displ == null ? valueArray : splitEscaped(delChar, displ);
+            displayArray = displ == null ? valueArray : splitEscaped(delimiter, displ);
         }
 
         final String descr = Utils.firstNonNull(locale_short_descriptions, short_descriptions);
-        String[] shortDescriptionsArray = descr == null ? null : splitEscaped(delChar, descr);
+        String[] shortDescriptionsArray = descr == null ? null : splitEscaped(delimiter, descr);
 
         if (displayArray.length != valueArray.length) {
             Logging.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''",
