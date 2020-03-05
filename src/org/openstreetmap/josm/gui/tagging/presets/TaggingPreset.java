@@ -119,7 +119,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * The types as preparsed collection.
      */
     public transient Set<TaggingPresetType> types;
-    public final transient List<TaggingPresetItem> data = new LinkedList<>();
+    public final transient List<TaggingPresetItem> data = new ArrayList<>(2);
     public transient Roles roles;
     public transient TemplateEntry nameTemplate;
     public transient Match nameTemplateFilter;
@@ -640,7 +640,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             super("");
             new ImageProvider("dialogs", "pin").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Add or remove toolbar button"));
-            List<String> t = new LinkedList<>(ToolbarPreferences.getToolString());
+            List<String> t = new ArrayList<>(ToolbarPreferences.getToolString());
             toolbarIndex = t.indexOf(getToolbarString());
             putValue(SELECTED_KEY, toolbarIndex >= 0);
         }

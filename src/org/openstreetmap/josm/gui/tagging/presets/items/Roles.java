@@ -4,8 +4,8 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -157,7 +157,7 @@ public class Roles extends TaggingPresetItem {
     /**
      * List of {@link Role} elements.
      */
-    public final List<Role> roles = new LinkedList<>();
+    public final List<Role> roles = new ArrayList<>(2);
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
