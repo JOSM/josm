@@ -53,7 +53,7 @@ public class Text extends KeyedItem {
      */
     public String auto_increment; // NOSONAR
     /** The length of the text box (number of characters allowed). */
-    public String length; // NOSONAR
+    public short length; // NOSONAR
     /** A comma separated list of alternative keys to use for autocompletion. */
     public String alternative_autocomplete_keys; // NOSONAR
 
@@ -73,8 +73,8 @@ public class Text extends KeyedItem {
         if (Config.getPref().getBoolean("taggingpreset.display-keys-as-hint", true)) {
             textField.setHint(key);
         }
-        if (length != null && !length.isEmpty()) {
-            textField.setMaxChars(Integer.valueOf(length));
+        if (length > 0) {
+            textField.setMaxChars((int) length);
         }
         if (usage.unused()) {
             if (auto_increment_selected != 0 && auto_increment != null) {

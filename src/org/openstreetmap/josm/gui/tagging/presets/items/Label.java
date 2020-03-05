@@ -20,7 +20,7 @@ public class Label extends TextItem {
     /** The location of icon file to display (optional) */
     public String icon; // NOSONAR
     /** The size of displayed icon. If not set, default is 16px */
-    public String icon_size; // NOSONAR
+    public short icon_size = 16; // NOSONAR
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
@@ -44,7 +44,6 @@ public class Label extends TextItem {
      * @return the label icon, or {@code null}
      */
     public ImageIcon getIcon() {
-        Integer size = parseInteger(icon_size);
-        return icon == null ? null : loadImageIcon(icon, TaggingPresetReader.getZipIcons(), size != null ? size : 16);
+        return icon == null ? null : loadImageIcon(icon, TaggingPresetReader.getZipIcons(), (int) icon_size);
     }
 }

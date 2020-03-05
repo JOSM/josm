@@ -55,7 +55,7 @@ public class Roles extends TaggingPresetItem {
         /** Is this role required at least once in the relation? */
         public boolean required; // NOSONAR
         /** How often must the element appear */
-        private long count;
+        private short count;
 
         public void setType(String types) throws SAXException {
             this.types = getType(types);
@@ -88,7 +88,7 @@ public class Roles extends TaggingPresetItem {
         }
 
         public void setCount(String count) {
-            this.count = Long.parseLong(count);
+            this.count = Short.parseShort(count);
         }
 
         /**

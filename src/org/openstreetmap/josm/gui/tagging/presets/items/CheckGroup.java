@@ -23,7 +23,7 @@ public class CheckGroup extends TaggingPresetItem {
     /**
      * Number of columns (positive integer)
      */
-    public String columns; // NOSONAR
+    public short columns = 1; // NOSONAR
 
     /**
      * List of checkboxes
@@ -32,9 +32,8 @@ public class CheckGroup extends TaggingPresetItem {
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
-        Integer cols = Integer.valueOf(columns);
-        int rows = (int) Math.ceil(checks.size()/cols.doubleValue());
-        JPanel panel = new JPanel(new GridLayout(rows, cols));
+        int rows = (int) Math.ceil(checks.size() / ((double) columns));
+        JPanel panel = new JPanel(new GridLayout(rows, columns));
 
         for (Check check : checks) {
             check.addToPanel(panel, sel, presetInitiallyMatches);

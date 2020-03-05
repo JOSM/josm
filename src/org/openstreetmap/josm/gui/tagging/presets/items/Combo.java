@@ -21,7 +21,7 @@ public class Combo extends ComboMultiSelect {
      */
     public boolean editable = true; // NOSONAR
     /** The length of the combo box (number of characters allowed). */
-    public String length; // NOSONAR
+    public short length; // NOSONAR
 
     protected JosmComboBox<PresetListEntry> combobox;
 
@@ -58,8 +58,8 @@ public class Combo extends ComboMultiSelect {
         if (Config.getPref().getBoolean("taggingpreset.display-keys-as-hint", true)) {
             tf.setHint(key);
         }
-        if (length != null && !length.isEmpty()) {
-            tf.setMaxChars(Integer.valueOf(length));
+        if (length > 0) {
+            tf.setMaxChars((int) length);
         }
         AutoCompletionList acList = tf.getAutoCompletionList();
         if (acList != null) {

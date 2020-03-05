@@ -33,7 +33,6 @@ public class CheckGroupTest {
     @Test
     public void testAddToPanel() {
         CheckGroup cg = new CheckGroup();
-        cg.columns = "1";
         JPanel p = new JPanel();
         assertEquals(0, p.getComponentCount());
         assertFalse(cg.addToPanel(p, Collections.<OsmPrimitive>emptyList(), false));

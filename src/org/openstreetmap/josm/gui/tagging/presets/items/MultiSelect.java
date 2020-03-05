@@ -19,7 +19,7 @@ public class MultiSelect extends ComboMultiSelect {
     /**
      * Number of rows to display (positive integer, optional).
      */
-    public String rows; // NOSONAR
+    public short rows; // NOSONAR
 
     protected ConcatenatingJList list;
 
@@ -47,9 +47,9 @@ public class MultiSelect extends ComboMultiSelect {
         JScrollPane sp = new JScrollPane(list);
         // if a number of rows has been specified in the preset,
         // modify preferred height of scroll pane to match that row count.
-        if (rows != null) {
+        if (rows > 0) {
             double height = renderer.getListCellRendererComponent(list,
-                    new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * Integer.parseInt(rows);
+                    new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * rows;
             sp.setPreferredSize(new Dimension((int) sp.getPreferredSize().getWidth(), (int) height));
         }
         p.add(sp, GBC.eol().fill(GBC.HORIZONTAL));

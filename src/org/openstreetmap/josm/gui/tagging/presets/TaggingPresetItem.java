@@ -128,7 +128,7 @@ public abstract class TaggingPresetItem {
     protected static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
         final Collection<String> s = Config.getPref().getList("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
-        if (maxSize != null) {
+        if (maxSize != null && maxSize > 0) {
             imgProv.setMaxSize(maxSize);
         }
         return imgProv.get();

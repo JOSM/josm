@@ -217,7 +217,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         /** The location of icon file to display */
         public String icon; // NOSONAR
         /** The size of displayed icon. If not set, default is size from icon file */
-        public String icon_size; // NOSONAR
+        public short icon_size; // NOSONAR
         /** The localized version of {@link #display_value}. */
         public String locale_display_value; // NOSONAR
         /** The localized version of {@link #short_description}. */
@@ -272,7 +272,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
          * @return the entry icon, or {@code null}
          */
         public ImageIcon getIcon() {
-            return icon == null ? null : loadImageIcon(icon, TaggingPresetReader.getZipIcons(), parseInteger(icon_size));
+            return icon == null ? null : loadImageIcon(icon, TaggingPresetReader.getZipIcons(), (int) icon_size);
         }
 
         /**
