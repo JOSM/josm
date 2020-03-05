@@ -156,6 +156,9 @@ public final class I18n {
             "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA, LATIN, PINYIN, ROMAJI) + ")))?");
 
     private static String format(String text, Object... objects) {
+        if (objects.length == 0) {
+            return text;
+        }
         try {
             return MessageFormat.format(text, objects);
         } catch (InvalidPathException e) {
