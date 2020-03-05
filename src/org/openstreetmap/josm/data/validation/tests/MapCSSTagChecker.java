@@ -882,6 +882,7 @@ public class MapCSSTagChecker extends Test.TagTest {
         indexData = null;
         // always clear the cache to make sure that we catch changes in geometry
         mpAreaCache.clear();
+        ruleToCheckMap.clear();
         super.endTest();
     }
 }
