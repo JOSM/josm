@@ -565,7 +565,7 @@ Build-Date: ${build.tstamp}
     <target name="test-unit-hardfail" depends="test-unit" description="Run 'test-unit' target but abort if tests failed">
         <fail message="'test-unit' failed" if="test.unit.failed"/>
     </target>
-    <target name="test-it" depends="test-compile" unless="test-it.notRequired"
+    <target name="test-it" depends="test-compile,create-revision" unless="test-it.notRequired"
         description="Run integration tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <call-junit testfamily="unit" testITsuffix="IT"/>
         <call-junit testfamily="functional" testITsuffix="IT"/>
