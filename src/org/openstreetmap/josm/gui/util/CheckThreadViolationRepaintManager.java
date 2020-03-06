@@ -14,13 +14,15 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.jdesktop.swinghelper.debug;
+package org.openstreetmap.josm.gui.util;
 
 import java.lang.ref.WeakReference;
 
 import javax.swing.JComponent;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
+
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * <p>This class is used to detect Event Dispatch Thread rule violations<br>
@@ -38,17 +40,7 @@ import javax.swing.SwingUtilities;
  * https://swinghelper.dev.java.net/
  */
 public class CheckThreadViolationRepaintManager extends RepaintManager {
-    // it is recommended to pass the complete check
-    private boolean completeCheck = true;
     private WeakReference<JComponent> lastComponent;
-
-    public CheckThreadViolationRepaintManager(boolean completeCheck) {
-        this.completeCheck = completeCheck;
-    }
-
-    public CheckThreadViolationRepaintManager() {
-        this(true);
-    }
 
     @Override
     public synchronized void addInvalidComponent(JComponent component) {
@@ -63,16 +55,15 @@ public class CheckThreadViolationRepaintManager extends RepaintManager {
     }
 
     private void checkThreadViolations(JComponent c) {
-        if (!SwingUtilities.isEventDispatchThread() && (completeCheck || c.isShowing())) {
+        if (!SwingUtilities.isEventDispatchThread()) {
             boolean repaint = false;
             boolean fromSwing = false;
             boolean imageUpdate = false;
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             for (StackTraceElement st : stackTrace) {
                 if (repaint && st.getClassName().startsWith("javax.swing.") &&
-                        // for details see
-                        // https://swinghelper.dev.java.net/issues/show_bug.cgi?id=1
-                         !st.getClassName().startsWith("javax.swing.SwingWorker")) {
+                    // for details see https://swinghelper.dev.java.net/issues/show_bug.cgi?id=1
+                    !st.getClassName().startsWith("javax.swing.SwingWorker")) {
                     fromSwing = true;
                 }
                 if (repaint && "imageUpdate".equals(st.getMethodName())) {
@@ -105,12 +96,12 @@ public class CheckThreadViolationRepaintManager extends RepaintManager {
         }
     }
 
-    protected void violationFound(JComponent c, StackTraceElement[] stackTrace) {
-        System.out.println();
-        System.out.println("EDT violation detected");
-        System.out.println(c);
+    protected static void violationFound(JComponent c, StackTraceElement[] stackTrace) {
+        Logging.error("");
+        Logging.error("EDT violation detected");
+        Logging.error(c.toString());
         for (StackTraceElement st : stackTrace) {
-            System.out.println("\tat " + st);
+            Logging.error("\tat " + st);
         }
     }
 }

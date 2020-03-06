@@ -63,9 +63,6 @@
         <Class name="~org.glassfish.json.*" />
     </Match>
     <Match>
-        <Class name="~org.jdesktop.swinghelper.debug.*" />
-    </Match>
-    <Match>
         <Class name="~org.openstreetmap.gui.jmapviewer.*" />
     </Match>
     <Match>

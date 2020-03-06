@@ -62,7 +62,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
@@ -120,6 +119,7 @@ import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor;
+import org.openstreetmap.josm.gui.util.CheckThreadViolationRepaintManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.util.WindowGeometry;

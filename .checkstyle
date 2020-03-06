@@ -10,14 +10,10 @@
   <filter name="DerivedFiles" enabled="true"/>
   <filter name="FilesFromPackage" enabled="true">
     <filter-data value="src/com"/>
-    <filter-data value="src/javax"/>
     <filter-data value="src/oauth"/>
     <filter-data value="src/org/apache"/>
-    <filter-data value="src/org/glassfish"/>
-    <filter-data value="src/org/jdesktop"/>
     <filter-data value="src/org/openstreetmap/gui"/>
     <filter-data value="src/org/openstreetmap/josm/gui/mappaint/mapcss/parsergen"/>
-    <filter-data value="src/org/tukaani"/>
     <filter-data value=".externalToolBuilders"/>
     <filter-data value=".settings"/>
     <filter-data value=".svn"/>

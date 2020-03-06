@@ -23,6 +23,7 @@
   <suppress checks="." files="[\\/]tools[\\/]japicc[\\/]" />
   <suppress checks="." files="[\\/]tools[\\/]pmd[\\/]" />
   <suppress checks="HeaderCheck" files="josm[\\/]tools[\\/]commons[\\/]" />
+  <suppress checks="HeaderCheck" files="CheckThreadViolationRepaintManager\.java" />
   <suppress checks="HeaderCheck" files="Ellipsoid\.java" />
   <suppress checks="HeaderCheck" files="NTV2GridShift\.java" />
   <suppress checks="HeaderCheck" files="NTV2GridShiftFile\.java" />

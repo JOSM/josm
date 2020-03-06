@@ -297,7 +297,6 @@ Build-Date: ${build.tstamp}
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
-            <exclude name="org/apache/commons/compress/**"/>
             <exclude name="org/apache/commons/jcs/JCS.java"/>
             <exclude name="org/apache/commons/jcs/access/GroupCacheAccess.java"/>
             <exclude name="org/apache/commons/jcs/access/PartitionedCacheAccess.java"/>
@@ -318,7 +317,9 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/jcs/utils/net/**"/>
             <exclude name="org/apache/commons/jcs/utils/props/**"/>
             <exclude name="org/apache/commons/jcs/utils/servlet/**"/>
-            <exclude name="org/apache/commons/logging/**"/>
+            <classpath>
+                <path refid="runtime.path"/>
+            </classpath>
         </javac>
     </target>
     <target name="compile-jmapviewer" depends="init" description="Compiles JMapViewer">
@@ -1060,7 +1061,7 @@ Build-Date: ${build.tstamp}
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-spi.jar" includes="org/openstreetmap/josm/spi/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/josm-tools.jar" includes="org/openstreetmap/josm/tools/**/*.class"/>
         <exec executable="jdeps" dir="${modules.dir}">
-            <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.*|oauth.*|org.apache.*|org.glassfish.*|org.jdesktop.*|org.openstreetmap.gui.*'"/>
+            <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.*|oauth.*|org.apache.*|org.glassfish.*|org.openstreetmap.gui.*'"/>
             <arg line="-dotoutput dots *.jar"/>
         </exec>
         <exec executable="dot" dir="${modules.dir}/dots">
@@ -1068,14 +1069,12 @@ Build-Date: ${build.tstamp}
         </exec>
         <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-without-dependencies.png"/>
         <!-- Direct dependencies -->
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/metadata-extractor.jar" includes="com/drew/**/*.class"/>
+        <copy todir="${modules.dir}" flatten="true">
+            <fileset refid="runtime.fileset" />
+        </copy>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/svgSalamander.jar" includes="com/kitfox/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/javax-json.jar" includes="javax/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/oauth-signpost.jar" includes="oauth/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-compress.jar" includes="org/apache/commons/compress/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-jcs.jar" includes="org/apache/commons/jcs/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/glassfish-json.jar" includes="org/glassfish/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/jdesktop.jar" includes="org/jdesktop/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/jmapviewer.jar" includes="org/openstreetmap/gui/**/*.class"/>
         <exec executable="jdeps" dir="${modules.dir}">
             <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.sun.*|com.google.*|org.tukaani.*|org.apache.commons.logging.*'"/>
@@ -1086,9 +1085,7 @@ Build-Date: ${build.tstamp}
         </exec>
         <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-with-direct-dependencies.png"/>
         <!-- All dependencies -->
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-logging.jar" includes="org/apache/commons/logging/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/google-gdata.jar" includes="com/google/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/tukaani-xz.jar" includes="org/tukaani/**/*.class"/>
         <exec executable="jdeps" dir="${modules.dir}">
             <arg line="-dotoutput dots *.jar"/>
         </exec>
@@ -1097,7 +1094,7 @@ Build-Date: ${build.tstamp}
         </exec>
         <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-with-all-dependencies.png"/>
     </target>
-    <target name="resolve" depends="init-ivy" unless="resolve.notRequired">
+    <target name="resolve" depends="init-ivy" unless="resolve.notRequired" description="Resolve Ivy dependencies">
         <ivy:resolve keep="true"/>
         <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
         <ivy:cachepath pathid="compile.path" conf="compile"/>

@@ -189,7 +189,6 @@ There are some third party libraries which are directly included in the source c
     src/org/openstreetmap/gui (svn external)
     -> http://svn.openstreetmap.org/applications/viewer/jmapviewer/
 * Apache commons compress: Support for bzip2 compression when opening files
-    src/org/apache/commons/compress/compressors (svn external)
     -> https://github.com/apache/commons-compress
 * Apache commons validator: Improved validator routines
     src/org/openstreetmap/josm/data/validation/routines
@@ -198,7 +197,6 @@ There are some third party libraries which are directly included in the source c
     src/com/kitfox/svg
     -> https://github.com/blackears/svgSalamander
 * Metadata Extractor: Read EXIF Metadata of photos
-    src/com/drew
     -> https://github.com/drewnoakes/metadata-extractor
 * Signpost: OAuth library
     src/oauth, src/com/google
@@ -207,11 +205,10 @@ There are some third party libraries which are directly included in the source c
     src/org/openstreetmap/josm/gui/MultiSplitLayout.java, MultiSplitPane.java
     -> https://github.com/floscher/multi-split
     -> https://community.oracle.com/docs/DOC-983539
-* swinghelper: Class CheckThreadViolationRepaintManager to find classpath violations
-    src/org/jdesktop/swinghelper/debug/CheckThreadViolationRepaintManager.java
+* swinghelper: Class CheckThreadViolationRepaintManager to find EDT violations
+    src/org/openstreetmap/josm/gui/util/CheckThreadViolationRepaintManager.java
     -> https://github.com/floscher/swinghelper
 * xz extractor
-    src/org/tukaani
     -> https://tukaani.org/xz/java.html
 * OpeningHoursParser (MIT license)
     -> https://github.com/simonpoole/OpeningHoursParser
