@@ -145,6 +145,30 @@ public class JoinAreasActionTest {
     }
 
     /**
+     * Non-regression test for bug #18744.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if OSM parsing fails
+     */
+    @Test
+    public void testTicket18744() throws IOException, IllegalDataException {
+        try (InputStream is = TestUtils.getRegressionDataStream(18744, "18744-sample.osm")) {
+            DataSet ds = OsmReader.parseDataSet(is, null);
+            Layer layer = new OsmDataLayer(ds, null, null);
+            MainApplication.getLayerManager().addLayer(layer);
+            try {
+                assertEquals(3, ds.getWays().size());
+                new JoinAreasAction(false).join(ds.getWays());
+                // join should not have changed anything
+                assertEquals(3, ds.getWays().size());
+            } finally {
+                // Ensure we clean the place before leaving, even if test fails.
+                MainApplication.getLayerManager().removeLayer(layer);
+            }
+        }
+    }
+
+
+    /**
      * Non-regression test which checks example files in nodist/data
      * @throws Exception if an error occurs
      */

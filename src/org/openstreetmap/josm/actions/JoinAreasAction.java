@@ -1533,6 +1533,14 @@ public class JoinAreasAction extends JosmAction {
             //retain only selected inner ways
             innerWays.retainAll(selectedWays);
 
+            if (!innerWays.isEmpty() && selectedWays.contains(outerWay)) {
+                // see #18744
+                new Notification(tr("Cannot join inner and outer ways of a multipolygon"))
+                        .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                        .show();
+                return null;
+            }
+
             if (processedOuterWays.contains(outerWay)) {
                 new Notification(
                         tr("Sorry. Cannot handle way that is outer in multiple multipolygon relations."))
