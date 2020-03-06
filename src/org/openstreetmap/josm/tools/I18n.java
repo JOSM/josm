@@ -156,7 +156,7 @@ public final class I18n {
             "name:(\\p{Lower}{2,3})(?:[-_](?i:(" + String.join("|", HIRAGANA, KATAKANA, LATIN, PINYIN, ROMAJI) + ")))?");
 
     private static String format(String text, Object... objects) {
-        if (objects.length == 0) {
+        if (objects.length == 0 && !text.contains("'")) {
             return text;
         }
         try {
