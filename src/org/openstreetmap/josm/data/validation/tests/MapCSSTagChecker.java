@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Area;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -17,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -66,6 +68,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -74,8 +77,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class MapCSSTagChecker extends Test.TagTest {
     private MapCSSStyleIndex indexData;
-    final Map<MapCSSRule, MapCSSTagCheckerAndRule> ruleToCheckMap = new HashMap<>();
-    private final Set<OsmPrimitive> tested = new HashSet<>();
+    private final Map<MapCSSRule, MapCSSTagCheckerAndRule> ruleToCheckMap = new HashMap<>();
     private static final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
     static final boolean ALL_TESTS = true;
     static final boolean ONLY_SELECTED_TESTS = false;
@@ -202,6 +204,9 @@ public class MapCSSTagChecker extends Test.TagTest {
     }
 
     final MultiMap<String, TagCheck> checks = new MultiMap<>();
+
+    /** maps the source URL for a test to the title shown in the dialog where known */
+    private final Map<String, String> urlTitles = new HashMap<>();
 
     /**
      * Result of {@link TagCheck#readMapCSS}
@@ -546,8 +551,9 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final String description = getDescriptionForMatchingSelector(p, matchingSelector);
                 final String description1 = group == null ? description : group;
                 final String description2 = group == null ? null : description;
+                final String selector = matchingSelector.toString();
                 TestError.Builder errorBuilder = TestError.builder(tester, getSeverity(), 3000)
-                        .messageWithManuallyTranslatedDescription(description1, description2, matchingSelector.toString());
+                        .messageWithManuallyTranslatedDescription(description1, description2, selector);
                 if (fix != null) {
                     errorBuilder.fix(() -> fix);
                 }
@@ -557,8 +563,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     for (IPrimitive c : env.children) {
                         if (c instanceof OsmPrimitive) {
                             errorBuilder = TestError.builder(tester, getSeverity(), 3000)
-                                    .messageWithManuallyTranslatedDescription(description1, description2,
-                                            matchingSelector.toString());
+                                    .messageWithManuallyTranslatedDescription(description1, description2, selector);
                             if (fix != null) {
                                 errorBuilder.fix(() -> fix);
                             }
@@ -617,7 +622,7 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         @Override
         public String getSource() {
-            return tr("URL / File: {0}", source);
+            return source;
         }
     }
 
@@ -661,7 +666,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                                 // rule.selectors might be different due to MapCSSStyleIndex, however, the declarations are the same object
                                 .filter(c -> c.rule.declaration == rule.declaration)
                                 .findFirst()
-                                .map(c -> new MapCSSTagCheckerAndRule(c, e.getKey()))
+                                .map(c -> new MapCSSTagCheckerAndRule(c, getTitle(e.getKey())))
                                 .orElse(null))
                         .filter(Objects::nonNull)
                         .findFirst()
@@ -678,6 +683,10 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
         }
         return res;
+    }
+
+    private String getTitle(String url) {
+        return urlTitles.getOrDefault(url, tr("unknown"));
     }
 
     /**
@@ -749,9 +758,6 @@ public class MapCSSTagChecker extends Test.TagTest {
         for (TestError e : getErrorsForPrimitive(p, ValidatorPrefHelper.PREF_OTHER.get())) {
             addIfNotSimilar(e, errors);
         }
-        if (partialSelection) {
-            tested.add(p);
-        }
     }
 
     /**
@@ -787,14 +793,35 @@ public class MapCSSTagChecker extends Test.TagTest {
             result = TagCheck.readMapCSS(reader, assertionConsumer);
             checks.remove(url);
             checks.putAll(url, result.parseChecks);
+            urlTitles.put(url, findURLTitle(url));
             indexData = null;
         }
         return result;
     }
 
+    /** Find a user friendly string for the url.
+     *
+     * @param url the source for the set of rules
+     * @return a value that can be used in tool tip or progress bar.
+     */
+    private static String findURLTitle(String url) {
+        for (SourceEntry source : new ValidatorPrefHelper().get()) {
+            if (url.equals(source.url) && source.title != null && !source.title.isEmpty()) {
+                return source.title;
+            }
+        }
+        if (url.endsWith(".mapcss")) // do we have others?
+            url = new File(url).getName();
+        if (url.length() > 33) {
+            url = "..." + url.substring(url.length() - 30);
+        }
+        return url;
+    }
+
     @Override
     public synchronized void initialize() throws Exception {
         checks.clear();
+        urlTitles.clear();
         indexData = null;
         for (SourceEntry source : new ValidatorPrefHelper().get()) {
             if (!source.active) {
@@ -842,30 +869,94 @@ public class MapCSSTagChecker extends Test.TagTest {
     public synchronized void startTest(ProgressMonitor progressMonitor) {
         super.startTest(progressMonitor);
         super.setShowElements(true);
-        if (indexData == null) {
-            indexData = createMapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), ALL_TESTS);
-        }
-        tested.clear();
-        mpAreaCache.clear();
     }
 
     @Override
     public synchronized void endTest() {
+        // no need to keep the index, it is quickly build and doubles the memory needs
+        indexData = null;
+        // always clear the cache to make sure that we catch changes in geometry
+        mpAreaCache.clear();
+        ruleToCheckMap.clear();
+        super.endTest();
+    }
+
+    @Override
+    public void visit(Collection<OsmPrimitive> selection) {
+        if (progressMonitor != null) {
+            progressMonitor.setTicksCount(selection.size() * checks.size());
+        }
+
+        mpAreaCache.clear();
+
+        Set<OsmPrimitive> surrounding = new HashSet<>();
+        for (Entry<String, Set<TagCheck>> entry : checks.entrySet()) {
+            if (isCanceled()) {
+                break;
+            }
+            visit(entry.getKey(), entry.getValue(), selection, surrounding);
+        }
+    }
+
+    /**
+     * Perform the checks for one check url
+     * @param url the url for the checks
+     * @param checksForUrl the checks to perform
+     * @param selection collection primitives
+     * @param surrounding surrounding primitives, evtl. filled by this routine
+     */
+    private void visit(String url, Set<TagCheck> checksForUrl, Collection<OsmPrimitive> selection,
+            Set<OsmPrimitive> surrounding) {
+        MultiMap<String, TagCheck> currentCheck = new MultiMap<>();
+        currentCheck.putAll(url, checksForUrl);
+        indexData = createMapCSSTagCheckerIndex(currentCheck, includeOtherSeverityChecks(), ALL_TESTS);
+        Set<OsmPrimitive> tested = new HashSet<>();
+
+
+        String title = getTitle(url);
+        if (progressMonitor != null) {
+            progressMonitor.setExtraText(tr(" {0}", title));
+        }
+        long cnt = 0;
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        for (OsmPrimitive p : selection) {
+            if (isCanceled()) {
+                break;
+            }
+            if (isPrimitiveUsable(p)) {
+                check(p);
+                if (partialSelection) {
+                    tested.add(p);
+                }
+            }
+            if (progressMonitor != null) {
+                progressMonitor.worked(1);
+                cnt++;
+                // add frequently changing info to progress monitor so that it
+                // doesn't seem to hang when test takes longer than 0.5 seconds
+                if (cnt % 10000 == 0 && stopwatch.elapsed() >= 500) {
+                    progressMonitor.setExtraText(tr(" {0}: {1} of {2} elements done", title, cnt, selection.size()));
+                }
+            }
+        }
+
         if (partialSelection && !tested.isEmpty()) {
             // #14287: see https://josm.openstreetmap.de/ticket/14287#comment:15
             // execute tests for objects which might contain or cross previously tested elements
 
             // rebuild index with a reduced set of rules (those that use ChildOrParentSelector) and thus may have left selectors
             // matching the previously tested elements
-            indexData = createMapCSSTagCheckerIndex(checks, includeOtherSeverityChecks(), ONLY_SELECTED_TESTS);
+            indexData = createMapCSSTagCheckerIndex(currentCheck, includeOtherSeverityChecks(), ONLY_SELECTED_TESTS);
 
-            Set<OsmPrimitive> surrounding = new HashSet<>();
-            for (OsmPrimitive p : tested) {
-                if (p.getDataSet() != null) {
-                    surrounding.addAll(p.getDataSet().searchWays(p.getBBox()));
-                    surrounding.addAll(p.getDataSet().searchRelations(p.getBBox()));
+            if (surrounding.isEmpty()) {
+                for (OsmPrimitive p : tested) {
+                    if (p.getDataSet() != null) {
+                        surrounding.addAll(p.getDataSet().searchWays(p.getBBox()));
+                        surrounding.addAll(p.getDataSet().searchRelations(p.getBBox()));
+                    }
                 }
             }
+
             final boolean includeOtherSeverity = includeOtherSeverityChecks();
             for (OsmPrimitive p : surrounding) {
                 if (tested.contains(p))
@@ -876,13 +967,6 @@ public class MapCSSTagChecker extends Test.TagTest {
                         addIfNotSimilar(e, errors);
                 }
             }
-            tested.clear();
         }
-        // no need to keep the index, it is quickly build and doubles the memory needs
-        indexData = null;
-        // always clear the cache to make sure that we catch changes in geometry
-        mpAreaCache.clear();
-        ruleToCheckMap.clear();
-        super.endTest();
     }
 }
