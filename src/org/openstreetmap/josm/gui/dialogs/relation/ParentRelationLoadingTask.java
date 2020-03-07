@@ -75,7 +75,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
      */
     public ParentRelationLoadingTask(Relation child, OsmDataLayer layer, boolean full, PleaseWaitProgressMonitor monitor) {
         super(tr("Download referring relations"), monitor, false /* don't ignore exception */);
-        CheckParameterUtil.ensure(child, "child", "id > 0", ch -> ch.getUniqueId() > 0);
+        CheckParameterUtil.ensureThat(child.getUniqueId() > 0, "id > 0");
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         if (!layer.isDownloadable()) {
             throw new IllegalArgumentException("Non-downloadable layer: " + layer);

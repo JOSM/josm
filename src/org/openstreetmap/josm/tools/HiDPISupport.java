@@ -68,7 +68,7 @@ public final class HiDPISupport {
      * in the list otherwise
      */
     public static Image getMultiResolutionImage(List<Image> imgs) {
-        CheckParameterUtil.ensure(imgs, "imgs", "not empty", ls -> !ls.isEmpty());
+        CheckParameterUtil.ensureThat(!imgs.isEmpty(), "imgs is empty");
         Optional<Constructor<? extends Image>> baseMrImageConstructor = getBaseMultiResolutionImageConstructor();
         if (baseMrImageConstructor.isPresent()) {
             try {

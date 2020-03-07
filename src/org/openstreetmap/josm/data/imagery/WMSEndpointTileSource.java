@@ -40,7 +40,7 @@ public class WMSEndpointTileSource extends AbstractWMSTileSource implements Temp
      */
     public WMSEndpointTileSource(ImageryInfo info, Projection tileProjection) {
         super(info, tileProjection);
-        CheckParameterUtil.ensure(info, "imageryType", x -> ImageryType.WMS_ENDPOINT == x.getImageryType());
+        CheckParameterUtil.ensureThat(info.getImageryType() == ImageryType.WMS_ENDPOINT, "imageryType");
         try {
             wmsi = new WMSImagery(info.getUrl(), info.getCustomHttpHeaders());
         } catch (IOException | WMSGetCapabilitiesException e) {

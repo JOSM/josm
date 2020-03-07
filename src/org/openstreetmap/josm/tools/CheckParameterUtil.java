@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.tools;
 
 import java.text.MessageFormat;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -14,48 +13,6 @@ public final class CheckParameterUtil {
 
     private CheckParameterUtil() {
         // Hide default constructor for utils classes
-    }
-
-    /**
-     * Ensures that a parameter is not null and that a certain condition holds.
-     * @param <T> parameter type
-     * @param obj parameter value
-     * @param parameterName parameter name
-     * @param conditionMsg string, stating the condition
-     * @param condition the condition to check
-     * @throws IllegalArgumentException in case the object is null or the condition
-     * is violated
-     * @since 12713
-     */
-    public static <T> void ensure(T obj, String parameterName, String conditionMsg, Predicate<T> condition) {
-        ensureParameterNotNull(obj, parameterName);
-        if (!condition.test(obj))
-            throw new IllegalArgumentException(
-                    MessageFormat.format("Parameter value ''{0}'' of type {1} is invalid, violated condition: ''{2}'', got ''{3}''",
-                            parameterName,
-                            obj.getClass().getCanonicalName(),
-                            conditionMsg,
-                            obj));
-    }
-
-    /**
-     * Ensures that a parameter is not null and that a certain condition holds.
-     * @param <T> parameter type
-     * @param obj parameter value
-     * @param parameterName parameter name
-     * @param condition the condition to check
-     * @throws IllegalArgumentException in case the object is null or the condition
-     * is violated
-     * @since 12713
-     */
-    public static <T> void ensure(T obj, String parameterName, Predicate<T> condition) {
-        ensureParameterNotNull(obj, parameterName);
-        if (!condition.test(obj))
-            throw new IllegalArgumentException(
-                    MessageFormat.format("Parameter value ''{0}'' of type {1} is invalid, got ''{2}''",
-                            parameterName,
-                            obj.getClass().getCanonicalName(),
-                            obj));
     }
 
     /**
