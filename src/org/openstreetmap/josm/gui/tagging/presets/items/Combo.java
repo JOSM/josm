@@ -36,23 +36,19 @@ public class Combo extends ComboMultiSelect {
     protected void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches) {
         if (!usage.unused()) {
             for (String s : usage.values) {
-                if (!lhm.containsKey(s)) {
-                    lhm.put(s, new PresetListEntry(s));
-                }
+                presetListEntries.add(new PresetListEntry(s));
             }
         }
-        if (def != null && !lhm.containsKey(def)) {
-            lhm.put(def, new PresetListEntry(def));
+        if (def != null) {
+            presetListEntries.add(new PresetListEntry(def));
         }
-        if (!lhm.containsKey("")) {
-            lhm.put("", new PresetListEntry(""));
-        }
+        presetListEntries.add(new PresetListEntry(""));
 
-        combobox = new JosmComboBox<>(lhm.values().toArray(new PresetListEntry[lhm.size()]));
+        combobox = new JosmComboBox<>(presetListEntries.toArray(new PresetListEntry[0]));
         component = combobox;
         combobox.setRenderer(getListCellRenderer());
         combobox.setEditable(editable);
-        combobox.reinitialize(lhm.values());
+        combobox.reinitialize(presetListEntries);
         AutoCompletingTextField tf = new AutoCompletingTextField();
         initAutoCompletionField(tf, key);
         if (Config.getPref().getBoolean("taggingpreset.display-keys-as-hint", true)) {
@@ -69,28 +65,28 @@ public class Combo extends ComboMultiSelect {
 
         if (usage.hasUniqueValue()) {
             // all items have the same value (and there were no unset items)
-            originalValue = lhm.get(usage.getFirst());
+            originalValue = getListEntry(usage.getFirst());
             combobox.setSelectedItem(originalValue);
         } else if (def != null && usage.unused()) {
             // default is set and all items were unset
             if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
                 // selected osm primitives are untagged or filling default feature is enabled
-                combobox.setSelectedItem(lhm.get(def).getDisplayValue(true));
+                combobox.setSelectedItem(getListEntry(def).getDisplayValue());
             } else {
                 // selected osm primitives are tagged and filling default feature is disabled
                 combobox.setSelectedItem("");
             }
-            originalValue = lhm.get(DIFFERENT);
+            originalValue = getListEntry(DIFFERENT);
         } else if (usage.unused()) {
             // all items were unset (and so is default)
-            originalValue = lhm.get("");
+            originalValue = getListEntry("");
             if (!presetInitiallyMatches && isForceUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
-                combobox.setSelectedItem(lhm.get(LAST_VALUES.get(key)));
+                combobox.setSelectedItem(getListEntry(LAST_VALUES.get(key)));
             } else {
                 combobox.setSelectedItem(originalValue);
             }
         } else {
-            originalValue = lhm.get(DIFFERENT);
+            originalValue = getListEntry(DIFFERENT);
             combobox.setSelectedItem(originalValue);
         }
         p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL));

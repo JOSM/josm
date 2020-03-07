@@ -25,7 +25,7 @@ public class MultiSelect extends ComboMultiSelect {
 
     @Override
     protected void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches) {
-        list = new ConcatenatingJList(delimiter, lhm.values().toArray(new PresetListEntry[lhm.size()]));
+        list = new ConcatenatingJList(delimiter, presetListEntries.toArray(new PresetListEntry[0]));
         component = list;
         ListCellRenderer<PresetListEntry> renderer = getListCellRenderer();
         list.setCellRenderer(renderer);

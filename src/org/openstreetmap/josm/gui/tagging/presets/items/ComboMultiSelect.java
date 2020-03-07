@@ -13,12 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
@@ -97,7 +96,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
     public boolean values_searchable; // NOSONAR
 
     protected JComponent component;
-    protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<>();
+    protected final Set<PresetListEntry> presetListEntries = new CopyOnWriteArraySet<>();
     private boolean initialized;
     protected Usage usage;
     protected Object originalValue;
@@ -252,7 +251,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             if (value.equals(DIFFERENT))
                 return "<b>" + Utils.escapeReservedCharactersHTML(DIFFERENT) + "</b>";
 
-            String displayValue = Utils.escapeReservedCharactersHTML(getDisplayValue(true));
+            String displayValue = Utils.escapeReservedCharactersHTML(getDisplayValue());
             String shortDescription = getShortDescription(true);
 
             if (displayValue.isEmpty() && (shortDescription == null || shortDescription.isEmpty()))
@@ -278,13 +277,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
         /**
          * Returns the value to display.
-         * @param translated whether the text must be translated
          * @return the value to display
          */
-        public String getDisplayValue(boolean translated) {
-            return translated
-                    ? Utils.firstNonNull(locale_display_value, tr(display_value), trc(value_context, value))
-                            : Utils.firstNonNull(display_value, value);
+        public String getDisplayValue() {
+            return Utils.firstNonNull(locale_display_value, tr(display_value), trc(value_context, value));
         }
 
         /**
@@ -303,13 +299,26 @@ public abstract class ComboMultiSelect extends KeyedItem {
         public String toString() {
             if (DIFFERENT.equals(value))
                 return DIFFERENT;
-            String displayValue = getDisplayValue(true);
+            String displayValue = getDisplayValue();
             return displayValue != null ? displayValue.replaceAll("<.*>", "") : ""; // remove additional markup, e.g. <br>
         }
 
         @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PresetListEntry that = (PresetListEntry) o;
+            return Objects.equals(value, that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
+
+        @Override
         public int compareTo(PresetListEntry o) {
-            return AlphanumComparator.getInstance().compare(this.getDisplayValue(true), o.getDisplayValue(true));
+            return AlphanumComparator.getInstance().compare(this.getDisplayValue(), o.getDisplayValue());
         }
     }
 
@@ -354,7 +363,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
     @Override
     public Collection<String> getValues() {
         initListEntries();
-        return lhm.keySet();
+        return presetListEntries.stream().map(x -> x.value).collect(Collectors.toSet());
     }
 
     /**
@@ -363,7 +372,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
      */
     public Collection<String> getDisplayValues() {
         initListEntries();
-        return lhm.values().stream().map(x -> x.getDisplayValue(true)).collect(Collectors.toList());
+        return presetListEntries.stream().map(PresetListEntry::getDisplayValue).collect(Collectors.toList());
     }
 
     @Override
@@ -373,7 +382,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         // find out if our key is already used in the selection.
         usage = determineTextUsage(sel, key);
         if (!usage.hasUniqueValue() && !usage.unused()) {
-            lhm.put(DIFFERENT, new PresetListEntry(DIFFERENT));
+            presetListEntries.add(new PresetListEntry(DIFFERENT));
         }
 
         final JLabel label = new JLabel(tr("{0}:", locale_text));
@@ -388,9 +397,9 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
     private void initListEntries() {
         if (initialized) {
-            lhm.remove(DIFFERENT); // possibly added in #addToPanel
+            presetListEntries.remove(new PresetListEntry(DIFFERENT)); // possibly added in #addToPanel
             return;
-        } else if (lhm.isEmpty()) {
+        } else if (presetListEntries.isEmpty()) {
             initListEntriesFromAttributes();
         } else {
             if (values != null) {
@@ -408,7 +417,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
                         + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
                         key, text, "short_descriptions", "list_entry"));
             }
-            for (PresetListEntry e : lhm.values()) {
+            for (PresetListEntry e : presetListEntries) {
                 if (e.value_context == null) {
                     e.value_context = values_context;
                 }
@@ -492,9 +501,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             Collections.sort(entries);
         }
 
-        for (PresetListEntry i : entries) {
-            lhm.put(i.value, i);
-        }
+        addListEntries(entries);
     }
 
     protected String getDisplayIfNull() {
@@ -508,10 +515,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
         String value = null;
 
         if (display != null) {
-            for (Entry<String, PresetListEntry> entry : lhm.entrySet()) {
-                String k = entry.getValue().toString();
+            for (PresetListEntry entry : presetListEntries) {
+                String k = entry.toString();
                 if (k.equals(display)) {
-                    value = entry.getKey();
+                    value = entry.value;
                     break;
                 }
             }
@@ -559,7 +566,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
      * @param e list entry to add
      */
     public void addListEntry(PresetListEntry e) {
-        lhm.put(e.value, e);
+        presetListEntries.add(e);
     }
 
     /**
@@ -570,6 +577,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
         for (PresetListEntry i : e) {
             addListEntry(i);
         }
+    }
+
+    protected PresetListEntry getListEntry(String value) {
+        return presetListEntries.stream().filter(e -> Objects.equals(e.value, value)).findFirst().orElse(null);
     }
 
     protected ListCellRenderer<PresetListEntry> getListCellRenderer() {
