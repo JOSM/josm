@@ -544,7 +544,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         changedTags.add(new Tag(key, value));
     }
 
-    public void setUse_last_as_default(String v) { // NOSONAR
+    public void setUse_last_as_default(String v) { // NOPMD
         if ("force".equals(v)) {
             use_last_as_default = 2;
         } else if ("true".equals(v)) {
