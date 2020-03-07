@@ -154,8 +154,8 @@ public class ImageResource {
      * @since 12722
      */
     public ImageIcon getImageIcon(Dimension dim, boolean multiResolution) {
-        if (dim.width < -1 || dim.width == 0 || dim.height < -1 || dim.height == 0)
-            throw new IllegalArgumentException(dim+" is invalid");
+        CheckParameterUtil.ensureThat((dim.width > 0 || dim.width == -1) && (dim.height > 0 || dim.height == -1),
+                () -> dim + " is invalid");
         BufferedImage img = imgCache.get(dim);
         if (img == null) {
             if (svg != null) {
@@ -242,8 +242,8 @@ public class ImageResource {
      * @since 12722
      */
     public ImageIcon getImageIconBounded(Dimension maxSize, boolean multiResolution) {
-        if (maxSize.width < -1 || maxSize.width == 0 || maxSize.height < -1 || maxSize.height == 0)
-            throw new IllegalArgumentException(maxSize+" is invalid");
+        CheckParameterUtil.ensureThat((maxSize.width > 0 || maxSize.width == -1) && (maxSize.height > 0 || maxSize.height == -1),
+                () -> maxSize + " is invalid");
         float sourceWidth;
         float sourceHeight;
         int maxWidth = maxSize.width;
