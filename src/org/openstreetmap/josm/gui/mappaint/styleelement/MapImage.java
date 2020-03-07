@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -145,8 +146,6 @@ public class MapImage {
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)
                 .setInArchiveDir(source.getZipEntryDirName())
-                .setWidth(width)
-                .setHeight(height)
                 .setOptional(true)
                 .getResourceAsync(result -> {
                     synchronized (this) {
@@ -156,7 +155,7 @@ public class MapImage {
                             ImageIcon noIcon = MapPaintStyles.getNoIconIcon(source);
                             img = noIcon == null ? null : noIcon.getImage();
                         } else {
-                            img = rescale(result.getImageIcon().getImage());
+                            img = rescale(result.getImageIcon(new Dimension(width, height)).getImage());
                         }
                         if (temporary) {
                             disabledImgCache = null;
