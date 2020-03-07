@@ -52,7 +52,7 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
                 PREF_DOWNLOAD_ALONG_WAY_OSM, PREF_DOWNLOAD_ALONG_WAY_GPS,
                 PREF_DOWNLOAD_ALONG_WAY_DISTANCE, PREF_DOWNLOAD_ALONG_WAY_AREA, null);
 
-        int ret = panel.showInDownloadDialog(tr("Download from OSM along selected ways"), HelpUtil.ht("/Tools/DownloadAlong"));
+        int ret = panel.showInDownloadDialog(tr("Download from OSM along selected ways"), HelpUtil.ht("/Action/DownloadAlongWay"));
         if (0 != ret && 1 != ret) {
             return null;
         }
