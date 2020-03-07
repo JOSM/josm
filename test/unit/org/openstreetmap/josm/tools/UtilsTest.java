@@ -595,4 +595,14 @@ public class UtilsTest {
         map4.put("mmm", ":-)");
         assertEquals(map4, Utils.toUnmodifiableMap(map4));
     }
+
+    /**
+     * Test of {@link Utils#execOutput}
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testExecOutput() throws Exception {
+        final String output = Utils.execOutput(Arrays.asList("echo", "Hello", "World"));
+        assertEquals("Hello World", output);
+    }
 }

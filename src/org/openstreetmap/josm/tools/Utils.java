@@ -921,18 +921,20 @@ public final class Utils {
         if (Logging.isDebugEnabled()) {
             Logging.debug(String.join(" ", command));
         }
-        Path out = Files.createTempFile("josm_exec_", ".txt");
-        Process p = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(out.toFile()).start();
-        if (!p.waitFor(timeout, unit) || p.exitValue() != 0) {
-            throw new ExecutionException(command.toString(), null);
-        }
-        String msg = String.join("\n", Files.readAllLines(out)).trim();
+        Path out = Files.createTempFile("josm_exec_" + command.get(0) + "_", ".txt");
         try {
-            Files.delete(out);
-        } catch (IOException e) {
-            Logging.warn(e);
+            Process p = new ProcessBuilder(command).redirectErrorStream(true).redirectOutput(out.toFile()).start();
+            if (!p.waitFor(timeout, unit) || p.exitValue() != 0) {
+                throw new ExecutionException(command.toString(), null);
+            }
+            return String.join("\n", Files.readAllLines(out)).trim();
+        } finally {
+            try {
+                Files.delete(out);
+            } catch (IOException e) {
+                Logging.warn(e);
+            }
         }
-        return msg;
     }
 
     /**
