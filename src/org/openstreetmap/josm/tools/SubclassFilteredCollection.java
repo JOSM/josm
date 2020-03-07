@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Predicate;
 
 /**
@@ -86,14 +88,15 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
     }
 
     @Override
+    public Spliterator<T> spliterator() {
+        return Spliterators.spliteratorUnknownSize(iterator(), 0);
+    }
+
+    @Override
     public int size() {
         if (size == -1) {
             size = 0;
-            Iterator<T> it = iterator();
-            while (it.hasNext()) {
-                size++;
-                it.next();
-            }
+            forEach(t -> size++);
         }
         return size;
     }
