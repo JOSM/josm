@@ -67,6 +67,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
@@ -207,6 +208,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         return null;
     }
 
+    public final ImageResource getImageResource() {
+        return (ImageResource) getValue("ImageResource");
+    }
+
     /**
      * Called from the XML parser to set the icon.
      * The loading task is performed in the background in order to speedup startup.
@@ -228,7 +233,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 if (result != null) {
                     GuiHelper.runInEDT(() -> {
                         try {
-                            result.attachImageIcon(this);
+                            result.attachImageIcon(this, true);
                         } catch (IllegalArgumentException e) {
                             Logging.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
                             Logging.warn(e);

@@ -276,6 +276,19 @@ public class ImageResource {
             return getImageIcon(new Dimension(-1, maxHeight), multiResolution);
     }
 
+    /**
+     * Returns an {@link ImageIcon} for the given map image, at the specified size.
+     * Uses a cache to improve performance.
+     * @param iconSize size in pixels
+     * @return an {@code ImageIcon} for the given map image, at the specified size
+     */
+    public ImageIcon getPaddedIcon(Dimension iconSize) {
+        final Dimension cacheKey = new Dimension(-iconSize.width, -iconSize.height); // use negative width/height for differentiation
+        final BufferedImage image = imgCache.computeIfAbsent(cacheKey, ignore ->
+                ImageProvider.createPaddedIcon(getImageIcon().getImage(), iconSize));
+        return new ImageIcon(image);
+    }
+
     @Override
     public String toString() {
         return "ImageResource ["

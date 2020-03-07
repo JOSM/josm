@@ -307,9 +307,6 @@ public class ImageProvider {
     /** small cache of critical images used in many parts of the application */
     private static final Map<OsmPrimitiveType, ImageIcon> osmPrimitiveTypeCache = new EnumMap<>(OsmPrimitiveType.class);
 
-    /** larger cache of critical padded image icons used in many parts of the application */
-    private static final Map<Dimension, Map<Image, ImageIcon>> paddedImageCache = new HashMap<>();
-
     private static final ExecutorService IMAGE_FETCHER =
             Executors.newSingleThreadExecutor(Utils.newThreadFactory("image-fetcher-%d", Thread.NORM_PRIORITY));
 
@@ -840,9 +837,6 @@ public class ImageProvider {
         cache.clear();
         synchronized (ROTATE_CACHE) {
             ROTATE_CACHE.clear();
-        }
-        synchronized (paddedImageCache) {
-            paddedImageCache.clear();
         }
         synchronized (osmPrimitiveTypeCache) {
             osmPrimitiveTypeCache.clear();
@@ -1555,9 +1549,9 @@ public class ImageProvider {
         if (primitive.isTagged() && (!options.contains(GetPaddedOptions.NO_WAY_PRESETS) || OsmPrimitiveType.WAY != primitive.getType())) {
             final Optional<ImageIcon> icon = TaggingPresets.getMatchingPresets(primitive).stream()
                     .sorted(Comparator.comparing(p -> p.types == null || p.types.isEmpty() ? Integer.MAX_VALUE : p.types.size()))
-                    .map(TaggingPreset::getIcon)
+                    .map(TaggingPreset::getImageResource)
                     .filter(Objects::nonNull)
-                    .map(imageIcon -> getPaddedIcon(imageIcon.getImage(), iconSize))
+                    .map(resource -> resource.getPaddedIcon(iconSize))
                     .findFirst();
             if (icon.isPresent()) {
                 return icon.get();
@@ -1567,7 +1561,7 @@ public class ImageProvider {
         // Use generic default icon.
         return options.contains(GetPaddedOptions.NO_DEFAULT)
                 ? null
-                : getPaddedIcon(get(primitive.getDisplayType()).getImage(), iconSize);
+                : new ImageProvider("data", primitive.getDisplayType().getAPIName()).getResource().getPaddedIcon(iconSize);
     }
 
     /**
@@ -1595,60 +1589,43 @@ public class ImageProvider {
             if (style instanceof NodeElement) {
                 NodeElement nodeStyle = (NodeElement) style;
                 MapImage icon = nodeStyle.mapImage;
-                if (icon != null &&
+                if (icon != null && icon.getImageResource() != null &&
                         (icon.name == null || !options.contains(GetPaddedOptions.NO_DEPRECATED) || !icon.name.contains("deprecated"))) {
-                    return getPaddedIcon(icon, iconSize);
+                    return icon.getImageResource().getPaddedIcon(iconSize);
                 }
             }
         }
         return null;
     }
 
-    /**
-     * Returns an {@link ImageIcon} for the given map image, at the specified size.
-     * Uses a cache to improve performance.
-     * @param mapImage map image
-     * @param iconSize size in pixels
-     * @return an {@code ImageIcon} for the given map image, at the specified size
-     * @see #clearCache
-     * @since 14284
-     */
-    public static ImageIcon getPaddedIcon(MapImage mapImage, Dimension iconSize) {
-        return getPaddedIcon(mapImage.getImage(false), iconSize);
-    }
-
-    private static ImageIcon getPaddedIcon(Image mapImage, Dimension iconSize) {
-        synchronized (paddedImageCache) {
-            return paddedImageCache.computeIfAbsent(iconSize, x -> new HashMap<>()).computeIfAbsent(mapImage, icon -> {
-                int backgroundRealWidth = GuiSizesHelper.getSizeDpiAdjusted(iconSize.width);
-                int backgroundRealHeight = GuiSizesHelper.getSizeDpiAdjusted(iconSize.height);
-                int iconRealWidth = icon.getWidth(null);
-                int iconRealHeight = icon.getHeight(null);
-                BufferedImage image = new BufferedImage(backgroundRealWidth, backgroundRealHeight, BufferedImage.TYPE_INT_ARGB);
-                double scaleFactor = Math.min(
-                        backgroundRealWidth / (double) iconRealWidth,
-                        backgroundRealHeight / (double) iconRealHeight);
-                Image scaledIcon;
-                final int scaledWidth;
-                final int scaledHeight;
-                if (scaleFactor < 1) {
-                    // Scale icon such that it fits on background.
-                    scaledWidth = (int) (iconRealWidth * scaleFactor);
-                    scaledHeight = (int) (iconRealHeight * scaleFactor);
-                    scaledIcon = icon.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-                } else {
-                    // Use original size, don't upscale.
-                    scaledWidth = iconRealWidth;
-                    scaledHeight = iconRealHeight;
-                    scaledIcon = icon;
-                }
-                image.getGraphics().drawImage(scaledIcon,
-                        (backgroundRealWidth - scaledWidth) / 2,
-                        (backgroundRealHeight - scaledHeight) / 2, null);
-
-                return new ImageIcon(image);
-            });
+    static BufferedImage createPaddedIcon(Image icon, Dimension iconSize) {
+        int backgroundRealWidth = GuiSizesHelper.getSizeDpiAdjusted(iconSize.width);
+        int backgroundRealHeight = GuiSizesHelper.getSizeDpiAdjusted(iconSize.height);
+        int iconRealWidth = icon.getWidth(null);
+        int iconRealHeight = icon.getHeight(null);
+        BufferedImage image = new BufferedImage(backgroundRealWidth, backgroundRealHeight, BufferedImage.TYPE_INT_ARGB);
+        double scaleFactor = Math.min(
+                backgroundRealWidth / (double) iconRealWidth,
+                backgroundRealHeight / (double) iconRealHeight);
+        Image scaledIcon;
+        final int scaledWidth;
+        final int scaledHeight;
+        if (scaleFactor < 1) {
+            // Scale icon such that it fits on background.
+            scaledWidth = (int) (iconRealWidth * scaleFactor);
+            scaledHeight = (int) (iconRealHeight * scaleFactor);
+            scaledIcon = icon.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+        } else {
+            // Use original size, don't upscale.
+            scaledWidth = iconRealWidth;
+            scaledHeight = iconRealHeight;
+            scaledIcon = icon;
         }
+        image.getGraphics().drawImage(scaledIcon,
+                (backgroundRealWidth - scaledWidth) / 2,
+                (backgroundRealHeight - scaledHeight) / 2, null);
+
+        return image;
     }
 
     /**

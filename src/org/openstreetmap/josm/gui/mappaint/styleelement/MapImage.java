@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvid
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProviderResult;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -32,6 +33,7 @@ public class MapImage {
      * ImageIcon can change while the image is loading.
      */
     private Image img;
+    private ImageResource imageResource;
 
     /**
      * The alpha (opacity) value of the image. It is multiplied to the image alpha channel.
@@ -109,6 +111,14 @@ public class MapImage {
         }
     }
 
+    /**
+     * Get the image resource associated with this MapImage object.
+     * @return the image resource
+     */
+    public ImageResource getImageResource() {
+        return imageResource;
+    }
+
     private Image getDisabled() {
         if (disabledImgCache != null)
             return disabledImgCache;
@@ -138,14 +148,15 @@ public class MapImage {
                 .setWidth(width)
                 .setHeight(height)
                 .setOptional(true)
-                .getAsync(result -> {
+                .getResourceAsync(result -> {
                     synchronized (this) {
+                        imageResource = result;
                         if (result == null) {
                             source.logWarning(tr("Failed to locate image ''{0}''", name));
                             ImageIcon noIcon = MapPaintStyles.getNoIconIcon(source);
                             img = noIcon == null ? null : noIcon.getImage();
                         } else {
-                            img = rescale(result.getImage());
+                            img = rescale(result.getImageIcon().getImage());
                         }
                         if (temporary) {
                             disabledImgCache = null;
