@@ -90,10 +90,11 @@ public abstract class ComboMultiSelect extends KeyedItem {
      * In case of {@link MultiSelect} the default is semicolon and this will also be used to separate selected values in the tag.
      */
     public char delimiter = ';'; // NOSONAR
-    /** whether the last value is used as default. Using "force" (2) enforces this behaviour also for already tagged objects. Default is "false" (0).*/
-    public byte use_last_as_default = 0; // NOSONAR
+    /** whether the last value is used as default.
+     * Using "force" (2) enforces this behaviour also for already tagged objects. Default is "false" (0).*/
+    public byte use_last_as_default; // NOSONAR
     /** whether to use values for search via {@link TaggingPresetSelector} */
-    public boolean values_searchable = false; // NOSONAR
+    public boolean values_searchable; // NOSONAR
 
     protected JComponent component;
     protected final Map<String, PresetListEntry> lhm = new LinkedHashMap<>();
@@ -535,7 +536,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         changedTags.add(new Tag(key, value));
     }
 
-    public void setUse_last_as_default(String v) {
+    public void setUse_last_as_default(String v) { // NOSONAR
         if ("force".equals(v)) {
             use_last_as_default = 2;
         } else if ("true".equals(v)) {
