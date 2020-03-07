@@ -455,6 +455,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
         if (valueArray == null) {
             valueArray = splitEscaped(delimiter, values);
+            values = null;
         }
 
         String[] displayArray = valueArray;
