@@ -12,7 +12,7 @@
 
     <import file="nbproject/build-impl.xml" as="nbimpl"/>
 
-    <import file="../build.xml" as="josmbase"/> <!-- import the main JOSM ant file -->
+    <import file="../../build.xml" as="josmbase"/> <!-- import the main JOSM ant file -->
 
     <!--
 
@@ -79,16 +79,16 @@
       ** Copy resource file required on classpath.
     -->
     <target name="copy-josm-resources">
-        <copy file="../CONTRIBUTION" todir="${build.classes.dir}"/>
-        <copy file="../README" todir="${build.classes.dir}"/>
-        <copy file="../LICENSE" todir="${build.classes.dir}"/>
-        <copy file="../gpl-2.0.txt" todir="${build.classes.dir}" />
-        <copy file="../gpl-3.0.txt" todir="${build.classes.dir}" />
-        <copy todir="${build.classes.dir}/images"><fileset dir="../images"/></copy>
-        <copy todir="${build.classes.dir}/data"><fileset dir="../data"/></copy>
-        <copy todir="${build.classes.dir}/styles"><fileset dir="../styles"/></copy>
+        <copy file="../../CONTRIBUTION" todir="${build.classes.dir}"/>
+        <copy file="../../README" todir="${build.classes.dir}"/>
+        <copy file="../../LICENSE" todir="${build.classes.dir}"/>
+        <copy file="../../gpl-2.0.txt" todir="${build.classes.dir}" />
+        <copy file="../../gpl-3.0.txt" todir="${build.classes.dir}" />
+        <copy todir="${build.classes.dir}/images"><fileset dir="../../resources/images"/></copy>
+        <copy todir="${build.classes.dir}/data"><fileset dir="../../resources/data"/></copy>
+        <copy todir="${build.classes.dir}/styles"><fileset dir="../../resources/styles"/></copy>
         <copy todir="${build.classes.dir}/org/openstreetmap/gui/jmapviewer/images">
-            <fileset dir="../src/org/openstreetmap/gui/jmapviewer/images"/>
+            <fileset dir="../../src/org/openstreetmap/gui/jmapviewer/images"/>
         </copy>
     </target>
 
