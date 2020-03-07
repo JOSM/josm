@@ -34,9 +34,9 @@ import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -1512,7 +1512,9 @@ public class ImageProvider {
         /**
          * Exclude tagging preset icons for {@linkplain OsmPrimitiveType#WAY ways}.
          */
-        NO_WAY_PRESETS,
+        NO_WAY_PRESETS;
+
+        private static final Collection<GetPaddedOptions> DEFAULT = Collections.singleton(GetPaddedOptions.NO_WAY_PRESETS);
     }
 
     /**
@@ -1524,7 +1526,7 @@ public class ImageProvider {
      * @since 8903
      */
     public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize) {
-        return getPadded(primitive, iconSize, EnumSet.of(GetPaddedOptions.NO_WAY_PRESETS));
+        return getPadded(primitive, iconSize, GetPaddedOptions.DEFAULT);
     }
 
     /**
