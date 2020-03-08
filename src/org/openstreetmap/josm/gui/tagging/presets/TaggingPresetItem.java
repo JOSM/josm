@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.util.LruCache;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -34,8 +34,8 @@ import org.xml.sax.SAXException;
  */
 public abstract class TaggingPresetItem {
 
-    // cache the parsing of types using a LRU cache (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-    private static final Map<String, Set<TaggingPresetType>> TYPE_CACHE = new LinkedHashMap<>(16, 1.1f, true);
+    // cache the parsing of types using a LRU cache
+    private static final Map<String, Set<TaggingPresetType>> TYPE_CACHE = new LruCache<>(16);;
 
     protected void initAutoCompletionField(AutoCompletingTextField field, String... key) {
         initAutoCompletionField(field, Arrays.asList(key));

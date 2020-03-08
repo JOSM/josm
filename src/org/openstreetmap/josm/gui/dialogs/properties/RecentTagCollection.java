@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs.properties;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,30 +11,13 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.preferences.ListProperty;
+import org.openstreetmap.josm.gui.util.LruCache;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Manages list of recently used tags that will be displayed in the {@link PropertiesDialog}.
  */
 class RecentTagCollection {
-
-    /**
-     * LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-     */
-    static final class LruCache extends LinkedHashMap<Tag, Void> {
-        private static final long serialVersionUID = 1L;
-        private final int capacity;
-
-        LruCache(int capacity) {
-            super(capacity + 1, 1.1f, true);
-            this.capacity = capacity;
-        }
-
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<Tag, Void> eldest) {
-            return size() > capacity;
-        }
-    }
 
     private final Map<Tag, Void> recentTags;
     private SearchCompiler.Match tagsToIgnore;

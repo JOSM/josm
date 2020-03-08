@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -118,6 +117,7 @@ import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.LruCache;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -181,7 +181,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     private static final NamedColorProperty PROPERTY_OUTSIDE_COLOR = new NamedColorProperty(marktr("outside downloaded area"), Color.YELLOW);
 
     /** List of recent relations */
-    private final Map<Relation, Void> recentRelations = new LruCache(PROPERTY_RECENT_RELATIONS_NUMBER.get()+1);
+    private final Map<Relation, Void> recentRelations = new LruCache<>(PROPERTY_RECENT_RELATIONS_NUMBER.get());
 
     /**
      * Returns list of recently closed relations or null if none.
@@ -256,18 +256,6 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
     static String createLayerName(Object arg) {
         return tr("Data Layer {0}", arg);
-    }
-
-    static final class LruCache extends LinkedHashMap<Relation, Void> {
-        private static final long serialVersionUID = 1L;
-        LruCache(int initialCapacity) {
-            super(initialCapacity, 1.1f, true);
-        }
-
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<Relation, Void> eldest) {
-            return size() > PROPERTY_RECENT_RELATIONS_NUMBER.get();
-        }
     }
 
     /**
