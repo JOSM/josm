@@ -367,9 +367,7 @@ public final class TaggingPresetReader {
                 tp = readAll(new BufferedReader(r), validate, all);
             }
         }
-        if (Logging.isDebugEnabled()) {
-            Logging.debug("Presets read in {0}", stopwatch);
-        }
+        Logging.debug(stopwatch.toString("Reading presets"));
         return tp;
     }
 

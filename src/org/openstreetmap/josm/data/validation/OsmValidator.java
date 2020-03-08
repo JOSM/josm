@@ -607,11 +607,12 @@ public final class OsmValidator {
      */
     public static synchronized void initializeTests() {
         if (!testsInitialized) {
-            Logging.debug("Initializing validator tests");
+            final String message = "Initializing validator tests";
+            Logging.debug(message);
             final Stopwatch stopwatch = Stopwatch.createStarted();
             initializeTests(getTests());
             testsInitialized = true;
-            Logging.debug("Initializing validator tests completed in {0}", stopwatch);
+            Logging.debug(stopwatch.toString("Initializing validator tests"));
         }
     }
 

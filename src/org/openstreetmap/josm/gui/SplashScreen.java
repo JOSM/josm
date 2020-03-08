@@ -163,6 +163,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
                 throw new IllegalStateException("This task has already been finished: " + name);
             }
             if (stopwatch.elapsed() >= 0) {
+                Logging.debug(stopwatch.toString(name));
                 duration = tr(" ({0})", stopwatch);
             }
         }
@@ -298,9 +299,6 @@ public class SplashScreen extends JFrame implements ChangeListener {
                     .findAny();
             taskOptional.ifPresent(task -> {
                 ((MeasurableTask) task).finish();
-                if (Logging.isDebugEnabled()) {
-                    Logging.debug(tr("{0} completed in {1}", title, ((MeasurableTask) task).duration));
-                }
                 listener.stateChanged(null);
             });
         }

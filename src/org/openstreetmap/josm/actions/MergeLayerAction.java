@@ -89,7 +89,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                         GuiHelper.runInEDTAndWait(() -> getLayerManager().removeLayer(lower));
                     }
 
-                    Logging.info(tr("{0} completed in {1}", actionName, stopwatch));
+                    Logging.info(stopwatch.toString(String.valueOf(actionName)));
                 });
             }
         }
@@ -113,7 +113,7 @@ public class MergeLayerAction extends AbstractMergeAction {
 
             if (layerMerged) {
                 getLayerManager().setActiveLayer(targetLayer);
-                Logging.info(tr("{0} completed in {1}", actionName, stopwatch));
+                Logging.info(stopwatch.toString(String.valueOf(actionName)));
             }
         });
     }

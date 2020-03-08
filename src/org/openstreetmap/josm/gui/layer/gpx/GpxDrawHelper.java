@@ -487,8 +487,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
 
         // show some debug info
         if (Logging.isDebugEnabled() && !visibleSegments.isEmpty()) {
-            Logging.debug("gpxdraw::draw takes " +
-                         stopwatch +
+            Logging.debug(stopwatch.toString("gpxdraw::draw") +
                          "(" +
                          "segments= " + visibleSegments.size() +
                          ", per 10000 = " + Utils.getDurationString(10_000 * stopwatch.elapsed() / visibleSegments.size()) +

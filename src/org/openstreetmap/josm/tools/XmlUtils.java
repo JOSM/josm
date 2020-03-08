@@ -86,7 +86,7 @@ public final class XmlUtils {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Logging.debug("Starting DOM parsing of {0}", is);
         Document result = newSafeDOMBuilder().parse(is);
-        Logging.debug("DOM parsing done in {0}", stopwatch);
+        Logging.debug(stopwatch.toString("DOM parsing"));
         return result;
     }
 
@@ -117,7 +117,7 @@ public final class XmlUtils {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Logging.debug("Starting SAX parsing of {0} using {1}", is, dh);
         newSafeSAXParser().parse(is, dh);
-        Logging.debug("SAX parsing done in {0}", stopwatch);
+        Logging.debug(stopwatch.toString("SAX parsing"));
     }
 
     /**

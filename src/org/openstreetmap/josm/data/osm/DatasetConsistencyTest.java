@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -188,8 +186,7 @@ public class DatasetConsistencyTest {
         if (Logging.isDebugEnabled()) {
             StackTraceElement item = Thread.currentThread().getStackTrace()[2];
             String operation = getClass().getSimpleName() + '.' + item.getMethodName();
-            Logging.debug(tr("{0} completed in {1}",
-                    operation, stopwatch));
+            Logging.debug(stopwatch.toString(operation));
         }
     }
 

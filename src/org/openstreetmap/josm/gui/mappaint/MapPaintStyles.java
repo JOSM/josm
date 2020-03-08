@@ -307,7 +307,7 @@ public final class MapPaintStyles {
             }
         }
         if (Logging.isDebugEnabled() || !source.isValid()) {
-            String message = "Initializing map style " + source.url + " completed in " + stopwatch;
+            String message = stopwatch.toString("Initializing map style " + source.url);
             if (!source.isValid()) {
                 Logging.warn(message + " (" + source.getErrors().size() + " errors, " + source.getWarnings().size() + " warnings)");
             } else {
