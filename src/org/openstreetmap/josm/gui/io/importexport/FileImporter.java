@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.ImportCancelException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
@@ -91,8 +92,11 @@ public abstract class FileImporter implements Comparable<FileImporter> {
      */
     public boolean importDataHandleExceptions(File f, ProgressMonitor progressMonitor) {
         try {
-            Logging.info("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
+            final Stopwatch stopwatch = Stopwatch.createStarted();
+            final String message = "Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)";
+            Logging.info(message);
             importData(f, progressMonitor);
+            Logging.info(stopwatch.toString(message));
             return true;
         } catch (IllegalDataException | IllegalStateException e) {
             Throwable cause = e.getCause();
