@@ -37,26 +37,6 @@ public class OpeningHourTest extends TagTest {
     }
 
     /**
-     * In OSM, the syntax originally designed to describe opening hours, is now used to describe a few other things as well.
-     * Some of those other tags work with points in time instead of time ranges.
-     * To support this the mode can be specified.
-     * @since 13147
-     */
-    public enum CheckMode {
-        /** time ranges (opening_hours, lit, …) default */
-        TIME_RANGE(0),
-        /** points in time */
-        POINTS_IN_TIME(1),
-        /** both (time ranges and points in time, used by collection_times, service_times, …) */
-        BOTH(2);
-        private final int code;
-
-        CheckMode(int code) {
-            this.code = code;
-        }
-    }
-
-    /**
      * An error concerning invalid syntax for an "opening_hours"-like tag.
      */
     public class OpeningHoursTestError {
