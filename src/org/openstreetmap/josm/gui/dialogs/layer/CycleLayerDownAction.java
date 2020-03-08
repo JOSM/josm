@@ -33,7 +33,8 @@ public class CycleLayerDownAction extends JosmAction {
      * Create a CycleLayerDownAction that cycles through layers that are in the model
      */
     public CycleLayerDownAction() {
-        super(tr("Cycle layer down"), "dialogs/previous", tr("Cycle through data layers in a downward direction"), cycleDown, true, "cycle-layer-down", false);
+        super(tr("Cycle layer down"), "dialogs/previous", tr("Cycle through data layers in a downward direction"),
+                cycleDown, true, "cycle-layer-down", false);
         new ImageProvider("dialogs", "previous").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Cycle through visible layers."));
         putValue(NAME, tr("Cycle layers"));
