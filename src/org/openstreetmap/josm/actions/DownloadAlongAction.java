@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
@@ -131,13 +132,16 @@ public abstract class DownloadAlongAction extends JosmAction {
         if (toDownload.isEmpty()) {
             return;
         }
-        JPanel msg = new JPanel(new GridBagLayout());
-        msg.add(new JLabel(
-                tr("<html>This action will require {0} individual<br>" + "download requests. Do you wish<br>to continue?</html>",
-                        toDownload.size())), GBC.eol());
-        if (!GraphicsEnvironment.isHeadless() && JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(
-                MainApplication.getMainFrame(), msg, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
-            return;
+        if (toDownload.size() > 1) {
+            JPanel msg = new JPanel(new GridBagLayout());
+            msg.add(new JLabel(trn(
+                    "<html>This action will require {0} individual<br>download request. Do you wish<br>to continue?</html>",
+                    "<html>This action will require {0} individual<br>download requests. Do you wish<br>to continue?</html>",
+                    toDownload.size(), toDownload.size())), GBC.eol());
+            if (!GraphicsEnvironment.isHeadless() && JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(
+                    MainApplication.getMainFrame(), msg, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE)) {
+                return;
+            }
         }
         final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
         final Future<?> future = new DownloadTaskList(Config.getPref().getBoolean("download.along.zoom-after-download"))
