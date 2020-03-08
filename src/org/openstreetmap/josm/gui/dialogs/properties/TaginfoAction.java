@@ -59,7 +59,7 @@ public class TaginfoAction extends JosmAction {
      */
     public TaginfoAction(String name, JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
                          JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier, String taginfoUrl) {
-        super(name, "dialogs/taginfo",
+        super(name, /* ICON */ "dialogs/taginfo",
                 tr("Launch browser with Taginfo statistics for selected object"), null, false);
         this.taginfoUrl = taginfoUrl.endsWith("/") ? taginfoUrl : taginfoUrl + '/';
         this.tagTable = Objects.requireNonNull(tagTable);
