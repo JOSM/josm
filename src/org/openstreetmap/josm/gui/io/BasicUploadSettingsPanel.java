@@ -75,6 +75,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
+        pnl.setBorder(BorderFactory.createTitledBorder(tr("Tags of changeset {0}", "")));
 
         JEditorPane commentLabel = new JMultilineLabel("<html><b>" + tr("Provide a brief comment for the changes you are uploading:"));
         pnl.add(commentLabel, GBC.eol().insets(0, 5, 10, 3).fill(GBC.HORIZONTAL));

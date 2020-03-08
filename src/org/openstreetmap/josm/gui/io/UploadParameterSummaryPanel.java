@@ -162,15 +162,17 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected void updateSummary() {
-        jepMessage.setText("<html>"
-                + buildStrategySummary()
-                + "<br>"
-                + Optional.of(OsmApi.getOsmApi().getServerUrl())
+        final String server = Optional.of(OsmApi.getOsmApi().getServerUrl())
                 .filter(url -> !Config.getUrls().getDefaultOsmApiUrl().equals(url))
                 .map(url -> tr("… to server: <strong>{0}</strong>", url))
-                .orElse("")
-                + "<br><br>"
+                .orElse("");
+        jepMessage.setText("<html>"
+                + "<br>"
                 + buildChangesetSummary()
+                + "<br><br>"
+                + buildStrategySummary()
+                + "<br>"
+                + server
                 + "</html>");
     }
 
