@@ -4,9 +4,9 @@ package org.openstreetmap.josm.tools;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -30,7 +30,7 @@ public class ImageResource {
     /**
      * Caches the image data for resized versions of the same image.
      */
-    private final Map<Dimension, BufferedImage> imgCache = new HashMap<>(4);
+    private final Map<Dimension, BufferedImage> imgCache = new ConcurrentHashMap<>(4);
     /**
      * SVG diagram information in case of SVG vector image.
      */
@@ -284,8 +284,11 @@ public class ImageResource {
      */
     public ImageIcon getPaddedIcon(Dimension iconSize) {
         final Dimension cacheKey = new Dimension(-iconSize.width, -iconSize.height); // use negative width/height for differentiation
-        final BufferedImage image = imgCache.computeIfAbsent(cacheKey, ignore ->
-                ImageProvider.createPaddedIcon(getImageIcon().getImage(), iconSize));
+        BufferedImage image = imgCache.get(cacheKey);
+        if (image == null) {
+            image = ImageProvider.createPaddedIcon(getImageIcon().getImage(), iconSize);
+            imgCache.put(cacheKey, image);
+        }
         return new ImageIcon(image);
     }
 
