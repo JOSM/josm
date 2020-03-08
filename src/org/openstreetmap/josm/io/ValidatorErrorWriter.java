@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -59,73 +60,76 @@ public class ValidatorErrorWriter extends XmlWriter {
     /**
      * Write validator errors to designated output target
      * @param validationErrors Test error collection to write
+     * @throws IOException in case of I/O error
      */
-    public void write(Collection<TestError> validationErrors) {
+    public void write(Collection<TestError> validationErrors) throws IOException {
         Set<Test> analysers = validationErrors.stream().map(TestError::getTester).collect(Collectors.toCollection(TreeSet::new));
         String timestamp = DateUtils.fromDate(new Date());
 
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.println("<analysers generator='JOSM' timestamp='"+timestamp+"'>");
 
-        OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(out, true, OsmChangeBuilder.DEFAULT_API_VERSION);
-        String lang = LanguageInfo.getJOSMLocaleCode();
+        try (OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(out, true, OsmChangeBuilder.DEFAULT_API_VERSION)) {
+            String lang = LanguageInfo.getJOSMLocaleCode();
 
-        for (Test test : analysers) {
-            out.println("  <analyser timestamp='"+timestamp+"' name='"+XmlWriter.encode(test.getName())+"'>");
-            // Build map of test error classes for the current test
-            Map<ErrorClass, List<TestError>> map = new HashMap<>();
-            for (Entry<Severity, Map<String, Map<String, List<TestError>>>> e1 :
-                OsmValidator.getErrorsBySeverityMessageDescription(validationErrors, e -> e.getTester() == test).entrySet()) {
-                for (Entry<String, Map<String, List<TestError>>> e2 : e1.getValue().entrySet()) {
-                    ErrorClass errorClass = new ErrorClass(e1.getKey(), e2.getKey());
-                    List<TestError> list = map.get(errorClass);
-                    if (list == null) {
-                        list = new ArrayList<>();
-                        map.put(errorClass, list);
-                    }
-                    e2.getValue().values().forEach(list::addAll);
-                }
-            }
-            // Write classes
-            for (ErrorClass ec : map.keySet()) {
-                out.println("    <class id='"+ec.id+"' level='"+ec.severity.getLevel()+"'>");
-                out.println("      <classtext lang='"+XmlWriter.encode(lang)+"' title='"+XmlWriter.encode(ec.message)+"'/>");
-                out.println("    </class>");
-            }
-
-            // Write errors
-            for (Entry<ErrorClass, List<TestError>> entry : map.entrySet()) {
-                for (TestError error : entry.getValue()) {
-                    LatLon ll = error.getPrimitives().iterator().next().getBBox().getCenter();
-                    out.println("    <error class='"+entry.getKey().id+"'>");
-                    out.print("      <location");
-                    osmWriter.writeLatLon(ll);
-                    out.println("/>");
-                    for (OsmPrimitive p : error.getPrimitives()) {
-                        p.accept(osmWriter);
-                    }
-                    out.println("      <text lang='"+XmlWriter.encode(lang)+"' value='"+XmlWriter.encode(error.getDescription())+"'/>");
-                    if (error.isFixable()) {
-                        out.println("      <fixes>");
-                        Command fix = error.getFix();
-                        if (fix instanceof AddPrimitivesCommand) {
-                            Logging.info("TODO: {0}", fix);
-                        } else if (fix instanceof DeleteCommand) {
-                            Logging.info("TODO: {0}", fix);
-                        } else if (fix instanceof ChangePropertyCommand) {
-                            Logging.info("TODO: {0}", fix);
-                        } else if (fix instanceof ChangePropertyKeyCommand) {
-                            Logging.info("TODO: {0}", fix);
-                        } else {
-                            Logging.warn("Unsupported command type: {0}", fix);
+            for (Test test : analysers) {
+                out.println("  <analyser timestamp='" + timestamp + "' name='" + XmlWriter.encode(test.getName()) + "'>");
+                // Build map of test error classes for the current test
+                Map<ErrorClass, List<TestError>> map = new HashMap<>();
+                for (Entry<Severity, Map<String, Map<String, List<TestError>>>> e1 :
+                        OsmValidator.getErrorsBySeverityMessageDescription(validationErrors, e -> e.getTester() == test).entrySet()) {
+                    for (Entry<String, Map<String, List<TestError>>> e2 : e1.getValue().entrySet()) {
+                        ErrorClass errorClass = new ErrorClass(e1.getKey(), e2.getKey());
+                        List<TestError> list = map.get(errorClass);
+                        if (list == null) {
+                            list = new ArrayList<>();
+                            map.put(errorClass, list);
                         }
-                        out.println("      </fixes>");
+                        e2.getValue().values().forEach(list::addAll);
                     }
-                    out.println("    </error>");
                 }
-            }
+                // Write classes
+                for (ErrorClass ec : map.keySet()) {
+                    out.println("    <class id='" + ec.id + "' level='" + ec.severity.getLevel() + "'>");
+                    out.println("      <classtext lang='" + XmlWriter.encode(lang) + "' title='" + XmlWriter.encode(ec.message) + "'/>");
+                    out.println("    </class>");
+                }
 
-            out.println("  </analyser>");
+                // Write errors
+                for (Entry<ErrorClass, List<TestError>> entry : map.entrySet()) {
+                    for (TestError error : entry.getValue()) {
+                        LatLon ll = error.getPrimitives().iterator().next().getBBox().getCenter();
+                        out.println("    <error class='" + entry.getKey().id + "'>");
+                        out.print("      <location");
+                        osmWriter.writeLatLon(ll);
+                        out.println("/>");
+                        for (OsmPrimitive p : error.getPrimitives()) {
+                            p.accept(osmWriter);
+                        }
+                        out.println("      <text lang='" + XmlWriter.encode(lang) +
+                                "' value='" + XmlWriter.encode(error.getDescription()) + "'/>");
+                        if (error.isFixable()) {
+                            out.println("      <fixes>");
+                            Command fix = error.getFix();
+                            if (fix instanceof AddPrimitivesCommand) {
+                                Logging.info("TODO: {0}", fix);
+                            } else if (fix instanceof DeleteCommand) {
+                                Logging.info("TODO: {0}", fix);
+                            } else if (fix instanceof ChangePropertyCommand) {
+                                Logging.info("TODO: {0}", fix);
+                            } else if (fix instanceof ChangePropertyKeyCommand) {
+                                Logging.info("TODO: {0}", fix);
+                            } else {
+                                Logging.warn("Unsupported command type: {0}", fix);
+                            }
+                            out.println("      </fixes>");
+                        }
+                        out.println("    </error>");
+                    }
+                }
+
+                out.println("  </analyser>");
+            }
         }
 
         out.println("</analysers>");
