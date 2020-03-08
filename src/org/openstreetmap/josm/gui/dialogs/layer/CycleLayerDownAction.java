@@ -27,14 +27,14 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class CycleLayerDownAction extends JosmAction {
     private static final long serialVersionUID = 1L;
     private static final Shortcut cycleDown =
-            Shortcut.registerShortcut("core:cyclelayerdown", tr("Cycle layers down"), KeyEvent.VK_CLOSE_BRACKET, Shortcut.SHIFT);
+            Shortcut.registerShortcut("core:cyclelayerdown", tr("Cycle layer down"), KeyEvent.VK_CLOSE_BRACKET, Shortcut.SHIFT);
 
     /**
      * Create a CycleLayerDownAction that cycles through layers that are in the model
      */
     public CycleLayerDownAction() {
-        super(tr("Cycle layers"), "dialogs/next", tr("Cycle through layers"), cycleDown, true, "cycle-layer", false);
-        new ImageProvider("dialogs", "next").getResource().attachImageIcon(this, true);
+        super(tr("Cycle layer down"), "dialogs/previous", tr("Cycle through data layers in a downward direction"), cycleDown, true, "cycle-layer-down", false);
+        new ImageProvider("dialogs", "previous").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Cycle through visible layers."));
         putValue(NAME, tr("Cycle layers"));
     }
