@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -304,9 +303,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     /** is the geo reference correct - don't offer offset handling */
     private boolean isGeoreferenceValid;
     /** which layers should be activated by default on layer addition. **/
-    private List<DefaultLayer> defaultLayers = new ArrayList<>();
+    private List<DefaultLayer> defaultLayers = Collections.emptyList();
     /** HTTP headers **/
-    private Map<String, String> customHttpHeaders = new ConcurrentHashMap<>();
+    private Map<String, String> customHttpHeaders = Collections.emptyMap();
     /** Should this map be transparent **/
     private boolean transparent = true;
     private int minimumTileExpire = (int) TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get());
@@ -587,7 +586,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                         collect(Collectors.toList());
             }
         }
-        customHttpHeaders = e.customHttpHeaders;
+        setCustomHttpHeaders(e.customHttpHeaders);
         transparent = e.transparent;
         minimumTileExpire = e.minimumTileExpire;
         category = ImageryCategory.fromString(e.category);
@@ -634,8 +633,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         // do not copy field {@code mirrors}
         this.icon = intern(i.icon);
         this.isGeoreferenceValid = i.isGeoreferenceValid;
-        this.defaultLayers = i.defaultLayers;
-        this.customHttpHeaders = i.customHttpHeaders;
+        setDefaultLayers(i.defaultLayers);
+        setCustomHttpHeaders(i.customHttpHeaders);
         this.transparent = i.transparent;
         this.minimumTileExpire = i.minimumTileExpire;
         this.categoryOriginalString = intern(i.categoryOriginalString);
@@ -1570,7 +1569,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param layers set the list of default layers
      */
     public void setDefaultLayers(List<DefaultLayer> layers) {
-        this.defaultLayers = layers;
+        this.defaultLayers = Utils.toUnmodifiableList(layers);
     }
 
     /**
@@ -1578,9 +1577,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @return headers
      */
     public Map<String, String> getCustomHttpHeaders() {
-        if (customHttpHeaders == null) {
-            return Collections.emptyMap();
-        }
         return customHttpHeaders;
     }
 
@@ -1589,7 +1585,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param customHttpHeaders http headers
      */
     public void setCustomHttpHeaders(Map<String, String> customHttpHeaders) {
-        this.customHttpHeaders = customHttpHeaders;
+        this.customHttpHeaders = Utils.toUnmodifiableMap(customHttpHeaders);
     }
 
     /**
