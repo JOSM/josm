@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -158,7 +159,7 @@ public class MapCSSRendererTest {
     @Before
     public void forOpenJDK() {
         String javaHome = System.getProperty("java.home");
-        Assume.assumeTrue("Test requires openJDK", javaHome != null && javaHome.contains("openjdk"));
+        Assume.assumeTrue("Test requires openJDK", javaHome != null && javaHome.toLowerCase(Locale.ENGLISH).contains("openjdk"));
 
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         for (String font : testConfig.fonts) {
