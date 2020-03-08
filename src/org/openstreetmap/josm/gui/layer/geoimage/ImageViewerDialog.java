@@ -261,7 +261,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageCenterViewAction extends JosmAction {
         ImageCenterViewAction() {
-            super(null, new ImageProvider("dialogs", "centreview"), tr("Center view"), null,
+            super(null, new ImageProvider("dialogs/autoscale", "selection"), tr("Center view"), null,
                   false, null, false);
         }
 
