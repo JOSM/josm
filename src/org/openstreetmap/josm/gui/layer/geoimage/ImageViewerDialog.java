@@ -289,8 +289,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageRemoveAction extends JosmAction {
         ImageRemoveAction() {
-            super(null, new ImageProvider("dialogs", "delete"), tr("Remove photo(s) from layer"), Shortcut.registerShortcut(
-                    "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", tr("Remove photo(s) from layer")), KeyEvent.VK_DELETE, Shortcut.SHIFT),
+            super(null, new ImageProvider("dialogs", "delete"), tr("Remove photo from layer"), Shortcut.registerShortcut(
+                    "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", tr("Remove photo from layer")), KeyEvent.VK_DELETE, Shortcut.SHIFT),
                   false, null, false);
         }
 
@@ -304,9 +304,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private class ImageRemoveFromDiskAction extends JosmAction {
         ImageRemoveFromDiskAction() {
-            super(null, new ImageProvider("dialogs", "geoimage/deletefromdisk"), tr("Delete photo file(s) from disk"),
+            super(null, new ImageProvider("dialogs", "geoimage/deletefromdisk"), tr("Delete photo file from disk"),
                   Shortcut.registerShortcut(
-                    "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete file(s) from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT),
+                    "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete photo file from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT),
                   false, null, false);
         }
 

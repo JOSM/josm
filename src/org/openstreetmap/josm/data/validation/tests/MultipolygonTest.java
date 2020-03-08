@@ -163,7 +163,7 @@ public class MultipolygonTest extends Test {
                     if (areaOuter != null) {
                         if (!area.equals(areaOuter)) {
                             String message = !areaStyle ? tr("Style for outer way mismatches")
-                                    : tr("With the currently used mappaint style(s) the style for outer way mismatches the area style");
+                                    : tr("With the currently used mappaint style the style for outer way mismatches the area style");
                             errors.add(TestError.builder(this, Severity.OTHER, OUTER_STYLE_MISMATCH)
                                     .message(message)
                                     .primitives(Arrays.asList(r, wOuter))
@@ -378,7 +378,7 @@ public class MultipolygonTest extends Test {
             }
             if (errorCode == RINGS_SHARE_NODES) {
                 errors.add(TestError.builder(this, Severity.OTHER, errorCode)
-                        .message(tr("Multipolygon rings share node(s)"))
+                        .message(tr("Multipolygon rings share nodes"))
                         .primitives(prims)
                         .highlight(sharedByPolygons)
                         .build());
@@ -577,7 +577,7 @@ public class MultipolygonTest extends Test {
                     } else if (loop == 0 || samePoly || (loop == 1 && !allInner)) {
                         String msg = loop == 0 ? tr("Intersection between multipolygon ways")
                                 : samePoly ? tr("Multipolygon ring contains segments twice")
-                                        : tr("Multipolygon outer way shares segment(s) with other ring");
+                                        : tr("Multipolygon outer way shares segments with other ring");
                         errors.add(TestError.builder(this, Severity.ERROR, CROSSING_WAYS)
                                 .message(msg)
                                 .primitives(Arrays.asList(r, ways.get(0), ways.get(1)))
@@ -692,8 +692,8 @@ public class MultipolygonTest extends Test {
 
     /**
      * Check for:<ul>
-     * <li>{@link #REPEATED_MEMBER_DIFF_ROLE}: Multipolygon member(s) repeated with different role</li>
-     * <li>{@link #REPEATED_MEMBER_SAME_ROLE}: Multipolygon member(s) repeated with same role</li>
+     * <li>{@link #REPEATED_MEMBER_DIFF_ROLE}: Multipolygon members repeated with different role</li>
+     * <li>{@link #REPEATED_MEMBER_SAME_ROLE}: Multipolygon members repeated with same role</li>
      * </ul>
      * @param r relation
      * @return true if repeated members have been detected, false otherwise
@@ -737,8 +737,8 @@ public class MultipolygonTest extends Test {
                     repeatedSameRole.addAll(primitives);
                 }
             }
-            addRepeatedMemberError(r, repeatedDiffRole, REPEATED_MEMBER_DIFF_ROLE, tr("Multipolygon member(s) repeated with different role"));
-            addRepeatedMemberError(r, repeatedSameRole, REPEATED_MEMBER_SAME_ROLE, tr("Multipolygon member(s) repeated with same role"));
+            addRepeatedMemberError(r, repeatedDiffRole, REPEATED_MEMBER_DIFF_ROLE, tr("Multipolygon members repeated with different role"));
+            addRepeatedMemberError(r, repeatedSameRole, REPEATED_MEMBER_SAME_ROLE, tr("Multipolygon members repeated with same role"));
         }
         return hasDups;
     }

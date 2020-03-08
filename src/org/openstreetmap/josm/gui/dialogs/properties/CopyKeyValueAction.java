@@ -31,7 +31,7 @@ public class CopyKeyValueAction extends AbstractCopyAction implements PopupMenuL
     public CopyKeyValueAction(JTable tagTable, IntFunction<String> keyFn, Supplier<Collection<? extends Tagged>> objectSp) {
         super(tagTable, keyFn, objectSp);
         setName(0);
-        putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tag(s) to clipboard"));
+        putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tags to clipboard"));
     }
 
     private void setName(long n) {
