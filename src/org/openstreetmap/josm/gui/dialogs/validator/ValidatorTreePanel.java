@@ -90,6 +90,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     public ValidatorTreePanel(List<TestError> errors) {
         setErrorList(errors);
         ToolTipManager.sharedInstance().registerComponent(this);
+        GuiHelper.extendTooltipDelay(this);
+
         this.setModel(valTreeModel);
         this.setRootVisible(false);
         this.setShowsRootHandles(true);
