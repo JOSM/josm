@@ -287,7 +287,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             int height = entry.getHeight();
 
             if (mayFitMemory(((long) width)*height*4*2)) {
-                Logging.info("Loading {0} using default toolkit", file.getPath());
+                Logging.info(tr("Loading {0}", file.getPath()));
                 tracker.addImage(img, 1);
 
                 // Wait for the end of loading
@@ -345,7 +345,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                     ImageDisplay.this.image = img;
                     visibleRect = new VisRect(0, 0, width, height);
 
-                    Logging.info("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
+                    Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
                             file.getPath(), width, height, width*height*4/1024/1024, switchedDim);
                 }
 
