@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.Logging;
  *
  * @author imi
  * @author Frederik Ramm
- * @since 13564 (successor to {@code OsmPrimitivRenderer}
+ * @since 13564 (successor to {@code OsmPrimitiveRenderer}
  */
 public class PrimitiveRenderer implements ListCellRenderer<IPrimitive>, TableCellRenderer {
     private final DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
