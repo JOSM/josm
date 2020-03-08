@@ -429,4 +429,9 @@ public final class Node extends OsmPrimitive implements INode {
     public UniqueIdGenerator getIdGenerator() {
         return idGenerator;
     }
+
+    @Override
+    protected void updateDirectionFlags() {
+        // Nodes do not need/have a direction, greatly improves performance, see #18886
+    }
 }

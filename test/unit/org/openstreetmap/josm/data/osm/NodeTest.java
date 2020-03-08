@@ -129,4 +129,11 @@ public class NodeTest {
         assertTrue(n.isOutSideWorld());
     }
 
+    /**
+     * Test that {@link Node#hasDirectionKeys} is not set.
+     */
+    @Test
+    public void testDirectional() {
+        assertFalse(OsmUtils.createPrimitive("node oneway=yes").hasDirectionKeys());
+    }
 }

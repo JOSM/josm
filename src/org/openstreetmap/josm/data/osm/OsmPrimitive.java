@@ -606,7 +606,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         return (flags & FLAG_ANNOTATED) != 0;
     }
 
-    private void updateDirectionFlags() {
+    protected void updateDirectionFlags() {
         boolean hasDirections = false;
         boolean directionReversed = false;
         if (reversedDirectionKeys.match(this)) {
