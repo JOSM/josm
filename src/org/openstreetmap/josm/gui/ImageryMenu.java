@@ -162,7 +162,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     public void refreshImageryMenu() {
         removeDynamicItems();
 
-        addDynamic(offsetMenuItem, null);
+        addDynamic(offsetMenuItem);
         addDynamicSeparator();
 
         // for each configured ImageryInfo, add a menu entry.
@@ -194,12 +194,17 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
                 addDynamicSeparator();
                 for (Entry<ImageryCategory, List<JMenuItem>> e : dynamicNonPhotoItems.entrySet()) {
                     ImageryCategory cat = e.getKey();
-                    JMenuItem categoryMenu = new JMenu(cat.getDescription());
-                    categoryMenu.setIcon(cat.getIcon(ImageSizes.MENU));
-                    for (JMenuItem it : e.getValue()) {
-                        categoryMenu.add(it);
+                    List<JMenuItem> list = e.getValue();
+                    if (list.size() > 1) {
+                        JMenuItem categoryMenu = new JMenu(cat.getDescription());
+                        categoryMenu.setIcon(cat.getIcon(ImageSizes.MENU));
+                        for (JMenuItem it : list) {
+                            categoryMenu.add(it);
+                        }
+                        dynamicNonPhotoMenus.add(add(categoryMenu));
+                    } else if (!list.isEmpty()) {
+                        dynamicNonPhotoMenus.add(add(list.get(0)));
                     }
-                    dynamicNonPhotoMenus.add(add(categoryMenu));
                 }
             }
         }
@@ -215,7 +220,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
             }
         } else {
             // or add the submenu itself
-            addDynamic(subMenu, null);
+            addDynamic(subMenu);
         }
     }
 
@@ -321,8 +326,8 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         doAddDynamic(item, category);
     }
 
-    private void addDynamic(JMenuItem it, ImageryCategory category) {
-        doAddDynamic(it, category);
+    private void addDynamic(JMenuItem it) {
+        doAddDynamic(it, null);
     }
 
     private void doAddDynamic(JMenuItem item, ImageryCategory category) {
