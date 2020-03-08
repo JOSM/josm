@@ -197,7 +197,7 @@ public class Test implements OsmPrimitiveVisitor {
         progressMonitor.finishTask();
         progressMonitor = null;
         if (stopwatch.elapsed() > 0) {
-            Logging.debug(tr("Test ''{0}'' completed in {1}", getName(), stopwatch));
+            Logging.debug(tr("{0} completed in {1}", getName(), stopwatch));
         }
     }
 

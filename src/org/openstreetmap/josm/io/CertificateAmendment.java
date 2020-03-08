@@ -258,7 +258,7 @@ public final class CertificateAmendment {
             }
             if (certificateIsMissing(keyStore, cert)) {
                 if (Logging.isDebugEnabled()) {
-                    Logging.debug(tr("Adding certificate for TLS connections: {0}", cert.getSubjectX500Principal().getName()));
+                    Logging.debug("Adding certificate for TLS connections: " + cert.getSubjectX500Principal().getName());
                 }
                 String alias = "josm:" + certAmend.filename;
                 keyStore.setCertificateEntry(alias, cert);

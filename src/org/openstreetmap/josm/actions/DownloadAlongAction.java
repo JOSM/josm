@@ -11,6 +11,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -160,11 +161,10 @@ public abstract class DownloadAlongAction extends JosmAction {
         ArrayList<LatLon> intermediateNodes = new ArrayList<>();
         intermediateNodes.add(p2);
         if (p1 != null && p2.greatCircleDistance(p1) > bufferDist) {
-            Double d = p2.greatCircleDistance(p1) / bufferDist;
-            int nbNodes = d.intValue();
+            double d = p2.greatCircleDistance(p1) / bufferDist;
+            int nbNodes = (int) d;
             if (Logging.isDebugEnabled()) {
-                Logging.debug(tr("{0} intermediate nodes to download.", nbNodes));
-                Logging.debug(tr("between {0} {1} and {2} {3}", p2.lat(), p2.lon(), p1.lat(), p1.lon()));
+                Logging.debug(MessageFormat.format("{0} intermediate nodes to download between {1} and {2}", nbNodes, p2, p1));
             }
             double latStep = (p2.lat() - p1.lat()) / (nbNodes + 1);
             double lonStep = (p2.lon() - p1.lon()) / (nbNodes + 1);

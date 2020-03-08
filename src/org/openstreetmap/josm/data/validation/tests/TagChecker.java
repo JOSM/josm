@@ -282,8 +282,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                         okValue = line.substring(1);
                     } else if (line.charAt(0) == '-' && okValue != null) {
                         String hk = harmonizeKey(line.substring(1));
-                        if (!okValue.equals(hk) && harmonizedKeys.put(hk, okValue) != null) {
-                            Logging.debug(tr("Line was ignored: {0}", line));
+                        if (!okValue.equals(hk) && harmonizedKeys.put(hk, okValue) != null && Logging.isDebugEnabled()) {
+                            Logging.debug("Line was ignored: " + line);
                         }
                     } else {
                         Logging.error(tr("Invalid spellcheck line: {0}", line));

@@ -188,7 +188,7 @@ public class DatasetConsistencyTest {
         if (Logging.isDebugEnabled()) {
             StackTraceElement item = Thread.currentThread().getStackTrace()[2];
             String operation = getClass().getSimpleName() + '.' + item.getMethodName();
-            Logging.debug(tr("Test ''{0}'' completed in {1}",
+            Logging.debug(tr("{0} completed in {1}",
                     operation, stopwatch));
         }
     }
