@@ -4,9 +4,7 @@ package org.openstreetmap.josm.data.projection;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -112,9 +110,8 @@ public class ProjectionRegressionTest {
         System.out.println("Update successful.");
     }
 
-    private static List<TestData> readData() throws IOException, FileNotFoundException {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(PROJECTION_DATA_FILE)),
-                StandardCharsets.UTF_8))) {
+    private static List<TestData> readData() throws IOException {
+        try (BufferedReader in = Files.newBufferedReader(Paths.get(PROJECTION_DATA_FILE), StandardCharsets.UTF_8)) {
             List<TestData> result = new ArrayList<>();
             String line;
             while ((line = in.readLine()) != null) {
