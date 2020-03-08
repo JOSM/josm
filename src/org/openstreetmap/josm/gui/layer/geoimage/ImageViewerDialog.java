@@ -305,9 +305,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private class ImageRemoveFromDiskAction extends JosmAction {
         ImageRemoveFromDiskAction() {
             super(null, new ImageProvider("dialogs", "geoimage/deletefromdisk"), tr("Delete photo file from disk"),
-                  Shortcut.registerShortcut(
-                    "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete photo file from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT),
-                  false, null, false);
+                    Shortcut.registerShortcut("geoimage:deletefilefromdisk",
+                            tr("Geoimage: {0}", tr("Delete photo file from disk")), KeyEvent.VK_DELETE, Shortcut.CTRL_SHIFT),
+                    false, null, false);
         }
 
         @Override
