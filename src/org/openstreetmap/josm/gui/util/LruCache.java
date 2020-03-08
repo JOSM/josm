@@ -6,7 +6,8 @@ import java.util.Map;
 
 /**
  * LRU cache
- * @apiNote http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html
+ * @see <a href="http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html">
+ *     Java Planet: How to set up a simple LRU cache using LinkedHashMap</a>
  */
 public final class LruCache<K, V> extends LinkedHashMap<K, V> {
     private static final long serialVersionUID = 1L;

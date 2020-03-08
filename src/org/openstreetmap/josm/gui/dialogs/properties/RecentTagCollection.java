@@ -23,7 +23,7 @@ class RecentTagCollection {
     private SearchCompiler.Match tagsToIgnore;
 
     RecentTagCollection(final int capacity) {
-        recentTags = new LruCache(capacity);
+        recentTags = new LruCache<>(capacity);
         tagsToIgnore = SearchCompiler.Never.INSTANCE;
     }
 
