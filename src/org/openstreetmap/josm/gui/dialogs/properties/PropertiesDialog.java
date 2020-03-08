@@ -372,10 +372,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         if (!newSel.isEmpty()) {
             final LatLon center = newSel.iterator().next().getBBox().getCenter();
             Territories.getRegionalTaginfoUrls(center).stream()
-                    .map(taginfo -> new TaginfoAction(
+                    .map(taginfo -> new TaginfoAction(tr("Go to Taginfo ({0})", taginfo.toString()),
                             tagTable, editHelper::getDataKey, editHelper::getDataValues,
-                            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), taginfo.getUrl(),
-                            String.join("/", taginfo.getIsoCodes()) + (taginfo.getSuffix() == null ? "" : " (" + taginfo.getSuffix() + ")"))
+                            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), taginfo.getUrl())
                     ).forEach(taginfoNationalActions::add);
             taginfoNationalActions.stream().map(membershipMenu::add).forEach(membershipMenuTagInfoNatItems::add);
             taginfoNationalActions.stream().map(tagMenu::add).forEach(tagMenuTagInfoNatItems::add);

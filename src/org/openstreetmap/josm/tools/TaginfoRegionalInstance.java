@@ -61,4 +61,9 @@ public class TaginfoRegionalInstance {
     public String getSuffix() {
         return suffix;
     }
+
+    @Override
+    public String toString() {
+        return (suffix == null ? "" : suffix + " ") + String.join("/", isoCodes);
+    }
 }

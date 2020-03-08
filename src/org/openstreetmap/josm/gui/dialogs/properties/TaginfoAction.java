@@ -43,23 +43,23 @@ public class TaginfoAction extends JosmAction {
      */
     public TaginfoAction(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
             JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier) {
-        this(tagTable, tagKeySupplier, tagValuesSupplier, membershipTable, memberValueSupplier, TAGINFO_URL_PROP.get(), null);
+        this(tr("Go to Taginfo"), tagTable, tagKeySupplier, tagValuesSupplier, membershipTable, memberValueSupplier, TAGINFO_URL_PROP.get());
     }
 
     /**
      * Constructs a new {@code TaginfoAction} with a given URL and optional name suffix.
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
      * @param tagTable The tag table. Cannot be null
      * @param tagKeySupplier Finds the key from given row of tag table. Cannot be null
      * @param tagValuesSupplier Finds the values from given row of tag table (map of values and number of occurrences). Cannot be null
      * @param membershipTable The membership table. Can be null
      * @param memberValueSupplier Finds the parent relation from given row of membership table. Can be null
      * @param taginfoUrl Taginfo URL. Cannot be null
-     * @param suffix Optional name suffix, can be null
      * @since 15565
      */
-    public TaginfoAction(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
-            JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier, String taginfoUrl, String suffix) {
-        super(tr("Go to Taginfo") + (suffix != null ? " " + suffix : ""), "dialogs/taginfo",
+    public TaginfoAction(String name, JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
+                         JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier, String taginfoUrl) {
+        super(name, "dialogs/taginfo",
                 tr("Launch browser with Taginfo statistics for selected object"), null, false);
         this.taginfoUrl = taginfoUrl.endsWith("/") ? taginfoUrl : taginfoUrl + '/';
         this.tagTable = Objects.requireNonNull(tagTable);
