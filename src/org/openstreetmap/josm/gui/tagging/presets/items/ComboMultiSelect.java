@@ -362,7 +362,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
     @Override
     public Collection<String> getValues() {
-        initListEntries();
+        initListEntries(false);
         return presetListEntries.stream().map(x -> x.value).collect(Collectors.toSet());
     }
 
@@ -371,13 +371,13 @@ public abstract class ComboMultiSelect extends KeyedItem {
      * @return the values to display
      */
     public Collection<String> getDisplayValues() {
-        initListEntries();
+        initListEntries(false);
         return presetListEntries.stream().map(PresetListEntry::getDisplayValue).collect(Collectors.toList());
     }
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
-        initListEntries();
+        initListEntries(true);
 
         // find out if our key is already used in the selection.
         usage = determineTextUsage(sel, key);
@@ -395,9 +395,11 @@ public abstract class ComboMultiSelect extends KeyedItem {
         return true;
     }
 
-    private void initListEntries() {
+    private void initListEntries(boolean cleanup) {
         if (initialized) {
-            presetListEntries.remove(new PresetListEntry(DIFFERENT)); // possibly added in #addToPanel
+            if (cleanup) { // do not cleanup for #getDisplayValues used in Combo#addToPanelAnchor
+                presetListEntries.remove(new PresetListEntry(DIFFERENT)); // possibly added in #addToPanel
+            }
             return;
         } else if (presetListEntries.isEmpty()) {
             initListEntriesFromAttributes();
