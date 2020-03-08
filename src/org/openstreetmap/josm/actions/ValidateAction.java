@@ -67,7 +67,6 @@ public class ValidateAction extends JosmAction {
             return;
 
         OsmValidator.initializeTests();
-        OsmValidator.initializeErrorLayer();
 
         Collection<Test> tests = OsmValidator.getEnabledTests(false);
         if (tests.isEmpty())
@@ -143,8 +142,11 @@ public class ValidateAction extends JosmAction {
                 MapFrame map = MainApplication.getMap();
                 map.validatorDialog.unfurlDialog();
                 map.validatorDialog.tree.setErrors(errors);
-                //FIXME: nicer way to find / invalidate the corresponding error layer
-                MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
+                if (!errors.isEmpty()) {
+                    //FIXME: nicer way to find / invalidate the corresponding error layer
+                    OsmValidator.initializeErrorLayer();
+                    MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
+                }
             });
         }
 
@@ -153,7 +155,7 @@ public class ValidateAction extends JosmAction {
         OsmTransferException {
             if (tests == null || tests.isEmpty())
                 return;
-            errors = new ArrayList<>(200);
+            errors = new ArrayList<>();
             getProgressMonitor().setTicksCount(tests.size() * validatedPrimitives.size());
             int testCounter = 0;
             for (Test test : tests) {
@@ -170,7 +172,7 @@ public class ValidateAction extends JosmAction {
                 test.clear();
             }
             tests = null;
-            if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
+            if (Boolean.TRUE.equals(ValidatorPrefHelper.PREF_USE_IGNORE.get())) {
                 getProgressMonitor().setCustomText("");
                 getProgressMonitor().subTask(tr("Updating ignored errors ..."));
                 for (TestError error : errors) {

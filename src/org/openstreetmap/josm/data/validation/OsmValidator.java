@@ -485,9 +485,7 @@ public final class OsmValidator {
      * Initializes error layer.
      */
     public static synchronized void initializeErrorLayer() {
-        if (!ValidatorPrefHelper.PREF_LAYER.get())
-            return;
-        if (errorLayer == null) {
+        if (errorLayer == null && Boolean.TRUE.equals(ValidatorPrefHelper.PREF_LAYER.get())) {
             errorLayer = new ValidatorLayer();
             MainApplication.getLayerManager().addLayer(errorLayer);
         }
