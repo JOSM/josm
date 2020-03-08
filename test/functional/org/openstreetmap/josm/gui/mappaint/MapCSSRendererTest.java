@@ -191,6 +191,8 @@ public class MapCSSRendererTest {
         sd.styleUrl = testConfig.getStyleSourceUrl();
         RenderingHelper rh = new RenderingHelper(dataSet, testConfig.getTestArea(), scale, Collections.singleton(sd));
         rh.setFillBackground(false);
+        rh.setDebugStream(System.out);
+        System.out.println("Running " + getClass() + "[" + testConfig.testDirectory + "]");
         BufferedImage image = rh.render();
 
         if (UPDATE_ALL) {

@@ -4,5 +4,6 @@
   <node id='-39599' action='modify' lat='41.75314999445' lon='-93.60127346601'>
     <tag k='name' v='Hgmpf' />
     <tag k='test' v='text-placement' />
+    <tag k='debug' v='yes' />
   </node>
 </osm>

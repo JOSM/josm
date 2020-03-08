@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +19,13 @@ import java.util.Optional;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -40,6 +43,7 @@ public class RenderingHelper {
     private final Collection<StyleData> styles;
     private Color backgroundColor;
     private boolean fillBackground = true;
+    private PrintStream debugStream;
 
     /**
      * Data class to save style settings along with the corresponding style URL.
@@ -182,7 +186,24 @@ public class RenderingHelper {
         StyledMapRenderer smr = new StyledMapRenderer(g, nc, false);
         smr.setStyles(elemStyles);
         smr.render(ds, false, bounds);
+
+        // For debugging, write computed StyleElement to debugStream for primitives marked with debug=yes
+        if (debugStream != null) {
+            for (OsmPrimitive primitive : ds.allPrimitives()) {
+                if (!primitive.isKeyTrue("debug")) {
+                    continue;
+                }
+                debugStream.println(primitive);
+                for (StyleElement styleElement : elemStyles.get(primitive, scale, nc)) {
+                    debugStream.append(" * ").println(styleElement);
+                }
+            }
+        }
+
         return image;
     }
 
+    void setDebugStream(PrintStream debugStream) {
+        this.debugStream = debugStream;
+    }
 }

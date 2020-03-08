@@ -43,6 +43,7 @@
     <tag k='highway' v='tertiary' />
     <tag k='name' v='An der Actien-Zuckerfabrik' />
     <tag k='test' v='w1' />
+    <tag k='debug' v='yes' />
   </way>
   <way id='-41280' action='modify'>
     <nd ref='-41264' />
