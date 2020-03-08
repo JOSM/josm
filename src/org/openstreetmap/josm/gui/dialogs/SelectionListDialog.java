@@ -433,8 +433,6 @@ public class SelectionListDialog extends ToggleDialog {
          * Constructs a new {@code ZoomToListSelection}.
          */
         ZoomToListSelection() {
-            putValue(NAME, tr("Zoom to selected element(s)"));
-            putValue(SHORT_DESCRIPTION, tr("Zoom to selected element(s)"));
             new ImageProvider("dialogs/autoscale", "selection").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
@@ -451,6 +449,9 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
+            String name = trn("Zoom to selected element", "Zoom to selected elements", model.getSelected().size());
+            putValue(NAME, name);
+            putValue(SHORT_DESCRIPTION, name);
             setEnabled(!model.isSelectionEmpty());
         }
 

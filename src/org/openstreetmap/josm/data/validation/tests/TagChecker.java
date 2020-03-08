@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionListener;
@@ -302,7 +303,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         }
 
         if (errorSources.length() > 0)
-            throw new IOException(tr("Could not access data file(s):\n{0}", errorSources));
+            throw new IOException(trn(
+                    "Could not access data file:\n{0}",
+                    "Could not access data files:\n{0}", errorSources.length(), errorSources));
     }
 
     /**
