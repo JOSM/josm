@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -203,10 +202,9 @@ public class ConditionalKeys extends Test.TagTest {
                 // validate opening hour if the value contains an hour (heuristic)
                 for (final String condition : conditional.conditions) {
                     if (condition.matches(".*[0-9]:[0-9]{2}.*")) {
-                        final List<OpeningHourTest.OpeningHoursTestError> errors = openingHourTest.checkOpeningHourSyntax(
-                                "", condition, true, Locale.getDefault());
+                        final List<TestError> errors = openingHourTest.checkOpeningHourSyntax("", condition);
                         if (!errors.isEmpty()) {
-                            return errors.get(0).getMessage();
+                            return errors.get(0).getDescription();
                         }
                     }
                 }

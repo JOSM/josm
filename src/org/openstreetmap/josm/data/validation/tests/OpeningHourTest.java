@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +30,8 @@ import org.openstreetmap.josm.data.validation.TestError;
  */
 public class OpeningHourTest extends TagTest {
 
+    private static final Collection<String> KEYS_TO_CHECK = Arrays.asList("opening_hours", "collection_times", "service_times");
+
     /**
      * Constructs a new {@code OpeningHourTest}.
      */
@@ -37,69 +41,22 @@ public class OpeningHourTest extends TagTest {
     }
 
     /**
-     * An error concerning invalid syntax for an "opening_hours"-like tag.
+     * Returns the real test error given to JOSM validator.
+     * @param severity The error severity
+     * @param message The error message
+     * @param key The incriminated key, used for display.
+     * @param prettifiedValue The prettified value
+     * @param p The incriminated OSM primitive.
+     * @return The real test error given to JOSM validator. Can be fixable or not if a prettified values has been determined.
      */
-    public class OpeningHoursTestError {
-        private final Severity severity;
-        private final String message;
-        private final String prettifiedValue;
-
-        /**
-         * Constructs a new {@code OpeningHoursTestError} with a known prettified value.
-         * @param message The error message
-         * @param severity The error severity
-         * @param prettifiedValue The prettified value
-         */
-        public OpeningHoursTestError(String message, Severity severity, String prettifiedValue) {
-            this.message = message;
-            this.severity = severity;
-            this.prettifiedValue = prettifiedValue;
-        }
-
-        /**
-         * Returns the real test error given to JOSM validator.
-         * @param p The incriminated OSM primitive.
-         * @param key The incriminated key, used for display.
-         * @return The real test error given to JOSM validator. Can be fixable or not if a prettified values has been determined.
-         */
-        public TestError getTestError(final OsmPrimitive p, final String key) {
-            final TestError.Builder error = TestError.builder(OpeningHourTest.this, severity, 2901)
-                    .message(tr("Opening hours syntax"), message) // todo obtain English message for ignore functionality
-                    .primitives(p);
-            if (prettifiedValue == null || prettifiedValue.equals(p.get(key))) {
-                return error.build();
-            } else {
-                return error.fix(() -> new ChangePropertyCommand(p, key, prettifiedValue)).build();
-            }
-        }
-
-        /**
-         * Returns the error message.
-         * @return The error message.
-         */
-        public String getMessage() {
-            return message;
-        }
-
-        /**
-         * Returns the prettified value.
-         * @return The prettified value.
-         */
-        public String getPrettifiedValue() {
-            return prettifiedValue;
-        }
-
-        /**
-         * Returns the error severity.
-         * @return The error severity.
-         */
-        public Severity getSeverity() {
-            return severity;
-        }
-
-        @Override
-        public String toString() {
-            return getMessage() + " => " + getPrettifiedValue();
+    private TestError createTestError(Severity severity, String message, String key, String prettifiedValue, OsmPrimitive p) {
+        final TestError.Builder error = TestError.builder(this, severity, 2901)
+                .message(tr("Opening hours syntax"), message) // todo obtain English message for ignore functionality
+                .primitives(p);
+        if (prettifiedValue == null || prettifiedValue.equals(p.get(key))) {
+            return error.build();
+        } else {
+            return error.fix(() -> new ChangePropertyCommand(p, key, prettifiedValue)).build();
         }
     }
 
@@ -110,8 +67,8 @@ public class OpeningHourTest extends TagTest {
      * @param value the opening hour value to be checked.
      * @return a list of {@link TestError} or an empty list
      */
-    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value) {
-        return checkOpeningHourSyntax(key, value, false, Locale.getDefault());
+    public List<TestError> checkOpeningHourSyntax(final String key, final String value) {
+        return checkOpeningHourSyntax(key, value, null, Locale.getDefault());
     }
 
     /**
@@ -119,11 +76,11 @@ public class OpeningHourTest extends TagTest {
      * and returns a list containing validation errors or an empty list. Null values result in an empty list.
      * @param key the OSM key (should be "opening_hours", "collection_times" or "service_times").
      * @param value the opening hour value to be checked.
-     * @param ignoreOtherSeverity whether to ignore errors with {@link Severity#OTHER}.
+     * @param p the primitive to check/fix.
      * @param locale the locale code used for localizing messages
      * @return a list of {@link TestError} or an empty list
      */
-    public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, boolean ignoreOtherSeverity, Locale locale) {
+    List<TestError> checkOpeningHourSyntax(final String key, final String value, OsmPrimitive p, Locale locale) {
         if (value == null || value.isEmpty()) {
             return Collections.emptyList();
         }
@@ -138,27 +95,21 @@ public class OpeningHourTest extends TagTest {
                 new OpeningHoursParser(new StringReader(value)).rules(true);
             }
         } catch (ParseException e) {
-            return Collections.singletonList(new OpeningHoursTestError(e.getMessage(), Severity.WARNING, prettifiedValue));
+            return Collections.singletonList(createTestError(Severity.WARNING, e.getMessage(), key, prettifiedValue, p));
         }
 
-        if (ignoreOtherSeverity || Objects.equals(value, prettifiedValue)) {
+        if (!includeOtherSeverityChecks() || Objects.equals(value, prettifiedValue) || p == null) {
             return Collections.emptyList();
         } else {
-            return Collections.singletonList(
-                    new OpeningHoursTestError(tr("{0} value can be prettified", key), Severity.OTHER, prettifiedValue));
-        }
-    }
-
-    protected void check(final OsmPrimitive p, final String key) {
-        for (OpeningHoursTestError e : checkOpeningHourSyntax(key, p.get(key))) {
-            errors.add(e.getTestError(p, key));
+            final String message = tr("{0} value can be prettified", key);
+            return Collections.singletonList(createTestError(Severity.OTHER, message, key, prettifiedValue, p));
         }
     }
 
     @Override
     public void check(final OsmPrimitive p) {
-        check(p, "opening_hours");
-        check(p, "collection_times");
-        check(p, "service_times");
+        for (String key : KEYS_TO_CHECK) {
+            errors.addAll(checkOpeningHourSyntax(key, p.get(key), p, Locale.getDefault()));
+        }
     }
 }
