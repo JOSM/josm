@@ -4,13 +4,14 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -97,8 +98,7 @@ public class SyncEditorLayerIndex {
     private static String eliInputFile = "imagery_eli.geojson";
     private static String josmInputFile = "imagery_josm.imagery.xml";
     private static String ignoreInputFile = "imagery_josm.ignores.txt";
-    private static OutputStream outputFile;
-    private static OutputStreamWriter outputStream;
+    private static Writer outputStream;
     private static String optionOutput;
     private static boolean optionShorten;
     private static boolean optionNoSkip;
@@ -131,14 +131,14 @@ public class SyncEditorLayerIndex {
         script.start();
         script.loadJosmEntries();
         if (optionJosmXml != null) {
-            try (OutputStreamWriter stream = new OutputStreamWriter(Files.newOutputStream(Paths.get(optionJosmXml)), UTF_8)) {
-                script.printentries(script.josmEntries, stream);
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(optionJosmXml), UTF_8)) {
+                script.printentries(script.josmEntries, writer);
             }
         }
         script.loadELIEntries();
         if (optionEliXml != null) {
-            try (OutputStreamWriter stream = new OutputStreamWriter(Files.newOutputStream(Paths.get(optionEliXml)), UTF_8)) {
-                script.printentries(script.eliEntries, stream);
+            try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(optionEliXml), UTF_8)) {
+                script.printentries(script.eliEntries, writer);
             }
         }
         script.checkInOneButNotTheOther();
@@ -146,9 +146,6 @@ public class SyncEditorLayerIndex {
         script.end();
         if (outputStream != null) {
             outputStream.close();
-        }
-        if (outputFile != null) {
-            outputFile.close();
         }
     }
 
@@ -215,8 +212,7 @@ public class SyncEditorLayerIndex {
                 .parseOptionsOrExit(Arrays.asList(args));
 
         if (optionOutput != null && !"-".equals(optionOutput)) {
-            outputFile = Files.newOutputStream(Paths.get(optionOutput));
-            outputStream = new OutputStreamWriter(outputFile, optionEncoding != null ? optionEncoding : "UTF-8");
+            outputStream = Files.newBufferedWriter(Paths.get(optionOutput), optionEncoding != null ? Charset.forName(optionEncoding) : UTF_8);
         } else if (optionEncoding != null) {
             outputStream = new OutputStreamWriter(System.out, optionEncoding);
         }
@@ -243,7 +239,7 @@ public class SyncEditorLayerIndex {
 
     void loadSkip() throws IOException {
         final Pattern pattern = Pattern.compile("^\\|\\| *(ELI|Ignore) *\\|\\| *\\{\\{\\{(.+)\\}\\}\\} *\\|\\|");
-        try (BufferedReader fr = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(ignoreInputFile)), UTF_8))) {
+        try (BufferedReader fr = Files.newBufferedReader(Paths.get(ignoreInputFile), UTF_8)) {
             String line;
 
             while ((line = fr.readLine()) != null) {
@@ -341,7 +337,7 @@ public class SyncEditorLayerIndex {
     }
 
     void loadELIEntries() throws IOException {
-        try (JsonReader jr = Json.createReader(new InputStreamReader(Files.newInputStream(Paths.get(eliInputFile)), UTF_8))) {
+        try (JsonReader jr = Json.createReader(Files.newBufferedReader(Paths.get(eliInputFile), UTF_8))) {
             eliEntries = jr.readObject().getJsonArray("features");
         }
 
@@ -407,7 +403,7 @@ public class SyncEditorLayerIndex {
         return res;
     }
 
-    void printentries(List<?> entries, OutputStreamWriter stream) throws IOException {
+    void printentries(List<?> entries, Writer stream) throws IOException {
         DecimalFormat df = new DecimalFormat("#.#######");
         df.setRoundingMode(java.math.RoundingMode.CEILING);
         stream.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
