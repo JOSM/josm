@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -21,12 +20,12 @@ import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.server.UserNameValidator;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * This is the panel for selecting whether the query should be restricted to a specific user.
@@ -37,14 +36,13 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
     private static final String PREF_QUERY_TYPE = PREF_ROOT + ".query-type";
 
     private final ButtonGroup bgUserRestrictions = new ButtonGroup();
-    private final JRadioButton rbRestrictToMyself = new JRadioButton();
-    private final JRadioButton rbRestrictToUid = new JRadioButton();
-    private final JRadioButton rbRestrictToUserName = new JRadioButton();
+    private final JRadioButton rbRestrictToMyself = new JRadioButton(); // text is set in #startUserInput
+    private final JRadioButton rbRestrictToUid = new JRadioButton(tr("Only changesets owned by the user with the following user ID"));
+    private final JRadioButton rbRestrictToUserName = new JRadioButton(tr("Only changesets owned by the user with the following user name"));
     private final JosmTextField tfUid = new JosmTextField(10);
     private transient UidInputFieldValidator valUid;
     private final JosmTextField tfUserName = new JosmTextField(10);
     private transient UserNameValidator valUserName;
-    private final JMultilineLabel lblRestrictedToMyself = new JMultilineLabel(tr("Only changesets owned by myself"));
 
     /**
      * Constructs a new {@code UserRestrictionPanel}.
@@ -55,41 +53,23 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
 
     protected JPanel buildUidInputPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
-        gc.insets = new Insets(0, 0, 0, 3);
-        pnl.add(new JLabel(tr("User ID:")), gc);
+        pnl.add(new JLabel(tr("User ID:")), GBC.std());
 
-        gc.gridx = 1;
-        pnl.add(tfUid, gc);
+        pnl.add(tfUid, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         SelectAllOnFocusGainedDecorator.decorate(tfUid);
         valUid = UidInputFieldValidator.decorate(tfUid);
 
-        // grab remaining space
-        gc.gridx = 2;
-        gc.weightx = 1.0;
-        pnl.add(new JPanel(), gc);
         return pnl;
     }
 
     protected JPanel buildUserNameInputPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
-        gc.insets = new Insets(0, 0, 0, 3);
-        pnl.add(new JLabel(tr("User name:")), gc);
+        pnl.add(new JLabel(tr("User name:")), GBC.std());
 
-        gc.gridx = 1;
-        pnl.add(tfUserName, gc);
+        pnl.add(tfUserName, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         SelectAllOnFocusGainedDecorator.decorate(tfUserName);
         valUserName = new UserNameValidator(tfUserName);
 
-        // grab remaining space
-        gc.gridx = 2;
-        gc.weightx = 1.0;
-        pnl.add(new JPanel(), gc);
         return pnl;
     }
 
@@ -104,53 +84,18 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
         ));
 
         ItemListener userRestrictionChangeHandler = new UserRestrictionChangedHandler();
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.gridx = 0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
+        GridBagConstraints gc = GBC.eol().fill(GridBagConstraints.HORIZONTAL);
+
         add(rbRestrictToMyself, gc);
         rbRestrictToMyself.addItemListener(userRestrictionChangeHandler);
 
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        add(lblRestrictedToMyself, gc);
-
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
         add(rbRestrictToUid, gc);
         rbRestrictToUid.addItemListener(userRestrictionChangeHandler);
-
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        add(new JMultilineLabel(tr("Only changesets owned by the user with the following user ID")), gc);
-
-        gc.gridx = 1;
-        gc.gridy = 2;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
         add(buildUidInputPanel(), gc);
 
-        gc.gridx = 0;
-        gc.gridy = 3;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
         add(rbRestrictToUserName, gc);
         rbRestrictToUserName.addItemListener(userRestrictionChangeHandler);
 
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        add(new JMultilineLabel(tr("Only changesets owned by the user with the following user name")), gc);
-
-        gc.gridx = 1;
-        gc.gridy = 4;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
         add(buildUserNameInputPanel(), gc);
 
         bgUserRestrictions.add(rbRestrictToMyself);
@@ -163,13 +108,13 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
      */
     public void startUserInput() {
         if (UserIdentityManager.getInstance().isAnonymous()) {
-            lblRestrictedToMyself.setText(tr("Only changesets owned by myself (disabled. JOSM is currently run by an anonymous user)"));
+            rbRestrictToMyself.setText(tr("Only changesets owned by myself (disabled. JOSM is currently run by an anonymous user)"));
             rbRestrictToMyself.setEnabled(false);
             if (rbRestrictToMyself.isSelected()) {
                 rbRestrictToUid.setSelected(true);
             }
         } else {
-            lblRestrictedToMyself.setText(tr("Only changesets owned by myself"));
+            rbRestrictToMyself.setText(tr("Only changesets owned by myself"));
             rbRestrictToMyself.setEnabled(true);
             rbRestrictToMyself.setSelected(true);
         }

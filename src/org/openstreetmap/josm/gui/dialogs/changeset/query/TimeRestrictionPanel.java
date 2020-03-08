@@ -23,11 +23,11 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * This is the panel to apply a time restriction to the changeset query.
@@ -35,8 +35,10 @@ import org.openstreetmap.josm.spi.preferences.Config;
  */
 public class TimeRestrictionPanel extends JPanel implements RestrictionPanel {
 
-    private final JRadioButton rbClosedAfter = new JRadioButton();
-    private final JRadioButton rbClosedAfterAndCreatedBefore = new JRadioButton();
+    private final JRadioButton rbClosedAfter = new JRadioButton(
+            tr("Only changesets closed after the following date/time"));
+    private final JRadioButton rbClosedAfterAndCreatedBefore = new JRadioButton(
+            tr("Only changesets closed after and created before a specific date/time"));
     private final JosmTextField tfClosedAfterDate1 = new JosmTextField();
     private transient DateValidator valClosedAfterDate1;
     private final JosmTextField tfClosedAfterTime1 = new JosmTextField();
@@ -162,43 +164,13 @@ public class TimeRestrictionPanel extends JPanel implements RestrictionPanel {
 
         // -- changesets closed after a specific date/time
         //
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.gridx = 0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
+        GridBagConstraints gc = GBC.eol().fill(GridBagConstraints.HORIZONTAL);
         add(rbClosedAfter, gc);
-
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        add(new JMultilineLabel(tr("Only changesets closed after the following date/time")), gc);
-
-        gc.gridx = 1;
-        gc.gridy = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
         add(buildClosedAfterInputPanel(), gc);
 
         // -- changesets closed after a specific date/time and created before a specific date time
         //
-        gc = new GridBagConstraints();
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.gridy = 2;
-        gc.gridx = 0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
         add(rbClosedAfterAndCreatedBefore, gc);
-
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        add(new JMultilineLabel(tr("Only changesets closed after and created before a specific date/time")), gc);
-
-        gc.gridx = 1;
-        gc.gridy = 3;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
         add(buildClosedAfterAndCreatedBeforeInputPanel(), gc);
 
         ButtonGroup bg = new ButtonGroup();

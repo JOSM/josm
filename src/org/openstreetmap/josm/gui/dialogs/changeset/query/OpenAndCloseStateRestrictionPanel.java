@@ -12,9 +12,9 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * This is the panel for selecting whether the changeset query should be restricted to
@@ -26,9 +26,9 @@ public class OpenAndCloseStateRestrictionPanel extends JPanel implements Restric
     private static final String PREF_ROOT = "changeset-query.advanced.open-restrictions";
     private static final String PREF_QUERY_TYPE = PREF_ROOT + ".query-type";
 
-    private final JRadioButton rbOpenOnly = new JRadioButton();
-    private final JRadioButton rbClosedOnly = new JRadioButton();
-    private final JRadioButton rbBoth = new JRadioButton();
+    private final JRadioButton rbOpenOnly = new JRadioButton(tr("Query open changesets only"));
+    private final JRadioButton rbClosedOnly = new JRadioButton(tr("Query closed changesets only"));
+    private final JRadioButton rbBoth = new JRadioButton(tr("Query both open and closed changesets"));
 
     /**
      * Constructs a new {@code OpenAndCloseStateRestrictionPanel}.
@@ -46,33 +46,10 @@ public class OpenAndCloseStateRestrictionPanel extends JPanel implements Restric
                         BorderFactory.createEmptyBorder(5, 5, 5, 5)
                 )
         ));
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
+        GridBagConstraints gc = GBC.eol().fill(GridBagConstraints.HORIZONTAL);
         add(rbOpenOnly, gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        add(new JMultilineLabel(tr("Query open changesets only")), gc);
-
-        gc.gridy = 1;
-        gc.gridx = 0;
-        gc.weightx = 0.0;
         add(rbClosedOnly, gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        add(new JMultilineLabel(tr("Query closed changesets only")), gc);
-
-        gc.gridy = 2;
-        gc.gridx = 0;
-        gc.weightx = 0.0;
         add(rbBoth, gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        add(new JMultilineLabel(tr("Query both open and closed changesets")), gc);
 
         ButtonGroup bgRestrictions = new ButtonGroup();
         bgRestrictions.add(rbBoth);

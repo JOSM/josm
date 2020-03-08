@@ -9,8 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -25,9 +23,9 @@ import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -46,7 +44,6 @@ public class BasicChangesetQueryPanel extends JPanel {
     }
 
     private transient Map<BasicQuery, JRadioButton> rbQueries;
-    private transient Map<BasicQuery, JMultilineLabel> lblQueries;
     private JCheckBox cbMyChangesetsOnly;
 
     protected JPanel buildQueriesPanel() {
@@ -54,82 +51,34 @@ public class BasicChangesetQueryPanel extends JPanel {
 
         ButtonGroup bgQueries = new ButtonGroup();
         rbQueries = new EnumMap<>(BasicQuery.class);
-        lblQueries = new EnumMap<>(BasicQuery.class);
         SelectQueryHandler selectedQueryHandler = new SelectQueryHandler();
         for (BasicQuery q: BasicQuery.values()) {
             JRadioButton rb = new JRadioButton();
             rb.addItemListener(selectedQueryHandler);
             rbQueries.put(q, rb);
             bgQueries.add(rb);
-            JMultilineLabel lbl = new JMultilineLabel("");
-            lbl.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (rb.isEnabled()) {
-                        rb.setSelected(true);
-                    }
-                }
-            });
-            lblQueries.put(q, lbl);
         }
 
-        GridBagConstraints gc = new GridBagConstraints();
+        GridBagConstraints gc = GBC.eop().fill(GridBagConstraints.HORIZONTAL);
         // -- most recent changes
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.insets = new Insets(0, 0, 5, 3);
         pnl.add(rbQueries.get(BasicQuery.MOST_RECENT_CHANGESETS), gc);
 
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        pnl.add(lblQueries.get(BasicQuery.MOST_RECENT_CHANGESETS), gc);
-
         // -- most recent changes
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.weightx = 0.0;
         pnl.add(rbQueries.get(BasicQuery.MY_OPEN_CHANGESETS), gc);
 
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        pnl.add(lblQueries.get(BasicQuery.MY_OPEN_CHANGESETS), gc);
-
         // -- changesets in map view
-        gc.gridx = 0;
-        gc.gridy = 2;
-        gc.fill = GridBagConstraints.NONE;
-        gc.weightx = 0.0;
         pnl.add(rbQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW), gc);
 
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        pnl.add(lblQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW), gc);
-
         // -- checkbox my changesets only
-        gc.gridx = 0;
-        gc.gridy = 3;
         gc.gridwidth = 2;
         gc.insets = new Insets(5, 0, 3, 3);
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
         cbMyChangesetsOnly = new JCheckBox(tr("Download my changesets only"));
         pnl.add(cbMyChangesetsOnly, gc);
         cbMyChangesetsOnly.setToolTipText(
                 tr("<html>Select to restrict the query to your changesets only.<br>Unselect to include all changesets in the query.</html>"));
 
         // grab remaining space
-        gc.gridx = 0;
-        gc.gridy = 4;
-        gc.gridwidth = 2;
-        gc.insets = new Insets(5, 0, 3, 3);
-        gc.fill = GridBagConstraints.BOTH;
-        gc.weightx = 1.0;
-        gc.weighty = 1.0;
-        pnl.add(new JPanel(), gc);
+        pnl.add(new JPanel(), GBC.eol().insets(5, 0, 3, 3).fill());
 
         return pnl;
     }
@@ -162,12 +111,12 @@ public class BasicChangesetQueryPanel extends JPanel {
      * Initializes the panel.
      */
     public void init() {
-        JMultilineLabel lbl = lblQueries.get(BasicQuery.MOST_RECENT_CHANGESETS);
+        JRadioButton lbl = rbQueries.get(BasicQuery.MOST_RECENT_CHANGESETS);
         lbl.setText(tr("<html>Download the latest changesets</html>"));
 
         // query for open changesets only possible if we have a current user which is at least
         // partially identified
-        lbl = lblQueries.get(BasicQuery.MY_OPEN_CHANGESETS);
+        lbl = rbQueries.get(BasicQuery.MY_OPEN_CHANGESETS);
         if (UserIdentityManager.getInstance().isAnonymous()) {
             rbQueries.get(BasicQuery.MY_OPEN_CHANGESETS).setEnabled(false);
             lbl.setText(tr("<html>Download my open changesets<br><em>Disabled. " +
@@ -178,7 +127,7 @@ public class BasicChangesetQueryPanel extends JPanel {
         }
 
         // query for changesets in the current map view only if there *is* a current map view
-        lbl = lblQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW);
+        lbl = rbQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW);
         if (!MainApplication.isDisplayingMapView()) {
             rbQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW).setEnabled(false);
             lbl.setText(tr("<html>Download changesets in the current map view.<br><em>Disabled. " +

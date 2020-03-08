@@ -15,10 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * This panel allows to specify a changeset query
@@ -26,10 +26,10 @@ import org.openstreetmap.josm.spi.preferences.Config;
  */
 public class AdvancedChangesetQueryPanel extends JPanel {
 
-    private final JCheckBox cbUserRestriction = new JCheckBox();
-    private final JCheckBox cbOpenAndCloseRestrictions = new JCheckBox();
-    private final JCheckBox cbTimeRestrictions = new JCheckBox();
-    private final JCheckBox cbBoundingBoxRestriction = new JCheckBox();
+    private final JCheckBox cbUserRestriction = new JCheckBox(tr("Select changesets owned by specific users"));
+    private final JCheckBox cbOpenAndCloseRestrictions = new JCheckBox(tr("Select changesets depending on whether they are open or closed"));
+    private final JCheckBox cbTimeRestrictions = new JCheckBox(tr("Select changesets based on the date/time they have been created or closed"));
+    private final JCheckBox cbBoundingBoxRestriction = new JCheckBox(tr("Select only changesets related to a specific bounding box"));
     private final UserRestrictionPanel pnlUserRestriction = new UserRestrictionPanel();
     private final OpenAndCloseStateRestrictionPanel pnlOpenAndCloseRestriction = new OpenAndCloseStateRestrictionPanel();
     private final TimeRestrictionPanel pnlTimeRestriction = new TimeRestrictionPanel();
@@ -46,90 +46,33 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         ItemListener stateChangeHandler = new RestrictionGroupStateChangeHandler();
         JPanel pnl = new VerticallyScrollablePanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        GridBagConstraints gc = new GridBagConstraints();
+        GridBagConstraints gc = GBC.eol().fill(GridBagConstraints.HORIZONTAL);
 
         // -- select changesets by a specific user
         //
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 0.0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
         pnl.add(cbUserRestriction, gc);
         cbUserRestriction.addItemListener(stateChangeHandler);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(new JMultilineLabel(tr("Select changesets owned by specific users")), gc);
-
-        gc.gridy = 1;
-        gc.gridx = 1;
-        gc.weightx = 1.0;
         pnl.add(pnlUserRestriction, gc);
 
         // -- restricting the query to open and closed changesets
         //
-        gc.gridy = 2;
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 0.0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
         pnl.add(cbOpenAndCloseRestrictions, gc);
         cbOpenAndCloseRestrictions.addItemListener(stateChangeHandler);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(new JMultilineLabel(tr("Select changesets depending on whether they are open or closed")), gc);
-
-        gc.gridy = 3;
-        gc.gridx = 1;
-        gc.weightx = 1.0;
         pnl.add(pnlOpenAndCloseRestriction, gc);
 
         // -- restricting the query to a specific time
         //
-        gc.gridy = 4;
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 0.0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
         pnl.add(cbTimeRestrictions, gc);
         cbTimeRestrictions.addItemListener(stateChangeHandler);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(new JMultilineLabel(tr("Select changesets based on the date/time they have been created or closed")), gc);
-
-        gc.gridy = 5;
-        gc.gridx = 1;
-        gc.weightx = 1.0;
         pnl.add(pnlTimeRestriction, gc);
 
 
         // -- restricting the query to a specific bounding box
         //
-        gc.gridy = 6;
-        gc.gridx = 0;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 0.0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
         pnl.add(cbBoundingBoxRestriction, gc);
         cbBoundingBoxRestriction.addItemListener(stateChangeHandler);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(new JMultilineLabel(tr("Select only changesets related to a specific bounding box")), gc);
-
-        gc.gridy = 7;
-        gc.gridx = 1;
-        gc.weightx = 1.0;
         pnl.add(pnlBoundingBoxRestriction, gc);
 
-
-        gc.gridy = 8;
-        gc.gridx = 0;
-        gc.gridwidth = 2;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.weightx = 1.0;
-        gc.weighty = 1.0;
         pnl.add(new JPanel(), gc);
 
         return pnl;
@@ -230,26 +173,18 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
     class RestrictionGroupStateChangeHandler implements ItemListener {
         protected void userRestrictionStateChanged() {
-            if (pnlUserRestriction == null)
-                return;
             pnlUserRestriction.setVisible(cbUserRestriction.isSelected());
         }
 
         protected void openCloseRestrictionStateChanged() {
-            if (pnlOpenAndCloseRestriction == null)
-                return;
             pnlOpenAndCloseRestriction.setVisible(cbOpenAndCloseRestrictions.isSelected());
         }
 
         protected void timeRestrictionsStateChanged() {
-            if (pnlTimeRestriction == null)
-                return;
             pnlTimeRestriction.setVisible(cbTimeRestrictions.isSelected());
         }
 
         protected void boundingBoxRestrictionChanged() {
-            if (pnlBoundingBoxRestriction == null)
-                return;
             pnlBoundingBoxRestriction.setVisible(cbBoundingBoxRestriction.isSelected());
         }
 
