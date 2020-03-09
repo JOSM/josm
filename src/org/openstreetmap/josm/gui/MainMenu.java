@@ -401,7 +401,7 @@ public class MainMenu extends JMenuBar {
      * group is for currently open windows that cannot be toggled, e.g. relation editors. It's recommended
      * to use WINDOW_MENU_GROUP to determine the group integer.
      */
-    public final WindowMenu windowMenu = addMenu(new WindowMenu(), /* untranslated name */ "Windows", KeyEvent.VK_W, 11, ht("/Help/Windows"));
+    public final WindowMenu windowMenu = addMenu(new WindowMenu(), /* untranslated name */ "Windows", KeyEvent.VK_W, 11, ht("/Help/Menu/Windows"));
 
     /**
      * audioMenu contains all audio-related actions. Be careful, this menu is not guaranteed to be displayed at all
