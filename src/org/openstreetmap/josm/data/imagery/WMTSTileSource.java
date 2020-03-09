@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.swing.ListSelectionModel;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -327,11 +328,19 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             setContent(list);
         }
 
-        public DefaultLayer getSelectedLayer() {
-            Layer selectedLayer = list.getSelectedLayer();
-            return new DefaultLayer(ImageryType.WMTS, selectedLayer.identifier, selectedLayer.style, selectedLayer.tileMatrixSet.identifier);
+        @Override
+        public void setupDialog() {
+            super.setupDialog();
+            buttons.get(0).setEnabled(false);
+            ListSelectionModel selectionModel = list.getTable().getSelectionModel();
+            selectionModel.addListSelectionListener(e -> buttons.get(0).setEnabled(!selectionModel.isSelectionEmpty()));
         }
 
+        public DefaultLayer getSelectedLayer() {
+            Layer selectedLayer = list.getSelectedLayer();
+            return selectedLayer == null ? null :
+                    new DefaultLayer(ImageryType.WMTS, selectedLayer.identifier, selectedLayer.style, selectedLayer.tileMatrixSet.identifier);
+        }
     }
 
     private final Map<String, String> headers = new ConcurrentHashMap<>();
