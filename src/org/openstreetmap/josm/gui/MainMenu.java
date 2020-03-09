@@ -389,7 +389,6 @@ public class MainMenu extends JMenuBar {
      * imageryMenu contains all imagery-related actions
      */
     public final ImageryMenu imageryMenu = addMenu(new ImageryMenu(imagerySubMenu), /* untranslated name */ "Imagery", KeyEvent.VK_I, 9, ht("/Menu/Imagery"));
-    // CHECKSTYLE.ON: LineLength
     /**
      * gpsMenu contains all plugin actions that are related
      * to using GPS data, including opening, uploading and real-time tracking
@@ -402,6 +401,7 @@ public class MainMenu extends JMenuBar {
      * to use WINDOW_MENU_GROUP to determine the group integer.
      */
     public final WindowMenu windowMenu = addMenu(new WindowMenu(), /* untranslated name */ "Windows", KeyEvent.VK_W, 11, ht("/Help/Menu/Windows"));
+    // CHECKSTYLE.ON: LineLength
 
     /**
      * audioMenu contains all audio-related actions. Be careful, this menu is not guaranteed to be displayed at all
