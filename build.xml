@@ -372,7 +372,6 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-XDignore.symbol.file"/>
             <compilerarg value="-Xplugin:ErrorProne -Xep:ReferenceEquality:OFF -Xep:ImmutableEnumChecker:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:FloatingPointLiteralPrecision:OFF -Xep:ShortCircuitBoolean:OFF -Xep:StringSplitter:OFF -Xep:JdkObsolete:OFF -Xep:UnnecessaryParentheses:OFF -Xep:EqualsGetClass:OFF -Xep:ThreadPriorityCheck:OFF -Xep:UndefinedEquals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:OverrideThrowableToString:OFF -Xep:JavaTimeDefaultTimeZone:OFF -Xep:UnusedVariable:OFF -Xep:EqualsUsingHashCode:OFF -Xep:BadImport:OFF -Xep:UnnecessaryLambda:OFF -Xep:AnnotateFormatMethod:OFF -Xep:MutablePublicArray:OFF"/>
             <compilerarg line="-Xmaxwarns 1000"/>
-            <exclude name="org/openstreetmap/josm/io/audio/fx/*.java" if:set="noJavaFX"/>
             <classpath>
                 <path refid="runtime.path"/>
             </classpath>
@@ -411,7 +410,6 @@ Build-Date: ${build.tstamp}
             <arg value="-html5" if:set="isJava9" />
             <arg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
             <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
-            <excludepackage name="org/openstreetmap/josm/io/audio/fx" if:set="noJavaFX" />
         </javadoc>
     </target>
     <target name="clean" depends="init-properties">
