@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.openstreetmap.josm.data.osm.TagMap;
+
 /**
  * Internationalisation support.
  *
@@ -340,6 +342,12 @@ public final class I18n {
         return num == 1 ? text : plural;
     }
 
+    /**
+     * Espaces the special i18n characters <code>'{}</code> with quotes.
+     * @param msg unescaped string
+     * @return escaped string
+     * @since 4477
+     */
     public static String escape(String msg) {
         if (msg == null) return null;
         return msg.replace("\'", "\'\'").replace("{", "\'{\'").replace("}", "\'}\'");
@@ -621,6 +629,26 @@ public final class I18n {
                     strings = null;
                     pstrings = null;
                 }
+            }
+        }
+    }
+
+    /**
+     * Updates the default locale : overrides the numbering system, if defined in internal boudnaries.xml for the current language/country.
+     * @since 16109
+     */
+    public static void initializeNumberingFormat() {
+        Locale l = Locale.getDefault();
+        TagMap tags = Territories.getCustomTags(l.getCountry());
+        if (tags != null) {
+            String numberingSystem = tags.get("ldml:nu:" + l.getLanguage());
+            if (numberingSystem != null && !numberingSystem.equals(l.getExtension(Locale.UNICODE_LOCALE_EXTENSION))) {
+                Locale.setDefault(new Locale.Builder()
+                        .setLanguage(l.getLanguage())
+                        .setRegion(l.getCountry())
+                        .setVariant(l.getVariant())
+                        .setExtension(Locale.UNICODE_LOCALE_EXTENSION, numberingSystem)
+                        .build());
             }
         }
     }

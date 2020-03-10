@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -57,6 +59,9 @@ public final class Territories {
     private static volatile Map<String, GeoPropertyIndex<Boolean>> iso3166Cache;
     private static volatile Map<String, TaginfoRegionalInstance> taginfoCache;
     private static volatile Map<String, TaginfoRegionalInstance> taginfoGeofabrikCache;
+    private static volatile Map<String, TagMap> customTagsCache;
+
+    private static final List<String> KNOWN_KEYS = Arrays.asList(ISO3166_1, ISO3166_2, TAGINFO, "type", "name:en", "driving_side", "note");
 
     private Territories() {
         // Hide implicit public constructor for utility classes
@@ -127,6 +132,7 @@ public final class Territories {
     private static void initializeInternalData() {
         iso3166Cache = new HashMap<>();
         taginfoCache = new TreeMap<>();
+        customTagsCache = new TreeMap<>();
         try (CachedFile cf = new CachedFile("resource://data/" + FILENAME);
                 InputStream is = cf.getInputStream()) {
             dataSet = OsmReader.parseDataSet(is, null);
@@ -136,6 +142,8 @@ public final class Territories {
                 String iso1 = osm.get(ISO3166_1);
                 String iso2 = osm.get(ISO3166_2);
                 if (iso1 != null || iso2 != null) {
+                    TagMap tags = osm.getKeys();
+                    KNOWN_KEYS.forEach(tags::remove);
                     GeoProperty<Boolean> gp;
                     if (osm instanceof Way) {
                         gp = new DefaultGeoProperty(Collections.singleton((Way) osm));
@@ -143,20 +151,27 @@ public final class Territories {
                         gp = new DefaultGeoProperty((Relation) osm);
                     }
                     GeoPropertyIndex<Boolean> gpi = new GeoPropertyIndex<>(gp, 24);
+                    addInCache(iso1, gpi, tags);
+                    addInCache(iso2, gpi, tags);
                     if (iso1 != null) {
-                        iso3166Cache.put(iso1, gpi);
                         String taginfo = osm.get(TAGINFO);
                         if (taginfo != null) {
                             taginfoCache.put(iso1, new TaginfoRegionalInstance(taginfo, Collections.singleton(iso1)));
                         }
                     }
-                    if (iso2 != null) {
-                        iso3166Cache.put(iso2, gpi);
-                    }
                 }
             }
         } catch (IOException | IllegalDataException ex) {
             throw new JosmRuntimeException(ex);
+        }
+    }
+
+    private static void addInCache(String code, GeoPropertyIndex<Boolean> gpi, TagMap tags) {
+        if (code != null) {
+            iso3166Cache.put(code, gpi);
+            if (!tags.isEmpty()) {
+                customTagsCache.put(code, tags);
+            }
         }
     }
 
@@ -214,5 +229,16 @@ public final class Territories {
                 .flatMap(code -> Stream.of(taginfoCache, taginfoGeofabrikCache).map(cache -> cache.get(code)))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the map of custom tags for a territory with the given ISO3166-1 or ISO3166-2 code.
+     *
+     * @param code the ISO3166-1 or ISO3166-2 code
+     * @return the map of custom tags for a territory with the given ISO3166-1 or ISO3166-2 code, or {@code null}
+     * @since 16109
+     */
+    public static TagMap getCustomTags(String code) {
+        return code != null ? customTagsCache.get(code) : null;
     }
 }

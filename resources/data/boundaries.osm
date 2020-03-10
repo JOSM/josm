@@ -21387,6 +21387,7 @@
     <nd ref='-3794' />
     <nd ref='-7116' />
     <tag k='ISO3166-1:alpha2' v='BH' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Bahrain' />
   </way>
   <way id='-28952'>
@@ -26616,6 +26617,7 @@
     <nd ref='-9966' />
     <nd ref='-9548' />
     <tag k='ISO3166-1:alpha2' v='EG' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Egypt, Arab Rep.' />
   </way>
   <way id='-29014'>
@@ -30197,6 +30199,7 @@
     <nd ref='-9542' />
     <nd ref='-9490' />
     <tag k='ISO3166-1:alpha2' v='IQ' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Iraq' />
   </way>
   <way id='-29074'>
@@ -30447,6 +30450,7 @@
     <nd ref='-9604' />
     <nd ref='-9584' />
     <tag k='ISO3166-1:alpha2' v='JO' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Jordan' />
   </way>
   <way id='-29080'>
@@ -31298,6 +31302,7 @@
     <nd ref='-2838' />
     <nd ref='-9888' />
     <tag k='ISO3166-1:alpha2' v='KH' />
+    <tag k='ldml:nu:km' v='khmr' />
     <tag k='name:en' v='Cambodia' />
   </way>
   <way id='-29088'>
@@ -31457,6 +31462,7 @@
     <nd ref='-9494' />
     <nd ref='-9928' />
     <tag k='ISO3166-1:alpha2' v='KW' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Kuwait' />
   </way>
   <way id='-29096'>
@@ -31863,6 +31869,7 @@
     <nd ref='-2974' />
     <nd ref='-11224' />
     <tag k='ISO3166-1:alpha2' v='LB' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Lebanon' />
   </way>
   <way id='-29100'>
@@ -36220,6 +36227,7 @@
     <nd ref='-3876' />
     <nd ref='-11040' />
     <tag k='ISO3166-1:alpha2' v='QA' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Qatar' />
   </way>
   <way id='-29178'>
@@ -36679,6 +36687,7 @@
     <nd ref='-9514' />
     <nd ref='-9512' />
     <tag k='ISO3166-1:alpha2' v='SA' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Saudi Arabia' />
   </way>
   <way id='-29188'>
@@ -38156,6 +38165,7 @@
     <nd ref='-11290' />
     <nd ref='-11220' />
     <tag k='ISO3166-1:alpha2' v='SY' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Syrian Arab Republic' />
   </way>
   <way id='-29216'>
@@ -41299,6 +41309,7 @@
     <nd ref='-28042' />
     <nd ref='-11556' />
     <tag k='ISO3166-1:alpha2' v='YE' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Yemen, Rep.' />
   </way>
   <way id='-29264'>
@@ -58296,6 +58307,7 @@
     <member type='way' ref='-28918' role='outer' />
     <member type='way' ref='-28920' role='inner' />
     <tag k='ISO3166-1:alpha2' v='AE' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='United Arab Emirates' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -58508,6 +58520,7 @@
     <member type='way' ref='-28916' role='inner' />
     <member type='way' ref='-29158' role='outer' />
     <tag k='ISO3166-1:alpha2' v='OM' />
+    <tag k='ldml:nu:ar' v='arab' />
     <tag k='name:en' v='Oman' />
     <tag k='type' v='multipolygon' />
   </relation>

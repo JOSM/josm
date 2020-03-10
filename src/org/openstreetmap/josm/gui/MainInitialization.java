@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateForma
 import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
@@ -97,8 +96,8 @@ public class MainInitialization implements InitializationSequence {
                         // This is a rare situation - probably only occurs if the user changes the API URL in the preferences menu.
                         // Otherwise they would not have been able to load the layers in the first place because they would have been disabled
                         if (MainApplication.isDisplayingMapView()) {
-                            for (Layer l : MainApplication.getLayerManager().getLayersOfType(ImageryLayer.class)) {
-                                if (((ImageryLayer) l).getInfo().isBlacklisted()) {
+                            for (ImageryLayer l : MainApplication.getLayerManager().getLayersOfType(ImageryLayer.class)) {
+                                if (l.getInfo().isBlacklisted()) {
                                     Logging.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
                                     MainApplication.getLayerManager().removeLayer(l);
                                 }
@@ -115,6 +114,7 @@ public class MainInitialization implements InitializationSequence {
                     }
                 }),
             new InitializationTask(tr("Initializing internal traffic data"), RightAndLefthandTraffic::initialize),
+            new InitializationTask(tr("Initializing numbering format"), I18n::initializeNumberingFormat),
             new InitializationTask(tr("Initializing validator"), OsmValidator::initialize),
             new InitializationTask(tr("Initializing presets"), TaggingPresets::initialize),
             new InitializationTask(tr("Initializing map styles"), MapPaintPreference::initialize),

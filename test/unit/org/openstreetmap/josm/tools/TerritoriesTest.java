@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -88,5 +89,15 @@ public class TerritoriesTest {
         String error = Logging.getLastErrorAndWarnings().get(0);
         assertTrue(error, error.startsWith("W: Failed to parse external taginfo data at "));
         assertTrue(error, error.contains(": Invalid token=EOF at (line no=3,"));
+    }
+
+    /**
+     * Unit test of {@link Territories#getCustomTags}
+     */
+    @Test
+    public void testGetCustomTags() {
+        assertNull(Territories.getCustomTags(null));
+        assertNull(Territories.getCustomTags("foo"));
+        assertEquals("arab", Territories.getCustomTags("BH").get("ldml:nu:ar"));
     }
 }
