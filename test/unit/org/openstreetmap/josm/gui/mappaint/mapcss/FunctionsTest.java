@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.openstreetmap.josm.data.osm.OsmPrimitiveType.NODE;
 
 import org.junit.Rule;
@@ -87,5 +88,19 @@ public class FunctionsTest {
     @Test
     public void testOsmTimestamp() {
         assertEquals(0, Functions.osm_timestamp(new EnvBuilder(NODE).build()));
+    }
+
+    /**
+     * Unit test of {@code Functions#to_xxx}
+     */
+    @Test
+    public void testParseFunctions() {
+        assertTrue(Functions.to_boolean("true"));
+        assertEquals(1, Functions.to_byte("1"));
+        assertEquals(1, Functions.to_short("1"));
+        assertEquals(1, Functions.to_int("1"));
+        assertEquals(1L, Functions.to_long("1"));
+        assertEquals(1f, Functions.to_float("1"), 1e-10);
+        assertEquals(1d, Functions.to_double("1"), 1e-10);
     }
 }

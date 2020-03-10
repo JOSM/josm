@@ -1191,4 +1191,81 @@ public final class Functions {
     public static boolean at(Environment env, double lat, double lon) { // NO_UCD (unused code)
         return new LatLon(lat, lon).equalsEpsilon(center(env));
     }
+
+    /**
+     * Parses the string argument as a boolean.
+     * @param value the {@code String} containing the boolean representation to be parsed
+     * @return the boolean represented by the string argument
+     * @see Boolean#parseBoolean
+     * @since 16110
+     */
+    public static boolean to_boolean(String value) { // NO_UCD (unused code)
+        return Boolean.parseBoolean(value);
+    }
+
+    /**
+     * Parses the string argument as a byte.
+     * @param value the {@code String} containing the byte representation to be parsed
+     * @return the byte represented by the string argument
+     * @see Byte#parseByte
+     * @since 16110
+     */
+    public static byte to_byte(String value) { // NO_UCD (unused code)
+        return Byte.parseByte(value);
+    }
+
+    /**
+     * Parses the string argument as a short.
+     * @param value the {@code String} containing the short representation to be parsed
+     * @return the short represented by the string argument
+     * @see Short#parseShort
+     * @since 16110
+     */
+    public static short to_short(String value) { // NO_UCD (unused code)
+        return Short.parseShort(value);
+    }
+
+    /**
+     * Parses the string argument as an int.
+     * @param value the {@code String} containing the int representation to be parsed
+     * @return the int represented by the string argument
+     * @see Integer#parseInt
+     * @since xxx
+     */
+    public static int to_int(String value) { // NO_UCD (unused code)
+        return Integer.parseInt(value);
+    }
+
+    /**
+     * Parses the string argument as a long.
+     * @param value the {@code String} containing the long representation to be parsed
+     * @return the long represented by the string argument
+     * @see Long#parseLong
+     * @since 16110
+     */
+    public static long to_long(String value) { // NO_UCD (unused code)
+        return Long.parseLong(value);
+    }
+
+    /**
+     * Parses the string argument as a float.
+     * @param value the {@code String} containing the float representation to be parsed
+     * @return the float represented by the string argument
+     * @see Float#parseFloat
+     * @since 16110
+     */
+    public static float to_float(String value) { // NO_UCD (unused code)
+        return Float.parseFloat(value);
+    }
+
+    /**
+     * Parses the string argument as a double.
+     * @param value the {@code String} containing the double representation to be parsed
+     * @return the double represented by the string argument
+     * @see Double#parseDouble
+     * @since 16110
+     */
+    public static double to_double(String value) { // NO_UCD (unused code)
+        return Double.parseDouble(value);
+    }
 }
