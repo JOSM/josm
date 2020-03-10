@@ -14,8 +14,9 @@ public final class UniqueIdGenerator {
     /**
      * Generates a new primitive unique id.
      * @return new primitive unique (negative) id
+     * @since 16108 (made public)
      */
-    long generateUniqueId() {
+    public long generateUniqueId() {
         return idCounter.decrementAndGet();
     }
 
