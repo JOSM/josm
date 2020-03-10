@@ -343,7 +343,7 @@ public final class I18n {
     }
 
     /**
-     * Espaces the special i18n characters <code>'{}</code> with quotes.
+     * Escapes the special i18n characters <code>'{}</code> with quotes.
      * @param msg unescaped string
      * @return escaped string
      * @since 4477

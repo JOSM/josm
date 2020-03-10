@@ -114,7 +114,11 @@ public class MainInitialization implements InitializationSequence {
                     }
                 }),
             new InitializationTask(tr("Initializing internal traffic data"), RightAndLefthandTraffic::initialize),
-            new InitializationTask(tr("Initializing numbering format"), I18n::initializeNumberingFormat),
+            new InitializationTask(tr("Initializing numbering format"), () -> {
+                if (Config.getPref().getBoolean("override.numbering.format", true)) {
+                    I18n.initializeNumberingFormat();
+                }
+            }),
             new InitializationTask(tr("Initializing validator"), OsmValidator::initialize),
             new InitializationTask(tr("Initializing presets"), TaggingPresets::initialize),
             new InitializationTask(tr("Initializing map styles"), MapPaintPreference::initialize),
