@@ -82,12 +82,12 @@ public class OpeningHourTestTest {
     public void testI18n() {
         final String key = "opening_hours";
         String value = ".";
-        assertEquals("Vorgefunden wurde:  \".\" \". \" in Zeile 0, Zeichen 0\nErwartet wurde: <EOF>",
+        assertEquals("Vorgefunden wurde:  \".\" \". \" in Zeile 0, Spalte 0\nErwartet wurde: <EOF>",
                 checkOpeningHourSyntax(key, value, Locale.GERMAN).get(0).getDescription());
         assertEquals("Encountered:  \".\" \". \" at line 0, column 0\nWas expecting: <EOF>",
                 checkOpeningHourSyntax(key, value, Locale.ENGLISH).get(0).getDescription());
         value = "Mon-Thu 12-18";
-        assertEquals("Wochentag mit 3 Buchstaben in Zeile 1, Zeichen 4",
+        assertEquals("Wochentag mit 3 Buchstaben in Zeile 1, Spalte 4",
                 checkOpeningHourSyntax(key, value, Locale.GERMAN).get(0).getDescription());
         assertEquals("Three character weekday at line 1, column 4",
                 checkOpeningHourSyntax(key, value, Locale.ENGLISH).get(0).getDescription());
