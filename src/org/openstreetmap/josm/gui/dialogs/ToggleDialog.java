@@ -975,6 +975,14 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         return data;
     }
 
+    /**
+     * Clear button actions. Should be used when recreating the layout with sidebuttons, and the previous sidebuttons are no longer desired.
+     * @since 16113
+     */
+    public void clearButtonActions() {
+        buttonActions.clear();
+    }
+
     @Override
     public void eventDispatched(AWTEvent event) {
         if (event instanceof MouseEvent && isShowing() && !isCollapsed && isDocked && buttonHiding == ButtonHidingType.DYNAMIC
