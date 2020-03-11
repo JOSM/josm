@@ -986,7 +986,7 @@
                 <combo key="wheelchair" text="Wheelchairs" values="yes,designated,limited,no" />
                 <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" />
                 <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" />
-                <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" /> -->
+                <check key="segregated" text="Segregated" />
             </optional>
         </item> <!-- Path -->
         <separator/>
@@ -1021,6 +1021,7 @@
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="foot" text="Pedestrians" values="yes,no,designated" />
+                <check key="segregated" text="Segregated" />
             </optional>
         </item> <!-- Dedicated Cycleway -->
         <item name="Segregated Foot- and Cycleway" icon="presets/transport/way/segregated_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
@@ -1057,6 +1058,7 @@
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="bicycle" text="Bicycle" values="yes,no,designated" />
+                <check key="segregated" text="Segregated" />
             </optional>
         </item> <!-- Dedicated Footway -->
         <item name="Steps" icon="presets/transport/way/steps.svg" type="way" preset_name_label="true">

@@ -1230,7 +1230,7 @@ public final class Functions {
      * @param value the {@code String} containing the int representation to be parsed
      * @return the int represented by the string argument
      * @see Integer#parseInt
-     * @since xxx
+     * @since 16110
      */
     public static int to_int(String value) { // NO_UCD (unused code)
         return Integer.parseInt(value);
