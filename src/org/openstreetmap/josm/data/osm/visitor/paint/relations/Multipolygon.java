@@ -590,7 +590,6 @@ public class Multipolygon {
         final Way[] joinArray = waysToJoin.toArray(new Way[0]);
         int left = waysToJoin.size();
         while (left > 0) {
-            Way w = null;
             boolean selected = false;
             List<Node> nodes = null;
             Set<Long> wayIds = new HashSet<>();
@@ -598,54 +597,36 @@ public class Multipolygon {
             while (joined && left > 0) {
                 joined = false;
                 for (int i = 0; i < joinArray.length && left != 0; ++i) {
-                    if (joinArray[i] != null) {
-                        Way c = joinArray[i];
-                        if (c.getNodesCount() == 0) {
-                            continue;
-                        }
-                        if (w == null) {
-                            w = c;
-                            selected = w.isSelected();
+                    Way c = joinArray[i];
+                    if (c != null && c.getNodesCount() > 0) {
+                        if (nodes == null) {
+                            // new ring
+                            selected = c.isSelected();
                             joinArray[i] = null;
                             --left;
+                            nodes = new ArrayList<>(c.getNodes());
+                            wayIds.add(c.getUniqueId());
                         } else {
+                            int cl = c.getNodesCount() - 1;
+                            int nl = nodes.size() - 1;
                             int mode = 0;
-                            int cl = c.getNodesCount()-1;
-                            int nl;
-                            if (nodes == null) {
-                                nl = w.getNodesCount()-1;
-                                if (w.getNode(nl) == c.getNode(0)) {
-                                    mode = 21;
-                                } else if (w.getNode(nl) == c.getNode(cl)) {
-                                    mode = 22;
-                                } else if (w.getNode(0) == c.getNode(0)) {
-                                    mode = 11;
-                                } else if (w.getNode(0) == c.getNode(cl)) {
-                                    mode = 12;
-                                }
-                            } else {
-                                nl = nodes.size()-1;
-                                if (nodes.get(nl) == c.getNode(0)) {
-                                    mode = 21;
-                                } else if (nodes.get(0) == c.getNode(cl)) {
-                                    mode = 12;
-                                } else if (nodes.get(0) == c.getNode(0)) {
-                                    mode = 11;
-                                } else if (nodes.get(nl) == c.getNode(cl)) {
-                                    mode = 22;
-                                }
+                            if (nodes.get(nl) == c.getNode(0)) {
+                                mode = 21;
+                            } else if (nodes.get(0) == c.getNode(cl)) {
+                                mode = 12;
+                            } else if (nodes.get(0) == c.getNode(0)) {
+                                mode = 11;
+                            } else if (nodes.get(nl) == c.getNode(cl)) {
+                                mode = 22;
                             }
                             if (mode != 0) {
+                                // found a connection
                                 joinArray[i] = null;
                                 joined = true;
                                 if (c.isSelected()) {
                                     selected = true;
                                 }
                                 --left;
-                                if (nodes == null) {
-                                    nodes = new ArrayList<>(w.getNodes());
-                                    wayIds.add(w.getUniqueId());
-                                }
                                 if (mode == 21) {
                                     nodes.addAll(c.getNodes().subList(1, cl + 1));
                                 } else if (mode == 12) {
@@ -664,11 +645,6 @@ public class Multipolygon {
                         }
                     }
                 }
-            }
-
-            if (nodes == null && w != null) {
-                nodes = w.getNodes();
-                wayIds.add(w.getUniqueId());
             }
 
             if (nodes != null) {
