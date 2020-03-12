@@ -620,6 +620,7 @@ Build-Date: ${build.tstamp}
 
         -dontoptimize
         -dontobfuscate
+        -dontwarn org.jetbrains.annotations.**
 
         # These options probably are not necessary (and make processing a bit slower)
         -dontskipnonpubliclibraryclasses
