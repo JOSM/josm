@@ -744,7 +744,6 @@
                             <xs:element name="minimum-tile-expire" minOccurs="0" maxOccurs="1" type="xs:positiveInteger" />
                         </xs:choice>
                     </xs:sequence>
-                    <xs:attribute name="last-check" type="xs:date" use="optional" />
                     <xs:attribute name="eli-best" type="xs:boolean" use="optional" />
                     <xs:attribute name="overlay" type="xs:boolean" use="optional" />
                 </xs:complexType>
