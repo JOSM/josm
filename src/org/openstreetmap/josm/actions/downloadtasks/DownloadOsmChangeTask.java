@@ -143,7 +143,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
         private HistoryLoaderAndListener(Map<OsmPrimitive, Date> toLoad) {
             this.toLoad = toLoad;
             this.setChangesetDataNeeded(false);
-            add(toLoad.keySet());
+            addOsmPrimitives(toLoad.keySet());
             // Updating process is done after all history requests have been made
             HistoryDataSet.getInstance().addHistoryDataSetListener(this);
         }

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
@@ -56,7 +58,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
     private static HistoryBrowserDialogManager instance;
 
-    private final Map<Long, HistoryBrowserDialog> dialogs;
+    private final Map<Long, HistoryBrowserDialog> dialogs = new HashMap<>();
 
     private final Predicate<PrimitiveId> unloadedHistoryPredicate = new UnloadedHistoryPredicate();
 
@@ -65,7 +67,6 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     private static final List<HistoryHook> hooks = new ArrayList<>();
 
     protected HistoryBrowserDialogManager() {
-        dialogs = new HashMap<>();
         MainApplication.getLayerManager().addLayerChangeListener(this);
     }
 
@@ -146,19 +147,16 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
     /**
      * Hides and destroys all currently visible history browser dialogs
-     *
+     * @since 2448
      */
     public void hideAll() {
-        List<HistoryBrowserDialog> dialogs = new ArrayList<>();
-        dialogs.addAll(this.dialogs.values());
-        for (HistoryBrowserDialog dialog: dialogs) {
-            hide(dialog);
-        }
+        dialogs.values().forEach(this::hide);
     }
 
     /**
      * Show history dialog for the given history.
      * @param h History to show
+     * @since 2448
      */
     public void show(History h) {
         if (h == null)
@@ -166,8 +164,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         if (existsDialog(h.getId())) {
             show(h.getId());
         } else {
-            HistoryBrowserDialog dialog = new HistoryBrowserDialog(h);
-            show(h.getId(), dialog);
+            show(h.getId(), new HistoryBrowserDialog(h));
         }
     }
 
@@ -217,25 +214,31 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
      * @param primitives The primitive(s) for which history will be displayed
      */
     public void showHistory(final Collection<? extends PrimitiveId> primitives) {
+        showHistory(MainApplication.getMainFrame(), primitives);
+    }
+
+    /**
+     * Show history dialog(s) for the given primitive(s).
+     * @param parent Parent component for displayed dialog boxes
+     * @param primitives The primitive(s) for which history will be displayed
+     * @since 16123
+     */
+    public void showHistory(Component parent, final Collection<? extends PrimitiveId> primitives) {
         final List<PrimitiveId> realPrimitives = new ArrayList<>(primitives);
         hooks.forEach(h -> h.modifyRequestedIds(realPrimitives));
         final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(realPrimitives, notNewPredicate);
         if (notNewPrimitives.isEmpty()) {
             JOptionPane.showMessageDialog(
-                    MainApplication.getMainFrame(),
+                    parent,
                     tr("Please select at least one already uploaded node, way, or relation."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        Collection<? extends PrimitiveId> toLoad = SubclassFilteredCollection.filter(realPrimitives, unloadedHistoryPredicate);
+        Collection<? extends PrimitiveId> toLoad = SubclassFilteredCollection.filter(notNewPrimitives, unloadedHistoryPredicate);
         if (!toLoad.isEmpty()) {
-            HistoryLoadTask task = new HistoryLoadTask();
-            for (PrimitiveId p : notNewPrimitives) {
-                task.add(p);
-            }
-            MainApplication.worker.submit(task);
+            MainApplication.worker.submit(new HistoryLoadTask(parent).addPrimitiveIds(toLoad));
         }
 
         Runnable r = () -> {
@@ -243,6 +246,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
                 for (PrimitiveId p : notNewPrimitives) {
                     final History h = HistoryDataSet.getInstance().getHistory(p);
                     if (h == null) {
+                        Logging.warn("{0} not found in HistoryDataSet", p);
                         continue;
                     }
                     SwingUtilities.invokeLater(() -> show(h));

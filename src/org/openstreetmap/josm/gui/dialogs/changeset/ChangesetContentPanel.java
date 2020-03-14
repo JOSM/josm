@@ -23,6 +23,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -35,6 +36,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -126,6 +128,9 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         );
         tblContent.setAutoCreateRowSorter(true);
         tblContent.addMouseListener(new PopupMenuLauncher(new ChangesetContentTablePopupMenu()));
+        HistoryInfoAction historyAction = MainApplication.getMenu().historyinfo;
+        tblContent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(historyAction.getShortcut().getKeyStroke(), "historyAction");
+        tblContent.getActionMap().put("historyAction", historyAction);
         pnl.add(new JScrollPane(tblContent), BorderLayout.CENTER);
         return pnl;
     }

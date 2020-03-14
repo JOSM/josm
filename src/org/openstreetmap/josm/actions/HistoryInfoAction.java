@@ -6,8 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.OsmData;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.OsmIdSelectionDialog;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
@@ -37,6 +42,25 @@ public class HistoryInfoAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        // Generic handling of tables displaying OSM primitives
+        if (ae.getSource() instanceof JTable) {
+            JTable table = (JTable) ae.getSource();
+            Set<PrimitiveId> sel = new HashSet<>();
+            for (int row : table.getSelectedRows()) {
+                for (int col = 0; col < table.getModel().getColumnCount(); col++) {
+                    Object value = table.getModel().getValueAt(row, col);
+                    if (value instanceof PrimitiveId) {
+                        sel.add((PrimitiveId) value);
+                        break;
+                    }
+                }
+            }
+            if (!sel.isEmpty()) {
+                HistoryBrowserDialogManager.getInstance().showHistory(sel);
+                return;
+            }
+        }
+        // Otherwise show history for currently selected objects
         OsmData<?, ?, ?, ?> set = getLayerManager().getActiveData();
         if (set != null && !set.selectionEmpty()) {
             HistoryBrowserDialogManager.getInstance().showHistory(set.getAllSelected());

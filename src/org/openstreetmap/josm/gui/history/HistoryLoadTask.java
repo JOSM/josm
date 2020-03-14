@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -67,11 +68,10 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @param parent the component to be used as reference to find the
      * parent for {@link org.openstreetmap.josm.gui.PleaseWaitDialog}.
      * Must not be <code>null</code>.
-     * @throws IllegalArgumentException if parent is <code>null</code>
+     * @throws NullPointerException if parent is <code>null</code>
      */
     public HistoryLoadTask(Component parent) {
-        super(parent, tr("Load history"), true);
-        CheckParameterUtil.ensureParameterNotNull(parent, "parent");
+        super(Objects.requireNonNull(parent, "parent"), tr("Load history"), true);
     }
 
     /**
@@ -91,10 +91,9 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      *
      * @param primitive the history item
      * @return this task
-     * @throws IllegalArgumentException if primitive is null
+     * @throws NullPointerException if primitive is null
      */
     public HistoryLoadTask add(HistoryOsmPrimitive primitive) {
-        CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
         return add(primitive.getPrimitiveId());
     }
 
@@ -103,10 +102,9 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      *
      * @param history the history. Must not be null.
      * @return this task
-     * @throws IllegalArgumentException if history is null
+     * @throws NullPointerException if history is null
      */
     public HistoryLoadTask add(History history) {
-        CheckParameterUtil.ensureParameterNotNull(history, "history");
         return add(history.getPrimitiveId());
     }
 
@@ -115,7 +113,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      *
      * @param primitive the OSM primitive. Must not be null. primitive.getOsmId() &gt; 0 required.
      * @return this task
-     * @throws IllegalArgumentException if the primitive is null
+     * @throws NullPointerException if the primitive is null
      * @throws IllegalArgumentException if primitive.getOsmId() &lt;= 0
      */
     public HistoryLoadTask add(OsmPrimitive primitive) {
@@ -129,16 +127,27 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @param primitives the OSM primitives. Must not be <code>null</code>.
      * <code>primitive.getId() &gt; 0</code> required.
      * @return this task
-     * @throws IllegalArgumentException if primitives is <code>null</code>
+     * @throws NullPointerException if primitives is null
      * @throws IllegalArgumentException if one of the ids in the collection &lt;= 0
+     * @since 16123
      */
-    public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) {
-        CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
-        for (OsmPrimitive primitive: primitives) {
-            if (primitive != null) {
-                add(primitive);
-            }
-        }
+    public HistoryLoadTask addPrimitiveIds(Collection<? extends PrimitiveId> primitives) {
+        primitives.forEach(this::add);
+        return this;
+    }
+
+    /**
+     * Adds a collection of objects to loaded, specified by a collection of OSM primitives.
+     *
+     * @param primitives the OSM primitives. Must not be <code>null</code>.
+     * <code>primitive.getId() &gt; 0</code> required.
+     * @return this task
+     * @throws NullPointerException if primitives is null
+     * @throws IllegalArgumentException if one of the ids in the collection &lt;= 0
+     * @since 16123
+     */
+    public HistoryLoadTask addOsmPrimitives(Collection<? extends OsmPrimitive> primitives) {
+        primitives.forEach(this::add);
         return this;
     }
 

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -164,14 +165,13 @@ public class HistoryDataSet implements LayerChangeListener {
      * @param pid the primitive id. Must not be null.
      * @return the history for a primitive with id <code>id</code>. null, if no
      * such history exists
-     * @throws IllegalArgumentException if pid is null
+     * @throws NullPointerException if pid is null
      */
     public History getHistory(PrimitiveId pid) {
-        CheckParameterUtil.ensureParameterNotNull(pid, "pid");
-        List<HistoryOsmPrimitive> versions = data.get(pid);
-        if (versions == null && pid instanceof IPrimitive) {
-            versions = data.get(((IPrimitive) pid).getPrimitiveId());
-        }
+        PrimitiveId key = pid instanceof IPrimitive ? ((IPrimitive) pid).getPrimitiveId()
+                        : pid instanceof HistoryOsmPrimitive ? ((HistoryOsmPrimitive) pid).getPrimitiveId()
+                        : pid;
+        List<HistoryOsmPrimitive> versions = data.get(Objects.requireNonNull(key, "key"));
         if (versions == null)
             return null;
         for (HistoryOsmPrimitive i : versions) {

@@ -15,7 +15,6 @@ import java.util.Objects;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -31,7 +30,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * Represents an immutable OSM primitive in the context of a historical view on OSM data.
  * @since 1670
  */
-public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryOsmPrimitive> {
+public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryOsmPrimitive>, PrimitiveId {
 
     private long id;
     private boolean visible;
@@ -203,11 +202,15 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
         return this.id == id;
     }
 
-    /**
-     * Returns the primitive type.
-     * @return the primitive type
-     */
-    public abstract OsmPrimitiveType getType();
+    @Override
+    public final long getUniqueId() {
+        return getId();
+    }
+
+    @Override
+    public final boolean isNew() {
+        return false;
+    }
 
     @Override
     public int compareTo(HistoryOsmPrimitive o) {
