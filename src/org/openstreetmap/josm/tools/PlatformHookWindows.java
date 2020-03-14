@@ -52,6 +52,7 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
@@ -339,11 +340,19 @@ public class PlatformHookWindows implements PlatformHook {
     @Override
     public X509Certificate getX509Certificate(NativeCertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
         // Get Windows Trust Root Store
         KeyStore ks = getRootKeystore();
         // Search by alias (fast)
         for (String winAlias : certAmend.getNativeAliases()) {
             Certificate result = ks.getCertificate(winAlias);
+            // Check for SHA-256 signature, as sometimes Microsoft can ship several certificates with the same alias, for example:
+            // AC RAIZ FNMT-RCM: EBC5570C29018C4D67B1AA127BAF12F703B4611EBC17B7DAB5573894179B93FA (SHA256)
+            // AC RAIZ FNMT-RCM: 4D9EBB28825C9643AB15D54E5F9614F13CB3E95DE3CF4EAC971301F320F9226E (SHA1)
+            if (!sha256matches(result, certAmend, md)) {
+                Logging.trace("Ignoring {0} as SHA-256 signature does not match", result);
+                result = null;
+            }
             if (result == null && !NetworkManager.isOffline(OnlineResource.CERTIFICATES)) {
                 // Make a web request to target site to force Windows to update if needed its trust root store from its certificate trust list
                 // A better, but a lot more complex method might be to get certificate list from Windows Registry with PowerShell
@@ -359,18 +368,21 @@ public class PlatformHookWindows implements PlatformHook {
             }
         }
         // If not found, search by SHA-256 (slower)
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
         for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
             String alias = aliases.nextElement();
             Certificate result = ks.getCertificate(alias);
-            if (result instanceof X509Certificate
-                    && certAmend.getSha256().equalsIgnoreCase(Utils.toHexString(md.digest(result.getEncoded())))) {
+            if (sha256matches(result, certAmend, md)) {
                 Logging.warn("Certificate not found for alias ''{0}'' but found for alias ''{1}''", certAmend.getNativeAliases(), alias);
                 return (X509Certificate) result;
             }
         }
         // Not found
         return null;
+    }
+
+    private static boolean sha256matches(Certificate result, NativeCertAmend certAmend, MessageDigest md) throws CertificateEncodingException {
+        return result instanceof X509Certificate
+                && certAmend.getSha256().equalsIgnoreCase(Utils.toHexString(md.digest(result.getEncoded())));
     }
 
     @Override

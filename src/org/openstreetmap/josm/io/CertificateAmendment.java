@@ -150,8 +150,11 @@ public final class CertificateAmendment {
     /**
      * Certificates looked into platform native keystore and not embedded in JOSM.
      * Identifiers must match Windows/macOS keystore aliases and Unix filenames for efficient search.
-     * To find correct values, see https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReport
-     * and https://support.apple.com/en-us/HT208127
+     * To find correct values, see:<ul>
+     * <li><a href="https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReport">Mozilla List</a></li>
+     * <li><a href="https://ccadb-public.secure.force.com/microsoft/IncludedCACertificateReportForMSFT">Microsoft List</a></li>
+     * <li><a href="https://support.apple.com/en-us/HT210770">Apple List</a></li>
+     * </ul>
      */
     private static final NativeCertAmend[] PLATFORM_CERT_AMEND = {
         // Let's Encrypt - should be included in JDK, but problems with Ubuntu 18.04, see #15851
@@ -189,6 +192,11 @@ public final class CertificateAmendment {
                 "Microsec_e-Szigno_Root_CA_2009.pem",
                 "3c5f81fea5fab82c64bfa2eaecafcde8e077fc8620a7cae537163df36edbf378",
                 "https://e-szigno.hu"),
+        // #18920 - Spanish Government - https://www.sede.fnmt.gob.es/descargas/certificados-raiz-de-la-fnmt
+        new NativeCertAmend(Collections.singleton("AC RAIZ FNMT-RCM"),
+                "AC_RAIZ_FNMT-RCM.pem",
+                "ebc5570c29018c4d67b1aa127baf12f703b4611ebc17b7dab5573894179b93fa",
+                "https://www.sede.fnmt.gob.es"),
     };
 
     private CertificateAmendment() {

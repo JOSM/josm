@@ -61,7 +61,7 @@ public class ProgramArguments {
         DOWNLOADGPS(true),
         /** --selection=&lt;searchstring&gt;           Select with the given search */
         SELECTION(true),
-        /** --offline=&lt;osm_api|josm_website|all&gt; Disable access to the given resource(s), delimited by comma */
+        /** --offline=&lt;osm_api|josm_website|certificates|all&gt; Disable access to the given resource(s), delimited by comma */
         OFFLINE(true),
         /** --skip-plugins */
         SKIP_PLUGINS(false);
