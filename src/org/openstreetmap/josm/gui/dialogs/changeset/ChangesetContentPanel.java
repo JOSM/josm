@@ -13,8 +13,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -62,7 +64,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  *
  * It listens to property change events for {@link ChangesetCacheManagerModel#CHANGESET_IN_DETAIL_VIEW_PROP}
  * and updates its view accordingly.
- *
+ * @since 2689
  */
 public class ChangesetContentPanel extends JPanel implements PropertyChangeListener, ChangesetAware {
 
@@ -75,7 +77,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     private ZoomInCurrentLayerAction actZoomInCurrentLayerAction;
 
     private final HeaderPanel pnlHeader = new HeaderPanel();
-    public DownloadObjectAction actDownloadObjectAction;
+    protected DownloadObjectAction actDownloadObjectAction;
 
     protected void buildModels() {
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
@@ -130,7 +132,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     protected JPanel buildActionButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JToolBar tb = new JToolBar(JToolBar.VERTICAL);
+        JToolBar tb = new JToolBar(SwingConstants.VERTICAL);
         tb.setFloatable(false);
 
         tb.add(actDownloadContentAction);
@@ -320,21 +322,12 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
     abstract class SelectionBasedAction extends AbstractAction implements ListSelectionListener, ActiveLayerChangeListener {
 
         protected Set<OsmPrimitive> getTarget() {
-            if (!isEnabled()) {
-                return null;
-            }
             DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-            if (ds == null) {
-                return null;
+            if (isEnabled() && ds != null) {
+                return model.getSelectedPrimitives().stream()
+                        .map(p -> ds.getPrimitiveById(p.getPrimitiveId())).filter(Objects::nonNull).collect(Collectors.toSet());
             }
-            Set<OsmPrimitive> target = new HashSet<>();
-            for (HistoryOsmPrimitive p : model.getSelectedPrimitives()) {
-                OsmPrimitive op = ds.getPrimitiveById(p.getPrimitiveId());
-                if (op != null) {
-                    target.add(op);
-                }
-            }
-            return target;
+            return Collections.emptySet();
         }
 
         public final void updateEnabledState() {
@@ -364,9 +357,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         @Override
         public void actionPerformed(ActionEvent e) {
             final Set<OsmPrimitive> target = getTarget();
-            if (target == null) {
-                return;
-            } else if (target.isEmpty()) {
+            if (target.isEmpty()) {
                 alertNoPrimitivesTo(model.getSelectedPrimitives(), tr("Nothing to select"),
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer"));
                 return;
@@ -387,9 +378,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         @Override
         public void actionPerformed(ActionEvent e) {
             final Set<OsmPrimitive> target = getTarget();
-            if (target == null) {
-                return;
-            } else if (target.isEmpty()) {
+            if (target.isEmpty()) {
                 alertNoPrimitivesTo(model.getSelectedPrimitives(), tr("Nothing to zoom to"),
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo"));
                 return;
