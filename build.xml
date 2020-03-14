@@ -1094,7 +1094,8 @@ Build-Date: ${build.tstamp}
         <move file="${modules.dir}/dots/summary.dot.png" tofile="${modules.dir}/josm-with-all-dependencies.png"/>
     </target>
     <target name="resolve" depends="init-ivy" unless="resolve.notRequired" description="Resolve Ivy dependencies">
-        <ivy:resolve keep="true"/>
+        <ivy:settings file="${base.dir}/ivysettings.xml"/>
+        <ivy:resolve file="${base.dir}/ivy.xml" keep="true"/>
         <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
         <ivy:cachepath pathid="compile.path" conf="compile"/>
         <ivy:cachepath pathid="runtime.path" conf="runtime"/>
