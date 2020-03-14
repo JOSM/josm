@@ -314,6 +314,7 @@ public class ImageryPreferenceTestIT {
         if (eula != null) {
             checkLinkUrl(info, eula.replaceAll("\\{lang\\}", ""));
         }
+        checkLinkUrl(info, info.getPrivacyPolicyURL());
         checkLinkUrl(info, info.getPermissionReferenceURL());
         checkLinkUrl(info, info.getTermsOfUseURL());
         if (info.getUrl().contains("{time}")) {
