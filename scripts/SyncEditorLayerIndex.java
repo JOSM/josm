@@ -441,6 +441,8 @@ public class SyncEditorLayerIndex {
                 stream.write("        <terms-of-use-url>"+cdata(t)+"</terms-of-use-url>\n");
             if (isNotBlank(t = getPermissionReferenceUrl(e)))
                 stream.write("        <permission-ref>"+cdata(t)+"</permission-ref>\n");
+            if (isNotBlank(t = getPrivacyPolicyUrl(e)))
+                stream.write("        <privacy-policy-url>"+cdata(t)+"</privacy-policy-url>\n");
             if ((getValidGeoreference(e)))
                 stream.write("        <valid-georeference>true</valid-georeference>\n");
             if (isNotBlank(t = getIcon(e)))
@@ -756,6 +758,7 @@ public class SyncEditorLayerIndex {
             ImageryInfo j = josmUrls.get(url);
 
             compareDescriptions(e, j);
+            comparePrivacyPolicyUrls(e, j);
             comparePermissionReferenceUrls(e, j);
             compareAttributionUrls(e, j);
             compareAttributionTexts(e, j);
@@ -776,6 +779,20 @@ public class SyncEditorLayerIndex {
                 myprintln("* Description differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
             } else if (!optionNoEli) {
                 myprintln("+ Missing ELI description ('"+jt+"'): "+getDescription(j));
+            }
+        }
+    }
+
+    void comparePrivacyPolicyUrls(JsonObject e, ImageryInfo j) {
+        String et = getPrivacyPolicyUrl(e);
+        String jt = getPrivacyPolicyUrl(j);
+        if (!Objects.equals(et, jt)) {
+            if (isBlank(jt)) {
+                myprintln("- Missing JOSM privacy policy URL ("+et+"): "+getDescription(j));
+            } else if (isNotBlank(et)) {
+                myprintln("+ Privacy policy URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
+            } else if (!optionNoEli) {
+                myprintln("+ Missing ELI privacy policy URL ('"+jt+"'): "+getDescription(j));
             }
         }
     }
@@ -1446,6 +1463,11 @@ public class SyncEditorLayerIndex {
     static String getPermissionReferenceUrl(Object e) {
         if (e instanceof ImageryInfo) return ((ImageryInfo) e).getPermissionReferenceURL();
         return ((Map<String, JsonObject>) e).get("properties").getString("license_url", null);
+    }
+
+    static String getPrivacyPolicyUrl(Object e) {
+        if (e instanceof ImageryInfo) return ((ImageryInfo) e).getPrivacyPolicyURL();
+        return ((Map<String, JsonObject>) e).get("properties").getString("privacy_policy_url", null);
     }
 
     static Map<String, Set<String>> getNoTileHeader(Object e) {

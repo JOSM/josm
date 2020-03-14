@@ -664,6 +664,8 @@
                             <xs:element name="max-zoom" minOccurs="0" maxOccurs="1" type="tns:zoom" />
                             <!-- The area of use, e.g. <bounds min-lat='45.7' min-lon='5.9' max-lat='55.0' max-lon='17.3'/> -->
                             <xs:element name="bounds" minOccurs="0" maxOccurs="1" type="tns:bounds" />
+                            <!-- A link to the privacy policy of the operator -->
+                            <xs:element name="privacy-policy-url" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
                             <!-- Provide a source that this background can be used for OSM. A page on the OSM-wiki with additional explanation and further references is preferred, but other sources (for example the license text) can also be linked. -->
                             <xs:element name="permission-ref" minOccurs="0" maxOccurs="1" type="xs:anyURI" />
                             <!-- A link to an EULA text that has to be accepted by the user, before the imagery source is added. -->

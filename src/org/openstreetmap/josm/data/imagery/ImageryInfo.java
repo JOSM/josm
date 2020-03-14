@@ -259,6 +259,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String langDescription;
     /** Text of a text attribution displayed when using the imagery */
     private String attributionText;
+    /** Link to the privacy policy of the operator */
+    private String privacyPolicyURL;
     /** Link to a reference stating the permission for OSM usage */
     private String permissionReferenceURL;
     /** Link behind the text attribution displayed when using the imagery */
@@ -827,6 +829,16 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         return permissionReferenceURL;
     }
 
+    /**
+     * Return the privacy policy URL.
+     * @return The url
+     * @see #setPrivacyPolicyURL
+     * @since 16127
+     */
+    public String getPrivacyPolicyURL() {
+        return privacyPolicyURL;
+    }
+
     @Override
     public Image getAttributionImage() {
         ImageIcon i = ImageProvider.getIfAvailable(attributionImage);
@@ -904,6 +916,16 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setPermissionReferenceURL(String url) {
         permissionReferenceURL = url;
+    }
+
+    /**
+     * Sets the privacy policy URL.
+     * @param url The url.
+     * @see #getPrivacyPolicyURL()
+     * @since 16127
+     */
+    public void setPrivacyPolicyURL(String url) {
+        privacyPolicyURL = url;
     }
 
     /**

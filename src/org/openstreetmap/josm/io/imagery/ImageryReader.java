@@ -219,6 +219,7 @@ public class ImageryReader implements Closeable {
                         "logo-url",
                         "terms-of-use-text",
                         "terms-of-use-url",
+                        "privacy-policy-url",
                         "permission-ref",
                         "country-code",
                         "category",
@@ -483,6 +484,9 @@ public class ImageryReader implements Closeable {
                     break;
                 case "terms-of-use-text":
                     entry.setTermsOfUseText(accumulator.toString());
+                    break;
+                case "privacy-policy-url":
+                    entry.setPrivacyPolicyURL(accumulator.toString());
                     break;
                 case "permission-ref":
                     entry.setPermissionReferenceURL(accumulator.toString());
