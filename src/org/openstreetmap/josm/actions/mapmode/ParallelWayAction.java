@@ -503,7 +503,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         if (referenceSegment == null)
             return false;
 
-        sourceWays.removeIf(w -> w.isIncomplete() || w.getNodesCount() == 0);
+        sourceWays.removeIf(w -> w.isIncomplete() || w.isEmpty());
 
         if (!sourceWays.contains(referenceSegment.way)) {
             clearSourceWays();

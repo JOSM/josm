@@ -173,7 +173,7 @@ public class DatasetConsistencyTest {
     public void checkZeroNodesWays() {
         final Stopwatch stopwatch = Stopwatch.createStarted();
         for (Way way : dataSet.getWays()) {
-            if (way.isUsable() && way.getNodesCount() == 0) {
+            if (way.isUsable() && way.isEmpty()) {
                 printError("WARN - ZERO NODES", "Way %s has zero nodes", way);
             } else if (way.isUsable() && way.getNodesCount() == 1) {
                 printError("WARN - NO NODES", "Way %s has only one node", way);

@@ -23,6 +23,15 @@ public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
     int getMembersCount();
 
     /**
+     * Determines if this relation is empty, i.e. it has no members.
+     * @return {@code true} if this relation is empty, i.e. it has no members
+     * @since 16119
+     */
+    default boolean isEmpty() {
+        return getMembersCount() == 0;
+    }
+
+    /**
      * Returns the relation member at the specified index.
      * @param index the index of the relation member
      * @return relation member at the specified index

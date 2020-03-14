@@ -1016,7 +1016,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     void fireWayNodesChanged(Way way) {
-        if (way.getNodesCount() > 0) {
+        if (!way.isEmpty()) {
             store.reindexWay(way, Way::updatePosition, Relation::updatePosition);
         }
         fireEvent(new WayNodesChangedEvent(this, way));

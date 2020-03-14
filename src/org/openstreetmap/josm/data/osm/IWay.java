@@ -18,6 +18,15 @@ public interface IWay<N extends INode> extends IPrimitive {
     int getNodesCount();
 
     /**
+     * Determines if this way is empty, i.e. it has no nodes.
+     * @return {@code true} if this way is empty, i.e. it has no nodes
+     * @since 16119
+     */
+    default boolean isEmpty() {
+        return getNodesCount() == 0;
+    }
+
+    /**
      * Replies the real number of nodes in this way (full number of nodes minus one if this way is closed)
      *
      * @return the real number of nodes in this way.

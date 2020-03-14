@@ -423,7 +423,7 @@ public class Multipolygon {
                     List<Way> waysToJoin = new ArrayList<>();
                     for (Long wayId : wayIds) {
                         Way w = (Way) ds.getPrimitiveById(wayId, OsmPrimitiveType.WAY);
-                        if (w != null && w.getNodesCount() > 0) { // fix #7173 (empty ways on purge)
+                        if (w != null && !w.isEmpty()) { // fix #7173 (empty ways on purge)
                             waysToJoin.add(w);
                         }
                     }
@@ -598,7 +598,7 @@ public class Multipolygon {
                 joined = false;
                 for (int i = 0; i < joinArray.length && left != 0; ++i) {
                     Way c = joinArray[i];
-                    if (c != null && c.getNodesCount() > 0) {
+                    if (c != null && !c.isEmpty()) {
                         if (nodes == null) {
                             // new ring
                             selected = c.isSelected();

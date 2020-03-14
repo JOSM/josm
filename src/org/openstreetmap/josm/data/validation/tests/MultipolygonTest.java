@@ -92,7 +92,7 @@ public class MultipolygonTest extends Test {
 
     @Override
     public void visit(Relation r) {
-        if (r.isMultipolygon() && r.getMembersCount() > 0) {
+        if (r.isMultipolygon() && !r.isEmpty()) {
             List<TestError> tmpErrors = new ArrayList<>(30);
             boolean hasUnexpectedWayRoles = checkMembersAndRoles(r, tmpErrors);
             boolean hasRepeatedMembers = checkRepeatedWayMembers(r);

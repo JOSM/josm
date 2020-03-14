@@ -125,7 +125,7 @@ public class UntaggedWay extends Test {
             }
         }
 
-        if (w.getNodesCount() == 0) {
+        if (w.isEmpty()) {
             errors.add(TestError.builder(this, Severity.ERROR, EMPTY_WAY)
                     .message(tr("Empty ways"))
                     .primitives(w)

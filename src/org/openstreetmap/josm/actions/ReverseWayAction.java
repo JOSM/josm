@@ -116,7 +116,7 @@ public final class ReverseWayAction extends JosmAction {
             return;
 
         final Collection<Way> sel = new LinkedHashSet<>(ds.getSelectedWays());
-        sel.removeIf(Way::isIncomplete);
+        sel.removeIf(w -> w.isIncomplete() || w.isEmpty());
         if (sel.isEmpty()) {
             new Notification(
                     tr("Please select at least one way."))
@@ -128,14 +128,14 @@ public final class ReverseWayAction extends JosmAction {
 
         Collection<Command> c = new LinkedList<>();
         for (Way w : sel) {
-            ReverseWayResult revResult;
             try {
-                revResult = reverseWay(w);
+                c.addAll(reverseWay(w).getCommands());
+            } catch (IllegalArgumentException ex) {
+                Logging.error(ex);
             } catch (UserCancelException ex) {
                 Logging.trace(ex);
                 return;
             }
-            c.addAll(revResult.getCommands());
         }
         UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Reverse Ways"), c));
     }
@@ -144,6 +144,7 @@ public final class ReverseWayAction extends JosmAction {
      * Reverses a given way.
      * @param w the way
      * @return the reverse command and the tag correction commands
+     * @throws IllegalArgumentException if sanity checks fail
      * @throws UserCancelException if user cancels a reverse warning dialog
      */
     public static ReverseWayResult reverseWay(Way w) throws UserCancelException {

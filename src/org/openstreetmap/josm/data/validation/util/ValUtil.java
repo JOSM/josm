@@ -33,7 +33,7 @@ public final class ValUtil {
      * @return A list with all the cells the way starts or ends
      */
     public static List<List<Way>> getWaysInCell(Way w, Map<Point2D, List<Way>> cellWays) {
-        if (w.getNodesCount() == 0)
+        if (w.isEmpty())
             return Collections.emptyList();
 
         Node n1 = w.getNode(0);

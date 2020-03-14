@@ -31,6 +31,7 @@ public class ChangeCommand extends Command {
      * Constructs a new {@code ChangeCommand} in the context of {@code osm} data set.
      * @param osm The existing primitive to modify. It must belong to a data set
      * @param newOsm The new primitive
+     * @throws IllegalArgumentException if sanity checks fail
      */
     public ChangeCommand(OsmPrimitive osm, OsmPrimitive newOsm) {
         this(osm.getDataSet(), osm, newOsm);
@@ -41,6 +42,7 @@ public class ChangeCommand extends Command {
      * @param data The data set
      * @param osm The existing primitive to modify
      * @param newOsm The new primitive
+     * @throws IllegalArgumentException if sanity checks fail
      * @since 11240
      */
     public ChangeCommand(DataSet data, OsmPrimitive osm, OsmPrimitive newOsm) {
@@ -53,7 +55,7 @@ public class ChangeCommand extends Command {
     private void sanityChecks() {
         CheckParameterUtil.ensureParameterNotNull(osm, "osm");
         CheckParameterUtil.ensureParameterNotNull(newOsm, "newOsm");
-        if (newOsm instanceof Way && ((Way) newOsm).getNodesCount() == 0) {
+        if (newOsm instanceof Way && ((Way) newOsm).isEmpty()) {
             // Do not allow to create empty ways (see #7465)
             throw new IllegalArgumentException(tr("New way {0} has 0 nodes", newOsm));
         }

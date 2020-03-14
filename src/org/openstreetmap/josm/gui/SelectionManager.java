@@ -390,7 +390,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
 
             // ways
             for (Way w : ds.getWays()) {
-                if (!w.isSelectable() || w.getNodesCount() == 0) {
+                if (!w.isSelectable() || w.isEmpty()) {
                     continue;
                 }
                 if (alt) {

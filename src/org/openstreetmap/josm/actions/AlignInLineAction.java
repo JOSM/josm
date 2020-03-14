@@ -255,8 +255,10 @@ public final class AlignInLineAction extends JosmAction {
         for (Way w: ways) {
             if (w.isClosed())
                 throw new InvalidSelection(tr("Can not align a polygon. Abort."));
-            nodes.addAll(w.getNodes());
-            lines.put(w, new Line(w));
+            if (!w.isEmpty()) {
+                nodes.addAll(w.getNodes());
+                lines.put(w, new Line(w));
+            }
         }
         if (nodes.isEmpty()) {
             throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
