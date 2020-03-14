@@ -271,6 +271,7 @@ public class ChangesetCacheManager extends JFrame {
                 new ChangesetCacheTableColumnModel(),
                 model.getSelectionModel()
         );
+        tblChangesets.setAutoCreateRowSorter(true);
         tblChangesets.addMouseListener(new MouseEventHandler());
         InputMapUtils.addEnterAction(tblChangesets, new ShowDetailAction(model));
         model.getSelectionModel().addListSelectionListener(new ChangesetDetailViewSynchronizer(model));

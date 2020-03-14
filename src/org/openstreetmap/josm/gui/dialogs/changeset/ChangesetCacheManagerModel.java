@@ -129,7 +129,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     @Override
     public int getColumnCount() {
-        return 5;
+        return 8;
     }
 
     @Override
