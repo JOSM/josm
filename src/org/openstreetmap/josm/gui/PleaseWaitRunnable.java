@@ -137,7 +137,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
     @Override
     public final void run() {
         if (EventQueue.isDispatchThread()) {
-            new Thread((Runnable) this::doRealRun, getClass().getName()).start();
+            new Thread(this::doRealRun, getClass().getName()).start();
         } else {
             doRealRun();
         }

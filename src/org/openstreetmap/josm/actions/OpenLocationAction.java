@@ -272,13 +272,12 @@ public class OpenLocationAction extends JosmAction {
             return Collections.emptyList();
         }
 
-        PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
-
         List<Future<?>> result = new ArrayList<>();
         for (final DownloadTask task : tasks) {
             try {
                 task.setZoomAfterDownload(zoomToData);
-                result.add(MainApplication.worker.submit(new PostDownloadHandler(task, task.loadUrl(settings, url, monitor))));
+                result.add(MainApplication.worker.submit(new PostDownloadHandler(task, task.loadUrl(settings, url,
+                        new PleaseWaitProgressMonitor(tr("Download data"))))));
             } catch (IllegalArgumentException e) {
                 Logging.error(e);
             }
