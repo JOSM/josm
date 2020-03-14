@@ -862,7 +862,7 @@ Build-Date: ${build.tstamp}
             <java classname="TagInfoExtract" failonerror="true" fork="false">
                 <sysproperty key="java.awt.headless" value="true"/>
                 <classpath>
-                    <pathelement path="${dist.jar}"/>
+                    <pathelement path="${build.dir}"/>
                     <pathelement path="${script-build.dir}"/>
                     <pathelement path="${guava.jar}"/>
                     <pathelement path="${commons-lang3.jar}"/>
@@ -888,7 +888,7 @@ Build-Date: ${build.tstamp}
         <echo message="Checking editor imagery difference"/>
         <java classname="SyncEditorLayerIndex" failonerror="true" fork="false">
             <classpath>
-                <pathelement path="${dist.jar}"/>
+                <pathelement path="${build.dir}"/>
                 <pathelement path="${script-build.dir}"/>
                 <pathelement path="${guava.jar}"/>
                 <pathelement path="${commons-lang3.jar}"/>
