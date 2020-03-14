@@ -112,6 +112,7 @@ public class ImageryReader implements Closeable {
         private static final String MAX_ZOOM = "max-zoom";
         private static final String MIN_ZOOM = "min-zoom";
         private static final String TILE_SIZE = "tile-size";
+        private static final String PRIVACY_POLICY_URL = "privacy-policy-url";
         private static final String TRUE = "true";
 
         private StringBuilder accumulator = new StringBuilder();
@@ -192,6 +193,7 @@ public class ImageryReader implements Closeable {
                         "id",
                         MIN_ZOOM,
                         MAX_ZOOM,
+                        PRIVACY_POLICY_URL,
                         TILE_SIZE
                 ).contains(qName)) {
                     newState = State.MIRROR_ATTRIBUTE;
@@ -219,7 +221,7 @@ public class ImageryReader implements Closeable {
                         "logo-url",
                         "terms-of-use-text",
                         "terms-of-use-url",
-                        "privacy-policy-url",
+                        PRIVACY_POLICY_URL,
                         "permission-ref",
                         "country-code",
                         "category",
@@ -375,6 +377,9 @@ public class ImageryReader implements Closeable {
                     case "url":
                         mirrorEntry.setUrl(accumulator.toString());
                         break;
+                    case PRIVACY_POLICY_URL:
+                        mirrorEntry.setPrivacyPolicyURL(accumulator.toString());
+                        break;
                     case MIN_ZOOM:
                     case MAX_ZOOM:
                         Integer val = null;
@@ -485,7 +490,7 @@ public class ImageryReader implements Closeable {
                 case "terms-of-use-text":
                     entry.setTermsOfUseText(accumulator.toString());
                     break;
-                case "privacy-policy-url":
+                case PRIVACY_POLICY_URL:
                     entry.setPrivacyPolicyURL(accumulator.toString());
                     break;
                 case "permission-ref":
