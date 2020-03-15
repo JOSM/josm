@@ -110,19 +110,6 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
     }
 
     /**
-     * Launches the internal help browser and directs it to the help page for
-     * <code>helpTopic</code>.
-     *
-     * @param helpTopic the help topic
-     */
-    public static void launchBrowser(String helpTopic) {
-        HelpBrowser browser = getInstance();
-        browser.openHelpTopic(helpTopic);
-        browser.setVisible(true);
-        browser.toFront();
-    }
-
-    /**
      * Builds the style sheet used in the internal help browser
      *
      * @return the style sheet
