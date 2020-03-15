@@ -35,7 +35,7 @@ public class HistoryInfoAction extends JosmAction {
                 Shortcut.registerShortcut("core:historyinfo",
                         tr("History"), KeyEvent.VK_H, Shortcut.CTRL), false);
         setHelpId(ht("/Action/ObjectHistory"));
-        putValue("toolbar", "action/historyinfo");
+        setToolbarId("action/historyinfo");
         MainApplication.getToolbar().register(this);
         setEnabled(true);
     }

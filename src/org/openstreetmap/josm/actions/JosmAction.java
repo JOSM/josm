@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -74,7 +75,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      *            won't be assigned a shortcut unless the user configures one. If you pass null here,
      *            the user CANNOT configure a shortcut for your action.
      * @param registerInToolbar register this action for the toolbar preferences?
-     * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
+     * @param toolbarId identifier for the toolbar preferences
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
     public JosmAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar,
@@ -98,7 +99,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         }
         setTooltip(tooltip);
         if (getValue("toolbar") == null) {
-            putValue("toolbar", toolbarId);
+            setToolbarId(toolbarId);
         }
         if (registerInToolbar && MainApplication.getToolbar() != null) {
             MainApplication.getToolbar().register(this);
@@ -291,8 +292,22 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         setHelpId(helpId);
     }
 
+    /**
+     * Sets the help topic id.
+     * @param helpId help topic id (result of {@link HelpUtil#ht})
+     * @since 14397
+     */
     protected void setHelpId(String helpId) {
         putValue("help", helpId);
+    }
+
+    /**
+     * Sets the toolbar id.
+     * @param toolbarId toolbar id
+     * @since 16138
+     */
+    protected void setToolbarId(String toolbarId) {
+        putValue("toolbar", toolbarId);
     }
 
     /**

@@ -55,7 +55,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
 
         AdjustImageryOffsetAction() {
             super(tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false);
-            putValue("toolbar", "imagery-offset");
+            setToolbarId("imagery-offset");
             MainApplication.getToolbar().register(this);
         }
 

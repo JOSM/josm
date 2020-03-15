@@ -23,7 +23,7 @@ public class TaggingPresetSearchAction extends JosmAction {
     public TaggingPresetSearchAction() {
         super(tr("Search preset..."), "dialogs/search", tr("Show preset search dialog"),
                 Shortcut.registerShortcut("preset:search", tr("Search presets"), KeyEvent.VK_F3, Shortcut.DIRECT), false);
-        putValue("toolbar", "presets/search");
+        setToolbarId("presets/search");
         MainApplication.getToolbar().register(this);
     }
 

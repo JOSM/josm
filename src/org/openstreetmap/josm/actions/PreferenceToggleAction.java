@@ -30,7 +30,7 @@ public class PreferenceToggleAction extends JosmAction implements PreferenceChan
      */
     public PreferenceToggleAction(String name, String tooltip, String prefKey, boolean prefDefault) {
         super(name, null, tooltip, null, false);
-        putValue("toolbar", "toggle-" + prefKey);
+        setToolbarId("toggle-" + prefKey);
         this.pref = new BooleanProperty(prefKey, prefDefault);
         checkbox = new JCheckBoxMenuItem(this);
         checkbox.setSelected(pref.get());

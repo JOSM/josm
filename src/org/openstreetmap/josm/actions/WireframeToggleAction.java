@@ -29,7 +29,7 @@ public class WireframeToggleAction extends ToggleAction {
               Shortcut.registerShortcut("menu:view:wireframe", tr("Toggle Wireframe view"), KeyEvent.VK_W, Shortcut.CTRL),
               false /* register toolbar */
         );
-        putValue("toolbar", "wireframe");
+        setToolbarId("wireframe");
         MainApplication.getToolbar().register(this);
         setSelected(MapRendererFactory.getInstance().isWireframeMapRendererActive());
         notifySelectedState();

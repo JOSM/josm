@@ -114,7 +114,7 @@ public class ExpertToggleAction extends ToggleAction {
               null,
               false /* register toolbar */
         );
-        putValue("toolbar", "expertmode");
+        setToolbarId("expertmode");
         if (MainApplication.getToolbar() != null) {
             MainApplication.getToolbar().register(this);
         }

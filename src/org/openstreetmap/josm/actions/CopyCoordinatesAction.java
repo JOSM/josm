@@ -28,7 +28,7 @@ public class CopyCoordinatesAction extends JosmAction {
                 Shortcut.registerShortcut("copy:coordinates", tr("Edit: {0}", tr("Copy Coordinates")),
                 KeyEvent.VK_C, Shortcut.CTRL_SHIFT),
                 false);
-        putValue("toolbar", "copy/coordinates");
+        setToolbarId("copy/coordinates");
     }
 
     @Override

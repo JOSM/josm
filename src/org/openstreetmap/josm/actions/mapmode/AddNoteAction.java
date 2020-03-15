@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -16,7 +17,6 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -36,8 +36,7 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
     public AddNoteAction(NoteData data) {
         super(tr("Add a new Note"), "addnote", tr("Add note mode"),
             ImageProvider.getCursor("crosshair", "create_note"));
-        CheckParameterUtil.ensureParameterNotNull(data, "data");
-        noteData = data;
+        noteData = Objects.requireNonNull(data, "data");
     }
 
     @Override

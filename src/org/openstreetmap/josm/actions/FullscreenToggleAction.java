@@ -43,7 +43,7 @@ public class FullscreenToggleAction extends ToggleAction {
               false /* register */
         );
         setHelpId(ht("/Action/FullscreenView"));
-        putValue("toolbar", "fullscreen");
+        setToolbarId("fullscreen");
         MainApplication.getToolbar().register(this);
         gd = GraphicsEnvironment.isHeadless() ? null : GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         setSelected(Config.getPref().getBoolean("draw.fullscreen", false));
