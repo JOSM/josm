@@ -622,6 +622,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.description = i.description;
         this.langDescription = i.langDescription;
         this.attributionText = i.attributionText;
+        this.privacyPolicyURL = i.privacyPolicyURL;
         this.permissionReferenceURL = i.permissionReferenceURL;
         this.attributionLinkURL = i.attributionLinkURL;
         this.attributionImage = i.attributionImage;
@@ -1554,6 +1555,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                n.imageryType = i.imageryType;
                if (i.getTileSize() != 0) {
                    n.setTileSize(i.getTileSize());
+               }
+               if (i.getPrivacyPolicyURL() != null) {
+                   n.setPrivacyPolicyURL(i.getPrivacyPolicyURL());
                }
                if (n.id != null) {
                    n.id = n.id + "_mirror"+num;
