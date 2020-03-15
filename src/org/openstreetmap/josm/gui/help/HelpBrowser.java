@@ -33,6 +33,7 @@ import javax.swing.text.Document;
 import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
@@ -50,6 +51,8 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * Help browser displaying HTML pages fetched from JOSM wiki.
  */
 public class HelpBrowser extends JFrame implements IHelpBrowser {
+
+    private static final BooleanProperty USE_EXTERNAL_BROWSER = new BooleanProperty("help.use-external-browser", false);
 
     /** the unique instance */
     private static HelpBrowser instance;
@@ -102,6 +105,13 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
      */
     public static void setUrlForHelpTopic(final String helpTopic) {
         final HelpBrowser browser = getInstance();
+        if (Boolean.TRUE.equals(USE_EXTERNAL_BROWSER.get())) {
+            SwingUtilities.invokeLater(() -> {
+                browser.loadRelativeHelpTopic(helpTopic);
+                OpenBrowser.displayUrl(browser.url);
+            });
+            return;
+        }
         SwingUtilities.invokeLater(() -> {
             browser.openHelpTopic(helpTopic);
             browser.setVisible(true);
