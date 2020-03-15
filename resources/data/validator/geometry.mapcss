@@ -404,18 +404,3 @@ area:closed2[aeroway] ⊉ way[building=hangar][!aeroway] {
   suggestAlternative: "building=industrial";
   suggestAlternative: "building=warehouse";
 }
-
-/* #17533 - Check waterway flow direction */
-*[waterway][waterway!=drain] > node:connection {
-  set notDrain;
-}
-way[waterway=drain] >[index!=1] node:connection {
-  set notDrainFirstNode;
-}
-way[waterway=drain] >[index!=-1] node:connection {
-  set notDrainLastNode;
-}
-way[waterway=drain] > node:connection!.notDrainFirstNode!.notDrain,
-way[waterway=drain] > node:connection!.notDrainLastNode!.notDrain {
-  throwWarning: tr("incorrect drain flow direction");
-}
