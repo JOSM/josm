@@ -40,6 +40,7 @@
         </condition>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
+        <property name="resources.dir" location="${base.dir}/resources"/>
         <property name="modules.dir" location="${dist.dir}/modules"/>
         <property name="tools.dir" location="${base.dir}/tools"/>
         <property name="pmd.dir" location="${tools.dir}/pmd"/>
@@ -50,7 +51,7 @@
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="script-build.dir" location="${base.dir}/build2"/>
         <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
-        <property name="epsg.output" location="${base.dir}/resources/data/projection/custom-epsg"/>
+        <property name="epsg.output" location="${resources.dir}/data/projection/custom-epsg"/>
         <property name="error_prone_core.jar" location="${tools.dir}/error_prone_core.jar"/>
         <property name="error_prone_javac.jar" location="${tools.dir}/error_prone_javac.jar"/>
         <property name="auto-value-annotations.jar" location="${tools.dir}/auto-value-annotations.jar"/>
@@ -96,7 +97,7 @@
                 <include name="**/*.jar"/>
             </fileset>
             <pathelement path="${build.dir}"/>
-            <pathelement path="${base.dir}/resources"/>
+            <pathelement path="${resources.dir}"/>
             <pathelement path="${failureaccess.jar}"/>
             <pathelement path="${guava.jar}"/>
             <pathelement path="${commons-lang3.jar}"/>
@@ -187,8 +188,8 @@ Build-Date: ${build.tstamp}
       ** Check internal XML files against their XSD
     -->
     <target name="check-schemas" unless="check-schemas.notRequired" depends="init-properties">
-        <schemavalidate file="resources/data/defaultpresets.xml" >
-            <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="resources/data/tagging-preset.xsd" />
+        <schemavalidate file="${resources.dir}/data/defaultpresets.xml" >
+            <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="${resources.dir}/data/tagging-preset.xsd" />
         </schemavalidate>
     </target>
     <!--
@@ -379,7 +380,7 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="copy-resources" description="Copy resource files to build directory">
         <copy todir="build" failonerror="no" includeemptydirs="no">
-            <fileset dir="resources"/>
+            <fileset dir="${resources.dir}"/>
         </copy>
     </target>
     <target name="init" depends="init-properties">
@@ -1019,7 +1020,7 @@ Build-Date: ${build.tstamp}
         <java classname="BuildProjectionDefinitions" failonerror="true" fork="true">
             <sysproperty key="java.awt.headless" value="true"/>
             <classpath>
-                <pathelement path="${base.dir}/resources"/>
+                <pathelement path="${resources.dir}"/>
                 <pathelement path="${proj-classpath}"/>
                 <pathelement path="${proj-build.dir}"/>
             </classpath>
