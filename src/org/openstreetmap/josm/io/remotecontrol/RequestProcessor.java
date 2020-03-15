@@ -167,7 +167,7 @@ public class RequestProcessor extends Thread {
         Writer out = null; // NOPMD
         try { // NOPMD
             out = new OutputStreamWriter(new BufferedOutputStream(request.getOutputStream()), RESPONSE_CHARSET);
-            BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), "ASCII")); // NOPMD
+            BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream(), StandardCharsets.US_ASCII)); // NOPMD
 
             String get = in.readLine();
             if (get == null) {
