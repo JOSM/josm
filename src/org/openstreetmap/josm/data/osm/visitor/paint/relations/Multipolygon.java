@@ -598,7 +598,10 @@ public class Multipolygon {
                 joined = false;
                 for (int i = 0; i < joinArray.length && left != 0; ++i) {
                     Way c = joinArray[i];
-                    if (c != null && !c.isEmpty()) {
+                    if (c != null && c.isEmpty()) {
+                        joinArray[i] = null;
+                        left--;
+                    } else if (c != null && !c.isEmpty()) {
                         if (nodes == null) {
                             // new ring
                             selected = c.isSelected();
