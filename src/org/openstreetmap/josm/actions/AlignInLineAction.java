@@ -194,7 +194,7 @@ public final class AlignInLineAction extends JosmAction {
     public Command buildCommand(DataSet ds) throws InvalidSelection {
         List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
         List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
-        selectedWays.removeIf(OsmPrimitive::isIncomplete);
+        selectedWays.removeIf(w -> w.isIncomplete() || w.isEmpty());
 
         // Decide what to align based on selection:
         if (selectedNodes.isEmpty() && !selectedWays.isEmpty()) {
