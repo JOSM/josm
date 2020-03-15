@@ -342,6 +342,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         MainApplication.getLayerManager().removeLayerChangeListener(this);
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
         MainApplication.getMenu().modeMenu.removeAll();
+        rememberToggleDialogWidth();
         dialogsPanel.destroy();
         Config.getPref().removePreferenceChangeListener(sidetoolbarPreferencesChangedListener);
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i) {
@@ -738,7 +739,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      */
     public void rememberToggleDialogWidth() {
         if (dialogsPanel.isVisible()) {
-            TOGGLE_DIALOGS_WIDTH.put(splitPane.getWidth() - splitPane.getDividerLocation());
+            TOGGLE_DIALOGS_WIDTH.put(splitPane.getWidth() - splitPane.getDividerLocation() - splitPane.getDividerSize() - 1);
         }
     }
 
