@@ -126,7 +126,7 @@ public interface DataSelectionListener {
         /**
          * Create a {@link SelectionReplaceEvent}
          * @param source The source dataset
-         * @param old The old primitves that were previously selected. The caller needs to ensure that this set is not modifed.
+         * @param old The old primitives that were previously selected. The caller needs to ensure that this set is not modified.
          * @param newSelection The primitives of the new selection.
          */
         public SelectionReplaceEvent(DataSet source, Set<OsmPrimitive> old, Stream<OsmPrimitive> newSelection) {
@@ -176,7 +176,7 @@ public interface DataSelectionListener {
         /**
          * Create a {@link SelectionAddEvent}
          * @param source The source dataset
-         * @param old The old primitves that were previously selected. The caller needs to ensure that this set is not modifed.
+         * @param old The old primitives that were previously selected. The caller needs to ensure that this set is not modified.
          * @param toAdd The primitives to add.
          */
         public SelectionAddEvent(DataSet source, Set<OsmPrimitive> old, Stream<OsmPrimitive> toAdd) {
@@ -225,7 +225,7 @@ public interface DataSelectionListener {
         /**
          * Create a {@link SelectionRemoveEvent}
          * @param source The source dataset
-         * @param old The old primitves that were previously selected. The caller needs to ensure that this set is not modifed.
+         * @param old The old primitives that were previously selected. The caller needs to ensure that this set is not modified.
          * @param toRemove The primitives to remove.
          */
         public SelectionRemoveEvent(DataSet source, Set<OsmPrimitive> old, Stream<OsmPrimitive> toRemove) {
@@ -276,7 +276,7 @@ public interface DataSelectionListener {
         /**
          * Create a {@link SelectionToggleEvent}
          * @param source The source dataset
-         * @param old The old primitves that were previously selected. The caller needs to ensure that this set is not modifed.
+         * @param old The old primitives that were previously selected. The caller needs to ensure that this set is not modified.
          * @param toToggle The primitives to toggle.
          */
         public SelectionToggleEvent(DataSet source, Set<OsmPrimitive> old, Stream<OsmPrimitive> toToggle) {
