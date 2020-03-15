@@ -138,7 +138,7 @@ public final class UrlPatterns {
         /** URL of Overpass API */
         OVERPASS_API_URL        (".*/interpreter\\?data=.*"),
         /** URL of Overpass API (XAPI compatibility) */
-        OVERPASS_API_XAPI_URL   (".*/xapi(\\?.*\\[@meta\\]|_meta\\?).*"),
+        OVERPASS_API_XAPI_URL   (".*/xapi(?:\\?.*\\[@meta\\]|_meta\\?)(.*)"),
         /** URL of remote .osm file */
         EXTERNAL_OSM_FILE       (".*/(.*\\.osm)"),
         /** URL of remote compressed osm file */
