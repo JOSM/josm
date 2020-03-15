@@ -182,6 +182,12 @@ area:closed:areaStyle[landuse=reservoir]                        ⧉ area:closed:
   throwWarning: tr("Overlapping Water Areas");
 }
 
+/* Water area inside water area (spatial test) */
+area:closed:areaStyle[natural =~ /^(water|wetland|coastline)$/] ∈  area:closed:areaStyle.water_area,
+area:closed:areaStyle[landuse=reservoir]                        ∈  area:closed:areaStyle.water_area {
+  throwWarning: tr("Water area inside water area");
+}
+
 area:closed:areaStyle ⧉ area:closed:areaStyle {
   throwOther: tr("Overlapping Areas");
 }
