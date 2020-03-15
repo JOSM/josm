@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -64,7 +64,7 @@ public class LoadAndZoomHandler extends RequestHandler {
     private double maxlon;
 
     // Optional argument 'select'
-    private final Set<SimplePrimitiveId> toSelect = new HashSet<>();
+    private final Set<SimplePrimitiveId> toSelect = new LinkedHashSet<>();
 
     private boolean isKeepingCurrentSelection;
 
@@ -174,12 +174,12 @@ public class LoadAndZoomHandler extends RequestHandler {
             });
         }
 
-        final Collection<OsmPrimitive> forTagAdd = new HashSet<>();
+        final Collection<OsmPrimitive> forTagAdd = new LinkedHashSet<>();
         final Bounds bbox = new Bounds(minlat, minlon, maxlat, maxlon);
         if (args.containsKey("select") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             // select objects after downloading, zoom to selection.
             GuiHelper.executeByMainWorkerInEDT(() -> {
-                Set<OsmPrimitive> newSel = new HashSet<>();
+                Set<OsmPrimitive> newSel = new LinkedHashSet<>();
                 DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (ds == null) // e.g. download failed
                     return;
