@@ -273,7 +273,8 @@ public class CombineWayAction extends JosmAction {
         final DataSet ds = getLayerManager().getEditDataSet();
         if (ds == null)
             return;
-        Collection<Way> selectedWays = ds.getSelectedWays();
+        Collection<Way> selectedWays = new LinkedHashSet<>(ds.getSelectedWays());
+        selectedWays.removeIf(Way::isEmpty);
         if (selectedWays.size() < 2) {
             new Notification(
                     tr("Please select at least two ways to combine."))
