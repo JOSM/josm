@@ -106,7 +106,15 @@
       ** E.g. ${build.dir} is set both by Netbeans and by the main JOSM ant file.
       ** Load the Netbeans properties first, which makes the values permanent.
     -->
-    <target name="init-josmbase" depends="-init-project, set-josmbase-properties, josmbase.init-properties"/>
+    <target name="init-josmbase" depends="-init-project, set-josmbase-properties, josmbase.init-properties">
+        <pathconvert property="ivy.classpath.computed" dirsep="/" pathsep=":">
+            <path refid="runtime.path"/>
+            <map from="${basedir}${file.separator}" to=""/>
+        </pathconvert>
+        <propertyfile file="nbproject/project.properties">
+            <entry operation="=" key="ivy.classpath" value="${ivy.classpath.computed}"/>
+        </propertyfile>
+    </target>
 
     <target name="-pre-compile" depends="init-josmbase, josmbase.javacc"/>
 
