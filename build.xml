@@ -1172,7 +1172,7 @@ Build-Date: ${build.tstamp}
             </patternset>
         </unzip>
     </target>
-    <target name="sources" description="Generates jar file of JOSM source files and its dependencies" depends="init,create-revision,epsg,resolve">
+    <target name="sources" description="Generates jar file of JOSM source files and its dependencies" depends="init,epsg,resolve">
         <ivy:cachefileset setid="sources.fileset" conf="sources"/>
         <jar destfile="${dist-sources.jar}" level="${clevel}">
             <zipgroupfileset refid="sources.fileset"/>
@@ -1181,7 +1181,6 @@ Build-Date: ${build.tstamp}
             <fileset file="CONTRIBUTION"/>
             <fileset file="README"/>
             <fileset file="LICENSE"/>
-            <fileset file="${build.dir}/REVISION"/>
         </jar>
     </target>
     <target name="bootstrap-workspace" description="Copy libraries from ivy cache to workspace folders for IDE" depends="resolve">
