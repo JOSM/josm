@@ -1342,7 +1342,6 @@ public final class DomainValidator extends AbstractValidator {
         "virgin", // virgin Virgin Enterprises Limited
         "visa", // visa Visa Worldwide Pte. Limited
         "vision", // vision Koko Station, LLC
-        "vistaprint", // vistaprint Vistaprint Limited
         "viva", // viva Saudi Telecom Company
         "vivo", // vivo Telefonica Brasil S.A.
         "vlaanderen", // vlaanderen DNS.be vzw
