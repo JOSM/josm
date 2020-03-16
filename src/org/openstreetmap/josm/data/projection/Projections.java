@@ -279,7 +279,7 @@ public final class Projections {
     /**
      * Get the projection definition string for the given code.
      * @param code the code
-     * @return the string that can be processed by #{link CustomProjection}.
+     * @return the string that can be processed by {@link CustomProjection}.
      * Null, if the code isn't supported.
      */
     public static String getInit(String code) {
