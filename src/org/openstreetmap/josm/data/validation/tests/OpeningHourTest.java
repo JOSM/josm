@@ -108,8 +108,10 @@ public class OpeningHourTest extends TagTest {
 
     @Override
     public void check(final OsmPrimitive p) {
-        for (String key : KEYS_TO_CHECK) {
-            errors.addAll(checkOpeningHourSyntax(key, p.get(key), p, Locale.getDefault()));
+        if (p.isTagged()) {
+            for (String key : KEYS_TO_CHECK) {
+                errors.addAll(checkOpeningHourSyntax(key, p.get(key), p, Locale.getDefault()));
+            }
         }
     }
 }

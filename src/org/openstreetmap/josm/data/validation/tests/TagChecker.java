@@ -615,6 +615,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      */
     @Override
     public void check(OsmPrimitive p) {
+        if (!p.isTagged())
+            return;
+
         // Just a collection to know if a primitive has been already marked with error
         MultiMap<OsmPrimitive, String> withErrors = new MultiMap<>();
 

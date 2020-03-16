@@ -117,11 +117,6 @@ public class Test implements OsmPrimitiveVisitor {
             super(name);
         }
 
-        @Override
-        public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && p.isTagged();
-        }
-
         /**
          * Checks the tags of the given primitive.
          * @param p The primitive to test
