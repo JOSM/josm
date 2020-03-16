@@ -9,6 +9,8 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.ImageIcon;
 
@@ -21,6 +23,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvid
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -114,9 +117,19 @@ public class MapImage {
 
     /**
      * Get the image resource associated with this MapImage object.
+     * This method blocks until the image has been loaded.
      * @return the image resource
      */
     public ImageResource getImageResource() {
+        if (imageResource == null) {
+            try {
+                // load and wait for the image
+                loadImage().get();
+            } catch (ExecutionException | InterruptedException e) {
+                Logging.warn(e);
+                Thread.currentThread().interrupt();
+            }
+        }
         return imageResource;
     }
 
@@ -141,7 +154,18 @@ public class MapImage {
         if (img != null)
             return img;
         temporary = false;
-        new ImageProvider(name)
+        loadImage();
+        synchronized (this) {
+            if (img == null) {
+                img = ImageProvider.get("clock").getImage();
+                temporary = true;
+            }
+        }
+        return img;
+    }
+
+    private CompletableFuture<Void> loadImage() {
+        return new ImageProvider(name)
                 .setDirs(MapPaintStyles.getIconSourceDirs(source))
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)
@@ -167,13 +191,6 @@ public class MapImage {
                     }
                 }
         );
-        synchronized (this) {
-            if (img == null) {
-                img = ImageProvider.get("clock").getImage();
-                temporary = true;
-            }
-        }
-        return img;
     }
 
     /**
