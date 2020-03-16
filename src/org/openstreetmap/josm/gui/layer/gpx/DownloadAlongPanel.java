@@ -18,6 +18,7 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.download.OSMDownloadSource.OSMDownloadSourcePanel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -60,6 +61,7 @@ public class DownloadAlongPanel extends JPanel {
         this.prefArea = prefArea;
         this.prefNear = prefNear;
 
+        add(new JLabel(tr(OSMDownloadSourcePanel.DATA_SOURCES_AND_TYPES)), GBC.std().insets(5, 5, 1, 5).anchor(GBC.CENTER));
         cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), Config.getPref().getBoolean(prefOsm, true));
         cbDownloadOsmData.setToolTipText(tr("Select to download OSM data."));
         add(cbDownloadOsmData, GBC.std().insets(1, 5, 1, 5));
@@ -68,19 +70,23 @@ public class DownloadAlongPanel extends JPanel {
         add(cbDownloadGpxData, GBC.eol().insets(5, 5, 1, 5));
 
         add(new JLabel(tr("Download everything within:")), GBC.std());
+        JPanel panel1 = new JPanel(new GridBagLayout());
         buffer = new JSpinner(new SpinnerNumberModel(Config.getPref().getDouble(prefDist, 50.0), 1.0, 5000.0, 1.0));
-        add(buffer, GBC.std().insets(5, 5, 5, 5));
-        add(new JLabel(tr("meters")), GBC.eol());
+        panel1.add(buffer, GBC.std().insets(5, 5, 5, 5));
+        panel1.add(new JLabel(tr("meters")), GBC.eol());
+        add(panel1, GBC.eol());
 
         add(new JLabel(tr("Maximum area per request:")), GBC.std());
+        JPanel panel2 = new JPanel(new GridBagLayout());
         maxRect = new JSpinner(new SpinnerNumberModel(Config.getPref().getDouble(prefArea, 20.0), 0.01, 25.0, 0.01)) {
             @Override
             public Dimension getPreferredSize() {
                 return buffer.getPreferredSize();
             }
         };
-        add(maxRect, GBC.std().insets(5, 5, 5, 5));
-        add(new JLabel("km\u00b2"), GBC.eol());
+        panel2.add(maxRect, GBC.std().insets(5, 5, 5, 5));
+        panel2.add(new JLabel("km\u00b2"), GBC.eol());
+        add(panel2, GBC.eol());
 
         if (prefNear != null) {
             add(new JLabel(tr("Download near:")), GBC.eol());

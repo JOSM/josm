@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.download;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
@@ -144,6 +145,12 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
         private static final BooleanProperty DOWNLOAD_NOTES = new BooleanProperty("download.osm.notes", false);
 
         /**
+         * Label used in front of data types available for download. Made public for reuse in other download dialogs.
+         * @since 16155
+         */
+        public static final String DATA_SOURCES_AND_TYPES = marktr("Data Sources and Types:");
+
+        /**
          * Creates a new {@link OSMDownloadSourcePanel}.
          * @param dialog the parent download dialog, as {@code DownloadDialog.getInstance()} might not be initialized yet
          * @param ds The osm download source the panel is for.
@@ -158,7 +165,7 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
                     dialog.getSelectedDownloadArea().ifPresent(this::updateSizeCheck);
 
             // adding the download tasks
-            add(new JLabel(tr("Data Sources and Types:")), GBC.std().insets(5, 5, 1, 5).anchor(GBC.CENTER));
+            add(new JLabel(tr(DATA_SOURCES_AND_TYPES)), GBC.std().insets(5, 5, 1, 5).anchor(GBC.CENTER));
             cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), true);
             cbDownloadOsmData.setToolTipText(tr("Select to download OSM data in the selected download area."));
             cbDownloadOsmData.getModel().addChangeListener(checkboxChangeListener);
