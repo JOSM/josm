@@ -58,7 +58,7 @@
         <property name="dataflow.jar" location="${tools.dir}/dataflow-shaded.jar"/>
         <property name="javacutil.jar" location="${tools.dir}/javacutil.jar"/>
         <property name="failureaccess.jar" location="${tools.dir}/failureaccess.jar"/>
-        <property name="commons-lang3.jar" location="${pmd.dir}/commons-lang3-3.8.1.jar"/>
+        <property name="commons-lang3.jar" location="${tools.dir}/commons-lang3-3.8.1.jar"/>
         <property name="jformatstring.jar" location="${spotbugs.dir}/jFormatString-3.0.0.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
@@ -102,11 +102,6 @@
             <pathelement path="${failureaccess.jar}"/>
             <pathelement path="${commons-lang3.jar}"/>
             <pathelement path="${spotbugs.dir}/spotbugs-annotations.jar"/>
-        </path>
-        <path id="pmd.classpath">
-            <fileset dir="${pmd.dir}">
-                <include name="*.jar"/>
-            </fileset>
         </path>
         <path id="processor.path">
             <pathelement location="${error_prone_core.jar}"/>
@@ -973,6 +968,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="pmd" depends="init-properties">
+        <ivy:cachepath pathid="pmd.classpath" conf="pmd"/>
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${toString:pmd.classpath}"/>
         <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- License: GPL. For details, see LICENSE file. -->
-<ivy-module version="2.0">
+<ivy-module version="2.0" xmlns:maven="http://ant.apache.org/ivy/maven">
     <info organisation="org.openstreetmap" module="josm"/>
     <configurations>
         <conf name="ivy" description="Apache Ivy configuration for self-update"/>
@@ -9,6 +9,7 @@
         <conf name="api" description="All libs that JOSM uses and are available for plugins"/>
         <conf name="runtimeOnly" description="The libs shipped with JOSM that we do not need during compilation"/>
         <conf name="provided" description="The libs we need during compilation but not on application start"/>
+        <conf name="pmd" description="Everything needed for running PMD"/>
         <conf name="epsg" description="Everything epsg needs- which is currently all of JOSM."/>
         <!--  Meta configuration used in build scripts -->
         <conf name="runtime" description="Libraries only needed at runtime" extends="implementation,api,runtimeOnly"/>
@@ -25,6 +26,13 @@
         <dependency org="org.tukaani" name="xz" rev="1.8" conf="api->default"/>
         <dependency org="com.drewnoakes" name="metadata-extractor" rev="2.13.0" conf="api->default"/>
         <dependency org="ch.poole" name="OpeningHoursParser" rev="0.21.1" conf="api->default"/>
+        <!-- pmd->default -->
+        <dependency org="net.sourceforge.pmd" name="pmd-core" rev="6.20.0" conf="pmd->default"/>
+        <dependency org="net.sourceforge.pmd" name="pmd-java" rev="6.20.0" conf="pmd->default"/>
+        <dependency org="net.sourceforge.saxon" name="saxon" rev="9.1.0.8" conf="pmd->default">
+            <artifact name="saxon" type="jar"/>
+            <artifact name="saxon" type="jar" maven:classifier="dom"/>
+        </dependency>
         <!-- sources->sources -->
         <dependency org="javax.json" name="javax.json-api" rev="1.1.4" conf="sources->sources"/>
         <dependency org="org.glassfish" name="javax.json" rev="1.1.4" conf="sources->sources"/>
