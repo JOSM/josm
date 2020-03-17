@@ -35,8 +35,7 @@ public class TagConflictResolutionUtilTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    @SafeVarargs
-    private static <T> HashSet<T> newHashSet(T... values) {
+    private static HashSet<String> newHashSet(String... values) {
         return Arrays.stream(values).collect(Collectors.toCollection(HashSet::new));
     }
 
@@ -386,7 +385,7 @@ public class TagConflictResolutionUtilTest {
             AutomaticChoiceGroup group1 = groups.iterator().next();
             assertEquals(group1.key, choiceKey1Group1.key);
             assertEquals(group1.group, choiceKey1Group1.group);
-            assertEquals(new HashSet<>(group1.choices), newHashSet(choiceKey1Group1, choiceKey1Group1bis));
+            assertEquals(new HashSet<>(group1.choices), new HashSet<>(Arrays.asList(choiceKey1Group1, choiceKey1Group1bis)));
 
             groups = AutomaticChoiceGroup.groupChoices(Arrays.asList(
                 choiceKey1Group1, choiceKey1Group1bis, choiceKey1Group2, choiceKey1Group2bis,
