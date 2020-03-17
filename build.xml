@@ -947,16 +947,11 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="spotbugs" depends="dist">
-        <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${spotbugs.dir}/spotbugs-ant.jar"/>
-        <path id="spotbugs-classpath">
-            <fileset dir="${spotbugs.dir}">
-                <include name="*.jar"/>
-            </fileset>
-        </path>
-        <property name="spotbugs-classpath" refid="spotbugs-classpath"/>
+        <ivy:cachepath pathid="spotbugs.classpath" conf="spotbugs"/>
+        <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${toString:spotbugs.classpath}"/>
         <spotbugs output="xml"
                 outputFile="spotbugs-josm.xml"
-                classpath="${spotbugs-classpath}"
+                classpath="${toString:spotbugs.classpath}"
                 pluginList=""
                 excludeFilter="${spotbugs.dir}/josm-filter.xml"
         	    onlyAnalyze="org.openstreetmap.josm.-"

@@ -10,6 +10,7 @@
         <conf name="runtimeOnly" description="The libs shipped with JOSM that we do not need during compilation"/>
         <conf name="provided" description="The libs we need during compilation but not on application start"/>
         <conf name="pmd" description="Everything needed for running PMD"/>
+        <conf name="spotbugs" description="Everything needed for running SpotBugs"/>
         <conf name="epsg" description="Everything epsg needs- which is currently all of JOSM."/>
         <!--  Meta configuration used in build scripts -->
         <conf name="runtime" description="Libraries only needed at runtime" extends="implementation,api,runtimeOnly"/>
@@ -33,6 +34,9 @@
             <artifact name="saxon" type="jar"/>
             <artifact name="saxon" type="jar" maven:classifier="dom"/>
         </dependency>
+        <!-- spotbugs->default -->
+        <dependency org="com.github.spotbugs" name="spotbugs" rev="3.1.12" conf="spotbugs->default"/>
+        <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="3.1.12" conf="spotbugs->default"/>
         <!-- sources->sources -->
         <dependency org="javax.json" name="javax.json-api" rev="1.1.4" conf="sources->sources"/>
         <dependency org="org.glassfish" name="javax.json" rev="1.1.4" conf="sources->sources"/>
