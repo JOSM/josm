@@ -11,6 +11,7 @@ import java.awt.Component;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
@@ -34,7 +35,6 @@ import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.MockUp;
@@ -136,13 +136,13 @@ public class PluginPreferenceHighLevelTest {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
-            new PluginServer.RemotePlugin(null, ImmutableMap.of("Plugin-Version", "2"), "irrelevant_plugin")
+            new PluginServer.RemotePlugin(null, Collections.singletonMap("Plugin-Version", "2"), "irrelevant_plugin")
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
-            ImmutableMap.<String, Object>of(
+            Collections.singletonMap(
                 "<html>The following plugin has been downloaded <strong>successfully</strong>:"
                 + "<ul><li>baz_plugin (6)</li></ul>"
                 + "You have to restart JOSM for some settings to take effect."
@@ -267,7 +267,7 @@ public class PluginPreferenceHighLevelTest {
         Config.getPref().putList("plugins", ImmutableList.of("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
-            ImmutableMap.<String, Object>of(
+            Collections.singletonMap(
                 "<html>You have to restart JOSM for some settings to take effect."
                 + "<br/><br/>Would you like to restart now?</html>",
                 "Cancel"
@@ -580,13 +580,13 @@ public class PluginPreferenceHighLevelTest {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarOld),
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
-            new PluginServer.RemotePlugin(null, ImmutableMap.of("Plugin-Version", "123"), "irrelevant_plugin")
+            new PluginServer.RemotePlugin(null, Collections.singletonMap("Plugin-Version", "123"), "irrelevant_plugin")
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", ImmutableList.of("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
-            ImmutableMap.<String, Object>of(
+            Collections.singletonMap(
                 "All installed plugins are up to date. JOSM does not have to download newer versions.",
                 "OK"
             )
@@ -739,7 +739,7 @@ public class PluginPreferenceHighLevelTest {
         Config.getPref().putList("plugins", ImmutableList.of());
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker();
-        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(ImmutableMap.<String, Object>of(
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(Collections.singletonMap(
             "<html>The following plugin has been downloaded <strong>successfully</strong>:"
             + "<ul><li>dummy_plugin (31772)</li></ul></html>",
             JOptionPane.OK_OPTION
@@ -844,7 +844,7 @@ public class PluginPreferenceHighLevelTest {
         final String bazOldServePath = "/baz/old.jar";
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
-            new PluginServer.RemotePlugin(this.referenceBazJarNew, ImmutableMap.of(
+            new PluginServer.RemotePlugin(this.referenceBazJarNew, Collections.singletonMap(
                 "6800_Plugin-Url", "6;http://localhost:" + this.pluginServerRule.port() + bazOldServePath
             ))
         );
@@ -859,7 +859,7 @@ public class PluginPreferenceHighLevelTest {
         );
         Config.getPref().putList("plugins", ImmutableList.of());
 
-        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(ImmutableMap.of(
+        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(Collections.singletonMap(
             "<html>The following plugin has been downloaded <strong>successfully</strong>:"
             + "<ul><li>baz_plugin (6)</li></ul>"
             + "You have to restart JOSM for some settings to take effect.<br/><br/>"

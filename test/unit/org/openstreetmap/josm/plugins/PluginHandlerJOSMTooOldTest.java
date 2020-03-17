@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -253,9 +254,7 @@ public class PluginHandlerJOSMTooOldTest {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
-            new PluginServer.RemotePlugin(this.referenceBazJarNew, ImmutableMap.of(
-                "Plugin-Mainversion", "5500"
-            ))
+            new PluginServer.RemotePlugin(this.referenceBazJarNew, Collections.singletonMap("Plugin-Mainversion", "5500"))
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", ImmutableList.of("baz_plugin"));
@@ -311,14 +310,14 @@ public class PluginHandlerJOSMTooOldTest {
 
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
-            new PluginServer.RemotePlugin(this.referenceQuxJarNewer, ImmutableMap.of(
+            new PluginServer.RemotePlugin(this.referenceQuxJarNewer, Collections.singletonMap(
                 "7499_Plugin-Url", "346;http://localhost:" + this.pluginServerRule.port() + "/dont/bother.jar"
             ))
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", ImmutableList.of("qux_plugin", "baz_plugin"));
 
-        new ExtendedDialogMocker(ImmutableMap.of("JOSM version 7,500 required for plugin qux_plugin.", "Download Plugin"));
+        new ExtendedDialogMocker(Collections.singletonMap("JOSM version 7,500 required for plugin qux_plugin.", "Download Plugin"));
 
         Files.copy(this.referenceQuxJarOld.toPath(), this.targetQuxJar.toPath());
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());

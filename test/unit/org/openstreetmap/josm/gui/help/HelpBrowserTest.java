@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.help;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.Collections;
+
 import javax.swing.JOptionPane;
 
 import org.junit.Rule;
@@ -14,8 +16,6 @@ import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformManager;
-
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Expectations;
@@ -156,7 +156,7 @@ public class HelpBrowserTest {
             mockPlatformHook.openUrl((String) any); times = 0;
         }};
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            ImmutableMap.<String, Object>of(
+            Collections.singletonMap(
                 "<html>The current URL <tt>https://josm.openstreetmap.de/javadoc</tt><br>is an external "
                 + "URL. Editing is only possible for help topics<br>on the help server "
                 + "<tt>https://josm.openstreetmap.de</tt>.</html>",

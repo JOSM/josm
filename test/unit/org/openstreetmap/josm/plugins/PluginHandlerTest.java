@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,8 +27,6 @@ import org.openstreetmap.josm.plugins.PluginHandler.PluginInformationAction;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -103,7 +102,7 @@ public class PluginHandlerTest {
     public void testFilterDeprecatedPlugins() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            ImmutableMap.<String, Object>of(
+            Collections.singletonMap(
                 "<html>The following plugin is no longer necessary and has been deactivated:" +
                     "<ul><li>imagery (integrated into main program)</li></ul></html>",
                 0
@@ -128,7 +127,7 @@ public class PluginHandlerTest {
     public void testFilterUnmaintainedPlugins() {
         TestUtils.assumeWorkingJMockit();
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
-            ImmutableMap.<String, Object>of(
+            Collections.singletonMap(
                 "<html>Loading of the plugin \"gpsbabelgui\" was requested.<br>" +
                     "This plugin is no longer developed and very likely will produce errors.<br>" +
                     "It should be disabled.<br>Delete from preferences?</html>",

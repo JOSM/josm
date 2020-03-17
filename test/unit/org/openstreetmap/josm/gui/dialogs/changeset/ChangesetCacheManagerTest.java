@@ -31,8 +31,6 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 
-import com.google.common.collect.ImmutableMap;
-
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -121,7 +119,7 @@ public class ChangesetCacheManagerTest {
     public void testDownloadMyChangesets() {
         TestUtils.assumeWorkingJMockit();
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
-            ImmutableMap.<String, Object>of(
+            Collections.singletonMap(
                 "<html>JOSM is currently running with an anonymous user. It cannot download<br>"
                 + "your changesets from the OSM server unless you enter your OSM user name<br>"
                 + "in the JOSM preferences.</html>",

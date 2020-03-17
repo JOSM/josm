@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.net.URL;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,8 +22,6 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.UserCancelException;
-
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Invocation;
@@ -79,7 +78,7 @@ public class DownloadOpenChangesetsTaskTest {
         }
         final OAuthWizardMocker oaWizardMocker = new OAuthWizardMocker();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            ImmutableMap.<String, Object>of(
+            Collections.singletonMap(
                 "<html>Could not retrieve the list of your open changesets because<br>JOSM does not know "
                 + "your identity.<br>You have either chosen to work anonymously or you are not "
                 + "entitled<br>to know the identity of the user on whose behalf you are working.</html>", JOptionPane.OK_OPTION
@@ -112,7 +111,7 @@ public class DownloadOpenChangesetsTaskTest {
         }
         final OAuthWizardMocker oaWizardMocker = new OAuthWizardMocker();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            ImmutableMap.<String, Object>of("There are no open changesets", JOptionPane.OK_OPTION)
+            Collections.singletonMap("There are no open changesets", JOptionPane.OK_OPTION)
         );
 
         DownloadOpenChangesetsTask task = new DownloadOpenChangesetsTask(new JPanel());

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
@@ -21,8 +22,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -89,7 +88,7 @@ public class AsynchronousUploadPrimitivesTaskTest {
     @Test
     public void testSingleUploadInstance() {
         TestUtils.assumeWorkingJMockit();
-        new JOptionPaneSimpleMocker(ImmutableMap.of(
+        new JOptionPaneSimpleMocker(Collections.singletonMap(
                 "A background upload is already in progress. Kindly wait for it to finish before uploading new changes", JOptionPane.OK_OPTION
             ));
         Optional<AsynchronousUploadPrimitivesTask> task = AsynchronousUploadPrimitivesTask.

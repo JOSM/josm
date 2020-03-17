@@ -4,6 +4,8 @@ package org.openstreetmap.josm.actions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.Collections;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -20,8 +22,6 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -84,7 +84,7 @@ public class MergeLayerActionTest {
     public void testMergeNoTargetLayer() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            ImmutableMap.<String, Object>of("<html>There are no layers the source layer<br>'onion'<br>could be merged to.</html>", 0)
+            Collections.singletonMap("<html>There are no layers the source layer<br>'onion'<br>could be merged to.</html>", 0)
         );
 
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "onion", null);

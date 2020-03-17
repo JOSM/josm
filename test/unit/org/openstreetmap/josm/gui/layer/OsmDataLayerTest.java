@@ -11,6 +11,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.junit.Before;
@@ -38,8 +39,6 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
-
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -294,7 +293,7 @@ public class OsmDataLayerTest {
     public void testCheckSaveConditions() {
         TestUtils.assumeWorkingJMockit();
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker(
-            ImmutableMap.<String, Object>of("The document contains no data.", "Cancel")
+            Collections.singletonMap("The document contains no data.", "Cancel")
         );
 
         assertFalse(layer.checkSaveConditions());

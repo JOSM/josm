@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+
 import org.awaitility.Awaitility;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,8 +22,6 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.TileSourceRule;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
-
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -44,7 +44,7 @@ public class DownloadWmsAlongTrackActionTest {
     public void testNoLayer() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            ImmutableMap.<String, Object>of("There are no imagery layers.", 0)
+            Collections.singletonMap("There are no imagery layers.", 0)
         );
 
         assertNull(new DownloadWmsAlongTrackAction(new GpxData()).createTask());
