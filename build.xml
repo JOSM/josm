@@ -607,7 +607,7 @@ Build-Date: ${build.tstamp}
             <csv destfile="${test.dir}/report/jacoco.csv"/>
         </jacoco:report>
     </target>
-    <target name="dist-optimized" depends="dist" unless="isJava11">
+    <target name="dist-optimized" depends="dist" unless="isJava13">
         <ivy:cachepath file="${tools.ivy}" pathid="proguard.classpath" conf="proguard"/>
         <taskdef resource="proguard/ant/task.properties" classpathref="proguard.classpath"/>
         <proguard>
