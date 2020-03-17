@@ -84,10 +84,11 @@
         <condition property="isJava11"><matches string="${ant.java.version}" pattern="1[1-9]" /></condition>
         <condition property="isJava12"><matches string="${ant.java.version}" pattern="1[2-9]" /></condition>
         <condition property="isJava13"><matches string="${ant.java.version}" pattern="1[3-9]" /></condition>
-        <!-- Disable jacoco on Java 13+, see https://github.com/jacoco/jacoco/pull/738 -->
+        <condition property="isJava16"><matches string="${ant.java.version}" pattern="1[6-9]" /></condition>
+        <!-- Disable jacoco on Java 16+, see https://github.com/jacoco/jacoco/pull/992 -->
         <condition property="coverageByDefault">
             <not>
-                <isset property="isJava13"/>
+                <isset property="isJava16"/>
             </not>
         </condition>
         <condition property="java.library.dir" value="jmods" else="lib">
