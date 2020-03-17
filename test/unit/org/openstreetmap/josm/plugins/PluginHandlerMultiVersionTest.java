@@ -8,9 +8,13 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,7 +29,6 @@ import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.google.common.collect.ImmutableList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -56,7 +59,7 @@ public class PluginHandlerMultiVersionTest {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
-            ImmutableList.of(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
+                Collections.singletonList(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
         );
 
         this.referenceBazJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.v6.jar");
@@ -114,7 +117,7 @@ public class PluginHandlerMultiVersionTest {
                 )
             )
         );
-        Config.getPref().putList("plugins", ImmutableList.of("qux_plugin", "baz_plugin"));
+        Config.getPref().putList("plugins", Arrays.asList("qux_plugin", "baz_plugin"));
 
         // catch any (unexpected) attempts to show us an ExtendedDialog
         new ExtendedDialogMocker();
@@ -127,7 +130,7 @@ public class PluginHandlerMultiVersionTest {
             null,
             null,
             false
-        ).stream().sorted((a, b) -> a.name.compareTo(b.name)).collect(ImmutableList.toImmutableList());
+        ).stream().sorted(Comparator.comparing(a -> a.name)).collect(Collectors.toList());
 
         assertEquals(2, updatedPlugins.size());
 
@@ -172,7 +175,7 @@ public class PluginHandlerMultiVersionTest {
             new PluginServer.RemotePlugin(this.referenceQuxJarNewest, attrOverrides)
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("qux_plugin", "baz_plugin"));
+        Config.getPref().putList("plugins", Arrays.asList("qux_plugin", "baz_plugin"));
 
         // catch any (unexpected) attempts to show us an ExtendedDialog
         new ExtendedDialogMocker();
@@ -185,7 +188,7 @@ public class PluginHandlerMultiVersionTest {
             null,
             null,
             false
-        ).stream().sorted((a, b) -> a.name.compareTo(b.name)).collect(ImmutableList.toImmutableList());
+        ).stream().sorted(Comparator.comparing(a -> a.name)).collect(Collectors.toList());
 
         assertEquals(2, updatedPlugins.size());
 

@@ -10,8 +10,11 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Component;
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -25,6 +28,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginProxy;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -34,7 +38,6 @@ import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.google.common.collect.ImmutableList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.MockUp;
@@ -78,13 +81,13 @@ public class PluginPreferenceHighLevelTest {
             PluginHandler.class,
             "pluginList"
         );
-        this.originalPluginList = ImmutableList.copyOf(pluginList);
+        this.originalPluginList = new ArrayList<>(pluginList);
         pluginList.clear();
 
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
-            ImmutableList.of(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
+            Collections.singletonList(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
         );
 
         this.referenceDummyJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31701.jar");
@@ -139,7 +142,7 @@ public class PluginPreferenceHighLevelTest {
             new PluginServer.RemotePlugin(null, Collections.singletonMap("Plugin-Version", "2"), "irrelevant_plugin")
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin"));
+        Config.getPref().putList("plugins", Collections.singletonList("dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
             Collections.singletonMap(
@@ -180,39 +183,35 @@ public class PluginPreferenceHighLevelTest {
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
+            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("dummy_plugin"),
-            model.getSelectedPlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("dummy_plugin"),
+            model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("(null)", "31701", "(null)"),
+            Arrays.asList("(null)", "31701", "(null)"),
             model.getAvailablePlugins().stream().map(
                 (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(ImmutableList.toImmutableList())
+            ).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("6", "31772", "2"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(ImmutableList.toImmutableList())
+            Arrays.asList("6", "31772", "2"),
+            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
         );
 
         // now we're going to choose to install baz_plugin
         model.setPluginSelected("baz_plugin", true);
 
         assertEquals(
-            ImmutableList.of("baz_plugin"),
-            model.getNewlyActivatedPlugins().stream().map(
-                (pi) -> pi.getName()
-            ).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("baz_plugin"),
+            model.getNewlyActivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
         assertEquals(
-            ImmutableList.of("baz_plugin"),
-            model.getPluginsScheduledForUpdateOrDownload().stream().map(
-                (pi) -> pi.getName()
-            ).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("baz_plugin"),
+            model.getPluginsScheduledForUpdateOrDownload().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
 
         tabbedPane.savePreferences();
@@ -247,8 +246,8 @@ public class PluginPreferenceHighLevelTest {
 
         // baz_plugin should have been added to the plugins list
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            Config.getPref().getList("plugins", null).stream().sorted().collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin"),
+            Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList())
         );
     }
 
@@ -264,7 +263,7 @@ public class PluginPreferenceHighLevelTest {
             new PluginServer.RemotePlugin(null, null, "irrelevant_plugin")
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("baz_plugin", "dummy_plugin"));
+        Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
             Collections.singletonMap(
@@ -304,24 +303,24 @@ public class PluginPreferenceHighLevelTest {
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
+            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            model.getSelectedPlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin"),
+            model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("6", "31701", "(null)"),
+            Arrays.asList("6", "31701", "(null)"),
             model.getAvailablePlugins().stream().map(
                 (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(ImmutableList.toImmutableList())
+            ).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("7", "31772", "(null)"),
+            Arrays.asList("7", "31772", "(null)"),
             model.getAvailablePlugins().stream().map(
                 (pi) -> pi.version == null ? "(null)" : pi.version
-            ).collect(ImmutableList.toImmutableList())
+            ).collect(Collectors.toList())
         );
 
         // now we're going to choose to disable baz_plugin
@@ -329,10 +328,8 @@ public class PluginPreferenceHighLevelTest {
 
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
         assertEquals(
-            ImmutableList.of("baz_plugin"),
-            model.getNewlyDeactivatedPlugins().stream().map(
-                (pi) -> pi.getName()
-            ).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("baz_plugin"),
+            model.getNewlyDeactivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         // questionably correct
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
@@ -368,8 +365,8 @@ public class PluginPreferenceHighLevelTest {
 
         // baz_plugin should have been removed from the installed plugins list
         assertEquals(
-            ImmutableList.of("dummy_plugin"),
-            Config.getPref().getList("plugins", null).stream().sorted().collect(ImmutableList.toImmutableList())
+            Collections.singletonList("dummy_plugin"),
+            Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList())
         );
     }
 
@@ -388,7 +385,7 @@ public class PluginPreferenceHighLevelTest {
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("baz_plugin", "dummy_plugin"));
+        Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker();
@@ -423,22 +420,22 @@ public class PluginPreferenceHighLevelTest {
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin"),
+            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            model.getSelectedPlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin"),
+            model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("6", "31701"),
+            Arrays.asList("6", "31701"),
             model.getAvailablePlugins().stream().map(
                 (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(ImmutableList.toImmutableList())
+            ).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("7", "31772"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(ImmutableList.toImmutableList())
+            Arrays.asList("7", "31772"),
+            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
         );
 
         // now we're going to choose not to update baz_plugin
@@ -446,10 +443,8 @@ public class PluginPreferenceHighLevelTest {
 
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
         assertEquals(
-            ImmutableList.of("baz_plugin"),
-            model.getNewlyDeactivatedPlugins().stream().map(
-                pi -> pi.getName()
-            ).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("baz_plugin"),
+            model.getNewlyDeactivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         // questionably correct
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
@@ -501,17 +496,15 @@ public class PluginPreferenceHighLevelTest {
 
         // plugins list shouldn't have been altered, we haven't hit save yet
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            Config.getPref().getList("plugins", null).stream().sorted().collect(ImmutableList.toImmutableList())
+                Arrays.asList("baz_plugin", "dummy_plugin"),
+            Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList())
         );
 
         // the model's selection state should be largely as before
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
         assertEquals(
-            ImmutableList.of("baz_plugin"),
-            model.getNewlyDeactivatedPlugins().stream().map(
-                (pi) -> pi.getName()
-            ).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("baz_plugin"),
+            model.getNewlyDeactivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertTrue(model.getPluginsScheduledForUpdateOrDownload().isEmpty());
 
@@ -523,10 +516,8 @@ public class PluginPreferenceHighLevelTest {
         assertTrue(model.getNewlyActivatedPlugins().isEmpty());
         assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
         assertEquals(
-            ImmutableList.of("baz_plugin"),
-            model.getPluginsScheduledForUpdateOrDownload().stream().map(
-                (pi) -> pi.getName()
-            ).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("baz_plugin"),
+            model.getPluginsScheduledForUpdateOrDownload().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
 
         // prepare jopsMocker to handle this message
@@ -583,7 +574,7 @@ public class PluginPreferenceHighLevelTest {
             new PluginServer.RemotePlugin(null, Collections.singletonMap("Plugin-Version", "123"), "irrelevant_plugin")
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("baz_plugin", "dummy_plugin"));
+        Config.getPref().putList("plugins", Arrays.asList("baz_plugin", "dummy_plugin"));
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
             Collections.singletonMap(
@@ -622,22 +613,22 @@ public class PluginPreferenceHighLevelTest {
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin", "irrelevant_plugin"),
+            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            model.getSelectedPlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin"),
+            model.getSelectedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("6", "31701", "(null)"),
+            Arrays.asList("6", "31701", "(null)"),
             model.getAvailablePlugins().stream().map(
                 (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(ImmutableList.toImmutableList())
+            ).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("6", "31701", "123"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(ImmutableList.toImmutableList())
+            Arrays.asList("6", "31701", "123"),
+            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
         );
 
         GuiHelper.runInEDTAndWait(
@@ -675,8 +666,8 @@ public class PluginPreferenceHighLevelTest {
 
         // plugins list shouldn't have been altered
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            Config.getPref().getList("plugins", null).stream().sorted().collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin"),
+            Config.getPref().getList("plugins", null).stream().sorted().collect(Collectors.toList())
         );
 
         // the model's selection state should be largely as before
@@ -736,7 +727,7 @@ public class PluginPreferenceHighLevelTest {
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of());
+        Config.getPref().putList("plugins", Collections.emptyList());
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(Collections.singletonMap(
@@ -771,19 +762,19 @@ public class PluginPreferenceHighLevelTest {
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin"),
+            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertTrue(model.getSelectedPlugins().isEmpty());
         assertEquals(
-            ImmutableList.of("(null)", "(null)"),
+            Arrays.asList("(null)", "(null)"),
             model.getAvailablePlugins().stream().map(
                 (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(ImmutableList.toImmutableList())
+            ).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("7", "31772"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(ImmutableList.toImmutableList())
+            Arrays.asList("7", "31772"),
+            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
         );
 
         // now we select dummy_plugin
@@ -791,10 +782,8 @@ public class PluginPreferenceHighLevelTest {
 
         // model should now reflect this
         assertEquals(
-            ImmutableList.of("dummy_plugin"),
-            model.getNewlyActivatedPlugins().stream().map(
-                pi -> pi.getName()
-            ).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("dummy_plugin"),
+            model.getNewlyActivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
 
@@ -857,7 +846,7 @@ public class PluginPreferenceHighLevelTest {
                 )
             )
         );
-        Config.getPref().putList("plugins", ImmutableList.of());
+        Config.getPref().putList("plugins", Collections.emptyList());
 
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(Collections.singletonMap(
             "<html>The following plugin has been downloaded <strong>successfully</strong>:"
@@ -894,19 +883,19 @@ public class PluginPreferenceHighLevelTest {
         assertEquals(model.getDisplayedPlugins(), model.getAvailablePlugins());
 
         assertEquals(
-            ImmutableList.of("baz_plugin", "dummy_plugin"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.getName()).collect(ImmutableList.toImmutableList())
+            Arrays.asList("baz_plugin", "dummy_plugin"),
+            model.getAvailablePlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertTrue(model.getSelectedPlugins().isEmpty());
         assertEquals(
-            ImmutableList.of("(null)", "(null)"),
+            Arrays.asList("(null)", "(null)"),
             model.getAvailablePlugins().stream().map(
                 (pi) -> pi.localversion == null ? "(null)" : pi.localversion
-            ).collect(ImmutableList.toImmutableList())
+            ).collect(Collectors.toList())
         );
         assertEquals(
-            ImmutableList.of("6", "31772"),
-            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(ImmutableList.toImmutableList())
+            Arrays.asList("6", "31772"),
+            model.getAvailablePlugins().stream().map((pi) -> pi.version).collect(Collectors.toList())
         );
 
         // now we select dummy_plugin
@@ -914,10 +903,8 @@ public class PluginPreferenceHighLevelTest {
 
         // model should now reflect this
         assertEquals(
-            ImmutableList.of("baz_plugin"),
-            model.getNewlyActivatedPlugins().stream().map(
-                pi -> pi.getName()
-            ).collect(ImmutableList.toImmutableList())
+            Collections.singletonList("baz_plugin"),
+            model.getNewlyActivatedPlugins().stream().map(PluginInformation::getName).collect(Collectors.toList())
         );
         assertTrue(model.getNewlyDeactivatedPlugins().isEmpty());
 

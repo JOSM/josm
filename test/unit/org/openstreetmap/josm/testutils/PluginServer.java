@@ -6,12 +6,14 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -24,8 +26,6 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Streams;
 
 public class PluginServer {
     public static class RemotePlugin {
@@ -119,7 +119,10 @@ public class PluginServer {
 
                 if (jarPath.startsWith(filesRootPath)) {
                     // would just use .toString() but need to force use of *forward slash* path separators on all platforms
-                    return Streams.stream(filesRootPath.relativize(jarPath)).map(p -> p.toString()).collect(Collectors.joining("/"));
+                    final Path path = filesRootPath.relativize(jarPath);
+                    return StreamSupport.stream(path.spliterator(), false)
+                            .map(Path::toString)
+                            .collect(Collectors.joining("/"));
                 }
             }
             return null;
@@ -186,7 +189,7 @@ public class PluginServer {
     protected final List<RemotePlugin> pluginList;
 
     public PluginServer(RemotePlugin... remotePlugins) {
-        this.pluginList = ImmutableList.copyOf(remotePlugins);
+        this.pluginList = Arrays.asList(remotePlugins);
     }
 
     public void applyToWireMockServer(WireMockServer wireMockServer) {

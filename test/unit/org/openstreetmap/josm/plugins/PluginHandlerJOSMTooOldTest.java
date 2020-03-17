@@ -9,8 +9,12 @@ import static org.junit.Assert.assertNotEquals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,7 +30,6 @@ import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.google.common.collect.ImmutableList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -59,7 +62,7 @@ public class PluginHandlerJOSMTooOldTest {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
-            ImmutableList.of(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
+                Collections.singletonList(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
         );
 
         this.referenceDummyJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31701.jar");
@@ -113,7 +116,7 @@ public class PluginHandlerJOSMTooOldTest {
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin", "baz_plugin"));
+        Config.getPref().putList("plugins", Arrays.asList("dummy_plugin", "baz_plugin"));
 
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker();
         edMocker.getMockResultMap().put(this.bazPluginVersionReqString, "Download Plugin");
@@ -127,16 +130,16 @@ public class PluginHandlerJOSMTooOldTest {
             null,
             null,
             false
-        ).stream().sorted((a, b) -> a.name.compareTo(b.name)).collect(ImmutableList.toImmutableList());
+        ).stream().sorted(Comparator.comparing(a -> a.name)).collect(Collectors.toList());
 
         assertEquals(
-            ImmutableList.of(
-                this.dummyPluginVersionReqString,
-                this.bazPluginVersionReqString
-            ),
+                Arrays.asList(
+                        this.dummyPluginVersionReqString,
+                        this.bazPluginVersionReqString
+                ),
             edMocker.getInvocationLog().stream().map(
                 invocationEntry -> invocationEntry[1]
-            ).sorted().collect(ImmutableList.toImmutableList())
+            ).sorted().collect(Collectors.toList())
         );
 
         assertEquals(2, updatedPlugins.size());
@@ -175,7 +178,7 @@ public class PluginHandlerJOSMTooOldTest {
             new PluginServer.RemotePlugin(this.referenceBazJarNew)
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin", "baz_plugin"));
+        Config.getPref().putList("plugins", Arrays.asList("dummy_plugin", "baz_plugin"));
 
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker();
         edMocker.getMockResultMap().put(this.bazPluginVersionReqString, "Download Plugin");
@@ -191,25 +194,22 @@ public class PluginHandlerJOSMTooOldTest {
             null,
             null,
             false
-        ).stream().sorted((a, b) -> a.name.compareTo(b.name)).collect(ImmutableList.toImmutableList());
+        ).stream().sorted(Comparator.comparing(a -> a.name)).collect(Collectors.toList());
 
         assertEquals(
-            ImmutableList.of(
-                this.dummyPluginVersionReqString,
-                this.bazPluginVersionReqString
-            ),
+                Arrays.asList(
+                        this.dummyPluginVersionReqString,
+                        this.bazPluginVersionReqString
+                ),
             edMocker.getInvocationLog().stream().map(
                 invocationEntry -> invocationEntry[1]
-            ).sorted().collect(ImmutableList.toImmutableList())
+            ).sorted().collect(Collectors.toList())
         );
 
-        assertEquals(
-            ImmutableList.of(
-                this.dummyPluginFailedString
-            ),
+        assertEquals(Collections.singletonList(this.dummyPluginFailedString),
             haMocker.getInvocationLog().stream().map(
                 invocationEntry -> invocationEntry[1]
-            ).sorted().collect(ImmutableList.toImmutableList())
+            ).sorted().collect(Collectors.toList())
         );
 
         assertEquals(2, updatedPlugins.size());
@@ -250,7 +250,7 @@ public class PluginHandlerJOSMTooOldTest {
             new PluginServer.RemotePlugin(this.referenceBazJarNew, Collections.singletonMap("Plugin-Mainversion", "5500"))
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("baz_plugin"));
+        Config.getPref().putList("plugins", Collections.singletonList("baz_plugin"));
 
         // setting up blank ExtendedDialogMocker which would raise an exception if any attempt to show
         // and ExtendedDialog were made
@@ -258,7 +258,7 @@ public class PluginHandlerJOSMTooOldTest {
 
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
 
-        final List<PluginInformation> updatedPlugins = ImmutableList.copyOf(PluginHandler.updatePlugins(
+        final List<PluginInformation> updatedPlugins = new ArrayList<>(PluginHandler.updatePlugins(
             MainApplication.getMainFrame(),
             null,
             null,
@@ -308,7 +308,7 @@ public class PluginHandlerJOSMTooOldTest {
             ))
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
-        Config.getPref().putList("plugins", ImmutableList.of("qux_plugin", "baz_plugin"));
+        Config.getPref().putList("plugins", Arrays.asList("qux_plugin", "baz_plugin"));
 
         new ExtendedDialogMocker(Collections.singletonMap("JOSM version 7,500 required for plugin qux_plugin.", "Download Plugin"));
 
@@ -320,7 +320,7 @@ public class PluginHandlerJOSMTooOldTest {
             null,
             null,
             false
-        ).stream().sorted((a, b) -> a.name.compareTo(b.name)).collect(ImmutableList.toImmutableList());
+        ).stream().sorted(Comparator.comparing(a -> a.name)).collect(Collectors.toList());
 
         assertEquals(2, updatedPlugins.size());
 

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,8 +20,6 @@ import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.Automa
 import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.AutomaticChoiceGroup;
 import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.AutomaticCombine;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -36,6 +35,11 @@ public class TagConflictResolutionUtilTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
+    @SafeVarargs
+    private static <T> HashSet<T> newHashSet(T... values) {
+        return Arrays.stream(values).collect(Collectors.toCollection(HashSet::new));
+    }
+
     /**
      * Unit test of {@link TagConflictResolutionUtil#applyAutomaticTagConflictResolution}.
      * assume predefined rules for US TIGER and French Cadastre.
@@ -47,14 +51,14 @@ public class TagConflictResolutionUtilTest {
         tc.add(new Tag("building", "school"));
         tc.add(new Tag("building", "garage"));
         TagConflictResolutionUtil.applyAutomaticTagConflictResolution(tc);
-        assertEquals(Sets.newHashSet("school", "garage"), new HashSet<>(tc.getValues("building")));
+        assertEquals(newHashSet("school", "garage"), new HashSet<>(tc.getValues("building")));
 
         // Check US Tiger tag conflict resolution
         tc = new TagCollection();
         tc.add(new Tag("tiger:test", "A:B"));
         tc.add(new Tag("tiger:test", "A"));
         TagConflictResolutionUtil.applyAutomaticTagConflictResolution(tc);
-        assertEquals(Sets.newHashSet("A:B"), new HashSet<>(tc.getValues("tiger:test")));
+        assertEquals(newHashSet("A:B"), new HashSet<>(tc.getValues("tiger:test")));
 
         // Check FR:cadastre source tag conflict resolution (most common values from taginfo except last one without accentuated characters)
         tc = new TagCollection();
@@ -83,7 +87,7 @@ public class TagConflictResolutionUtilTest {
         assertEquals(18, tc.getValues("source").size());
         tc.remove(otherSource);
         TagConflictResolutionUtil.applyAutomaticTagConflictResolution(tc);
-        assertEquals(Sets.newHashSet("cadastre-dgi-fr source : Direction Generale des Finances Publiques - Cadastre. Mise a jour : 2015"),
+        assertEquals(newHashSet("cadastre-dgi-fr source : Direction Generale des Finances Publiques - Cadastre. Mise a jour : 2015"),
                 new HashSet<>(tc.getValues("source")));
 
         // Check CA:canvec source tag conflict resolution
@@ -96,7 +100,7 @@ public class TagConflictResolutionUtilTest {
         tc.add(new Tag("source", "NRCan-CanVec-10.0"));
         tc.add(new Tag("source", "NRCan-CanVec-12.0"));
         TagConflictResolutionUtil.applyAutomaticTagConflictResolution(tc);
-        assertEquals(Sets.newHashSet("NRCan-CanVec-12.0"), new HashSet<>(tc.getValues("source")));
+        assertEquals(newHashSet("NRCan-CanVec-12.0"), new HashSet<>(tc.getValues("source")));
     }
 
     /**
@@ -208,16 +212,16 @@ public class TagConflictResolutionUtilTest {
         @Test
         public void testResolve() {
             for (AutomaticCombine resolver: differentlyConstructed(new AutomaticCombine("random", "", true, "|", "String"))) {
-                assertEquals(resolver.resolve(Sets.newHashSet("value1", "value2")), "value1|value2");
-                assertEquals(resolver.resolve(Sets.newHashSet("3|1", "4|2|1", "6|05", "3;1")), "05|1|2|3|3;1|4|6");
+                assertEquals(resolver.resolve(newHashSet("value1", "value2")), "value1|value2");
+                assertEquals(resolver.resolve(newHashSet("3|1", "4|2|1", "6|05", "3;1")), "05|1|2|3|3;1|4|6");
             }
 
             for (AutomaticCombine resolver: differentlyConstructed(new AutomaticCombine("test[45].*", "", true, ";", "Integer"))) {
-                assertEquals(resolver.resolve(Sets.newHashSet("1254545;95;24", "25;24;3")), "3;24;25;95;1254545");
+                assertEquals(resolver.resolve(newHashSet("1254545;95;24", "25;24;3")), "3;24;25;95;1254545");
             }
 
             for (AutomaticCombine resolver: differentlyConstructed(new AutomaticCombine("AB", "", true, ";", null))) {
-                String resolution = resolver.resolve(Sets.newHashSet("3;x;1", "4;x"));
+                String resolution = resolver.resolve(newHashSet("3;x;1", "4;x"));
                 assertTrue(resolution.equals("3;x;1;4") || resolution.equals("4;x;3;1"));
             }
         }
@@ -382,7 +386,7 @@ public class TagConflictResolutionUtilTest {
             AutomaticChoiceGroup group1 = groups.iterator().next();
             assertEquals(group1.key, choiceKey1Group1.key);
             assertEquals(group1.group, choiceKey1Group1.group);
-            assertEquals(new HashSet<>(group1.choices), Sets.newHashSet(choiceKey1Group1, choiceKey1Group1bis));
+            assertEquals(new HashSet<>(group1.choices), newHashSet(choiceKey1Group1, choiceKey1Group1bis));
 
             groups = AutomaticChoiceGroup.groupChoices(Arrays.asList(
                 choiceKey1Group1, choiceKey1Group1bis, choiceKey1Group2, choiceKey1Group2bis,
@@ -427,17 +431,17 @@ public class TagConflictResolutionUtilTest {
             AutomaticChoiceGroup group = new AutomaticChoiceGroup(
                     choiceKey1Group1.key, choiceKey1Group1.group, choiceKey1Group1.isRegex,
                     Arrays.asList(choiceKey1Group1, choiceKey1Group1bis));
-            assertEquals(group.resolve(Sets.newHashSet(choiceKey1Group1.value)), choiceKey1Group1.value);
-            assertEquals(group.resolve(Sets.newHashSet(choiceKey1Group1.value, choiceKey1Group1bis.value)), choiceKey1Group1bis.value);
-            assertNull(group.resolve(Sets.newHashSet("random", choiceKey1Group1.value, choiceKey1Group1bis.value)));
+            assertEquals(group.resolve(newHashSet(choiceKey1Group1.value)), choiceKey1Group1.value);
+            assertEquals(group.resolve(newHashSet(choiceKey1Group1.value, choiceKey1Group1bis.value)), choiceKey1Group1bis.value);
+            assertNull(group.resolve(newHashSet("random", choiceKey1Group1.value, choiceKey1Group1bis.value)));
 
             group = new AutomaticChoiceGroup(
                     choiceKey2Group1.key, choiceKey2Group2.group, choiceKey2Group2.isRegex,
                     Arrays.asList(choiceKey2Group2, choiceKey2Group2bis));
-            assertEquals(group.resolve(Sets.newHashSet("value1")), "value1");
-            assertEquals(group.resolve(Sets.newHashSet("value1Z", "value2A")), "value1Z");
-            assertEquals(group.resolve(Sets.newHashSet("value1A", "value2Z")), "value2Z");
-            assertNull(group.resolve(Sets.newHashSet("value1Z", "value2A", "other not matched value")));
+            assertEquals(group.resolve(newHashSet("value1")), "value1");
+            assertEquals(group.resolve(newHashSet("value1Z", "value2A")), "value1Z");
+            assertEquals(group.resolve(newHashSet("value1A", "value2Z")), "value2Z");
+            assertNull(group.resolve(newHashSet("value1Z", "value2A", "other not matched value")));
         }
     }
 }
