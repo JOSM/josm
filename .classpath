@@ -48,11 +48,6 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="tools/guava.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="test/lib/system-rules-1.19.0.jar">
 		<attributes>
 			<attribute name="test" value="true"/>

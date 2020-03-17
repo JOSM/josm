@@ -58,7 +58,6 @@
         <property name="dataflow.jar" location="${tools.dir}/dataflow-shaded.jar"/>
         <property name="javacutil.jar" location="${tools.dir}/javacutil.jar"/>
         <property name="failureaccess.jar" location="${tools.dir}/failureaccess.jar"/>
-        <property name="guava.jar" location="${tools.dir}/guava.jar"/>
         <property name="commons-lang3.jar" location="${pmd.dir}/commons-lang3-3.8.1.jar"/>
         <property name="jformatstring.jar" location="${spotbugs.dir}/jFormatString-3.0.0.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
@@ -101,7 +100,6 @@
             <pathelement path="${build.dir}"/>
             <pathelement path="${resources.dir}"/>
             <pathelement path="${failureaccess.jar}"/>
-            <pathelement path="${guava.jar}"/>
             <pathelement path="${commons-lang3.jar}"/>
             <pathelement path="${spotbugs.dir}/spotbugs-annotations.jar"/>
         </path>
@@ -115,7 +113,6 @@
             <pathelement location="${dataflow.jar}"/>
             <pathelement location="${javacutil.jar}"/>
             <pathelement location="${failureaccess.jar}"/>
-            <pathelement location="${guava.jar}"/>
             <pathelement location="${jformatstring.jar}"/>
             <pathelement location="${auto-value-annotations.jar}"/>
         </path>
@@ -851,7 +848,6 @@ Build-Date: ${build.tstamp}
             <classpath>
                 <pathelement path="${build.dir}"/>
                 <pathelement path="${test.dir}/build/unit"/>
-                <pathelement path="${guava.jar}"/>
                 <pathelement path="${commons-lang3.jar}"/>
             </classpath>
         </javac>
@@ -867,7 +863,6 @@ Build-Date: ${build.tstamp}
                 <classpath>
                     <pathelement path="${build.dir}"/>
                     <pathelement path="${script-build.dir}"/>
-                    <pathelement path="${guava.jar}"/>
                     <pathelement path="${commons-lang3.jar}"/>
                 </classpath>
                 <arg value="--type"/>
@@ -893,7 +888,6 @@ Build-Date: ${build.tstamp}
             <classpath>
                 <pathelement path="${build.dir}"/>
                 <pathelement path="${script-build.dir}"/>
-                <pathelement path="${guava.jar}"/>
                 <pathelement path="${commons-lang3.jar}"/>
             </classpath>
             <arg value="--noeli"/>
