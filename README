@@ -160,8 +160,6 @@ This is an overview of the files and directories in the JOSM code repository:
     - ivy/                  Apache Ivy binary, configuration file, and downloaded dependencies 
     - jacocoant.jar         used to include coverage data into JUnit test reports
     - japicc/               used to generate a compatibility report between optimized jar and normal one
-    - javacc.jar            used in the build process to generate some .java files from a javacc source file
-                            (src/org/openstreetmap/josm/gui/mappaint/mapcss/MapCSSParser.jj)
     - proguard.jar          optimize final binary jar - see build.xml (not used in production so far)
     - spotbugs/             libs and config files for spotbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
