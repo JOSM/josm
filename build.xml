@@ -947,7 +947,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="spotbugs" depends="dist">
-        <ivy:cachepath pathid="spotbugs.classpath" conf="spotbugs"/>
+        <ivy:cachepath file="${tools.dir}/ivy.xml" pathid="spotbugs.classpath" conf="spotbugs"/>
         <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${toString:spotbugs.classpath}"/>
         <spotbugs output="xml"
                 outputFile="spotbugs-josm.xml"
@@ -963,7 +963,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="pmd" depends="init-properties">
-        <ivy:cachepath pathid="pmd.classpath" conf="pmd"/>
+        <ivy:cachepath file="${tools.dir}/ivy.xml" pathid="pmd.classpath" conf="pmd"/>
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${toString:pmd.classpath}"/>
         <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />
