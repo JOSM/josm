@@ -19,6 +19,7 @@
     <dependencies>
         <!-- api->default -->
         <dependency org="javax.json" name="javax.json-api" rev="1.1.4" conf="api->default"/>
+        <dependency org="org.glassfish" name="javax.json" rev="1.1.4" conf="api->default"/>
         <dependency org="commons-logging" name="commons-logging" rev="1.2" conf="api->default"/>
         <dependency org="org.apache.commons" name="commons-compress" rev="1.20" conf="api->default"/>
         <dependency org="org.tukaani" name="xz" rev="1.8" conf="api->default"/>
@@ -26,6 +27,7 @@
         <dependency org="ch.poole" name="OpeningHoursParser" rev="0.21.1" conf="api->default"/>
         <!-- sources->sources -->
         <dependency org="javax.json" name="javax.json-api" rev="1.1.4" conf="sources->sources"/>
+        <dependency org="org.glassfish" name="javax.json" rev="1.1.4" conf="sources->sources"/>
         <dependency org="commons-logging" name="commons-logging" rev="1.2" conf="sources->sources"/>
         <dependency org="org.apache.commons" name="commons-compress" rev="1.20" conf="sources->sources"/>
         <dependency org="org.tukaani" name="xz" rev="1.8" conf="sources->sources"/>
