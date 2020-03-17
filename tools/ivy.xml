@@ -4,12 +4,15 @@
     <info organisation="org.openstreetmap" module="josm"/>
     <configurations>
         <conf name="javacc" description="Everything needed for running JavaCC"/>
+        <conf name="proguard" description="Everything needed for running ProGuard"/>
         <conf name="pmd" description="Everything needed for running PMD"/>
         <conf name="spotbugs" description="Everything needed for running SpotBugs"/>
     </configurations>
     <dependencies>
         <!-- javacc->default -->
         <dependency org="net.java.dev.javacc" name="javacc" rev="7.0.3" conf="javacc->default"/>
+        <!-- proguard->default -->
+        <dependency org="net.sf.proguard" name="proguard-anttask" rev="6.0.3" conf="proguard->default"/>
         <!-- pmd->default -->
         <dependency org="net.sourceforge.pmd" name="pmd-core" rev="6.20.0" conf="pmd->default"/>
         <dependency org="net.sourceforge.pmd" name="pmd-java" rev="6.20.0" conf="pmd->default"/>

@@ -608,7 +608,8 @@ Build-Date: ${build.tstamp}
         </jacoco:report>
     </target>
     <target name="dist-optimized" depends="dist" unless="isJava11">
-        <taskdef resource="proguard/ant/task.properties" classpath="${tools.dir}/proguard.jar"/>
+        <ivy:cachepath file="${tools.ivy}" pathid="proguard.classpath" conf="proguard"/>
+        <taskdef resource="proguard/ant/task.properties" classpathref="proguard.classpath"/>
         <proguard>
         -injars ${dist.jar}
         -outjars ${dist-optimized.jar}
@@ -950,7 +951,7 @@ Build-Date: ${build.tstamp}
 
     <target name="spotbugs" depends="dist">
         <ivy:cachepath file="${tools.ivy}" pathid="spotbugs.classpath" conf="spotbugs"/>
-        <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="${toString:spotbugs.classpath}"/>
+        <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="spotbugs.classpath"/>
         <spotbugs output="xml"
                 outputFile="spotbugs-josm.xml"
                 classpath="${toString:spotbugs.classpath}"
@@ -966,7 +967,7 @@ Build-Date: ${build.tstamp}
 
     <target name="pmd" depends="init-properties">
         <ivy:cachepath file="${tools.ivy}" pathid="pmd.classpath" conf="pmd"/>
-        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${toString:pmd.classpath}"/>
+        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
         <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />
             <ruleset>${pmd.dir}/josm-ruleset.xml</ruleset>
