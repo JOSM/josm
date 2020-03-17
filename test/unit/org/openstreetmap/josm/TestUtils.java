@@ -59,7 +59,6 @@ import org.openstreetmap.josm.tools.WikiReader;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.google.common.io.ByteStreams;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.github.classgraph.ClassGraph;
@@ -530,8 +529,8 @@ public final class TestUtils {
                 FileInputStream streamB = new FileInputStream(fileB);
             ) {
                 assertArrayEquals(
-                    ByteStreams.toByteArray(streamA),
-                    ByteStreams.toByteArray(streamB)
+                    Utils.readBytesFromStream(streamA),
+                    Utils.readBytesFromStream(streamB)
                 );
             }
         } catch (IOException e) {

@@ -19,8 +19,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import com.google.common.io.ByteStreams;
+import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -140,7 +139,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
             // the ".jar" file's contents should be as before
             assertArrayEquals(
                 existingPluginContents,
-                ByteStreams.toByteArray(pluginDirPluginStream)
+                Utils.readBytesFromStream(pluginDirPluginStream)
             );
         }
     }
