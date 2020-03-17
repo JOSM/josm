@@ -4,6 +4,7 @@
     <info organisation="org.openstreetmap" module="josm"/>
     <configurations>
         <conf name="javacc" description="Everything needed for running JavaCC"/>
+        <conf name="checkstyle" description="Everything needed for running Checkstyle"/>
         <conf name="proguard" description="Everything needed for running ProGuard"/>
         <conf name="pmd" description="Everything needed for running PMD"/>
         <conf name="spotbugs" description="Everything needed for running SpotBugs"/>
@@ -11,6 +12,8 @@
     <dependencies>
         <!-- javacc->default -->
         <dependency org="net.java.dev.javacc" name="javacc" rev="7.0.3" conf="javacc->default"/>
+        <!-- checkstyle->default -->
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.27" conf="checkstyle->default"/>
         <!-- proguard->default -->
         <dependency org="net.sf.proguard" name="proguard-anttask" rev="6.2.2" conf="proguard->default"/>
         <!-- pmd->default -->
