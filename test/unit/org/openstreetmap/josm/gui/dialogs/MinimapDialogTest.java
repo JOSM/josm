@@ -16,6 +16,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -47,8 +48,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.ImagePatternMatching;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -529,11 +528,11 @@ public class MinimapDialogTest {
 
         this.paintSlippyMap();
 
-        Map<Integer, String> paletteMap = ImmutableMap.<Integer, String>builder()
-            .put(0xffffffff, "w")  // white
-            .put(0xff000000, "b")  // black
-            .put(0xfff0d1d1, "p")  // pink
-            .build();
+        Map<Integer, String> paletteMap = new HashMap<Integer, String>() {{
+            put(0xffffffff, "w");  // white
+            put(0xff000000, "b");  // black
+            put(0xfff0d1d1, "p");  // pink
+        }};
 
         Matcher rowMatcher = ImagePatternMatching.rowMatch(
             paintedSlippyMap,
@@ -679,13 +678,13 @@ public class MinimapDialogTest {
 
         this.paintSlippyMap();
 
-        Map<Integer, String> paletteMap = ImmutableMap.<Integer, String>builder()
-            .put(0xff00ff00, "g")  // green
-            .put(0xff000000, "b")  // black
-            .put(0xff8ad16b, "v")  // viewport marker inner (pink+green mix)
-            .put(0xff00df00, "d")  // (shaded green)
-            .put(0xff8ac46b, "q")  // (shaded pink+green mix)
-            .build();
+        Map<Integer, String> paletteMap = new HashMap<Integer, String>() {{
+            put(0xff00ff00, "g");  // green
+            put(0xff000000, "b");  // black
+            put(0xff8ad16b, "v");  // viewport marker inner (pink+green mix)
+            put(0xff00df00, "d");  // (shaded green)
+            put(0xff8ac46b, "q");  // (shaded pink+green mix)
+        }};
 
         // assert downloaded areas are not drawn
         ImagePatternMatching.rowMatch(
@@ -851,13 +850,13 @@ public class MinimapDialogTest {
 
         this.paintSlippyMap();
 
-        Map<Integer, String> paletteMap = ImmutableMap.<Integer, String>builder()
-            .put(0xff00ff00, "g")  // green
-            .put(0xff000000, "b")  // black
-            .put(0xff8ad16b, "v")  // viewport marker inner (pink+green mix)
-            .put(0xff00df00, "d")  // (shaded green)
-            .put(0xff8ac46b, "q")  // (shaded pink+green mix)
-            .build();
+        Map<Integer, String> paletteMap = new HashMap<Integer, String>() {{
+            put(0xff00ff00, "g");  // green
+            put(0xff000000, "b");  // black
+            put(0xff8ad16b, "v");  // viewport marker inner (pink+green mix)
+            put(0xff00df00, "d");  // (shaded green)
+            put(0xff8ac46b, "q");  // (shaded pink+green mix)
+        }};
 
         // the middle row should be entirely unshaded
         ImagePatternMatching.rowMatch(

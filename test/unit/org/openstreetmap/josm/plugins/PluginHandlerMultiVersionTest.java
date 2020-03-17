@@ -8,7 +8,9 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,7 +26,6 @@ import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -95,13 +96,14 @@ public class PluginHandlerMultiVersionTest {
         TestUtils.assumeWorkingJMockit();
 
         final String quxNewerServePath = "/qux/newer.jar";
+        final Map<String, String> attrOverrides = new HashMap<String, String>() {{
+            put("7500_Plugin-Url", "432;http://localhost:" + pluginServerRule.port() + quxNewerServePath);
+            put("7499_Plugin-Url", "346;http://localhost:" + pluginServerRule.port() + "/not/served.jar");
+            put("6999_Plugin-Url", "345;http://localhost:" + pluginServerRule.port() + "/not/served/eithejar");
+        }};
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
-            new PluginServer.RemotePlugin(this.referenceQuxJarNewest, ImmutableMap.of(
-                "7500_Plugin-Url", "432;http://localhost:" + this.pluginServerRule.port() + quxNewerServePath,
-                "7499_Plugin-Url", "346;http://localhost:" + this.pluginServerRule.port() + "/not/served.jar",
-                "6999_Plugin-Url", "345;http://localhost:" + this.pluginServerRule.port() + "/not/served/either.jar"
-            ))
+            new PluginServer.RemotePlugin(this.referenceQuxJarNewest, attrOverrides)
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         // need to actually serve this older jar from somewhere
@@ -160,13 +162,14 @@ public class PluginHandlerMultiVersionTest {
     public void testUpdatePluginsExistingVersionLatestPossible() throws Exception {
         TestUtils.assumeWorkingJMockit();
 
+        final Map<String, String> attrOverrides = new HashMap<String, String>() {{
+            put("7500_Plugin-Url", "432;http://localhost:" + pluginServerRule.port() + "/dont.jar");
+            put("7499_Plugin-Url", "346;http://localhost:" + pluginServerRule.port() + "/even.jar");
+            put("6999_Plugin-Url", "345;http://localhost:" + pluginServerRule.port() + "/bother.jar");
+        }};
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
-            new PluginServer.RemotePlugin(this.referenceQuxJarNewest, ImmutableMap.of(
-                "7500_Plugin-Url", "432;http://localhost:" + this.pluginServerRule.port() + "/dont.jar",
-                "7499_Plugin-Url", "346;http://localhost:" + this.pluginServerRule.port() + "/even.jar",
-                "6999_Plugin-Url", "345;http://localhost:" + this.pluginServerRule.port() + "/bother.jar"
-            ))
+            new PluginServer.RemotePlugin(this.referenceQuxJarNewest, attrOverrides)
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", ImmutableList.of("qux_plugin", "baz_plugin"));

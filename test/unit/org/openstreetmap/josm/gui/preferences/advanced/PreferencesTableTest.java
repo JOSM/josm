@@ -20,8 +20,6 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
-import com.google.common.collect.ImmutableMap;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -51,10 +49,9 @@ public class PreferencesTableTest {
     @Test
     public void testPreferencesTable() {
         TestUtils.assumeWorkingJMockit();
-        new JOptionPaneSimpleMocker(ImmutableMap.of(
-            "Please select the row to edit.", JOptionPane.OK_OPTION,
-            "Please select the row to delete.", JOptionPane.OK_OPTION
-        ));
+        final JOptionPaneSimpleMocker mocker = new JOptionPaneSimpleMocker();
+        mocker.getMockResultMap().put("Please select the row to edit.", JOptionPane.OK_OPTION);
+        mocker.getMockResultMap().put("Please select the row to delete.", JOptionPane.OK_OPTION);
         new ExtendedDialogMocker() {
             @Override
             protected int getMockResult(final ExtendedDialog instance) {

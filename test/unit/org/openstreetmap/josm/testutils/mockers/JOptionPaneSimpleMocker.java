@@ -14,9 +14,6 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil.MessagePanel;
 import org.openstreetmap.josm.tools.Logging;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.primitives.Ints;
-
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -59,33 +56,24 @@ import mockit.MockUp;
  * are probably best handled with case-specific mockers.
  */
 public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
-    protected static final Map<Integer, int[]> optionTypePermittedResults = ImmutableMap.of(
-        JOptionPane.YES_NO_OPTION, new int[] {
-            JOptionPane.YES_OPTION,
-            JOptionPane.NO_OPTION,
-            JOptionPane.CLOSED_OPTION
-        },
-        JOptionPane.YES_NO_CANCEL_OPTION, new int[] {
-            JOptionPane.YES_OPTION,
-            JOptionPane.NO_OPTION,
-            JOptionPane.CANCEL_OPTION,
-            JOptionPane.CLOSED_OPTION
-        },
-        JOptionPane.OK_CANCEL_OPTION, new int[] {
-            JOptionPane.OK_OPTION,
-            JOptionPane.CANCEL_OPTION,
-            JOptionPane.CLOSED_OPTION
-        },
-        // it's hard to know much about DEFAULT_OPTION, so we can't really police anything here, so
-        // including all known options
-        JOptionPane.DEFAULT_OPTION, new int[] {
-            JOptionPane.OK_OPTION,
-            JOptionPane.CANCEL_OPTION,
-            JOptionPane.CLOSED_OPTION,
-            JOptionPane.YES_OPTION,
-            JOptionPane.NO_OPTION
+
+    private boolean isPermittedResult(int option, int value) {
+        if (option == JOptionPane.YES_NO_OPTION) {
+            return value == JOptionPane.YES_OPTION || value == JOptionPane.NO_OPTION || value == JOptionPane.CLOSED_OPTION;
+        } else if (option == JOptionPane.YES_NO_CANCEL_OPTION) {
+            return value == JOptionPane.YES_OPTION || value == JOptionPane.NO_OPTION
+                    || value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION;
+        } else if (option == JOptionPane.OK_CANCEL_OPTION) {
+            return value == JOptionPane.OK_OPTION || value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION;
+        } else if (option == JOptionPane.DEFAULT_OPTION) {
+            // it's hard to know much about DEFAULT_OPTION, so we can't really police anything here, so
+            // including all known options
+            return value == JOptionPane.OK_OPTION || value == JOptionPane.CANCEL_OPTION || value == JOptionPane.CLOSED_OPTION
+                    || value == JOptionPane.YES_OPTION || value == JOptionPane.NO_OPTION;
+        } else {
+            return false;
         }
-    );
+    }
 
     protected final MessagePanelMocker messagePanelMocker;
 
@@ -285,7 +273,7 @@ public class JOptionPaneSimpleMocker extends BaseDialogMockUp<JOptionPane> {
         try {
             this.act(message);
             final Object result = this.getMockResultForMessage(message);
-            if (!(result instanceof Integer && Ints.contains(optionTypePermittedResults.get(optionType), (int) result))) {
+            if (!(result instanceof Integer && isPermittedResult(optionType, (int) result))) {
                 fail(String.format(
                     "Invalid result for showConfirmDialog with optionType %d: %s",
                     optionType,

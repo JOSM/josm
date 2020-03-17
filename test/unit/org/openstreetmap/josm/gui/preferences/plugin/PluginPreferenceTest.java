@@ -20,8 +20,6 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import com.google.common.collect.ImmutableMap;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -91,11 +89,9 @@ public class PluginPreferenceTest {
      */
     @Test
     public void testNotifyDownloadResults() {
-        new HelpAwareOptionPaneMocker(ImmutableMap.<String, Object>builder()
-            .put("<html></html>", "OK")  // (buildDownloadSummary() output was empty)
-            .put("<html>Please restart JOSM to activate the downloaded plugins.</html>", "OK")
-            .build()
-        );
+        final HelpAwareOptionPaneMocker mocker = new HelpAwareOptionPaneMocker();
+        mocker.getMockResultMap().put("<html></html>", "OK");  // (buildDownloadSummary() output was empty)
+        mocker.getMockResultMap().put("<html>Please restart JOSM to activate the downloaded plugins.</html>", "OK");
 
         PluginDownloadTask task = new PluginDownloadTask(NullProgressMonitor.INSTANCE, Collections.<PluginInformation>emptyList(), "");
         PluginPreference.notifyDownloadResults(null, task, false);

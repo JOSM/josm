@@ -28,8 +28,6 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 
-import com.google.common.collect.ImmutableMap;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Invocation;
 import mockit.Mock;
@@ -128,19 +126,7 @@ public class UploadDialogTest {
     @Test
     public void testUploadAction() {
         TestUtils.assumeWorkingJMockit();
-        ExtendedDialogMocker edMocker = new ExtendedDialogMocker(
-            ImmutableMap.<String, Object>of(
-                "<html>Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />This is "
-                + "technically allowed, but please consider that many users who are<br />watching changes "
-                + "in their area depend on meaningful changeset comments<br />to understand what is going "
-                + "on!<br /><br />If you spend a minute now to explain your change, you will make life<br />"
-                + "easier for many other mappers.</html>", "Revise",
-                "<html>You did not specify a source for your changes.<br />It is technically allowed, "
-                + "but this information helps<br />other users to understand the origins of the data."
-                + "<br /><br />If you spend a minute now to explain your change, you will make life"
-                + "<br />easier for many other mappers.</html>", "Revise"
-            )
-        ) {
+        ExtendedDialogMocker edMocker = new ExtendedDialogMocker() {
             @Mock
             void setupDialog(Invocation invocation) throws Exception {
                 if (GraphicsEnvironment.isHeadless()) {
@@ -158,6 +144,15 @@ public class UploadDialogTest {
                 }
             }
         };
+        edMocker.getMockResultMap().put("<html>Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />This is "
+                + "technically allowed, but please consider that many users who are<br />watching changes "
+                + "in their area depend on meaningful changeset comments<br />to understand what is going "
+                + "on!<br /><br />If you spend a minute now to explain your change, you will make life<br />"
+                + "easier for many other mappers.</html>", "Revise");
+        edMocker.getMockResultMap().put("<html>You did not specify a source for your changes.<br />It is technically allowed, "
+                + "but this information helps<br />other users to understand the origins of the data."
+                + "<br /><br />If you spend a minute now to explain your change, you will make life"
+                + "<br />easier for many other mappers.</html>", "Revise");
 
         MockUploadDialog uploadDialog = new MockUploadDialog("comment", "source");
         new UploadDialog.UploadAction(uploadDialog).actionPerformed(null);

@@ -27,7 +27,6 @@ import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -116,11 +115,9 @@ public class PluginHandlerJOSMTooOldTest {
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin", "baz_plugin"));
 
-        final ExtendedDialogMocker edMocker = new ExtendedDialogMocker(ImmutableMap.<String, Object>builder()
-            .put(this.bazPluginVersionReqString, "Download Plugin")
-            .put(this.dummyPluginVersionReqString, "Download Plugin")
-            .build()
-        );
+        final ExtendedDialogMocker edMocker = new ExtendedDialogMocker();
+        edMocker.getMockResultMap().put(this.bazPluginVersionReqString, "Download Plugin");
+        edMocker.getMockResultMap().put(this.dummyPluginVersionReqString, "Download Plugin");
 
         Files.copy(this.referenceDummyJarOld.toPath(), this.targetDummyJar.toPath());
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
@@ -180,15 +177,11 @@ public class PluginHandlerJOSMTooOldTest {
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", ImmutableList.of("dummy_plugin", "baz_plugin"));
 
-        final ExtendedDialogMocker edMocker = new ExtendedDialogMocker(ImmutableMap.<String, Object>builder()
-            .put(this.bazPluginVersionReqString, "Download Plugin")
-            .put(this.dummyPluginVersionReqString, "Skip Download")
-            .build()
-        );
-        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(ImmutableMap.<String, Object>builder()
-            .put(this.dummyPluginFailedString, "OK")
-            .build()
-        );
+        final ExtendedDialogMocker edMocker = new ExtendedDialogMocker();
+        edMocker.getMockResultMap().put(this.bazPluginVersionReqString, "Download Plugin");
+        edMocker.getMockResultMap().put(this.dummyPluginVersionReqString, "Skip Download");
+        final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker();
+        haMocker.getMockResultMap().put(this.dummyPluginFailedString, "OK");
 
         Files.copy(this.referenceDummyJarOld.toPath(), this.targetDummyJar.toPath());
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());

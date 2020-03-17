@@ -14,8 +14,6 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
-import com.google.common.collect.ImmutableMap;
-
 import mockit.Mock;
 import mockit.MockUp;
 
@@ -72,23 +70,22 @@ public class RelationEditorActionsTest extends AbstractRelationEditorActionTest 
     @Test
     public void testDeleteCurrentRelationAction() {
         TestUtils.assumeWorkingJMockit();
-        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
-            ImmutableMap.<String, Object>of(
-                "<html>\n  <head>\n    \n  </head>\n  <body>\n    You are about to delete 1 "
-                + "relation:\n\n    "
-                + "<ul>\n      <li>\n        incomplete\n      </li>\n    </ul>\n    <br>\n    "
-                + "This step is rarely necessary and cannot be undone easily after being \n    "
-                + "uploaded to the server.<br>Do you really want to delete?\n  </body>\n</html>\n", JOptionPane.YES_OPTION,
-                "<html>\n  <head>\n    \n  </head>\n  <body>\n    You are about to delete incomplete "
-                + "objects.<br>This will cause problems \n    because you don\'t see the real object.<br>"
-                + "Do you really want to delete?\n  </body>\n</html>\n",
-                JOptionPane.YES_OPTION
-            )
-        ) {
+        final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker() {
             public String getStringFromOriginalMessage(Object originalMessage) {
                 return ((JTextComponent) ((Container) originalMessage).getComponent(0)).getText();
             }
         };
+        jopsMocker.getMockResultMap().put(
+                "<html>\n  <head>\n    \n  </head>\n  <body>\n    You are about to delete 1 "
+                + "relation:\n\n    "
+                + "<ul>\n      <li>\n        incomplete\n      </li>\n    </ul>\n    <br>\n    "
+                + "This step is rarely necessary and cannot be undone easily after being \n    "
+                + "uploaded to the server.<br>Do you really want to delete?\n  </body>\n</html>\n", JOptionPane.YES_OPTION);
+        jopsMocker.getMockResultMap().put(
+                "<html>\n  <head>\n    \n  </head>\n  <body>\n    You are about to delete incomplete "
+                + "objects.<br>This will cause problems \n    because you don\'t see the real object.<br>"
+                + "Do you really want to delete?\n  </body>\n</html>\n",
+                JOptionPane.YES_OPTION);
 
         new DeleteCurrentRelationAction(relationEditorAccess).actionPerformed(null);
 
