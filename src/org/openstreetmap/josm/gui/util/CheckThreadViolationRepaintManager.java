@@ -25,17 +25,16 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
- * <p>This class is used to detect Event Dispatch Thread rule violations<br>
- * See <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</a>
- * for more info</p>
- * <p/>
- * <p>This is a modification of original idea of Scott Delap<br>
- * Initial version of ThreadCheckingRepaintManager can be found here<br>
+ * <p>This class is used to detect Event Dispatch Thread rule violations</p>
+ *
+ * <p>This is a modification of original idea of Scott Delap.
+ * Initial version of {@code ThreadCheckingRepaintManager} can be found here:
  * <a href="http://www.clientjava.com/blog/2004/08/20/1093059428000.html">Easily Find Swing Threading Mistakes</a>
  * </p>
  *
  * @author Scott Delap
  * @author Alexander Potochkin
+ * @see <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</a>
  *
  * https://swinghelper.dev.java.net/
  */

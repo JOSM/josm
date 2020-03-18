@@ -68,6 +68,7 @@ public final class MapCSSStyleIndex {
      * Builds and initializes the index.
      * <p>
      * You must own the write lock of STYLE_SOURCE_LOCK when calling this method.
+     * @param ruleStream the rules to index
      */
     public void buildIndex(Stream<MapCSSRule> ruleStream) {
         clear();

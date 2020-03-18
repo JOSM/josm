@@ -33,6 +33,7 @@ public class StayOpenMenuItem extends JMenuItem {
 
     /**
      * Constructs a new {@code StayOpenMenuItem} whose properties are taken from the Action supplied.
+     * @param a associated action
      * @see JMenuItem#JMenuItem(javax.swing.Action)
      */
     public StayOpenMenuItem(Action a) {

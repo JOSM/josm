@@ -47,6 +47,7 @@ final class MapCSSTagCheckerAsserts {
     /**
      * Checks that rule assertions are met for the given set of TagChecks.
      * @param check The TagCheck for which assertions have to be checked
+     * @param assertions The assertions to check (map values correspond to expected result)
      * @param assertionConsumer The handler for assertion error messages
      */
     static void checkAsserts(final MapCSSTagChecker.TagCheck check, final Map<String, Boolean> assertions,

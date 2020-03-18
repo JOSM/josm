@@ -33,6 +33,7 @@ public class StayOpenRadioButtonMenuItem extends JRadioButtonMenuItem {
 
     /**
      * Constructs a new {@code StayOpenRadioButtonMenuItem} whose properties are taken from the Action supplied.
+     * @param a associated action
      * @see JRadioButtonMenuItem#JRadioButtonMenuItem(Action)
      */
     public StayOpenRadioButtonMenuItem(Action a) {

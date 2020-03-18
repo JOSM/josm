@@ -28,7 +28,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Extracts web links from OSM tags.
- * <p></p>
+ * 
  * The following rules are used:
  * <ul>
  * <li>internal rules for basic tags</li>
