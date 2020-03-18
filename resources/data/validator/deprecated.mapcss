@@ -1952,3 +1952,11 @@ node[exit_to] {
   suggestAlternative: "destination";
   group: tr("deprecated tagging");
 }
+
+/* #18951 */
+*[water=riverbank] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "water=river";
+  group: tr("deprecated tagging");
+  fixAdd: "water=river";
+}
