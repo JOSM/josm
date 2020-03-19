@@ -592,6 +592,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         }
 
         if (mode == Mode.MOVE && e.getButton() == MouseEvent.BUTTON1) {
+            DataSet ds = getLayerManager().getEditDataSet();
             if (!didMouseDrag) {
                 // only built in move mode
                 virtualManager.clear();
@@ -602,7 +603,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     selectPrims(cycleManager.cyclePrims(), true, false);
 
                     // If the user double-clicked a node, change to draw mode
-                    Collection<OsmPrimitive> c = getLayerManager().getEditDataSet().getSelected();
+                    Collection<OsmPrimitive> c = ds.getSelected();
                     if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
                         // We need to do it like this as otherwise drawAction will see a double
                         // click and switch back to SelectMode
@@ -699,8 +700,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         DataSet ds = getLayerManager().getEditDataSet();
         Collection<OsmPrimitive> selection = ds.getSelectedNodesAndWays();
         if (selection.isEmpty()) { // if nothing was selected to drag, just select nearest node/way to the cursor
-            OsmPrimitive nearestPrimitive = mv.getNearestNodeOrWay(mv.getPoint(startEN), mv.isSelectablePredicate, true);
-            ds.setSelected(nearestPrimitive);
+            ds.setSelected(mv.getNearestNodeOrWay(mv.getPoint(startEN), mv.isSelectablePredicate, true));
         }
 
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
@@ -828,13 +828,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      */
     private void confirmOrUndoMovement(MouseEvent e) {
         if (movesHiddenWay()) {
-            final ExtendedDialog ed = new ConfirmMoveDialog();
+            final ConfirmMoveDialog ed = new ConfirmMoveDialog();
             ed.setContent(tr("Are you sure that you want to move elements with attached ways that are hidden by filters?"));
             ed.toggleEnable("movedHiddenElements");
-            ed.showDialog();
-            if (ed.getValue() != 1) {
-                UndoRedoHandler.getInstance().undo();
-            }
+            showConfirmMoveDialog(ed);
         }
         Set<Node> nodes = new HashSet<>();
         int max = Config.getPref().getInt("warn.move.maxelements", 20);
@@ -849,22 +846,24 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             }
         }
         if (nodes.size() > max) {
-            final ExtendedDialog ed = new ConfirmMoveDialog();
+            final ConfirmMoveDialog ed = new ConfirmMoveDialog();
             ed.setContent(
                     /* for correct i18n of plural forms - see #9110 */
                     trn("You moved more than {0} element. " + "Moving a large number of elements is often an error.\n" + "Really move them?",
                         "You moved more than {0} elements. " + "Moving a large number of elements is often an error.\n" + "Really move them?",
                         max, max));
             ed.toggleEnable("movedManyElements");
-            ed.showDialog();
-
-            if (ed.getValue() != 1) {
-                UndoRedoHandler.getInstance().undo();
-            }
+            showConfirmMoveDialog(ed);
         } else {
             // if small number of elements were moved,
             updateKeyModifiers(e);
             if (ctrl) mergePrims(e.getPoint());
+        }
+    }
+
+    private void showConfirmMoveDialog(ConfirmMoveDialog ed) {
+        if (ed.showDialog().getValue() != 1) {
+            UndoRedoHandler.getInstance().undo();
         }
     }
 
