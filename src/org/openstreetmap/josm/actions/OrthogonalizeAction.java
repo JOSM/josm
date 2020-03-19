@@ -209,32 +209,27 @@ public final class OrthogonalizeAction extends JosmAction {
         }
         final int nodesCount = nodeList.size();
         if (wayDataList.isEmpty() && nodesCount > 2) {
-            final WayData data = new WayData(nodeList);
-            final Collection<Command> commands = orthogonalize(Collections.singletonList(data), Collections.<Node>emptyList());
-            return new SequenceCommand(tr("Orthogonalize"), commands);
-        } else if (wayDataList.isEmpty()) {
-            throw new InvalidUserInputException("usage");
-        } else {
-            if (nodesCount <= 2) {
-                OrthogonalizeAction.rememberMovements.clear();
-                final Collection<Command> commands = new LinkedList<>();
+            return new SequenceCommand(tr("Orthogonalize"),
+                    orthogonalize(Collections.singletonList(new WayData(nodeList)), Collections.<Node>emptyList()));
+        } else if (!wayDataList.isEmpty() && nodesCount <= 2) {
+            OrthogonalizeAction.rememberMovements.clear();
+            final Collection<Command> commands = new LinkedList<>();
 
-                if (nodesCount == 2) {  // fixed direction, or single node to move
-                    commands.addAll(orthogonalize(wayDataList, nodeList));
-                } else if (nodesCount == 1) {
-                    commands.add(orthogonalize(wayDataList, nodeList.get(0)));
-                } else if (nodesCount == 0) {
-                    for (List<WayData> g : buildGroups(wayDataList)) {
-                        commands.addAll(orthogonalize(g, nodeList));
-                    }
+            if (nodesCount == 2) {  // fixed direction, or single node to move
+                commands.addAll(orthogonalize(wayDataList, nodeList));
+            } else if (nodesCount == 1) {
+                commands.add(orthogonalize(wayDataList, nodeList.get(0)));
+            } else if (nodesCount == 0) {
+                for (List<WayData> g : buildGroups(wayDataList)) {
+                    commands.addAll(orthogonalize(g, nodeList));
                 }
+            }
 
+            if (!commands.isEmpty()) {
                 return new SequenceCommand(tr("Orthogonalize"), commands);
-
-            } else {
-                throw new InvalidUserInputException("usage");
             }
         }
+        throw new InvalidUserInputException("usage");
     }
 
     /**
