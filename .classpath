@@ -79,7 +79,7 @@
 			<accessrule kind="discouraged" pattern="javafx/util/Duration"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry kind="lib" path="tools/pmd/commons-lang3-3.8.1.jar">
+	<classpathentry kind="lib" path="tools/commons-lang3-3.8.1.jar">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
