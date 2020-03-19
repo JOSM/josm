@@ -306,10 +306,10 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
             if (!isDownloadNotes() && !isDownloadOsmData() && !isDownloadGpxData()) {
                 isAreaTooLarge = false;
             } else if (isDownloadNotes() && !isDownloadOsmData() && !isDownloadGpxData()) {
-                // see max_note_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
+                // see max_note_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/settings.yml
                 isAreaTooLarge = bbox.getArea() > Config.getPref().getDouble("osm-server.max-request-area-notes", 25);
             } else {
-                // see max_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
+                // see max_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/settings.yml
                 isAreaTooLarge = bbox.getArea() > Config.getPref().getDouble("osm-server.max-request-area", 0.25);
             }
 
