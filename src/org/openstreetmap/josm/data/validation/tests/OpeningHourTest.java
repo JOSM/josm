@@ -45,15 +45,16 @@ public class OpeningHourTest extends TagTest {
      * @param severity The error severity
      * @param message The error message
      * @param key The incriminated key, used for display.
+     * @param value The incriminated value, used for comparison with prettified value.
      * @param prettifiedValue The prettified value
      * @param p The incriminated OSM primitive.
      * @return The real test error given to JOSM validator. Can be fixable or not if a prettified values has been determined.
      */
-    private TestError createTestError(Severity severity, String message, String key, String prettifiedValue, OsmPrimitive p) {
+    private TestError createTestError(Severity severity, String message, String key, String value, String prettifiedValue, OsmPrimitive p) {
         final TestError.Builder error = TestError.builder(this, severity, 2901)
                 .message(tr("Opening hours syntax"), message) // todo obtain English message for ignore functionality
-                .primitives(p);
-        if (prettifiedValue == null || prettifiedValue.equals(p.get(key))) {
+                .primitives(p != null ? new OsmPrimitive[] {p} : new OsmPrimitive[] {});
+        if (p == null || prettifiedValue == null || prettifiedValue.equals(value)) {
             return error.build();
         } else {
             return error.fix(() -> new ChangePropertyCommand(p, key, prettifiedValue)).build();
@@ -95,14 +96,14 @@ public class OpeningHourTest extends TagTest {
                 new OpeningHoursParser(new StringReader(value)).rules(true);
             }
         } catch (ParseException e) {
-            return Collections.singletonList(createTestError(Severity.WARNING, e.getMessage(), key, prettifiedValue, p));
+            return Collections.singletonList(createTestError(Severity.WARNING, e.getMessage(), key, value, prettifiedValue, p));
         }
 
-        if (!includeOtherSeverityChecks() || Objects.equals(value, prettifiedValue) || p == null) {
+        if (!includeOtherSeverityChecks() || Objects.equals(value, prettifiedValue)) {
             return Collections.emptyList();
         } else {
             final String message = tr("{0} value can be prettified", key);
-            return Collections.singletonList(createTestError(Severity.OTHER, message, key, prettifiedValue, p));
+            return Collections.singletonList(createTestError(Severity.OTHER, message, key, value, prettifiedValue, p));
         }
     }
 

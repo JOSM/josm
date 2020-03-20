@@ -82,9 +82,9 @@ public class OpeningHourTestTest {
     public void testI18n() {
         final String key = "opening_hours";
         String value = ".";
-        assertEquals("Vorgefunden wurde:  \".\" \". \" in Zeile 0, Spalte 0\nErwartet wurde: <EOF>",
+        assertEquals(String.format("Vorgefunden wurde:  \".\" \". \" in Zeile 0, Spalte 0%nErwartet wurde: <EOF>"),
                 checkOpeningHourSyntax(key, value, Locale.GERMAN).get(0).getDescription());
-        assertEquals("Encountered:  \".\" \". \" at line 0, column 0\nWas expecting: <EOF>",
+        assertEquals(String.format("Encountered:  \".\" \". \" at line 0, column 0%nWas expecting: <EOF>"),
                 checkOpeningHourSyntax(key, value, Locale.ENGLISH).get(0).getDescription());
         value = "Mon-Thu 12-18";
         assertEquals("Wochentag mit 3 Buchstaben in Zeile 1, Spalte 4",
@@ -139,10 +139,10 @@ public class OpeningHourTestTest {
     public void testCheckOpeningHourSyntax5() {
         final String key = "opening_hours";
         assertThat(checkOpeningHourSyntax(key, "badtext"), hasSize(1));
-        assertEquals("Encountered:  <UNEXPECTED_CHAR> \"b \" at line 0, column 0\nWas expecting: <EOF>",
+        assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"b \" at line 0, column 0%nWas expecting: <EOF>"),
                 checkOpeningHourSyntax(key, "badtext").get(0).getDescription().trim());
         assertThat(checkOpeningHourSyntax(key, "5.00 p.m-11.00 p.m"), hasSize(1));
-        assertEquals("Encountered:  <UNEXPECTED_CHAR> \"p \" at line 1, column 2\nWas expecting: <EOF>",
+        assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"p \" at line 1, column 2%nWas expecting: <EOF>"),
                 checkOpeningHourSyntax(key, "5.00 p.m-11.00 p.m").get(0).getDescription());
     }
 

@@ -219,12 +219,11 @@ public class TestError implements Comparable<TestError> {
          * Returns a new test error with the specified values
          *
          * @return a new test error with the specified values
-         * @throws IllegalArgumentException when {@link #message} or {@link #primitives} is null/empty.
+         * @throws IllegalArgumentException when {@link #message} or {@link #primitives} is null.
          */
         public TestError build() {
             CheckParameterUtil.ensureParameterNotNull(message, "message not set");
             CheckParameterUtil.ensureParameterNotNull(primitives, "primitives not set");
-            CheckParameterUtil.ensureThat(!primitives.isEmpty(), "primitives is empty");
             if (this.highlighted == null) {
                 this.highlighted = Collections.emptySet();
             }
