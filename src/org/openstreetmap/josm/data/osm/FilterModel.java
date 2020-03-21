@@ -109,7 +109,6 @@ public class FilterModel implements SortableModel<Filter> {
 
             ds.beginUpdate();
             try {
-
                 final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
 
                 changed = FilterWorker.executeFilters(all, filterMatcher);
@@ -157,8 +156,7 @@ public class FilterModel implements SortableModel<Filter> {
         changed = false;
         List<OsmPrimitive> deselect = new ArrayList<>();
 
-        ds.beginUpdate();
-        try {
+        ds.update(() -> {
             for (int i = 0; i < 2; i++) {
                 for (OsmPrimitive primitive: primitives) {
 
@@ -189,9 +187,7 @@ public class FilterModel implements SortableModel<Filter> {
                     }
                 }
             }
-        } finally {
-            ds.endUpdate();
-        }
+        });
 
         if (!deselect.isEmpty()) {
             ds.clearSelection(deselect);

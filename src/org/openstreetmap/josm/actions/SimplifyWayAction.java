@@ -171,8 +171,7 @@ public class SimplifyWayAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         DataSet ds = getLayerManager().getEditDataSet();
-        ds.beginUpdate();
-        try {
+        ds.update(() -> {
             List<Way> ways = ds.getSelectedWays().stream()
                     .filter(p -> !p.isIncomplete())
                     .collect(Collectors.toList());
@@ -194,9 +193,7 @@ public class SimplifyWayAction extends JosmAction {
             if (err > 0) {
                 simplifyWays(ways, err);
             }
-        } finally {
-            ds.endUpdate();
-        }
+        });
     }
 
     /**

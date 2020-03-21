@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -97,17 +96,12 @@ public class MoveAction extends JosmAction {
         setHelpId(ht("/Action/Move"));
     }
 
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        DataSet ds = getLayerManager().getEditDataSet();
-
-        if (!MainApplication.isDisplayingMapView() || ds == null)
-            return;
-
-        // find out how many "real" units the objects have to be moved in order to
-        // achive an 1-pixel movement
-
-        MapView mapView = MainApplication.getMap().mapView;
+    /**
+     * Find out how many "real" units the objects have to be moved in order to achieve an 1-pixel movement
+     * @param mapView map view
+     * @return move offset
+     */
+    private EastNorth getOffset(MapView mapView) {
         EastNorth en1 = mapView.getEastNorth(100, 100);
         EastNorth en2 = mapView.getEastNorth(101, 101);
 
@@ -130,28 +124,39 @@ public class MoveAction extends JosmAction {
             disty = 0;
         }
 
+        return new EastNorth(distx, disty);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        DataSet ds = getLayerManager().getEditDataSet();
+
+        if (!MainApplication.isDisplayingMapView() || ds == null)
+            return;
+
+        MapView mapView = MainApplication.getMap().mapView;
+        final EastNorth dist = getOffset(mapView);
+
         Collection<OsmPrimitive> selection = ds.getSelected();
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 
-        Command c = UndoRedoHandler.getInstance().getLastCommand();
-
-        ds.beginUpdate();
-        try {
+        MoveCommand cmd = ds.update(c -> {
+            MoveCommand moveCmd;
             if (c instanceof MoveCommand && ds.equals(c.getAffectedDataSet())
                     && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
-                ((MoveCommand) c).moveAgain(distx, disty);
+                moveCmd = (MoveCommand) c;
+                moveCmd.moveAgain(dist.east(), dist.north());
             } else {
-                c = new MoveCommand(ds, selection, distx, disty);
-                UndoRedoHandler.getInstance().add(c);
+                moveCmd = new MoveCommand(ds, selection, dist.east(), dist.north());
+                UndoRedoHandler.getInstance().add(moveCmd);
             }
-        } finally {
-            ds.endUpdate();
-        }
+            return moveCmd;
+        }, UndoRedoHandler.getInstance().getLastCommand());
 
         for (Node n : affectedNodes) {
             if (n.isLatLonKnown() && n.isOutSideWorld()) {
                 // Revert move
-                ((MoveCommand) c).moveAgain(-distx, -disty);
+                cmd.moveAgain(-dist.east(), -dist.north());
                 JOptionPane.showMessageDialog(
                         MainApplication.getMainFrame(),
                         tr("Cannot move objects outside of the world."),

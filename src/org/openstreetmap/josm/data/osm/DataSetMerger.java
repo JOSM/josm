@@ -423,8 +423,7 @@ public class DataSetMerger {
         if (progressMonitor != null) {
             progressMonitor.beginTask(tr("Merging data..."), sourceDataSet.allPrimitives().size());
         }
-        targetDataSet.beginUpdate();
-        try {
+        targetDataSet.update(() -> {
             List<? extends OsmPrimitive> candidates = new ArrayList<>(targetDataSet.getNodes());
             for (Node node: sourceDataSet.getNodes()) {
                 mergePrimitive(node, candidates);
@@ -480,9 +479,7 @@ public class DataSetMerger {
             if (sourceDataSet.isLocked() && !targetDataSet.isLocked()) {
                 targetDataSet.lock();
             }
-        } finally {
-            targetDataSet.endUpdate();
-        }
+        });
         if (progressMonitor != null) {
             progressMonitor.finishTask();
         }

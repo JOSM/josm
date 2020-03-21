@@ -23,6 +23,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -255,14 +256,11 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      */
     public DataSet(OsmPrimitive... osmPrimitives) {
         this();
-        beginUpdate();
-        try {
+        update(() -> {
             for (OsmPrimitive o : osmPrimitives) {
                 addPrimitive(o);
             }
-        } finally {
-            endUpdate();
-        }
+        });
     }
 
     /**
@@ -498,8 +496,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     public void addPrimitive(OsmPrimitive primitive) {
         Objects.requireNonNull(primitive, "primitive");
         checkModifiable();
-        beginUpdate();
-        try {
+        update(() -> {
             if (getPrimitiveById(primitive) != null)
                 throw new DataIntegrityProblemException(
                         tr("Unable to add primitive {0} to the dataset because it is already included",
@@ -510,9 +507,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reindexRelation to work properly)
             store.addPrimitive(primitive);
             firePrimitivesAdded(Collections.singletonList(primitive), false);
-        } finally {
-            endUpdate();
-        }
+        });
     }
 
     /**
@@ -527,16 +522,13 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      */
     public void removePrimitive(PrimitiveId primitiveId) {
         checkModifiable();
-        beginUpdate();
-        try {
+        update(() -> {
             OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
             if (primitive == null)
                 return;
             removePrimitiveImpl(primitive);
             firePrimitivesRemoved(Collections.singletonList(primitive), false);
-        } finally {
-            endUpdate();
-        }
+        });
     }
 
     private void removePrimitiveImpl(OsmPrimitive primitive) {
@@ -551,13 +543,10 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
 
     void removePrimitive(OsmPrimitive primitive) {
         checkModifiable();
-        beginUpdate();
-        try {
+        update(() -> {
             removePrimitiveImpl(primitive);
             firePrimitivesRemoved(Collections.singletonList(primitive), false);
-        } finally {
-            endUpdate();
-        }
+        });
     }
 
     /*---------------------------------------------------
@@ -803,9 +792,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      */
     public Set<Way> unlinkNodeFromWays(Node node) {
         checkModifiable();
-        Set<Way> result = new HashSet<>();
-        beginUpdate();
-        try {
+        return update(() -> {
+            Set<Way> result = new HashSet<>();
             for (Way way : node.getParentWays()) {
                 List<Node> wayNodes = way.getNodes();
                 if (wayNodes.remove(node)) {
@@ -817,10 +805,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                     result.add(way);
                 }
             }
-        } finally {
-            endUpdate();
-        }
-        return result;
+            return result;
+        });
     }
 
     /**
@@ -832,9 +818,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      */
     public Set<Relation> unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
         checkModifiable();
-        Set<Relation> result = new HashSet<>();
-        beginUpdate();
-        try {
+        return update(() -> {
+            Set<Relation> result = new HashSet<>();
             for (Relation relation : getRelations()) {
                 List<RelationMember> members = relation.getMembers();
 
@@ -853,10 +838,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                     result.add(relation);
                 }
             }
-        } finally {
-            endUpdate();
-        }
-        return result;
+            return result;
+        });
     }
 
     /**
@@ -868,17 +851,14 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      */
     public Set<OsmPrimitive> unlinkReferencesToPrimitive(OsmPrimitive referencedPrimitive) {
         checkModifiable();
-        Set<OsmPrimitive> result = new HashSet<>();
-        beginUpdate();
-        try {
+        return update(() -> {
+            Set<OsmPrimitive> result = new HashSet<>();
             if (referencedPrimitive instanceof Node) {
                 result.addAll(unlinkNodeFromWays((Node) referencedPrimitive));
             }
             result.addAll(unlinkPrimitiveFromRelations(referencedPrimitive));
-        } finally {
-            endUpdate();
-        }
-        return result;
+            return result;
+        });
     }
 
     @Override
@@ -978,6 +958,54 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             throw new AssertionError("endUpdate called without beginUpdate");
     }
 
+    /**
+     * Performs the update runnable between {@link #beginUpdate()} / {@link #endUpdate()} calls.
+     * @param runnable update action
+     * @since 16187
+     */
+    public void update(Runnable runnable) {
+        beginUpdate();
+        try {
+            runnable.run();
+        } finally {
+            endUpdate();
+        }
+    }
+
+    /**
+     * Performs the update function between {@link #beginUpdate()} / {@link #endUpdate()} calls.
+     * @param function update function
+     * @param t function argument
+     * @param <T> argument type
+     * @param <R> result type
+     * @return function result
+     * @since 16187
+     */
+    public <T, R> R update(Function<T, R> function, T t) {
+        beginUpdate();
+        try {
+            return function.apply(t);
+        } finally {
+            endUpdate();
+        }
+    }
+
+    /**
+     * Performs the update supplier between {@link #beginUpdate()} / {@link #endUpdate()} calls.
+     * @param supplier update supplier
+     * @param <R> result type
+     * @return supplier result
+     * @since 16187
+     */
+    public <R> R update(Supplier<R> supplier) {
+        beginUpdate();
+        try {
+            return supplier.get();
+        } finally {
+            endUpdate();
+        }
+    }
+
     private void fireEventToListeners(AbstractDatasetChangedEvent event) {
         for (DataSetListener listener : listeners) {
             Logging.trace("Firing {0} to {1} (dataset)", event, listener);
@@ -1043,28 +1071,19 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     /**
      * Invalidates the internal cache of projected east/north coordinates.
      *
-     * This method can be invoked after the globally configured projection method
-     * changed.
+     * This method can be invoked after the globally configured projection method changed.
      */
     public void invalidateEastNorthCache() {
         if (ProjectionRegistry.getProjection() == null)
             return; // sanity check
-        beginUpdate();
-        try {
-            for (Node n : getNodes()) {
-                n.invalidateEastNorthCache();
-            }
-        } finally {
-            endUpdate();
-        }
+        update(() -> getNodes().forEach(Node::invalidateEastNorthCache));
     }
 
     /**
      * Cleanups all deleted primitives (really delete them from the dataset).
      */
     public void cleanupDeletedPrimitives() {
-        beginUpdate();
-        try {
+        update(() -> {
             Collection<OsmPrimitive> toCleanUp = getPrimitives(
                     primitive -> primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew()));
             if (!toCleanUp.isEmpty()) {
@@ -1075,9 +1094,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                 }
                 firePrimitivesRemoved(toCleanUp, false);
             }
-        } finally {
-            endUpdate();
-        }
+        });
     }
 
     /**
@@ -1090,17 +1107,14 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
         //TODO: Why can't we clear a dataset that is locked?
         //TODO: Report listeners that are still active (should be none)
         checkModifiable();
-        beginUpdate();
-        try {
+        update(() -> {
             clearSelection();
             for (OsmPrimitive primitive : allPrimitives) {
                 primitive.setDataset(null);
             }
             store.clear();
             allPrimitives.clear();
-        } finally {
-            endUpdate();
-        }
+        });
     }
 
     /**

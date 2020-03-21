@@ -591,11 +591,11 @@ public class JoinAreasAction extends JosmAction {
         if (!executedCmds.isEmpty()) {
             // revert all executed commands
             ds = executedCmds.getFirst().getAffectedDataSet();
-            ds.beginUpdate();
-            while (!executedCmds.isEmpty()) {
-                executedCmds.removeLast().undoCommand();
-            }
-            ds.endUpdate();
+            ds.update(() -> {
+                while (!executedCmds.isEmpty()) {
+                    executedCmds.removeLast().undoCommand();
+                }
+            });
         }
     }
 
@@ -1747,17 +1747,12 @@ public class JoinAreasAction extends JosmAction {
 
         @Override
         public void undoCommand() {
-            getAffectedDataSet().beginUpdate();
-            super.undoCommand();
-            getAffectedDataSet().endUpdate();
+            getAffectedDataSet().update(super::undoCommand);
         }
 
         @Override
         public boolean executeCommand() {
-            getAffectedDataSet().beginUpdate();
-            boolean rc = super.executeCommand();
-            getAffectedDataSet().endUpdate();
-            return rc;
+            return getAffectedDataSet().update(super::executeCommand);
         }
     }
 }

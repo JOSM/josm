@@ -711,20 +711,21 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         Command c = getLastCommandInDataset(ds);
         if (mode == Mode.MOVE) {
             if (startEN == null) return false; // fix #8128
-            ds.beginUpdate();
-            try {
+            return ds.update(() -> {
+                MoveCommand moveCmd = null;
                 if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
-                    ((MoveCommand) c).saveCheckpoint();
-                    ((MoveCommand) c).applyVectorTo(currentEN);
+                    moveCmd = (MoveCommand) c;
+                    moveCmd.saveCheckpoint();
+                    moveCmd.applyVectorTo(currentEN);
                 } else if (!selection.isEmpty()) {
-                    c = new MoveCommand(selection, startEN, currentEN);
-                    UndoRedoHandler.getInstance().add(c);
+                    moveCmd = new MoveCommand(selection, startEN, currentEN);
+                    UndoRedoHandler.getInstance().add(moveCmd);
                 }
                 for (Node n : affectedNodes) {
                     if (n.isOutSideWorld()) {
                         // Revert move
-                        if (c instanceof MoveCommand) {
-                            ((MoveCommand) c).resetToCheckpoint();
+                        if (moveCmd != null) {
+                            moveCmd.resetToCheckpoint();
                         }
                         // TODO: We might use a simple notification in the lower left corner.
                         JOptionPane.showMessageDialog(
@@ -736,9 +737,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                         return false;
                     }
                 }
-            } finally {
-                ds.endUpdate();
-            }
+                return true;
+            });
         } else {
             startEN = currentEN; // drag can continue after scaling/rotation
 
@@ -746,8 +746,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 return false;
             }
 
-            ds.beginUpdate();
-            try {
+            return ds.update(() -> {
                 if (mode == Mode.ROTATE) {
                     if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
                         ((RotateCommand) c).handleEvent(currentEN);
@@ -766,11 +765,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 if (doesImpactStatusLine(affectedNodes, ways)) {
                     MainApplication.getMap().statusLine.setDist(ways);
                 }
-            } finally {
-                ds.endUpdate();
-            }
+                return true;
+            });
         }
-        return true;
     }
 
     private static boolean doesImpactStatusLine(Collection<Node> affectedNodes, Collection<Way> selectedWays) {
@@ -909,8 +906,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             Collection<OsmPrimitive> selection = ds.getSelectedNodesAndWays();
             Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
             Command c = getLastCommandInDataset(ds);
-            ds.beginUpdate();
-            try {
+            ds.update(() -> {
                 if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
                     Node selectedNode = selNodes.iterator().next();
                     EastNorth selectedEN = selectedNode.getEastNorth();
@@ -918,9 +914,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     ((MoveCommand) c).moveAgain(targetEN.getX() - selectedEN.getX(),
                                                 targetEN.getY() - selectedEN.getY());
                 }
-            } finally {
-                ds.endUpdate();
-            }
+            });
         }
 
         Collection<Node> nodesToMerge = new LinkedList<>(selNodes);

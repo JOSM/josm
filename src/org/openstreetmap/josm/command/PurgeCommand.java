@@ -83,8 +83,7 @@ public class PurgeCommand extends Command {
 
     @Override
     public boolean executeCommand() {
-        getAffectedDataSet().beginUpdate();
-        try {
+        getAffectedDataSet().update(() -> {
             purgedConflicts.get().clear();
             // unselect primitives in advance to not fire a selection change for every one of them
             getAffectedDataSet().clearSelection(toPurge);
@@ -115,9 +114,7 @@ public class PurgeCommand extends Command {
                 }
             }
             getAffectedDataSet().clearMappaintCache();
-        } finally {
-            getAffectedDataSet().endUpdate();
-        }
+        });
         return true;
     }
 
@@ -126,8 +123,7 @@ public class PurgeCommand extends Command {
         if (getAffectedDataSet() == null)
             return;
 
-        getAffectedDataSet().beginUpdate();
-        try {
+        getAffectedDataSet().update(() -> {
             for (OsmPrimitive osm : toPurge) {
                 PrimitiveData data = makeIncompleteDataByPrimId.get(osm);
                 if (data != null) {
@@ -146,9 +142,7 @@ public class PurgeCommand extends Command {
                 getAffectedDataSet().getConflicts().add(conflict);
             }
             getAffectedDataSet().clearMappaintCache();
-        } finally {
-            getAffectedDataSet().endUpdate();
-        }
+        });
     }
 
     /**

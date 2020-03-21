@@ -693,15 +693,12 @@ public class ValidatorDialog extends ToggleDialog
          * Undo commands as they were not yet added to the UndoRedo Handler
          */
         private void tryUndo() {
-            final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-            int i = fixCommands.size() - 1;
-            ds.beginUpdate();
-            for (; i >= 0; i--) {
-                fixCommands.get(i).undoCommand();
-            }
-            ds.endUpdate();
+            MainApplication.getLayerManager().getActiveDataSet().update(() -> {
+                for (int i = fixCommands.size() - 1; i >= 0; i--) {
+                    fixCommands.get(i).undoCommand();
+                }
+            });
         }
-
     }
 
     private static void invalidateValidatorLayers() {
@@ -722,17 +719,12 @@ public class ValidatorDialog extends ToggleDialog
 
         @Override
         public void undoCommand() {
-            getAffectedDataSet().beginUpdate();
-            super.undoCommand();
-            getAffectedDataSet().endUpdate();
+            getAffectedDataSet().update(super::undoCommand);
         }
 
         @Override
         public boolean executeCommand() {
-            getAffectedDataSet().beginUpdate();
-            boolean rc = super.executeCommand();
-            getAffectedDataSet().endUpdate();
-            return rc;
+            return getAffectedDataSet().update(super::executeCommand);
         }
     }
 

@@ -651,16 +651,13 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
         // if uploaded, clean the modified flags as well
         data.cleanupDeletedPrimitives();
-        data.beginUpdate();
-        try {
+        data.update(() -> {
             for (OsmPrimitive p: data.allPrimitives()) {
                 if (processed.contains(p)) {
                     p.setModified(false);
                 }
             }
-        } finally {
-            data.endUpdate();
-        }
+        });
     }
 
     private static String counterText(String text, int deleted, int incomplete) {
