@@ -546,6 +546,10 @@ public abstract class ComboMultiSelect extends KeyedItem {
         changedTags.add(new Tag(key, value));
     }
 
+    /**
+     * Sets whether the last value is used as default.
+     * @param v Using "force" (2) enforces this behaviour also for already tagged objects. Default is "false" (0).
+     */
     public void setUse_last_as_default(String v) { // NOPMD
         if ("force".equals(v)) {
             use_last_as_default = 2;

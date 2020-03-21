@@ -39,6 +39,7 @@ public class Roles extends TaggingPresetItem {
      * Information on a certain role, which is expected for the relation members.
      */
     public static class Role {
+        /** Presets types expected for this role */
         public Set<TaggingPresetType> types; // NOSONAR
         /** Role name used in a relation */
         public String key; // NOSONAR
@@ -57,10 +58,20 @@ public class Roles extends TaggingPresetItem {
         /** How often must the element appear */
         private short count;
 
+        /**
+         * Sets the presets types expected for this role.
+         * @param types comma-separated set of expected types
+         * @throws SAXException if an unknown type is detected
+         */
         public void setType(String types) throws SAXException {
             this.types = getType(types);
         }
 
+        /**
+         * Sets wether this role is required at least once in the relation.
+         * @param str "required" or "optional"
+         * @throws SAXException if str is neither "required" or "optional"
+         */
         public void setRequisite(String str) throws SAXException {
             if ("required".equals(str)) {
                 required = true;
@@ -68,6 +79,11 @@ public class Roles extends TaggingPresetItem {
                 throw new SAXException(tr("Unknown requisite: {0}", str));
         }
 
+        /**
+         * Sets wether the role name is a regular expression.
+         * @param str "true" or "false"
+         * @throws SAXException if str is neither "true" or "false"
+         */
         public void setRegexp(String str) throws SAXException {
             if ("true".equals(str)) {
                 regexp = true;
@@ -75,6 +91,11 @@ public class Roles extends TaggingPresetItem {
                 throw new SAXException(tr("Unknown regexp value: {0}", str));
         }
 
+        /**
+         * Sets an expression (cf. search dialog) for objects of this role
+         * @param memberExpression an expression (cf. search dialog) for objects of this role
+         * @throws SAXException in case of parsing error
+         */
         public void setMember_expression(String memberExpression) throws SAXException {
             try {
                 final SearchSetting searchSetting = new SearchSetting();
@@ -87,6 +108,10 @@ public class Roles extends TaggingPresetItem {
             }
         }
 
+        /**
+         * Sets how often must the element appear.
+         * @param count how often must the element appear
+         */
         public void setCount(String count) {
             this.count = Short.parseShort(count);
         }
@@ -121,6 +146,11 @@ public class Roles extends TaggingPresetItem {
             return this.key.equals(role);
         }
 
+        /**
+         * Adds this role to the given panel.
+         * @param p panel where to add this role
+         * @return {@code true}
+         */
         public boolean addToPanel(JPanel p) {
             String cstring;
             if (count > 0 && !required) {

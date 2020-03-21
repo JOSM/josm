@@ -244,9 +244,7 @@ public final class TaggingPresetReader {
                     tp.group = lastmenu;
                     if (all.contains(tp)) {
                         lastmenuOriginal = tp;
-                        java.util.Optional<TaggingPreset> val = all.stream().filter(tp::equals).findFirst();
-                        if (val.isPresent())
-                            tp = (TaggingPresetMenu) val.get();
+                        tp = (TaggingPresetMenu) all.stream().filter(tp::equals).findFirst().orElse(tp);
                         lastmenuOriginal.group = null;
                     } else {
                         tp.setDisplayName();
@@ -434,6 +432,10 @@ public final class TaggingPresetReader {
         return readAll(getPresetSources(), validate, displayErrMsg);
     }
 
+    /**
+     * Returns the zip file where the icons are located
+     * @return the zip file where the icons are located
+     */
     public static File getZipIcons() {
         return zipIcons;
     }

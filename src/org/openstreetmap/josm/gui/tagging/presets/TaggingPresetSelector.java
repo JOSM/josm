@@ -344,13 +344,19 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
             Collections.sort(result);
             return result;
-
         }
 
+        /**
+         * Clears the selector.
+         */
         public void clear() {
             classifications.clear();
         }
 
+        /**
+         * Loads a given collection of presets.
+         * @param presets presets collection
+         */
         public void loadPresets(Collection<TaggingPreset> presets) {
             for (TaggingPreset preset : presets) {
                 if (preset instanceof TaggingPresetSeparator || preset instanceof TaggingPresetMenu) {
@@ -394,6 +400,10 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         super.init();
     }
 
+    /**
+     * Initializes the selector with a given collection of presets.
+     * @param presets presets collection
+     */
     public void init(Collection<TaggingPreset> presets) {
         classifications.clear();
         classifications.loadPresets(presets);
@@ -441,6 +451,10 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         return preset;
     }
 
+    /**
+     * Selects a given preset.
+     * @param p preset to select
+     */
     public synchronized void setSelectedPreset(TaggingPreset p) {
         lsResult.setSelectedValue(p, true);
     }

@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 public abstract class TaggingPresetItem {
 
     // cache the parsing of types using a LRU cache
-    private static final Map<String, Set<TaggingPresetType>> TYPE_CACHE = new LruCache<>(16);;
+    private static final Map<String, Set<TaggingPresetType>> TYPE_CACHE = new LruCache<>(16);
 
     protected void initAutoCompletionField(AutoCompletingTextField field, String... key) {
         initAutoCompletionField(field, Arrays.asList(key));
