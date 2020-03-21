@@ -1954,9 +1954,15 @@ node[exit_to] {
 }
 
 /* #18951 */
-*[water=riverbank] {
+*[water=riverbank][!natural] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "water=river";
+  suggestAlternative: "natural=water + water=river";
   group: tr("deprecated tagging");
   fixAdd: "water=river";
+  fixAdd: "natural=water";
+}
+*[water=riverbank][natural] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=water + water=river";
+  group: tr("deprecated tagging");
 }
