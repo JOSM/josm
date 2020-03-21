@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -67,8 +68,10 @@ public class XmlObjectParser implements Iterable<Object> {
     private class Parser extends DefaultHandler {
         private final Stack<Object> current = new Stack<>();
         private StringBuilder characters = new StringBuilder(64);
-
         private Locator locator;
+        private final StringParser primitiveParsers = new StringParser(StringParser.DEFAULT)
+                .registerParser(boolean.class, this::parseBoolean)
+                .registerParser(Boolean.class, this::parseBoolean);
 
         @Override
         public void setDocumentLocator(Locator locator) {
@@ -122,24 +125,6 @@ public class XmlObjectParser implements Iterable<Object> {
             characters = new StringBuilder(64);
         }
 
-        private Object getValueForClass(Class<?> klass, String value) {
-            if (boolean.class.equals(klass))
-                return parseBoolean(value);
-            else if (char.class.equals(klass))
-                return value.charAt(0);
-            else if (short.class.equals(klass) || Short.class.equals(klass))
-                return Integer.valueOf(value);
-            else if (Integer.class.equals(klass))
-                return Integer.valueOf(value);
-            else if (Long.class.equals(klass))
-                return Long.valueOf(value);
-            else if (Float.class.equals(klass))
-                return Float.valueOf(value);
-            else if (Double.class.equals(klass))
-                return Double.valueOf(value);
-            return value;
-        }
-
         private void setValue(Entry entry, String fieldName, String value) throws SAXException {
             if (value != null) {
                 value = value.intern();
@@ -156,12 +141,9 @@ public class XmlObjectParser implements Iterable<Object> {
                 if (f == null && fieldName.startsWith(lang)) {
                     f = entry.getField("locale_" + fieldName.substring(lang.length()));
                 }
-                if (f != null && Modifier.isPublic(f.getModifiers()) && (
-                        String.class.equals(f.getType()) || boolean.class.equals(f.getType()) || char.class.equals(f.getType()) ||
-                        Float.class.equals(f.getType()) || Double.class.equals(f.getType()) ||
-                        short.class.equals(f.getType()) || Short.class.equals(f.getType()) ||
-                        Long.class.equals(f.getType()) || Integer.class.equals(f.getType()))) {
-                    f.set(c, getValueForClass(f.getType(), value));
+                Optional<?> parsed;
+                if (f != null && Modifier.isPublic(f.getModifiers()) && (parsed = primitiveParsers.tryParse(f.getType(), value)).isPresent()) {
+                    f.set(c, parsed.get());
                 } else {
                     String setter;
                     if (fieldName.startsWith(lang)) {
@@ -172,7 +154,8 @@ public class XmlObjectParser implements Iterable<Object> {
                     }
                     Method m = entry.getMethod(setter);
                     if (m != null) {
-                        m.invoke(c, getValueForClass(m.getParameterTypes()[0], value));
+                        parsed = primitiveParsers.tryParse(m.getParameterTypes()[0], value);
+                        m.invoke(c, parsed.isPresent() ? parsed.get() : value);
                     }
                 }
             } catch (ReflectiveOperationException | IllegalArgumentException e) {
