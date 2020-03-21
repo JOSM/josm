@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.GenericParser;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -25,6 +26,17 @@ public final class Cascade {
     private boolean defaultSelectedHandling = true;
 
     private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
+
+    private static final GenericParser<Object> GENERIC_PARSER = new GenericParser<>()
+            .registerParser(float.class, Cascade::toFloat)
+            .registerParser(Float.class, Cascade::toFloat)
+            .registerParser(double.class, Cascade::toDouble)
+            .registerParser(Double.class, Cascade::toDouble)
+            .registerParser(boolean.class, Cascade::toBool)
+            .registerParser(Boolean.class, Cascade::toBool)
+            .registerParser(float[].class, Cascade::toFloatArray)
+            .registerParser(Color.class, Cascade::toColor)
+            .registerParser(String.class, Cascade::toString);
 
     /**
      * Constructs a new {@code Cascade}.
@@ -136,41 +148,18 @@ public final class Cascade {
         if (klass.isInstance(o))
             return (T) o;
 
-        if (klass == float.class || klass == Float.class)
-            return (T) toFloat(o);
+        return GENERIC_PARSER.supports(klass)
+                ? GENERIC_PARSER.parse(klass, o)
+                : null;
+    }
 
-        if (klass == double.class || klass == Double.class) {
-            o = toFloat(o);
-            if (o != null) {
-                o = Double.valueOf((Float) o);
-            }
-            return (T) o;
+    private static String toString(Object o) {
+        if (o instanceof Keyword)
+            return ((Keyword) o).val;
+        if (o instanceof Color) {
+            return ColorHelper.color2html((Color) o);
         }
-
-        if (klass == boolean.class || klass == Boolean.class)
-            return (T) toBool(o);
-
-        if (klass == float[].class)
-            return (T) toFloatArray(o);
-
-        if (klass == Color.class)
-            return (T) toColor(o);
-
-        if (klass == String.class) {
-            if (o instanceof Keyword)
-                return (T) ((Keyword) o).val;
-            if (o instanceof Color) {
-                Color c = (Color) o;
-                int alpha = c.getAlpha();
-                if (alpha != 255)
-                    return (T) String.format("#%06x%02x", ((Color) o).getRGB() & 0x00ffffff, alpha);
-                return (T) String.format("#%06x", ((Color) o).getRGB() & 0x00ffffff);
-            }
-
-            return (T) o.toString();
-        }
-
-        return null;
+        return o.toString();
     }
 
     private static Float toFloat(Object o) {
@@ -184,6 +173,11 @@ public final class Cascade {
             }
         }
         return null;
+    }
+
+    private static Double toDouble(Object o) {
+        final Float number = toFloat(o);
+        return number != null ? Double.valueOf(number) : null;
     }
 
     private static Boolean toBool(Object o) {
