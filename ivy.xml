@@ -3,7 +3,6 @@
 <ivy-module version="2.0" xmlns:maven="http://ant.apache.org/ivy/maven">
     <info organisation="org.openstreetmap" module="josm"/>
     <configurations>
-        <conf name="ivy" description="Apache Ivy configuration for self-update"/>
         <!--  configuration that should be used when specifying dependencies -->
         <conf name="implementation" description="All libs JOSM uses that plugins should not use"/>
         <conf name="api" description="All libs that JOSM uses and are available for plugins"/>

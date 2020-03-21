@@ -16,11 +16,19 @@
          xmlns:unless="ant:unless"
 >
     <target name="init-ivy">
+        <property name="ivy.version" value="2.5.0"/>
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="lib.dir"   location="${base.dir}/lib"/>
         <property name="tools.dir" location="${base.dir}/tools"/>
         <property name="tools.ivy" location="${tools.dir}/ivy.xml"/>
-        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${tools.dir}/ivy/ivy.jar"/>
+        <property name="ivy.jar.dir" location="${tools.dir}/ivy"/>
+        <property name="ivy.jar.file" location="${ivy.jar.dir}/ivy-${ivy.version}.jar"/>
+        <mkdir dir="${ivy.jar.dir}"/>
+        <get src="https://josm.openstreetmap.de/nexus/content/repositories/public/org/apache/ivy/ivy/${ivy.version}/ivy-${ivy.version}.jar"
+             dest="${ivy.jar.file}"
+             skipexisting="true"
+        />
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar.file}"/>
     </target>
     <target name="init-properties" depends="resolve">
         <property environment="env"/>
@@ -1095,7 +1103,6 @@ Build-Date: ${build.tstamp}
         <ivy:cachepath pathid="runtime.path" conf="runtime"/>
         <ivy:cachefileset setid="runtime.fileset" conf="runtime"/>
         <ivy:cachepath pathid="test.path" conf="test"/>
-        <ivy:retrieve pattern="${tools.dir}/ivy/[artifact]-[type].[ext]" conf="ivy"/>
     </target>
     <target name="extract-libraries" depends="resolve" description="extract libraries to build dir">
         <unzip dest="${build.dir}">
