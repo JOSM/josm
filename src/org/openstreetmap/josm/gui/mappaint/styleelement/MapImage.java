@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 import javax.swing.ImageIcon;
 
@@ -117,14 +118,14 @@ public class MapImage {
 
     /**
      * Get the image resource associated with this MapImage object.
-     * This method blocks until the image has been loaded.
+     * This method blocks until the image resource has been loaded.
      * @return the image resource
      */
     public ImageResource getImageResource() {
         if (imageResource == null) {
             try {
-                // load and wait for the image
-                loadImage().get();
+                // load and wait for the image resource
+                loadImageResource().get();
             } catch (ExecutionException | InterruptedException e) {
                 Logging.warn(e);
                 Thread.currentThread().interrupt();
@@ -164,33 +165,57 @@ public class MapImage {
         return img;
     }
 
-    private CompletableFuture<Void> loadImage() {
+    private CompletableFuture<Void> load(Consumer<? super ImageResource> action) {
         return new ImageProvider(name)
                 .setDirs(MapPaintStyles.getIconSourceDirs(source))
                 .setId("mappaint."+source.getPrefName())
                 .setArchive(source.zipIcons)
                 .setInArchiveDir(source.getZipEntryDirName())
                 .setOptional(true)
-                .getResourceAsync(result -> {
-                    synchronized (this) {
-                        imageResource = result;
-                        if (result == null) {
-                            source.logWarning(tr("Failed to locate image ''{0}''", name));
-                            ImageIcon noIcon = MapPaintStyles.getNoIconIcon(source);
-                            img = noIcon == null ? null : noIcon.getImage();
-                        } else {
-                            img = rescale(result.getImageIcon(new Dimension(width, height)).getImage());
-                        }
-                        if (temporary) {
-                            disabledImgCache = null;
-                            MapView mapView = MainApplication.getMap().mapView;
-                            mapView.preferenceChanged(null); // otherwise repaint is ignored, because layer hasn't changed
-                            mapView.repaint();
-                        }
-                        temporary = false;
-                    }
+                .getResourceAsync(action);
+    }
+
+    /**
+     * Loads image resource and actual rescaled image.
+     * @return the future of the requested image
+     * @see #loadImageResource
+     */
+    private CompletableFuture<Void> loadImage() {
+        return load(result -> {
+            synchronized (this) {
+                imageResource = result;
+                if (result == null) {
+                    source.logWarning(tr("Failed to locate image ''{0}''", name));
+                    ImageIcon noIcon = MapPaintStyles.getNoIconIcon(source);
+                    img = noIcon == null ? null : noIcon.getImage();
+                } else {
+                    img = rescale(result.getImageIcon(new Dimension(width, height)).getImage());
                 }
-        );
+                if (temporary) {
+                    disabledImgCache = null;
+                    MapView mapView = MainApplication.getMap().mapView;
+                    mapView.preferenceChanged(null); // otherwise repaint is ignored, because layer hasn't changed
+                    mapView.repaint();
+                }
+                temporary = false;
+            }
+        });
+    }
+
+    /**
+     * Loads image resource only.
+     * @return the future of the requested image resource
+     * @see #loadImage
+     */
+    private CompletableFuture<Void> loadImageResource() {
+        return load(result -> {
+            synchronized (this) {
+                imageResource = result;
+                if (result == null) {
+                    source.logWarning(tr("Failed to locate image ''{0}''", name));
+                }
+            }
+        });
     }
 
     /**
