@@ -21,7 +21,7 @@ public class ValUtilTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests that {@code ValUtil} satisfies utility class criterias.
+     * Tests that {@code ValUtil} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

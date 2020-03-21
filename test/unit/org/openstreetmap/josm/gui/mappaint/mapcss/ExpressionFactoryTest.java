@@ -21,7 +21,7 @@ public class ExpressionFactoryTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests that {@code Functions} satisfies utility class criterias.
+     * Tests that {@code Functions} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

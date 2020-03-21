@@ -89,7 +89,7 @@ public class OrthogonalizeActionTest {
     }
 
     /**
-     * Tests that {@code OrthogonalizeAction.EN} satisfies utility class criterias.
+     * Tests that {@code OrthogonalizeAction.EN} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

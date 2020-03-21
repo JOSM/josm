@@ -46,7 +46,7 @@ public class PreferencesUtilsTest {
     }
 
     /**
-     * Tests that {@code PreferencesUtils} satisfies utility class criterias.
+     * Tests that {@code PreferencesUtils} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

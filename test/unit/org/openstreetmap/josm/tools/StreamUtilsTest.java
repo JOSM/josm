@@ -26,7 +26,7 @@ public class StreamUtilsTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests that {@code StreamUtils} satisfies utility class criterias.
+     * Tests that {@code StreamUtils} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

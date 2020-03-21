@@ -40,7 +40,7 @@ public class UtilsTest {
     public JOSMTestRules rules = new JOSMTestRules();
 
     /**
-     * Tests that {@code Utils} satisfies utility class criterias.
+     * Tests that {@code Utils} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

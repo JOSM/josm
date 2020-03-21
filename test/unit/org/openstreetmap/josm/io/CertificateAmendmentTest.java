@@ -21,7 +21,7 @@ public class CertificateAmendmentTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests that {@code CertificateAmendment} satisfies utility class criterias.
+     * Tests that {@code CertificateAmendment} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

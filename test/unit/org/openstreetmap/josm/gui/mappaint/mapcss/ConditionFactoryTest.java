@@ -33,7 +33,7 @@ public class ConditionFactoryTest {
     }
 
     /**
-     * Tests that {@code PseudoClasses} satisfies utility class criterias.
+     * Tests that {@code PseudoClasses} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

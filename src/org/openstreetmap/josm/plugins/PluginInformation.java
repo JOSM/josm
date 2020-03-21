@@ -390,7 +390,7 @@ public class PluginInformation {
     }
 
     /**
-     * Try to find a plugin after some criterias. Extract the plugin-information
+     * Try to find a plugin after some criteria. Extract the plugin-information
      * from the plugin and return it. The plugin is searched in the following way:
      *<ol>
      *<li>first look after an MANIFEST.MF in the package org.openstreetmap.josm.plugins.&lt;plugin name&gt;

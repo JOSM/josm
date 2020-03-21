@@ -34,7 +34,7 @@ public class DateUtilsTest {
     public JOSMTestRules test = new JOSMTestRules().i18n().preferences();
 
     /**
-     * Tests that {@code DateUtils} satisfies utility class criterias.
+     * Tests that {@code DateUtils} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

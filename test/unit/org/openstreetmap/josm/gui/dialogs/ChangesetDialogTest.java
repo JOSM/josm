@@ -22,7 +22,7 @@ public class ChangesetDialogTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests that {@code LaunchChangesetManager} satisfies utility class criterias.
+     * Tests that {@code LaunchChangesetManager} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

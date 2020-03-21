@@ -30,7 +30,7 @@ public class JCSCacheManagerTest {
     public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20000);
 
     /**
-     * Tests that {@code JCSCacheManager} satisfies utility class criterias.
+     * Tests that {@code JCSCacheManager} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

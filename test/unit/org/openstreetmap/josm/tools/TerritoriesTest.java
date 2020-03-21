@@ -33,7 +33,7 @@ public class TerritoriesTest {
     public JOSMTestRules rules = new JOSMTestRules().projection().territories();
 
     /**
-     * Tests that {@code Territories} satisfies utility class criterias.
+     * Tests that {@code Territories} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

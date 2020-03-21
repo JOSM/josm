@@ -33,7 +33,7 @@ public class ReverseWayTagCorrectorTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests that {@code ReverseWayTagCorrector.TagSwitcher} satisfies utility class criterias.
+     * Tests that {@code ReverseWayTagCorrector.TagSwitcher} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

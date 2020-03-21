@@ -21,7 +21,7 @@ public class TaggingPresetsTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests that {@code TaggingPresets} satisfies utility class criterias.
+     * Tests that {@code TaggingPresets} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

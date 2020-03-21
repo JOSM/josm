@@ -123,7 +123,7 @@ public class ClipboardUtilsTest {
     }
 
     /**
-     * Tests that {@code ClipboardUtils} satisfies utility class criterias.
+     * Tests that {@code ClipboardUtils} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

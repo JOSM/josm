@@ -36,7 +36,7 @@ public class OsmValidatorTest {
     }
 
     /**
-     * Tests that {@code OsmValidator} satisfies utility class criterias.
+     * Tests that {@code OsmValidator} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

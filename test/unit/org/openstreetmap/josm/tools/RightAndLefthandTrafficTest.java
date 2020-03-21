@@ -23,7 +23,7 @@ public class RightAndLefthandTrafficTest {
     public JOSMTestRules rules = new JOSMTestRules().projection().rlTraffic();
 
     /**
-     * Tests that {@code RightAndLefthandTraffic} satisfies utility class criterias.
+     * Tests that {@code RightAndLefthandTraffic} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

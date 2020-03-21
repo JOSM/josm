@@ -37,7 +37,7 @@ public class SignpostAdaptersTest {
     }
 
     /**
-     * Tests that {@code SignpostAdapters} satisfies utility class criterias.
+     * Tests that {@code SignpostAdapters} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

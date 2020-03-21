@@ -35,7 +35,7 @@ public final class SelectByInternalPointActionTest {
     public JOSMTestRules rules = new JOSMTestRules().preferences().projection().main();
 
     /**
-     * Tests that {@code SelectByInternalPointAction} satisfies utility class criterias.
+     * Tests that {@code SelectByInternalPointAction} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test

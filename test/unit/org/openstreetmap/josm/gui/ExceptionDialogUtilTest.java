@@ -21,7 +21,7 @@ public class ExceptionDialogUtilTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Tests that {@code ExceptionDialogUtil} satisfies utility class criterias.
+     * Tests that {@code ExceptionDialogUtil} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
