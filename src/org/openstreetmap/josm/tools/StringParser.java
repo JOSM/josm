@@ -35,6 +35,9 @@ public class StringParser extends GenericParser<String> {
             .registerParser(Double.class, Double::parseDouble)
             .parsers));
 
+    /**
+     * Creates an empty {@code StringParser}
+     */
     public StringParser() {
         super();
     }
@@ -48,7 +51,7 @@ public class StringParser extends GenericParser<String> {
         super(parser);
     }
 
-    protected StringParser(Map<Class<?>, Function<String, ?>> parsers) {
+    private StringParser(Map<Class<?>, Function<String, ?>> parsers) {
         super(parsers);
     }
 

@@ -125,10 +125,8 @@ public class XmlObjectParser implements Iterable<Object> {
             characters = new StringBuilder(64);
         }
 
-        private void setValue(Entry entry, String fieldName, String value) throws SAXException {
-            if (value != null) {
-                value = value.intern();
-            }
+        private void setValue(Entry entry, String fieldName, String value0) throws SAXException {
+            final String value = value0 != null ? value0.intern() : null;
             CheckParameterUtil.ensureParameterNotNull(entry, "entry");
             if ("class".equals(fieldName) || "default".equals(fieldName) || "throw".equals(fieldName) ||
                     "new".equals(fieldName) || "null".equals(fieldName)) {
@@ -141,8 +139,10 @@ public class XmlObjectParser implements Iterable<Object> {
                 if (f == null && fieldName.startsWith(lang)) {
                     f = entry.getField("locale_" + fieldName.substring(lang.length()));
                 }
-                Optional<?> parsed;
-                if (f != null && Modifier.isPublic(f.getModifiers()) && (parsed = primitiveParsers.tryParse(f.getType(), value)).isPresent()) {
+                Optional<?> parsed = Optional.ofNullable(f)
+                        .filter(field -> Modifier.isPublic(field.getModifiers()))
+                        .flatMap(field -> primitiveParsers.tryParse(field.getType(), value));
+                if (parsed.isPresent()) {
                     f.set(c, parsed.get());
                 } else {
                     String setter;

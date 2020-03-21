@@ -9,12 +9,16 @@ import java.util.function.Function;
 /**
  * Utility class to parse various types from other values.
  *
+ * @param <U> the type of the objects to parse
  * @since 16184
  */
 public class GenericParser<U> {
 
     protected final Map<Class<?>, Function<U, ?>> parsers;
 
+    /**
+     * Creates an empty {@code GenericParser}
+     */
     public GenericParser() {
         this(new LinkedHashMap<>());
     }
@@ -28,6 +32,11 @@ public class GenericParser<U> {
         this(new LinkedHashMap<>(parser.parsers));
     }
 
+    /**
+     * Creates a new {@code GenericParser} with the same parsers as the specified map
+     *
+     * @param parsers the parsers
+     */
     protected GenericParser(Map<Class<?>, Function<U, ?>> parsers) {
         this.parsers = parsers;
     }
@@ -79,7 +88,7 @@ public class GenericParser<U> {
      * @return the parsed value for {@code value} as type {@code type},
      * or {@code Optional.empty()} (if parsing fails, or the type is not {@linkplain #supports supported})
      */
-    public <T> Optional<?> tryParse(Class<?> type, U value) {
+    public <T> Optional<T> tryParse(Class<T> type, U value) {
         try {
             return Optional.ofNullable(parse(type, value));
         } catch (RuntimeException ex) {
