@@ -53,6 +53,7 @@ import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
+import org.openstreetmap.josm.actions.relation.DuplicateRelationAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -391,7 +392,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             membershipMenuHandler.addAction(deleteAction);
             membershipMenu.addSeparator();
         }
-        RelationPopupMenus.setupHandler(membershipMenuHandler, EditRelationAction.class, DeleteRelationsAction.class);
+        RelationPopupMenus.setupHandler(membershipMenuHandler,
+                EditRelationAction.class, DuplicateRelationAction.class, DeleteRelationsAction.class);
         membershipMenu.addSeparator();
         membershipMenu.add(helpRelAction);
         membershipMenu.add(taginfoAction);

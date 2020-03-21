@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.DuplicateRelationAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
@@ -92,7 +93,7 @@ public class ChildRelationBrowser extends JPanel {
 
         final JPopupMenu popupMenu = new JPopupMenu();
         final PopupMenuHandler popupMenuHandler = new PopupMenuHandler(popupMenu);
-        RelationPopupMenus.setupHandler(popupMenuHandler);
+        RelationPopupMenus.setupHandler(popupMenuHandler, DuplicateRelationAction.class);
 
         add(buildButtonPanel(), BorderLayout.SOUTH);
         childTree.setToggleClickCount(0);

@@ -9,6 +9,7 @@ import javax.swing.Action;
 import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
 import org.openstreetmap.josm.actions.relation.DownloadMembersAction;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
+import org.openstreetmap.josm.actions.relation.DuplicateRelationAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.actions.relation.SelectInRelationListAction;
 import org.openstreetmap.josm.actions.relation.SelectMembersAction;
@@ -35,6 +36,10 @@ public final class RelationPopupMenus {
         final Collection<Class<? extends Action>> exclude = Arrays.asList(excludeActions);
         if (!exclude.contains(EditRelationAction.class)) {
             menu.addAction(new EditRelationAction());
+        }
+
+        if (!exclude.contains(DuplicateRelationAction.class)) {
+            menu.addAction(new DuplicateRelationAction());
         }
 
         if (!exclude.contains(DeleteRelationsAction.class)) {
