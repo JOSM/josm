@@ -1122,6 +1122,11 @@ Build-Date: ${build.tstamp}
                 <exclude name="org/apache/commons/logging/impl/Log4JLogger*"/>
                 <exclude name="org/apache/commons/logging/impl/LogKitLogger*"/>
                 <exclude name="org/apache/commons/logging/impl/ServletContextCleaner*"/>
+                <exclude name="org/apache/commons/jcs/auxiliary/disk/jdbc/**"/>
+                <exclude name="org/apache/commons/jcs/auxiliary/remote/http/client/**"/>
+                <exclude name="org/apache/commons/jcs/auxiliary/remote/http/server/RemoteHttpCacheServlet*"/>
+                <exclude name="org/apache/commons/jcs/auxiliary/remote/server/RemoteCacheStartupServlet*"/>
+                <exclude name="org/apache/commons/jcs/utils/servlet/**"/>
             </patternset>
         </unzip>
     </target>
