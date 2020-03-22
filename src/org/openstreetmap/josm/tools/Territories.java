@@ -57,8 +57,8 @@ public final class Territories {
     private static DataSet dataSet;
 
     private static volatile Map<String, GeoPropertyIndex<Boolean>> iso3166Cache;
-    private static volatile Map<String, TaginfoRegionalInstance> taginfoCache;
-    private static volatile Map<String, TaginfoRegionalInstance> taginfoGeofabrikCache;
+    protected static volatile Map<String, TaginfoRegionalInstance> taginfoCache;
+    protected static volatile Map<String, TaginfoRegionalInstance> taginfoGeofabrikCache;
     private static volatile Map<String, TagMap> customTagsCache;
 
     private static final List<String> KNOWN_KEYS = Arrays.asList(ISO3166_1, ISO3166_2, TAGINFO, "type", "name:en", "driving_side", "note");
