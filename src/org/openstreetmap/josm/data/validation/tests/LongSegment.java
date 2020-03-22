@@ -46,6 +46,9 @@ public class LongSegment extends Test {
 
     @Override
     public void visit(Node n) {
+        if (!partialSelection)
+            return;
+
         // Test all way segments around this node.
         // If there is an error in the unchanged part of the way, we do not need to warn the user about it.
         for (Way way : n.getParentWays()) {
