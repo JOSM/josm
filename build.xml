@@ -219,7 +219,6 @@ Build-Date: ${build.tstamp}
                 <attribute name="Add-Opens" value="java.base/java.lang java.base/java.nio java.base/jdk.internal.loader java.base/jdk.internal.ref java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
             </manifest>
             <service type="java.text.spi.DecimalFormatSymbolsProvider" provider="org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider" />
-            <zipfileset dir="${src.dir}/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images"/>
         </jar>
     </target>
     <!-- Mac OS X target -->
@@ -327,33 +326,7 @@ Build-Date: ${build.tstamp}
             </classpath>
         </javac>
     </target>
-    <target name="compile-jmapviewer" depends="init" description="Compiles JMapViewer">
-        <!-- JMapViewer -->
-        <javac sourcepath="" srcdir="${src.dir}" fork="yes"
-            excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**"
-            destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
-            <compilerarg value="-J-Xbootclasspath/p:${error_prone_javac.jar}" unless:set="isJava9"/>
-            <compilerarg line="-XDcompilePolicy=simple"/>
-            <compilerarg value="-processorpath"/>
-            <compilerarg pathref="processor.path"/>
-            <compilerarg value="-Xlint:cast"/>
-            <compilerarg value="-Xlint:deprecation"/>
-            <compilerarg value="-Xlint:dep-ann"/>
-            <compilerarg value="-Xlint:divzero"/>
-            <compilerarg value="-Xlint:empty"/>
-            <compilerarg value="-Xlint:finally"/>
-            <compilerarg value="-Xlint:overrides"/>
-            <!--<compilerarg value="-Xlint:rawtypes"/>-->
-            <compilerarg value="-Xlint:static"/>
-            <compilerarg value="-Xlint:try"/>
-            <compilerarg value="-Xlint:unchecked"/>
-            <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
-            <compilerarg value="-XDignore.symbol.file"/>
-            <compilerarg value="-Xplugin:ErrorProne -Xep:CatchAndPrintStackTrace:OFF -Xep:ReferenceEquality:OFF -Xep:StringSplitter:OFF -Xep:BadImport:OFF"/>
-            <compilerarg line="-Xmaxwarns 1000"/>
-        </javac>
-    </target>
-    <target name="compile" depends="init,javacc,compile-cots,compile-jmapviewer" unless="compile.notRequired" description="Compiles JOSM">
+    <target name="compile" depends="init,javacc,compile-cots" unless="compile.notRequired" description="Compiles JOSM">
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
             excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/**"
@@ -399,7 +372,7 @@ Build-Date: ${build.tstamp}
                 sourcepath="${src.dir}"
                 classpathref="compile.path"
                 encoding="UTF-8"
-                packagenames="org.openstreetmap.josm.*,org.openstreetmap.gui.jmapviewer.*"
+                packagenames="org.openstreetmap.josm.*"
                 excludepackagenames="org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.*"
                 windowtitle="JOSM"
                 use="true"
@@ -1110,6 +1083,7 @@ Build-Date: ${build.tstamp}
             <patternset>
                 <exclude name="META-INF/**"/>
                 <exclude name="*"/>
+                <exclude name="org/openstreetmap/gui/jmapviewer/Demo*"/>
                 <exclude name="com/drew/imaging/FileTypeDetector*"/>
                 <exclude name="com/drew/imaging/ImageMetadataReader*"/>
                 <exclude name="com/drew/imaging/avi/**"/>
@@ -1175,7 +1149,9 @@ Build-Date: ${build.tstamp}
         <ivy:cachefileset setid="sources.fileset" conf="sources"/>
         <jar destfile="${dist-sources.jar}" level="${clevel}">
             <zipgroupfileset refid="sources.fileset"/>
-            <fileset dir="${src.dir}"/>
+            <fileset dir="${src.dir}">
+                <exclude name="org/openstreetmap/gui/jmapviewer/**"/>
+            </fileset>
             <fileset dir="${resources.dir}"/>
             <fileset file="CONTRIBUTION"/>
             <fileset file="README"/>
