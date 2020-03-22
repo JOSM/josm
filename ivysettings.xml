@@ -5,6 +5,7 @@
   <resolvers>
     <chain name="chain">
       <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
+      <ibiblio name="josm-nexus-snapshots" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/snapshots/" />
       <ibiblio name="jcenter" m2compatible="true" root="https://jcenter.bintray.com/" />
     </chain>
   </resolvers>

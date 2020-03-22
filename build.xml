@@ -297,30 +297,10 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile-cots" depends="init" description="Compiles third-party dependencies not retrieved with Ivy">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/google/**,com/kitfox/**,oauth/**,org/apache/commons/**" nowarn="on" encoding="iso-8859-1"
+        <javac srcdir="${src.dir}" includes="com/google/**,com/kitfox/**,oauth/**" nowarn="on" encoding="iso-8859-1"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
-            <exclude name="org/apache/commons/jcs/JCS.java"/>
-            <exclude name="org/apache/commons/jcs/access/GroupCacheAccess.java"/>
-            <exclude name="org/apache/commons/jcs/access/PartitionedCacheAccess.java"/>
-            <exclude name="org/apache/commons/jcs/access/behavior/IGroupCacheAccess.java"/>
-            <exclude name="org/apache/commons/jcs/access/exception/InvalidGroupException.java"/>
-            <exclude name="org/apache/commons/jcs/admin/servlet/**"/>
-            <exclude name="org/apache/commons/jcs/auxiliary/AbstractAuxiliaryCacheMonitor.java"/>
-            <exclude name="org/apache/commons/jcs/auxiliary/disk/jdbc/**"/>
-            <exclude name="org/apache/commons/jcs/auxiliary/lateral/**"/>
-            <exclude name="org/apache/commons/jcs/auxiliary/remote/**"/>
-            <exclude name="org/apache/commons/jcs/engine/CacheAdaptor.java"/>
-            <exclude name="org/apache/commons/jcs/engine/CacheGroup.java"/>
-            <exclude name="org/apache/commons/jcs/engine/CacheWatchRepairable.java"/>
-            <exclude name="org/apache/commons/jcs/engine/Zombie*.java"/>
-            <exclude name="org/apache/commons/jcs/engine/logging/CacheEventLoggerDebugLogger.java"/>
-            <exclude name="org/apache/commons/jcs/utils/access/**"/>
-            <exclude name="org/apache/commons/jcs/utils/discovery/**"/>
-            <exclude name="org/apache/commons/jcs/utils/net/**"/>
-            <exclude name="org/apache/commons/jcs/utils/props/**"/>
-            <exclude name="org/apache/commons/jcs/utils/servlet/**"/>
             <classpath>
                 <path refid="runtime.path"/>
             </classpath>
