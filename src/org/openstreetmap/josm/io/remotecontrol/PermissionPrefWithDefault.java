@@ -20,20 +20,28 @@ import org.openstreetmap.josm.spi.preferences.Config;
 public class PermissionPrefWithDefault {
     private static final List<PermissionPrefWithDefault> PREFS = new ArrayList<>();
 
+    /** Load data from API */
     public static final PermissionPrefWithDefault LOAD_DATA =
             new PermissionPrefWithDefault("remotecontrol.permission.load-data", true, tr("Load data from API"));
+    /** Import data from URL */
     public static final PermissionPrefWithDefault IMPORT_DATA =
             new PermissionPrefWithDefault("remotecontrol.permission.import", true, tr("Import data from URL"));
+    /** Open local files */
     public static final PermissionPrefWithDefault OPEN_FILES =
             new PermissionPrefWithDefault("remotecontrol.permission.open-files", false, tr("Open local files"));
+    /** Load imagery layers */
     public static final PermissionPrefWithDefault LOAD_IMAGERY =
             new PermissionPrefWithDefault("remotecontrol.permission.imagery", true, tr("Load imagery layers"));
+    /** Change the selection */
     public static final PermissionPrefWithDefault CHANGE_SELECTION =
             new PermissionPrefWithDefault("remotecontrol.permission.change-selection", true, tr("Change the selection"));
+    /** Change the viewport */
     public static final PermissionPrefWithDefault CHANGE_VIEWPORT =
             new PermissionPrefWithDefault("remotecontrol.permission.change-viewport", true, tr("Change the viewport"));
+    /** Create new objects */
     public static final PermissionPrefWithDefault CREATE_OBJECTS =
             new PermissionPrefWithDefault("remotecontrol.permission.create-objects", true, tr("Create new objects"));
+    /** Read protocol version */
     public static final PermissionPrefWithDefault READ_PROTOCOL_VERSION =
             new PermissionPrefWithDefault("remotecontrol.permission.read-protocolversion", true, tr("Read protocol version"));
     /**

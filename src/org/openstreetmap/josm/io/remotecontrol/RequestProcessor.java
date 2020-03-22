@@ -388,6 +388,10 @@ public class RequestProcessor extends Thread {
             out.write("\r\n");
     }
 
+    /**
+     * Returns the JSON information for all handlers.
+     * @return the JSON information for all handlers
+     */
     public static String getHandlersInfoAsJSON() {
         StringBuilder r = new StringBuilder();
         boolean first = true;
@@ -406,6 +410,11 @@ public class RequestProcessor extends Thread {
         return r.toString();
     }
 
+    /**
+     * Returns the JSON information for a given handler.
+     * @param cmd handler key
+     * @return JSON information for the given handler
+     */
     public static String getHandlerInfoAsJSON(String cmd) {
         try (StringWriter w = new StringWriter()) {
             RequestHandler handler = null;

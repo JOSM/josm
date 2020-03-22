@@ -37,9 +37,13 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class RequestHandler {
 
+    /** preference key to determine if all Remote Control actions must be confirmed manually */
     public static final String globalConfirmationKey = "remotecontrol.always-confirm";
+    /** whether remote control actions must be confirmed manually by default */
     public static final boolean globalConfirmationDefault = false;
+    /** preference key to determine if remote control loads data in a new layer */
     public static final String loadInNewLayerKey = "remotecontrol.new-layer";
+    /** whether remote control loads data in a new layer by default */
     public static final boolean loadInNewLayerDefault = false;
 
     protected static final Pattern SPLITTER_COMMA = Pattern.compile(",\\s*");
@@ -122,16 +126,32 @@ public abstract class RequestHandler {
      */
     public abstract PermissionPrefWithDefault getPermissionPref();
 
+    /**
+     * Returns the mandatory parameters. Both used to enfore their presence at runtime and for documentation.
+     * @return the mandatory parameters
+     */
     public abstract String[] getMandatoryParams();
 
+    /**
+     * Returns the optional parameters. Both used to enfore their presence at runtime and for documentation.
+     * @return the optional parameters
+     */
     public String[] getOptionalParams() {
         return new String[0];
     }
 
+    /**
+     * Returns usage description, for bad requests and documentation.
+     * @return usage description
+     */
     public String getUsage() {
         return null;
     }
 
+    /**
+     * Returns usage examples, for bad requests and documentation.
+     * @return Usage examples
+     */
     public String[] getUsageExamples() {
         return new String[0];
     }
@@ -294,10 +314,18 @@ public abstract class RequestHandler {
         myCommand = command;
     }
 
+    /**
+     * Returns the response content.
+     * @return the response content
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     * Returns the response content type.
+     * @return the response content type
+     */
     public String getContentType() {
         return contentType;
     }
@@ -336,10 +364,17 @@ public abstract class RequestHandler {
         }
     }
 
+    /**
+     * Sets who sent the request (the host from referer header or IP of request sender)
+     * @param sender the host from referer header or IP of request sender
+     */
     public void setSender(String sender) {
         this.sender = sender;
     }
 
+    /**
+     * Base exception of remote control handler errors.
+     */
     public static class RequestHandlerException extends Exception {
 
         /**
@@ -368,6 +403,9 @@ public abstract class RequestHandler {
         }
     }
 
+    /**
+     * Error raised when a runtime error occurred.
+     */
     public static class RequestHandlerErrorException extends RequestHandlerException {
 
         /**
@@ -379,6 +417,9 @@ public abstract class RequestHandler {
         }
     }
 
+    /**
+     * Error raised for bad requests.
+     */
     public static class RequestHandlerBadRequestException extends RequestHandlerException {
 
         /**
@@ -407,6 +448,9 @@ public abstract class RequestHandler {
         }
     }
 
+    /**
+     * Error raised for forbidden usage.
+     */
     public static class RequestHandlerForbiddenException extends RequestHandlerException {
 
         /**
@@ -418,6 +462,9 @@ public abstract class RequestHandler {
         }
     }
 
+    /**
+     * Handler that takes an URL as parameter.
+     */
     public abstract static class RawURLParseRequestHandler extends RequestHandler {
         @Override
         protected void parseArgs() throws URISyntaxException {
