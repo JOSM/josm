@@ -213,7 +213,7 @@ public interface Selector {
                 if (!left.matches(e.withPrimitive(parent)))
                     return;
                 int count = counter.getAsInt();
-                if (link.conds == null) {
+                if (link.conds == null || link.conds.isEmpty()) {
                     // index is not needed, we can avoid the sequential search below
                     e.parent = parent;
                     e.count = count;
