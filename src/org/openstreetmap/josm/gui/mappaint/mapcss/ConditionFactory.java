@@ -447,6 +447,7 @@ public final class ConditionFactory {
     public static class IndexCondition implements Condition {
         final String index;
         final Op op;
+        final boolean isFirstOrLast;
 
         /**
          * Constructs a new {@code IndexCondition}.
@@ -456,6 +457,7 @@ public final class ConditionFactory {
         public IndexCondition(String index, Op op) {
             this.index = index;
             this.op = op;
+            isFirstOrLast = op == Op.EQ && ("1".equals(index) || "-1".equals(index));
         }
 
         @Override

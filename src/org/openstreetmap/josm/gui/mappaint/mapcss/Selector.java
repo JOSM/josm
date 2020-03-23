@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.IndexCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.OpenEndPseudoClassCondition;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.CompositeList;
@@ -219,14 +220,26 @@ public interface Selector {
                     e.count = count;
                     return;
                 }
-                for (int i = 0; i < count; i++) {
-                    if (getter.apply(i).equals(e.osm) && link.matches(e.withParentAndIndexAndLinkContext(parent, i, count))) {
+                // see #18964
+                int step = firstAndLastOnly() ? count - 1 : 1;
+                for (int i = 0; i < count; i += step) {
+                    if (getter.apply(i).equals(e.osm)
+                            && link.matches(e.withParentAndIndexAndLinkContext(parent, i, count))) {
                         e.parent = parent;
                         e.index = i;
                         e.count = count;
                         return;
                     }
                 }
+            }
+
+            private boolean firstAndLastOnly() {
+                for (Condition c : link.conds) {
+                    if (!(c instanceof IndexCondition) || !((IndexCondition) c).isFirstOrLast) {
+                        return false;
+                    }
+                }
+                return true;
             }
 
             @Override
