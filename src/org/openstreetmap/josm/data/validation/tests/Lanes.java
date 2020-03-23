@@ -92,4 +92,9 @@ public class Lanes extends Test.TagTest {
         checkNumberOfLanesByKey(p, "lanes:backward", tr("Number of lane dependent values inconsistent in backward direction"));
         checkNumberOfLanes(p);
     }
+
+    @Override
+    public boolean isPrimitiveUsable(OsmPrimitive p) {
+        return p.isTagged() && super.isPrimitiveUsable(p);
+    }
 }

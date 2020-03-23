@@ -77,6 +77,8 @@ public class NameMismatch extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
+        if (!p.isTagged())
+            return;
         Set<String> names = p.getKeys().entrySet().stream()
                 .filter(e -> e.getValue() != null && e.getKey().startsWith("name:") && !EXCLUSIONS.contains(e.getKey()))
                 .map(Entry::getValue)
@@ -113,4 +115,10 @@ public class NameMismatch extends Test.TagTest {
             }
         }
     }
+
+    @Override
+    public boolean isPrimitiveUsable(OsmPrimitive p) {
+        return p.isTagged() && super.isPrimitiveUsable(p);
+    }
+
 }
