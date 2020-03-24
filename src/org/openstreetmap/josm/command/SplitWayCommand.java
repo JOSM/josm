@@ -500,23 +500,46 @@ public class SplitWayCommand extends SequenceCommand {
                                 // Self-closing way.
                                 direction = Direction.IRRELEVANT;
                             } else {
+                                boolean previousWayMemberMissing = true;
+                                boolean nextWayMemberMissing = true;
+
                                 // For ordered relations, looking beyond the nearest neighbour members is not required,
                                 // and can even cause the wrong direction to be guessed (with closed loops).
                                 if (ir - 1 >= 0 && relationMembers.get(ir - 1).isWay()) {
                                     Way w = relationMembers.get(ir - 1).getWay();
-                                    if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
-                                        direction = Direction.FORWARDS;
-                                    } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
-                                        direction = Direction.BACKWARDS;
+                                    if (!w.isIncomplete()) {
+                                        previousWayMemberMissing = false;
+                                        if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
+                                            direction = Direction.FORWARDS;
+                                        } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
+                                            direction = Direction.BACKWARDS;
+                                        }
                                     }
+                                } else {
+                                    previousWayMemberMissing = false;
                                 }
                                 if (ir + 1 < relationMembers.size() && relationMembers.get(ir + 1).isWay()) {
                                     Way w = relationMembers.get(ir + 1).getWay();
-                                    if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
-                                        direction = Direction.BACKWARDS;
-                                    } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
-                                        direction = Direction.FORWARDS;
+                                    if (!w.isIncomplete()) {
+                                        nextWayMemberMissing = false;
+                                        if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
+                                            direction = Direction.BACKWARDS;
+                                        } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
+                                            direction = Direction.FORWARDS;
+                                        }
                                     }
+                                } else {
+                                    nextWayMemberMissing = false;
+                                }
+
+                                if (direction == Direction.UNKNOWN
+                                        && !previousWayMemberMissing
+                                        && !nextWayMemberMissing) {
+                                    // If both the next and previous way member in the relation are already known at
+                                    // this point, and they are not connected to this one, then we can safely
+                                    // assume that the direction doesn't matter. Downloading any more members
+                                    // won't help in any case.
+                                    direction = Direction.IRRELEVANT;
                                 }
                             }
                         } else {

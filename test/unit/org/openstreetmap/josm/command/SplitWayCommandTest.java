@@ -289,7 +289,7 @@ public final class SplitWayCommandTest {
     }
 
     /**
-     * Non-regression test for issue #17400 ( Warn when splitting way in not fully downloaded region)
+     * Non-regression test for issue #17400 (Warn when splitting way in not fully downloaded region)
      *
      * Bus route 190 gets broken when the split occurs, because the two new way parts are inserted in the relation in
      * the wrong order.
@@ -330,6 +330,40 @@ public final class SplitWayCommandTest {
             // Before #18596 this would have been a broken connection: 74---75-x-76.
             assertConnectedAtEnds(relation.getMember(74).getWay(), relation.getMember(75).getWay());
             assertConnectedAtEnds(relation.getMember(75).getWay(), relation.getMember(76).getWay());
+        }
+    }
+
+    /**
+     * Non-regression test for issue #18863 (Asking for download of missing members when not needed)
+     *
+     * A split on node 4518025255 caused the 'download missing members?' dialog to pop up for relation 68745 (CB 2),
+     * even though the way members next to the split way were already downloaded. This happened because this relation
+     * does not have its members connected at all.
+     *
+     * This split should not trigger any download action at all.
+     *
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if OSM parsing fails
+     */
+    @Test
+    public void testTicket18863() throws IOException, IllegalDataException {
+        try (InputStream is = TestUtils.getRegressionDataStream(18863, "data.osm.bz2")) {
+            DataSet ds = OsmReader.parseDataSet(is, null);
+
+            Way splitWay = (Way) ds.getPrimitiveById(290581177L, OsmPrimitiveType.WAY);
+            Node splitNode = (Node) ds.getPrimitiveById(4518025255L, OsmPrimitiveType.NODE);
+
+            final Optional<SplitWayCommand> result = SplitWayCommand.splitWay(
+                    splitWay,
+                    SplitWayCommand.buildSplitChunks(splitWay, Collections.singletonList(splitNode)),
+                    new ArrayList<>(),
+                    Strategy.keepLongestChunk(),
+                    // This split requires no additional downloads. If any are needed, this command will fail.
+                    SplitWayCommand.WhenRelationOrderUncertain.ABORT
+            );
+
+            // Should not result in aborting the split.
+            assertTrue(result.isPresent());
         }
     }
 }
