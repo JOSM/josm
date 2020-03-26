@@ -243,6 +243,8 @@ public class TagEditHelper {
     public void addTag() {
         changedKey = null;
         DataSet activeDataSet = OsmDataManager.getInstance().getActiveDataSet();
+        if (activeDataSet == null)
+            return;
         try {
             activeDataSet.beginUpdate();
             sel = OsmDataManager.getInstance().getInProgressSelection();
