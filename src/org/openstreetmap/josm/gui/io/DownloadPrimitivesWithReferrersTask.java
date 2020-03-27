@@ -203,7 +203,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
      * @param msgType Type of message, see {@link JOptionPane}
      * @return The Dialog object
      */
-    private static ExtendedDialog reportProblemDialog(Set<PrimitiveId> errs,
+    public static ExtendedDialog reportProblemDialog(Set<PrimitiveId> errs,
             String title, String text, String listLabel, int msgType) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new HtmlPanel(text), GBC.eop());
@@ -219,7 +219,8 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         txt.setBackground(p.getBackground());
         txt.setColumns(40);
         txt.setRows(1);
-        txt.setText(errs.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        txt.setText(errs.stream().map(pid -> pid.getType().getAPIName().substring(0, 1) + pid.getUniqueId())
+                .collect(Collectors.joining(", ")));
         JScrollPane scroll = new JScrollPane(txt);
         p.add(scroll, GBC.eop().weight(1.0, 0.0).fill(GBC.HORIZONTAL));
 
