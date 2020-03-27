@@ -577,8 +577,14 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                         res.rc404 = pkg;
                         return res;
                     }
-                    Logging.info(tr("Server replied with response code 404, retrying with an individual request for each object."));
-                    return singleGetIdPackage(type, pkg, progressMonitor);
+                    if (pkg.size() == 1) {
+                        FetchResult res = new FetchResult(new DataSet(), new HashSet<PrimitiveId>());
+                        res.missingPrimitives.add(new SimplePrimitiveId(pkg.iterator().next(), type));
+                        return res;
+                    } else {
+                        Logging.info(tr("Server replied with response code 404, retrying with an individual request for each object."));
+                        return singleGetIdPackage(type, pkg, progressMonitor);
+                    }
                 } else {
                     throw e;
                 }

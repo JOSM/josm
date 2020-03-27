@@ -113,12 +113,17 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         }
         currentTask.run();
         // Then, download referrers for each primitive
-        if (downloadReferrers) {
-            currentTask = new DownloadReferrersTask(tmpLayer, ids);
-            currentTask.run();
-            synchronized (this) {
-                if (currentTask.getProgressMonitor().isCanceled())
-                    cancel();
+        if (downloadReferrers && tmpLayer.data != null) {
+            // see #18895: don't try to download parents for invisible objects
+            List<PrimitiveId> visible = ids.stream().map(tmpLayer.data::getPrimitiveById)
+                    .filter(p -> p != null && p.isVisible()).collect(Collectors.toList());
+            if (!visible.isEmpty()) {
+                currentTask = new DownloadReferrersTask(tmpLayer, visible);
+                currentTask.run();
+                synchronized (this) {
+                    if (currentTask.getProgressMonitor().isCanceled())
+                        cancel();
+                }
             }
         }
         currentTask = null;
