@@ -16,6 +16,8 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -207,6 +209,34 @@ public final class JoinNodeWayActionTest {
             assertTrue("Node was moved to an unexpected position", toMove2.getEastNorth().equalsEpsilon(expected2.getEastNorth(), 1e-7));
             assertTrue("Node was not added to expected number of ways", toMove1.getParentWays().size() == 2);
             assertTrue("Node was not added to expected number of ways", toMove2.getParentWays().size() == 2);
+        } finally {
+            MainApplication.getLayerManager().removeLayer(layer);
+        }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18990">Bug #18990</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket18990() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(18990, "18990-sample.osm"), null);
+        Layer layer = new OsmDataLayer(ds, OsmDataLayer.createNewName(), null);
+        MainApplication.getLayerManager().addLayer(layer);
+        try {
+            Node toMove = (Node) ds.getPrimitiveById(new SimplePrimitiveId(7018586511L, OsmPrimitiveType.NODE));
+            assertTrue(toMove != null);
+            Node expected = new Node(new LatLon(43.48582074476985, -96.76897750613033));
+
+            ds.setSelected(toMove);
+            setupMapView(ds);
+            JoinNodeWayAction action = JoinNodeWayAction.createMoveNodeOntoWayAction();
+            action.setEnabled(true);
+            action.actionPerformed(null);
+            assertTrue("Node was moved to an unexpected position", toMove.getEastNorth().equalsEpsilon(expected.getEastNorth(), 1e-7));
+            assertTrue("Node was not added to expected way", toMove.getParentWays().size() == 1);
+            assertTrue("Node was not added to expected way segment",
+                    toMove.getParentWays().iterator().next().getNodes().indexOf(toMove) == 2);
         } finally {
             MainApplication.getLayerManager().removeLayer(layer);
         }

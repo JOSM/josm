@@ -143,8 +143,8 @@ public class JoinNodeWayAction extends JosmAction {
                             data.put(ws.way, innerMap);
                         }
                         innerMap.put(ws.lowerIndex, node);
+                        seenWays.add(ws.way);
                     }
-                    seenWays.add(ws.way);
                 }
             }
         }
