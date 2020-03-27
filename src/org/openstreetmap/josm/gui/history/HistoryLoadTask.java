@@ -6,9 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -50,10 +52,12 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     private boolean canceled;
     private Exception lastException;
-    private final Set<PrimitiveId> toLoad = new HashSet<>();
+    private final Set<PrimitiveId> toLoad = new LinkedHashSet<>();
     private HistoryDataSet loadedData;
     private OsmServerHistoryReader reader;
     private boolean getChangesetData = true;
+    private boolean collectMissing;
+    private final Set<PrimitiveId> missingPrimitives = new LinkedHashSet<>();
 
     /**
      * Constructs a new {@code HistoryLoadTask}.
@@ -193,7 +197,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
         String msg = getLoadingMessage(pid);
         progressMonitor.indeterminateSubTask(tr(msg, Long.toString(pid.getUniqueId())));
         reader = null;
-        HistoryDataSet ds;
+        HistoryDataSet ds = null;
         try {
             reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
             if (getChangesetData) {
@@ -201,12 +205,22 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
             } else {
                 ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
             }
+        } catch (OsmApiException e) {
+            if (canceled)
+                return;
+            if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND && collectMissing) {
+                missingPrimitives.add(pid);
+            } else {
+                throw e;
+            }
         } catch (OsmTransferException e) {
             if (canceled)
                 return;
             throw e;
         }
-        loadedData.mergeInto(ds);
+        if (ds != null) {
+            loadedData.mergeInto(ds);
+        }
     }
 
     protected static HistoryDataSet loadHistory(OsmServerHistoryReader reader, ProgressMonitor progressMonitor) throws OsmTransferException {
@@ -266,4 +280,27 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     public void setChangesetDataNeeded(boolean b) {
         getChangesetData = b;
     }
+
+    /**
+     * Determine if missing primitives should be collected. By default they are not collected
+     * and the first missing object terminates the task.
+     * @param b true means collect missing data and continue.
+     * @since 16205
+     */
+    public void setCollectMissing(boolean b) {
+        collectMissing = b;
+    }
+
+    /**
+     * replies the set of ids of all primitives for which a fetch request to the
+     * server was submitted but which are not available from the server (the server
+     * replied a return code of 404)
+     * @since 16205
+     *
+     * @return the set of ids of missing primitives
+     */
+    public Set<PrimitiveId> getMissingPrimitives() {
+        return missingPrimitives;
+    }
+
 }
