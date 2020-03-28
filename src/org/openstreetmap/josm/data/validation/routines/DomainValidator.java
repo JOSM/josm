@@ -976,7 +976,6 @@ public final class DomainValidator extends AbstractValidator {
         "museum", // museum Museum Domain Management Association
         "mutual", // mutual Northwestern Mutual MU TLD Registry, LLC
         "nab", // nab National Australia Bank Limited
-        "nadex", // nadex Nadex Domains, Inc
         "nagoya", // nagoya GMO Registry, Inc.
         "name", // name VeriSign Information Services, Inc.
         "nationwide", // nationwide Nationwide Mutual Insurance Company
