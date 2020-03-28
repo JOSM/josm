@@ -295,9 +295,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * replies the set of ids of all primitives for which a fetch request to the
      * server was submitted but which are not available from the server (the server
      * replied a return code of 404)
-     * @since 16205
-     *
      * @return the set of ids of missing primitives
+     * @since 16205
      */
     public Set<PrimitiveId> getMissingPrimitives() {
         return missingPrimitives;
