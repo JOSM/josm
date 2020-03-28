@@ -210,7 +210,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                 addPrimitive(newNode);
             }
             for (Way w : copyFrom.getWays()) {
-                Way newWay = new Way(w);
+                Way newWay = new Way(w, false, false);
                 primMap.put(w, newWay);
                 List<Node> newNodes = new ArrayList<>();
                 for (Node n : w.getNodes()) {
@@ -223,14 +223,12 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             // and then get the cloned members
             Collection<Relation> relations = copyFrom.getRelations();
             for (Relation r : relations) {
-                Relation newRelation = new Relation(r);
-                newRelation.setMembers(null);
+                Relation newRelation = new Relation(r, false, false);
                 primMap.put(r, newRelation);
                 addPrimitive(newRelation);
             }
             for (Relation r : relations) {
-                Relation newRelation = (Relation) primMap.get(r);
-                newRelation.setMembers(r.getMembers().stream()
+                ((Relation) primMap.get(r)).setMembers(r.getMembers().stream()
                         .map(rm -> new RelationMember(rm.getRole(), primMap.get(rm.getMember())))
                         .collect(Collectors.toList()));
             }

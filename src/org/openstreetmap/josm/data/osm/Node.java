@@ -220,12 +220,12 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     @Override
-    public void cloneFrom(OsmPrimitive osm) {
+    public void cloneFrom(OsmPrimitive osm, boolean copyChildren) {
         if (!(osm instanceof Node))
             throw new IllegalArgumentException("Not a node: " + osm);
         boolean locked = writeLock();
         try {
-            super.cloneFrom(osm);
+            super.cloneFrom(osm, copyChildren);
             setCoor(((Node) osm).getCoor());
         } finally {
             writeUnlock(locked);

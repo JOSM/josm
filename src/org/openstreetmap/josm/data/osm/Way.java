@@ -203,14 +203,26 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      * @param original The original {@code Way} to be identically cloned. Must not be null
      * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
      * If {@code false}, does nothing
-     * @since 2410
+     * @param copyNodes whether to copy nodes too
+     * @since 16212
      */
-    public Way(Way original, boolean clearMetadata) {
+    public Way(Way original, boolean clearMetadata, boolean copyNodes) {
         super(original.getUniqueId(), true);
-        cloneFrom(original);
+        cloneFrom(original, copyNodes);
         if (clearMetadata) {
             clearOsmMetadata();
         }
+    }
+
+    /**
+     * Constructs a new {@code Way} from an existing {@code Way}.
+     * @param original The original {@code Way} to be identically cloned. Must not be null
+     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
+     * If {@code false}, does nothing
+     * @since 2410
+     */
+    public Way(Way original, boolean clearMetadata) {
+        this(original, clearMetadata, true);
     }
 
     /**
@@ -285,14 +297,15 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     @Override
-    public void cloneFrom(OsmPrimitive osm) {
+    public void cloneFrom(OsmPrimitive osm, boolean copyNodes) {
         if (!(osm instanceof Way))
             throw new IllegalArgumentException("Not a way: " + osm);
         boolean locked = writeLock();
         try {
-            super.cloneFrom(osm);
-            Way otherWay = (Way) osm;
-            setNodes(otherWay.getNodes());
+            super.cloneFrom(osm, copyNodes);
+            if (copyNodes) {
+                setNodes(((Way) osm).getNodes());
+            }
         } finally {
             writeUnlock(locked);
         }

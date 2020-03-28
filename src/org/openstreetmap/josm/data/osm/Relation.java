@@ -198,13 +198,25 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
      * @param clone The relation to clone
      * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
      * If {@code false}, does nothing
+     * @param copyMembers whether to copy relation members too
+     * @since 16212
      */
-    public Relation(Relation clone, boolean clearMetadata) {
+    public Relation(Relation clone, boolean clearMetadata, boolean copyMembers) {
         super(clone.getUniqueId(), true);
-        cloneFrom(clone);
+        cloneFrom(clone, copyMembers);
         if (clearMetadata) {
             clearOsmMetadata();
         }
+    }
+
+    /**
+     * Constructs an identical clone of the argument.
+     * @param clone The relation to clone
+     * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
+     * If {@code false}, does nothing
+     */
+    public Relation(Relation clone, boolean clearMetadata) {
+        this(clone, clearMetadata, true);
     }
 
     /**
@@ -236,14 +248,16 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     }
 
     @Override
-    public void cloneFrom(OsmPrimitive osm) {
+    public void cloneFrom(OsmPrimitive osm, boolean copyMembers) {
         if (!(osm instanceof Relation))
             throw new IllegalArgumentException("Not a relation: " + osm);
         boolean locked = writeLock();
         try {
-            super.cloneFrom(osm);
-            // It's not necessary to clone members as RelationMember class is immutable
-            setMembers(((Relation) osm).getMembers());
+            super.cloneFrom(osm, copyMembers);
+            if (copyMembers) {
+                // It's not necessary to clone members as RelationMember class is immutable
+                setMembers(((Relation) osm).getMembers());
+            }
         } finally {
             writeUnlock(locked);
         }

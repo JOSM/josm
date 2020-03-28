@@ -315,4 +315,28 @@ public class DataSetTest {
         ds.addDataSourceListener(removeListener);
         new DataSet().mergeFrom(ds);
     }
+
+    /**
+     * Checks that a read-only dataset can be cloned.
+     */
+    @Test
+    public void testCloneReadOnly() {
+        DataSet ds = new DataSet();
+        Node n1 = new Node(LatLon.SOUTH_POLE);
+        Node n2 = new Node(LatLon.NORTH_POLE);
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        Way w = new Way();
+        w.setNodes(Arrays.asList(n1, n2));
+        ds.addPrimitive(w);
+        Relation r = new Relation();
+        r.setMembers(Arrays.asList(new RelationMember(null, w)));
+        ds.addPrimitive(r);
+        ds.lock();
+
+        DataSet copy = new DataSet(ds);
+
+        assertEquals(4, copy.allPrimitives().size());
+        assertTrue(copy.isLocked());
+    }
 }

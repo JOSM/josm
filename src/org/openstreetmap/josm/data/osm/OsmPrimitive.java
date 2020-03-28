@@ -882,7 +882,18 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * use this only in the data initializing phase
      * @param other other primitive
      */
-    public void cloneFrom(OsmPrimitive other) {
+    public final void cloneFrom(OsmPrimitive other) {
+        cloneFrom(other, true);
+    }
+
+    /**
+     * Get and write all attributes from the parameter. Does not fire any listener, so
+     * use this only in the data initializing phase
+     * @param other other primitive
+     * @param copyChildren whether to copy child primitives too
+     * @since 16212
+     */
+    protected void cloneFrom(OsmPrimitive other, boolean copyChildren) {
         // write lock is provided by subclasses
         if (id != other.id && dataSet != null)
             throw new DataIntegrityProblemException("Osm id cannot be changed after primitive was added to the dataset");
