@@ -112,12 +112,12 @@ public class ImageResource {
     /**
      * Set both icons of an Action
      * @param a The action for the icons
-     * @param addresource Adds an resource named "ImageResource" if <code>true</code>
+     * @param attachImageResource Adds an resource named "ImageResource" if <code>true</code>
      * @since 10369
      */
-    public void attachImageIcon(AbstractAction a, boolean addresource) {
+    public void attachImageIcon(AbstractAction a, boolean attachImageResource) {
         attachImageIcon(a);
-        if (addresource) {
+        if (attachImageResource) {
             a.putValue("ImageResource", this);
         }
     }
