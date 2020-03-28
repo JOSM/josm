@@ -424,7 +424,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     /**
      * Worker function for drawing areas.
      *
-     * @param path the path object for the area that should be drawn; in case
+     * @param area the path object for the area that should be drawn; in case
      * of multipolygons, this can path can be a complex shape with one outer
      * polygon and one or more inner polygons
      * @param color The color to fill the area with.
@@ -436,10 +436,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * polygons)
      * @param disabled If this should be drawn with a special disabled style.
      */
-    protected void drawArea(MapViewPath path, Color color,
+    protected void drawArea(MapViewPath area, Color color,
             MapImage fillImage, Float extent, MapViewPath pfClip, boolean disabled) {
         if (!isOutlineOnly && color.getAlpha() != 0) {
-            Shape area = path;
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             if (fillImage == null) {
                 if (isInactiveMode) {
@@ -456,7 +455,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 } else {
                     Logging.warn("Unable to get image from " + fillImage);
                 }
-                Float alpha = fillImage.getAlphaFloat();
+                float alpha = fillImage.getAlphaFloat();
                 if (!Utils.equalsEpsilon(alpha, 1f)) {
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
                 }
