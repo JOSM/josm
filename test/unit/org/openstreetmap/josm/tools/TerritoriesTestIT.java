@@ -13,7 +13,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Unit tests of {@link Territories} class.
+ * Integration tests of {@link Territories} class.
  */
 public class TerritoriesTestIT {
 
@@ -33,6 +33,8 @@ public class TerritoriesTestIT {
         Logging.clearLastErrorAndWarnings();
         Territories.initialize();
         assertEquals("no errors or warnings", Collections.emptyList(), Logging.getLastErrorAndWarnings());
+        assertFalse("customTagsCache is non empty", Territories.customTagsCache.isEmpty());
+        assertFalse("iso3166Cache is non empty", Territories.iso3166Cache.isEmpty());
         assertFalse("taginfoCache is non empty", Territories.taginfoCache.isEmpty());
         assertFalse("taginfoGeofabrikCache is non empty", Territories.taginfoGeofabrikCache.isEmpty());
     }
