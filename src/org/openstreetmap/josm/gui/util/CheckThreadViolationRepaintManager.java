@@ -13,7 +13,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 package org.openstreetmap.josm.gui.util;
 
 import java.lang.ref.WeakReference;
@@ -27,16 +26,10 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * <p>This class is used to detect Event Dispatch Thread rule violations</p>
  *
- * <p>This is a modification of original idea of Scott Delap.
- * Initial version of {@code ThreadCheckingRepaintManager} can be found here:
- * <a href="http://www.clientjava.com/blog/2004/08/20/1093059428000.html">Easily Find Swing Threading Mistakes</a>
- * </p>
+ * <p>This is a modification of original idea of Scott Delap.</p>
  *
  * @author Scott Delap
  * @author Alexander Potochkin
- * @see <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</a>
- *
- * https://swinghelper.dev.java.net/
  */
 public class CheckThreadViolationRepaintManager extends RepaintManager {
     private WeakReference<JComponent> lastComponent;
