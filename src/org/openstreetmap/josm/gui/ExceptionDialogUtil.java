@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
@@ -44,7 +43,7 @@ public final class ExceptionDialogUtil {
     private static int showErrorDialog(String msg, String title, String helpTopic) {
         return HelpAwareOptionPane.showOptionDialog(
                 MainApplication.getMainFrame(),
-                new HtmlPanel(msg),
+                msg,
                 title,
                 JOptionPane.ERROR_MESSAGE,
                 helpTopic
@@ -335,7 +334,7 @@ public final class ExceptionDialogUtil {
         String body = e.getErrorBody();
         Object msg = null;
         if (e.isHtml() && body != null && body.startsWith("<") && body.contains("<html>")) {
-            msg = new HtmlPanel(body);
+            // use html string as is
         } else {
             msg = ExceptionUtil.explainGeneric(e);
         }

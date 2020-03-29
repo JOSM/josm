@@ -27,7 +27,7 @@ import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -257,9 +257,15 @@ public final class HelpAwareOptionPane {
                 }
             }
         }
-
+        final Object content;
+        if (msg instanceof String) {
+            String msgStr = (String) msg;
+            content = new HtmlPanel(msgStr.startsWith("<html>") ? msgStr : "<html>" + msgStr + "</html>");
+        } else {
+            content = msg;
+        }
         final JOptionPane pane = new JOptionPane(
-                msg instanceof String ? new JMultilineLabel((String) msg, true) : msg,
+                content,
                 messageType,
                 JOptionPane.DEFAULT_OPTION,
                 icon,
