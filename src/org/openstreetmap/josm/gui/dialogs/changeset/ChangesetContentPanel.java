@@ -69,7 +69,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  * @since 2689
  */
 public class ChangesetContentPanel extends JPanel implements PropertyChangeListener, ChangesetAware {
-
+    private JTable tblContent;
     private ChangesetContentTableModel model;
     private transient Changeset currentChangeset;
 
@@ -121,7 +121,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     protected JPanel buildContentPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
-        JTable tblContent = new JTable(
+        tblContent = new JTable(
                 model,
                 new ChangesetContentTableColumnModel(),
                 model.getSelectionModel()
@@ -213,6 +213,10 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         );
     }
 
+    private Set<HistoryOsmPrimitive> getSelectedPrimitives() {
+      return model.getSelectedPrimitives(tblContent);
+    }
+
     class ChangesetContentTablePopupMenu extends JPopupMenu {
         ChangesetContentTablePopupMenu() {
             add(actDownloadContentAction);
@@ -287,7 +291,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Set<HistoryOsmPrimitive> selected = model.getSelectedPrimitives();
+            Set<HistoryOsmPrimitive> selected = getSelectedPrimitives();
             if (selected.isEmpty()) return;
             showHistory(selected);
         }
@@ -309,7 +313,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            final List<PrimitiveId> primitiveIds = model.getSelectedPrimitives().stream().map(HistoryOsmPrimitive::getPrimitiveId)
+            final List<PrimitiveId> primitiveIds = getSelectedPrimitives().stream().map(HistoryOsmPrimitive::getPrimitiveId)
                     .collect(Collectors.toList());
             MainApplication.worker.submit(new DownloadPrimitivesWithReferrersTask(false, primitiveIds, true, true, null, null));
         }
@@ -329,7 +333,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         protected Set<OsmPrimitive> getTarget() {
             DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
             if (isEnabled() && ds != null) {
-                return model.getSelectedPrimitives().stream()
+                return getSelectedPrimitives().stream()
                         .map(p -> ds.getPrimitiveById(p.getPrimitiveId())).filter(Objects::nonNull).collect(Collectors.toSet());
             }
             return Collections.emptySet();
@@ -363,7 +367,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public void actionPerformed(ActionEvent e) {
             final Set<OsmPrimitive> target = getTarget();
             if (target.isEmpty()) {
-                alertNoPrimitivesTo(model.getSelectedPrimitives(), tr("Nothing to select"),
+                alertNoPrimitivesTo(getSelectedPrimitives(), tr("Nothing to select"),
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer"));
                 return;
             }
@@ -384,7 +388,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public void actionPerformed(ActionEvent e) {
             final Set<OsmPrimitive> target = getTarget();
             if (target.isEmpty()) {
-                alertNoPrimitivesTo(model.getSelectedPrimitives(), tr("Nothing to zoom to"),
+                alertNoPrimitivesTo(getSelectedPrimitives(), tr("Nothing to zoom to"),
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo"));
                 return;
             }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
@@ -59,14 +60,14 @@ public class ChangesetContentTableModel extends AbstractTableModel {
 
     /**
      * Returns the selected history primitives.
+     * @param table the JTable used with this model
      * @return the selected history primitives
      */
-    public Set<HistoryOsmPrimitive> getSelectedPrimitives() {
+    public Set<HistoryOsmPrimitive> getSelectedPrimitives(JTable table) {
         Set<HistoryOsmPrimitive> ret = new HashSet<>();
-        for (int i = 0; i < data.size(); i++) {
-            if (selectionModel.isSelectedIndex(i)) {
-                ret.add(data.get(i).getPrimitive());
-            }
+        int[] selection = table.getSelectedRows();
+        for (int i = 0; i < selection.length; i++) {
+            ret.add(data.get(table.convertRowIndexToModel(selection[i])).getPrimitive());
         }
         return ret;
     }
