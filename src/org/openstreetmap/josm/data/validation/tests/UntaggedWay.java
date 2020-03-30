@@ -141,7 +141,7 @@ public class UntaggedWay extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        DataSet ds = OsmDataManager.getInstance().getEditDataSet();
+        DataSet ds = OsmDataManager.getInstance().getActiveDataSet();
         if (ds == null)
             return;
         waysUsedInRelations = new HashSet<>();
@@ -181,6 +181,6 @@ public class UntaggedWay extends Test {
 
     @Override
     public boolean isPrimitiveUsable(OsmPrimitive p) {
-        return p.isUsable();
+        return p instanceof Way;
     }
 }

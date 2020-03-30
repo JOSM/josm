@@ -236,7 +236,7 @@ public abstract class UnconnectedWays extends Test {
         othernodes = new HashSet<>();
         mindist = Config.getPref().getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Config.getPref().getDouble(PREFIX + ".way_way_distance", 0.0);
-        ds = OsmDataManager.getInstance().getEditDataSet();
+        ds = OsmDataManager.getInstance().getActiveDataSet();
         dsArea = ds == null ? null : ds.getDataSourceArea();
     }
 
