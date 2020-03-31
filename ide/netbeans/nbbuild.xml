@@ -87,9 +87,6 @@
         <copy todir="${build.classes.dir}/images"><fileset dir="../../resources/images"/></copy>
         <copy todir="${build.classes.dir}/data"><fileset dir="../../resources/data"/></copy>
         <copy todir="${build.classes.dir}/styles"><fileset dir="../../resources/styles"/></copy>
-        <copy todir="${build.classes.dir}/org/openstreetmap/gui/jmapviewer/images">
-            <fileset dir="../../src/org/openstreetmap/gui/jmapviewer/images"/>
-        </copy>
     </target>
 
     <!--
