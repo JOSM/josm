@@ -1432,7 +1432,6 @@ public final class DomainValidator extends AbstractValidator {
         "xn--d1acj3b", // дети The Foundation for Network Initiatives “The Smart Internet”
         "xn--eckvdtc9d", // ポイント Amazon Registry Services, Inc.
         "xn--efvy88h", // 新闻 Xinhua News Agency Guangdong Branch 新华通讯社广东分社
-        "xn--estv75g", // 工行 Industrial and Commercial Bank of China Limited
         "xn--fct429k", // 家電 Amazon Registry Services, Inc.
         "xn--fhbei", // كوم VeriSign Sarl
         "xn--fiq228c5hs", // 中文网 TLD REGISTRY LIMITED
