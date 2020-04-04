@@ -10,12 +10,13 @@
         <conf name="provided" description="The libs we need during compilation but not on application start"/>
         <conf name="epsg" description="Everything epsg needs- which is currently all of JOSM."/>
         <!-- Special configurations used to retrieve jar files of test lib/tools referred by file path -->
+        <conf name="commonslang" description="Apache Commons Lang test library"/>
         <conf name="jmockit" description="JMockit test library"/>
         <conf name="jacocoant" description="Jacoco Ant test library"/>
         <!--  Meta configurations used in build scripts -->
         <conf name="runtime" description="Libraries only needed at runtime" extends="implementation,api,runtimeOnly"/>
         <conf name="compile" description="Libraries needed only for compilation" extends="implementation,api,provided"/>
-        <conf name="test" description="Libraries only needed for testing" extends="compile,runtime,jmockit"/>
+        <conf name="test" description="Libraries only needed for testing" extends="compile,runtime,commonslang,jmockit"/>
         <conf name="sources" description="Source code of used libraries"/>
     </configurations>
     <dependencies>
@@ -39,16 +40,18 @@
         <dependency conf="sources->sources" org="org.tukaani" name="xz" rev="1.8"/>
         <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.13.0"/>
         <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.21.1"/>
+        <!-- commonslang->default -->
+        <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.10"/>
         <!-- jacocoant->default -->
         <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.6-SNAPSHOT">
-        	<artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
+            <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
         </dependency>
         <!-- jmockit->default - Don't upgrade JMockit until https://josm.openstreetmap.de/ticket/18200 is resolved -->
         <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.44"/>
         <!-- test->default -->
         <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.0.1"/>
         <dependency conf="test->default" org="com.github.stefanbirkner" name="system-rules" rev="1.19.0">
-        	<exclude module="junit-dep" />
+            <exclude module="junit-dep" />
         </dependency>
         <dependency conf="test->default" org="com.github.tomakehurst" name="wiremock" rev="2.26.3"/>
         <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.67"/>
