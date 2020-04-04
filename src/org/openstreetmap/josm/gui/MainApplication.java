@@ -411,7 +411,9 @@ public class MainApplication {
      * @since 11650
      */
     public static List<String> getCommandLineArgs() {
-        return Collections.unmodifiableList(commandLineArgs);
+        return commandLineArgs == null
+                ? Collections.emptyList()
+                : Collections.unmodifiableList(commandLineArgs);
     }
 
     /**
