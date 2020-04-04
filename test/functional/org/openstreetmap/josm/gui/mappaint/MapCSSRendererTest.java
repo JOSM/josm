@@ -41,6 +41,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.ColorHelper;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -216,21 +217,28 @@ public class MapCSSRendererTest {
                 int result = image.getRGB(x, y);
                 if (!colorsAreSame(expected, result)) {
                     differencePoints.add(new Point(x, y));
-                    int colorDiff = colorDiff(new Color(expected, true), new Color(result, true));
+                    Color expectedColor = new Color(expected, true);
+                    Color resultColor = new Color(result, true);
+                    int colorDiff = Math.abs(expectedColor.getRed() - resultColor.getRed())
+                            + Math.abs(expectedColor.getGreen() - resultColor.getGreen())
+                            + Math.abs(expectedColor.getBlue() - resultColor.getBlue());
+                    int alphaDiff = Math.abs(expectedColor.getAlpha() - resultColor.getAlpha());
                     if (differences.length() < 500) {
                         differences.append("\nDifference at ")
                         .append(x)
                         .append(",")
                         .append(y)
                         .append(": Expected ")
-                        .append(Integer.toHexString(expected))
+                        .append(ColorHelper.color2html(expectedColor))
                         .append(" but got ")
-                        .append(Integer.toHexString(result))
+                        .append(ColorHelper.color2html(resultColor))
                         .append(" (color diff is ")
                         .append(colorDiff)
+                        .append(", alpha diff is ")
+                        .append(alphaDiff)
                         .append(")");
                     }
-                    colorDiffSum += colorDiff;
+                    colorDiffSum += colorDiff + alphaDiff;
                 }
             }
         }
@@ -261,11 +269,6 @@ public class MapCSSRendererTest {
         if (n.isKeyTrue("disabled")) {
             n.setDisabledState(false);
         }
-    }
-
-    private int colorDiff(Color c1, Color c2) {
-        return Math.abs(c1.getAlpha() - c2.getAlpha()) + Math.abs(c1.getRed() - c2.getRed())
-                + Math.abs(c1.getGreen() - c2.getGreen()) + Math.abs(c1.getBlue() - c2.getBlue());
     }
 
     /**
