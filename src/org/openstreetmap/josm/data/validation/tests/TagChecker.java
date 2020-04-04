@@ -475,6 +475,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     private static boolean isAllowedPhoneticCharacter(String key, int c) {
+        // CHECKSTYLE.OFF: BooleanExpressionComplexity
         return c == 0x0259 || c == 0x018F // U+0259 is paired with the capital letter U+018F in Azeri, see #18740
             || c == 0x0254 || c == 0x0186 // U+0254 is paired with the capital letter U+0186 in several African languages, see #18740
             || c == 0x025B || c == 0x0190 // U+025B is paired with the capital letter U+0190 in several African languages, see #18740
@@ -494,7 +495,6 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     }
 
     private static boolean isUnusualBmpUse(UnicodeBlock b) {
-        // CHECKSTYLE.OFF: BooleanExpressionComplexity
         return b == UnicodeBlock.COMBINING_MARKS_FOR_SYMBOLS            // U+20D0..U+20FF
             || b == UnicodeBlock.MATHEMATICAL_OPERATORS                 // U+2200..U+22FF
             || b == UnicodeBlock.ENCLOSED_ALPHANUMERICS                 // U+2460..U+24FF
