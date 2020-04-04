@@ -37,8 +37,8 @@ area:closed[aeroway=helipad][area?] {
 }
 
 /* #9257, #17482 */
-way[foot =~ /^(yes|designated)$/][highway =~ /^(footway|pedestrian)$/][!access],
-way[bicycle =~ /^(yes|designated)$/][highway=cycleway][!vehicle][!access][foot!=designated],
+way[foot][highway][foot =~ /^(yes|designated)$/][highway =~ /^(footway|pedestrian)$/][!access],
+way[bicycle][highway][bicycle =~ /^(yes|designated)$/][highway=cycleway][!vehicle][!access][foot!=designated],
 *[gnis:Class="Populated Place"][place=city],
 *[gnis:Class="Populated Place"][place=town],
 *[gnis:Class="Populated Place"][place=village],
