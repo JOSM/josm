@@ -7,7 +7,7 @@ way[surface=~/^(unpaved|compacted|gravel|fine_gravel|pebblestone|ground|earth|di
 }
 
 /* {0.key} without {1.key} (warning level) */
-way[junction                   ][!highway][junction!=yes],
+way[junction                   ][!highway][junction!=yes][!area:highway],
 way[lanes                      ][!highway][leisure!=track][leisure!=swimming_pool],
 way[living_street              ][!highway],
 way[maintenance                ][!highway],
