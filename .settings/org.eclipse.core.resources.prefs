@@ -1,3 +1,15 @@
 eclipse.preferences.version=1
 encoding//native/windows/locale=ISO-8859-1
+encoding//resources/data/validator/addresses.mapcss=UTF-8
+encoding//resources/data/validator/combinations.mapcss=UTF-8
+encoding//resources/data/validator/deprecated.mapcss=UTF-8
+encoding//resources/data/validator/geometry.mapcss=UTF-8
+encoding//resources/data/validator/highway.mapcss=UTF-8
+encoding//resources/data/validator/multiple.mapcss=UTF-8
+encoding//resources/data/validator/numeric.mapcss=UTF-8
+encoding//resources/data/validator/relation.mapcss=UTF-8
+encoding//resources/data/validator/religion.mapcss=UTF-8
+encoding//resources/data/validator/territories.mapcss=UTF-8
+encoding//resources/data/validator/unnecessary.mapcss=UTF-8
+encoding//resources/data/validator/wikipedia.mapcss=UTF-8
 encoding/<project>=UTF-8

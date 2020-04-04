@@ -22,52 +22,12 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/jmockit.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4">
 		<attributes>
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=JOSM&amp;ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=ivysettings.xml&amp;loadSettingsOnDemand=false&amp;ivyUserDir=&amp;propertyFiles="/>
-	<classpathentry kind="lib" path="test/lib/jfcunit.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="test/lib/equalsverifier-3.1.2.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/classgraph-4.6.32.jar" sourcepath="C:/Users/vippy/.m2/repository/io/github/classgraph/classgraph/4.6.32/classgraph-4.6.32-sources.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/system-rules-1.19.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="test/lib/commons-testing/commons-testing-2.1.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="test/lib/wiremock-standalone-2.20.0.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="test/lib/awaitility-3.1.5.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -78,16 +38,6 @@
 			<accessrule kind="discouraged" pattern="com/sun/javafx/application/PlatformImpl"/>
 			<accessrule kind="discouraged" pattern="javafx/util/Duration"/>
 		</accessrules>
-	</classpathentry>
-	<classpathentry kind="lib" path="tools/commons-lang3-3.8.1.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="tools/spotbugs/spotbugs-annotations.jar">
-		<attributes>
-			<attribute name="test" value="true"/>
-		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

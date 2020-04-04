@@ -13,7 +13,7 @@
         <!-- javacc->default -->
         <dependency org="net.java.dev.javacc" name="javacc" rev="7.0.3" conf="javacc->default"/>
         <!-- checkstyle->default -->
-        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.27" conf="checkstyle->default"/>
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.29" conf="checkstyle->default"/>
         <!-- proguard->default -->
         <dependency org="net.sf.proguard" name="proguard-anttask" rev="6.2.2" conf="proguard->default"/>
         <!-- pmd->default -->
@@ -24,7 +24,7 @@
             <artifact name="saxon" type="jar" maven:classifier="dom"/>
         </dependency>
         <!-- spotbugs->default -->
-        <dependency org="com.github.spotbugs" name="spotbugs" rev="3.1.12" conf="spotbugs->default"/>
-        <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="3.1.12" conf="spotbugs->default"/>
+        <dependency org="com.github.spotbugs" name="spotbugs" rev="4.0.1" conf="spotbugs->default"/>
+        <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.0.1" conf="spotbugs->default"/>
     </dependencies>
 </ivy-module>
