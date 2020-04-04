@@ -142,10 +142,10 @@ public class ValidateAction extends JosmAction {
                 MapFrame map = MainApplication.getMap();
                 map.validatorDialog.unfurlDialog();
                 map.validatorDialog.tree.setErrors(errors);
+                //FIXME: nicer way to find / invalidate the corresponding error layer
+                MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
                 if (!errors.isEmpty()) {
-                    //FIXME: nicer way to find / invalidate the corresponding error layer
                     OsmValidator.initializeErrorLayer();
-                    MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
                 }
             });
         }
