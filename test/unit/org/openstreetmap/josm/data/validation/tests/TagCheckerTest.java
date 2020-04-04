@@ -347,6 +347,8 @@ public class TagCheckerTest {
     @Test
     public void testTicket18740() {
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:ak", "Frɛnkyeman"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:bm", "Esipaɲi"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:oym", "Wɨlapaleya Ɨtu"));
     }
 
     /**
