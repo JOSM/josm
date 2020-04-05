@@ -107,7 +107,9 @@ public class BasicUploadSettingsPanel extends JPanel {
         obtainSource.add(obtainSourceAutomatically, GBC.std().anchor(GBC.WEST));
         obtainSource.add(obtainSourceOnce, GBC.std().anchor(GBC.WEST));
         obtainSource.add(new JLabel(), GBC.eol().fill(GBC.HORIZONTAL));
-        pnl.add(obtainSource, GBC.eol().insets(0, 0, 10, 3).fill(GBC.HORIZONTAL));
+        if (Config.getPref().getBoolean("upload.show.automatic.source", true)) {
+            pnl.add(obtainSource, GBC.eol().insets(0, 0, 10, 3).fill(GBC.HORIZONTAL));
+        }
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
         hcbUploadSource.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
