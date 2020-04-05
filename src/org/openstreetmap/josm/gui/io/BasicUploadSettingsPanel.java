@@ -182,8 +182,10 @@ public class BasicUploadSettingsPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         add(buildUploadCommentPanel(), BorderLayout.NORTH);
         add(pnlUploadParameterSummary, BorderLayout.CENTER);
-        add(cbRequestReview, BorderLayout.SOUTH);
-        cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
+        if (Config.getPref().getBoolean("upload.show.review.request", true)) {
+            add(cbRequestReview, BorderLayout.SOUTH);
+            cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
+        }
     }
 
     /**
