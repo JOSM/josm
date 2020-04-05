@@ -226,8 +226,8 @@ public class TagInfoExtract {
                 JsonObjectBuilder project = Json.createObjectBuilder()
                         .add("name", name)
                         .add("description", description)
-                        .add("project_url", "https://josm.openstreetmap.de/")
-                        .add("icon_url", "https://josm.openstreetmap.de/export/7770/josm/trunk/resources/images/logo_16x16x8.png")
+                        .add("project_url", JosmUrls.getInstance().getJOSMWebsite())
+                        .add("icon_url", options.findImageUrl("logo_16x16x8.png"))
                         .add("contact_name", "JOSM developer team")
                         .add("contact_email", "josm-dev@openstreetmap.org");
                 final JsonArrayBuilder jsonTags = Json.createArrayBuilder();
