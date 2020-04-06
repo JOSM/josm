@@ -63,7 +63,7 @@ FunctionEnd
 ; ============================================================================
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "..\LICENSE"
+!insertmacro MUI_PAGE_LICENSE "..\..\LICENSE"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -296,7 +296,7 @@ Section $(JOSM_SEC_IMAGERY_OFFSET_DB_PLUGIN) SecImageryOffsetDbPlugin
 SectionIn 1 2
 SetShellVarContext current
 SetOutPath $APPDATA\JOSM\plugins
-File "../../dist/imagery_offset_db.jar"
+File "../../../dist/imagery_offset_db.jar"
 StrCpy $plugins "$plugins<entry value='imagery_offset_db'/>"
 SectionEnd
 
@@ -305,7 +305,7 @@ Section $(JOSM_SEC_TURNRESTRICTIONS_PLUGIN) SecTurnrestrictionsPlugin
 SectionIn 1 2
 SetShellVarContext current
 SetOutPath $APPDATA\JOSM\plugins
-File "../../dist/turnrestrictions.jar"
+File "../../../dist/turnrestrictions.jar"
 StrCpy $plugins "$plugins<entry value='turnrestrictions'/>"
 SectionEnd
 

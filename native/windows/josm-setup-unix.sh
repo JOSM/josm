@@ -58,14 +58,14 @@ elif [ -n "$1" ]; then
   export JOSM_FILE="/home/josm/www/download/josm-tested.jar"
 else
   # no argument: for everyone else
-  svncorerevision=`svnversion -n ..`
-  #svnpluginsrevision=`svnversion -n ../../plugins`
+  svncorerevision=`svnversion -n ../..`
+  #svnpluginsrevision=`svnversion -n ../../../plugins`
   #svnrevision="$svncorerevision-$svnpluginsrevision"
 
   #export VERSION=custom-${svnrevision}
   export VERSION=`echo ${svncorerevision} | sed -e 's/M//g' -e 's/S//g' -e 's/P//g'`
   export JOSM_BUILD="yes"
-  export JOSM_FILE="..\dist\josm-custom.jar"
+  export JOSM_FILE="..\..\dist\josm-custom.jar"
 fi
 
 echo "Creating Windows Installer for josm-$VERSION"
@@ -76,13 +76,13 @@ echo "### Build the Complete josm + Plugin Stuff"
 if [ "x$JOSM_BUILD" == "xyes" ]; then
     (
 	echo "Build the Complete josm Stuff"
-	
+
 	echo "Compile Josm"
-	cd ../core
+	cd ../..
 	ant -q clean
 	ant -q compile || exit -1
 	cd ..
-	
+
 	echo "Compile Josm Plugins"
 	cd plugins
 	ant -q clean
