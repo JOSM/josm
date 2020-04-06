@@ -472,7 +472,7 @@ public class SplitWayCommand extends SequenceCommand {
             int ir = 0;
             List<RelationMember> relationMembers = r.getMembers();
             for (RelationMember rm : relationMembers) {
-                if (rm.isWay() && rm.getMember() == way) {
+                if (rm.getMember() == way) {
                     boolean insert = true;
                     if (relationSpecialTypes.containsKey(type) && "restriction".equals(relationSpecialTypes.get(type))) {
                         RelationInformation rValue = treatAsRestriction(r, rm, c, newWays, way, changedWay);
@@ -540,6 +540,22 @@ public class SplitWayCommand extends SequenceCommand {
                                     // assume that the direction doesn't matter. Downloading any more members
                                     // won't help in any case.
                                     direction = Direction.IRRELEVANT;
+                                }
+                                if (direction == Direction.UNKNOWN && (!way.firstNode().isOutsideDownloadArea()
+                                        || way.lastNode().isOutsideDownloadArea())) {
+                                    // check if any other complete way in the relation is connected to the way
+                                    // if so, the order of the relation is broken
+                                    for (int i = 0; i < r.getMembersCount(); i++) {
+                                        if (i >= ir - 1 && i <= ir + 1)
+                                            continue;
+                                        RelationMember rmTest = r.getMember(i);
+                                        if (rmTest.isWay() && !rmTest.getMember().isIncomplete() &&
+                                            (way.isFirstLastNode(rmTest.getWay().firstNode())
+                                                    || way.isFirstLastNode(rm.getWay().lastNode()))) {
+                                                direction = Direction.IRRELEVANT;
+                                                break;
+                                        }
+                                    }
                                 }
                             }
                         } else {
