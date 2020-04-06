@@ -273,7 +273,7 @@ Build-Date: ${build.tstamp}
         </exec>
     </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
-        <ivy:cachepath file="${tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <java classname="javacc" fork="true" failonerror="true">
             <classpath refid="javacc.classpath"/>
@@ -394,9 +394,9 @@ Build-Date: ${build.tstamp}
             <pathelement path="${build.dir}"/>
             <pathelement path="${resources.dir}"/>
         </path>
-        <ivy:retrieve pattern="${test.dir}/lib/[artifact].[ext]" conf="jmockit"/>
-        <ivy:retrieve pattern="${tools.dir}/[artifact].[ext]" conf="commonslang"/>
-        <ivy:retrieve pattern="${tools.dir}/[conf].[ext]" conf="jacocoant"/>
+        <ivy:retrieve log="download-only" pattern="${test.dir}/lib/[artifact].[ext]" conf="jmockit"/>
+        <ivy:retrieve log="download-only" pattern="${tools.dir}/[artifact].[ext]" conf="commonslang"/>
+        <ivy:retrieve log="download-only" pattern="${tools.dir}/[conf].[ext]" conf="jacocoant"/>
         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="${tools.dir}/jacocoant.jar" />
     </target>
     <target name="test-clean" depends="init-properties">
@@ -567,7 +567,7 @@ Build-Date: ${build.tstamp}
         </jacoco:report>
     </target>
     <target name="dist-optimized" depends="dist" unless="isJava13">
-        <ivy:cachepath file="${tools.ivy}" pathid="proguard.classpath" conf="proguard"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="proguard.classpath" conf="proguard"/>
         <taskdef resource="proguard/ant/task.properties" classpathref="proguard.classpath"/>
         <proguard>
         -injars ${dist.jar}
@@ -878,7 +878,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="checkstyle-compile" depends="init-properties">
-        <ivy:cachepath file="${tools.ivy}" pathid="checkstyle.classpath" conf="checkstyle"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="checkstyle.classpath" conf="checkstyle"/>
         <mkdir dir="${checkstyle-build.dir}"/>
         <javac sourcepath="" srcdir="${checkstyle.dir}/src" failonerror="true"
             destdir="${checkstyle-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
@@ -912,7 +912,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="spotbugs" depends="dist">
-        <ivy:cachepath file="${tools.ivy}" pathid="spotbugs.classpath" conf="spotbugs"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="spotbugs.classpath" conf="spotbugs"/>
         <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="spotbugs.classpath"/>
         <spotbugs output="xml"
                 outputFile="spotbugs-josm.xml"
@@ -928,7 +928,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="pmd" depends="init-properties">
-        <ivy:cachepath file="${tools.ivy}" pathid="pmd.classpath" conf="pmd"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="pmd.classpath" conf="pmd"/>
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
         <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />
@@ -1048,12 +1048,11 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="resolve" depends="init-ivy" unless="resolve.notRequired" description="Resolve Ivy dependencies">
         <ivy:settings file="${base.dir}/ivysettings.xml"/>
-        <ivy:resolve file="${base.dir}/ivy.xml" keep="true"/>
-        <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
-        <ivy:cachepath pathid="compile.path" conf="compile"/>
-        <ivy:cachepath pathid="runtime.path" conf="runtime"/>
-        <ivy:cachefileset setid="runtime.fileset" conf="runtime"/>
-        <ivy:cachepath pathid="test.path" conf="test"/>
+        <ivy:resolve log="download-only" file="${base.dir}/ivy.xml" keep="true"/>
+        <ivy:cachepath log="download-only" pathid="compile.path" conf="compile"/>
+        <ivy:cachepath log="download-only" pathid="runtime.path" conf="runtime"/>
+        <ivy:cachefileset log="download-only" setid="runtime.fileset" conf="runtime"/>
+        <ivy:cachepath log="download-only" pathid="test.path" conf="test"/>
     </target>
     <target name="extract-libraries" depends="resolve" description="extract libraries to build dir">
         <unzip dest="${build.dir}">
@@ -1129,7 +1128,7 @@ Build-Date: ${build.tstamp}
         </unzip>
     </target>
     <target name="sources" description="Generates jar file of JOSM source files and its dependencies" depends="init,epsg,resolve">
-        <ivy:cachefileset setid="sources.fileset" conf="sources"/>
+        <ivy:cachefileset log="download-only" setid="sources.fileset" conf="sources"/>
         <jar destfile="${dist-sources.jar}" level="${clevel}">
             <zipgroupfileset refid="sources.fileset"/>
             <fileset dir="${src.dir}">
@@ -1145,6 +1144,9 @@ Build-Date: ${build.tstamp}
         <delete dir="${lib.dir}"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[type].[ext]" conf="compile,runtime,sources,test"/>
         <ivy:retrieve pattern="${lib.dir}/tools/[artifact]-[type].[ext]" conf="javacc,checkstyle,pmd,spotbugs" file="${tools.ivy}"/>
+    </target>
+    <target name="ivy-report" description="Generates Ivy reports of dependency resolving" depends="resolve">
+        <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
     </target>
     <target name="api-dependency-tree" description="Displays Ivy dependency tree for JOSM API" depends="resolve">
         <ivy:dependencytree conf="api"/>
