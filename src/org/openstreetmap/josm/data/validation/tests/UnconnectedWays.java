@@ -13,11 +13,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -52,6 +54,8 @@ import org.openstreetmap.josm.tools.Logging;
 public abstract class UnconnectedWays extends Test {
     private final int code;
     private final boolean isHighwayTest;
+
+    static final double DETOUR_FACTOR = 4;
 
     protected abstract boolean isCandidate(OsmPrimitive p);
 
@@ -247,21 +251,15 @@ public abstract class UnconnectedWays extends Test {
                 map.clear();
                 return map;
             }
+            if (s.w.hasTag(HIGHWAY, "platform"))
+                continue;
             for (Node endnode : s.nearbyNodes(mindist)) {
                 Way parentWay = getWantedParentWay(endnode);
-                if (parentWay != null) {
-                    if (!Objects.equals(OsmUtils.getLayer(s.w), OsmUtils.getLayer(parentWay))) {
-                        continue; // ignore ways with different layer tag
-                    }
-
-                    // to handle intersections of 't' shapes and similar
-                    if (!s.isConnectedTo(endnode)) {
-                        if (parentWay.hasTag(HIGHWAY, "platform") || s.w.hasTag(HIGHWAY, "platform")
-                                || s.barrierBetween(endnode)) {
-                            continue;
-                        }
-                        addIfNewOrCloser(map, endnode, s);
-                    }
+                if (parentWay != null && !parentWay.hasTag(HIGHWAY, "platform")
+                        && Objects.equals(OsmUtils.getLayer(s.w), OsmUtils.getLayer(parentWay))
+                        // to handle intersections of 't' shapes and similar
+                        && !s.isConnectedTo(endnode) && !s.obstacleBetween(endnode)) {
+                    addIfNewOrCloser(map, endnode, s);
                 }
             }
         }
@@ -374,7 +372,7 @@ public abstract class UnconnectedWays extends Test {
         }
         fillSearchNodes(endnodes);
         if (!searchNodes.isEmpty()) {
-            maxLen = 4 * mindist;
+            maxLen = DETOUR_FACTOR * mindist;
             if (isHighwayTest) {
                 addErrors(Severity.WARNING, getHighwayEndNodesNearOtherHighway(), tr("Way end node near other highway"));
             } else {
@@ -385,7 +383,7 @@ public abstract class UnconnectedWays extends Test {
         /* the following two should use a shorter distance */
         boolean includeOther = isBeforeUpload ? ValidatorPrefHelper.PREF_OTHER_UPLOAD.get() : ValidatorPrefHelper.PREF_OTHER.get();
         if (minmiddledist > 0.0 && includeOther) {
-            maxLen = 4 * minmiddledist;
+            maxLen = DETOUR_FACTOR * minmiddledist;
             fillSearchNodes(middlenodes);
             addErrors(Severity.OTHER, getWayNodesNearOtherWay(), tr("Way node near other way"));
             fillSearchNodes(othernodes);
@@ -431,7 +429,7 @@ public abstract class UnconnectedWays extends Test {
          * @return true if a reasonable connection was found
          */
         boolean isConnectedTo(Node startNode) {
-            return isConnectedTo(startNode, new HashSet<>(), 0);
+            return isConnectedTo(startNode, new LinkedHashSet<>(), 0, w);
         }
 
         /**
@@ -439,34 +437,51 @@ public abstract class UnconnectedWays extends Test {
          * @param node the given node
          * @param visited set of visited nodes
          * @param len length of the travelled route
+         * @param parent the previous parent way
          * @return true if a reasonable connection was found
          */
-        private boolean isConnectedTo(Node node, Set<Node> visited, double len) {
-            if (n1 == node || n2 == node) {
-                return true;
-            }
+        private boolean isConnectedTo(Node node, LinkedHashSet<Node> visited, double len, Way parent) {
             if (len > maxLen) {
                 return false;
             }
+            if (n1 == node || n2 == node) {
+                Node uncon = visited.iterator().next();
+                LatLon cl = ProjectionRegistry.getProjection().eastNorth2latlon(calcClosest(uncon));
+                // calculate real detour length, closest point might be somewhere between n1 and n2
+                double detourLen = len + node.getCoor().greatCircleDistance(cl);
+                if (detourLen > maxLen)
+                    return false;
+                // see #17914: flag also nodes which are very close
+                double directDist = getDist(uncon);
+                if (directDist <= 0.1)
+                    return false;
+                return directDist > 0.5 || (visited.size() == 2 && directDist * 1.5 > detourLen);
+            }
             if (visited != null) {
                 visited.add(node);
-                for (final Way way : node.getParentWays()) {
-                    if (isWantedWay(way)) {
-                        List<Node> nextNodes = new ArrayList<>();
-                        int pos = way.getNodes().indexOf(node);
-                        if (pos > 0) {
-                            nextNodes.add(way.getNode(pos - 1));
-                        }
-                        if (pos + 1 < way.getNodesCount()) {
-                            nextNodes.add(way.getNode(pos + 1));
-                        }
-                        for (Node next : nextNodes) {
-                            final boolean containsN = visited.contains(next);
-                            visited.add(next);
-                            if (!containsN && isConnectedTo(next, visited,
-                                    len + node.getCoor().greatCircleDistance(next.getCoor()))) {
-                                return true;
-                            }
+                List<Way> wantedParents = node.getParentWays().stream().filter(pw -> isWantedWay(pw))
+                        .collect(Collectors.toList());
+                if (wantedParents.size() > 1 && wantedParents.indexOf(parent) != wantedParents.size() - 1) {
+                    // we want to find a different way. so move known way to the end of the list
+                    wantedParents.remove(parent);
+                    wantedParents.add(parent);
+                }
+
+                for (final Way way : wantedParents) {
+                    List<Node> nextNodes = new ArrayList<>();
+                    int pos = way.getNodes().indexOf(node);
+                    if (pos > 0) {
+                        nextNodes.add(way.getNode(pos - 1));
+                    }
+                    if (pos + 1 < way.getNodesCount()) {
+                        nextNodes.add(way.getNode(pos + 1));
+                    }
+                    for (Node next : nextNodes) {
+                        final boolean containsN = visited.contains(next);
+                        visited.add(next);
+                        if (!containsN && isConnectedTo(next, visited,
+                                len + node.getCoor().greatCircleDistance(next.getCoor()), way)) {
+                            return true;
                         }
                     }
                 }
@@ -474,11 +489,12 @@ public abstract class UnconnectedWays extends Test {
             return false;
         }
 
+        private EastNorth calcClosest(Node n) {
+            return Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), n.getEastNorth());
+        }
+
         double getDist(Node n) {
-            EastNorth coord = n.getEastNorth();
-            if (coord == null)
-                return Double.NaN;
-            EastNorth closest = Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), coord);
+            EastNorth closest = calcClosest(n);
             return n.getCoor().greatCircleDistance(ProjectionRegistry.getProjection().eastNorth2latlon(closest));
         }
 
@@ -509,13 +525,14 @@ public abstract class UnconnectedWays extends Test {
             return new BBox(topLeft, botRight);
         }
 
+        /**
+         * We know that any point near the line segment must be at
+         * least as close as the other end of the line, plus
+         * a little fudge for the distance away (dist)
+         * @param dist fudge to add
+         * @return collection of nearby nodes
+         */
         Collection<Node> nearbyNodes(double dist) {
-            /*
-             * We know that any point near the line segment must be at
-             * least as close as the other end of the line, plus
-             * a little fudge for the distance away ('dist').
-             */
-
             BBox bounds = this.getBounds(dist * (360.0d / (Ellipsoid.WGS84.a * 2 * Math.PI)));
             List<Node> result = null;
             List<Node> foundNodes = searchNodes.search(bounds);
@@ -534,14 +551,16 @@ public abstract class UnconnectedWays extends Test {
             return result == null ? Collections.emptyList() : result;
         }
 
-        private boolean barrierBetween(Node endnode) {
+        private boolean obstacleBetween(Node endnode) {
             EastNorth en = endnode.getEastNorth();
-            EastNorth closest = Geometry.closestPointToSegment(n1.getEastNorth(), n2.getEastNorth(), en);
-            BBox bbox = new BBox(endnode.getCoor(), ProjectionRegistry.getProjection().eastNorth2latlon(closest));
+            EastNorth closest = calcClosest(endnode);
+            LatLon llClosest = ProjectionRegistry.getProjection().eastNorth2latlon(closest);
+            // find obstacles between end node and way segment
+            BBox bbox = new BBox(endnode.getCoor(), llClosest);
             for (Way nearbyWay : ds.searchWays(bbox)) {
-                if (nearbyWay != w && nearbyWay.isUsable() && nearbyWay.hasTag("barrier")
+                if (nearbyWay != w && nearbyWay.isUsable() && isObstacle(nearbyWay)
                         && !endnode.getParentWays().contains(nearbyWay)) {
-                    //make sure that the barrier is really between endnode and the highway segment, not just close to or around them
+                    //make sure that the obstacle is really between endnode and the highway segment, not just close to or around them
                     Iterator<Node> iter = nearbyWay.getNodes().iterator();
                     EastNorth prev = iter.next().getEastNorth();
                     while (iter.hasNext()) {
@@ -555,6 +574,11 @@ public abstract class UnconnectedWays extends Test {
             }
             return false;
         }
+
+        private boolean isObstacle(Way w) {
+            return w.hasKey("barrier", "waterway") || isBuilding(w);
+        }
+
     }
 
     List<MyWaySegment> getWaySegments(Way w) {
