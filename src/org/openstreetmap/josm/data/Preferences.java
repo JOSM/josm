@@ -607,6 +607,7 @@ public class Preferences extends AbstractPreferences {
                 }
             }
         }
+        File possiblyGoodBackupFile = new File(prefDir, "preferences.xml_backup");
         try {
             load();
             initSuccessful = true;
@@ -617,14 +618,37 @@ public class Preferences extends AbstractPreferences {
                 JOptionPane.showMessageDialog(
                         MainApplication.getMainFrame(),
                         tr("<html>Preferences file had errors.<br> Making backup of old one to <br>{0}<br> " +
-                                "and creating a new default preference file.</html>",
-                                backupFile.getAbsoluteFile()),
+                                "and trying to read last good preference file <br>{1}<br>.</html>",
+                                backupFile.getAbsoluteFile(), possiblyGoodBackupFile.getAbsoluteFile()),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
             }
             PlatformManager.getPlatform().rename(preferenceFile, backupFile);
+        }
+        if (!initSuccessful) {
             try {
+                if (possiblyGoodBackupFile.exists() && possiblyGoodBackupFile.length() > 0) {
+                    Utils.copyFile(possiblyGoodBackupFile, preferenceFile);
+                }
+
+                load();
+                initSuccessful = true;
+            } catch (IOException | SAXException | XMLStreamException e) {
+                Logging.error(e);
+                Logging.warn(tr("Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
+            }
+        }
+        if (!initSuccessful) {
+            try {
+                if (!GraphicsEnvironment.isHeadless()) {
+                    JOptionPane.showMessageDialog(
+                            MainApplication.getMainFrame(),
+                            tr("<html>Preferences file had errors.<br> Creating a new default preference file.</html>"),
+                             tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
                 resetToDefault();
                 save();
             } catch (IOException e1) {
