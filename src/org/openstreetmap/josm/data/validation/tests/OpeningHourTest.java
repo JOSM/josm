@@ -113,6 +113,11 @@ public class OpeningHourTest extends TagTest {
             for (String key : KEYS_TO_CHECK) {
                 errors.addAll(checkOpeningHourSyntax(key, p.get(key), p, Locale.getDefault()));
             }
+            // COVID-19, a few additional values are permitted, see #19048, see https://wiki.openstreetmap.org/wiki/Key:opening_hours:covid19
+            final String keyCovid19 = "opening_hours:covid19";
+            if (p.hasTag(keyCovid19) && !p.hasTag(keyCovid19, "same", "restricted", "open", "off")) {
+                errors.addAll(checkOpeningHourSyntax(keyCovid19, p.get(keyCovid19), p, Locale.getDefault()));
+            }
         }
     }
 }
