@@ -234,6 +234,8 @@ public final class OsmValidator {
             } catch (SecurityException e) {
                 Logging.log(Logging.LEVEL_ERROR, "Unable to load ignored errors", e);
             }
+            // see #19053: remove invalid entry
+            ignoredErrors.remove("3000");
         }
     }
 

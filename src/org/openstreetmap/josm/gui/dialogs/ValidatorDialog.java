@@ -410,7 +410,9 @@ public class ValidatorDialog extends ToggleDialog
 
         lastSelectedNode = node;
         if (node != null) {
+            final Set<String> codes = new HashSet<>();
             ValidatorTreePanel.visitTestErrors(node, error -> {
+                codes.add(error.getIgnoreSubGroup()); // see #19053
                 error.setSelected(true);
 
                 hasFixes.set(hasFixes.get() || error.isFixable());
@@ -422,7 +424,7 @@ public class ValidatorDialog extends ToggleDialog
             });
             selectAction.setEnabled(true);
             if (ignoreAction != null) {
-                ignoreAction.setEnabled(!(node.getUserObject() instanceof Severity));
+                ignoreAction.setEnabled(!(node.getUserObject() instanceof Severity) && codes.size() <= 1);
             }
         }
 
