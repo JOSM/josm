@@ -3169,8 +3169,8 @@ node[craft=shoemaker] {
     icon-image: "presets/craft/shoemaker.svg";
     set icon_z17;
 }
-node[craft=photographer][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=photographer] {
+    icon-image: "presets/craft/photographer.svg";
     set icon_z17;
 }
 node[craft=metal_construction] {
