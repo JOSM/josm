@@ -3396,6 +3396,14 @@ node[tourism=information][information=guidepost] {
     icon-image: "presets/misc/information/guidepost.svg";
     set icon_z17;
 }
+node[tourism=information][information=route_marker] {
+    icon-image: "presets/misc/information/route_marker.svg";
+    set icon_z17;
+}
+node[tourism=information][information=audioguide] {
+    icon-image: "presets/misc/information/audioguide.svg";
+    set icon_z17;
+}
 area[tourism=information][information=office] {
     fill-color: tourism#e180a2;
 }

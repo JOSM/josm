@@ -3219,6 +3219,23 @@
                 <label text="... other transportation modes possible" />
             </optional>
         </item> <!-- Guidepost -->
+        <item name="Route marker" icon="presets/misc/information/route_marker.svg" type="node" preset_name_label="true">
+            <link wiki="Key:information" />
+            <space />
+            <key key="tourism" value="information" />
+            <key key="information" value="route_marker" />
+            <reference ref="name_ref_operator" />
+            <text key="ele" text="Elevation" />
+            <optional text="Routes shown for:">
+                <check key="hiking" text="Hiking" />
+                <check key="bicycle" text="Cycling" />
+                <check key="mtb" text="Mountainbiking" />
+                <check key="ski" text="Skiing" />
+                <check key="horse" text="Riding" />
+                <space />
+                <label text="... other transportation modes possible" />
+            </optional>
+        </item> <!-- Route marker -->
         <item name="Information Terminal" icon="presets/misc/information/information.svg" type="node" preset_name_label="true">
             <link wiki="Tag:information=terminal" />
             <label text="Information access via electronic methods." />
@@ -3232,7 +3249,7 @@
             <reference ref="fee" />
             <reference ref="internet" />
         </item> <!-- Information Terminal -->
-        <item name="Audio Guide" icon="presets/misc/information/information.svg" type="node" preset_name_label="true">
+        <item name="Audio Guide" icon="presets/misc/information/audioguide.svg" type="node" preset_name_label="true">
             <link wiki="Tag:information=audioguide" />
             <label text="Information using headphones or a mobile phone." />
             <space />

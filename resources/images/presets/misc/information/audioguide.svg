@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="16"
+   id="svg2"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="audioguide8.svg"
+   sodipodi:version="0.32"
+   space="preserve"
+   style="clip-rule:evenodd;fill-rule:evenodd;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision"
+   viewBox="0 0 16 16"
+   width="16"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.0">
+  <metadata
+     id="metadata3">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title></dc:title>
+        <dc:description />
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>info</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>information</rdf:li>
+            <rdf:li>sign</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://www.openclipart.org/">
+            <dc:title>Open Clip Art Library</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>mo</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>mo</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:date />
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://web.resource.org/cc/PublicDomain" />
+        <dc:language>en</dc:language>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://web.resource.org/cc/PublicDomain">
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Reproduction" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/Distribution" />
+        <cc:permits
+           rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     bordercolor="#666666"
+     borderopacity="1.0"
+     id="base"
+     inkscape:current-layer="svg2"
+     inkscape:cx="5.6987664"
+     inkscape:cy="8.8717241"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:window-height="987"
+     inkscape:window-width="1680"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:zoom="36.078962"
+     pagecolor="#ffffff"
+     showgrid="true"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid815" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <style
+       id="style6"
+       type="text/css">
+   
+    .fil0 {fill:#EF7900}
+   
+  </style>
+  </defs>
+  <rect
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:12.73160267;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect2159"
+     width="6.3737254"
+     height="13.037165"
+     x="5.0217228"
+     y="1.7384022" />
+  <g
+     id="Layer_x0020_1"
+     transform="scale(1.2706945)"
+     style="fill:#0000ff;fill-opacity:1">
+    <path
+       class="fil0"
+       d="m 6.29577,0 c 3.47651,0 6.29577,2.81926 6.29577,6.29577 0,3.47651 -2.81926,6.29577 -6.29577,6.29577 C 2.81926,12.59154 0,9.77228 0,6.29577 0,2.81926 2.81926,0 6.29577,0 Z m 0.946169,4.51008 v 5.59696 h 0.746244 v 0.666294 H 7.854945 4.603355 V 10.10704 H 5.349633 V 5.17637 H 4.603355 V 4.510076 h 0.133272 2.50531 z M 5.296309,2.75105 c 0,-0.239884 0.086649,-0.455316 0.259879,-0.646332 0.17323,-0.191016 0.397573,-0.286507 0.672959,-0.286507 h 0.133272 c 0.230974,0 0.444196,0.084405 0.639633,0.253214 0.195471,0.168775 0.293172,0.395328 0.293172,0.679625 0,0.239849 -0.084371,0.455282 -0.25318,0.646298 C 6.873235,3.588364 6.646716,3.683855 6.362419,3.683855 H 6.229147 C 5.998173,3.683855 5.784951,3.59945 5.589514,3.430675 5.394043,3.261866 5.296308,3.035313 5.296308,2.75105 Z"
+       id="path10"
+       style="fill:#0000ff;fill-opacity:1"
+       inkscape:connector-curvature="0" />
+  </g>
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.49186891;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     id="rect837"
+     width="1"
+     height="5"
+     x="11"
+     y="6" />
+  <rect
+     style="clip-rule:evenodd;opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.85194194;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal;image-rendering:optimizeQuality;shape-rendering:geometricPrecision;text-rendering:geometricPrecision"
+     id="rect837-1"
+     width="1"
+     height="5"
+     x="13"
+     y="6" />
+  <path
+     style="fill:#ffffff;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 2,11 6,8.5 2,6"
+     id="path854"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
+</svg>
