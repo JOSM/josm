@@ -470,6 +470,7 @@ public final class OsmValidator {
     public static void saveIgnoredErrors() {
         List<Map<String, String>> list = new ArrayList<>();
         cleanupIgnoredErrors();
+        ignoredErrors.remove("3000"); // see #19053
         list.add(ignoredErrors);
         int i = 0;
         while (i < list.size()) {
