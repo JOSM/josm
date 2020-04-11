@@ -6195,6 +6195,14 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Antiques -->
+        <separator/>
+        <item name="Storage Rental" icon="presets/shop/storage_rental.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=storage_rental" />
+            <space />
+            <key key="shop" value="storage_rental" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Storage Rental -->
     </group> <!-- Home decoration -->
     <group name="Printed Material" icon="presets/shop/stationery.svg">
         <item name="Stationery" icon="presets/shop/stationery.svg" type="node,closedway,multipolygon" preset_name_label="true">

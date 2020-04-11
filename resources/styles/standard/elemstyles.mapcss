@@ -2071,6 +2071,7 @@ area[shop=perfumery],
 area[shop=tea],
 area[shop=coffee],
 area[shop=antiques],
+area[shop=storage_rental],
 area[shop=music],
 area[shop=weapons],
 area[shop=funeral_directors],
@@ -2436,6 +2437,10 @@ node[shop=coffee] {
 }
 node[shop=antiques] {
     icon-image: "presets/shop/antique.svg";
+    set icon_z17;
+}
+node[shop=storage_rental] {
+    icon-image: "presets/shop/storage_rental.svg";
     set icon_z17;
 }
 node[shop=music] {
