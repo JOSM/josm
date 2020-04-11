@@ -220,7 +220,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                 .append(TD_END).append(TR_END)
                 .append(TR_START).append(TD_START)
                 .append(Utils.joinAsHtmlUnorderedList(Arrays.asList("<i>key=value</i>", "<i>key=*</i>", "<i>key~regex</i>",
-                        "<i>key!=value</i>", "<i>key!~regex</i>", "<i>key=\"combined value\"</i>")))
+                        "<i>-key=value</i>", "<i>-key~regex</i>", "<i>key=\"combined value\"</i>")))
                 .append(TD_END).append(TD_START)
                 .append(tr("<span>Download objects that have some concrete key/value pair, only the key with any contents for the value, " +
                         "the value matching some regular expression. \"Not equal\" operators are supported as well.</span>"))

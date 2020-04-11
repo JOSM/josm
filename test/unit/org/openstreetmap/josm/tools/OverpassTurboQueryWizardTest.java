@@ -38,6 +38,7 @@ public class OverpassTurboQueryWizardTest {
     @Test
     public void testKeyValue() {
         assertQueryEquals("  nwr[\"amenity\"=\"drinking_water\"];\n", "amenity=drinking_water");
+        assertQueryEquals("  nwr[\"amenity\"];\n", "amenity=*");
     }
 
     /**
@@ -45,8 +46,8 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testKeyNotValue() {
-        assertQueryEquals("  nwr[\"amenity\"!=\"drinking_water\"];\n", "amenity!=drinking_water");
-        assertQueryEquals("  nwr[\"amenity\"!=\"drinking_water\"];\n", "amenity<>drinking_water");
+        assertQueryEquals("  nwr[\"amenity\"!=\"drinking_water\"];\n", "-amenity=drinking_water");
+        assertQueryEquals("  nwr[!\"amenity\"];\n", "-amenity=*");
     }
 
     /**
@@ -56,15 +57,20 @@ public class OverpassTurboQueryWizardTest {
     public void testKeyLikeValue() {
         assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~bar");
         assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~/bar/");
-        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~=bar");
-        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~=/bar/");
-        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo like bar");
-        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo like /bar/");
         // case insensitive
         assertQueryEquals("  nwr[\"foo\"~\"bar\",i];\n", "foo~/bar/i");
         // negated
-        assertQueryEquals("  nwr[\"foo\"!~\"bar\"];\n", "foo!~bar");
-        assertQueryEquals("  nwr[\"foo\"!~\"bar\"];\n", "foo not like bar");
+        assertQueryEquals("  nwr[\"foo\"!~\"bar\"];\n", "-foo~bar");
+        assertQueryEquals("  nwr[\"foo\"!~\"bar\",i];\n", "-foo~/bar/i");
+    }
+
+    /**
+     * Test OSM boolean true/false.
+     */
+    @Test
+    public void testOsmBoolean() {
+        assertQueryEquals("  nwr[\"highway\"][\"oneway\"~\"true|yes|1|on\"];\n", "highway=* AND oneway?");
+        assertQueryEquals("  nwr[\"highway\"][\"oneway\"~\"false|no|0|off\"];\n", "highway=* AND -oneway?");
     }
 
     /**
@@ -83,7 +89,6 @@ public class OverpassTurboQueryWizardTest {
     @Test
     public void testBooleanOr() {
         assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n  nwr[\"baz\"=\"42\"];\n", "foo=bar or baz=42");
-        assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n  nwr[\"baz\"=\"42\"];\n", "foo=bar || baz=42");
         assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n  nwr[\"baz\"=\"42\"];\n", "foo=bar | baz=42");
     }
 
@@ -117,7 +122,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testUser() {
-        assertQueryEquals("  nwr(user:\"foo\");\n  nwr(uid:42);\n", "user:foo or uid:42");
+        assertQueryEquals("  nwr(user:\"foo\");\n  nwr(uid:42);\n", "user:foo or user:42");
     }
 
     /**
@@ -125,7 +130,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testEmpty() {
-        assertQueryEquals("  way[\"foo\"~\"^$\"];\n", "foo='' and type:way");
+        assertQueryEquals("  way[\"foo\"~\"^$\"];\n", "foo=\"\" and type:way");
     }
 
     /**
@@ -219,6 +224,6 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test(expected = UncheckedParseException.class)
     public void testErroneous() {
-        OverpassTurboQueryWizard.getInstance().constructQuery("foo");
+        OverpassTurboQueryWizard.getInstance().constructQuery("-(foo or bar)");
     }
 }

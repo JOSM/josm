@@ -122,8 +122,6 @@ This is an overview of the files and directories in the JOSM code repository:
     - defaultpresets.xml    data file for the core tagging presets
     - help-browser.css      CSS file for the help sites (HTML content is downloaded from the website
                             on demand, but displayed inside the programm in a Java web browser component.)
-    - overpass-wizard.js    Javascript code to provide a wizard-GUI for creating Overpass requests
-                            (external library, see https://github.com/tyrasd/overpass-wizard)
     - *.lang                translation data
     - *.xsd                 xml schema files for validation of configuration files
   - images/                 images distributed with the JOSM binary

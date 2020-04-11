@@ -504,13 +504,17 @@ public class SearchCompiler {
     /**
      * Matches if the value of the corresponding key is ''yes'', ''true'', ''1'' or ''on''.
      */
-    private static class BooleanMatch extends TaggedMatch {
+    public static class BooleanMatch extends TaggedMatch {
         private final String key;
         private final boolean defaultValue;
 
         BooleanMatch(String key, boolean defaultValue) {
             this.key = key;
             this.defaultValue = defaultValue;
+        }
+
+        public String getKey() {
+            return key;
         }
 
         @Override
@@ -709,7 +713,7 @@ public class SearchCompiler {
     /**
      * Matches objects with the given key-value pair.
      */
-    private static class KeyValue extends TaggedMatch {
+    public static class KeyValue extends TaggedMatch {
         private final String key;
         private final Pattern keyPattern;
         private final String value;
@@ -772,6 +776,14 @@ public class SearchCompiler {
                 }
             }
             return mv;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
         }
 
         @Override
@@ -890,7 +902,7 @@ public class SearchCompiler {
      */
     public static class ExactKeyValue extends TaggedMatch {
 
-        enum Mode {
+        public enum Mode {
             ANY, ANY_KEY, ANY_VALUE, EXACT, NONE, MISSING_KEY,
             ANY_KEY_REGEXP, ANY_VALUE_REGEXP, EXACT_REGEXP, MISSING_KEY_REGEXP;
         }
@@ -1000,6 +1012,18 @@ public class SearchCompiler {
                 return true;
             }
             throw new AssertionError("Missed state");
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public Mode getMode() {
+            return mode;
         }
 
         @Override
@@ -1147,13 +1171,17 @@ public class SearchCompiler {
         }
     }
 
-    private static class ExactType extends Match {
+    public static class ExactType extends Match {
         private final OsmPrimitiveType type;
 
         ExactType(String type) throws SearchParseError {
             this.type = OsmPrimitiveType.from(type);
             if (this.type == null)
                 throw new SearchParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation", type));
+        }
+
+        public OsmPrimitiveType getType() {
+            return type;
         }
 
         @Override
@@ -1185,7 +1213,7 @@ public class SearchCompiler {
     /**
      * Matches objects last changed by the given username.
      */
-    private static class UserMatch extends Match {
+    public static class UserMatch extends Match {
         private String user;
 
         UserMatch(String user) {
@@ -1194,6 +1222,10 @@ public class SearchCompiler {
             } else {
                 this.user = user;
             }
+        }
+
+        public String getUser() {
+            return user;
         }
 
         @Override
