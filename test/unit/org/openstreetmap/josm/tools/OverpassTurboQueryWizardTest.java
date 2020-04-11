@@ -21,34 +21,50 @@ public class OverpassTurboQueryWizardTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().timeout(15000);
 
-    /**
-     * Test {@code key=value}.
-     */
-    @Test
-    public void testKeyValue() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("amenity=drinking_water");
+    private void assertQueryEquals(String expectedQueryPart, String input) {
+        final String query = OverpassTurboQueryWizard.getInstance().constructQuery(input);
         assertEquals("" +
                 "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
-                "  nwr[\"amenity\"=\"drinking_water\"];\n" +
+                expectedQueryPart +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
     }
 
     /**
-     * Test {@code key!=value}.
+     * Test {@code key=value}.
+     */
+    @Test
+    public void testKeyValue() {
+        assertQueryEquals("  nwr[\"amenity\"=\"drinking_water\"];\n", "amenity=drinking_water");
+    }
+
+    /**
+     * Test {@code key!=value} and {@code key<>value}.
      */
     @Test
     public void testKeyNotValue() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("amenity!=drinking_water");
-        assertEquals("" +
-                "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
-                "(\n" +
-                "  nwr[\"amenity\"!=\"drinking_water\"];\n" +
-                ");\n" +
-                "(._;>;);\n" +
-                "out meta;", query);
+        assertQueryEquals("  nwr[\"amenity\"!=\"drinking_water\"];\n", "amenity!=drinking_water");
+        assertQueryEquals("  nwr[\"amenity\"!=\"drinking_water\"];\n", "amenity<>drinking_water");
+    }
+
+    /**
+     * Test {@code key~value} and similar.
+     */
+    @Test
+    public void testKeyLikeValue() {
+        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~bar");
+        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~/bar/");
+        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~=bar");
+        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~=/bar/");
+        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo like bar");
+        assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo like /bar/");
+        // case insensitive
+        assertQueryEquals("  nwr[\"foo\"~\"bar\",i];\n", "foo~/bar/i");
+        // negated
+        assertQueryEquals("  nwr[\"foo\"!~\"bar\"];\n", "foo!~bar");
+        assertQueryEquals("  nwr[\"foo\"!~\"bar\"];\n", "foo not like bar");
     }
 
     /**
@@ -56,16 +72,9 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testBooleanAnd() {
-        final String expected = "" +
-                "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
-                "(\n" +
-                "  nwr[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n" +
-                ");\n" +
-                "(._;>;);\n" +
-                "out meta;";
-        assertEquals(expected, OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar and baz=42"));
-        assertEquals(expected, OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar && baz=42"));
-        assertEquals(expected, OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar & baz=42"));
+        assertQueryEquals("  nwr[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n", "foo=bar and baz=42");
+        assertQueryEquals("  nwr[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n", "foo=bar && baz=42");
+        assertQueryEquals("  nwr[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n", "foo=bar & baz=42");
     }
 
     /**
@@ -73,17 +82,9 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testBooleanOr() {
-        final String expected = "" +
-                "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
-                "(\n" +
-                "  nwr[\"foo\"=\"bar\"];\n" +
-                "  nwr[\"baz\"=\"42\"];\n" +
-                ");\n" +
-                "(._;>;);\n" +
-                "out meta;";
-        assertEquals(expected, OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar or baz=42"));
-        assertEquals(expected, OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar || baz=42"));
-        assertEquals(expected, OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | baz=42"));
+        assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n  nwr[\"baz\"=\"42\"];\n", "foo=bar or baz=42");
+        assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n  nwr[\"baz\"=\"42\"];\n", "foo=bar || baz=42");
+        assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n  nwr[\"baz\"=\"42\"];\n", "foo=bar | baz=42");
     }
 
     /**
@@ -91,17 +92,16 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testBoolean() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("(foo=* or bar=*) and (asd=* or fasd=*)");
-        assertEquals("" +
-                "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
-                "(\n" +
-                "  nwr[\"foo\"][\"asd\"];\n" +
-                "  nwr[\"foo\"][\"fasd\"];\n" +
-                "  nwr[\"bar\"][\"asd\"];\n" +
-                "  nwr[\"bar\"][\"fasd\"];\n" +
-                ");\n" +
-                "(._;>;);\n" +
-                "out meta;", query);
+        assertQueryEquals("" +
+                "  nwr[\"foo\"][\"baz1\"];\n" +
+                "  nwr[\"foo\"][\"baz2\"];\n" +
+                "  nwr[\"foo\"][\"baz3\"][\"baz4\"];\n" +
+                "  nwr[\"foo\"][\"baz3\"][\"baz5\"];\n" +
+                "  nwr[\"bar\"][\"baz1\"];\n" +
+                "  nwr[\"bar\"][\"baz2\"];\n" +
+                "  nwr[\"bar\"][\"baz3\"][\"baz4\"];\n" +
+                "  nwr[\"bar\"][\"baz3\"][\"baz5\"];\n",
+                "(foo=* or bar=*) and (baz1=* or baz2=* or (baz3=* and (baz4=* or baz5=*)))");
     }
 
     /**
@@ -109,15 +109,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testType() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar and (type:node or type:way)");
-        assertEquals("" +
-                "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
-                "(\n" +
-                "  node[\"foo\"=\"bar\"];\n" +
-                "  way[\"foo\"=\"bar\"];\n" +
-                ");\n" +
-                "(._;>;);\n" +
-                "out meta;", query);
+        assertQueryEquals("  node[\"foo\"=\"bar\"];\n  way[\"foo\"=\"bar\"];\n", "foo=bar and (type:node or type:way)");
     }
 
     /**
@@ -125,15 +117,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testUser() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("user:foo or uid:42");
-        assertEquals("" +
-                "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
-                "(\n" +
-                "  nwr(user:\"foo\");\n" +
-                "  nwr(uid:42);\n" +
-                ");\n" +
-                "(._;>;);\n" +
-                "out meta;", query);
+        assertQueryEquals("  nwr(user:\"foo\");\n  nwr(uid:42);\n", "user:foo or uid:42");
     }
 
     /**
@@ -141,11 +125,41 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testEmpty() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo='' and type:way");
+        assertQueryEquals("  way[\"foo\"~\"^$\"];\n", "foo='' and type:way");
+    }
+
+    /**
+     * Test geocodeArea.
+     */
+    @Test
+    public void testInArea() {
+        String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | foo=baz in Innsbruck");
         assertEquals("" +
-                "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
+                "[out:xml][timeout:90];\n" +
+                "{{geocodeArea:Innsbruck}}->.searchArea;\n" +
                 "(\n" +
-                "  way[\"foo\"~\"^$\"];\n" +
+                "  nwr[\"foo\"=\"bar\"](area.searchArea);\n" +
+                "  nwr[\"foo\"=\"baz\"](area.searchArea);\n" +
+                ");\n" +
+                "(._;>;);\n" +
+                "out meta;", query);
+        query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | foo=baz in \"Sankt Sigmund im Sellrain\"");
+        assertEquals("" +
+                "[out:xml][timeout:90];\n" +
+                "{{geocodeArea:Sankt Sigmund im Sellrain}}->.searchArea;\n" +
+                "(\n" +
+                "  nwr[\"foo\"=\"bar\"](area.searchArea);\n" +
+                "  nwr[\"foo\"=\"baz\"](area.searchArea);\n" +
+                ");\n" +
+                "(._;>;);\n" +
+                "out meta;", query);
+        query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | foo=baz in \"Новосибирск\"");
+        assertEquals("" +
+                "[out:xml][timeout:90];\n" +
+                "{{geocodeArea:Новосибирск}}->.searchArea;\n" +
+                "(\n" +
+                "  nwr[\"foo\"=\"bar\"](area.searchArea);\n" +
+                "  nwr[\"foo\"=\"baz\"](area.searchArea);\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
@@ -155,16 +169,40 @@ public class OverpassTurboQueryWizardTest {
      * Test geocodeArea.
      */
     @Test
-    public void testInArea() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar in Josmland");
+    public void testAroundArea() {
+        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | foo=baz around \"Sankt Sigmund im Sellrain\"");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
-                "{{geocodeArea:Josmland}}->.searchArea;\n" +
+                "{{radius=1000}}\n" +
                 "(\n" +
-                "  nwr[\"foo\"=\"bar\"](area.searchArea);\n" +
+                "  nwr[\"foo\"=\"bar\"](around:{{radius}},{{geocodeCoords:Sankt Sigmund im Sellrain}});\n" +
+                "  nwr[\"foo\"=\"baz\"](around:{{radius}},{{geocodeCoords:Sankt Sigmund im Sellrain}});\n" +
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
+    }
+
+    /**
+     * Test global query.
+     */
+    @Test
+    public void testGlobal() {
+        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar global");
+        assertEquals("" +
+                "[out:xml][timeout:90];\n" +
+                "(\n" +
+                "  nwr[\"foo\"=\"bar\"];\n" +
+                ");\n" +
+                "(._;>;);\n" +
+                "out meta;", query);
+    }
+
+    /**
+     * Test "in bbox" query.
+     */
+    @Test
+    public void testInBbox() {
+        assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n", "foo=bar IN BBOX");
     }
 
     /**
@@ -173,14 +211,7 @@ public class OverpassTurboQueryWizardTest {
     @Test
     @Ignore("preset handling not implemented")
     public void testPreset() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("Hospital");
-        assertEquals("" +
-                "[out:xml][timeout:90];\n" +
-                "(\n" +
-                "  nwr[\"amenity\"=\"hospital\"];\n" +
-                ");\n" +
-                "(._;>;);\n" +
-                "out meta;", query);
+        assertQueryEquals("  nwr[\"amenity\"=\"hospital\"];\n", "Hospital");
     }
 
     /**
