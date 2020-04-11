@@ -120,7 +120,7 @@ public class InspectPrimitiveDialogTest {
                 "\n" +
                 "Range:|s119.4328566955879-Infinity\n" +
                 " default: \n" +
-                "Cascade{ font-size:8.0; major-z-index:4.95; symbol-fill-color:#ff0000; symbol-shape:Keyword{square}; symbol-size:6.0; symbol-stroke-color:#ff0000; }\n" +
+                "Cascade{ font-size:8.0; major-z-index:4.95; symbol-fill-color:#FF0000; symbol-shape:Keyword{square}; symbol-size:6.0; symbol-stroke-color:#FF0000; }\n" +
                 "\n" +
                 "> skipping \"Potlatch 2\" (not active)\n" +
                 "\n" +
