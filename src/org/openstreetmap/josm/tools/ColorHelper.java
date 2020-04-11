@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.Color;
-import java.util.Locale;
 
 /**
  * Helper to convert from color to HTML string and back.
@@ -38,11 +37,6 @@ public final class ColorHelper {
         }
     }
 
-    private static String int2hex(int i) {
-        String s = Integer.toHexString(i / 16) + Integer.toHexString(i % 16);
-        return s.toUpperCase(Locale.ENGLISH);
-    }
-
     /**
      * Returns the HTML color code (6 or 8 digit).
      * @param col The color to convert
@@ -54,22 +48,18 @@ public final class ColorHelper {
 
     /**
      * Returns the HTML color code (6 or 8 digit).
-     * @param col The color to convert
+     * @param color The color to convert
      * @param withAlpha if {@code true} and alpha value &lt; 255, return 8-digit color code, else always 6-digit
      * @return the HTML color code (6 or 8 digit)
      * @since 6655
      */
-    public static String color2html(Color col, boolean withAlpha) {
-        if (col == null)
+    public static String color2html(Color color, boolean withAlpha) {
+        if (color == null)
             return null;
-        String code = '#'+int2hex(col.getRed())+int2hex(col.getGreen())+int2hex(col.getBlue());
-        if (withAlpha) {
-            int alpha = col.getAlpha();
-            if (alpha < 255) {
-                code += int2hex(alpha);
-            }
-        }
-        return code;
+        int alpha = color.getAlpha();
+        return withAlpha && alpha != 255
+                ? String.format("#%06X%02X", color.getRGB() & 0x00ffffff, alpha)
+                : String.format("#%06X", color.getRGB() & 0x00ffffff);
     }
 
     /**
@@ -84,5 +74,56 @@ public final class ColorHelper {
         return bg == null ? null :
               (bg.getRed()*0.299 + bg.getGreen()*0.587 + bg.getBlue()*0.114) > 186 ?
                   Color.BLACK : Color.WHITE;
+    }
+
+    /**
+     * convert float range 0 &lt;= x &lt;= 1 to integer range 0..255
+     * when dealing with colors and color alpha value
+     * @param val float value between 0 and 1
+     * @return null if val is null, the corresponding int if val is in the
+     *         range 0...1. If val is outside that range, return 255
+     */
+    public static Integer float2int(Float val) {
+        if (val == null)
+            return null;
+        if (val < 0 || val > 1)
+            return 255;
+        return (int) (255f * val + 0.5f);
+    }
+
+    /**
+     * convert integer range 0..255 to float range 0 &lt;= x &lt;= 1
+     * when dealing with colors and color alpha value
+     * @param val integer value
+     * @return corresponding float value in range 0 &lt;= x &lt;= 1
+     */
+    public static Float int2float(Integer val) {
+        if (val == null)
+            return null;
+        if (val < 0 || val > 255)
+            return 1f;
+        return ((float) val) / 255f;
+    }
+
+    /**
+     * Multiply the alpha value of the given color with the factor. The alpha value is clamped to 0..255
+     * @param color The color
+     * @param alphaFactor The factor to multiply alpha with.
+     * @return The new color.
+     * @since 11692
+     */
+    public static Color alphaMultiply(Color color, float alphaFactor) {
+        int alpha = float2int(int2float(color.getAlpha()) * alphaFactor);
+        alpha = Utils.clamp(alpha, 0, 255);
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+    }
+
+    /**
+     * Returns the complementary color of {@code clr}.
+     * @param clr the color to complement
+     * @return the complementary color of {@code clr}
+     */
+    public static Color complement(Color clr) {
+        return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
     }
 }

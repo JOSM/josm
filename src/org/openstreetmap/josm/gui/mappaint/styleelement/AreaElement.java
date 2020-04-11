@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.HiDPISupport;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -95,16 +96,16 @@ public class AreaElement extends StyleElement {
             }
 
             fillImage.alpha = Utils.clamp(Config.getPref().getInt("mappaint.fill-image-alpha", 255), 0, 255);
-            Integer pAlpha = Utils.colorFloat2int(c.get(FILL_OPACITY, null, float.class));
+            Integer pAlpha = ColorHelper.float2int(c.get(FILL_OPACITY, null, float.class));
             if (pAlpha != null) {
                 fillImage.alpha = pAlpha;
             }
         } else {
             color = c.get(FILL_COLOR, null, Color.class);
             if (color != null) {
-                float defaultOpacity = Utils.colorInt2float(DEFAULT_FILL_ALPHA.get());
+                float defaultOpacity = ColorHelper.int2float(DEFAULT_FILL_ALPHA.get());
                 float opacity = c.get(FILL_OPACITY, defaultOpacity, Float.class);
-                color = Utils.alphaMultiply(color, opacity);
+                color = ColorHelper.alphaMultiply(color, opacity);
             }
         }
 
@@ -158,7 +159,7 @@ public class AreaElement extends StyleElement {
 
     @Override
     public String toString() {
-        return "AreaElemStyle{" + super.toString() + "color=" + Utils.toString(color) +
+        return "AreaElemStyle{" + super.toString() + "color=" + ColorHelper.color2html(color) +
                 " fillImage=[" + fillImage + "] extent=[" + extent + "] extentThreshold=[" + extentThreshold + "]}";
     }
 }

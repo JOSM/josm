@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -411,69 +410,6 @@ public class UtilsTest {
         assertNull(Utils.firstNonNull());
         assertNull(Utils.firstNonNull(null, null));
         assertEquals("foo", Utils.firstNonNull(null, "foo", null));
-    }
-
-    /**
-     * Test of {@link Utils#toString}
-     */
-    @Test
-    public void testToString() {
-        assertEquals("null", Utils.toString(null));
-        assertEquals("#ff0000", Utils.toString(Color.red));
-        assertEquals("#345678(alpha=18)", Utils.toString(new Color(0x12345678, true)));
-    }
-
-    /**
-     * Test of {@link Utils#colorFloat2int}
-     */
-    @Test
-    public void testColorFloat2int() {
-        assertNull(Utils.colorFloat2int(null));
-        assertEquals(255, (int) Utils.colorFloat2int(-1.0f));
-        assertEquals(0, (int) Utils.colorFloat2int(-0.0f));
-        assertEquals(0, (int) Utils.colorFloat2int(0.0f));
-        assertEquals(64, (int) Utils.colorFloat2int(0.25f));
-        assertEquals(128, (int) Utils.colorFloat2int(0.5f));
-        assertEquals(255, (int) Utils.colorFloat2int(1.0f));
-        assertEquals(255, (int) Utils.colorFloat2int(2.0f));
-    }
-
-    /**
-     * Test of {@link Utils#colorInt2float}
-     */
-    @Test
-    public void testColorInt2float() {
-        assertNull(Utils.colorInt2float(null));
-        assertEquals(1.0f, Utils.colorInt2float(-1), 1e-3);
-        assertEquals(0.0f, Utils.colorInt2float(0), 1e-3);
-        assertEquals(0.25f, Utils.colorInt2float(64), 1e-3);
-        assertEquals(0.502f, Utils.colorInt2float(128), 1e-3);
-        assertEquals(0.753f, Utils.colorInt2float(192), 1e-3);
-        assertEquals(1.0f, Utils.colorInt2float(255), 1e-3);
-        assertEquals(1.0f, Utils.colorInt2float(1024), 1e-3);
-    }
-
-    /**
-     * Test of {@link Utils#alphaMultiply}
-     */
-    @Test
-    public void testAlphaMultiply() {
-        final Color color = new Color(0x12345678, true);
-        assertEquals(new Color(0x12345678, true), Utils.alphaMultiply(color, 1f));
-        assertEquals(new Color(0x24345678, true), Utils.alphaMultiply(color, 2f));
-    }
-
-    /**
-     * Test of {@link Utils#complement}
-     */
-    @Test
-    public void testComplement() {
-        assertEquals(Color.cyan, Utils.complement(Color.red));
-        assertEquals(Color.red, Utils.complement(Color.cyan));
-        assertEquals(Color.magenta, Utils.complement(Color.green));
-        assertEquals(Color.green, Utils.complement(Color.magenta));
-        assertEquals(Color.yellow, Utils.complement(Color.blue));
-        assertEquals(Color.blue, Utils.complement(Color.yellow));
     }
 
     /**

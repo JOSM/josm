@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -254,72 +253,6 @@ public final class Utils {
      */
     public static String joinAsHtmlUnorderedList(Iterable<?> values) {
         return StreamUtils.toStream(values).map(Object::toString).collect(StreamUtils.toHtmlList());
-    }
-
-    /**
-     * convert Color to String
-     * (Color.toString() omits alpha value)
-     * @param c the color
-     * @return the String representation, including alpha
-     */
-    public static String toString(Color c) {
-        if (c == null)
-            return "null";
-        if (c.getAlpha() == 255)
-            return String.format("#%06x", c.getRGB() & 0x00ffffff);
-        else
-            return String.format("#%06x(alpha=%d)", c.getRGB() & 0x00ffffff, c.getAlpha());
-    }
-
-    /**
-     * convert float range 0 &lt;= x &lt;= 1 to integer range 0..255
-     * when dealing with colors and color alpha value
-     * @param val float value between 0 and 1
-     * @return null if val is null, the corresponding int if val is in the
-     *         range 0...1. If val is outside that range, return 255
-     */
-    public static Integer colorFloat2int(Float val) {
-        if (val == null)
-            return null;
-        if (val < 0 || val > 1)
-            return 255;
-        return (int) (255f * val + 0.5f);
-    }
-
-    /**
-     * convert integer range 0..255 to float range 0 &lt;= x &lt;= 1
-     * when dealing with colors and color alpha value
-     * @param val integer value
-     * @return corresponding float value in range 0 &lt;= x &lt;= 1
-     */
-    public static Float colorInt2float(Integer val) {
-        if (val == null)
-            return null;
-        if (val < 0 || val > 255)
-            return 1f;
-        return ((float) val) / 255f;
-    }
-
-    /**
-     * Multiply the alpha value of the given color with the factor. The alpha value is clamped to 0..255
-     * @param color The color
-     * @param alphaFactor The factor to multiply alpha with.
-     * @return The new color.
-     * @since 11692
-     */
-    public static Color alphaMultiply(Color color, float alphaFactor) {
-        int alpha = Utils.colorFloat2int(Utils.colorInt2float(color.getAlpha()) * alphaFactor);
-        alpha = clamp(alpha, 0, 255);
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-    }
-
-    /**
-     * Returns the complementary color of {@code clr}.
-     * @param clr the color to complement
-     * @return the complementary color of {@code clr}
-     */
-    public static Color complement(Color clr) {
-        return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
     }
 
     /**

@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvid
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.SimpleBoxProvider;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.RotationAngle;
 import org.openstreetmap.josm.tools.Utils;
@@ -167,7 +168,7 @@ public class NodeElement extends StyleElement {
         mapImage.offsetY = Math.round(offsetYF);
 
         mapImage.alpha = Utils.clamp(Config.getPref().getInt("mappaint.icon-image-alpha", 255), 0, 255);
-        Integer pAlpha = Utils.colorFloat2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
+        Integer pAlpha = ColorHelper.float2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
         if (pAlpha != null) {
             mapImage.alpha = pAlpha;
         }
@@ -212,7 +213,7 @@ public class NodeElement extends StyleElement {
 
         Stroke stroke = null;
         if (strokeColor != null && strokeWidth != null) {
-            Integer strokeAlpha = Utils.colorFloat2int(c.get("symbol-stroke-opacity", null, Float.class));
+            Integer strokeAlpha = ColorHelper.float2int(c.get("symbol-stroke-opacity", null, Float.class));
             if (strokeAlpha != null) {
                 strokeColor = new Color(strokeColor.getRed(), strokeColor.getGreen(),
                         strokeColor.getBlue(), strokeAlpha);
@@ -226,7 +227,7 @@ public class NodeElement extends StyleElement {
         }
 
         if (fillColor != null) {
-            Integer fillAlpha = Utils.colorFloat2int(c.get("symbol-fill-opacity", null, Float.class));
+            Integer fillAlpha = ColorHelper.float2int(c.get("symbol-fill-opacity", null, Float.class));
             if (fillAlpha != null) {
                 fillColor = new Color(fillColor.getRed(), fillColor.getGreen(),
                         fillColor.getBlue(), fillAlpha);

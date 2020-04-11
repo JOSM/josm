@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.ColorHelper;
 
 /**
  * Manages the selection of a rectangle or a lasso loop. Listening to left and right mouse button
@@ -82,7 +82,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         public void paint(Graphics2D g, MapView mv, Bounds bbox) {
             if (mousePos == null || mousePosStart == null || mousePos == mousePosStart)
                 return;
-            Color color = Utils.complement(PaintColors.getBackgroundColor());
+            Color color = ColorHelper.complement(PaintColors.getBackgroundColor());
             g.setColor(color);
             if (lassoMode) {
                 g.drawPolygon(lasso);

@@ -14,7 +14,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GenericParser;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Simple map of properties with dynamic typing.
@@ -250,7 +249,7 @@ public final class Cascade {
             if (val instanceof float[]) {
                 sb.append(Arrays.toString((float[]) val));
             } else if (val instanceof Color) {
-                sb.append(Utils.toString((Color) val));
+                sb.append(ColorHelper.color2html((Color) val));
             } else if (val != null) {
                 sb.append(val);
             }

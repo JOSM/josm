@@ -17,7 +17,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.StaticLabelCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.TagLookupCompositionStrategy;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.ColorHelper;
 
 /**
  * Represents the rendering style for a textual label placed somewhere on the map.
@@ -139,7 +139,7 @@ public class TextLabel implements StyleKeys {
 
         Color color = c.get(TEXT_COLOR, defaultTextColor, Color.class);
         float alpha = c.get(TEXT_OPACITY, 1f, Float.class);
-        color = Utils.alphaMultiply(color, alpha);
+        color = ColorHelper.alphaMultiply(color, alpha);
 
         Float haloRadius = c.get(TEXT_HALO_RADIUS, null, Float.class);
         if (haloRadius != null && haloRadius <= 0) {
@@ -147,9 +147,9 @@ public class TextLabel implements StyleKeys {
         }
         Color haloColor = null;
         if (haloRadius != null) {
-            haloColor = c.get(TEXT_HALO_COLOR, Utils.complement(color), Color.class);
+            haloColor = c.get(TEXT_HALO_COLOR, ColorHelper.complement(color), Color.class);
             float haloAlphaFactor = c.get(TEXT_HALO_OPACITY, 1f, Float.class);
-            haloColor = Utils.alphaMultiply(haloColor, haloAlphaFactor);
+            haloColor = ColorHelper.alphaMultiply(haloColor, haloAlphaFactor);
         }
 
         return new TextLabel(strategy, font, color, haloRadius, haloColor);
@@ -198,7 +198,7 @@ public class TextLabel implements StyleKeys {
         StringBuilder sb = new StringBuilder(96);
         sb.append("labelCompositionStrategy=").append(labelCompositionStrategy)
           .append(" font=").append(font)
-          .append(" color=").append(Utils.toString(color));
+          .append(" color=").append(ColorHelper.color2html(color));
         if (haloRadius != null) {
             sb.append(" haloRadius=").append(haloRadius)
               .append(" haloColor=").append(haloColor);

@@ -19,8 +19,8 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is the style definition for a simple line.
@@ -234,10 +234,10 @@ public class LineElement extends StyleElement {
     @Override
     public String toString() {
         return "LineElemStyle{" + super.toString() + "width=" + line.getLineWidth() +
-            " realWidth=" + realWidth + " color=" + Utils.toString(color) +
+            " realWidth=" + realWidth + " color=" + ColorHelper.color2html(color) +
             " dashed=" + Arrays.toString(line.getDashArray()) +
             (line.getDashPhase() == 0 ? "" : " dashesOffses=" + line.getDashPhase()) +
-            " dashedColor=" + Utils.toString(dashesBackground) +
+            " dashedColor=" + ColorHelper.color2html(dashesBackground) +
             " linejoin=" + linejoinToString(line.getLineJoin()) +
             " linecap=" + linecapToString(line.getEndCap()) +
             (offset == 0 ? "" : " offset=" + offset) +
@@ -333,7 +333,7 @@ public class LineElement extends StyleElement {
             color = PaintColors.UNTAGGED.get();
         }
 
-        Integer pAlpha = Utils.colorFloat2int(c.get(type.prefix + OPACITY, null, Float.class));
+        Integer pAlpha = ColorHelper.float2int(c.get(type.prefix + OPACITY, null, Float.class));
         if (pAlpha != null) {
             alpha = pAlpha;
         }
@@ -362,7 +362,7 @@ public class LineElement extends StyleElement {
         }
         Color dashesBackground = c.get(type.prefix + DASHES_BACKGROUND_COLOR, null, Color.class);
         if (dashesBackground != null) {
-            pAlpha = Utils.colorFloat2int(c.get(type.prefix + DASHES_BACKGROUND_OPACITY, null, Float.class));
+            pAlpha = ColorHelper.float2int(c.get(type.prefix + DASHES_BACKGROUND_OPACITY, null, Float.class));
             if (pAlpha != null) {
                 alpha = pAlpha;
             }

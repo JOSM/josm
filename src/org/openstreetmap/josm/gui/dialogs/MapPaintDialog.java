@@ -74,6 +74,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.gui.widgets.ScrollableTable;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -611,7 +612,7 @@ public class MapPaintDialog extends ToggleDialog {
                 text.append(tableRow(tr("Icon:"), s.icon));
             }
             if (s.getBackgroundColorOverride() != null) {
-                text.append(tableRow(tr("Background:"), Utils.toString(s.getBackgroundColorOverride())));
+                text.append(tableRow(tr("Background:"), ColorHelper.color2html(s.getBackgroundColorOverride())));
             }
             text.append(tableRow(tr("Style is currently active?"), s.active ? tr("Yes") : tr("No")))
                 .append("</table>");

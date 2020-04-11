@@ -270,7 +270,7 @@ public final class Functions {
      * @see java.awt.Color#getRed()
      */
     public static float red(Color c) { // NO_UCD (unused code)
-        return Utils.colorInt2float(c.getRed());
+        return ColorHelper.int2float(c.getRed());
     }
 
     /**
@@ -280,7 +280,7 @@ public final class Functions {
      * @see java.awt.Color#getGreen()
      */
     public static float green(Color c) { // NO_UCD (unused code)
-        return Utils.colorInt2float(c.getGreen());
+        return ColorHelper.int2float(c.getGreen());
     }
 
     /**
@@ -290,7 +290,7 @@ public final class Functions {
      * @see java.awt.Color#getBlue()
      */
     public static float blue(Color c) { // NO_UCD (unused code)
-        return Utils.colorInt2float(c.getBlue());
+        return ColorHelper.int2float(c.getBlue());
     }
 
     /**
@@ -300,7 +300,7 @@ public final class Functions {
      * @see java.awt.Color#getAlpha()
      */
     public static float alpha(Color c) { // NO_UCD (unused code)
-        return Utils.colorInt2float(c.getAlpha());
+        return ColorHelper.int2float(c.getAlpha());
     }
 
     /**

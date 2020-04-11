@@ -22,10 +22,10 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProviderResult;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An image that will be displayed on the map.
@@ -239,7 +239,7 @@ public class MapImage {
      * @return The value in range 0..1
      */
     public float getAlphaFloat() {
-        return Utils.colorInt2float(alpha);
+        return ColorHelper.int2float(alpha);
     }
 
     /**
