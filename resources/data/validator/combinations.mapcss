@@ -77,8 +77,6 @@ way[have_riverbank             ][!waterway],
   assertMatch: "way lanes=42";
   assertNoMatch: "way lanes=42 highway=unclassified";
   assertMatch: "node source:addr:postcode=postman";
-  assertMatch: "node source:addr=postman";
-  assertNoMatch: "node source:addr=postman addr:housenumber=42";
 }
 
 /* {0.key} without {1.key} (info level) */
@@ -689,6 +687,8 @@ way[highway][crossing][highway =~ /^(motorway|motorway_link|trunk|trunk_link|pri
 *[source:addr][!/^addr:/] {
   throwWarning: tr("{0} without {1}", "{0.key}", "addr:*");
   group: tr("missing tag");
+  assertMatch: "node source:addr=postman";
+  assertNoMatch: "node source:addr=postman addr:housenumber=42";
 }
 *[source:maxspeed][!/^maxspeed:?/] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "maxspeed", "maxspeed:*");
