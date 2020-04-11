@@ -10,7 +10,6 @@ relation[!type] {
 /* see also #9071 */
 relation[type=route][!route],
 relation[type=route_master][!route_master],
-relation[type=restriction][!/^restriction/], /* see #11586 */
 relation[type=boundary][!boundary][!disused:boundary],
 relation[type=public_transport][!public_transport],
 relation[type=waterway][!waterway],
@@ -21,8 +20,6 @@ relation[type=enforcement][!enforcement] {
   assertNoMatch: "relation type=route route=train";
   assertMatch: "relation type=route_master";
   assertNoMatch: "relation type=route_master route_master=train";
-  assertMatch: "relation type=restriction";
-  assertNoMatch: "relation type=restriction restriction=no_left_turn";
   assertMatch: "relation type=boundary";
   assertNoMatch: "relation type=boundary boundary=administrative";
   assertNoMatch: "relation type=site site=administrative";
@@ -32,6 +29,15 @@ relation[type=enforcement][!enforcement] {
   assertNoMatch: "relation type=waterway waterway=river";
   assertMatch: "relation type=enforcement";
   assertNoMatch: "relation type=enforcement enforcement=maxspeed";
+}
+
+/* #11586 */
+relation[type=restriction][!/^restriction/]{ 
+  throwWarning: tr("{0} relation without {0} tag", "restriction");
+  group: tr("missing tag");
+  assertMatch: "relation type=restriction";
+  assertNoMatch: "relation type=restriction restriction=no_left_turn";
+  assertNoMatch: "relation type=restriction restriction:hgv=no_left_turn";
 }
 
 /* #15208, #16242 */

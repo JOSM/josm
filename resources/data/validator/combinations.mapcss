@@ -48,11 +48,11 @@ way[have_riverbank             ][!waterway],
 *[place                        ][!name][place!=islet],
 *[transformer                  ][!power],
 *[source:date                  ][!source],
-*[source:name                  ][!name],
+*[source:name                  ][!name][noname!=yes],
 *[source:maxspeed:forward      ][!maxspeed:forward][!maxspeed],
 *[source:maxspeed:backward     ][!maxspeed:backward][!maxspeed],
 *[source:building              ][!building],
-*[source:ref                   ][!ref],
+*[source:ref                   ][!ref][noref!=yes],
 *[source:population            ][!population],
 *[source:postal_code           ][!postal_code],
 *[source:ele                   ][!ele],
@@ -71,9 +71,7 @@ way[have_riverbank             ][!waterway],
 *[source:postcode              ][!addr:postcode],
 *[source:housenumber           ][!addr:housenumber],
 *[source:addr:postcode         ][!addr:postcode],
-*[source:addr:housenumber      ][!addr:housenumber],
-*[source:addr                  ][!/^addr:/],
-*[source:maxspeed              ][!/^maxspeed:?/] {
+*[source:addr:housenumber      ][!addr:housenumber] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
   group: tr("missing tag");
   assertMatch: "way lanes=42";
@@ -366,7 +364,7 @@ relation[type=multipolygon] >[role="inner"] way[area][eval(number_of_tags()) = 1
 /* addr:postcode is used together with place in some countries */
 *[boundary][/^addr:/],
 *[highway][/^addr:/][highway!=services][highway!=rest_area][!"addr:postcode"] {
-  throwWarning: tr("{0} together with addr:*", "{0.key}");
+  throwWarning: tr("{0} together with {1}", "{0.key}", "addr:*");
   group: tr("suspicious tag combination");
   assertMatch: "node place=foo addr:housenumber=5";
   assertMatch: "node place=foo addr:housenumber=5 addr:postcode=12345";
@@ -677,5 +675,13 @@ way[construction][construction!=yes][construction!=minor][highway][highway!=cons
 /* #19066 */
 *[amenity=recycling][!/^recycling:/][recycling_type!=centre] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "recycling:*");
+  group: tr("missing tag");
+}
+*[source:addr][!/^addr:/] {
+  throwWarning: tr("{0} without {1}", "{0.key}", "addr:*");
+  group: tr("missing tag");
+}
+*[source:maxspeed][!/^maxspeed:?/] {
+  throwWarning: tr("{0} without {1} or {2}", "{0.key}", "maxspeed", "maxspeed:*");
   group: tr("missing tag");
 }
