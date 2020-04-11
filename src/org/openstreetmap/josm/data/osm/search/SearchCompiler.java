@@ -196,7 +196,7 @@ public class SearchCompiler {
                             final long minDate;
                             final long maxDate;
                             try {
-                                // if min timestap is empty: use lowest possible date
+                                // if min timestamp is empty: use lowest possible date
                                 minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
                             } catch (UncheckedParseException ex) {
                                 throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
