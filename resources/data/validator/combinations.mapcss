@@ -672,6 +672,15 @@ way[construction][construction!=yes][construction!=minor][highway][highway!=cons
   group: tr("suspicious tag combination");
 }
 
+/* #19018 */
+way[highway][crossing][highway =~ /^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|service|living_street)$/] {
+  throwWarning: tr("{0} together with {1}. Should be used on a minor highway type or a node", "{1.key}", "{0.tag}");
+  group: tr("suspicious tag combination");
+  fixRemove: "crossing";
+  assertMatch: "way highway=trunk crossing=unmarked";
+  assertNoMatch: "way highway=construction construction=footway crossing=unmarked";
+}
+
 /* #19066 */
 *[amenity=recycling][!/^recycling:/][recycling_type!=centre] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "recycling:*");
