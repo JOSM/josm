@@ -17,6 +17,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -401,6 +403,18 @@ public class SearchCompiler {
             return rhs;
         }
 
+        /**
+         * First applies {@code mapper} to both sides and then applies {@code operator} on the two results.
+         * @param mapper the mapping function
+         * @param operator the operator
+         * @param <T> the type of the intermediate result
+         * @param <U> the type of the result
+         * @return {@code operator.apply(mapper.apply(lhs), mapper.apply(rhs))}
+         */
+        public <T, U> U map(Function<Match, T> mapper, BiFunction<T, T, U> operator) {
+            return operator.apply(mapper.apply(lhs), mapper.apply(rhs));
+        }
+
         protected static String parenthesis(Match m) {
             return '(' + m.toString() + ')';
         }
@@ -561,8 +575,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof And) ? parenthesis(lhs) : lhs) + " && "
-                 + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof And) ? parenthesis(rhs) : rhs);
+            return map(m -> m instanceof AbstractBinaryMatch && !(m instanceof And) ? parenthesis(m) : m, (s1, s2) -> s1 + " && " + s2);
         }
     }
 
@@ -591,8 +604,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof Or) ? parenthesis(lhs) : lhs) + " || "
-                 + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof Or) ? parenthesis(rhs) : rhs);
+            return map(m -> m instanceof AbstractBinaryMatch && !(m instanceof Or) ? parenthesis(m) : m, (s1, s2) -> s1 + " || " + s2);
         }
     }
 
@@ -621,8 +633,7 @@ public class SearchCompiler {
 
         @Override
         public String toString() {
-            return (lhs instanceof AbstractBinaryMatch && !(lhs instanceof Xor) ? parenthesis(lhs) : lhs) + " ^ "
-                 + (rhs instanceof AbstractBinaryMatch && !(rhs instanceof Xor) ? parenthesis(rhs) : rhs);
+            return map(m -> m instanceof AbstractBinaryMatch && !(m instanceof Xor) ? parenthesis(m) : m, (s1, s2) -> s1 + " ^ " + s2);
         }
     }
 
