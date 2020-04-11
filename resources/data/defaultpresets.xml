@@ -4149,22 +4149,28 @@
             <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
             <space />
             <checkgroup columns="4">
-                <check key="recycling:batteries" text="Batteries" />
-                <check key="recycling:cans" text="Cans" />
-                <check key="recycling:cardboard" text="Cardboard" />
-                <check key="recycling:clothes" text="Clothes" />
-                <check key="recycling:electrical_appliances" text="Electrical Appliances" />
-                <check key="recycling:glass" text="Glass" />
-                <check key="recycling:glass_bottles" text="Glass Bottles" />
-                <check key="recycling:green_waste" text="Green Waste" />
                 <check key="recycling:paper" text="Paper" />
+                <check key="recycling:paper_packaging" text="Paper packaging" />
+                <check key="recycling:cardboard" text="Cardboard" />
+                <check key="recycling:newspaper" text="Newspaper" />
+                <check key="recycling:magazines" text="Magazines" />
+                <check key="recycling:books" text="Books" />
                 <check key="recycling:plastic" text="Plastic" />
                 <check key="recycling:plastic_bottles" text="Plastic Bottles" />
                 <check key="recycling:plastic_packaging" text="Plastic Packaging" />
-                <check key="recycling:scrap_metal" text="Scrap Metal" />
+                <check key="recycling:beverage_cartons" text="Beverage cartons" />
+                <check key="recycling:glass" text="Glass" />
+                <check key="recycling:glass_bottles" text="Glass Bottles" />
+                <check key="recycling:cans" text="Cans" />
+                <check key="recycling:clothes" text="Clothes" />
                 <check key="recycling:shoes" text="Shoes" />
-                <check key="recycling:small_appliances" text="Small Appliances" />
+                <check key="recycling:scrap_metal" text="Scrap Metal" />
+                <check key="recycling:wood" text="Wood" />
+                <check key="recycling:green_waste" text="Green Waste" />
                 <check key="recycling:waste" text="Waste" />
+                <check key="recycling:batteries" text="Batteries" />
+                <check key="recycling:small_appliances" text="Small Appliances" />
+                <check key="recycling:electrical_appliances" text="Electrical Appliances" />
             </checkgroup>
         </item> <!-- Recycling Container-->
         <item name="Recycling Centre" icon="presets/service/recycling/recycling_centre.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -4175,22 +4181,28 @@
             <reference ref="name_operator_oh_wheelchair" />
             <space />
             <checkgroup columns="4">
-                <check key="recycling:batteries" text="Batteries" />
-                <check key="recycling:cans" text="Cans" />
-                <check key="recycling:cardboard" text="Cardboard" />
-                <check key="recycling:clothes" text="Clothes" />
-                <check key="recycling:electrical_appliances" text="Electrical Appliances" />
-                <check key="recycling:glass" text="Glass" />
-                <check key="recycling:glass_bottles" text="Glass Bottles" />
-                <check key="recycling:green_waste" text="Green Waste" />
                 <check key="recycling:paper" text="Paper" />
+                <check key="recycling:paper_packaging" text="Paper packaging" />
+                <check key="recycling:cardboard" text="Cardboard" />
+                <check key="recycling:newspaper" text="Newspaper" />
+                <check key="recycling:magazines" text="Magazines" />
+                <check key="recycling:books" text="Books" />
                 <check key="recycling:plastic" text="Plastic" />
                 <check key="recycling:plastic_bottles" text="Plastic Bottles" />
                 <check key="recycling:plastic_packaging" text="Plastic Packaging" />
-                <check key="recycling:scrap_metal" text="Scrap Metal" />
+                <check key="recycling:beverage_cartons" text="Beverage cartons" />
+                <check key="recycling:glass" text="Glass" />
+                <check key="recycling:glass_bottles" text="Glass Bottles" />
+                <check key="recycling:cans" text="Cans" />
+                <check key="recycling:clothes" text="Clothes" />
                 <check key="recycling:shoes" text="Shoes" />
-                <check key="recycling:small_appliances" text="Small Appliances" />
+                <check key="recycling:scrap_metal" text="Scrap Metal" />
+                <check key="recycling:wood" text="Wood" />
+                <check key="recycling:green_waste" text="Green Waste" />
                 <check key="recycling:waste" text="Waste" />
+                <check key="recycling:batteries" text="Batteries" />
+                <check key="recycling:small_appliances" text="Small Appliances" />
+                <check key="recycling:electrical_appliances" text="Electrical Appliances" />
             </checkgroup>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Recycling Centre-->
@@ -7207,7 +7219,7 @@
                 <text key="height" text="Height (meters)" />
             </optional>
         </item> <!-- Tree Row -->
-        <item name="Wood" icon="presets/landmark/forest.svg" type="closedway,multipolygon" preset_name_label="true">
+        <item name="Wood" icon="presets/landmark/forest.svg" type="closedway,multipolygon" name_context="natural" preset_name_label="true">
             <link wiki="Tag:natural=wood" />
             <label text="Woodland where timber production does not dominate use." />
             <space />
