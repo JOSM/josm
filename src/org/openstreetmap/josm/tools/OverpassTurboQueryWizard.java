@@ -111,6 +111,9 @@ public final class OverpassTurboQueryWizard {
         } else if (match instanceof SearchCompiler.KeyValue) {
             final String key = ((SearchCompiler.KeyValue) match).getKey();
             final String value = ((SearchCompiler.KeyValue) match).getValue();
+            if ("newer".equals(key)) {
+                return "(newer:" + quote("{{date:" + value + "}}") + ")";
+            }
             return "[~" + quote(key) + "~" + quote(value) + "]";
         } else if (match instanceof SearchCompiler.ExactKeyValue) {
             // https://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide
