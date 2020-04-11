@@ -87,6 +87,7 @@ import org.openstreetmap.josm.tools.HiDPISupport;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.RotationAngle;
 import org.openstreetmap.josm.tools.ShapeClipper;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -619,8 +620,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         FontRenderContext frc = g.getFontRenderContext();
         Rectangle2D bounds = text.font.getStringBounds(s, frc);
 
-        double x = Math.round(p.getInViewX()) + bs.xOffset + bounds.getCenterX();
-        double y = Math.round(p.getInViewY()) + bs.yOffset + bounds.getCenterY();
+        double x = p.getInViewX() + bs.xOffset;
+        double y = p.getInViewY() + bs.yOffset;
         /**
          *
          *       left-above __center-above___ right-above
@@ -659,7 +660,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             } else throw new AssertionError();
         }
 
-        displayText(n, text, s, bounds, new MapViewPositionAndRotation(mapState.getForView(x, y), 0));
+        final MapViewPoint viewPoint = mapState.getForView(x, y);
+        final AffineTransform at = new AffineTransform();
+        at.setToTranslation(
+                Math.round(viewPoint.getInViewX()),
+                Math.round(viewPoint.getInViewY()));
+        if (!RotationAngle.NO_ROTATION.equals(text.rotationAngle)) {
+            at.rotate(text.rotationAngle.getRotationAngle(n));
+        }
+        displayText(n, text, s, at);
         g.setFont(defaultFont);
     }
 
@@ -1187,13 +1196,20 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         AffineTransform at = new AffineTransform();
         if (Math.abs(center.getRotation()) < .01) {
             // Explicitly no rotation: move to full pixels.
-            at.setToTranslation(Math.round(center.getPoint().getInViewX() - nb.getCenterX()),
+            at.setToTranslation(
+                    Math.round(center.getPoint().getInViewX() - nb.getCenterX()),
                     Math.round(center.getPoint().getInViewY() - nb.getCenterY()));
         } else {
-            at.setToTranslation(center.getPoint().getInViewX(), center.getPoint().getInViewY());
+            at.setToTranslation(
+                    center.getPoint().getInViewX(),
+                    center.getPoint().getInViewY());
             at.rotate(center.getRotation());
             at.translate(-nb.getCenterX(), -nb.getCenterY());
         }
+        displayText(osm, text, name, at);
+    }
+
+    private void displayText(IPrimitive osm, TextLabel text, String name, AffineTransform at) {
         displayText(() -> {
             AffineTransform defaultTransform = g.getTransform();
             g.transform(at);

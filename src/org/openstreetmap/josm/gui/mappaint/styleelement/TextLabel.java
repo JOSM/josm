@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.TagLookupCompositionStrategy;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.RotationAngle;
 
 /**
  * Represents the rendering style for a textual label placed somewhere on the map.
@@ -39,6 +40,10 @@ public class TextLabel implements StyleKeys {
      */
     public Font font;
     /**
+     * The rotation angle to be used when rendering
+     */
+    public RotationAngle rotationAngle;
+    /**
      * The color to draw the text in, includes alpha.
      */
     public Color color;
@@ -57,14 +62,16 @@ public class TextLabel implements StyleKeys {
      * @param strategy the strategy indicating how the text is composed for a specific {@link OsmPrimitive} to be rendered.
      * If null, no label is rendered.
      * @param font the font to be used. Must not be null.
+     * @param rotationAngle the rotation angle to be used. Must not be null.
      * @param color the color to be used. Must not be null
      * @param haloRadius halo radius
      * @param haloColor halo color
      */
-    protected TextLabel(LabelCompositionStrategy strategy, Font font, Color color, Float haloRadius,
-            Color haloColor) {
+    protected TextLabel(LabelCompositionStrategy strategy, Font font, RotationAngle rotationAngle,
+                        Color color, Float haloRadius, Color haloColor) {
         this.labelCompositionStrategy = strategy;
         this.font = Objects.requireNonNull(font, "font");
+        this.rotationAngle = Objects.requireNonNull(rotationAngle, "rotationAngle");
         this.color = Objects.requireNonNull(color, "color");
         this.haloRadius = haloRadius;
         this.haloColor = haloColor;
@@ -78,6 +85,7 @@ public class TextLabel implements StyleKeys {
     public TextLabel(TextLabel other) {
         this.labelCompositionStrategy = other.labelCompositionStrategy;
         this.font = other.font;
+        this.rotationAngle = other.rotationAngle;
         this.color = other.color;
         this.haloColor = other.haloColor;
         this.haloRadius = other.haloRadius;
@@ -136,6 +144,7 @@ public class TextLabel implements StyleKeys {
         String s = strategy.compose(env.osm);
         if (s == null) return null;
         Font font = StyleElement.getFont(c, s);
+        RotationAngle rotationAngle = NodeElement.createTextRotationAngle(env);
 
         Color color = c.get(TEXT_COLOR, defaultTextColor, Color.class);
         float alpha = c.get(TEXT_OPACITY, 1f, Float.class);
@@ -152,7 +161,7 @@ public class TextLabel implements StyleKeys {
             haloColor = ColorHelper.alphaMultiply(haloColor, haloAlphaFactor);
         }
 
-        return new TextLabel(strategy, font, color, haloRadius, haloColor);
+        return new TextLabel(strategy, font, rotationAngle, color, haloRadius, haloColor);
     }
 
     /**
@@ -198,6 +207,7 @@ public class TextLabel implements StyleKeys {
         StringBuilder sb = new StringBuilder(96);
         sb.append("labelCompositionStrategy=").append(labelCompositionStrategy)
           .append(" font=").append(font)
+          .append(" rotationAngle=").append(rotationAngle)
           .append(" color=").append(ColorHelper.color2html(color));
         if (haloRadius != null) {
             sb.append(" haloRadius=").append(haloRadius)
@@ -208,7 +218,7 @@ public class TextLabel implements StyleKeys {
 
     @Override
     public int hashCode() {
-        return Objects.hash(labelCompositionStrategy, font, color, haloRadius, haloColor);
+        return Objects.hash(labelCompositionStrategy, font, rotationAngle, color, haloRadius, haloColor);
     }
 
     @Override
@@ -218,6 +228,7 @@ public class TextLabel implements StyleKeys {
         TextLabel textLabel = (TextLabel) obj;
         return Objects.equals(labelCompositionStrategy, textLabel.labelCompositionStrategy) &&
                 Objects.equals(font, textLabel.font) &&
+                Objects.equals(rotationAngle, textLabel.rotationAngle) &&
                 Objects.equals(color, textLabel.color) &&
                 Objects.equals(haloRadius, textLabel.haloRadius) &&
                 Objects.equals(haloColor, textLabel.haloColor);

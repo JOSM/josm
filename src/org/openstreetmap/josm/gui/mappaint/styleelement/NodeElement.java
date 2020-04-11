@@ -87,14 +87,28 @@ public class NodeElement extends StyleElement {
      * @since 11670
      */
     public static RotationAngle createRotationAngle(Environment env) {
+        return createRotationAngle(env, ICON_ROTATION);
+    }
+
+    /**
+     * Reads the text-rotation property and creates a rotation angle from it.
+     * @param env The environment
+     * @return The angle
+     * @since 16253
+     */
+    public static RotationAngle createTextRotationAngle(Environment env) {
+        return createRotationAngle(env, TEXT_ROTATION);
+    }
+
+    private static RotationAngle createRotationAngle(Environment env, String key) {
         Cascade c = env.mc.getCascade(env.layer);
 
         RotationAngle rotationAngle = RotationAngle.NO_ROTATION;
-        final Float angle = c.get(ICON_ROTATION, null, Float.class, true);
+        final Float angle = c.get(key, null, Float.class, true);
         if (angle != null) {
             rotationAngle = RotationAngle.buildStaticRotation(angle);
         } else {
-            final Keyword rotationKW = c.get(ICON_ROTATION, null, Keyword.class);
+            final Keyword rotationKW = c.get(key, null, Keyword.class);
             if (rotationKW != null) {
                 if ("way".equals(rotationKW.val)) {
                     rotationAngle = RotationAngle.buildWayDirectionRotation();
