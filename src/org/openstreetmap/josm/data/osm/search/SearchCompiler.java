@@ -2118,6 +2118,8 @@ public class SearchCompiler {
             String key = tokenizer.getText();
             if (tokenizer.readIfEqual(Token.EQUALS)) {
                 return new ExactKeyValue(regexSearch, key, tokenizer.readTextOrNumber());
+            } else if (tokenizer.readIfEqual(Token.TILDE)) {
+                return new ExactKeyValue(true, key, tokenizer.readTextOrNumber());
             } else if (tokenizer.readIfEqual(Token.LESS_THAN)) {
                 return new ValueComparison(key, tokenizer.readTextOrNumber(), -1);
             } else if (tokenizer.readIfEqual(Token.GREATER_THAN)) {

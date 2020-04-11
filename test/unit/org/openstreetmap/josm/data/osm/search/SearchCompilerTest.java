@@ -141,6 +141,21 @@ public class SearchCompilerTest {
     }
 
     /**
+     * Search by regular expression: key~value.
+     * @throws SearchParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testRegexp() throws SearchParseError {
+        final SearchCompiler.Match c = SearchCompiler.compile("foo~[Bb]a[rz]");
+        assertFalse(c.match(newPrimitive("foobar", "true")));
+        assertFalse(c.match(newPrimitive("foo", "foo")));
+        assertTrue(c.match(newPrimitive("foo", "bar")));
+        assertTrue(c.match(newPrimitive("foo", "baz")));
+        assertTrue(c.match(newPrimitive("foo", "Baz")));
+        assertEquals("foo=[Bb]a[rz]", c.toString());
+    }
+
+    /**
      * Search by comparison.
      * @throws SearchParseError if an error has been encountered while compiling
      */

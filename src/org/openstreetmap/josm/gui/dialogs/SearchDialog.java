@@ -293,6 +293,7 @@ public class SearchDialog extends ExtendedDialog {
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addKeyword("<i>key</i>", null, tr("matches if ''key'' exists"))
                 .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
+                .addKeyword("<i>key</i>~<i>regexp</i>", null, tr("value of ''key'' matching the regular expression ''regexp''"))
                 .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
                 .addKeyword("<i>key</i>=", null, tr("''key'' with empty value"))
                 .addKeyword("*=<i>value</i>", null, tr("''value'' in any key"))

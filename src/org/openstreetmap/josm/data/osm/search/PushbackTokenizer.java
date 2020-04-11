@@ -107,6 +107,10 @@ public class PushbackTokenizer {
          */
         EQUALS(marktr("<equals>")),
         /**
+         * The tilde sign (~)
+         */
+        TILDE(marktr("<tilde>")),
+        /**
          * A text
          */
         KEY(marktr("<key>")),
@@ -147,7 +151,7 @@ public class PushbackTokenizer {
         }
     }
 
-    private static final List<Character> SPECIAL_CHARS = Arrays.asList('"', ':', '(', ')', '|', '^', '=', '?', '<', '>');
+    private static final List<Character> SPECIAL_CHARS = Arrays.asList('"', ':', '(', ')', '|', '^', '=', '~', '?', '<', '>');
     private static final List<Character> SPECIAL_CHARS_QUOTED = Arrays.asList('"');
 
     private String getString(boolean quoted) {
@@ -199,6 +203,9 @@ public class PushbackTokenizer {
         case '=':
             getChar();
             return Token.EQUALS;
+        case '~':
+            getChar();
+            return Token.TILDE;
         case '<':
             getChar();
             return Token.LESS_THAN;
