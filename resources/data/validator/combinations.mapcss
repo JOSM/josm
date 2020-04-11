@@ -146,7 +146,6 @@ relation[route=ski  ][!piste:type][type=route],
 *[aeroway=terminal][!building],
 *[office=government][!government],
 *[power=generator][!generator:source],
-*[amenity=recycling][!/^recycling:/][recycling_type!=centre],
 *[amenity=social_facility][!social_facility],
 *[amenity=place_of_worship][!religion] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
@@ -673,4 +672,10 @@ way[construction][construction!=yes][construction!=minor][highway][highway!=cons
 *[amenity=recycling][collection_times       ][opening_hours][collection_times=~/[a-z]-[A-Z].*[0-9]-[0-9]/] {
   throwWarning: tr("{0} together with {1}. Probably {2} is meant.", "{1.key}", "{0.tag}", "{2.key}");
   group: tr("suspicious tag combination");
+}
+
+/* #19066 */
+*[amenity=recycling][!/^recycling:/][recycling_type!=centre] {
+  throwWarning: tr("{0} without {1}", "{0.tag}", "recycling:*");
+  group: tr("missing tag");
 }
