@@ -307,6 +307,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                     }
                 }
                 if (tracker.isErrorID(1)) {
+                    Logging.warn("Abort loading of {0} since tracker errored with 1", file);
                     // the tracker catches OutOfMemory conditions
                     tracker.removeImage(img);
                     img = null;
@@ -314,6 +315,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                     tracker.removeImage(img);
                 }
             } else {
+                Logging.warn("Abort loading of {0} since it might not fit into memory", file);
                 img = null;
             }
 
