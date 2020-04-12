@@ -31,7 +31,6 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageResource;
 
 /**
  * UI component for resolving conflicts in the tag sets of two {@link OsmPrimitive}s.
@@ -179,13 +178,7 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
      */
     class KeepMineAction extends AbstractAction implements ListSelectionListener {
         KeepMineAction() {
-            ImageResource icon = new ImageProvider("dialogs/conflict", "tagkeepmine").getResource();
-            if (icon != null) {
-                icon.attachImageIcon(this, true);
-                putValue(Action.NAME, "");
-            } else {
-                putValue(Action.NAME, ">");
-            }
+            new ImageProvider("dialogs/conflict", "tagkeepmine").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Keep the selected key/value pairs from the local dataset"));
             setEnabled(false);
         }
@@ -211,13 +204,7 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
      */
     class KeepTheirAction extends AbstractAction implements ListSelectionListener {
         KeepTheirAction() {
-            ImageResource icon = new ImageProvider("dialogs/conflict", "tagkeeptheir").getResource();
-            if (icon != null) {
-                icon.attachImageIcon(this, true);
-                putValue(Action.NAME, "");
-            } else {
-                putValue(Action.NAME, ">");
-            }
+            new ImageProvider("dialogs/conflict", "tagkeeptheir").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Keep the selected key/value pairs from the server dataset"));
             setEnabled(false);
         }
@@ -240,7 +227,7 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
     /**
      * Synchronizes scrollbar adjustments between a set of
      * {@link Adjustable}s. Whenever the adjustment of one of
-     * the registerd Adjustables is updated the adjustment of
+     * the registered Adjustables is updated the adjustment of
      * the other registered Adjustables is adjusted too.
      *
      */
@@ -309,13 +296,7 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
     class UndecideAction extends AbstractAction implements ListSelectionListener {
 
         UndecideAction() {
-            ImageResource icon = new ImageProvider("dialogs/conflict", "tagundecide").getResource();
-            if (icon != null) {
-                icon.attachImageIcon(this, true);
-                putValue(Action.NAME, "");
-            } else {
-                putValue(Action.NAME, tr("Undecide"));
-            }
+            new ImageProvider("dialogs/conflict", "tagundecide").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Mark the selected tags as undecided"));
             setEnabled(false);
         }

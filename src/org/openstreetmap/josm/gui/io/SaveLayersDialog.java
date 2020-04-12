@@ -54,7 +54,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -363,10 +362,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SHORT_DESCRIPTION, tr("Close this dialog and resume editing in JOSM"));
-            ImageResource resource = new ImageProvider("cancel").setOptional(true).getResource();
-            if (resource != null) {
-                resource.attachImageIcon(this, true);
-            }
+            new ImageProvider("cancel").getResource().attachImageIcon(this, true);
             InputMapUtils.addEscapeAction(getRootPane(), this);
         }
 
@@ -400,25 +396,18 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 case EXIT:
                     putValue(NAME, tr("Exit now!"));
                     putValue(SHORT_DESCRIPTION, tr("Exit JOSM without saving. Unsaved changes are lost."));
-                    attachImageIcon(new ImageProvider("exit"));
+                    new ImageProvider("exit").getResource().attachImageIcon(this, true);
                     break;
                 case RESTART:
                     putValue(NAME, tr("Restart now!"));
                     putValue(SHORT_DESCRIPTION, tr("Restart JOSM without saving. Unsaved changes are lost."));
-                    attachImageIcon(new ImageProvider("restart"));
+                    new ImageProvider("restart").getResource().attachImageIcon(this, true);
                     break;
                 case DELETE:
                     putValue(NAME, tr("Delete now!"));
                     putValue(SHORT_DESCRIPTION, tr("Delete layers without saving. Unsaved changes are lost."));
-                    attachImageIcon(new ImageProvider("dialogs", "delete"));
+                    new ImageProvider("dialogs", "delete").getResource().attachImageIcon(this, true);
                     break;
-            }
-        }
-
-        private void attachImageIcon(ImageProvider provider) {
-            ImageResource resource = provider.setOptional(true).getResource();
-            if (resource != null) {
-                resource.attachImageIcon(this, true);
             }
         }
 

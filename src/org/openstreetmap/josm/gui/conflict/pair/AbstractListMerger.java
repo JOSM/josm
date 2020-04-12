@@ -40,7 +40,6 @@ import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageResource;
 
 /**
  * A UI component for resolving conflicts in two lists of entries of type T.
@@ -420,13 +419,8 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
      */
     abstract static class CopyAction extends AbstractAction implements ListSelectionListener {
 
-        protected CopyAction(String iconName, String actionName, String shortDescription) {
-            ImageResource icon = new ImageProvider("dialogs/conflict", iconName).getResource();
-            if (icon == null) {
-                putValue(Action.NAME, actionName);
-            } else {
-                icon.attachImageIcon(this, true);
-            }
+        protected CopyAction(String iconName, String shortDescription) {
+            new ImageProvider("dialogs/conflict", iconName).getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, shortDescription);
             setEnabled(false);
         }
@@ -439,7 +433,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyStartLeftAction extends CopyAction {
 
         CopyStartLeftAction() {
-            super(/* ICON(dialogs/conflict/)*/ "copystartleft", tr("> top"),
+            super(/* ICON(dialogs/conflict/)*/ "copystartleft",
                 tr("Copy my selected nodes to the start of the merged node list"));
         }
 
@@ -461,7 +455,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyEndLeftAction extends CopyAction {
 
         CopyEndLeftAction() {
-            super(/* ICON(dialogs/conflict/)*/ "copyendleft", tr("> bottom"),
+            super(/* ICON(dialogs/conflict/)*/ "copyendleft",
                 tr("Copy my selected elements to the end of the list of merged elements."));
         }
 
@@ -483,7 +477,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyBeforeCurrentLeftAction extends CopyAction {
 
         CopyBeforeCurrentLeftAction() {
-            super(/* ICON(dialogs/conflict/)*/ "copybeforecurrentleft", tr("> before"),
+            super(/* ICON(dialogs/conflict/)*/ "copybeforecurrentleft",
                     tr("Copy my selected elements before the first selected element in the list of merged elements."));
         }
 
@@ -513,7 +507,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyAfterCurrentLeftAction extends CopyAction {
 
         CopyAfterCurrentLeftAction() {
-            super(/* ICON(dialogs/conflict/)*/ "copyaftercurrentleft", tr("> after"),
+            super(/* ICON(dialogs/conflict/)*/ "copyaftercurrentleft",
                     tr("Copy my selected elements after the first selected element in the list of merged elements."));
         }
 
@@ -539,7 +533,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyStartRightAction extends CopyAction {
 
         CopyStartRightAction() {
-            super(/* ICON(dialogs/conflict/)*/ "copystartright", tr("< top"),
+            super(/* ICON(dialogs/conflict/)*/ "copystartright",
                 tr("Copy their selected element to the start of the list of merged elements."));
         }
 
@@ -557,7 +551,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyEndRightAction extends CopyAction {
 
         CopyEndRightAction() {
-            super(/* ICON(dialogs/conflict/)*/ "copyendright", tr("< bottom"),
+            super(/* ICON(dialogs/conflict/)*/ "copyendright",
                 tr("Copy their selected elements to the end of the list of merged elements."));
         }
 
@@ -575,7 +569,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyBeforeCurrentRightAction extends CopyAction {
 
         CopyBeforeCurrentRightAction() {
-            super(/* ICON(dialogs/conflict/)*/ "copybeforecurrentright", tr("< before"),
+            super(/* ICON(dialogs/conflict/)*/ "copybeforecurrentright",
                     tr("Copy their selected elements before the first selected element in the list of merged elements."));
         }
 
@@ -601,7 +595,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class CopyAfterCurrentRightAction extends CopyAction {
 
         CopyAfterCurrentRightAction() {
-            super(/* ICON(dialogs/conflict/)*/ "copyaftercurrentright", tr("< after"),
+            super(/* ICON(dialogs/conflict/)*/ "copyaftercurrentright",
                     tr("Copy their selected element after the first selected element in the list of merged elements"));
         }
 
@@ -683,12 +677,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class MoveUpMergedAction extends AbstractAction implements ListSelectionListener {
 
         MoveUpMergedAction() {
-            ImageResource icon = new ImageProvider("dialogs/conflict", "moveup").getResource();
-            if (icon == null) {
-                putValue(Action.NAME, tr("Up"));
-            } else {
-                icon.attachImageIcon(this, true);
-            }
+            new ImageProvider("dialogs/conflict", "moveup").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Move up the selected entries by one position."));
             setEnabled(false);
         }
@@ -716,12 +705,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class MoveDownMergedAction extends AbstractAction implements ListSelectionListener {
 
         MoveDownMergedAction() {
-            ImageResource icon = new ImageProvider("dialogs/conflict", "movedown").getResource();
-            if (icon == null) {
-                putValue(Action.NAME, tr("Down"));
-            } else {
-                icon.attachImageIcon(this, true);
-            }
+            new ImageProvider("dialogs/conflict", "movedown").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Move down the selected entries by one position."));
             setEnabled(false);
         }
@@ -749,12 +733,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     class RemoveMergedAction extends AbstractAction implements ListSelectionListener {
 
         RemoveMergedAction() {
-            ImageResource icon = new ImageProvider("dialogs/conflict", "remove").getResource();
-            if (icon == null) {
-                putValue(Action.NAME, tr("Remove"));
-            } else {
-                icon.attachImageIcon(this, true);
-            }
+            new ImageProvider("dialogs/conflict", "remove").getResource().attachImageIcon(this, true);
             putValue(Action.SHORT_DESCRIPTION, tr("Remove the selected entries from the list of merged elements."));
             setEnabled(false);
         }
