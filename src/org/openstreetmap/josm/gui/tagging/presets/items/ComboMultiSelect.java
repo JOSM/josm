@@ -387,6 +387,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
         final JLabel label = new JLabel(tr("{0}:", locale_text));
         label.setToolTipText(getKeyTooltipText());
+        label.setComponentPopupMenu(getPopupMenu());
         p.add(label, GBC.std().insets(0, 0, 10, 0));
         addToPanelAnchor(p, default_, presetInitiallyMatches);
         label.setLabelFor(component);

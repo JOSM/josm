@@ -165,6 +165,7 @@ public class Text extends KeyedItem {
         }
         final JLabel label = new JLabel(locale_text + ':');
         label.setToolTipText(getKeyTooltipText());
+        label.setComponentPopupMenu(getPopupMenu());
         label.setLabelFor(value);
         p.add(label, GBC.std().insets(0, 0, 10, 0));
         p.add(value, GBC.eol().fill(GBC.HORIZONTAL));

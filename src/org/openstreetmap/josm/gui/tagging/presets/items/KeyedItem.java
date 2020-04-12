@@ -11,9 +11,14 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.JPopupMenu;
+
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.dialogs.properties.HelpTagAction;
+import org.openstreetmap.josm.gui.dialogs.properties.TaginfoAction;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 
 /**
@@ -201,6 +206,15 @@ public abstract class KeyedItem extends TextItem {
         default:
             throw new IllegalStateException();
         }
+    }
+
+    protected JPopupMenu getPopupMenu() {
+        Tag tag = new Tag(key, null);
+        JPopupMenu popupMenu = new JPopupMenu();
+        popupMenu.add(tr("Key: {0}", key)).setEnabled(false);
+        popupMenu.add(new HelpTagAction(() -> tag));
+        popupMenu.add(new TaginfoAction(() -> tag, () -> null));
+        return popupMenu;
     }
 
     @Override

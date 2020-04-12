@@ -90,6 +90,7 @@ public class Check extends KeyedItem {
                 allowedStates.toArray(new QuadStateCheckBox.State[0]));
         check.setPropertyText(key);
         check.setState(check.getState()); // to update the tooltip text
+        check.setComponentPopupMenu(getPopupMenu());
 
         if (icon != null) {
             JPanel checkPanel = new JPanel(new GridBagLayout());

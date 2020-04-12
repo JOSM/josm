@@ -47,8 +47,10 @@ public class QuadStateCheckBox extends JCheckBox {
     private final transient MouseListener mouseAdapter = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
-            grabFocus();
-            cbModel.nextState();
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                grabFocus();
+                cbModel.nextState();
+            }
         }
     };
 
