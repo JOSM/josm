@@ -1,13 +1,24 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionPriority;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -89,7 +100,39 @@ public class Combo extends ComboMultiSelect {
             originalValue = getListEntry(DIFFERENT);
             combobox.setSelectedItem(originalValue);
         }
-        p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL));
+        if ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour")) {
+            p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
+            JButton button = new JButton(new ChooseColorAction());
+            p.add(button, GBC.eol().fill(GBC.VERTICAL));
+            ActionListener updateColor = ignore -> button.setBackground(getColor());
+            updateColor.actionPerformed(null);
+            combobox.addActionListener(updateColor);
+        } else {
+            p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL));
+        }
+    }
+
+    class ChooseColorAction extends AbstractAction {
+        ChooseColorAction() {
+            putValue(SHORT_DESCRIPTION, tr("Select color"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Color color = getColor();
+            color = JColorChooser.showDialog(MainApplication.getMainPanel(), tr("Select color"), color);
+            setColor(color);
+        }
+    }
+
+    protected void setColor(Color color) {
+        if (color != null) {
+            combobox.setSelectedItem(ColorHelper.color2html(color));
+        }
+    }
+
+    protected Color getColor() {
+        return ColorHelper.html2color(String.valueOf(getSelectedItem()));
     }
 
     @Override
