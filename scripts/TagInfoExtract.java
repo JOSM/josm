@@ -259,6 +259,7 @@ public class TagInfoExtract {
             try (BufferedReader reader = options.inputFile.getContentReader()) {
                 Collection<TaggingPreset> presets = TaggingPresetReader.readAll(reader, true);
                 List<TagInfoTag> tags = convertPresets(presets, "", true);
+                Logging.info("Converting {0} internal presets", tags.size());
                 writeJson("JOSM main presets", "Tags supported by the default presets in the OSM editor JOSM", tags);
             }
         }
@@ -313,14 +314,14 @@ public class TagInfoExtract {
                     continue;
                 }
                 try {
-                    System.out.println("Loading " + source.url);
+                    Logging.info("Loading {0}", source.url);
                     Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, false);
                     final List<TagInfoTag> t = convertPresets(presets, source.title + " ", false);
-                    System.out.println("Converting " + t.size() + " presets of " + source.title);
+                    Logging.info("Converting {0} presets of {1}", t.size(), source.title);
                     tags.addAll(t);
                 } catch (Exception ex) {
-                    System.err.println("Skipping " + source.url + " due to error");
-                    ex.printStackTrace();
+                    Logging.warn("Skipping {0} due to error", source.url);
+                    Logging.warn(ex);
                 }
 
             }
