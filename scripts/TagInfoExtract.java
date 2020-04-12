@@ -19,13 +19,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 import javax.json.Json;
@@ -68,6 +71,7 @@ import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -261,18 +265,36 @@ public class TagInfoExtract {
 
         List<TagInfoTag> convertPresets(Iterable<TaggingPreset> presets, String descriptionPrefix, boolean addImages) {
             final List<TagInfoTag> tags = new ArrayList<>();
+            final Map<Tag, TagInfoTag> optionalTags = new LinkedHashMap<>();
             for (TaggingPreset preset : presets) {
-                for (KeyedItem item : Utils.filteredCollection(preset.data, KeyedItem.class)) {
-                    final Iterable<String> values = item.isKeyRequired()
-                            ? item.getValues()
-                            : Collections.emptyList();
-                    for (String value : values) {
-                        final Set<TagInfoTag.Type> types = TagInfoTag.Type.forPresetTypes(preset.types);
-                        tags.add(new TagInfoTag(descriptionPrefix + preset.getName(), item.key, value, types,
-                                addImages && preset.iconName != null ? options.findImageUrl(preset.iconName) : null));
-                    }
-                }
+                preset.data.stream()
+                        .flatMap(item -> item instanceof KeyedItem
+                                ? Stream.of(((KeyedItem) item))
+                                : item instanceof CheckGroup
+                                ? ((CheckGroup) item).checks.stream()
+                                : Stream.empty())
+                        .forEach(item -> {
+                            for (String value : item.getValues()) {
+                                Set<TagInfoTag.Type> types = TagInfoTag.Type.forPresetTypes(preset.types);
+                                if (item.isKeyRequired()) {
+                                    tags.add(new TagInfoTag(descriptionPrefix + preset.getName(), item.key, value, types,
+                                            addImages && preset.iconName != null ? options.findImageUrl(preset.iconName) : null));
+                                } else {
+                                    optionalTags.compute(new Tag(item.key, value), (osmTag, tagInfoTag) -> {
+                                        if (tagInfoTag == null) {
+                                            String description = descriptionPrefix + "Optional for: " + preset.getName();
+                                            return new TagInfoTag(description, item.key, value, types, null);
+                                        } else {
+                                            tagInfoTag.descriptions.add(preset.getName());
+                                            tagInfoTag.objectTypes.addAll(types);
+                                            return tagInfoTag;
+                                        }
+                                    });
+                                }
+                            }
+                        });
             }
+            tags.addAll(optionalTags.values());
             return tags;
         }
 
@@ -523,14 +545,16 @@ public class TagInfoExtract {
      * POJO representing a <a href="https://wiki.openstreetmap.org/wiki/Taginfo/Projects">Taginfo tag</a>.
      */
     private static class TagInfoTag {
-        final String description;
+        final Collection<String> descriptions = new ArrayList<>();
         final String key;
         final String value;
         final Set<Type> objectTypes;
         final String iconURL;
 
         TagInfoTag(String description, String key, String value, Set<Type> objectTypes, String iconURL) {
-            this.description = description;
+            if (description != null) {
+                this.descriptions.add(description);
+            }
             this.key = key;
             this.value = value;
             this.objectTypes = objectTypes;
@@ -539,8 +563,8 @@ public class TagInfoExtract {
 
         JsonObjectBuilder toJson() {
             final JsonObjectBuilder object = Json.createObjectBuilder();
-            if (description != null) {
-                object.add("description", description);
+            if (!descriptions.isEmpty()) {
+                object.add("description", String.join(", ", Utils.limit(descriptions, 8, "...")));
             }
             object.add("key", key);
             object.add("value", value);
