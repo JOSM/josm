@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -65,6 +66,8 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
 
     TaggingPresetSearchPrimitiveDialog() {
         super(MainApplication.getMainFrame(), tr("Search for objects by preset"), tr("Search"), tr("Cancel"));
+        setButtonIcons("dialogs/search", "cancel");
+        configureContextsensitiveHelp("/Action/TaggingPresetSearchPrimitiveDialog", true /* show help button */);
         selector = new TaggingPresetSelector(false, false);
         setContent(selector, false);
         selector.setDblClickListener(e -> buttonAction(0, null));
