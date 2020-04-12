@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -13,7 +15,6 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetLabel;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.GBC;
@@ -22,7 +23,7 @@ import org.openstreetmap.josm.tools.GBC;
  * Adds a link to an other preset.
  * @since 8863
  */
-public class PresetLink extends TaggingPresetItem {
+public class PresetLink extends TextItem {
 
     static final class TaggingPresetMouseAdapter extends MouseAdapter {
         private final TaggingPreset t;
@@ -39,6 +40,15 @@ public class PresetLink extends TaggingPresetItem {
 
     /** The exact name of the preset to link to. Required. */
     public String preset_name = ""; // NOSONAR
+
+    /**
+     * Creates a label to be inserted aboive this link
+     * @return a label
+     */
+    public JLabel createLabel() {
+        initializeLocaleText(tr("Edit also …"));
+        return new JLabel(locale_text);
+    }
 
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {

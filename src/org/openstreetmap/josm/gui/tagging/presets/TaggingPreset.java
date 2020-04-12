@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -306,7 +307,6 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     public PresetPanel createPanel(Collection<OsmPrimitive> selected) {
         PresetPanel p = new PresetPanel();
         List<Link> l = new LinkedList<>();
-        List<PresetLink> presetLink = new LinkedList<>();
 
         final JPanel pp = new JPanel();
         if (types != null) {
@@ -335,29 +335,27 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
         boolean presetInitiallyMatches = !selected.isEmpty() && selected.stream().allMatch(this);
         JPanel items = new JPanel(new GridBagLayout());
+        TaggingPresetItem previous = null;
         for (TaggingPresetItem i : data) {
             if (i instanceof Link) {
                 l.add((Link) i);
                 p.hasElements = true;
-            } else if (i instanceof PresetLink) {
-                presetLink.add((PresetLink) i);
             } else {
+                if (i instanceof PresetLink) {
+                    PresetLink link = (PresetLink) i;
+                    if (!(previous instanceof PresetLink && Objects.equals(((PresetLink) previous).text, link.text))) {
+                        items.add(link.createLabel(), GBC.eol().insets(0, 8, 0, 0));
+                    }
+                }
                 if (i.addToPanel(items, selected, presetInitiallyMatches)) {
                     p.hasElements = true;
                 }
             }
+            previous = i;
         }
         p.add(items, GBC.eol().fill());
         if (selected.isEmpty() && !supportsRelation()) {
             GuiHelper.setEnabledRec(items, false);
-        }
-
-        // add PresetLink
-        if (!presetLink.isEmpty()) {
-            p.add(new JLabel(tr("Edit also …")), GBC.eol().insets(0, 8, 0, 0));
-            for (PresetLink link : presetLink) {
-                link.addToPanel(p, selected, presetInitiallyMatches);
-            }
         }
 
         // add Link

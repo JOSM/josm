@@ -154,6 +154,8 @@
 
     <complexType name="preset_link">
         <attribute name="preset_name" type="string" use="required" />
+        <attribute name="text" type="string" />
+        <attribute name="text_context" type="string" />
         <attribute name="name" use="prohibited" />
     </complexType>
 
