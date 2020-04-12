@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Cell renderer of tags table.
@@ -111,18 +112,20 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                     str = (String) v.entrySet().iterator().next().getKey();
                 }
             }
-            boolean knownNameKey = false;
+            boolean enableHTML = false;
             if (column == 0 && str != null) {
                 Pair<String, Boolean> label = I18n.getLocalizedLanguageName(str);
-                if (label != null) {
-                    knownNameKey = label.b;
-                    if (knownNameKey) {
-                        str = new StringBuilder("<html><body>").append(str)
-                                .append(" <i>&lt;").append(label.a).append("&gt;</i></body></html>").toString();
-                    }
+                if (label != null && label.b) {
+                    enableHTML = true;
+                    str = "<html><body>" + str + " <i>&lt;" + label.a + "&gt;</i></body></html>";
                 }
+            } else if (column == 1 && str != null && String.valueOf(table.getModel().getValueAt(row, 0)).contains("colour")) {
+                enableHTML = true;
+                // U+25A0 BLACK SQUARE
+                String escaped = Utils.escapeReservedCharactersHTML(str);
+                str = "<html><body><span color='" + escaped + "'>\u25A0</span> " + escaped + "</body></html>";
             }
-            ((JLabel) c).putClientProperty("html.disable", knownNameKey ? null : Boolean.TRUE); // Fix #8730
+            ((JLabel) c).putClientProperty("html.disable", enableHTML ? null : Boolean.TRUE); // Fix #8730
             ((JLabel) c).setText(str);
             if (DISCARDABLE.get()) {
                 String key = null;
