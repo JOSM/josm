@@ -100,7 +100,7 @@ public class Combo extends ComboMultiSelect {
             originalValue = getListEntry(DIFFERENT);
             combobox.setSelectedItem(originalValue);
         }
-        if ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour")) {
+        if (key != null && ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour"))) {
             p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
             JButton button = new JButton(new ChooseColorAction());
             p.add(button, GBC.eol().fill(GBC.VERTICAL));
