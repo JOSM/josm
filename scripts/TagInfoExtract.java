@@ -620,7 +620,7 @@ public class TagInfoExtract {
         tmpdir.toFile().deleteOnExit();
         System.setProperty("josm.home", tmpdir.toString());
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
-        Territories.initialize();
+        Territories.initializeInternalData();
         RightAndLefthandTraffic.initialize();
         Files.createDirectories(options.imageDir);
     }

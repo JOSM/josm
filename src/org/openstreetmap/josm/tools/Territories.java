@@ -123,13 +123,17 @@ public final class Territories {
     /**
      * Initializes territories.
      * TODO: Synchronization can be refined inside the {@link GeoPropertyIndex} as most look-ups are read-only.
+     * @see #initializeInternalData()
      */
     public static synchronized void initialize() {
         initializeInternalData();
         initializeExternalData();
     }
 
-    private static void initializeInternalData() {
+    /**
+     * Initializes territories using the internal data only.
+     */
+    public static void initializeInternalData() {
         iso3166Cache = new HashMap<>();
         taginfoCache = new TreeMap<>();
         customTagsCache = new TreeMap<>();

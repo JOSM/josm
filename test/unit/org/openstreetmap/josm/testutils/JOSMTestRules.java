@@ -549,7 +549,7 @@ public class JOSMTestRules implements TestRule {
         }
 
         if (territories) {
-            Territories.initialize();
+            Territories.initializeInternalData();
         }
 
         if (rlTraffic) {
