@@ -291,7 +291,7 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''")),
                 GBC.eol());
         hintPanel.add(new SearchKeywordRow(hcbSearchString)
-                .addKeyword("<i>key</i>", null, tr("matches if ''key'' exists"))
+                .addKeyword("<i>key:</i>", null, tr("matches if ''key'' exists"))
                 .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
                 .addKeyword("<i>key</i>~<i>regexp</i>", null, tr("value of ''key'' matching the regular expression ''regexp''"))
                 .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))

@@ -539,6 +539,20 @@ public class SearchCompilerTest {
     }
 
     /**
+     * Test whether a key exists.
+     * @throws SearchParseError never
+     */
+    @Test
+    public void testKeyExists15943() throws SearchParseError {
+        Match matcher = SearchCompiler.compile("surface:");
+        assertTrue(matcher.match(new Tag("surface", "")));
+        assertTrue(matcher.match(new Tag("surface", "wood")));
+        assertFalse(matcher.match(new Tag("surface:source", "xxx")));
+        assertFalse(matcher.match(new Tag("foo", "bar")));
+        assertFalse(matcher.match(new Tag("name", "foo:surface:bar")));
+    }
+
+    /**
      * Unit test of {@link SearchCompiler.ExactKeyValue.Mode} enum.
      */
     @Test
