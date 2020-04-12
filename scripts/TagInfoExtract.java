@@ -267,13 +267,7 @@ public class TagInfoExtract {
                             ? item.getValues()
                             : Collections.emptyList();
                     for (String value : values) {
-                        final Set<TagInfoTag.Type> types = preset.types == null ? Collections.emptySet() : preset.types.stream()
-                                .map(it -> TaggingPresetType.CLOSEDWAY.equals(it)
-                                        ? TagInfoTag.Type.AREA
-                                        : TaggingPresetType.MULTIPOLYGON.equals(it)
-                                        ? TagInfoTag.Type.RELATION
-                                        : TagInfoTag.Type.valueOf(it.toString()))
-                                .collect(Collectors.toCollection(() -> EnumSet.noneOf(TagInfoTag.Type.class)));
+                        final Set<TagInfoTag.Type> types = TagInfoTag.Type.forPresetTypes(preset.types);
                         tags.add(new TagInfoTag(descriptionPrefix + preset.getName(), item.key, value, types,
                                 addImages && preset.iconName != null ? options.findImageUrl(preset.iconName) : null));
                     }
@@ -562,7 +556,27 @@ public class TagInfoExtract {
         }
 
         enum Type {
-            NODE, WAY, AREA, RELATION
+            NODE, WAY, AREA, RELATION;
+
+            static TagInfoTag.Type forPresetType(TaggingPresetType type) {
+                switch (type) {
+                    case CLOSEDWAY:
+                        return AREA;
+                    case MULTIPOLYGON:
+                        return RELATION;
+                    default:
+                        return valueOf(type.toString());
+                }
+            }
+
+            static Set<TagInfoTag.Type> forPresetTypes(Set<TaggingPresetType> types) {
+                if (types == null) {
+                    return Collections.emptySet();
+                }
+                return types.stream()
+                        .map(Type::forPresetType)
+                        .collect(Collectors.toCollection(() -> EnumSet.noneOf(Type.class)));
+            }
         }
     }
 
