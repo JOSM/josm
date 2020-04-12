@@ -365,7 +365,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 try {
                     parseChecks.add(TagCheck.ofMapCSSRule(rule, assertionConsumer));
                 } catch (IllegalDataException e) {
-                    Logging.error("Cannot add MapCss rule: "+e.getMessage());
+                    Logging.error("Cannot add MapCSS rule: "+e.getMessage());
                     source.logError(e);
                 }
             }
