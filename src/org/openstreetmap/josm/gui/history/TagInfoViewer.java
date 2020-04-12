@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Collection;
@@ -84,7 +86,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
         tagMenu.add(trackJosmAction(new CopyAllKeyValueAction(table, tagKeyFn, objectSp)));
         tagMenu.addSeparator();
         tagMenu.add(trackJosmAction(new HelpTagAction(table, tagKeyFn, tagValuesFn)));
-        tagMenu.add(trackJosmAction(new TaginfoAction(table, tagKeyFn, tagValuesFn, null, null)));
+        tagMenu.add(trackJosmAction(new TaginfoAction(tr("Go to Taginfo"), table, tagKeyFn, tagValuesFn, null, null, null)));
 
         table.addMouseListener(new PopupMenuLauncher(tagMenu));
         return table;

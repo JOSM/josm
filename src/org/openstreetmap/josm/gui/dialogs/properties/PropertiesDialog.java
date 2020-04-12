@@ -191,8 +191,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpTagAction = new HelpTagAction(tagTable, editHelper::getDataKey, editHelper::getDataValues);
     private final HelpAction helpRelAction = new HelpMembershipAction(membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
-    private final TaginfoAction taginfoAction = new TaginfoAction(tagTable, editHelper::getDataKey, editHelper::getDataValues,
-            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
+    private final TaginfoAction taginfoAction = new TaginfoAction(tr("Go to Taginfo"),
+            tagTable, editHelper::getDataKey, editHelper::getDataValues,
+            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), null);
     private final Collection<TaginfoAction> taginfoNationalActions = new ArrayList<>();
     private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction(
@@ -364,7 +365,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         membershipMenuTagInfoNatItems.clear();
         tagMenuTagInfoNatItems.forEach(tagMenu::remove);
         tagMenuTagInfoNatItems.clear();
-        taginfoNationalActions.forEach(JosmAction::destroy);
         taginfoNationalActions.clear();
     }
 
@@ -602,7 +602,6 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
     @Override
     public void destroy() {
-        taginfoAction.destroy();
         destroyTaginfoNationalActions();
         super.destroy();
         Config.getPref().removeKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
