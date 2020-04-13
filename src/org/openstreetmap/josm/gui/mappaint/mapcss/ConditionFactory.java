@@ -359,7 +359,7 @@ public final class ConditionFactory {
          * @throws PatternSyntaxException if the value syntax is invalid
          */
         public KeyValueRegexpCondition(String k, String v, Op op, boolean considerValAsKey) {
-            super(k, "" /* v is not needed */, op, considerValAsKey);
+            super(k, v, op, considerValAsKey); /* value is needed in validator messages */
             CheckParameterUtil.ensureThat(!considerValAsKey, "considerValAsKey is not supported");
             CheckParameterUtil.ensureThat(SUPPORTED_OPS.contains(op), "Op must be REGEX or NREGEX");
             this.pattern = Pattern.compile(v);
