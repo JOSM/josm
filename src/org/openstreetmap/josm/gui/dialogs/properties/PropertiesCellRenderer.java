@@ -119,7 +119,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                     enableHTML = true;
                     str = "<html><body>" + str + " <i>&lt;" + label.a + "&gt;</i></body></html>";
                 }
-            } else if (column == 1 && str != null && String.valueOf(table.getModel().getValueAt(row, 0)).contains("colour")) {
+            } else if (column == 1 && str != null && String.valueOf(getKeyInRow(table, row)).contains("colour")) {
                 enableHTML = true;
                 // U+25A0 BLACK SQUARE
                 String escaped = Utils.escapeReservedCharactersHTML(str);
@@ -132,7 +132,7 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                 if (column == 0) {
                     key = str;
                 } else if (column == 1) {
-                    Object value0 = table.getModel().getValueAt(row, 0);
+                    Object value0 = getKeyInRow(table, row);
                     if (value0 instanceof String) {
                         key = (String) value0;
                     }
@@ -141,6 +141,10 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             }
         }
         return c;
+    }
+
+    private Object getKeyInRow(JTable table, int row) {
+        return table.getModel().getValueAt(table.convertRowIndexToModel(row), 0);
     }
 
     /**
