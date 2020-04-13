@@ -103,6 +103,7 @@ public class Combo extends ComboMultiSelect {
         if (key != null && ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour"))) {
             p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
             JButton button = new JButton(new ChooseColorAction());
+            button.setBorderPainted(false);
             p.add(button, GBC.eol().fill(GBC.VERTICAL));
             ActionListener updateColor = ignore -> button.setBackground(getColor());
             updateColor.actionPerformed(null);
