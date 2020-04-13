@@ -150,6 +150,8 @@ public interface LabelCompositionStrategy {
             "ref",
             "operator",
             "brand",
+            "addr:unit",
+            "addr:flats",
             "addr:housenumber"
         };
 
