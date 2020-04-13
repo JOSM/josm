@@ -898,7 +898,7 @@ public class MainMenu extends JMenuBar {
 
         windowMenu.addMenuListener(menuSeparatorHandler);
 
-        new EditLayerMenuEnabler(Arrays.asList(modeMenu, presetsMenu));
+        new EditLayerMenuEnabler(Arrays.asList(modeMenu, toolsMenu, moreToolsMenu, selectionMenu));
     }
     // CHECKSTYLE.ON: ExecutableStatementCountCheck
 

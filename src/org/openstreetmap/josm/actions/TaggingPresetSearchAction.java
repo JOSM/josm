@@ -29,10 +29,17 @@ public class TaggingPresetSearchAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (hasActiveDataLayer()) {
+            TaggingPresetSearchDialog.getInstance().showDialog();
+        }
+    }
 
-        if (MainApplication.getLayerManager().getActiveData() == null)
-            return;
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(hasActiveDataLayer());
+    }
 
-        TaggingPresetSearchDialog.getInstance().showDialog();
+    private boolean hasActiveDataLayer() {
+        return getLayerManager().getActiveData() != null;
     }
 }
