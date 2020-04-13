@@ -28,6 +28,9 @@
             <list_entry value="impassable" short_description="No wheeled vehicle" />
         </combo>
     </chunk>
+    <chunk id="sport_surface">
+        <combo key="surface" text="Surface" values="artificial_turf,asphalt,clay,concrete,decoturf,grass,sand,tartan,ground" />
+    </chunk>
     <chunk id="riding_surface">
         <combo key="leisure" text="Type" values="horse_riding,pitch,sports_centre,stadium,track" values_context="riding" />
         <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
@@ -4356,7 +4359,7 @@
             <key key="leisure" value="pitch" />
             <text key="name" text="Name" />
             <reference ref="sport" />
-            <combo key="surface" text="Surface" values="artificial_turf,asphalt,clay,concrete,decoturf,grass,sand,tartan,ground" />
+            <reference ref="sport_surface" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pitch -->
         <item name="Racetrack" icon="presets/sport/track.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
@@ -4365,7 +4368,7 @@
             <key key="leisure" value="track" />
             <text key="name" text="Name" />
             <combo key="sport" text="Sport" values="athletics,cycling,dog_racing,equestrian,horse_racing,running,roller_skating,ice_skating" values_context="sport" />
-            <combo key="surface" text="Surface" values="artificial_turf,asphalt,clay,concrete,decoturf,grass,sand,tartan,ground" />
+            <reference ref="sport_surface" />
         </item> <!-- Racetrack -->
         <group name="Golf" icon="presets/sport/golf/golf.svg">
                 <item name="Golf Course" icon="presets/sport/golf/golf.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -4454,6 +4457,7 @@
             <key key="sport" value="multi" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,fitness_centre,stadium,track" values_context="running" />
+            <reference ref="sport_surface" />
         </item> <!-- Multi -->
         <item name="Nine-pin Bowling" icon="presets/sport/9pin.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=9pin" />
@@ -4461,6 +4465,7 @@
             <key key="sport" value="9pin" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
+            <combo key="surface" text="Surface" values="clay,concrete,ground,wood" />
         </item> <!-- Nine-pin Bowling -->
         <item name="Ten-pin Bowling" icon="presets/sport/10pin.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=10pin" />
@@ -4468,6 +4473,7 @@
             <key key="sport" value="10pin" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
+            <combo key="surface" text="Surface" values="clay,concrete,ground,wood" />
         </item> <!-- Ten-pin Bowling -->
         <item name="Archery" icon="presets/sport/archery.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=archery" />
@@ -4482,6 +4488,7 @@
             <key key="sport" value="athletics" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="running" default="track" />
+            <reference ref="sport_surface" />
         </item> <!-- Track and Field Athletics -->
         <item name="Running" icon="presets/sport/running.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=running" />
@@ -4489,6 +4496,7 @@
             <key key="sport" value="running" />
             <reference ref="name_operator" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="running" />
+            <reference ref="sport_surface" />
         </item> <!-- Running -->
         <item name="Climbing site" icon="presets/sport/climbing.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=climbing" />
@@ -4552,6 +4560,7 @@
             <key key="sport" value="cycling" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="racing" />
+            <reference ref="sport_surface" />
         </item> <!-- Cycling -->
         <item name="Dog Racing" icon="presets/sport/dog_racing.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=dog_racing" />
@@ -4559,6 +4568,7 @@
             <key key="sport" value="dog_racing" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="racing" />
+            <reference ref="sport_surface" />
         </item> <!-- Dog Racing -->
         <item name="Equestrian" icon="presets/sport/equestrian.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=equestrian" />
@@ -4594,6 +4604,7 @@
             <key key="sport" value="roller_skating" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
+            <combo key="surface" text="Surface" values="asphalt,concrete" />
         </item> <!-- Roller Skating -->
         <item name="Skateboard" icon="presets/sport/skateboard.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=skateboard" />
@@ -4601,6 +4612,7 @@
             <key key="sport" value="skateboard" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" default="pitch" values_context="racing" />
+            <combo key="surface" text="Surface" values="asphalt,concrete" />
         </item> <!-- Skateboard -->
         <item name="Swimming" icon="presets/sport/swimming.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=swimming" />
@@ -4639,30 +4651,35 @@
             <space />
             <key key="sport" value="soccer" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Soccer -->
         <item name="Australian Football" icon="presets/sport/football.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=australian_football" />
             <space />
             <key key="sport" value="australian_football" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Australian Football -->
         <item name="American Football" icon="presets/sport/football.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=american_football" />
             <space />
             <key key="sport" value="american_football" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- American Football -->
         <item name="Canadian Football" icon="presets/sport/football.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=canadian_football" />
             <space />
             <key key="sport" value="canadian_football" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Canadian Football -->
         <item name="Gaelic Games" icon="presets/sport/soccer.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=gaelic_games" />
             <space />
             <key key="sport" value="gaelic_games" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
             <optional>
                 <check key="gaelic_games:hurling" text="Hurling" />
                 <check key="gaelic_games:football" text="Football" />
@@ -4676,24 +4693,29 @@
             <space />
             <key key="sport" value="rugby_league" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Rugby League -->
         <item name="Rugby Union" icon="presets/sport/football.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=rugby_union" />
             <space />
             <key key="sport" value="rugby_union" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Rugby Union -->
         <item name="Baseball" icon="presets/sport/baseball.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=baseball" />
             <space />
             <key key="sport" value="baseball" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Baseball -->
         <item name="Basketball" icon="presets/sport/basketball.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=basketball" />
             <space />
             <key key="sport" value="basketball" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
+            <combo key="hoops" text="Hoops" values="1,2,3,4" />
         </item> <!-- Basketball -->
         <item name="Handball" icon="presets/sport/handball.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=handball" />
@@ -4701,6 +4723,7 @@
             <key key="sport" value="handball" />
             <reference ref="name_operator" />
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" />
+            <reference ref="sport_surface" />
         </item> <!-- Handball -->
         <item name="Volleyball" icon="presets/sport/volleyball.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=volleyball" />
@@ -4708,6 +4731,7 @@
             <key key="sport" value="volleyball" />
             <reference ref="name_operator" />
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" />
+            <reference ref="sport_surface" />
         </item> <!-- Volleyball -->
         <item name="Beach Volleyball" icon="presets/sport/beachvolleyball.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=beachvolleyball" />
@@ -4735,24 +4759,28 @@
             <space />
             <key key="sport" value="boules" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Boule -->
         <item name="Lawn Bowling" icon="presets/sport/boule.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=bowls" />
             <space />
             <key key="sport" value="bowls" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Lawn Bowling -->
         <item name="Cricket" icon="presets/sport/cricket.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=cricket" />
             <space />
             <key key="sport" value="cricket" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Cricket -->
         <item name="Croquet" icon="presets/sport/croquet.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=croquet" />
             <space />
             <key key="sport" value="croquet" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Croquet -->
         <item name="Field Hockey" icon="presets/sport/field_hockey.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=field_hockey" />
@@ -4760,6 +4788,7 @@
             <key key="sport" value="field_hockey" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
+            <reference ref="sport_surface" />
         </item> <!-- Field Hockey -->
         <item name="Ice Hockey" icon="presets/sport/ice_hockey.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=ice_hockey" />
@@ -4773,6 +4802,7 @@
             <space />
             <key key="sport" value="pelota" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Pelota -->
         <item name="Racquetball" icon="presets/sport/racquetball.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=racquet" />
@@ -4780,6 +4810,7 @@
             <key key="sport" value="racquet" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
+            <reference ref="sport_surface" />
         </item> <!-- Racquetball -->
         <item name="Table Tennis/Ping-Pong" icon="presets/sport/table_tennis.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=table_tennis" />
@@ -4793,6 +4824,7 @@
             <space />
             <key key="sport" value="tennis" />
             <reference ref="name_leisure_pitch" />
+            <reference ref="sport_surface" />
         </item> <!-- Tennis -->
     </group> <!-- Sport (Ball) -->
     <group name="Motorsport" icon="presets/vehicle/motorbike.svg">
@@ -4802,6 +4834,7 @@
             <key key="sport" value="motor" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="racing" />
+            <combo key="surface" text="Surface" values="asphalt,concrete,ground" />
         </item> <!-- Motorsport -->
         <item name="Kart Racing" icon="presets/sport/karting.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=karting" />
@@ -4809,6 +4842,7 @@
             <key key="sport" value="karting" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="racing" />
+            <combo key="surface" text="Surface" values="asphalt,concrete,ground" />
         </item> <!-- Kart Racing -->
         <item name="Motocross" icon="presets/sport/motocross.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=motocross" />
@@ -4824,6 +4858,7 @@
             <key key="sport" value="model_aerodrome" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="aerialway" />
+            <combo key="surface" text="Surface" values="asphalt,concrete,ground" />
         </item> <!-- Model Aerodrome -->
         <item name="RC Car" icon="presets/sport/rc_car.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=rc_car" />
@@ -4831,6 +4866,7 @@
             <key key="sport" value="rc_car" />
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,track" values_context="racing" />
+            <combo key="surface" text="Surface" values="asphalt,concrete,ground" />
         </item> <!-- RC Car -->
     </group> <!-- Motorsport -->
   </group> <!-- Sports -->
