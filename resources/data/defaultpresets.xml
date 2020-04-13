@@ -1065,7 +1065,9 @@
             <link wiki="Tag:highway=steps" />
             <key key="highway" value="steps" />
             <optional>
-                <reference ref="name_layer" />
+                <text key="name" text="Name" />
+                <text key="level" text="Storey" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <reference ref="surface" />
                 <text key="step_count" text="Amount of Steps" />
                 <space />
