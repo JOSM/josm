@@ -3,6 +3,8 @@ package org.openstreetmap.josm.tools;
 
 import java.awt.Color;
 
+import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
+
 /**
  * Helper to convert from color to HTML string and back.
  */
@@ -13,7 +15,7 @@ public final class ColorHelper {
     }
 
     /**
-     * Returns the {@code Color} for the given HTML code.
+     * Returns the {@code Color} for the given HTML code, also evaluates CSS color names using {@link CSSColors}.
      * @param html the color code
      * @return the color
      */
@@ -21,11 +23,13 @@ public final class ColorHelper {
         if (!html.isEmpty() && html.charAt(0) == '#')
             html = html.substring(1);
         if (html.length() == 3) {
-            return html2color(new String(
-                    new char[]{html.charAt(0), html.charAt(0), html.charAt(1), html.charAt(1), html.charAt(2), html.charAt(2)}));
+            html = new String(new char[]{
+                    html.charAt(0), html.charAt(0),
+                    html.charAt(1), html.charAt(1),
+                    html.charAt(2), html.charAt(2)});
         }
         if (html.length() != 6 && html.length() != 8)
-            return null;
+            return CSSColors.get(html);
         try {
             return new Color(
                     Integer.parseInt(html.substring(0, 2), 16),
@@ -33,7 +37,7 @@ public final class ColorHelper {
                     Integer.parseInt(html.substring(4, 6), 16),
                     html.length() == 8 ? Integer.parseInt(html.substring(6, 8), 16) : 255);
         } catch (NumberFormatException e) {
-            return null;
+            return CSSColors.get(html);
         }
     }
 

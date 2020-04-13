@@ -25,6 +25,9 @@ public class ColorHelperTest {
         assertEquals(Color.CYAN, ColorHelper.html2color("00ffff"));
         assertEquals(Color.CYAN, ColorHelper.html2color("#00ffff"));
         assertEquals(Color.CYAN, ColorHelper.html2color("#00FFFF"));
+        assertEquals(Color.CYAN, ColorHelper.html2color("cyan"));
+        assertEquals(new Color(0xa52a2a), ColorHelper.html2color("brown"));
+        assertEquals(new Color(0x6495ed), ColorHelper.html2color("cornflowerblue"));
         assertEquals(new Color(0x12345678, true), ColorHelper.html2color("#34567812"));
     }
 

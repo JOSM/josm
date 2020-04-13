@@ -24,9 +24,9 @@ import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Cell renderer of tags table.
@@ -122,8 +122,10 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             } else if (column == 1 && str != null && String.valueOf(getKeyInRow(table, row)).contains("colour")) {
                 enableHTML = true;
                 // U+25A0 BLACK SQUARE
-                String escaped = Utils.escapeReservedCharactersHTML(str);
-                str = "<html><body><span color='" + escaped + "'>\u25A0</span> " + escaped + "</body></html>";
+                final String color = str.matches("#[0-9A-Fa-f]{3,8}")
+                        ? str
+                        : ColorHelper.color2html(ColorHelper.html2color(str));
+                str = "<html><body><span color='" + color + "'>\u25A0</span> " + color + "</body></html>";
             }
             ((JLabel) c).putClientProperty("html.disable", enableHTML ? null : Boolean.TRUE); // Fix #8730
             ((JLabel) c).setText(str);
