@@ -85,32 +85,4 @@ public class ConnectivityRelationsTest {
         Assert.assertEquals(++expectedFailures, check.getErrors().size());
     }
 
-    /**
-     * Check for bad roles (not from/via/to)
-     */
-    @Test
-    public void testForBadRole() {
-        Relation relation = createDefaultTestRelation();
-        check.visit(relation);
-        int expectedFailures = 0;
-
-        Assert.assertEquals(expectedFailures, check.getErrors().size());
-
-        for (int i = 0; i < relation.getMembers().size(); i++) {
-            String tRole = replaceMember(relation, i, "badRole");
-            check.visit(relation);
-            Assert.assertEquals(++expectedFailures, check.getErrors().size());
-            replaceMember(relation, i, tRole);
-            check.visit(relation);
-            Assert.assertEquals(expectedFailures, check.getErrors().size());
-        }
-    }
-
-    private String replaceMember(Relation relation, int index, String replacementRole) {
-        RelationMember relationMember = relation.getMember(index);
-        String currentRole = relationMember.getRole();
-        relation.removeMember(index);
-        relation.addMember(index, new RelationMember(replacementRole, relationMember.getMember()));
-        return currentRole;
-    }
 }
