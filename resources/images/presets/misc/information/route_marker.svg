@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="13"
-   height="9"
-   viewBox="0 0 13 9"
+   width="16"
+   height="11"
+   viewBox="0 0 16 11"
    id="svg2"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="route_marker8.svg">
+   sodipodi:docname="route_marker109c.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="34.013443"
-     inkscape:cx="7.1967994"
-     inkscape:cy="7.7820864"
+     inkscape:zoom="33.669431"
+     inkscape:cx="6.8773307"
+     inkscape:cy="6.0736897"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -73,17 +73,16 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1044.3622)">
-    <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.67603958;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="rect4516"
-       width="13"
-       height="8.9999657"
-       x="0"
-       y="1044.3622" />
+     transform="translate(0,-1042.3622)">
+    <path
+       style="fill:#ffffff;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 15,1045.3622 H 8 v -3 l -8,5.5 8,5.5 v -3 h 7 v -5"
+       id="path818"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc" />
     <path
        style="fill:#2a7fff;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 13,1050.3622 H 6 v 2 l -5,-3.5 5,-3.5 v 2 h 7 z"
+       d="M 14,1049.3622 H 7 v 2 l -5,-3.5 5,-3.5 v 2 h 7 z"
        id="path815"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccc" />
