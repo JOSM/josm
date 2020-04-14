@@ -30,7 +30,7 @@ public final class UnGlueActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main();
+    public JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
 
     /**
      * Setup test.
