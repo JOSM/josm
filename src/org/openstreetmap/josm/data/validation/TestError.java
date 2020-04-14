@@ -338,6 +338,10 @@ public class TestError implements Comparable<TestError> {
      * @return The ignore sub group
      */
     public String getIgnoreSubGroup() {
+        if (code == 3000) {
+            // see #19053
+            return "3000_" + (description == null ? message : description);
+        }
         String ignorestring = getIgnoreGroup();
         if (descriptionEn != null) {
             ignorestring += '_' + descriptionEn;
@@ -351,6 +355,10 @@ public class TestError implements Comparable<TestError> {
      * @see TestError#getIgnoreSubGroup()
      */
     public String getIgnoreGroup() {
+        if (code == 3000) {
+            // see #19053
+            return "3000_" + getMessage();
+        }
         return Integer.toString(code);
     }
 
@@ -524,4 +532,5 @@ public class TestError implements Comparable<TestError> {
     public String toString() {
         return "TestError [tester=" + tester + ", code=" + code + ", message=" + message + ']';
     }
+
 }

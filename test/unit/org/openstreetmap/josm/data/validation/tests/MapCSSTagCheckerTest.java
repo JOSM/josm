@@ -144,7 +144,7 @@ public class MapCSSTagCheckerTest {
         final Collection<TestError> errors = test.getErrorsForPrimitive(p, false);
         assertEquals(1, errors.size());
         assertEquals("has alt_name but not name", errors.iterator().next().getMessage());
-        assertEquals("3000_*[.+_name][!name]", errors.iterator().next().getIgnoreSubGroup());
+        assertEquals("3000_has alt_name but not name", errors.iterator().next().getIgnoreSubGroup());
     }
 
     /**
@@ -159,7 +159,7 @@ public class MapCSSTagCheckerTest {
         final Collection<TestError> errors = test.getErrorsForPrimitive(p, false);
         assertEquals(1, errors.size());
         assertEquals("footway used with foot=no", errors.iterator().next().getMessage());
-        assertEquals("3000_way[highway=footway][foot]", errors.iterator().next().getIgnoreSubGroup());
+        assertEquals("3000_footway used with foot=no", errors.iterator().next().getIgnoreSubGroup());
     }
 
     /**
@@ -411,6 +411,25 @@ public class MapCSSTagCheckerTest {
             List<TestError> errors = test.getErrors();
             assertEquals(3, errors.size());
         }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19053">Bug #19053</a>.
+     * Mapcss rule with group.
+     * @throws ParseException if a parsing error occurs
+     */
+    @Test
+    public void testTicket19053() throws ParseException {
+        final MapCSSTagChecker test = buildTagChecker(
+                "*[ele][ele =~ /^-?[0-9]+\\.[0-9][0-9][0-9]+$/] {"
+                        + "throwWarning: tr(\"{0}\",\"{0.tag}\");"
+                        + "group: tr(\"Unnecessary amount of decimal places\");" + "}");
+        final OsmPrimitive p = OsmUtils.createPrimitive("node ele=12.123456");
+        final Collection<TestError> errors = test.getErrorsForPrimitive(p, false);
+        assertEquals(1, errors.size());
+        assertEquals("Unnecessary amount of decimal places", errors.iterator().next().getMessage());
+        assertEquals("3000_ele=12.123456", errors.iterator().next().getIgnoreSubGroup());
+        assertEquals("3000_Unnecessary amount of decimal places", errors.iterator().next().getIgnoreGroup());
     }
 
 }

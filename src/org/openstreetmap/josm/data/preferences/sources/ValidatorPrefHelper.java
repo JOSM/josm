@@ -47,6 +47,9 @@ public class ValidatorPrefHelper extends SourcePrefHelper {
     /** The preferences key for the ignorelist */
     public static final String PREF_IGNORELIST = PREFIX + ".ignorelist";
 
+    /** The preferences key for the ignorelist format */
+    public static final String PREF_IGNORELIST_FORMAT = PREF_IGNORELIST + ".version";
+
     /**
      * The preferences key for enabling the permanent filtering
      * of the displayed errors in the tree regarding the current selection

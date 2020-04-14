@@ -18,10 +18,12 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -223,6 +225,7 @@ public final class OsmValidator {
                         TreeSet<String> treeSet = new TreeSet<>();
                         treeSet.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
                         treeSet.forEach(ignore -> ignoredErrors.putIfAbsent(ignore, ""));
+                        removeLegacyEntries(true);
 
                         saveIgnoredErrors();
                         Files.deleteIfExists(path);
@@ -236,8 +239,33 @@ public final class OsmValidator {
             } catch (SecurityException e) {
                 Logging.log(Logging.LEVEL_ERROR, "Unable to load ignored errors", e);
             }
-            // see #19053: remove invalid entry
-            ignoredErrors.remove("3000");
+            removeLegacyEntries(Config.getPref().get(ValidatorPrefHelper.PREF_IGNORELIST_FORMAT).isEmpty());
+        }
+    }
+
+    private static void removeLegacyEntries(boolean force) {
+        // see #19053:
+        boolean wasChanged = false;
+        if (force) {
+            Iterator<Entry<String, String>> iter = ignoredErrors.entrySet().iterator();
+            while (iter.hasNext()) {
+                Entry<String, String> entry = iter.next();
+                if (entry.getKey().startsWith("3000_")) {
+                    Logging.warn(tr("Cannot handle ignore list entry {0}", entry));
+                    iter.remove();
+                    wasChanged = true;
+                }
+            }
+        }
+        String legacyEntry = ignoredErrors.remove("3000");
+        if (legacyEntry != null) {
+            if (!legacyEntry.isEmpty()) {
+                addIgnoredError("3000_" + legacyEntry, legacyEntry);
+            }
+            wasChanged = true;
+        }
+        if (wasChanged) {
+            saveIgnoredErrors();
         }
     }
 
@@ -267,6 +295,7 @@ public final class OsmValidator {
      *  Make sure that we don't keep single entries for a "group ignore".
      */
     static void cleanupIgnoredErrors() {
+        cleanup3000();
         if (ignoredErrors.size() > 1) {
             List<String> toRemove = new ArrayList<>();
 
@@ -288,6 +317,18 @@ public final class OsmValidator {
             ignoredErrors.clear();
             ignoredErrors.putAll(tmap);
         }
+    }
+
+    private static void cleanup3000() {
+        // see #19053
+        Set<String> toRemove = new HashSet<>();
+        for (Entry<String, String> entry : ignoredErrors.entrySet()) {
+            if (entry.getKey().equals("3000_" + entry.getValue()))
+                toRemove.add(entry.getValue());
+        }
+        ignoredErrors.entrySet()
+                .removeIf(e -> toRemove.contains(e.getValue()) && !e.getKey().equals("3000_" + e.getValue()));
+
     }
 
     private static boolean sameCode(String key1, String key2) {
@@ -484,6 +525,7 @@ public final class OsmValidator {
         }
         if (list.isEmpty()) list = null;
         Config.getPref().putListOfMaps(ValidatorPrefHelper.PREF_IGNORELIST, list);
+        Config.getPref().put(ValidatorPrefHelper.PREF_IGNORELIST_FORMAT, "2");
     }
 
     /**
