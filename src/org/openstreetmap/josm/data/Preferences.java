@@ -87,6 +87,7 @@ public class Preferences extends AbstractPreferences {
     private static final String[] OBSOLETE_PREF_KEYS = {
         "remotecontrol.https.enabled", /* remove entry after Dec. 2019 */
         "remotecontrol.https.port", /* remove entry after Dec. 2019 */
+        "curves.circlearc.angle-separation" // see #19076
     };
 
     /** remove if key starts with */
