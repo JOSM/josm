@@ -7756,6 +7756,17 @@
                 <role key="to" text="to way" requisite="required" count="1" type="way" />
             </roles>
         </item> <!-- Turn Restriction -->
+         <item name="Lane Connectivity" type="relation" preset_name_label="true" icon="presets/transport/way/relation_connectivity.svg">
+            <link wiki="Relation:connectivity" />
+            <space />
+            <key key="type" value="connectivity" />
+            <text key="connectivity" text="Lane Connectivity" />
+            <roles>
+                <role key="from" text="from way" requisite="required" count="1" type="way" />
+                <role key="via" text="via node or ways" requisite="required" type="way,node" />
+                <role key="to" text="to way" requisite="required" count="1" type="way" />
+            </roles>
+        </item> <!-- Lane Connectivity -->
         <item name="Enforcement" icon="presets/vehicle/restriction/speed_camera.svg" type="relation" preset_name_label="true">
             <link wiki="Relation:enforcement" />
             <space />
