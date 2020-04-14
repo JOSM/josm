@@ -72,11 +72,12 @@ public class ConnectivityRelations extends Test {
      * @return A Map in the form of {@code Map<Lane From, Map<Lane To, Optional>>} May contain nulls when errors are encountered
      */
     public static Map<Integer, Map<Integer, Boolean>> parseConnectivityTag(Relation relation) {
-        final String joined = relation.get(CONNECTIVITY_TAG).replace("bw", Integer.toString(BW));
-
-        if (joined == null) {
+        String cnTag = relation.get(CONNECTIVITY_TAG);
+        if (cnTag == null) {
             return Collections.emptyMap();
         }
+        final String joined = cnTag.replace("bw", Integer.toString(BW));
+
 
         final Map<Integer, Map<Integer, Boolean>> result = new HashMap<>();
         String[] lanes = joined.split("\\|", -1);
