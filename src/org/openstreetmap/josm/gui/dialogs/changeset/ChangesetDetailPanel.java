@@ -152,12 +152,12 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         pnl.add(tfOpen, gc);
         tfOpen.setEditable(false);
 
-        //-- Created by:
+        //-- Author:
         gc.gridx = 0;
         gc.gridy = 3;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        pnl.add(new JLabel(tr("Created by:")), gc);
+        pnl.add(new JLabel(tr("Author:")), gc);
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1.0;
@@ -165,24 +165,24 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         pnl.add(tfUser, gc);
         tfUser.setEditable(false);
 
-        //-- Created On:
+        //-- Created at:
         gc.gridx = 0;
         gc.gridy = 4;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        pnl.add(new JLabel(tr("Created on:")), gc);
+        pnl.add(new JLabel(tr("Created at:")), gc);
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridx = 1;
         pnl.add(tfCreatedOn, gc);
         tfCreatedOn.setEditable(false);
 
-        //-- Closed On:
+        //-- Closed at:
         gc.gridx = 0;
         gc.gridy = 5;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
-        pnl.add(new JLabel(tr("Closed on:")), gc);
+        pnl.add(new JLabel(tr("Closed at:")), gc);
 
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridx = 1;

@@ -38,7 +38,7 @@ public class ChangesetCacheTableColumnModel extends DefaultTableColumnModel {
         createColumn(2, tr("Open"), 25, -1);
 
         // column 3 - User
-        createColumn(3, tr("User"), 50, -1);
+        createColumn(3, tr("Author"), 50, -1);
 
         // column 4 - Created at
         createColumn(4, tr("Created at"), 100, -1);

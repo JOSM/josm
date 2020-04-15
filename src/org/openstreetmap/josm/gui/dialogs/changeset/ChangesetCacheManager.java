@@ -285,7 +285,7 @@ public class ChangesetCacheManager extends JFrame {
     }
 
     protected void build() {
-        setTitle(tr("Changeset Management Dialog"));
+        setTitle(tr("Changeset Manager"));
         setIconImage(ImageProvider.get("dialogs/changeset", "changesetmanager").getImage());
         Container cp = getContentPane();
 
