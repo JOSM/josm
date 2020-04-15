@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionPriority;
@@ -103,6 +104,7 @@ public class Combo extends ComboMultiSelect {
         if (key != null && ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour"))) {
             p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
             JButton button = new JButton(new ChooseColorAction());
+            button.setOpaque(true);
             button.setBorderPainted(false);
             p.add(button, GBC.eol().fill(GBC.VERTICAL));
             ActionListener updateColor = ignore -> button.setBackground(getColor());
