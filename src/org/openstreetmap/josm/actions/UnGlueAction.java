@@ -108,14 +108,13 @@ public class UnGlueAction extends JosmAction {
                 }
                 // If there aren't enough ways, maybe the user wanted to unglue the nodes
                 // (= copy tags to a new node)
-                if (!selfCrossing) {
-                    if (selection.size() == 1 && selectedNode.isTagged()) {
+                if (!selfCrossing)
+                    if (checkForUnglueNode(selection)) {
                         unglueOneNodeAtMostOneWay(e);
                     } else {
                         errorTime = Notification.TIME_SHORT;
                         errMsg = tr("This node is not glued to anything else.");
                     }
-                }
             } else {
                 // and then do the work.
                 unglueWays();
@@ -243,6 +242,28 @@ public class UnGlueAction extends JosmAction {
         UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Unglued Node"), cmds));
         getLayerManager().getEditDataSet().setSelected(moveSelectedNode ? selectedNode : unglued);
         mv.repaint();
+    }
+
+    /**
+     * Checks if selection is suitable for ungluing. This is the case when there's a single,
+     * tagged node selected that's part of at least one way (ungluing an unconnected node does
+     * not make sense. Due to the call order in actionPerformed, this is only called when the
+     * node is only part of one or less ways.
+     *
+     * @param selection The selection to check against
+     * @return {@code true} if selection is suitable
+     */
+    private boolean checkForUnglueNode(Collection<? extends OsmPrimitive> selection) {
+        if (selection.size() != 1)
+            return false;
+        OsmPrimitive n = (OsmPrimitive) selection.toArray()[0];
+        if (!(n instanceof Node))
+            return false;
+        if (((Node) n).getParentWays().isEmpty())
+            return false;
+
+        selectedNode = (Node) n;
+        return selectedNode.isTagged();
     }
 
     /**
