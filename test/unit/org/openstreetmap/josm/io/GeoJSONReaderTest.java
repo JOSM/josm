@@ -45,7 +45,7 @@ public class GeoJSONReaderTest {
             final List<OsmPrimitive> primitives = new ArrayList<>(new GeoJSONReader()
                 .doParseDataSet(in, null)
                 .getPrimitives(it -> true));
-            assertEquals(21, primitives.size());
+            assertEquals(20, primitives.size());
 
             final Node node1 = new Node(new LatLon(0.5, 102.0));
             final Optional<OsmPrimitive> foundNode1 = primitives.stream()
@@ -55,7 +55,7 @@ public class GeoJSONReaderTest {
             assertEquals("valueA", foundNode1.get().get("propA"));
 
             final Way way1 = new Way();
-            way1.addNode(new Node(new LatLon(0, 102)));
+            way1.addNode(new Node(new LatLon(0.5, 102.0)));
             way1.addNode(new Node(new LatLon(1, 103)));
             way1.addNode(new Node(new LatLon(0, 104)));
             way1.addNode(new Node(new LatLon(1, 105)));
@@ -65,6 +65,8 @@ public class GeoJSONReaderTest {
             assertTrue(foundWay1.isPresent());
             assertEquals("valueB", foundWay1.get().get("propB"));
             assertEquals("0.0", foundWay1.get().get("propB2"));
+            assertEquals(foundNode1.get(), ((Way) foundWay1.get()).firstNode());
+            assertEquals("valueA", ((Way) foundWay1.get()).firstNode().get("propA"));
 
             final Way way2 = new Way();
             way2.addNode(new Node(new LatLon(40, 180)));

@@ -23,6 +23,7 @@ import javax.json.stream.JsonParsingException;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -266,6 +267,11 @@ public class GeoJSONReader extends AbstractReader {
     }
 
     private Node createNode(final LatLon latlon) {
+        final List<Node> existingNodes = getDataSet().searchNodes(new BBox(latlon, latlon));
+        if (!existingNodes.isEmpty()) {
+            // reuse existing node, avoid multiple nodes on top of each other
+            return existingNodes.get(0);
+        }
         final Node node = new Node(latlon);
         getDataSet().addPrimitive(node);
         return node;
@@ -276,8 +282,9 @@ public class GeoJSONReader extends AbstractReader {
             return Optional.empty();
         }
 
-        final List<LatLon> latlons = coordinates.stream().map(
-                coordinate -> getLatLon(coordinate.asJsonArray())).collect(Collectors.toList());
+        final List<LatLon> latlons = coordinates.stream()
+                .map(coordinate -> getLatLon(coordinate.asJsonArray()))
+                .collect(Collectors.toList());
 
         final int size = latlons.size();
         final boolean doAutoclose;
@@ -294,13 +301,11 @@ public class GeoJSONReader extends AbstractReader {
         }
 
         final Way way = new Way();
-        way.setNodes(latlons.stream().map(Node::new).collect(Collectors.toList()));
+        getDataSet().addPrimitive(way);
+        way.setNodes(latlons.stream().map(this::createNode).collect(Collectors.toList()));
         if (doAutoclose) {
             way.addNode(way.getNode(0));
         }
-
-        way.getNodes().stream().distinct().forEach(it -> getDataSet().addPrimitive(it));
-        getDataSet().addPrimitive(way);
 
         return Optional.of(way);
     }
