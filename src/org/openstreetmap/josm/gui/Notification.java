@@ -3,11 +3,13 @@ package org.openstreetmap.josm.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.util.Objects;
 
 import javax.swing.Icon;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -209,5 +211,34 @@ public class Notification {
      */
     public void show() {
         NotificationManager.getInstance().showNotification(this);
+    }
+
+    private Object getContentTextOrComponent() {
+        return content instanceof JTextComponent ? ((JTextComponent) content).getText() : content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notification that = (Notification) o;
+        System.out.println(getContentTextOrComponent().getClass());
+        return duration == that.duration
+                && Objects.equals(getContentTextOrComponent(), that.getContentTextOrComponent())
+                && Objects.equals(helpTopic, that.helpTopic);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getContentTextOrComponent(), duration, helpTopic);
+    }
+
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "content=" + getContentTextOrComponent() +
+                ", duration=" + duration +
+                ", helpTopic='" + helpTopic + '\'' +
+                '}';
     }
 }

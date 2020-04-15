@@ -20,8 +20,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.RoundRectangle2D;
+import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -40,6 +41,7 @@ import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Manages {@link Notification}s, i.e.&nbsp;displays them on screen.
@@ -62,7 +64,7 @@ class NotificationManager {
 
     private Notification currentNotification;
     private NotificationPanel currentNotificationPanel;
-    private final Queue<Notification> queue;
+    private final Deque<Notification> queue;
 
     private static IntegerProperty pauseTime = new IntegerProperty("notification-default-pause-time-ms", 300); // milliseconds
 
@@ -85,12 +87,16 @@ class NotificationManager {
     }
 
     /**
-     * Show the given notification
+     * Show the given notification (unless a duplicate notification is being shown at the moment or at the end of the queue)
      * @param note The note to show.
      * @see Notification#show()
      */
     public void showNotification(Notification note) {
         synchronized (queue) {
+            if (Objects.equals(note, currentNotification) || Objects.equals(note, queue.peekLast())) {
+                Logging.debug("Dropping duplicate notification {0}", note);
+                return;
+            }
             queue.add(note);
             processQueue();
         }
