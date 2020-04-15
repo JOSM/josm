@@ -223,7 +223,7 @@ public class LatLon extends Coordinate implements ILatLon {
 
     /**
      * Computes the distance between this lat/lon and another point on the earth.
-     * Uses Haversine formular.
+     * Uses <a href="https://en.wikipedia.org/wiki/Haversine_formula">Haversine formula</a>.
      * @param other the other point.
      * @return distance in metres.
      */
@@ -288,7 +288,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * Interpolate between this and a other latlon
      * @param ll2 The other lat/lon object
      * @param proportion The proportion to interpolate
-     * @return a new latlon at this position if proportion is 0, at the other position it proportion is 1 and lineary interpolated otherwise.
+     * @return a new latlon at this position if proportion is 0, at the other position it proportion is 1 and linearly interpolated otherwise.
      */
     public LatLon interpolate(LatLon ll2, double proportion) {
         // this is an alternate form of this.lat() + proportion * (ll2.lat() - this.lat()) that is slightly faster
