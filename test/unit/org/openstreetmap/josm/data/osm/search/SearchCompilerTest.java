@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -107,12 +108,6 @@ public class SearchCompilerTest {
         }
     }
 
-    private static OsmPrimitive newPrimitive(String key, String value) {
-        final Node p = new Node();
-        p.put(key, value);
-        return p;
-    }
-
     /**
      * Search anything.
      * @throws SearchParseError if an error has been encountered while compiling
@@ -120,9 +115,9 @@ public class SearchCompilerTest {
     @Test
     public void testAny() throws SearchParseError {
         final SearchCompiler.Match c = SearchCompiler.compile("foo");
-        assertTrue(c.match(newPrimitive("foobar", "true")));
-        assertTrue(c.match(newPrimitive("name", "hello-foo-xy")));
-        assertFalse(c.match(newPrimitive("name", "X")));
+        assertTrue(c.match(OsmUtils.createPrimitive("node foobar=true")));
+        assertTrue(c.match(OsmUtils.createPrimitive("node name=hello-foo-xy")));
+        assertFalse(c.match(OsmUtils.createPrimitive("node name=X")));
         assertEquals("foo", c.toString());
     }
 
@@ -133,10 +128,10 @@ public class SearchCompilerTest {
     @Test
     public void testEquals() throws SearchParseError {
         final SearchCompiler.Match c = SearchCompiler.compile("foo=bar");
-        assertFalse(c.match(newPrimitive("foobar", "true")));
-        assertTrue(c.match(newPrimitive("foo", "bar")));
-        assertFalse(c.match(newPrimitive("fooX", "bar")));
-        assertFalse(c.match(newPrimitive("foo", "barX")));
+        assertFalse(c.match(OsmUtils.createPrimitive("node foobar=true")));
+        assertTrue(c.match(OsmUtils.createPrimitive("node foo=bar")));
+        assertFalse(c.match(OsmUtils.createPrimitive("node fooX=bar")));
+        assertFalse(c.match(OsmUtils.createPrimitive("node foo=barX")));
         assertEquals("foo=bar", c.toString());
     }
 
@@ -147,11 +142,11 @@ public class SearchCompilerTest {
     @Test
     public void testRegexp() throws SearchParseError {
         final SearchCompiler.Match c = SearchCompiler.compile("foo~[Bb]a[rz]");
-        assertFalse(c.match(newPrimitive("foobar", "true")));
-        assertFalse(c.match(newPrimitive("foo", "foo")));
-        assertTrue(c.match(newPrimitive("foo", "bar")));
-        assertTrue(c.match(newPrimitive("foo", "baz")));
-        assertTrue(c.match(newPrimitive("foo", "Baz")));
+        assertFalse(c.match(OsmUtils.createPrimitive("node foobar=true")));
+        assertFalse(c.match(OsmUtils.createPrimitive("node foo=foo")));
+        assertTrue(c.match(OsmUtils.createPrimitive("node foo=bar")));
+        assertTrue(c.match(OsmUtils.createPrimitive("node foo=baz")));
+        assertTrue(c.match(OsmUtils.createPrimitive("node foo=Baz")));
         assertEquals("foo=[Bb]a[rz]", c.toString());
     }
 
@@ -162,37 +157,37 @@ public class SearchCompilerTest {
     @Test
     public void testCompare() throws SearchParseError {
         final SearchCompiler.Match c1 = SearchCompiler.compile("start_date>1950");
-        assertTrue(c1.match(newPrimitive("start_date", "1950-01-01")));
-        assertTrue(c1.match(newPrimitive("start_date", "1960")));
-        assertFalse(c1.match(newPrimitive("start_date", "1950")));
-        assertFalse(c1.match(newPrimitive("start_date", "1000")));
-        assertTrue(c1.match(newPrimitive("start_date", "101010")));
+        assertTrue(c1.match(OsmUtils.createPrimitive("node start_date=1950-01-01")));
+        assertTrue(c1.match(OsmUtils.createPrimitive("node start_date=1960")));
+        assertFalse(c1.match(OsmUtils.createPrimitive("node start_date=1950")));
+        assertFalse(c1.match(OsmUtils.createPrimitive("node start_date=1000")));
+        assertTrue(c1.match(OsmUtils.createPrimitive("node start_date=101010")));
 
         final SearchCompiler.Match c2 = SearchCompiler.compile("start_date<1960");
-        assertTrue(c2.match(newPrimitive("start_date", "1950-01-01")));
-        assertFalse(c2.match(newPrimitive("start_date", "1960")));
-        assertTrue(c2.match(newPrimitive("start_date", "1950")));
-        assertTrue(c2.match(newPrimitive("start_date", "1000")));
-        assertTrue(c2.match(newPrimitive("start_date", "200")));
+        assertTrue(c2.match(OsmUtils.createPrimitive("node start_date=1950-01-01")));
+        assertFalse(c2.match(OsmUtils.createPrimitive("node start_date=1960")));
+        assertTrue(c2.match(OsmUtils.createPrimitive("node start_date=1950")));
+        assertTrue(c2.match(OsmUtils.createPrimitive("node start_date=1000")));
+        assertTrue(c2.match(OsmUtils.createPrimitive("node start_date=200")));
 
         final SearchCompiler.Match c3 = SearchCompiler.compile("name<I");
-        assertTrue(c3.match(newPrimitive("name", "Alpha")));
-        assertFalse(c3.match(newPrimitive("name", "Sigma")));
+        assertTrue(c3.match(OsmUtils.createPrimitive("node name=Alpha")));
+        assertFalse(c3.match(OsmUtils.createPrimitive("node name=Sigma")));
 
         final SearchCompiler.Match c4 = SearchCompiler.compile("\"start_date\"<1960");
-        assertTrue(c4.match(newPrimitive("start_date", "1950-01-01")));
-        assertFalse(c4.match(newPrimitive("start_date", "2000")));
+        assertTrue(c4.match(OsmUtils.createPrimitive("node start_date=1950-01-01")));
+        assertFalse(c4.match(OsmUtils.createPrimitive("node start_date=2000")));
 
         final SearchCompiler.Match c5 = SearchCompiler.compile("height>180");
-        assertTrue(c5.match(newPrimitive("height", "200")));
-        assertTrue(c5.match(newPrimitive("height", "99999")));
-        assertFalse(c5.match(newPrimitive("height", "50")));
-        assertFalse(c5.match(newPrimitive("height", "-9999")));
-        assertFalse(c5.match(newPrimitive("height", "fixme")));
+        assertTrue(c5.match(OsmUtils.createPrimitive("node height=200")));
+        assertTrue(c5.match(OsmUtils.createPrimitive("node height=99999")));
+        assertFalse(c5.match(OsmUtils.createPrimitive("node height=50")));
+        assertFalse(c5.match(OsmUtils.createPrimitive("node height=-9999")));
+        assertFalse(c5.match(OsmUtils.createPrimitive("node height=fixme")));
 
         final SearchCompiler.Match c6 = SearchCompiler.compile("name>C");
-        assertTrue(c6.match(newPrimitive("name", "Delta")));
-        assertFalse(c6.match(newPrimitive("name", "Alpha")));
+        assertTrue(c6.match(OsmUtils.createPrimitive("node name=Delta")));
+        assertFalse(c6.match(OsmUtils.createPrimitive("node name=Alpha")));
     }
 
     /**
@@ -457,11 +452,11 @@ public class SearchCompilerTest {
     @Test
     public void testBooleanLogic() throws SearchParseError {
         final SearchCompiler.Match c1 = SearchCompiler.compile("foo AND bar AND baz");
-        assertTrue(c1.match(newPrimitive("foobar", "baz")));
+        assertTrue(c1.match(OsmUtils.createPrimitive("node foobar=baz")));
         assertEquals("foo && bar && baz", c1.toString());
         final SearchCompiler.Match c2 = SearchCompiler.compile("foo AND (bar OR baz)");
-        assertTrue(c2.match(newPrimitive("foobar", "yes")));
-        assertTrue(c2.match(newPrimitive("foobaz", "yes")));
+        assertTrue(c2.match(OsmUtils.createPrimitive("node foobar=yes")));
+        assertTrue(c2.match(OsmUtils.createPrimitive("node foobaz=yes")));
         assertEquals("foo && (bar || baz)", c2.toString());
         final SearchCompiler.Match c3 = SearchCompiler.compile("foo OR (bar baz)");
         assertEquals("foo || (bar && baz)", c3.toString());
