@@ -70,7 +70,7 @@ public final class TaggingPresets {
         if (presetsMenu.getComponentCount() == 0) {
             MainMenu.add(presetsMenu, mainMenu.presetSearchAction);
             MainMenu.add(presetsMenu, mainMenu.presetSearchPrimitiveAction);
-            MainMenu.add(presetsMenu, PreferencesAction.forPreferenceSubTab(tr("Preset preferences"),
+            MainMenu.add(presetsMenu, PreferencesAction.forPreferenceSubTab(tr("Preset preferences..."),
                     tr("Click to open the tagging presets tab in the preferences"), TaggingPresetPreference.class));
             presetsMenu.addSeparator();
         }
