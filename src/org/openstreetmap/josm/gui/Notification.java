@@ -222,7 +222,6 @@ public class Notification {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Notification that = (Notification) o;
-        System.out.println(getContentTextOrComponent().getClass());
         return duration == that.duration
                 && Objects.equals(getContentTextOrComponent(), that.getContentTextOrComponent())
                 && Objects.equals(helpTopic, that.helpTopic);
