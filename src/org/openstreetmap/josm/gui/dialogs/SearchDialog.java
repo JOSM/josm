@@ -232,12 +232,13 @@ public class SearchDialog extends ExtendedDialog {
                 SearchCompiler.compile(ss);
                 super.buttonAction(buttonIndex, evt);
             } catch (SearchParseError | MapCSSException e) {
-                Logging.debug(e);
+                Logging.warn(e);
+                String message = Utils.escapeReservedCharactersHTML(e.getMessage()
+                        .replace("<html>", "")
+                        .replace("</html>", ""));
                 JOptionPane.showMessageDialog(
                         MainApplication.getMainFrame(),
-                        "<html>" + tr("Search expression is not valid: \n\n {0}",
-                                e.getMessage().replace("<html>", "").replace("</html>", "")).replace("\n", "<br>") +
-                        "</html>",
+                        "<html>" + tr("Search expression is not valid: \n\n {0}", message).replace("\n", "<br>") + "</html>",
                         tr("Invalid search expression"),
                         JOptionPane.ERROR_MESSAGE);
             }
