@@ -541,21 +541,11 @@ public class SplitWayCommand extends SequenceCommand {
                                     // won't help in any case.
                                     direction = Direction.IRRELEVANT;
                                 }
-                                if (direction == Direction.UNKNOWN && (!way.firstNode().isOutsideDownloadArea()
-                                        || way.lastNode().isOutsideDownloadArea())) {
-                                    // check if any other complete way in the relation is connected to the way
-                                    // if so, the order of the relation is broken
-                                    for (int i = 0; i < r.getMembersCount(); i++) {
-                                        if (i >= ir - 1 && i <= ir + 1)
-                                            continue;
-                                        RelationMember rmTest = r.getMember(i);
-                                        if (rmTest.isWay() && !rmTest.getMember().isIncomplete() &&
-                                            (way.isFirstLastNode(rmTest.getWay().firstNode())
-                                                    || way.isFirstLastNode(rm.getWay().lastNode()))) {
-                                                direction = Direction.IRRELEVANT;
-                                                break;
-                                        }
-                                    }
+                                if (direction == Direction.UNKNOWN && !way.getDataSet().getDataSourceBounds().isEmpty()
+                                        && !(way.firstNode().isOutsideDownloadArea()
+                                                || way.lastNode().isOutsideDownloadArea())) {
+                                    // we know the connected ways, downloading more members will not help
+                                    direction = Direction.IRRELEVANT;
                                 }
                             }
                         } else {
