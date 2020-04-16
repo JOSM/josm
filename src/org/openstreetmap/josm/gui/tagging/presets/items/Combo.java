@@ -116,13 +116,13 @@ public class Combo extends ComboMultiSelect {
 
     class ChooseColorAction extends AbstractAction {
         ChooseColorAction() {
-            putValue(SHORT_DESCRIPTION, tr("Select color"));
+            putValue(SHORT_DESCRIPTION, tr("Choose a color"));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             Color color = getColor();
-            color = JColorChooser.showDialog(MainApplication.getMainPanel(), tr("Select color"), color);
+            color = JColorChooser.showDialog(MainApplication.getMainPanel(), tr("Choose a color"), color);
             setColor(color);
         }
     }
