@@ -1966,3 +1966,17 @@ node[exit_to] {
   suggestAlternative: "natural=water + water=river";
   group: tr("deprecated tagging");
 }
+
+node[amenity=bench][capacity][!seats],
+way[amenity=bench][capacity][!seats] {
+  throwWarning: tr("{0} is deprecated for {1}", "{1.key}", "{0.tag}");
+  suggestAlternative: "seats";
+  group: tr("deprecated tagging");
+  fixChangeKey: "capacity => seats";
+}
+node[amenity=bench][capacity][seats],
+way[amenity=bench][capacity][seats] {
+  throwWarning: tr("{0} is deprecated for {1}", "{1.key}", "{0.tag}");
+  suggestAlternative: "seats";
+  group: tr("deprecated tagging");
+}

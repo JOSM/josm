@@ -253,6 +253,8 @@ way[incline][incline !~ /^(up|down|-?([0-9]+?(\.[1-9]%)?|100)[%°]?)$/] {
 }
 
 /* must be an integer positive number only and not 0, see #10837 (lanes), #11055 (screen) */
+node[seats][seats !~ /^[1-9]([0-9]*)$/][amenity=bench],
+way[seats][seats !~ /^[1-9]([0-9]*)$/][amenity=bench],
 way[lanes][lanes !~ /^[1-9]([0-9]*)$/][highway],
 way["lanes:backward"]["lanes:backward" !~ /^[1-9]([0-9]*)$/][highway],
 way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
