@@ -64,7 +64,6 @@ import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManagerTest;
-import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -99,7 +98,6 @@ public class JOSMTestRules implements TestRule {
     private boolean usePresets;
     private boolean useHttps;
     private boolean territories;
-    private boolean rlTraffic;
     private boolean metric;
     private boolean main;
 
@@ -269,10 +267,11 @@ public class JOSMTestRules implements TestRule {
      * Use right and lefthand traffic dataset in this test.
      * @return this instance, for easy chaining
      * @since 12556
+     * @deprecated Use {@link #territories}
      */
+    @Deprecated
     public JOSMTestRules rlTraffic() {
         territories();
-        rlTraffic = true;
         return this;
     }
 
@@ -550,10 +549,6 @@ public class JOSMTestRules implements TestRule {
 
         if (territories) {
             Territories.initializeInternalData();
-        }
-
-        if (rlTraffic) {
-            RightAndLefthandTraffic.initialize();
         }
 
         if (this.edtAssertionMockingRunnable != null) {

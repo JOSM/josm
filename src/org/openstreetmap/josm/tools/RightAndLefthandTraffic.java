@@ -1,13 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -42,23 +40,21 @@ public final class RightAndLefthandTraffic {
 
     /**
      * Initializes Right and lefthand traffic data.
+     * @param geoProperty the property containing the traffic data
      * TODO: Synchronization can be refined inside the {@link GeoPropertyIndex} as most look-ups are read-only.
      */
-    public static synchronized void initialize() {
-        rlCache = new GeoPropertyIndex<>(computeLeftDrivingBoundaries(), 24);
+    static synchronized void initialize(DefaultGeoProperty geoProperty) {
+        rlCache = new GeoPropertyIndex<>(geoProperty, 24);
     }
 
-    private static DefaultGeoProperty computeLeftDrivingBoundaries() {
-        Collection<Way> ways = new ArrayList<>();
+    static void appendLeftDrivingBoundaries(OsmPrimitive osm, Collection<Way> ways) {
         // Find all outer ways of left-driving countries. Many of them are adjacent (African and Asian states)
-        DataSet data = Territories.getDataSet();
-        for (Way w : data.getWays()) {
-            if (LEFT.equals(w.get(DRIVING_SIDE))) {
+        if (LEFT.equals(osm.get(DRIVING_SIDE))) {
+            if (osm instanceof Way) {
+                Way w = (Way) osm;
                 addWayIfNotInner(ways, w);
-            }
-        }
-        for (Relation r : data.getRelations()) {
-            if (r.isMultipolygon() && LEFT.equals(r.get(DRIVING_SIDE))) {
+            } else if (osm instanceof Relation && osm.isMultipolygon()) {
+                Relation r = (Relation) osm;
                 for (RelationMember rm : r.getMembers()) {
                     if (rm.isWay() && "outer".equals(rm.getRole()) && !RIGHT.equals(rm.getMember().get(DRIVING_SIDE))) {
                         addWayIfNotInner(ways, (Way) rm.getMember());
@@ -66,8 +62,6 @@ public final class RightAndLefthandTraffic {
                 }
             }
         }
-        // Combine adjacent countries into a single polygon
-        return new DefaultGeoProperty(ways);
     }
 
     /**

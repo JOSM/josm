@@ -50,7 +50,7 @@ public class TagEditHelperTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().territories().rlTraffic().projection();
+    public JOSMTestRules test = new JOSMTestRules().territories().projection();
 
     private static TagEditHelper newTagEditHelper() {
         DefaultTableModel propertyData = new DefaultTableModel();

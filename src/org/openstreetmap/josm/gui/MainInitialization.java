@@ -38,7 +38,6 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.PlatformManager;
-import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Tag2Link;
 import org.openstreetmap.josm.tools.Territories;
@@ -81,9 +80,7 @@ public class MainInitialization implements InitializationSequence {
                 // help shortcut
                 MainApplication.registerActionShortcut(MainApplication.menu.help,
                         Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.DIRECT));
-            }),
-            // This needs to be done before RightAndLefthandTraffic::initialize is called
-            new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize)
+            })
         );
     }
 
@@ -113,8 +110,8 @@ public class MainInitialization implements InitializationSequence {
                         Logging.warn(Logging.getErrorMessage(Utils.getRootCause(e)));
                     }
                 }),
-            new InitializationTask(tr("Initializing internal traffic data"), RightAndLefthandTraffic::initialize),
-            new InitializationTask(tr("Initializing numbering format"), () -> {
+            new InitializationTask(tr("Initializing internal boundaries data"), () -> {
+                Territories.initialize();
                 if (Config.getPref().getBoolean("override.numbering.format", true)) {
                     I18n.initializeNumberingFormat();
                 }

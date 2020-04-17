@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.OptionParser.OptionCount;
 import org.openstreetmap.josm.tools.OptionParser.OptionParseException;
-import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
+import org.openstreetmap.josm.tools.Territories;
 
 /**
  * Command line interface for rendering osm data to an image file.
@@ -438,7 +438,7 @@ public class RenderingCLI implements CLIModule {
         String projCode = Optional.ofNullable(argProjection).orElse("epsg:3857");
         ProjectionRegistry.setProjection(Projections.getProjectionByCode(projCode.toUpperCase(Locale.US)));
 
-        RightAndLefthandTraffic.initialize();
+        Territories.initialize();
     }
 
     private Level getLogLevel() {

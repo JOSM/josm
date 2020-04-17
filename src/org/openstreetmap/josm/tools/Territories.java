@@ -31,10 +31,12 @@ import javax.json.stream.JsonParsingException;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
@@ -113,14 +115,6 @@ public final class Territories {
     }
 
     /**
-     * Returns a copy of the territories dataset.
-     * @return a copy of the territories dataset
-     */
-    public static synchronized DataSet getDataSet() {
-        return new DataSet(dataSet);
-    }
-
-    /**
      * Initializes territories.
      * TODO: Synchronization can be refined inside the {@link GeoPropertyIndex} as most look-ups are read-only.
      * @see #initializeInternalData()
@@ -137,12 +131,14 @@ public final class Territories {
         iso3166Cache = new HashMap<>();
         taginfoCache = new TreeMap<>();
         customTagsCache = new TreeMap<>();
+        Collection<Way> traffic = new ArrayList<>();
         try (CachedFile cf = new CachedFile("resource://data/" + FILENAME);
                 InputStream is = cf.getInputStream()) {
             dataSet = OsmReader.parseDataSet(is, null);
-            Collection<OsmPrimitive> candidates = new ArrayList<>(dataSet.getWays());
-            candidates.addAll(dataSet.getRelations());
-            for (OsmPrimitive osm : candidates) {
+            for (OsmPrimitive osm : dataSet.allPrimitives()) {
+                if (osm instanceof Node) {
+                    continue;
+                }
                 String iso1 = osm.get(ISO3166_1);
                 String iso2 = osm.get(ISO3166_2);
                 if (iso1 != null || iso2 != null) {
@@ -164,9 +160,19 @@ public final class Territories {
                         }
                     }
                 }
+                RightAndLefthandTraffic.appendLeftDrivingBoundaries(osm, traffic);
             }
+            RightAndLefthandTraffic.initialize(new DefaultGeoProperty(traffic));
         } catch (IOException | IllegalDataException ex) {
             throw new JosmRuntimeException(ex);
+        } finally {
+            MultipolygonCache.getInstance().clear(dataSet);
+            if (!Logging.isDebugEnabled()) {
+                // unset dataSet to save memory, see #18907
+                dataSet = null;
+            } else {
+                Logging.debug("Retaining {0} to allow editing via advanced preferences", FILENAME);
+            }
         }
     }
 

@@ -89,6 +89,10 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         }
     }
 
+    /**
+     * Requires {@link Logging#isDebugEnabled()}, otherwise dataset is unloaded
+     * @see Territories#initializeInternalData()
+     */
     private static final class EditBoundariesAction extends AbstractAction {
         EditBoundariesAction() {
             super(tr("Edit boundaries"));
@@ -390,8 +394,10 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
         menu.addSeparator();
         menu.add(getProfileMenu());
-        menu.addSeparator();
-        menu.add(new EditBoundariesAction());
+        if (Logging.isDebugEnabled()) {
+            menu.addSeparator();
+            menu.add(new EditBoundariesAction());
+        }
         menu.addSeparator();
         menu.add(new ResetPreferencesAction());
         return menu;

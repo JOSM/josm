@@ -20,7 +20,7 @@ public class RightAndLefthandTrafficTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().projection().rlTraffic();
+    public JOSMTestRules rules = new JOSMTestRules().projection().territories();
 
     /**
      * Tests that {@code RightAndLefthandTraffic} satisfies utility class criteria.
