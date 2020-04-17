@@ -114,17 +114,16 @@ public class InspectPrimitiveDialogTest {
 
         // CHECKSTYLE.OFF: LineLength
         String baseText =
-                "Styles Cache for \"node\":\n" +
-                "\n" +
-                "> applying mapcss style \"JOSM default (MapCSS)\"\n" +
-                "\n" +
-                "Range:|s119.4328566955879-Infinity\n" +
-                " default: \n" +
-                "Cascade{ font-size:8.0; major-z-index:4.95; symbol-fill-color:#FF0000; symbol-shape:Keyword{square}; symbol-size:6.0; symbol-stroke-color:#FF0000; }\n" +
-                "\n" +
-                "> skipping \"Potlatch 2\" (not active)\n" +
+                "Styles for \"node\":\n" +
+                "==================\n" +
+                "MapCSS style \"JOSM default (MapCSS)\"\n" +
+                "------------------------------------\n" +
+                "Display range: |z119.4329-Infinity\n" +
+                "Layer default\n" +
+                " * Cascade{ font-size:8.0; major-z-index:4.95; symbol-fill-color:#FF0000; symbol-shape:Keyword{square}; symbol-size:6.0; symbol-stroke-color:#FF0000; }\n" +
                 "\n" +
                 "List of generated Styles:\n" +
+                "-------------------------\n" +
                 " * NodeElement{z_idx=[4.95/0.0/0.0]  symbol=[symbolShape=SQUARE size=6 stroke=java.awt.BasicStroke strokeColor=java.awt.Color[r=255,g=0,b=0] fillColor=java.awt.Color[r=255,g=0,b=0]]}\n" +
                 "\n" +
                 "\n";
@@ -143,7 +142,7 @@ public class InspectPrimitiveDialogTest {
             n.setUser(User.getAnonymous());
             ds.addPrimitive(n);
             ds.addSelected(n);
-            assertEquals(baseText + baseText + "The 2 selected objects have identical style caches.",
+            assertEquals(baseText + baseText + "The 2 selected objects have identical style caches.\n",
                     InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", ""));
         } finally {
             MainApplication.getLayerManager().removeLayer(layer);

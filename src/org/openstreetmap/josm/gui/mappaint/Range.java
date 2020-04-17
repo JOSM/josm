@@ -102,7 +102,7 @@ public class Range {
 
     @Override
     public String toString() {
-        return String.format("|s%s-%s", lower, upper);
+        return String.format("|z%.4f-%.4f", lower, upper);
     }
 
     @Override

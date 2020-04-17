@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -117,32 +119,42 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         NavigatableComponent nc = MainApplication.getMap().mapView;
         double scale = nc.getDist100Pixel();
 
-        final StringBuilder txtMappaint = new StringBuilder();
+        final StringWriter stringWriter = new StringWriter();
+        final PrintWriter txtMappaint = new PrintWriter(stringWriter);
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
             for (IPrimitive osm : sel) {
-                txtMappaint.append(tr("Styles Cache for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())));
+                String heading = tr("Styles for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance()));
+                txtMappaint.println(heading);
+                txtMappaint.println(repeatString("=", heading.length()));
 
                 MultiCascade mc = new MultiCascade();
 
                 for (StyleSource s : elemstyles.getStyleSources()) {
                     if (s.active) {
-                        txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n", getSort(s), s.getDisplayString()));
+                        heading = tr("{0} style \"{1}\"", getSort(s), s.getDisplayString());
+                        txtMappaint.println(heading);
+                        txtMappaint.println(repeatString("-", heading.length()));
                         s.apply(mc, osm, scale, false);
-                        txtMappaint.append(tr("\nRange:{0}", mc.range));
+                        txtMappaint.println(tr("Display range: {0}", mc.range));
                         for (Entry<String, Cascade> e : mc.getLayers()) {
-                            txtMappaint.append("\n ").append(e.getKey()).append(": \n").append(e.getValue());
+                            txtMappaint.println(tr("Layer {0}", e.getKey()));
+                            txtMappaint.print(" * ");
+                            txtMappaint.println(e.getValue());
                         }
-                    } else {
-                        txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)", s.getDisplayString()));
                     }
                 }
-                txtMappaint.append(tr("\n\nList of generated Styles:\n"));
+                txtMappaint.println();
+                heading = tr("List of generated Styles:");
+                txtMappaint.println(heading);
+                txtMappaint.println(repeatString("-", heading.length()));
                 StyleElementList sl = elemstyles.get(osm, scale, nc);
                 for (StyleElement s : sl) {
-                    txtMappaint.append(" * ").append(s).append('\n');
+                    txtMappaint.print(" * ");
+                    txtMappaint.println(s);
                 }
-                txtMappaint.append("\n\n");
+                txtMappaint.println();
+                txtMappaint.println();
             }
         } finally {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
@@ -152,16 +164,21 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             StyleCache sc1 = selList.get(0).getCachedStyle();
             StyleCache sc2 = selList.get(1).getCachedStyle();
             if (sc1 == sc2) {
-                txtMappaint.append(tr("The 2 selected objects have identical style caches."));
+                txtMappaint.println(tr("The 2 selected objects have identical style caches."));
             }
             if (!sc1.equals(sc2)) {
-                txtMappaint.append(tr("The 2 selected objects have different style caches."));
+                txtMappaint.println(tr("The 2 selected objects have different style caches."));
             }
             if (sc1 != sc2 && sc1.equals(sc2)) {
-                txtMappaint.append(tr("Warning: The 2 selected objects have equal, but not identical style caches."));
+                txtMappaint.println(tr("Warning: The 2 selected objects have equal, but not identical style caches."));
             }
         }
-        return txtMappaint.toString();
+        return stringWriter.toString();
+    }
+
+    private static String repeatString(String string, int count) {
+        // Java 11: use String.repeat
+        return new String(new char[count]).replace("\0", string);
     }
 
     /*  Future Ideas:
@@ -200,9 +217,9 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     private static String getSort(StyleSource s) {
         if (s instanceof MapCSSStyleSource) {
-            return tr("mapcss");
+            return "MapCSS";
         } else {
-            return tr("unknown");
+            return tr("UNKNOWN");
         }
     }
 }
