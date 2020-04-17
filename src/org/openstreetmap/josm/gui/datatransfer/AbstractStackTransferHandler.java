@@ -34,12 +34,8 @@ public abstract class AbstractStackTransferHandler extends TransferHandler {
     @Override
     public boolean canImport(TransferSupport support) {
         // import everything for now, only support copy.
-        for (AbstractOsmDataPaster df : getSupportedPasters()) {
-            if (df.supports(support)) {
-                return true;
-            }
-        }
-        return false;
+        return getSupportedPasters().stream()
+                .anyMatch(df -> df.supports(support));
     }
 
     @Override

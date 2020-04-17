@@ -61,12 +61,8 @@ public class PrimitiveTransferable implements Transferable {
     @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
         DataFlavor[] flavors = getTransferDataFlavors();
-        for (DataFlavor f : flavors) {
-            if (flavor.equals(f)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(flavors)
+                .anyMatch(flavor::equals);
     }
 
     @Override

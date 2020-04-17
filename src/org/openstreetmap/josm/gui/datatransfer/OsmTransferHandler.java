@@ -90,11 +90,8 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
     public boolean isDataAvailable() {
         try {
             Collection<DataFlavor> available = Arrays.asList(ClipboardUtils.getClipboard().getAvailableDataFlavors());
-            for (AbstractOsmDataPaster s : SUPPORTED) {
-                if (s.supports(available)) {
-                    return true;
-                }
-            }
+            return SUPPORTED.stream()
+                    .anyMatch(s -> s.supports(available));
         } catch (IllegalStateException e) {
             Logging.debug(e);
         } catch (NullPointerException e) { // NOPMD
