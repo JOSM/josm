@@ -64,9 +64,6 @@ import javax.imageio.stream.ImageInputStream;
 import javax.swing.ImageIcon;
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.kitfox.svg.SVGDiagram;
-import com.kitfox.svg.SVGException;
-import com.kitfox.svg.SVGUniverse;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -89,6 +86,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.kitfox.svg.SVGDiagram;
+import com.kitfox.svg.SVGException;
+import com.kitfox.svg.SVGUniverse;
 
 /**
  * Helper class to support the application with images.
@@ -1016,6 +1017,11 @@ public class ImageProvider {
             String mediatype = m.group(1);
             if ("image/svg+xml".equals(mediatype)) {
                 String s = new String(bytes, StandardCharsets.UTF_8);
+                // see #19097: check if s starts with PNG magic
+                if (s.length() > 4 && "PNG".equals(s.substring(1, 4))) {
+                    Logging.warn("url contains PNG file " + url);
+                    return null;
+                }
                 SVGDiagram svg;
                 synchronized (getSvgUniverse()) {
                     URI uri = getSvgUniverse().loadSVG(new StringReader(s), Utils.encodeUrl(s));
