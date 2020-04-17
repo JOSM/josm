@@ -66,7 +66,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
     TaggingPresetSearchPrimitiveDialog() {
         super(MainApplication.getMainFrame(), tr("Search for objects by preset"), tr("Search"), tr("Cancel"));
         setButtonIcons("dialogs/search", "cancel");
-        configureContextsensitiveHelp("/Action/TaggingPresetSearchPrimitiveDialog", true /* show help button */);
+        configureContextsensitiveHelp("/Action/TaggingPresetSearchPrimitive", true /* show help button */);
         selector = new TaggingPresetSelector(false, false);
         setContent(selector, false);
         selector.setDblClickListener(e -> buttonAction(0, null));
