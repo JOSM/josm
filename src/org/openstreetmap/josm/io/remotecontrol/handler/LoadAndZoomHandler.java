@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -225,16 +226,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         }
 
         // This comes before the other changeset tags, so that they can be overridden
-        if (args.containsKey("changeset_tags")) {
-            MainApplication.worker.submit(() -> {
-                DataSet ds = MainApplication.getLayerManager().getEditDataSet();
-                if (ds != null) {
-                    for (String[] key : AddTagsDialog.parseUrlTagsToKeyValues(args.get("changeset_tags"))) {
-                        ds.addChangeSetTag(key[0], key[1]);
-                    }
-                }
-            });
-        }
+        parseChangesetTags(args);
 
         // add changeset tags after download if necessary
         if (args.containsKey("changeset_comment") || args.containsKey("changeset_source") || args.containsKey("changeset_hashtags")) {
@@ -266,6 +258,19 @@ public class LoadAndZoomHandler extends RequestHandler {
                                     + "Technical explanation: the URL query parameter ''select='' or ''search='' has an invalid value.\n"
                                     + "Ask someone at the origin of the clicked link to fix this.")
                         ).setIcon(JOptionPane.WARNING_MESSAGE).setDuration(Notification.TIME_LONG).show();
+                }
+            });
+        }
+    }
+
+    static void parseChangesetTags(Map<String, String> args) {
+        if (args.containsKey("changeset_tags")) {
+            MainApplication.worker.submit(() -> {
+                DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+                if (ds != null) {
+                    for (String[] key : AddTagsDialog.parseUrlTagsToKeyValues(args.get("changeset_tags"))) {
+                        ds.addChangeSetTag(key[0], key[1]);
+                    }
                 }
             });
         }

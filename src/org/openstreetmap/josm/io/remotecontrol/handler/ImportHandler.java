@@ -48,6 +48,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                     task.loadUrl(getDownloadParams(), url.toExternalForm(), null);
                 }
             }
+            LoadAndZoomHandler.parseChangesetTags(args);
         } catch (RuntimeException ex) { // NOPMD
             Logging.warn("RemoteControl: Error parsing import remote control request:");
             Logging.error(ex);
@@ -62,7 +63,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"new_layer", "layer_name", "layer_locked", "download_policy", "upload_policy"};
+        return new String[] {"new_layer", "layer_name", "layer_locked", "download_policy", "upload_policy", "changeset_tags"};
     }
 
     @Override
