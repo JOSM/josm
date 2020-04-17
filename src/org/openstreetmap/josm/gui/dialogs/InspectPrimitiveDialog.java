@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.PrimitiveComparator;
+import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -186,32 +189,22 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         Sort by the count for presentation, so the most active editors are on top.
         Count only tagged nodes (so empty way nodes don't inflate counts).
     */
-    protected static String buildListOfEditorsText(Iterable<? extends IPrimitive> primitives) {
-        final Map<String, Integer> editCountByUser = new TreeMap<>(Collator.getInstance(Locale.getDefault()));
-
-        // Count who edited each selected object
-        for (IPrimitive o : primitives) {
-            if (o.getUser() != null) {
-                String username = o.getUser().getName();
-                Integer oldCount = editCountByUser.get(username);
-                if (oldCount == null) {
-                    editCountByUser.put(username, 1);
-                } else {
-                    editCountByUser.put(username, oldCount + 1);
-                }
-            }
-        }
+    protected static String buildListOfEditorsText(Collection<? extends IPrimitive> primitives) {
+        final Map<String, Long> editCountByUser = primitives.stream()
+                .map(IPrimitive::getUser)
+                .filter(Objects::nonNull)
+                .collect(Collectors.groupingBy(
+                        User::getName,
+                        () -> new TreeMap<>(Collator.getInstance(Locale.getDefault())),
+                        Collectors.counting()));
 
         // Print the count in sorted order
         final StringBuilder s = new StringBuilder(48)
             .append(trn("{0} user last edited the selection:", "{0} users last edited the selection:",
                 editCountByUser.size(), editCountByUser.size()))
             .append("\n\n");
-        for (Map.Entry<String, Integer> entry : editCountByUser.entrySet()) {
-            final String username = entry.getKey();
-            final Integer editCount = entry.getValue();
-            s.append(String.format("%6d  %s", editCount, username)).append('\n');
-        }
+        editCountByUser.forEach((username, editCount) ->
+                s.append(String.format("%6d  %s", editCount, username)).append('\n'));
         return s.toString();
     }
 
