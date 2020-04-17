@@ -65,9 +65,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
 import com.kitfox.svg.xml.XMLParseUtil;
 import org.openstreetmap.josm.spi.preferences.Config;
 
@@ -1802,21 +1799,6 @@ public final class Utils {
         if (klass.isInstance(o))
             return Optional.of((T) o);
         return Optional.empty();
-    }
-
-    /**
-     * Returns JRE JavaScript Engine (Nashorn by default), if any.
-     * Catches and logs SecurityException and return null in case of error.
-     * @return JavaScript Engine, or null.
-     * @since 13301
-     */
-    public static ScriptEngine getJavaScriptEngine() {
-        try {
-            return new ScriptEngineManager(null).getEngineByName("JavaScript");
-        } catch (SecurityException | ExceptionInInitializerError e) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to get JavaScript engine", e);
-            return null;
-        }
     }
 
     /**
