@@ -10,11 +10,9 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -396,33 +394,24 @@ public class UnGlueAction extends JosmAction {
             if (r.isDeleted()) {
                 continue;
             }
-            Relation newRel = null;
-            Map<String, Integer> rolesToReAdd = null; // <role name, index>
-            int i = 0;
-            for (RelationMember rm : r.getMembers()) {
-                if (rm.isNode() && rm.getMember() == originalNode) {
-                    if (newRel == null) {
-                        newRel = new Relation(r);
-                        rolesToReAdd = new HashMap<>();
-                    }
-                    if (rolesToReAdd != null) {
-                        rolesToReAdd.put(rm.getRole(), i);
-                    }
+            Relation newRel = new Relation(r);
+            // loop backwards because we add or remove members, works also when nodes appear
+            // multiple times in the same relation
+            boolean changed = false;
+            for (int i = r.getMembersCount() - 1; i >= 0; i--) {
+                RelationMember rm = r.getMember(i);
+                if (rm.getMember() != originalNode)
+                    continue;
+                for (Node n : newNodes) {
+                    newRel.addMember(i + 1, new RelationMember(rm.getRole(), n));
                 }
-                i++;
+                if (ExistingBothNew.NEW == memberships) {
+                    // remove old member
+                    newRel.removeMember(i);
+                }
+                changed = true;
             }
-            if (newRel != null) {
-                if (rolesToReAdd != null) {
-                    for (Map.Entry<String, Integer> role : rolesToReAdd.entrySet()) {
-                        for (Node n : newNodes) {
-                            newRel.addMember(role.getValue() + 1, new RelationMember(role.getKey(), n));
-                        }
-                        if (ExistingBothNew.NEW == memberships) {
-                            // remove old member
-                            newRel.removeMember(role.getValue());
-                        }
-                    }
-                }
+            if (changed) {
                 cmds.add(new ChangeCommand(r, newRel));
             }
         }
