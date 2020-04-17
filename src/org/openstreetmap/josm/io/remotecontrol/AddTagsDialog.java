@@ -10,14 +10,12 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
@@ -37,6 +35,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.TextTagParser;
 
 /**
  * Dialog to add tags as part of the remotecontrol.
@@ -292,16 +291,8 @@ public class AddTagsDialog extends ExtendedDialog {
      * @return An 2d array in the format of {@code [key][value]}
      * @since 15316
      */
-    public static String[][] parseUrlTagsToKeyValues(String urlSection) {
-        return Arrays.stream(urlSection.split("\\|"))
-                .map(String::trim)
-                .filter(tag -> !tag.isEmpty() && tag.contains("="))
-                .map(tag -> tag.split("\\s*=\\s*", 2))
-                .map(pair -> {
-                    pair[1] = pair.length < 2 ? "" : pair[1];
-                    return pair;
-                })
-                .collect(Collectors.toList()).toArray(new String[][] {});
+    public static Map<String, String> parseUrlTagsToKeyValues(String urlSection) {
+        return TextTagParser.readTagsByRegexp(urlSection, "\\|", "(.*?)=(.*?)", false);
     }
 
     /**
@@ -312,14 +303,6 @@ public class AddTagsDialog extends ExtendedDialog {
      * @since 7521
      */
     public static void addTags(String[][] keyValue, String sender, Collection<? extends OsmPrimitive> primitives) {
-        if (trustedSenders.contains(sender)) {
-            if (MainApplication.getLayerManager().getEditDataSet() != null) {
-                for (String[] row : keyValue) {
-                    UndoRedoHandler.getInstance().add(new ChangePropertyCommand(primitives, row[0], row[1]));
-                }
-            }
-        } else {
-            new AddTagsDialog(keyValue, sender, primitives).showDialog();
-        }
+        new AddTagsDialog(keyValue, sender, primitives).showDialog();
     }
 }

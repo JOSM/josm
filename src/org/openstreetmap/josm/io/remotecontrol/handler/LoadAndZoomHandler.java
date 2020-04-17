@@ -268,9 +268,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             MainApplication.worker.submit(() -> {
                 DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (ds != null) {
-                    for (String[] key : AddTagsDialog.parseUrlTagsToKeyValues(args.get("changeset_tags"))) {
-                        ds.addChangeSetTag(key[0], key[1]);
-                    }
+                    AddTagsDialog.parseUrlTagsToKeyValues(args.get("changeset_tags")).forEach(ds::addChangeSetTag);
                 }
             });
         }
