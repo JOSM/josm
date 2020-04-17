@@ -6,15 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.gui.MainApplication;
@@ -29,7 +25,6 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Helper class to do specific Preferences operation - appending, replacing, deletion by key and by value
- * Also contains functions that convert preferences object to JavaScript object and back
  * @since 12634 (extracted from {@code CustomConfigurator})
  */
 public final class PreferencesUtils {
@@ -279,203 +274,6 @@ public final class PreferencesUtils {
 
     public static void showPrefs(Preferences tmpPref) {
         Logging.info("properties: " + tmpPref.settingsMap);
-    }
-
-    public static void modifyPreferencesByScript(ScriptEngine engine, Preferences tmpPref, String js) throws ScriptException {
-        loadPrefsToJS(engine, tmpPref, "API.pref", true);
-        engine.eval(js);
-        readPrefsFromJS(engine, tmpPref, "API.pref");
-    }
-
-    /**
-     * Convert JavaScript preferences object to preferences data structures
-     * @param engine - JS engine to put object
-     * @param tmpPref - preferences to fill from JS
-     * @param varInJS - JS variable name, where preferences are stored
-     * @throws ScriptException if the evaluation fails
-     */
-    public static void readPrefsFromJS(ScriptEngine engine, Preferences tmpPref, String varInJS) throws ScriptException {
-        String finish =
-            "stringMap = new java.util.TreeMap ;"+
-            "listMap =  new java.util.TreeMap ;"+
-            "listlistMap = new java.util.TreeMap ;"+
-            "listmapMap =  new java.util.TreeMap ;"+
-            "for (key in "+varInJS+") {"+
-            "  val = "+varInJS+"[key];"+
-            "  type = typeof val == 'string' ? 'string' : val.type;"+
-            "  if (type == 'string') {"+
-            "    stringMap.put(key, val);"+
-            "  } else if (type == 'list') {"+
-            "    l = new java.util.ArrayList;"+
-            "    for (i=0; i<val.length; i++) {"+
-            "      l.add(java.lang.String.valueOf(val[i]));"+
-            "    }"+
-            "    listMap.put(key, l);"+
-            "  } else if (type == 'listlist') {"+
-            "    l = new java.util.ArrayList;"+
-            "    for (i=0; i<val.length; i++) {"+
-            "      list=val[i];"+
-            "      jlist=new java.util.ArrayList;"+
-            "      for (j=0; j<list.length; j++) {"+
-            "         jlist.add(java.lang.String.valueOf(list[j]));"+
-            "      }"+
-            "      l.add(jlist);"+
-            "    }"+
-            "    listlistMap.put(key, l);"+
-            "  } else if (type == 'listmap') {"+
-            "    l = new java.util.ArrayList;"+
-            "    for (i=0; i<val.length; i++) {"+
-            "      map=val[i];"+
-            "      jmap=new java.util.TreeMap;"+
-            "      for (var key2 in map) {"+
-            "         jmap.put(key2,java.lang.String.valueOf(map[key2]));"+
-            "      }"+
-            "      l.add(jmap);"+
-            "    }"+
-            "    listmapMap.put(key, l);"+
-            "  }  else {" +
-            "   " + PreferencesUtils.class.getName() + ".log('Unknown type:'+val.type+ '- use list, listlist or listmap'); }"+
-            "  }";
-        engine.eval(finish);
-
-        @SuppressWarnings("unchecked")
-        Map<String, String> stringMap = (Map<String, String>) engine.get("stringMap");
-        @SuppressWarnings("unchecked")
-        Map<String, List<String>> listMap = (Map<String, List<String>>) engine.get("listMap");
-        @SuppressWarnings("unchecked")
-        Map<String, List<Collection<String>>> listlistMap = (Map<String, List<Collection<String>>>) engine.get("listlistMap");
-        @SuppressWarnings("unchecked")
-        Map<String, List<Map<String, String>>> listmapMap = (Map<String, List<Map<String, String>>>) engine.get("listmapMap");
-
-        tmpPref.settingsMap.clear();
-
-        Map<String, Setting<?>> tmp = new HashMap<>();
-        for (Entry<String, String> e : stringMap.entrySet()) {
-            tmp.put(e.getKey(), new StringSetting(e.getValue()));
-        }
-        for (Entry<String, List<String>> e : listMap.entrySet()) {
-            tmp.put(e.getKey(), new ListSetting(e.getValue()));
-        }
-
-        for (Entry<String, List<Collection<String>>> e : listlistMap.entrySet()) {
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            List<List<String>> value = (List) e.getValue();
-            tmp.put(e.getKey(), new ListListSetting(value));
-        }
-        for (Entry<String, List<Map<String, String>>> e : listmapMap.entrySet()) {
-            tmp.put(e.getKey(), new MapListSetting(e.getValue()));
-        }
-        for (Entry<String, Setting<?>> e : tmp.entrySet()) {
-            if (e.getValue().equals(tmpPref.defaultsMap.get(e.getKey()))) continue;
-            tmpPref.settingsMap.put(e.getKey(), e.getValue());
-        }
-    }
-
-    /**
-     * Convert preferences data structures to JavaScript object
-     * @param engine - JS engine to put object
-     * @param tmpPref - preferences to convert
-     * @param whereToPutInJS - variable name to store preferences in JS
-     * @param includeDefaults - include known default values to JS objects
-     * @throws ScriptException if the evaluation fails
-     */
-    public static void loadPrefsToJS(ScriptEngine engine, Preferences tmpPref, String whereToPutInJS, boolean includeDefaults)
-            throws ScriptException {
-        Map<String, String> stringMap = new TreeMap<>();
-        Map<String, List<String>> listMap = new TreeMap<>();
-        Map<String, List<List<String>>> listlistMap = new TreeMap<>();
-        Map<String, List<Map<String, String>>> listmapMap = new TreeMap<>();
-
-        if (includeDefaults) {
-            for (Map.Entry<String, Setting<?>> e: tmpPref.defaultsMap.entrySet()) {
-                Setting<?> setting = e.getValue();
-                if (setting instanceof StringSetting) {
-                    stringMap.put(e.getKey(), ((StringSetting) setting).getValue());
-                } else if (setting instanceof ListSetting) {
-                    listMap.put(e.getKey(), ((ListSetting) setting).getValue());
-                } else if (setting instanceof ListListSetting) {
-                    listlistMap.put(e.getKey(), ((ListListSetting) setting).getValue());
-                } else if (setting instanceof MapListSetting) {
-                    listmapMap.put(e.getKey(), ((MapListSetting) setting).getValue());
-                }
-            }
-        }
-        tmpPref.settingsMap.entrySet().removeIf(e -> e.getValue().getValue() == null);
-
-        for (Map.Entry<String, Setting<?>> e: tmpPref.settingsMap.entrySet()) {
-            Setting<?> setting = e.getValue();
-            if (setting instanceof StringSetting) {
-                stringMap.put(e.getKey(), ((StringSetting) setting).getValue());
-            } else if (setting instanceof ListSetting) {
-                listMap.put(e.getKey(), ((ListSetting) setting).getValue());
-            } else if (setting instanceof ListListSetting) {
-                listlistMap.put(e.getKey(), ((ListListSetting) setting).getValue());
-            } else if (setting instanceof MapListSetting) {
-                listmapMap.put(e.getKey(), ((MapListSetting) setting).getValue());
-            }
-        }
-
-        engine.put("stringMap", stringMap);
-        engine.put("listMap", listMap);
-        engine.put("listlistMap", listlistMap);
-        engine.put("listmapMap", listmapMap);
-
-        String init =
-            "function getJSList( javaList ) {"+
-            " var jsList; var i; "+
-            " if (javaList == null) return null;"+
-            "jsList = [];"+
-            "  for (i = 0; i < javaList.size(); i++) {"+
-            "    jsList.push(String(list.get(i)));"+
-            "  }"+
-            "return jsList;"+
-            "}"+
-            "function getJSMap( javaMap ) {"+
-            " var jsMap; var it; var e; "+
-            " if (javaMap == null) return null;"+
-            " jsMap = {};"+
-            " for (it = javaMap.entrySet().iterator(); it.hasNext();) {"+
-            "    e = it.next();"+
-            "    jsMap[ String(e.getKey()) ] = String(e.getValue()); "+
-            "  }"+
-            "  return jsMap;"+
-            "}"+
-            "for (it = stringMap.entrySet().iterator(); it.hasNext();) {"+
-            "  e = it.next();"+
-            whereToPutInJS+"[String(e.getKey())] = String(e.getValue());"+
-            "}\n"+
-            "for (it = listMap.entrySet().iterator(); it.hasNext();) {"+
-            "  e = it.next();"+
-            "  list = e.getValue();"+
-            "  jslist = getJSList(list);"+
-            "  jslist.type = 'list';"+
-            whereToPutInJS+"[String(e.getKey())] = jslist;"+
-            "}\n"+
-            "for (it = listlistMap.entrySet().iterator(); it.hasNext(); ) {"+
-            "  e = it.next();"+
-            "  listlist = e.getValue();"+
-            "  jslistlist = [];"+
-            "  for (it2 = listlist.iterator(); it2.hasNext(); ) {"+
-            "    list = it2.next(); "+
-            "    jslistlist.push(getJSList(list));"+
-            "    }"+
-            "  jslistlist.type = 'listlist';"+
-            whereToPutInJS+"[String(e.getKey())] = jslistlist;"+
-            "}\n"+
-            "for (it = listmapMap.entrySet().iterator(); it.hasNext();) {"+
-            "  e = it.next();"+
-            "  listmap = e.getValue();"+
-            "  jslistmap = [];"+
-            "  for (it2 = listmap.iterator(); it2.hasNext();) {"+
-            "    map = it2.next();"+
-            "    jslistmap.push(getJSMap(map));"+
-            "    }"+
-            "  jslistmap.type = 'listmap';"+
-            whereToPutInJS+"[String(e.getKey())] = jslistmap;"+
-            "}\n";
-
-        // Execute conversion script
-        engine.eval(init);
     }
 
     /**

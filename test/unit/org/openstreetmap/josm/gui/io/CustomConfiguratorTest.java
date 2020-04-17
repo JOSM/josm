@@ -83,7 +83,7 @@ public class CustomConfiguratorTest {
         CustomConfigurator.readXML(TestUtils.getTestDataRoot() + "customconfigurator", "append.xml");
         String log = PreferencesUtils.getLog();
         assertFalse(log, log.contains("Error"));
-        assertFalse(Config.getPref().getList("test").isEmpty());
+        assertEquals(Arrays.asList("11111111", "2222222", "JOSM"), Config.getPref().getList("test"));
 
         // Test 2 - read(file, pref) + replace
         Preferences pref = new Preferences();

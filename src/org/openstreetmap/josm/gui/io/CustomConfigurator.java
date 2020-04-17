@@ -24,8 +24,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.DocumentBuilder;
@@ -385,20 +383,19 @@ public final class CustomConfigurator {
 
         private Preferences mainPrefs;
         private final Map<String, Element> tasksMap = new HashMap<>();
+        private final Map<String, String> environment = new HashMap<>();
 
         private boolean lastV; // last If condition result
-
-        private ScriptEngine engine;
 
         public void openAndReadXML(File file) {
             PreferencesUtils.log("-- Reading custom preferences from " + file.getAbsolutePath() + " --");
             try {
                 String fileDir = file.getParentFile().getAbsolutePath();
-                if (fileDir != null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
+                environment.put("scriptDir", normalizeDirName(fileDir));
                 try (InputStream is = Files.newInputStream(file.toPath())) {
                     openAndReadXML(is);
                 }
-            } catch (ScriptException | IOException | SecurityException | InvalidPathException ex) {
+            } catch (IOException | SecurityException | InvalidPathException ex) {
                 PreferencesUtils.log(ex, "Error reading custom preferences:");
             }
         }
@@ -416,32 +413,10 @@ public final class CustomConfigurator {
         }
 
         public XMLCommandProcessor(Preferences mainPrefs) {
-            try {
-                this.mainPrefs = mainPrefs;
-                PreferencesUtils.resetLog();
-                engine = Utils.getJavaScriptEngine();
-                if (engine == null) {
-                    throw new ScriptException("Failed to retrieve JavaScript engine");
-                }
-                engine.eval("API={}; API.pref={}; API.fragments={};");
-
-                engine.eval("homeDir='"+normalizeDirName(Config.getDirs().getPreferencesDirectory(false).getAbsolutePath()) +"';");
-                engine.eval("josmVersion="+Version.getInstance().getVersion()+';');
-                String className = CustomConfigurator.class.getName();
-                engine.eval("API.messageBox="+className+".messageBox");
-                engine.eval("API.askText=function(text) { return String("+className+".askForText(text));}");
-                engine.eval("API.askOption="+className+".askForOption");
-                engine.eval("API.downloadFile="+className+".downloadFile");
-                engine.eval("API.downloadAndUnpackFile="+className+".downloadAndUnpackFile");
-                engine.eval("API.deleteFile="+className+".deleteFile");
-                engine.eval("API.plugin ="+className+".pluginOperation");
-                engine.eval("API.pluginInstall = function(names) { "+className+".pluginOperation(names,'','');}");
-                engine.eval("API.pluginUninstall = function(names) { "+className+".pluginOperation('',names,'');}");
-                engine.eval("API.pluginDelete = function(names) { "+className+".pluginOperation('','',names);}");
-            } catch (ScriptException ex) {
-                PreferencesUtils.log("Error: initializing script engine: "+ex.getMessage());
-                Logging.error(ex);
-            }
+            this.mainPrefs = mainPrefs;
+            PreferencesUtils.resetLog();
+            setVar("homeDir", normalizeDirName(Config.getDirs().getPreferencesDirectory(false).getAbsolutePath()));
+            setVar("josmVersion", String.valueOf(Version.getInstance().getVersion()));
         }
 
         private void processXML(Document document) {
@@ -493,9 +468,6 @@ public final class CustomConfigurator {
                 case "delete":
                     processDeleteElement(elem);
                     break;
-                case "script":
-                    processScriptElement(elem);
-                    break;
                 default:
                     PreferencesUtils.log("Error: Unknown element " + elementName);
                 }
@@ -516,17 +488,6 @@ public final class CustomConfigurator {
 
             Preferences tmpPref = readPreferencesFromDOMElement(item);
             PreferencesUtils.showPrefs(tmpPref);
-
-            if (!id.isEmpty()) {
-                try {
-                    String fragmentVar = "API.fragments['"+id+"']";
-                    engine.eval(fragmentVar+"={};");
-                    PreferencesUtils.loadPrefsToJS(engine, tmpPref, fragmentVar, false);
-                    // we store this fragment as API.fragments['id']
-                } catch (ScriptException ex) {
-                    PreferencesUtils.log(ex, "Error: can not load preferences fragment:");
-                }
-            }
 
             if ("replace".equals(oper)) {
                 PreferencesUtils.log("Preferences replace: %d keys: %s\n",
@@ -606,11 +567,7 @@ public final class CustomConfigurator {
         }
 
         public void setVar(String name, String value) {
-            try {
-                engine.eval(name+"='"+value+"';");
-            } catch (ScriptException ex) {
-                PreferencesUtils.log(ex, String.format("Error: Can not assign variable: %s=%s :", name, value));
-            }
+            environment.put(name, value);
         }
 
         private void processIfElement(Element elem) {
@@ -645,33 +602,18 @@ public final class CustomConfigurator {
             return false;
         }
 
-        private void processScriptElement(Element elem) {
-            String js = elem.getChildNodes().item(0).getTextContent();
-            PreferencesUtils.log("Processing script...");
-            try {
-                PreferencesUtils.modifyPreferencesByScript(engine, mainPrefs, js);
-            } catch (ScriptException ex) {
-                messageBox("e", ex.getMessage());
-                PreferencesUtils.log(ex, "JS error:");
-            }
-            PreferencesUtils.log("Script finished");
-        }
-
         /**
          * substitute ${expression} = expression evaluated by JavaScript
          * @param s string
          * @return evaluation result
          */
         private String evalVars(String s) {
-            Matcher mr = Pattern.compile("\\$\\{([^\\}]*)\\}").matcher(s);
+            Matcher mr = Pattern.compile("\\$\\{(?<identifier>[^\\}]*)\\}").matcher(s);
             StringBuffer sb = new StringBuffer();
             while (mr.find()) {
-                try {
-                    String result = engine.eval(mr.group(1)).toString();
-                    mr.appendReplacement(sb, result);
-                } catch (ScriptException ex) {
-                    PreferencesUtils.log(ex, String.format("Error: Can not evaluate expression %s :", mr.group(1)));
-                }
+                String identifier = mr.group("identifier");
+                String value = environment.get(identifier);
+                mr.appendReplacement(sb, String.valueOf(value));
             }
             mr.appendTail(sb);
             return sb.toString();
