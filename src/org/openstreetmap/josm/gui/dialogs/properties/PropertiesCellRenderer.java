@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Pair;
@@ -124,8 +125,10 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
                 // U+25A0 BLACK SQUARE
                 final String color = str.matches("#[0-9A-Fa-f]{3,8}")
                         ? str
-                        : ColorHelper.color2html(ColorHelper.html2color(str));
-                str = "<html><body><span color='" + color + "'>\u25A0</span> " + str + "</body></html>";
+                        : ColorHelper.color2html(CSSColors.get(str));
+                if (color != null) {
+                    str = "<html><body><span color='" + color + "'>\u25A0</span> " + str + "</body></html>";
+                }
             }
             ((JLabel) c).putClientProperty("html.disable", enableHTML ? null : Boolean.TRUE); // Fix #8730
             ((JLabel) c).setText(str);

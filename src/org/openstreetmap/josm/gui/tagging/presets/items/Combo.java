@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.tagging.ac.AutoCompletionPriority;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
@@ -134,7 +135,10 @@ public class Combo extends ComboMultiSelect {
     }
 
     protected Color getColor() {
-        return ColorHelper.html2color(String.valueOf(getSelectedItem()));
+        String colorString = String.valueOf(getSelectedItem());
+        return colorString.startsWith("#")
+                ? ColorHelper.html2color(colorString)
+                : CSSColors.get(colorString);
     }
 
     @Override
