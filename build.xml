@@ -333,6 +333,10 @@ Build-Date: ${build.tstamp}
         <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
             <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
         </uptodate>
+        <uptodate property="epsg.notRequired" targetfile="${epsg.output}">
+            <srcfiles file="${base.dir}/scripts/BuildProjectionDefinitions.java"/>
+            <srcfiles dir="nodist/data/projection"/>
+        </uptodate>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${dist.dir}"/>
     </target>
@@ -966,7 +970,7 @@ Build-Date: ${build.tstamp}
     <!--
       ** generate projection list.
     -->
-    <target name="epsg" depends="epsg-compile">
+    <target name="epsg" unless="epsg.notRequired" depends="epsg-compile">
         <touch file="${epsg.output}" mkdirs="true"/>
         <java classname="BuildProjectionDefinitions" failonerror="true" fork="true">
             <sysproperty key="java.awt.headless" value="true"/>
