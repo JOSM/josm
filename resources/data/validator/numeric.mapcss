@@ -414,3 +414,84 @@ node[fire_hydrant:pressure="#"] {
   assertNoMatch: "node isced:level=5";
   assertNoMatch: "node isced:level=0-3";
 }
+
+/* #11253, maxstay=0 is unclear. Was in presets. */
+*[maxstay=0] {
+  throwWarning: tr("Definition of {0} is unclear", "{0.tag}");
+  assertMatch: "node maxstay=0";
+  assertMatch: "way maxstay=0";
+  assertNoMatch: "node maxstay=2";
+  assertNoMatch: "way maxstay=no";
+}
+
+/* #11253, maxstay needs unit. Was in presets without it. Autofixes for the most common cases. */
+*[maxstay][maxstay =~ /^([1-9][0-9]*(\.[0-9]+)? min)$/][maxstay!="1 min"] {
+  throwWarning: tr("unusual value of {0}: set unit e.g. {1} or {2}; only positive values; point is decimal separator; space between value and unit", "{0.key}", "minutes", "hours");
+  fixAdd: concat("maxstay=", replace(tag("maxstay"), "min", "minutes"));
+  set maxstay_autofix;
+  assertMatch: "node maxstay=\"5 min\"";
+  assertMatch: "node maxstay=\"15 min\"";
+  assertNoMatch: "node maxstay=\"1 min\"";
+  assertNoMatch: "node maxstay=\"02 minutes\"";
+  assertNoMatch: "node maxstay=\"2 minutes\"";
+}
+*[maxstay="1h"],
+*[maxstay="1 h"],
+*[maxstay="1 hr"] {
+  throwWarning: tr("unusual value of {0}: set unit e.g. {1} or {2}; only positive values; point is decimal separator; space between value and unit", "{0.key}", "minutes", "hours");
+  fixAdd: "maxstay=1 hour";
+  set maxstay_autofix;
+  assertMatch: "node maxstay=1h";
+  assertMatch: "node maxstay=\"1 h\"";
+  assertMatch: "node maxstay=\"1 hr\"";
+}
+*[maxstay][maxstay =~ /^([1-9][0-9]*(\.[0-9]+)? h)$/][maxstay!="1 h"] {
+  throwWarning: tr("unusual value of {0}: set unit e.g. {1} or {2}; only positive values; point is decimal separator; space between value and unit", "{0.key}", "minutes", "hours");
+  fixAdd: concat("maxstay=", replace(tag("maxstay"), "h", "hours"));
+  set maxstay_autofix;
+  assertMatch: "node maxstay=\"5 h\"";
+  assertMatch: "node maxstay=\"15 h\"";
+  assertNoMatch: "node maxstay=\"1 h\"";
+  assertNoMatch: "node maxstay=\"02 hours\"";
+  assertNoMatch: "node maxstay=\"2 hours\"";
+}
+*[maxstay][maxstay =~ /^([1-9][0-9]*(\.[0-9]+)? hr)$/][maxstay!="1 hr"] {
+  throwWarning: tr("unusual value of {0}: set unit e.g. {1} or {2}; only positive values; point is decimal separator; space between value and unit", "{0.key}", "minutes", "hours");
+  fixAdd: concat("maxstay=", replace(tag("maxstay"), "hr", "hours"));
+  set maxstay_autofix;
+  assertMatch: "node maxstay=\"5 hr\"";
+  assertMatch: "node maxstay=\"15 hr\"";
+  assertNoMatch: "node maxstay=\"1 hr\"";
+  assertNoMatch: "node maxstay=\"02 hours\"";
+  assertNoMatch: "node maxstay=\"2 hours\"";
+}
+*[maxstay][maxstay =~ /^([1-9][0-9]*(\.[0-9]+)?h)$/][maxstay!="1h"] {
+  throwWarning: tr("unusual value of {0}: set unit e.g. {1} or {2}; only positive values; point is decimal separator; space between value and unit", "{0.key}", "minutes", "hours");
+  fixAdd: concat("maxstay=", replace(tag("maxstay"), "h", " hours"));
+  set maxstay_autofix;
+  assertMatch: "node maxstay=5h";
+  assertMatch: "node maxstay=15h";
+  assertNoMatch: "node maxstay=1h";
+  assertNoMatch: "node maxstay=02hours";
+  assertNoMatch: "node maxstay=2hours";
+  assertNoMatch: "node maxstay=\"2 h\"";
+  assertNoMatch: "node maxstay=\"2 hr\"";
+}
+/* the rest without autofix */
+*[maxstay][maxstay !~ /^(([1-9][0-9]*(\.[0-9]+)?( (minute|minutes|hour|hours|day|days|week|weeks|month|months|year|years)))|(no|unlimited|0|load-unload))$/]!.maxstay_autofix {
+  throwWarning: tr("unusual value of {0}: set unit e.g. {1} or {2}; only positive values; point is decimal separator; space between value and unit", "{0.key}", "minutes", "hours");
+  assertMatch: "node maxstay=something";
+  assertMatch: "node maxstay=-5";
+  assertMatch: "node maxstay=180";
+  assertMatch: "node maxstay=66minutes";
+  assertMatch: "node maxstay=\"1. hours\"";
+  assertMatch: "node maxstay=\"0 minutes\"";
+  assertNoMatch: "node maxstay=0";
+  assertNoMatch: "node maxstay=no";
+  assertNoMatch: "node maxstay=\"7 h\"";
+  assertNoMatch: "node maxstay=\"7 hr\"";
+  assertNoMatch: "node maxstay=unlimited";
+  assertNoMatch: "node maxstay=load-unload";
+  assertNoMatch: "node maxstay=\"66 minutes\"";
+  assertNoMatch: "node maxstay=\"2.5 hours\"";
+}

@@ -230,7 +230,7 @@
         <reference ref="surface_smoothness" />
     </chunk>
     <chunk id="maxstay">
-        <combo key="maxstay" text="Time Limit (minutes)" values="0,30,60,90,120,180" />
+        <combo key="maxstay" text="Time Limit" values="30 minutes,60 minutes,180 minutes,1 hour,1.5 hours,1 day,3 days,2 weeks,4 months,1.5 years,unlimited,no,load-unload" values_no_i18n="true" values_sort="false" />
     </chunk>
     <chunk id="supervised">
         <combo key="supervised" text="Supervised" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
@@ -2423,6 +2423,7 @@
             <text key="capacity" text="Capacity" />
             <reference ref="parking_access_fee_operator_surface_smoothness" />
             <reference ref="supervised_lit_oh" />
+            <reference ref="maxstay" />
             <check key="covered" text="Covered (with roof)" />
         </item> <!-- Parking -->
         <item name="Motorcycle Dealer" icon="presets/vehicle/motorbike.svg" type="node,closedway,multipolygon" preset_name_label="true">
