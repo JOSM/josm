@@ -286,8 +286,8 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile-cots" depends="init" description="Compiles third-party dependencies not retrieved with Ivy">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/google/**,com/kitfox/**,oauth/**" nowarn="on" encoding="iso-8859-1"
-            destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
+        <javac srcdir="${src.dir}" includes="com/google/**,com/kitfox/**,oauth/**" excludes="**/package-info.java" nowarn="on" encoding="iso-8859-1"
+            destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
             <classpath>
@@ -298,8 +298,8 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc,compile-cots" unless="compile.notRequired" description="Compiles JOSM">
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
-            excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/**"
-            destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/**,**/package-info.java"
+            destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-J-Xbootclasspath/p:${error_prone_javac.jar}" unless:set="isJava9"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
             <compilerarg value="-processorpath"/>
@@ -417,7 +417,7 @@ Build-Date: ${build.tstamp}
         <sequential>
             <javac srcdir="${test.dir}/@{testfamily}" destdir="${test.dir}/build/@{testfamily}"
                 target="${java.lang.version}" source="${java.lang.version}" debug="on"
-                includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+                includeantruntime="false" encoding="UTF-8">
                 <compilerarg value="-Xlint:all"/>
                 <compilerarg value="-Xlint:-serial"/>
                 <classpath>
@@ -804,7 +804,7 @@ Build-Date: ${build.tstamp}
     <target name="script-compile" depends="test-compile" description="Compiles all scripts">
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="*.java"
                destdir="${script-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
-               includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+               includeantruntime="false" encoding="UTF-8">
             <classpath>
                 <pathelement path="${build.dir}"/>
                 <pathelement path="${test.dir}/build/unit"/>
@@ -885,7 +885,7 @@ Build-Date: ${build.tstamp}
         <mkdir dir="${checkstyle-build.dir}"/>
         <javac sourcepath="" srcdir="${checkstyle.dir}/src" failonerror="true"
             destdir="${checkstyle-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
-            includeantruntime="false" createMissingPackageInfoClass="false"
+            includeantruntime="false"
             encoding="UTF-8" classpathref="checkstyle.classpath">
         </javac>
     </target>
@@ -963,7 +963,7 @@ Build-Date: ${build.tstamp}
         <mkdir dir="${proj-build.dir}"/>
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="BuildProjectionDefinitions.java"
             destdir="${proj-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
-            includeantruntime="false" createMissingPackageInfoClass="false"
+            includeantruntime="false"
             encoding="UTF-8" classpath="${proj-classpath}">
         </javac>
     </target>
