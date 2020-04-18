@@ -8,7 +8,6 @@
         <conf name="api" description="All libs that JOSM uses and are available for plugins"/>
         <conf name="runtimeOnly" description="The libs shipped with JOSM that we do not need during compilation"/>
         <conf name="provided" description="The libs we need during compilation but not on application start"/>
-        <conf name="epsg" description="Everything epsg needs- which is currently all of JOSM."/>
         <!-- Special configurations used to retrieve jar files of test lib/tools referred by file path -->
         <conf name="commonslang" description="Apache Commons Lang test library"/>
         <conf name="jmockit" description="JMockit test library"/>
