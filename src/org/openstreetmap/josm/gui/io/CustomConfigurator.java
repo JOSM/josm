@@ -476,7 +476,6 @@ public final class CustomConfigurator {
 
         private void processPreferencesElement(Element item) {
             String oper = evalVars(item.getAttribute("operation"));
-            String id = evalVars(item.getAttribute("id"));
 
             if ("delete-keys".equals(oper)) {
                 String pattern = evalVars(item.getAttribute("pattern"));
