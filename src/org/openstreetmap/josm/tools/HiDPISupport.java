@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -30,9 +29,15 @@ import javax.swing.ImageIcon;
  */
 public final class HiDPISupport {
 
-    private static volatile Optional<Class<? extends Image>> baseMultiResolutionImageClass;
-    private static volatile Optional<Constructor<? extends Image>> baseMultiResolutionImageConstructor;
-    private static volatile Optional<Method> resolutionVariantsMethod;
+    private static final Class<? extends Image> baseMultiResolutionImageClass;
+    private static final Constructor<? extends Image> baseMultiResolutionImageConstructor;
+    private static final Method resolutionVariantsMethod;
+
+    static {
+        baseMultiResolutionImageClass = initBaseMultiResolutionImageClass();
+        baseMultiResolutionImageConstructor = initBaseMultiResolutionImageConstructor();
+        resolutionVariantsMethod = initResolutionVariantsMethod();
+    }
 
     private HiDPISupport() {
         // Hide default constructor
@@ -50,7 +55,7 @@ public final class HiDPISupport {
      */
     public static Image getMultiResolutionImage(Image base, ImageResource ir) {
         double uiScale = getHiDPIScale();
-        if (uiScale != 1.0 && getBaseMultiResolutionImageConstructor().isPresent()) {
+        if (uiScale != 1.0 && baseMultiResolutionImageConstructor != null) {
             ImageIcon zoomed = ir.getImageIcon(new Dimension(
                     (int) Math.round(base.getWidth(null) * uiScale),
                     (int) Math.round(base.getHeight(null) * uiScale)), false);
@@ -69,10 +74,9 @@ public final class HiDPISupport {
      */
     public static Image getMultiResolutionImage(List<Image> imgs) {
         CheckParameterUtil.ensureThat(!imgs.isEmpty(), "imgs is empty");
-        Optional<Constructor<? extends Image>> baseMrImageConstructor = getBaseMultiResolutionImageConstructor();
-        if (baseMrImageConstructor.isPresent()) {
+        if (baseMultiResolutionImageConstructor != null) {
             try {
-                return baseMrImageConstructor.get().newInstance((Object) imgs.toArray(new Image[0]));
+                return baseMultiResolutionImageConstructor.newInstance((Object) imgs.toArray(new Image[0]));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
                 Logging.error("Unexpected error while instantiating object of class BaseMultiResolutionImage: " + ex);
             }
@@ -89,15 +93,13 @@ public final class HiDPISupport {
      * then the base image, otherwise the image itself
      */
     public static Image getBaseImage(Image img) {
-        Optional<Class<? extends Image>> baseMrImageClass = getBaseMultiResolutionImageClass();
-        Optional<Method> resVariantsMethod = getResolutionVariantsMethod();
-        if (!baseMrImageClass.isPresent() || !resVariantsMethod.isPresent()) {
+        if (baseMultiResolutionImageClass == null || resolutionVariantsMethod == null) {
             return img;
         }
-        if (baseMrImageClass.get().isInstance(img)) {
+        if (baseMultiResolutionImageClass.isInstance(img)) {
             try {
                 @SuppressWarnings("unchecked")
-                List<Image> imgVars = (List<Image>) resVariantsMethod.get().invoke(img);
+                List<Image> imgVars = (List<Image>) resolutionVariantsMethod.invoke(img);
                 if (!imgVars.isEmpty()) {
                     return imgVars.get(0);
                 }
@@ -118,15 +120,13 @@ public final class HiDPISupport {
      * itself as a singleton list
      */
     public static List<Image> getResolutionVariants(Image img) {
-        Optional<Class<? extends Image>> baseMrImageClass = getBaseMultiResolutionImageClass();
-        Optional<Method> resVariantsMethod = getResolutionVariantsMethod();
-        if (!baseMrImageClass.isPresent() || !resVariantsMethod.isPresent()) {
+        if (baseMultiResolutionImageClass == null || resolutionVariantsMethod == null) {
             return Collections.singletonList(img);
         }
-        if (baseMrImageClass.get().isInstance(img)) {
+        if (baseMultiResolutionImageClass.isInstance(img)) {
             try {
                 @SuppressWarnings("unchecked")
-                List<Image> imgVars = (List<Image>) resVariantsMethod.get().invoke(img);
+                List<Image> imgVars = (List<Image>) resolutionVariantsMethod.invoke(img);
                 if (!imgVars.isEmpty()) {
                     return imgVars;
                 }
@@ -188,7 +188,7 @@ public final class HiDPISupport {
      */
     public static Image processMRImages(List<Image> imgs, Function<List<Image>, Image> processor) {
         CheckParameterUtil.ensureThat(!imgs.isEmpty(), "at least one element expected");
-        if (!getBaseMultiResolutionImageClass().isPresent()) {
+        if (baseMultiResolutionImageClass != null) {
             return processor.apply(imgs);
         }
         List<List<Image>> allVars = imgs.stream().map(HiDPISupport::getResolutionVariants).collect(Collectors.toList());
@@ -204,64 +204,36 @@ public final class HiDPISupport {
         return getMultiResolutionImage(imgsProcessed);
     }
 
-    private static Optional<Class<? extends Image>> getBaseMultiResolutionImageClass() {
-        if (baseMultiResolutionImageClass == null) {
-            synchronized (HiDPISupport.class) {
-                if (baseMultiResolutionImageClass == null) {
-                    try {
-                        @SuppressWarnings("unchecked")
-                        Class<? extends Image> c = (Class<? extends Image>) Class.forName("java.awt.image.BaseMultiResolutionImage");
-                        baseMultiResolutionImageClass = Optional.ofNullable(c);
-                    } catch (ClassNotFoundException ex) {
-                        // class is not present in Java 8
-                        baseMultiResolutionImageClass = Optional.empty();
-                        Logging.trace(ex);
-                    }
-                }
-            }
+    @SuppressWarnings("unchecked")
+    private static Class<? extends Image> initBaseMultiResolutionImageClass() {
+        try {
+            return (Class<? extends Image>) Class.forName("java.awt.image.BaseMultiResolutionImage");
+        } catch (ClassNotFoundException ex) {
+            // class is not present in Java 8
+            Logging.trace(ex);
+            return null;
         }
-        return baseMultiResolutionImageClass;
     }
 
-    private static Optional<Constructor<? extends Image>> getBaseMultiResolutionImageConstructor() {
-        if (baseMultiResolutionImageConstructor == null) {
-            synchronized (HiDPISupport.class) {
-                if (baseMultiResolutionImageConstructor == null) {
-                    getBaseMultiResolutionImageClass().ifPresent(klass -> {
-                        try {
-                            Constructor<? extends Image> constr = klass.getConstructor(Image[].class);
-                            baseMultiResolutionImageConstructor = Optional.ofNullable(constr);
-                        } catch (NoSuchMethodException ex) {
-                            Logging.error("Cannot find expected constructor: " + ex);
-                        }
-                    });
-                    if (baseMultiResolutionImageConstructor == null) {
-                        baseMultiResolutionImageConstructor = Optional.empty();
-                    }
-                }
-            }
+    private static Constructor<? extends Image> initBaseMultiResolutionImageConstructor() {
+        try {
+            return baseMultiResolutionImageClass != null
+                    ? baseMultiResolutionImageClass.getConstructor(Image[].class)
+                    : null;
+        } catch (NoSuchMethodException ex) {
+            Logging.error("Cannot find expected constructor: " + ex);
+            return null;
         }
-        return baseMultiResolutionImageConstructor;
     }
 
-    private static Optional<Method> getResolutionVariantsMethod() {
-        if (resolutionVariantsMethod == null) {
-            synchronized (HiDPISupport.class) {
-                if (resolutionVariantsMethod == null) {
-                    getBaseMultiResolutionImageClass().ifPresent(klass -> {
-                        try {
-                            Method m = klass.getMethod("getResolutionVariants");
-                            resolutionVariantsMethod = Optional.ofNullable(m);
-                        } catch (NoSuchMethodException ex) {
-                            Logging.error("Cannot find expected method: "+ex);
-                        }
-                    });
-                    if (resolutionVariantsMethod == null) {
-                        resolutionVariantsMethod = Optional.empty();
-                    }
-                }
-            }
+    private static Method initResolutionVariantsMethod() {
+        try {
+            return baseMultiResolutionImageClass != null
+                    ? baseMultiResolutionImageClass.getMethod("getResolutionVariants")
+                    : null;
+        } catch (NoSuchMethodException ex) {
+            Logging.error("Cannot find expected method: " + ex);
+            return null;
         }
-        return resolutionVariantsMethod;
     }
 }
