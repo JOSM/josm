@@ -47,6 +47,8 @@
                 </not>
             </or>
         </condition>
+        <available property="svn.present" file="${base.dir}/.svn"/>
+        <available property="git.present" file="${base.dir}/.git"/>
         <property name="build.dir" location="${base.dir}/build"/>
         <property name="dist.dir" location="${base.dir}/dist"/>
         <property name="resources.dir" location="${base.dir}/resources"/>
@@ -125,22 +127,19 @@
     <!--
       ** Initializes the REVISION.XML file from SVN information
     -->
-    <target name="init-svn-revision-xml" depends="init-properties">
-        <exec append="false" output="${base.dir}/REVISION.XML" executable="svn" dir="${base.dir}" failifexecutionfails="false" resultproperty="svn.info.result">
+    <target name="init-svn-revision-xml" if="svn.present" depends="init-properties">
+        <exec append="false" output="${base.dir}/REVISION.XML" executable="svn" dir="${base.dir}" resultproperty="svn.info.result">
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
             <arg value="."/>
         </exec>
-        <condition property="svn.info.success">
-            <equals arg1="${svn.info.result}" arg2="0" />
-        </condition>
     </target>
     <!--
       ** Initializes the REVISION.XML file from git information
     -->
-    <target name="init-git-revision-xml" unless="svn.info.success" depends="init-properties">
-        <exec append="false" output="${base.dir}/REVISION.XML" executable="git" dir="${base.dir}" failifexecutionfails="false">
+    <target name="init-git-revision-xml" if="git.present" depends="init-properties">
+        <exec append="false" output="${base.dir}/REVISION.XML" executable="git" dir="${base.dir}">
             <arg value="log"/>
             <arg value="-1"/>
             <arg value="--grep=git-svn-id"/>
