@@ -295,7 +295,7 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc,compile-cots" unless="compile.notRequired" description="Compiles JOSM">
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
-            excludes="com/**,oauth/**,org/apache/commons/**,org/openstreetmap/gui/jmapviewer/**,**/package-info.java"
+            excludes="com/**,oauth/**,org/apache/commons/**,**/package-info.java"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-J-Xbootclasspath/p:${error_prone_javac.jar}" unless:set="isJava9"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
@@ -1141,9 +1141,7 @@ Build-Date: ${build.tstamp}
         <ivy:cachefileset log="download-only" setid="sources.fileset" conf="sources"/>
         <jar destfile="${dist-sources.jar}" level="${clevel}">
             <zipgroupfileset refid="sources.fileset"/>
-            <fileset dir="${src.dir}">
-                <exclude name="org/openstreetmap/gui/jmapviewer/**"/>
-            </fileset>
+            <fileset dir="${src.dir}"/>
             <fileset dir="${resources.dir}"/>
         </jar>
     </target>
