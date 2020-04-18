@@ -19,7 +19,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().timeout(15000);
+    public JOSMTestRules test = new JOSMTestRules().i18n("de");
 
     private void assertQueryEquals(String expectedQueryPart, String input) {
         final String query = OverpassTurboQueryWizard.getInstance().constructQuery(input);

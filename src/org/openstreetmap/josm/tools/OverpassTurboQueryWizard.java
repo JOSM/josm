@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
@@ -88,9 +89,10 @@ public final class OverpassTurboQueryWizard {
         for (Match conjunction : normalized) {
             final EnumSet<OsmPrimitiveType> types = EnumSet.noneOf(OsmPrimitiveType.class);
             final String query = constructQuery(conjunction, types);
-            for (Object type : types.isEmpty() || types.size() == 3 ? Collections.singleton("nwr") : types) {
-                queryLines.add("  " + type + query + queryLineSuffix + ";");
-            }
+            final Stream<String> typeStream = types.isEmpty() || types.size() == 3
+                    ? Stream.of("nwr")
+                    : types.stream().map(OsmPrimitiveType::getAPIName);
+            typeStream.forEach(type -> queryLines.add("  " + type + query + queryLineSuffix + ";"));
         }
         queryLines.add(");");
         queryLines.add("(._;>;);");
