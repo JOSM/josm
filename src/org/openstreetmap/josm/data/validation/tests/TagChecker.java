@@ -216,16 +216,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         for (String key : TaggingPresets.getPresetKeys()) {
             if (isKeyIgnored(key))
                 continue;
-            boolean allNumerical = true;
             Set<String> values = TaggingPresets.getPresetValues(key);
-            if (values.isEmpty())
-                allNumerical = false;
-            for (String val : values) {
-                if (!isNum(val)) {
-                    allNumerical = false;
-                    break;
-                }
-            }
+            boolean allNumerical = values != null && !values.isEmpty()
+                    && values.stream().allMatch(TagChecker::isNum);
             if (allNumerical) {
                 ignoreForLevenshtein.add(key);
             }
@@ -393,13 +386,10 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
 
     private static void initAdditionalPresetsValueData() {
         additionalPresetsValueData = new HashSet<>();
-        for (String a : AbstractPrimitive.getUninterestingKeys()) {
-            additionalPresetsValueData.add(a);
-        }
-        for (String a : Config.getPref().getList(ValidatorPrefHelper.PREFIX + ".knownkeys",
-                Arrays.asList("is_in", "int_ref", "fixme", "population"))) {
-            additionalPresetsValueData.add(a);
-        }
+        additionalPresetsValueData.addAll(AbstractPrimitive.getUninterestingKeys());
+        additionalPresetsValueData.addAll(Config.getPref().getList(
+                ValidatorPrefHelper.PREFIX + ".knownkeys",
+                Arrays.asList("is_in", "int_ref", "fixme", "population")));
     }
 
     private static void addPresetValue(KeyedItem ky) {
@@ -574,20 +564,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      * @return true if the given key is ignored
      */
     private static boolean isKeyIgnored(String key) {
-        if (ignoreDataEquals.contains(key)) {
-            return true;
-        }
-        for (String a : ignoreDataStartsWith) {
-            if (key.startsWith(a)) {
-                return true;
-            }
-        }
-        for (String a : ignoreDataEndsWith) {
-            if (key.endsWith(a)) {
-                return true;
-            }
-        }
-        return false;
+        return ignoreDataEquals.contains(key)
+                || ignoreDataStartsWith.stream().anyMatch(key::startsWith)
+                || ignoreDataEndsWith.stream().anyMatch(key::endsWith);
     }
 
     /**
@@ -604,11 +583,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (values != null && values.isEmpty())
             return true;
         if (!isTagInPresets(key, value)) {
-            for (Tag a : ignoreDataTag) {
-                if (key.equals(a.getKey()) && value.equals(a.getValue())) {
-                    return true;
-                }
-            }
+            return ignoreDataTag.stream()
+                    .anyMatch(a -> key.equals(a.getKey()) && value.equals(a.getValue()));
         }
         return false;
     }
@@ -798,13 +774,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         } else {
             fixedKey = isKeyInPresets(prettifiedKey) ? prettifiedKey : harmonizedKeys.get(prettifiedKey);
         }
-        if (fixedKey == null) {
-            for (Tag a : ignoreDataTag) {
-                if (a.getKey().equals(prettifiedKey)) {
-                    fixedKey = prettifiedKey;
-                    break;
-                }
-            }
+        if (fixedKey == null && ignoreDataTag.stream().anyMatch(a -> a.getKey().equals(prettifiedKey))) {
+            fixedKey = prettifiedKey;
         }
 
         if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
@@ -833,7 +804,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         final String harmonizedValue = harmonizeValue(value);
         if (harmonizedValue == null || harmonizedValue.isEmpty())
             return;
-        String fixedValue = null;
+        String fixedValue;
         List<Set<String>> sets = new ArrayList<>();
         Set<String> presetValues = getPresetValues(key);
         if (presetValues != null)
@@ -841,12 +812,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         Set<String> usedValues = oftenUsedTags.get(key);
         if (usedValues != null)
             sets.add(usedValues);
-        for (Set<String> possibleValues: sets) {
-            if (possibleValues.contains(harmonizedValue)) {
-                fixedValue = harmonizedValue;
-                break;
-            }
-        }
+        fixedValue = sets.stream().anyMatch(possibleValues -> possibleValues.contains(harmonizedValue))
+                ? harmonizedValue : null;
         if (fixedValue == null && !ignoreForLevenshtein.contains(key)) {
             int maxPresetValueLen = 0;
             List<String> fixVals = new ArrayList<>();

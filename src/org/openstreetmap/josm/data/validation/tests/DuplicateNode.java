@@ -319,16 +319,10 @@ public class DuplicateNode extends Test {
         // Merge only if at least 2 nodes remain
         if (nodes.size() >= 2) {
             // Use first existing node or first node if all nodes are new
-            Node target = null;
-            for (Node n: nodes) {
-                if (!n.isNew()) {
-                    target = n;
-                    break;
-                }
-            }
-            if (target == null) {
-                target = nodes.iterator().next();
-            }
+            Node target = nodes.stream()
+                    .filter(n -> !n.isNew())
+                    .findFirst()
+                    .orElseGet(() -> nodes.iterator().next());
 
             if (Command.checkOutlyingOrIncompleteOperation(nodes, Collections.singleton(target)) == Command.IS_OK)
                 return MergeNodesAction.mergeNodes(nodes, target);

@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -335,12 +336,9 @@ public class Test implements OsmPrimitiveVisitor {
      * @return a Delete command on all primitives that have not yet been deleted, or null otherwise
      */
     protected final Command deletePrimitivesIfNeeded(Collection<? extends OsmPrimitive> primitives) {
-        Collection<OsmPrimitive> primitivesToDelete = new ArrayList<>();
-        for (OsmPrimitive p : primitives) {
-            if (!p.isDeleted()) {
-                primitivesToDelete.add(p);
-            }
-        }
+        Collection<OsmPrimitive> primitivesToDelete = primitives.stream()
+                .filter(p -> !p.isDeleted())
+                .collect(Collectors.toList());
         if (!primitivesToDelete.isEmpty()) {
             return DeleteCommand.delete(primitivesToDelete);
         } else {
