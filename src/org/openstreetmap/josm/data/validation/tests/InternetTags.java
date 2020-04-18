@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.validation.routines.UrlValidator;
  * Performs validation tests on internet-related tags (websites, e-mail addresses, etc.).
  * @since 7489
  */
-public class InternetTags extends Test {
+public class InternetTags extends Test.TagTest {
 
     /** Error code for an invalid URL */
     public static final int INVALID_URL = 3301;
@@ -122,7 +122,8 @@ public class InternetTags extends Test {
         return errors;
     }
 
-    private void test(OsmPrimitive p) {
+    @Override
+    public void check(OsmPrimitive p) {
         for (String k : p.keySet()) {
             // Test key against URL validator
             if (!doTest(p, k, URL_KEYS, UrlValidator.getInstance(), INVALID_URL)) {
@@ -130,20 +131,5 @@ public class InternetTags extends Test {
                 doTest(p, k, EMAIL_KEYS, EmailValidator.getInstance(), INVALID_EMAIL);
             }
         }
-    }
-
-    @Override
-    public void visit(Node n) {
-        test(n);
-    }
-
-    @Override
-    public void visit(Way w) {
-        test(w);
-    }
-
-    @Override
-    public void visit(Relation r) {
-        test(r);
     }
 }
