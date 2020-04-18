@@ -14,6 +14,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.apache.commons.jcs.JCS;
 import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheFactory;
@@ -25,7 +26,6 @@ import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheFactory;
 import org.apache.commons.jcs.engine.CompositeCacheAttributes;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes.DiskUsagePattern;
 import org.apache.commons.jcs.engine.control.CompositeCache;
-import org.apache.commons.jcs.engine.control.CompositeCacheManager;
 import org.apache.commons.jcs.utils.serialization.StandardSerializer;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -41,7 +41,6 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8168
  */
 public final class JCSCacheManager {
-    private static volatile CompositeCacheManager cacheManager;
     private static final long maxObjectTTL = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
     public static final BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
@@ -111,8 +110,7 @@ public final class JCSCacheManager {
         // Hide implicit public constructor for utility classes
     }
 
-    @SuppressWarnings("resource")
-    private static void initialize() {
+    static {
         File cacheDir = new File(Config.getDirs().getCacheDirectory(true), "jcs");
 
         try {
@@ -153,9 +151,7 @@ public final class JCSCacheManager {
         props.setProperty("jcs.default.elementattributes.IsSpool",            "true");
         // CHECKSTYLE.ON: SingleSpaceSeparator
         try {
-            CompositeCacheManager cm = CompositeCacheManager.getUnconfiguredInstance();
-            cm.configure(props);
-            cacheManager = cm;
+            JCS.setConfigProperties(props);
         } catch (SecurityException e) {
             Logging.log(Logging.LEVEL_WARN, "Unable to initialize JCS", e);
         }
@@ -182,27 +178,17 @@ public final class JCSCacheManager {
      * @param cachePath         path to disk cache. if null, no disk cache will be created
      * @return cache access object
      */
-    public static <K, V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
-        if (cacheManager != null)
-            return getCacheInner(cacheName, maxMemoryObjects, maxDiskObjects, cachePath);
-
-        synchronized (JCSCacheManager.class) {
-            if (cacheManager == null)
-                initialize();
-            return cacheManager != null ? getCacheInner(cacheName, maxMemoryObjects, maxDiskObjects, cachePath) : null;
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    private static <K, V> CacheAccess<K, V> getCacheInner(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
-        CompositeCache<K, V> cc = cacheManager.getCache(cacheName, getCacheAttributes(maxMemoryObjects));
+    public static <K, V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
+        CacheAccess<K, V> cacheAccess = JCS.getInstance(cacheName, getCacheAttributes(maxMemoryObjects));
+        CompositeCache<K, V> cc = cacheAccess.getCacheControl();
 
         if (cachePath != null && cacheDirLock != null) {
             IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath, cacheName);
             try {
                 if (cc.getAuxCaches().length == 0) {
                     cc.setAuxCaches(new AuxiliaryCache[]{DISK_CACHE_FACTORY.createCache(
-                            diskAttributes, cacheManager, null, new StandardSerializer())});
+                            diskAttributes, null, null, new StandardSerializer())});
                 }
             } catch (Exception e) { // NOPMD
                 // in case any error in setting auxiliary cache, do not use disk cache at all - only memory
@@ -210,18 +196,14 @@ public final class JCSCacheManager {
                 Logging.debug(e);
             }
         }
-        return new CacheAccess<>(cc);
+        return cacheAccess;
     }
 
     /**
      * Close all files to ensure, that all indexes and data are properly written
      */
     public static void shutdown() {
-        // use volatile semantics to get consistent object
-        CompositeCacheManager localCacheManager = cacheManager;
-        if (localCacheManager != null) {
-            localCacheManager.shutDown();
-        }
+        JCS.shutdown();
     }
 
     private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath, String cacheName) {
