@@ -74,7 +74,7 @@ public final class BuildProjectionDefinitions {
      * @throws IOException if any I/O error occurs
      */
     public static void main(String[] args) throws IOException {
-        buildList(args[0]);
+        buildList(args.length > 0 ? args[0] : ".");
     }
 
     static List<String> initList(String baseDir, String ext) throws IOException {
