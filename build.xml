@@ -354,7 +354,10 @@ Build-Date: ${build.tstamp}
                 author="false">
             <link href="https://docs.oracle.com/javase/8/docs/api" unless:set="isJava11" />
             <link href="https://docs.oracle.com/en/java/javase/11/docs/api" if:set="isJava11" />
-            <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
+            <doctitle><![CDATA[<h2>
+                <img src="https://josm.openstreetmap.de/svn/trunk/nodist/images/logo/header.png" style="vertical-align: middle;" alt="JOSM">
+                &mdash; Javadoc
+            </h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
             <!-- Disable HTML checking until we switch to Java13+, see https://bugs.openjdk.java.net/browse/JDK-8223552 -->
             <arg value="-Xdoclint:-html" if:set="isJava13" />
