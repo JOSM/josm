@@ -167,6 +167,8 @@ public final class OverpassTurboQueryWizard {
 
     /**
      * Quotes the given string for its use in Overpass QL
+     * @param s the string to quote
+     * @return the quoted string
      */
     private static String quote(final String s) {
         return "\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
@@ -174,6 +176,8 @@ public final class OverpassTurboQueryWizard {
 
     /**
      * Normalizes the match to disjunctive normal form: A∧(B∨C) ⇔ (A∧B)∨(A∧C)
+     * @param match the match to normalize
+     * @return the match in disjunctive normal form
      */
     private static List<Match> normalizeToDNF(final Match match) {
         if (match instanceof SearchCompiler.And) {
