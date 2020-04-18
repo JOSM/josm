@@ -105,8 +105,14 @@ ESRI projection definitions: Environmental Systems Research Institute
 
 ------------------------------------ ICONS ------------------------------------
 
-Most icons have been nicked from GNOME and the GIMP, both under GPL. 
-Some are originally LGPL but redistributed here under GPL. 
+Lots of icons are from GNOME Project https://www.gnome.org/ under GPL or LGPL,
+redistributed here under GPL.
+
+Some icons are from GIMP https://www.gimp.org/ under GPL or LGPL,
+redistributed here under GPL.
+
+Lots of icons are from https://openclipart.org/, https://publicdomainvectors.org/,
+The Tango Desktop Project, other sources or self created, all PD and CC0 licensed.
 
 Simple OpenStreetMap logo has been created by ScubbX (CC-SA 2.0) based on official
 logo used by the OpenStreetMap Foundation:
@@ -114,10 +120,13 @@ https://wiki.openstreetmap.org/wiki/File:Logo_simple.svg
 
 Social logos come from https://github.com/Automattic/social-logos (GPLv2 or later)
 
-The keyboard icon comes fom:
+The keyboard icon comes from:
 - source: http://www.iconfinder.net/index.php?q=key&page=icondetails&iconid=8553&size=128&q=key&s12=on&s16=on&s22=on&s32=on&s48=on&s64=on&s128=on
 - licence: GPL
 - designer: Paolino, http://www.paolinoland.it/
 - original filename: keyboard.png
 - original size: 128x128
 - modifications: icon was cropped, then resized
+
+See also the commit message of each icon for its source
+(https://josm.openstreetmap.de/browser/josm/trunk/resources/images).
