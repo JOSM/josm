@@ -965,7 +965,7 @@ Build-Date: ${build.tstamp}
     <!--
       ** Compile build script for generating projection list.
     -->
-    <target name="epsg-compile" depends="init-properties,compile">
+    <target name="epsg-compile" depends="init-properties">
         <property name="proj-classpath" location="${build.dir}"/>
         <mkdir dir="${proj-build.dir}"/>
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="BuildProjectionDefinitions.java"
