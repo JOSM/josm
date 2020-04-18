@@ -304,11 +304,7 @@ public class Addresses extends Test {
                     String number = p.get(ADDR_HOUSE_NUMBER);
                     if (number != null) {
                         number = number.trim().toUpperCase(Locale.ENGLISH);
-                        List<OsmPrimitive> list = map.get(number);
-                        if (list == null) {
-                            list = new ArrayList<>();
-                            map.put(number, list);
-                        }
+                        List<OsmPrimitive> list = map.computeIfAbsent(number, k -> new ArrayList<>());
                         list.add(p);
                     }
                     if (relationName != null && p.hasKey(ADDR_STREET) && !relationName.equals(p.get(ADDR_STREET))) {

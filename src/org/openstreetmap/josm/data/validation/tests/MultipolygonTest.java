@@ -324,11 +324,7 @@ public class MultipolygonTest extends Test {
                 if (n.getReferrers().size() <= 1) {
                     continue; // cannot be a problem node
                 }
-                List<Way> ways = nodeMap.get(n);
-                if (ways == null) {
-                    ways = new ArrayList<>();
-                    nodeMap.put(n, ways);
-                }
+                List<Way> ways = nodeMap.computeIfAbsent(n, k -> new ArrayList<>());
                 ways.add(rm.getWay());
                 if (ways.size() > 2 || (ways.size() == 2 && i != 0 && i + 1 != numNodes)) {
                     sharedNodes.add(n);
@@ -562,11 +558,7 @@ public class MultipolygonTest extends Test {
                     }
                     boolean samePoly = false;
                     if (crossingPolys[0] != null && crossingPolys[1] != null) {
-                        List<PolyData> crossingPolygons = problemPolygonMap.get(crossingPolys[0]);
-                        if (crossingPolygons == null) {
-                            crossingPolygons = new ArrayList<>();
-                            problemPolygonMap.put(crossingPolys[0], crossingPolygons);
-                        }
+                        List<PolyData> crossingPolygons = problemPolygonMap.computeIfAbsent(crossingPolys[0], k -> new ArrayList<>());
                         crossingPolygons.add(crossingPolys[1]);
                         if (crossingPolys[0] == crossingPolys[1]) {
                             samePoly = true;

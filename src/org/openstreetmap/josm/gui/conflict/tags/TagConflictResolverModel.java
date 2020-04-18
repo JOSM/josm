@@ -87,9 +87,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
         if (tags == null) return;
         for (String key: tags.getKeys()) {
             MultiValueResolutionDecision decision = new MultiValueResolutionDecision(tags.getTagsFor(key));
-            if (decisions.get(key) == null) {
-                decisions.put(key, decision);
-            }
+            decisions.putIfAbsent(key, decision);
         }
         displayedKeys.clear();
         Set<String> keys = tags.getKeys();
@@ -105,7 +103,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
                 keys.retainAll(keysWithMultiValues);
             }
             for (String key: tags.getKeys()) {
-                if (!decisions.get(key).isDecided() && !keys.contains(key)) {
+                if (!decisions.get(key).isDecided()) {
                     keys.add(key);
                 }
             }

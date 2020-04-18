@@ -124,11 +124,7 @@ public class Highways extends Test {
                         value = value.replaceAll("_link$", "");
                     }
                     if (!link || !linkOk) {
-                        List<Way> list = map.get(value);
-                        if (list == null) {
-                            list = new ArrayList<>();
-                            map.put(value, list);
-                        }
+                        List<Way> list = map.computeIfAbsent(value, k -> new ArrayList<>());
                         list.add(h);
                     }
                 }

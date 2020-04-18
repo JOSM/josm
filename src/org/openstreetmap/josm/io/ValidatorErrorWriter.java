@@ -80,11 +80,7 @@ public class ValidatorErrorWriter extends XmlWriter {
                         OsmValidator.getErrorsBySeverityMessageDescription(validationErrors, e -> e.getTester() == test).entrySet()) {
                     for (Entry<String, Map<String, List<TestError>>> e2 : e1.getValue().entrySet()) {
                         ErrorClass errorClass = new ErrorClass(e1.getKey(), e2.getKey());
-                        List<TestError> list = map.get(errorClass);
-                        if (list == null) {
-                            list = new ArrayList<>();
-                            map.put(errorClass, list);
-                        }
+                        List<TestError> list = map.computeIfAbsent(errorClass, k -> new ArrayList<>());
                         e2.getValue().values().forEach(list::addAll);
                     }
                 }
