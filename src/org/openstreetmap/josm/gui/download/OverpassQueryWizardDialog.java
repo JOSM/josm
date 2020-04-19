@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.gui.dialogs.SearchDialog;
 import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration.OverpassWizardCallbacks;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
+import org.openstreetmap.josm.tools.SearchCompilerQueryWizard;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -81,7 +81,7 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
     }
 
     /**
-     * Tries to process a search term using {@link OverpassTurboQueryWizard}. If the term cannot
+     * Tries to process a search term using {@link SearchCompilerQueryWizard}. If the term cannot
      * be parsed, the the corresponding dialog is shown.
      * @param searchTerm The search term to parse.
      * @return {@link Optional#empty()} if an exception was thrown when parsing, meaning
@@ -90,7 +90,7 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
      */
     private Optional<String> tryParseSearchTerm(String searchTerm) {
         try {
-            return Optional.of(OverpassTurboQueryWizard.getInstance().constructQuery(searchTerm));
+            return Optional.of(SearchCompilerQueryWizard.getInstance().constructQuery(searchTerm));
         } catch (UncheckedParseException | IllegalStateException ex) {
             Logging.error(ex);
             JOptionPane.showMessageDialog(

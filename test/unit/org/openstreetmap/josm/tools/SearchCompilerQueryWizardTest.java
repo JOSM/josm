@@ -11,9 +11,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Unit tests of {@link OverpassTurboQueryWizard} class.
+ * Unit tests of {@link SearchCompilerQueryWizard} class.
  */
-public class OverpassTurboQueryWizardTest {
+public class SearchCompilerQueryWizardTest {
     /**
      * Base test environment is enough
      */
@@ -21,8 +21,12 @@ public class OverpassTurboQueryWizardTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().i18n("de");
 
+    private static String constructQuery(String s) {
+        return SearchCompilerQueryWizard.getInstance().constructQuery(s);
+    }
+
     private void assertQueryEquals(String expectedQueryPart, String input) {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery(input);
+        final String query = constructQuery(input);
         assertEquals("" +
                 "[out:xml][timeout:90][bbox:{{bbox}}];\n" +
                 "(\n" +
@@ -138,7 +142,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testInArea() {
-        String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | foo=baz in Innsbruck");
+        String query = constructQuery("foo=bar | foo=baz in Innsbruck");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
                 "{{geocodeArea:Innsbruck}}->.searchArea;\n" +
@@ -148,7 +152,7 @@ public class OverpassTurboQueryWizardTest {
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
-        query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | foo=baz in \"Sankt Sigmund im Sellrain\"");
+        query = constructQuery("foo=bar | foo=baz in \"Sankt Sigmund im Sellrain\"");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
                 "{{geocodeArea:Sankt Sigmund im Sellrain}}->.searchArea;\n" +
@@ -158,7 +162,7 @@ public class OverpassTurboQueryWizardTest {
                 ");\n" +
                 "(._;>;);\n" +
                 "out meta;", query);
-        query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | foo=baz in \"Новосибирск\"");
+        query = constructQuery("foo=bar | foo=baz in \"Новосибирск\"");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
                 "{{geocodeArea:Новосибирск}}->.searchArea;\n" +
@@ -175,7 +179,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testAroundArea() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar | foo=baz around \"Sankt Sigmund im Sellrain\"");
+        final String query = constructQuery("foo=bar | foo=baz around \"Sankt Sigmund im Sellrain\"");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
                 "{{radius=1000}}\n" +
@@ -192,7 +196,7 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test
     public void testGlobal() {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery("foo=bar global");
+        final String query = constructQuery("foo=bar global");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
                 "(\n" +
@@ -224,6 +228,6 @@ public class OverpassTurboQueryWizardTest {
      */
     @Test(expected = UncheckedParseException.class)
     public void testErroneous() {
-        OverpassTurboQueryWizard.getInstance().constructQuery("-(foo or bar)");
+        constructQuery("-(foo or bar)");
     }
 }

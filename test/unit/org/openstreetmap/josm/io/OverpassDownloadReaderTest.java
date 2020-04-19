@@ -21,7 +21,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.io.OverpassDownloadReader.OverpassOutpoutFormat;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
+import org.openstreetmap.josm.tools.SearchCompilerQueryWizard;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -58,7 +58,7 @@ public class OverpassDownloadReaderTest {
     }
 
     private String getExpandedQuery(String search) {
-        final String query = OverpassTurboQueryWizard.getInstance().constructQuery(search);
+        final String query = SearchCompilerQueryWizard.getInstance().constructQuery(search);
         final String request = new OverpassDownloadReader(new Bounds(1, 2, 3, 4), null, query)
                 .getRequestForBbox(1, 2, 3, 4)
                 .substring("interpreter?data=".length());

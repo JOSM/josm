@@ -23,20 +23,20 @@ import org.openstreetmap.josm.data.osm.search.SearchParseError;
  *
  * @since 8744 (using tyrasd/overpass-wizard), 16262 (standalone)
  */
-public final class OverpassTurboQueryWizard {
+public final class SearchCompilerQueryWizard {
 
-    private static final OverpassTurboQueryWizard instance = new OverpassTurboQueryWizard();
+    private static final SearchCompilerQueryWizard instance = new SearchCompilerQueryWizard();
 
     /**
      * Replies the unique instance of this class.
      *
      * @return the unique instance of this class
      */
-    public static OverpassTurboQueryWizard getInstance() {
+    public static SearchCompilerQueryWizard getInstance() {
         return instance;
     }
 
-    private OverpassTurboQueryWizard() {
+    private SearchCompilerQueryWizard() {
         // private constructor for utility class
     }
 
@@ -181,11 +181,11 @@ public final class OverpassTurboQueryWizard {
      */
     private static List<Match> normalizeToDNF(final Match match) {
         if (match instanceof SearchCompiler.And) {
-            return ((SearchCompiler.And) match).map(OverpassTurboQueryWizard::normalizeToDNF, (lhs, rhs) -> lhs.stream()
+            return ((SearchCompiler.And) match).map(SearchCompilerQueryWizard::normalizeToDNF, (lhs, rhs) -> lhs.stream()
                     .flatMap(l -> rhs.stream().map(r -> new SearchCompiler.And(l, r)))
                     .collect(Collectors.toList()));
         } else if (match instanceof SearchCompiler.Or) {
-            return ((SearchCompiler.Or) match).map(OverpassTurboQueryWizard::normalizeToDNF, CompositeList::new);
+            return ((SearchCompiler.Or) match).map(SearchCompilerQueryWizard::normalizeToDNF, CompositeList::new);
         } else if (match instanceof SearchCompiler.Xor) {
             throw new UnsupportedOperationException(match.toString());
         } else if (match instanceof SearchCompiler.Not) {

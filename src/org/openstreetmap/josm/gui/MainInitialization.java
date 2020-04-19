@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -36,7 +37,6 @@ import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Tag2Link;
@@ -126,9 +126,7 @@ public class MainInitialization implements InitializationSequence {
 
     @Override
     public List<Callable<?>> asynchronousCallableTasks() {
-        return Arrays.asList(
-                OverpassTurboQueryWizard::getInstance
-            );
+        return Collections.emptyList();
     }
 
     @Override
