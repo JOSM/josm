@@ -24,8 +24,10 @@ import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
@@ -193,8 +195,16 @@ public class MapCSSTagCheckerTest {
      */
     @Test
     public void testInit() throws Exception {
+        Logging.clearLastErrorAndWarnings();
         MapCSSTagChecker c = new MapCSSTagChecker();
         c.initialize();
+
+        assertTrue("no warnings/errors are logged", Logging.getLastErrorAndWarnings().isEmpty());
+
+        // to trigger MapCSSStyleIndex code
+        Node node = new Node(new LatLon(12, 34));
+        node.put("amenity", "drinking_water");
+        assertTrue(c.getErrorsForPrimitive(node, false).isEmpty());
     }
 
     /**
