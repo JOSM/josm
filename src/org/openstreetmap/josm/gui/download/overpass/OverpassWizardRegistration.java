@@ -55,7 +55,7 @@ public final class OverpassWizardRegistration {
         // Register the default wizard
         registerWizard(callbacks -> new AbstractAction(tr("Query Wizard")) {
             {
-                putValue(SHORT_DESCRIPTION, tr("Build an Overpass query using the Overpass Turbo Query Wizard tool"));
+                putValue(SHORT_DESCRIPTION, tr("Build an Overpass query using the query wizard"));
                 new ImageProvider("dialogs/magic-wand").getResource().attachImageIcon(this, true);
             }
             @Override

@@ -104,7 +104,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         private static final String ACTION_IMG_SUBDIR = "dialogs";
 
         private static final StringProperty DOWNLOAD_QUERY = new StringProperty("download.overpass.query",
-                "/*\n" + tr("Place your Overpass query below or generate one using the Overpass Turbo Query Wizard") + "\n*/");
+                "/*\n" + tr("Place your Overpass query below or generate one using the query wizard") + "\n*/");
 
         private final JosmTextArea overpassQuery;
         private final UserQueryList overpassQueryList;
