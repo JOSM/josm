@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.download.OverpassQueryWizardDialog;
  */
 public final class OverpassWizardRegistration {
     /**
-     * A list of all reigstered wizards. Needs to be synchronized since plugin registration may happen outside main thread / asynchronously.
+     * A list of all registered wizards. Needs to be synchronized since plugin registration may happen outside main thread / asynchronously.
      */
     private static List<OverpassQueryWizard> wizards = Collections.synchronizedList(new ArrayList<>());
 
