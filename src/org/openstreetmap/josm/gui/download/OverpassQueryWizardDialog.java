@@ -44,7 +44,7 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
                 tr("Overpass Turbo Query Wizard"),
                 tr("Build query"), tr("Build query and execute"), tr("Cancel"));
         this.callbacks = callbacks;
-        setButtonIcons("ok", "download-overpass", "cancel");
+        setButtonIcons("dialogs/magic-wand", "download-overpass", "cancel");
         setCancelButton(CANCEL + 1);
         setDefaultButton(BUILD_AN_EXECUTE_QUERY + 1);
     }

@@ -38,7 +38,6 @@ import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadSourceSizingPolicy.AdjustableDownloadSizePolicy;
 import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration;
-import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration.OverpassQueryWizard;
 import org.openstreetmap.josm.gui.download.overpass.OverpassWizardRegistration.OverpassWizardCallbacks;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -167,9 +166,9 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
             JPanel leftPanel = new JPanel(new GridBagLayout());
             leftPanel.add(new JLabel(tr("Overpass query:")), GBC.eol().insets(5, 1, 5, 1).anchor(GBC.NORTHWEST));
             leftPanel.add(new JLabel(), GBC.eol().fill(GBC.VERTICAL));
-            OverpassWizardRegistration.getWizards()
+            OverpassWizardRegistration.getWizards(this)
                 .stream()
-                .map(this::generateWizardButton)
+                .map(JButton::new)
                 .forEach(button -> leftPanel.add(button, GBC.eol().anchor(GBC.CENTER)));
             leftPanel.add(new JLabel(), GBC.eol().fill(GBC.VERTICAL));
             leftPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -179,18 +178,6 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
             add(listPanel, BorderLayout.EAST);
 
             setMinimumSize(new Dimension(450, 240));
-        }
-
-        private JButton generateWizardButton(OverpassQueryWizard wizard) {
-            JButton openQueryWizard = new JButton(wizard.getWizardName());
-            openQueryWizard.setToolTipText(wizard.getWizardTooltip().orElse(null));
-            openQueryWizard.addActionListener(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    wizard.startWizard(OverpassDownloadSourcePanel.this);
-                }
-            });
-            return openQueryWizard;
         }
 
         @Override

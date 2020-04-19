@@ -4,13 +4,19 @@ package org.openstreetmap.josm.gui.download.overpass;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 import org.openstreetmap.josm.gui.download.OverpassQueryWizardDialog;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Registers the overpass query wizards.
@@ -21,16 +27,16 @@ public final class OverpassWizardRegistration {
     /**
      * A list of all registered wizards. Needs to be synchronized since plugin registration may happen outside main thread / asynchronously.
      */
-    private static List<OverpassQueryWizard> wizards = Collections.synchronizedList(new ArrayList<>());
+    private static final List<Function<OverpassWizardCallbacks, Action>> wizards = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * Registers a wizard to be added to the overpass download dialog
      * <p>
      * To be called by plugins during the JOSM boot process or at least before opening the download dialog for the first time.
      * @param wizard The wizard to register
-     * @since 13930
+     * @since 13930, 16355 (signature)
      */
-    public static void registerWizard(OverpassQueryWizard wizard) {
+    public static void registerWizard(Function<OverpassWizardCallbacks, Action> wizard) {
         Objects.requireNonNull(wizard, "wizard");
         wizards.add(wizard);
     }
@@ -39,26 +45,22 @@ public final class OverpassWizardRegistration {
      * Gets all wizards that are currently registered.
      * @return The list of wizards.
      */
-    public static List<OverpassQueryWizard> getWizards() {
-        return Collections.unmodifiableList(wizards);
+    public static List<Action> getWizards(OverpassWizardCallbacks callbacks) {
+        return wizards.stream()
+                .map(x -> x.apply(callbacks))
+                .collect(Collectors.toList());
     }
 
     static {
         // Register the default wizard
-        registerWizard(new OverpassQueryWizard() {
+        registerWizard(callbacks -> new AbstractAction(tr("Query Wizard")) {
+            {
+                putValue(SHORT_DESCRIPTION, tr("Build an Overpass query using the Overpass Turbo Query Wizard tool"));
+                new ImageProvider("dialogs/magic-wand").getResource().attachImageIcon(this, true);
+            }
             @Override
-            public void startWizard(OverpassWizardCallbacks callbacks) {
+            public void actionPerformed(ActionEvent e) {
                 new OverpassQueryWizardDialog(callbacks).showDialog();
-            }
-
-            @Override
-            public Optional<String> getWizardTooltip() {
-                return Optional.of(tr("Build an Overpass query using the Overpass Turbo Query Wizard tool"));
-            }
-
-            @Override
-            public String getWizardName() {
-                return tr("Query Wizard");
             }
         });
     }
@@ -68,32 +70,7 @@ public final class OverpassWizardRegistration {
     }
 
     /**
-     * Defines a query wizard that generates overpass queries.
-     * @author Michael Zangl
-     * @since 13930
-     */
-    public interface OverpassQueryWizard {
-        /**
-         * Get the name of the wizard
-         * @return The name
-         */
-        String getWizardName();
-
-        /**
-         * Get the tooltip text to display when hovering the wizard button.
-         * @return The tooltip text or an empty optional to display no tooltip.
-         */
-        Optional<String> getWizardTooltip();
-
-        /**
-         * Start the wizard.
-         * @param callbacks The callbacks to use to send back wizard results.
-         */
-        void startWizard(OverpassWizardCallbacks callbacks);
-    }
-
-    /**
-     * Wizard callbacks required by {@link OverpassQueryWizard#startWizard}
+     * Wizard callbacks required by {@link #registerWizard}
      * @author Michael Zangl
      * @since 13930
      */

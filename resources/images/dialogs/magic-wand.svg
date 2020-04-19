@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://web.resource.org/cc/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:svg="http://www.w3.org/2000/svg" id="svg2" viewBox="0 0 48 48" version="1.0">
+  <defs id="defs4">
+    <linearGradient id="linearGradient2209">
+      <stop id="stop2211" stop-color="#555753" offset="0"/>
+      <stop id="stop2213" stop-color="#fff" offset="1"/>
+    </linearGradient>
+    <linearGradient id="linearGradient2215" y2="14.617" xlink:href="#linearGradient2209" gradientUnits="userSpaceOnUse" x2="20.254" gradientTransform="matrix(.74143 .67103 -.67103 .74143 19.61 -9.6966)" y1="15.082" x1="29.576"/>
+    <linearGradient id="linearGradient3095" y2="14.617" xlink:href="#linearGradient2209" gradientUnits="userSpaceOnUse" x2="20.254" gradientTransform="matrix(.74143 .67103 -.67103 .74143 1.6352 10.183)" y1="15.082" x1="29.576"/>
+    <linearGradient id="linearGradient3111" y2="24.949" gradientUnits="userSpaceOnUse" x2="15.709" y1="31.481" x1="22.241">
+      <stop id="stop3115" stop-color="#424441" offset="0"/>
+      <stop id="stop3117" stop-color="#757772" offset="1"/>
+    </linearGradient>
+    <radialGradient id="radialGradient3132" gradientUnits="userSpaceOnUse" cy="45.409" cx="23.537" gradientTransform="matrix(1 0 0 .44 4.3097e-18 25.429)" r="13.496">
+      <stop id="stop3128" stop-opacity=".26522" offset="0"/>
+      <stop id="stop3130" stop-opacity="0" offset="1"/>
+    </radialGradient>
+  </defs>
+  <g id="layer1">
+    <path id="path2182" d="m29.272 9.8384l-22.794 25.186-0.0207 0.023c-0.063 0.058-0.1093 0.121-0.1678 0.185-1.3597 1.503-0.9349 4.128 0.9725 5.854s4.575 1.9 5.935 0.398c0.058-0.065 0.102-0.129 0.154-0.198 0.024-0.031 0.062-0.061 0.084-0.093l22.731-25.115-6.894-6.2396z" stroke="#2e3436" stroke-width=".98988" fill="url(#linearGradient3111)"/>
+    <path id="path1307" d="m31.418 7.4045a7.8276 3.6709 0 1 1 -15.655 0 7.8276 3.6709 0 1 1 15.655 0z" transform="matrix(.44145 .39953 -.67103 .74143 27.605 -2.3152)" stroke="#2e3436" stroke-width="1.296" fill="#eeeeec"/>
+    <path id="path2192" d="m31.128 21.633c-1.718 1.502-4.131 1.235-5.904-0.37-1.773-1.604-2.301-4-1.125-5.696l5.18-5.7228 0.023 0.021c-0.978 1.5348-0.461 3.8818 1.29 5.4668 1.753 1.586 4.139 1.87 5.568 0.74l-5.032 5.561z" stroke="#2e3436" stroke-width=".98988" fill="url(#linearGradient2215)"/>
+    <path id="path3093" d="m13.153 41.513c-1.718 1.501-4.1307 1.235-5.904-0.37s-2.3012-4-1.1246-5.696l5.1796-5.723 0.023 0.021c-0.978 1.535-0.461 3.882 1.29 5.467 1.753 1.586 4.139 1.87 5.568 0.74l-5.032 5.561z" stroke="#2e3436" stroke-width=".98988" fill="url(#linearGradient3095)"/>
+    <path id="path3124" d="m37.033 45.409a13.496 5.9382 0 1 1 -26.992 0 13.496 5.9382 0 1 1 26.992 0z" fill="url(#radialGradient3132)" transform="matrix(1.2967 0 0 .6995 -9.02 9.7365)"/>
+    <path id="path3152" d="m30.839 10.823c-0.433 0.364-4.345-2.848-4.909-2.8081s-3.984 3.7711-4.463 3.4721c-0.48-0.299 1.366-5.0119 1.154-5.5361-0.212-0.5241-4.818-2.6235-4.682-3.1723 0.137-0.5489 5.189-0.2491 5.622-0.613 0.433-0.3638 1.007-5.3928 1.571-5.4327 0.564-0.04 1.84 4.858 2.32 5.1573 0.48 0.2992 5.44-0.7094 5.652-0.1853 0.212 0.5242-4.052 3.2515-4.188 3.8003-0.136 0.5489 2.356 4.9548 1.923 5.3178z" transform="matrix(1.433 0 0 1.433 .055145 13.177)" stroke="#c4a000" stroke-miterlimit="5" stroke-width=".69084" fill="#fce94f"/>
+    <path id="use3154" d="m30.839 10.823c-0.433 0.364-4.345-2.848-4.909-2.8081s-3.984 3.7711-4.463 3.4721c-0.48-0.299 1.366-5.0119 1.154-5.5361-0.212-0.5241-4.818-2.6235-4.682-3.1723 0.137-0.5489 5.189-0.2491 5.622-0.613 0.433-0.3638 1.007-5.3928 1.571-5.4327 0.564-0.04 1.84 4.858 2.32 5.1573 0.48 0.2992 5.44-0.7094 5.652-0.1853 0.212 0.5242-4.052 3.2515-4.188 3.8003-0.136 0.5489 2.356 4.9548 1.923 5.3178z" transform="matrix(.70097 -.24099 .24099 .70097 20.268 32.848)" stroke="#c4a000" stroke-miterlimit="5" stroke-width="1.3356" fill="#fce94f"/>
+    <path id="path3158" d="m30.839 10.823c-0.433 0.364-4.345-2.848-4.909-2.8081s-3.984 3.7711-4.463 3.4721c-0.48-0.299 1.366-5.0119 1.154-5.5361-0.212-0.5241-4.818-2.6235-4.682-3.1723 0.137-0.5489 5.189-0.2491 5.622-0.613 0.433-0.3638 1.007-5.3928 1.571-5.4327 0.564-0.04 1.84 4.858 2.32 5.1573 0.48 0.2992 5.44-0.7094 5.652-0.1853 0.212 0.5242-4.052 3.2515-4.188 3.8003-0.136 0.5489 2.356 4.9548 1.923 5.3178z" transform="matrix(1.1431 -.031670 .031670 1.1431 1.9028 28.036)" stroke="#c4a000" stroke-miterlimit="5" stroke-width=".86572" fill="#fce94f"/>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+        <dc:publisher>
+          <cc:Agent rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Wand with Stars</dc:title>
+        <dc:date>2007-03-03T13:07:37</dc:date>
+        <dc:description>An icon size magic wand with stars</dc:description>
+        <dc:source>http://openclipart.org/detail/3394/wand-with-stars-by-freedo</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>freedo</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>clip art</rdf:li>
+            <rdf:li>clipart</rdf:li>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>image</rdf:li>
+            <rdf:li>magic</rdf:li>
+            <rdf:li>media</rdf:li>
+            <rdf:li>png</rdf:li>
+            <rdf:li>public domain</rdf:li>
+            <rdf:li>star</rdf:li>
+            <rdf:li>svg</rdf:li>
+            <rdf:li>wand</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
