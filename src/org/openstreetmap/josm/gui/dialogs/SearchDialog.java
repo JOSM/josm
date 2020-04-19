@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -53,7 +54,7 @@ public class SearchDialog extends ExtendedDialog {
 
     private final SearchSetting searchSettings;
 
-    private final HistoryComboBox hcbSearchString = new HistoryComboBox();
+    protected final HistoryComboBox hcbSearchString = new HistoryComboBox();
 
     private JCheckBox addOnToolbar;
     private JCheckBox caseSensitive;
@@ -75,17 +76,40 @@ public class SearchDialog extends ExtendedDialog {
      * @param expertMode expert mode
      */
     public SearchDialog(SearchSetting initialValues, List<String> searchExpressionHistory, boolean expertMode) {
-        super(MainApplication.getMainFrame(),
+        this(initialValues, searchExpressionHistory, new PanelOptions(expertMode, false), MainApplication.getMainFrame(),
                 initialValues instanceof Filter ? tr("Filter") : tr("Search"),
                 initialValues instanceof Filter ? tr("Submit filter") : tr("Search"),
                 tr("Cancel"));
-        this.searchSettings = new SearchSetting(initialValues);
         setButtonIcons("dialogs/search", "cancel");
         configureContextsensitiveHelp("/Action/Search", true /* show help button */);
-        setContent(buildPanel(searchExpressionHistory, expertMode));
     }
 
-    private JPanel buildPanel(List<String> searchExpressionHistory, boolean expertMode) {
+    protected SearchDialog(SearchSetting initialValues, List<String> searchExpressionHistory, PanelOptions options,
+                           Component mainFrame, String title, String... buttonTexts) {
+        super(mainFrame, title, buttonTexts);
+        this.searchSettings = new SearchSetting(initialValues);
+        setContent(buildPanel(searchExpressionHistory, options));
+    }
+
+    /**
+     * Determines which parts of the search dialog will be shown
+     */
+    protected static class PanelOptions {
+        private final boolean expertMode;
+        private final boolean overpassQuery;
+
+        /**
+         * Constructs new options which determine which parts of the search dialog will be shown
+         * @param expertMode whether export mode is enabled
+         * @param overpassQuery whether the panel shall be adapted for Overpass query
+         */
+        public PanelOptions(boolean expertMode, boolean overpassQuery) {
+            this.expertMode = expertMode;
+            this.overpassQuery = overpassQuery;
+        }
+    }
+
+    private JPanel buildPanel(List<String> searchExpressionHistory, PanelOptions options) {
 
         // prepare the combo box with the search expressions
         JLabel label = new JLabel(searchSettings instanceof Filter ? tr("Filter string:") : tr("Search string:"));
@@ -139,7 +163,7 @@ public class SearchDialog extends ExtendedDialog {
         left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
         left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
 
-        if (expertMode) {
+        if (options.expertMode) {
             additionalSettings.add(allElements, GBC.eol());
             additionalSettings.add(addOnToolbar, GBC.eop());
 
@@ -152,7 +176,7 @@ public class SearchDialog extends ExtendedDialog {
             left.add(searchOptions, GBC.eol().fill(GBC.BOTH));
         }
 
-        JPanel right = buildHintsSection(hcbSearchString, expertMode);
+        JPanel right = buildHintsSection(hcbSearchString, options);
         JPanel top = new JPanel(new GridBagLayout());
         top.add(label, GBC.std().insets(0, 0, 5, 0));
         top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
@@ -213,9 +237,13 @@ public class SearchDialog extends ExtendedDialog {
 
         JPanel p = new JPanel(new GridBagLayout());
         p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
-        p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0).fill(GBC.VERTICAL));
+        if (!options.overpassQuery) {
+            p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0).fill(GBC.VERTICAL));
+        }
         p.add(right, GBC.std().fill(GBC.BOTH).insets(0, 10, 0, 0));
-        p.add(selector, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
+        if (!options.overpassQuery) {
+            p.add(selector, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
+        }
 
         return p;
     }
@@ -278,7 +306,7 @@ public class SearchDialog extends ExtendedDialog {
         return addOnToolbar.isSelected();
     }
 
-    private static JPanel buildHintsSection(HistoryComboBox hcbSearchString, boolean expertMode) {
+    private static JPanel buildHintsSection(HistoryComboBox hcbSearchString, PanelOptions options) {
         JPanel hintPanel = new JPanel(new GridBagLayout());
         hintPanel.setBorder(BorderFactory.createTitledBorder(tr("Hints")));
 
@@ -316,15 +344,19 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions")),
                 GBC.eol());
 
-        if (expertMode) {
-            hintPanel.add(new SearchKeywordRow(hcbSearchString)
+        SearchKeywordRow objectHints = new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("objects"))
                 .addKeyword("type:node", "type:node ", tr("all nodes"))
                 .addKeyword("type:way", "type:way ", tr("all ways"))
-                .addKeyword("type:relation", "type:relation ", tr("all relations"))
+                .addKeyword("type:relation", "type:relation ", tr("all relations"));
+        if (options.expertMode) {
+            objectHints
                 .addKeyword("closed", "closed ", tr("all closed ways"))
-                .addKeyword("untagged", "untagged ", tr("object without useful tags")),
-                GBC.eol());
+                .addKeyword("untagged", "untagged ", tr("object without useful tags"));
+        }
+        hintPanel.add(objectHints, GBC.eol());
+
+        if (options.expertMode) {
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
                     .addKeyword("preset:\"Annotation/Address\"", "preset:\"Annotation/Address\"",
                             tr("all objects that use the address preset"))
@@ -380,6 +412,19 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword("indownloadedarea", "indownloadedarea ", tr("objects in downloaded area"))
                 .addKeyword("allindownloadedarea", "allindownloadedarea ",
                         tr("objects (and all its way nodes / relation members) in downloaded area")),
+                GBC.eol());
+        }
+        if (options.overpassQuery) {
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
+                .addTitle(tr("location"))
+                .addKeyword("<i>key=value in <u>location</u></i>", null,
+                        tr("{0} all objects having {1} as attribute are downloaded.", "<i>tourism=hotel in Berlin</i> -", "'tourism=hotel'"))
+                .addKeyword("<i>key=value around <u>location</u></i>", null,
+                        tr("{0} all object with the corresponding key/value pair located around Berlin. Note, the default value for radius " +
+                                "is set to 1000m, but it can be changed in the generated query.", "<i>tourism=hotel around Berlin</i> -"))
+                .addKeyword("<i>key=value in bbox</i>", null,
+                        tr("{0} all objects within the current selection that have {1} as attribute.", "<i>tourism=hotel in bbox</i> -",
+                                "'tourism=hotel'")),
                 GBC.eol());
         }
 
