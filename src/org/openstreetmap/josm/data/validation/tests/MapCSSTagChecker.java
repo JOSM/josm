@@ -537,14 +537,12 @@ public class MapCSSTagChecker extends Test.TagTest {
          * Constructs a {@link TestError} for the given primitive, or returns null if the primitive does not give rise to an error.
          *
          * @param p the primitive to construct the error for
+         * @param matchingSelector the matching selector (e.g., obtained via {@link #whichSelectorMatchesPrimitive})
+         * @param env the environment
+         * @param tester the tester
          * @return an instance of {@link TestError}, or returns null if the primitive does not give rise to an error.
          */
-        List<TestError> getErrorsForPrimitive(OsmPrimitive p) {
-            final Environment env = new Environment(p);
-            return getErrorsForPrimitive(p, whichSelectorMatchesEnvironment(env), env, null);
-        }
-
-        private List<TestError> getErrorsForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env, Test tester) {
+        protected List<TestError> getErrorsForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env, Test tester) {
             List<TestError> res = new ArrayList<>();
             if (matchingSelector != null && !errors.isEmpty()) {
                 final Command fix = fixPrimitive(p);

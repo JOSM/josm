@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.validation.Test.TagTest;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
+import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
@@ -102,7 +103,7 @@ public class MapCSSTagCheckerTest {
         new DataSet(n1, n2);
         assertTrue(check.test(n1));
 
-        final Collection<TestError> errors = check.getErrorsForPrimitive(n1);
+        final Collection<TestError> errors = check.getErrorsForPrimitive(n1, check.whichSelectorMatchesPrimitive(n1), new Environment(), null);
         assertEquals(1, errors.size());
         TestError err = errors.iterator().next();
         assertEquals("deprecated", err.getMessage());
