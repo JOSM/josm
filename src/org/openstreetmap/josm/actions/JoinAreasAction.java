@@ -519,8 +519,8 @@ public class JoinAreasAction extends JosmAction {
 
         // TODO: Only display this warning when nodes outside dataSourceArea are deleted
         boolean ok = checkAndConfirmOutlyingOperation("joinarea", tr("Join area confirmation"),
-                trn("The selected way has nodes outside of the downloaded data region.",
-                    "The selected ways have nodes outside of the downloaded data region.",
+                trn("The selected way has nodes which can have other referrers not yet downloaded.",
+                    "The selected ways have nodes which can have other referrers not yet downloaded.",
                     ways.size()) + "<br/>"
                     + tr("This can lead to nodes being deleted accidentally.") + "<br/>"
                     + tr("Are you really sure to continue?")

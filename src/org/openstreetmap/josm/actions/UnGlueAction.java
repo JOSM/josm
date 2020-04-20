@@ -503,7 +503,7 @@ public class UnGlueAction extends JosmAction {
             primitives.add(selectedNode);
         final boolean ok = checkAndConfirmOutlyingOperation("unglue",
                 tr("Unglue confirmation"),
-                tr("You are about to unglue nodes outside of the area you have downloaded."
+                tr("You are about to unglue nodes which can have other referrers not yet downloaded."
                         + "<br>"
                         + "This can cause problems because other objects (that you do not see) might use them."
                         + "<br>"

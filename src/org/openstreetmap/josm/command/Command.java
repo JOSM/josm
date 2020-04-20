@@ -228,7 +228,8 @@ public abstract class Command implements PseudoCommand {
             if (osm.isIncomplete()) {
                 res |= IS_INCOMPLETE;
             } else if (osm.isOutsideDownloadArea()
-                    && (ignore == null || !ignore.contains(osm))) {
+                    || (!osm.isNew() && osm.getDataSet() != null && osm.getDataSet().getDataSourceBounds().isEmpty())
+                            && (ignore == null || !ignore.contains(osm))) {
                 res |= IS_OUTSIDE;
             }
         }

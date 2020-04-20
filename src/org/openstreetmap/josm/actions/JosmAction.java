@@ -495,10 +495,11 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Check whether user is about to operate on data outside of the download area.
      * Request confirmation if he is.
+     * Also handles the case that there is no download area.
      *
      * @param operation the operation name which is used for setting some preferences
      * @param dialogTitle the title of the dialog being displayed
-     * @param outsideDialogMessage the message text to be displayed when data is outside of the download area
+     * @param outsideDialogMessage the message text to be displayed when data is outside of the download area or no download area exists
      * @param incompleteDialogMessage the message text to be displayed when data is incomplete
      * @param primitives the primitives to operate on
      * @param ignore {@code null} or a primitive to be ignored

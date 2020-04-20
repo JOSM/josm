@@ -95,7 +95,7 @@ public final class DeleteAction extends JosmAction {
             Collection<? extends OsmPrimitive> ignore) {
         return checkAndConfirmOutlyingOperation("delete",
                 tr("Delete confirmation"),
-                tr("You are about to delete nodes outside of the area you have downloaded."
+                tr("You are about to delete nodes which can have other referrers not yet downloaded."
                         + "<br>"
                         + "This can cause problems because other objects (that you do not see) might use them."
                         + "<br>"
