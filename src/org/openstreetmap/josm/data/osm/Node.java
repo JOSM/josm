@@ -356,7 +356,7 @@ public final class Node extends OsmPrimitive implements INode {
      * @param hops number of hops
      * @param predicate predicate to match
      * @return {@code true} if {@code this} node mets the conditions
-     * @deprecated: Was used by UnconnectedWays test
+     * @deprecated Was used by UnconnectedWays test
      */
     @Deprecated
     public boolean isConnectedTo(final Collection<Node> otherNodes, final int hops, Predicate<Node> predicate) {
@@ -367,6 +367,7 @@ public final class Node extends OsmPrimitive implements INode {
                 ? isConnectedTo(otherNodes, hops, predicate, null)
                 : isConnectedTo(otherNodes, hops, predicate, new TreeSet<>());
     }
+
     @Deprecated
     private boolean isConnectedTo(final Collection<Node> otherNodes, final int hops, Predicate<Node> predicate, Set<Node> visited) {
         if (otherNodes.contains(this)) {
