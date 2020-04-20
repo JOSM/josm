@@ -114,8 +114,8 @@ public class UnGlueAction extends JosmAction {
                 unglueWays();
             }
         } else if (checkSelectionOneWayAnyNodes(selection)) {
-            selectedNodes.removeIf(n -> n.getParentWays().stream().filter(Way::isUsable).count() < 2);
             checkAndConfirmOutlyingUnglue();
+            selectedNodes.removeIf(n -> n.getParentWays().stream().filter(Way::isUsable).count() < 2);
             if (selectedNodes.isEmpty()) {
                 if (selection.size() > 1) {
                     errMsg = tr("None of these nodes are glued to anything else.");
