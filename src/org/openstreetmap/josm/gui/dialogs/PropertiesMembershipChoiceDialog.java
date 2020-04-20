@@ -37,14 +37,6 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
      */
     public enum ExistingBothNew {
         OLD, BOTH, NEW;
-
-        /**
-         * Returns the opposite/inverted user choice.
-         * @return the opposite/inverted user choice
-         */
-        public ExistingBothNew opposite() {
-            return equals(OLD) ? NEW : equals(NEW) ? OLD : this;
-        }
     }
 
     /**
