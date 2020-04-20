@@ -18,6 +18,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
@@ -82,6 +84,7 @@ public class JoinAreasActionTest {
     public void testTicket9599Simple() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(9599, "three_old.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
+            ds.addDataSource(new DataSource(new Bounds(-90, -180, 90, 180), "Everywhere"));
             Layer layer = new OsmDataLayer(ds, null, null);
             MainApplication.getLayerManager().addLayer(layer);
             try {
@@ -153,6 +156,7 @@ public class JoinAreasActionTest {
     public void testTicket18744() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18744, "18744-sample.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
+            ds.addDataSource(new DataSource(new Bounds(-90, -180, 90, 180), "Everywhere"));
             Layer layer = new OsmDataLayer(ds, null, null);
             MainApplication.getLayerManager().addLayer(layer);
             try {
