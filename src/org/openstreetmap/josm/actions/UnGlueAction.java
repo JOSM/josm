@@ -99,7 +99,7 @@ public class UnGlueAction extends JosmAction {
 
                     final PropertiesMembershipChoiceDialog dialog = PropertiesMembershipChoiceDialog.showIfNecessary(
                             Collections.singleton(selectedNode), !selectedNode.isTagged());
-                    if (dialog != null) {
+                    if (dialog != null && dialog.getTags().isPresent()) {
                         unglueOneNodeAtMostOneWay(way, dialog);
                         return;
                     } else if (closedOrSelfCrossing) {
