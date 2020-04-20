@@ -9,7 +9,6 @@ import java.util.Collections;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
-import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * The asynchronous task for updating a collection of objects using multi fetch.
@@ -30,7 +29,6 @@ public class UpdatePrimitivesTask extends AbstractPrimitiveTask {
     public UpdatePrimitivesTask(OsmDataLayer layer, Collection<? extends OsmPrimitive> toUpdate) {
         super(tr("Update objects"), layer);
         this.toUpdate = toUpdate != null ? toUpdate : Collections.<OsmPrimitive>emptyList();
-        setDownloadRelations(Config.getPref().getBoolean("update.selected.complete-relation", true));
     }
 
     @Override
