@@ -126,7 +126,7 @@ public class ConnectivityRelations extends Test {
         if (r.hasTag("type", CONNECTIVITY_TAG)) {
             if (!r.hasKey(CONNECTIVITY_TAG)) {
                 errors.add(TestError.builder(this, Severity.WARNING, NO_CONNECTIVITY_TAG)
-                        .message(tr("No 'connectivity' tag in connectivity relation")).primitives(r).build());
+                        .message(tr("Connectivity relation without connectivity tag")).primitives(r).build());
             } else if (!r.hasIncompleteMembers()) {
                 boolean badRole = checkForBadRole(r);
                 boolean missingRole = checkForMissingRole(r);
@@ -229,9 +229,10 @@ public class ConnectivityRelations extends Test {
             }
         } else if (!defaultLanes) {
             errors.add(TestError.builder(this, Severity.WARNING, MEMBER_MISSING_LANES)
-                    .message(trn("Relation {0} member missing lanes tag", "Relation {0} members missing 'lanes' or '*:lanes' tag",
-                            lanelessRolesCount, lanelessRoles)).primitives(relation)
-                    .build());
+                    .message(trn("Relation {0} member is missing a lanes or *:lanes tag",
+                            "Relation {0} members are missing a lanes or *:lanes tag", lanelessRolesCount,
+                            lanelessRoles))
+                    .primitives(relation).build());
         }
         return roleLanes;
     }
@@ -399,9 +400,9 @@ public class ConnectivityRelations extends Test {
         String message = "";
         if (viaNodes > 1) {
             if (viaWays > 0) {
-                message = tr("Relation should not contain mixed 'via' ways and nodes");
+                message = tr("Relation should not contain mixed ''via'' ways and nodes");
             } else {
-                message = tr("Multiple 'via' roles only allowed with ways");
+                message = tr("Multiple ''via'' roles only allowed with ways");
             }
         }
         if (message.isEmpty()) {
