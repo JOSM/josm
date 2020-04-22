@@ -504,7 +504,7 @@ public class SyncEditorLayerIndex {
                 continue;
             }
             if (isBlank(e.getDate()) && e.getDate() != null) {
-                myprintln("+++ JOSM-Entry without empty Date: " + getDescription(e));
+                myprintln("+++ JOSM-Entry with empty Date: " + getDescription(e));
                 continue;
             }
             if (isBlank(getName(e))) {
