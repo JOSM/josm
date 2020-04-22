@@ -879,7 +879,8 @@ Build-Date: ${build.tstamp}
             <arg value="--unlink"/>
         </exec>
         <exec append="false" executable="wget" failifexecutionfails="true">
-            <arg value="https://raw.githubusercontent.com/osmlab/editor-layer-index/gh-pages/imagery.geojson"/>
+            <!--<arg value="https://raw.githubusercontent.com/osmlab/editor-layer-index/gh-pages/imagery.geojson"/>-->
+            <arg value="https://raw.githubusercontent.com/ideditor/imagery-index/master/dist/legacy/imagery.geojson"/>
             <arg value="-O"/>
             <arg value="imagery_eli.geojson"/>
             <arg value="--unlink"/>

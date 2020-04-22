@@ -503,6 +503,10 @@ public class SyncEditorLayerIndex {
                 myprintln("+++ JOSM-Entry without URL: " + getDescription(e));
                 continue;
             }
+            if (isBlank(e.getDate()) && e.getDate() != null) {
+                myprintln("+++ JOSM-Entry without empty Date: " + getDescription(e));
+                continue;
+            }
             if (isBlank(getName(e))) {
                 myprintln("+++ JOSM-Entry without Name: " + getDescription(e));
                 continue;
