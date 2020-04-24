@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
@@ -142,7 +141,7 @@ public class UnclosedWays extends Test {
                             "ridge", "saddle", "strait", "tree", "tree_row", "valley", "volcano"))),
 
         new UnclosedWaysCheck(1102, "landuse", marktr("landuse type {0}")),
-        new UnclosedWaysCheck(1103, "amenities", marktr("amenities type {0}")),
+        new UnclosedWaysCheck(1103, "amenity", marktr("amenity type {0}")),
         new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"),
                 new HashSet<>(Arrays.asList("water_slide", "climbing", "skiing", "toboggan", "bobsleigh", "karting"))),
         new UnclosedWaysCheck(1105, "tourism",   marktr("tourism type {0}"),
@@ -179,12 +178,9 @@ public class UnclosedWays extends Test {
         if (!w.isUsable() || w.isArea())
             return;
 
-        for (OsmPrimitive parent: w.getReferrers()) {
-            if (parent instanceof Relation && ((Relation) parent).isMultipolygon())
-                return;
-        }
-
         for (UnclosedWaysCheck c : checks) {
+            if ("boundary".equals(c.key) && w.referrers(Relation.class).anyMatch(Relation::isMultipolygon))
+                return;
             TestError error = c.getTestError(w, this);
             if (error != null) {
                 errors.add(error);

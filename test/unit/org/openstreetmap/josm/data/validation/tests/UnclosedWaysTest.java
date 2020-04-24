@@ -78,7 +78,8 @@ public class UnclosedWaysTest {
     }
 
     /**
-     * Test to make sure the multipolygon ways are ignored
+     * Test to make sure the multipolygon ways are not ignored
+     * See #19136, #19145
      * @throws Exception if an exception occurs
      */
     @Test
@@ -95,7 +96,53 @@ public class UnclosedWaysTest {
         ds.addPrimitive(r);
         uwTest.visit(w);
         assertTrue(ElemStyles.hasAreaElemStyle(w, false));
+        assertEquals(1, uwTest.getErrors().size());
+
+        uwTest.endTest();
+    }
+
+    /**
+     * Test to make sure the boundary ways are ignored when member of a boundary relation
+     * See #19136, #19145
+     * @throws Exception if an exception occurs
+     */
+    @Test
+    public void testWayInBoundary() throws Exception {
+        UnclosedWays uwTest = new UnclosedWays();
+        uwTest.initialize();
+        uwTest.startTest(null);
+        DataSet ds = new DataSet();
+
+        // Erroneous tag
+        Way w = createUnclosedWay("boundary=administrative", ds);
+        Relation r = (Relation) OsmUtils.createPrimitive("relation type=boundary");
+        r.addMember(new RelationMember("inner", w));
+        ds.addPrimitive(r);
+        uwTest.visit(w);
+        assertFalse(ElemStyles.hasAreaElemStyle(w, false));
         assertEquals(0, uwTest.getErrors().size());
+
+        uwTest.endTest();
+    }
+
+    /**
+     * Test to make sure that amenity=* is closed.
+     * See #19145
+     * @throws Exception if an exception occurs
+     */
+    @Test
+    public void testAmenity() throws Exception {
+        UnclosedWays uwTest = new UnclosedWays();
+        uwTest.initialize();
+        uwTest.startTest(null);
+        DataSet ds = new DataSet();
+
+        // Erroneous tag
+        Way w = createUnclosedWay("amenity=school", ds);
+        uwTest.visit(w);
+        assertTrue(ElemStyles.hasAreaElemStyle(w, false));
+        assertEquals(1, uwTest.getErrors().size());
+        assertEquals(1103, uwTest.getErrors().iterator().next().getCode());
 
         uwTest.endTest();
     }
