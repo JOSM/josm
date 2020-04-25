@@ -2349,7 +2349,10 @@
             <space />
             <key key="amenity" value="car_wash" />
             <reference ref="name_brand_operator_oh_wheelchair" />
-            <check key="self_service" text="Self Service" />
+            <checkgroup columns="2">
+                <check key="automated" text="Automated" text_context="car_wash" />
+                <check key="self_service" text="Self Service" />
+            </checkgroup>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Wash -->
         <separator/>

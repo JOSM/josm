@@ -57,7 +57,7 @@ public class Highways extends Test {
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private static final Set<String> KNOWN_SOURCE_MAXSPEED_CONTEXTS = new HashSet<>(Arrays.asList(
-            "urban", "rural", "zone", "zone20", "zone:20", "zone30", "zone:30", "zone40",
+            "urban", "rural", "zone", "zone10", "zone:10", "zone20", "zone:20", "zone30", "zone:30", "zone40", "zone:40", "zone60", "zone:60",
             "nsl_single", "nsl_dual", "motorway", "trunk", "living_street", "bicycle_road"));
 
     private static final Set<String> ISO_COUNTRIES = new HashSet<>(Arrays.asList(Locale.getISOCountries()));
