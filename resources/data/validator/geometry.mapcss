@@ -334,11 +334,6 @@ area:closed[place=island][eval(areasize()) < 500000] {
   fixAdd: "place=islet";
 }
 
-/* #15648 */
-way[place=island]!:closed {
-  throwError: tr("Way with {0} not closed.", "{0.tag}");
-}
-
 /* #12561 - building larger than Aalsmeer Flower Auction (518000) and Tesla factory (510000) */
 area:closed[building][building!=no][eval(areasize()) > 520000] {
   throwError: tr("Too large building");
