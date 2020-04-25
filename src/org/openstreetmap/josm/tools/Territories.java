@@ -63,7 +63,7 @@ public final class Territories {
     static volatile Map<String, TaginfoRegionalInstance> taginfoGeofabrikCache;
     static volatile Map<String, TagMap> customTagsCache;
 
-    private static final List<String> KNOWN_KEYS = Arrays.asList(ISO3166_1, ISO3166_2, TAGINFO, "type", "name:en", "driving_side", "note");
+    private static final List<String> KNOWN_KEYS = Arrays.asList(ISO3166_1, ISO3166_2, TAGINFO, "type", "driving_side", "note");
 
     private Territories() {
         // Hide implicit public constructor for utility classes
