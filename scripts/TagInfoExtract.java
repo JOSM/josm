@@ -282,7 +282,7 @@ public class TagInfoExtract {
                                 } else {
                                     optionalTags.compute(new Tag(item.key, value), (osmTag, tagInfoTag) -> {
                                         if (tagInfoTag == null) {
-                                            String description = descriptionPrefix + "Optional for: " + preset.getName();
+                                            String description = descriptionPrefix + TagInfoTag.OPTIONAL_FOR_COUNT + ": " + preset.getName();
                                             return new TagInfoTag(description, item.key, value, types, null);
                                         } else {
                                             tagInfoTag.descriptions.add(preset.getName());
@@ -550,6 +550,7 @@ public class TagInfoExtract {
      * POJO representing a <a href="https://wiki.openstreetmap.org/wiki/Taginfo/Projects">Taginfo tag</a>.
      */
     private static class TagInfoTag {
+        static final String OPTIONAL_FOR_COUNT = "Optional for {count}";
         final Collection<String> descriptions = new ArrayList<>();
         final String key;
         final String value;
@@ -569,7 +570,9 @@ public class TagInfoExtract {
         JsonObjectBuilder toJson() {
             final JsonObjectBuilder object = Json.createObjectBuilder();
             if (!descriptions.isEmpty()) {
-                object.add("description", String.join(", ", Utils.limit(descriptions, 8, "...")));
+                final int size = descriptions.size();
+                object.add("description", String.join(", ", Utils.limit(descriptions, 8, "..."))
+                        .replace(OPTIONAL_FOR_COUNT, size > 3 ? "Optional for " + size : "Optional for"));
             }
             object.add("key", key);
             if (value != null) {
