@@ -274,7 +274,7 @@ public class TagInfoExtract {
                                 ? ((CheckGroup) item).checks.stream()
                                 : Stream.empty())
                         .forEach(item -> {
-                            for (String value : item.getValues()) {
+                            for (String value : values(item)) {
                                 Set<TagInfoTag.Type> types = TagInfoTag.Type.forPresetTypes(preset.types);
                                 if (item.isKeyRequired()) {
                                     tags.add(new TagInfoTag(descriptionPrefix + preset.getName(), item.key, value, types,
@@ -296,6 +296,11 @@ public class TagInfoExtract {
             }
             tags.addAll(optionalTags.values());
             return tags;
+        }
+
+        private Collection<String> values(KeyedItem item) {
+            final Collection<String> values = item.getValues();
+            return values.isEmpty() || values.size() > 50 ? Collections.singleton(null) : values;
         }
 
     }
@@ -567,7 +572,9 @@ public class TagInfoExtract {
                 object.add("description", String.join(", ", Utils.limit(descriptions, 8, "...")));
             }
             object.add("key", key);
-            object.add("value", value);
+            if (value != null) {
+                object.add("value", value);
+            }
             if ((!objectTypes.isEmpty())) {
                 final JsonArrayBuilder types = Json.createArrayBuilder();
                 objectTypes.stream().map(Enum::name).map(String::toLowerCase).forEach(types::add);
