@@ -279,7 +279,7 @@ public class TagInfoExtract {
                                 if (item.isKeyRequired()) {
                                     tags.add(new TagInfoTag(descriptionPrefix + preset.getName(), item.key, value, types,
                                             addImages && preset.iconName != null ? options.findImageUrl(preset.iconName) : null));
-                                } else {
+                                } else if (Presets.class.equals(getClass())) { // not for ExternalPresets
                                     optionalTags.compute(new Tag(item.key, value), (osmTag, tagInfoTag) -> {
                                         if (tagInfoTag == null) {
                                             String description = descriptionPrefix + TagInfoTag.OPTIONAL_FOR_COUNT + ": " + preset.getName();
