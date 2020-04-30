@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
@@ -509,11 +510,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
             return false;
         if (referrers instanceof OsmPrimitive)
             return referrers instanceof Relation && ((OsmPrimitive) referrers).isSelected();
-        for (OsmPrimitive ref : (OsmPrimitive[]) referrers) {
-            if (ref instanceof Relation && ref.isSelected())
-                return true;
-        }
-        return false;
+        return Arrays.stream((OsmPrimitive[]) referrers)
+                .anyMatch(ref -> ref instanceof Relation && ref.isSelected());
     }
 
     @Override
@@ -523,22 +521,16 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         if (referrers instanceof OsmPrimitive) {
             return isOuterMemberOfMultipolygon((OsmPrimitive) referrers);
         }
-        for (OsmPrimitive ref : (OsmPrimitive[]) referrers) {
-            if (isOuterMemberOfMultipolygon(ref))
-                return true;
-        }
-        return false;
+        return Arrays.stream((OsmPrimitive[]) referrers)
+                .anyMatch(this::isOuterMemberOfMultipolygon);
     }
 
     private boolean isOuterMemberOfMultipolygon(OsmPrimitive ref) {
-        if (ref instanceof Relation && ref.isSelected() && ((Relation) ref).isMultipolygon()) {
-            for (RelationMember rm : ((Relation) ref).getMembersFor(Collections.singleton(this))) {
-                if ("outer".equals(rm.getRole())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return ref instanceof Relation
+                && ref.isSelected()
+                && ((Relation) ref).isMultipolygon()
+                && ((Relation) ref).getMembersFor(Collections.singleton(this)).stream()
+                    .anyMatch(rm -> "outer".equals(rm.getRole()));
     }
 
     @Override
@@ -575,25 +567,15 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     private void updateTagged() {
-        for (String key: keySet()) {
-            // 'area' is not really uninteresting (putting it in that list may have unpredictable side effects)
-            // but it's clearly not enough to consider an object as tagged (see #9261)
-            if (!isUninterestingKey(key) && !"area".equals(key)) {
-                updateFlagsNoLock(FLAG_TAGGED, true);
-                return;
-            }
-        }
-        updateFlagsNoLock(FLAG_TAGGED, false);
+        // 'area' is not really uninteresting (putting it in that list may have unpredictable side effects)
+        // but it's clearly not enough to consider an object as tagged (see #9261)
+        updateFlagsNoLock(FLAG_TAGGED, keySet().stream()
+                .anyMatch(key -> !isUninterestingKey(key) && !"area".equals(key)));
     }
 
     private void updateAnnotated() {
-        for (String key: keySet()) {
-            if (getWorkInProgressKeys().contains(key)) {
-                updateFlagsNoLock(FLAG_ANNOTATED, true);
-                return;
-            }
-        }
-        updateFlagsNoLock(FLAG_ANNOTATED, false);
+        updateFlagsNoLock(FLAG_ANNOTATED, keySet().stream()
+                .anyMatch(getWorkInProgressKeys()::contains));
     }
 
     @Override
@@ -745,13 +727,9 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
             }
         } else if (referrers instanceof OsmPrimitive[]) {
             OsmPrimitive[] orig = (OsmPrimitive[]) referrers;
-            int idx = -1;
-            for (int i = 0; i < orig.length; i++) {
-                if (orig[i] == referrer) {
-                    idx = i;
-                    break;
-                }
-            }
+            int idx = IntStream.range(0, orig.length)
+                    .filter(i -> orig[i] == referrer)
+                    .findFirst().orElse(-1);
             if (idx == -1)
                 return;
 
@@ -903,7 +881,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     }
 
     /**
-     * Merges the technical and semantical attributes from <code>other</code> onto this.
+     * Merges the technical and semantic attributes from <code>other</code> onto this.
      *
      * Both this and other must be new, or both must be assigned an OSM ID. If both this and <code>other</code>
      * have an assigned OSM id, the IDs have to be the same.
