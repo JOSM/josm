@@ -58,7 +58,7 @@ public class OpenChangesetPopupMenu extends JPopupMenu {
     private static final List<ChangesetViewerEntry> DEFAULT_ENTRIES = Arrays.asList(
             new ChangesetViewerEntry(tr("View changeset in web browser"), Config.getUrls().getBaseBrowseUrl() + "/changeset/{0}"),
             new ChangesetViewerEntry(tr("Open {0}", "achavi (Augmented OSM Change Viewer)"), "https://overpass-api.de/achavi/?changeset={0}"),
-            new ChangesetViewerEntry(tr("Open {0}", "OSMCha (OSM Changeset Analyzer)"), "https://osmcha.mapbox.com/changesets/{0}"),
+            new ChangesetViewerEntry(tr("Open {0}", "OSMCha (OSM Changeset Analyzer)"), "https://osmcha.org/changesets/{0}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer (Mapki)"), "http://osm.mapki.com/history/{1}.php?id={2}"),
             new ChangesetViewerEntry(tr("Open {0}", "OSM History Viewer (Pewu)"), "https://pewu.github.io/osm-history/#/{1}/{2}"),
             new ChangesetViewerEntry(tr("Open {0}", "WhoDidIt (OSM Changeset Analyzer)"),
