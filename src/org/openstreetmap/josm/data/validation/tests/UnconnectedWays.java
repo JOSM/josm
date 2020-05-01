@@ -119,7 +119,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean isCandidate(OsmPrimitive p) {
-            return p.hasTagDifferent(RAILWAY, "abandoned", "platform");
+            return p.hasTagDifferent(RAILWAY, "abandoned", "platform", "razed");
         }
 
         @Override
