@@ -3587,10 +3587,7 @@ area[landuse=railway] {
 }
 area[landuse=construction] {
     fill-color: construction#ffff00;
-}
-way[landuse=construction] {
     width: 1;
-    color: construction#ffff00;
     dashes: 9,9;
 }
 area[landuse=military] {
