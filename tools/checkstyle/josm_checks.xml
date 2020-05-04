@@ -117,7 +117,6 @@ JOSM Checkstyle rules
     <property name="tabWidth" value="4"/>
   </module>
   <module name="NewlineAtEndOfFile">
-    <property name="lineSeparator" value="lf"/>
   </module>
   <module name="SuppressionFilter">
     <property name="file" value="${basedir}/tools/checkstyle/josm_filters.xml" default="tools/checkstyle/josm_filters.xml"/>

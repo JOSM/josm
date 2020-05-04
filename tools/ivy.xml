@@ -13,7 +13,7 @@
         <!-- javacc->default -->
         <dependency org="net.java.dev.javacc" name="javacc" rev="7.0.3" conf="javacc->default"/>
         <!-- checkstyle->default -->
-        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.29" conf="checkstyle->default"/>
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.31" conf="checkstyle->default"/>
         <!-- proguard->default -->
         <dependency org="net.sf.proguard" name="proguard-anttask" rev="6.2.2" conf="proguard->default"/>
         <!-- pmd->default -->
