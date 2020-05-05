@@ -101,7 +101,7 @@ public final class JCSCacheManager {
                     // nothing to be done on close
                 }
             });
-        } catch (SecurityException e) {
+        } catch (Exception e) {
             Logging.log(Logging.LEVEL_ERROR, "Unable to configure JCS logs", e);
         }
     }
@@ -131,7 +131,7 @@ public final class JCSCacheManager {
                     Logging.warn("Will not use disk cache");
                 }
             }
-        } catch (SecurityException e) {
+        } catch (Exception e) {
             Logging.log(Logging.LEVEL_WARN, "Unable to configure disk cache. Will not use it", e);
         }
 
@@ -152,7 +152,7 @@ public final class JCSCacheManager {
         // CHECKSTYLE.ON: SingleSpaceSeparator
         try {
             JCS.setConfigProperties(props);
-        } catch (SecurityException e) {
+        } catch (Exception e) {
             Logging.log(Logging.LEVEL_WARN, "Unable to initialize JCS", e);
         }
     }
