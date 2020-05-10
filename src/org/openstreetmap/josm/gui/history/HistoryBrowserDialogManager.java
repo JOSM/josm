@@ -2,16 +2,17 @@
 package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -28,6 +29,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
@@ -58,7 +60,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
     private static HistoryBrowserDialogManager instance;
 
-    private final Map<Long, HistoryBrowserDialog> dialogs = new HashMap<>();
+    private final LinkedHashMap<Long, HistoryBrowserDialog> dialogs = new LinkedHashMap<>();
 
     private final Predicate<PrimitiveId> unloadedHistoryPredicate = new UnloadedHistoryPredicate();
 
@@ -143,6 +145,11 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         }
         dialog.setVisible(false);
         dialog.dispose();
+
+        if (!dialogs.isEmpty()) {
+            // see #17270: set focus to last dialog
+            new LinkedList<>(dialogs.values()).getLast().toFront();
+        }
     }
 
     /**
@@ -224,6 +231,17 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
      * @since 16123
      */
     public void showHistory(Component parent, final Collection<? extends PrimitiveId> primitives) {
+        if (primitives.size() > Config.getPref().getInt("warn.open.maxhistory", 5) &&
+                /* I18N english text for value 1 makes no real sense, never called for values <= maxhistory (usually 5) */
+                JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
+                        "<html>" + trn(
+                                "You are about to open <b>{0}</b> history dialog.<br/>Do you want to continue?",
+                                "You are about to open <b>{0}</b> different history dialogs simultaneously.<br/>Do you want to continue?",
+                                primitives.size(), primitives.size()) + "</html>",
+                        tr("Confirmation"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)) {
+            return;
+        }
+
         final List<PrimitiveId> realPrimitives = new ArrayList<>(primitives);
         hooks.forEach(h -> h.modifyRequestedIds(realPrimitives));
         final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(realPrimitives, notNewPredicate);
