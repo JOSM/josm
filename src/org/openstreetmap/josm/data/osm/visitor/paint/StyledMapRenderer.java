@@ -1324,8 +1324,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Iterator<MapViewPoint> it = new OffsetIterator(mapState, wayNodes, offset);
         boolean initialMoveToNeeded = true;
         ArrowPaintHelper drawArrowHelper = null;
+        double minSegmentLenSq = 0;
         if (showOrientation) {
             drawArrowHelper = new ArrowPaintHelper(PHI, 10 + line.getLineWidth());
+            minSegmentLenSq = Math.pow(drawArrowHelper.getOnLineLength() * 1.3, 2);
         }
         while (it.hasNext()) {
             MapViewPoint p = it.next();
@@ -1341,12 +1343,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
                 /* draw arrow */
                 if (drawArrowHelper != null) {
-                    boolean drawArrow;
-                    // always draw last arrow - no matter how short the segment is
-                    drawArrow = !it.hasNext();
-                    if (!showHeadArrowOnly) {
-                        // draw arrows in between only if there is enough space
-                        drawArrow = drawArrow || p1.distanceToInView(p2) > drawArrowHelper.getOnLineLength() * 1.3;
+                    final boolean drawArrow;
+                    if (way.isSelected()) {
+                        // always draw last arrow - no matter how short the segment is
+                        drawArrow = !it.hasNext() || p1.distanceToInViewSq(p2) > minSegmentLenSq;
+                    } else {
+                        // not selected: only draw arrow when it fits
+                        drawArrow = (!showHeadArrowOnly || !it.hasNext()) && p1.distanceToInViewSq(p2) > minSegmentLenSq;
                     }
                     if (drawArrow) {
                         drawArrowHelper.paintArrowAt(orientationArrows, p2, p1);
