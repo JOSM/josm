@@ -8,11 +8,15 @@ import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -22,9 +26,11 @@ import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.io.NameFinder;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -39,6 +45,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class JumpToAction extends JosmAction {
 
     private final JosmTextField url = new JosmTextField();
+    private final JosmTextField place = new JosmTextField();
     private final JosmTextField lat = new JosmTextField();
     private final JosmTextField lon = new JosmTextField();
     private final JosmTextField zm = new JosmTextField();
@@ -111,6 +118,7 @@ public class JumpToAction extends JosmAction {
                 .map(OsmUrlToBounds::parse);
         if (boundsFromClipboard.isPresent() && Config.getPref().getBoolean("jumpto.use.clipboard", true)) {
             setBounds(boundsFromClipboard.get());
+            place.setText("");
         } else {
             setBounds(mv.getState().getViewArea().getCornerBounds());
         }
@@ -131,6 +139,7 @@ public class JumpToAction extends JosmAction {
         zm.getDocument().addDocumentListener(x);
         url.getDocument().addDocumentListener(new OsmURLListener());
 
+        SelectAllOnFocusGainedDecorator.decorate(place);
         SelectAllOnFocusGainedDecorator.decorate(lat);
         SelectAllOnFocusGainedDecorator.decorate(lon);
         SelectAllOnFocusGainedDecorator.decorate(zm);
@@ -138,6 +147,10 @@ public class JumpToAction extends JosmAction {
 
         JPanel p = new JPanel(new GridBagLayout());
         panel.add(p, BorderLayout.NORTH);
+
+        p.add(new JLabel(tr("Enter a place name to search for")), GBC.eol());
+        p.add(place, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(3, 5, 3, 5));
 
         p.add(new JLabel(tr("Latitude")), GBC.eol());
         p.add(lat, GBC.eol().fill(GBC.HORIZONTAL));
@@ -147,6 +160,7 @@ public class JumpToAction extends JosmAction {
 
         p.add(new JLabel(tr("Zoom (in metres)")), GBC.eol());
         p.add(zm, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(3, 5, 3, 5));
 
         p.add(new JLabel(tr("URL")), GBC.eol());
         p.add(url, GBC.eol().fill(GBC.HORIZONTAL));
@@ -158,6 +172,21 @@ public class JumpToAction extends JosmAction {
             final int option = new JumpToPositionDialog(buttons, panel).showDialog().getValue();
 
             if (option != 1) return;
+            if (place.hasFocus() && !place.getText().trim().isEmpty()) {
+                try {
+                    List<NameFinder.SearchResult> searchResults = NameFinder.queryNominatim(place.getText());
+                    if (!searchResults.isEmpty()) {
+                        NameFinder.SearchResult searchResult = searchResults.get(0);
+                        new Notification(tr("Jumping to: {0}", searchResult.getName()))
+                                .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                                .show();
+                        mv.zoomTo(searchResult.getBounds());
+                    }
+                    return;
+                } catch (IOException | RuntimeException ex) {
+                    Logging.warn(ex);
+                }
+            }
             try {
                 zoomLvl = Double.parseDouble(zm.getText());
                 ll = new LatLon(Double.parseDouble(lat.getText()), Double.parseDouble(lon.getText()));
