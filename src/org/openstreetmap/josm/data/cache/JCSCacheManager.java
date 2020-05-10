@@ -74,15 +74,7 @@ public final class JCSCacheManager {
                     if (record.getLevel().intValue() >= Level.SEVERE.intValue()) {
                         Logging.error(msg);
                     } else if (record.getLevel().intValue() >= Level.WARNING.intValue()) {
-                        // Get rid of useless JCS warnings, see #18644
-                        // Pending upstream patch: https://issues.apache.org/jira/projects/JCS/issues/JCS-200
-                        // Pending upstream patch: https://issues.apache.org/jira/projects/JCS/issues/JCS-201
-                        if ("No configuration settings found.  Using hardcoded default values for all pools.".equals(msg)
-                                || (msg.startsWith("Region") && msg.endsWith("Resetting cache"))) { // "Region [TMS_BLOCK_v2] Resetting cache"
-                            Logging.debug(msg);
-                        } else {
-                            Logging.warn(msg);
-                        }
+                        Logging.warn(msg);
                         // downgrade INFO level to debug, as JCS is too verbose at INFO level
                     } else if (record.getLevel().intValue() >= Level.INFO.intValue()) {
                         Logging.debug(msg);
