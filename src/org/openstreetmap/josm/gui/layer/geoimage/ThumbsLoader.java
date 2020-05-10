@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.jcs.access.behavior.ICacheAccess;
+import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.gui.MainApplication;

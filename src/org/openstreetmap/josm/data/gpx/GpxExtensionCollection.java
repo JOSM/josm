@@ -9,7 +9,7 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.jcs.access.exception.InvalidArgumentException;
+import org.apache.commons.jcs3.access.exception.InvalidArgumentException;
 import org.openstreetmap.josm.io.GpxReader;
 import org.xml.sax.Attributes;
 

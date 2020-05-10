@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.jcs.access.behavior.ICacheAccess;
+import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

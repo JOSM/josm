@@ -8,8 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import org.apache.commons.jcs.access.CacheAccess;
-import org.apache.commons.jcs.auxiliary.disk.block.BlockDiskCacheAttributes;
+import org.apache.commons.jcs3.access.CacheAccess;
+import org.apache.commons.jcs3.auxiliary.disk.block.BlockDiskCacheAttributes;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -45,7 +45,7 @@ public class JCSCacheManagerTest {
     @Test
     public void testLoggingAdaptor12054() throws IOException {
         JCSCacheManager.getCache("foobar", 1, 0, "foobar"); // cause logging adaptor to be initialized
-        Logger.getLogger("org.apache.commons.jcs").warning("{switch:0}");
+        Logger.getLogger("org.apache.commons.jcs3").warning("{switch:0}");
     }
 
     @Test

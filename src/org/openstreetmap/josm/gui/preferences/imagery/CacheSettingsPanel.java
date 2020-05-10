@@ -26,10 +26,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
-import org.apache.commons.jcs.access.CacheAccess;
-import org.apache.commons.jcs.engine.stats.behavior.ICacheStats;
-import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
-import org.apache.commons.jcs.engine.stats.behavior.IStats;
+import org.apache.commons.jcs3.access.CacheAccess;
+import org.apache.commons.jcs3.engine.stats.behavior.ICacheStats;
+import org.apache.commons.jcs3.engine.stats.behavior.IStatElement;
+import org.apache.commons.jcs3.engine.stats.behavior.IStats;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;

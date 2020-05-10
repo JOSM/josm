@@ -14,19 +14,19 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.apache.commons.jcs.JCS;
-import org.apache.commons.jcs.access.CacheAccess;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
-import org.apache.commons.jcs.auxiliary.AuxiliaryCacheFactory;
-import org.apache.commons.jcs.auxiliary.disk.behavior.IDiskCacheAttributes;
-import org.apache.commons.jcs.auxiliary.disk.block.BlockDiskCacheAttributes;
-import org.apache.commons.jcs.auxiliary.disk.block.BlockDiskCacheFactory;
-import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheAttributes;
-import org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCacheFactory;
-import org.apache.commons.jcs.engine.CompositeCacheAttributes;
-import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes.DiskUsagePattern;
-import org.apache.commons.jcs.engine.control.CompositeCache;
-import org.apache.commons.jcs.utils.serialization.StandardSerializer;
+import org.apache.commons.jcs3.JCS;
+import org.apache.commons.jcs3.access.CacheAccess;
+import org.apache.commons.jcs3.auxiliary.AuxiliaryCache;
+import org.apache.commons.jcs3.auxiliary.AuxiliaryCacheFactory;
+import org.apache.commons.jcs3.auxiliary.disk.behavior.IDiskCacheAttributes;
+import org.apache.commons.jcs3.auxiliary.disk.block.BlockDiskCacheAttributes;
+import org.apache.commons.jcs3.auxiliary.disk.block.BlockDiskCacheFactory;
+import org.apache.commons.jcs3.auxiliary.disk.indexed.IndexedDiskCacheAttributes;
+import org.apache.commons.jcs3.auxiliary.disk.indexed.IndexedDiskCacheFactory;
+import org.apache.commons.jcs3.engine.CompositeCacheAttributes;
+import org.apache.commons.jcs3.engine.behavior.ICompositeCacheAttributes.DiskUsagePattern;
+import org.apache.commons.jcs3.engine.control.CompositeCache;
+import org.apache.commons.jcs3.utils.serialization.StandardSerializer;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -59,7 +59,7 @@ public final class JCSCacheManager {
     static {
         // raising logging level gives ~500x performance gain
         // http://westsworld.dk/blog/2008/01/jcs-and-performance/
-        jcsLog = Logger.getLogger("org.apache.commons.jcs");
+        jcsLog = Logger.getLogger("org.apache.commons.jcs3");
         try {
             jcsLog.setLevel(Level.INFO);
             jcsLog.setUseParentHandlers(false);

@@ -13,7 +13,7 @@ import java.util.Objects;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import org.apache.commons.jcs.access.CacheAccess;
+import org.apache.commons.jcs3.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.coor.LatLon;

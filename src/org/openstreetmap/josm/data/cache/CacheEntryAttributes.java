@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.jcs.engine.ElementAttributes;
+import org.apache.commons.jcs3.engine.ElementAttributes;
 import org.openstreetmap.josm.tools.Logging;
 
 /**

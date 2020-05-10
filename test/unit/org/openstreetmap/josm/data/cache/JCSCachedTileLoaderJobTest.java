@@ -12,8 +12,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.jcs.access.behavior.ICacheAccess;
-import org.apache.commons.jcs.engine.behavior.ICacheElement;
+import org.apache.commons.jcs3.access.behavior.ICacheAccess;
+import org.apache.commons.jcs3.engine.behavior.ICacheElement;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.jcs.access.behavior.ICacheAccess;
+import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
