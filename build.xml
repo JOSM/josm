@@ -1036,7 +1036,7 @@ Build-Date: ${build.tstamp}
         </copy>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/svgSalamander.jar" includes="com/kitfox/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/oauth-signpost.jar" includes="oauth/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-jcs.jar" includes="org/apache/commons/jcs/**/*.class"/>
+        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-jcs.jar" includes="org/apache/commons/jcs3/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/jmapviewer.jar" includes="org/openstreetmap/gui/**/*.class"/>
         <exec executable="jdeps" dir="${modules.dir}">
             <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.sun.*|com.google.*|org.tukaani.*|org.apache.commons.logging.*'"/>
@@ -1131,11 +1131,13 @@ Build-Date: ${build.tstamp}
                 <exclude name="org/apache/commons/logging/impl/Log4JLogger*"/>
                 <exclude name="org/apache/commons/logging/impl/LogKitLogger*"/>
                 <exclude name="org/apache/commons/logging/impl/ServletContextCleaner*"/>
-                <exclude name="org/apache/commons/jcs/auxiliary/disk/jdbc/**"/>
-                <exclude name="org/apache/commons/jcs/auxiliary/remote/http/client/**"/>
-                <exclude name="org/apache/commons/jcs/auxiliary/remote/http/server/RemoteHttpCacheServlet*"/>
-                <exclude name="org/apache/commons/jcs/auxiliary/remote/server/RemoteCacheStartupServlet*"/>
-                <exclude name="org/apache/commons/jcs/utils/servlet/**"/>
+                <exclude name="org/apache/commons/jcs3/auxiliary/disk/jdbc/**"/>
+                <exclude name="org/apache/commons/jcs3/auxiliary/remote/http/client/**"/>
+                <exclude name="org/apache/commons/jcs3/auxiliary/remote/http/server/RemoteHttpCacheServlet*"/>
+                <exclude name="org/apache/commons/jcs3/auxiliary/remote/server/RemoteCacheStartupServlet*"/>
+                <exclude name="org/apache/commons/jcs3/log/Log4j2Factory*"/>
+                <exclude name="org/apache/commons/jcs3/log/Log4j2LogAdapter*"/>
+                <exclude name="org/apache/commons/jcs3/utils/servlet/**"/>
             </patternset>
         </unzip>
     </target>
