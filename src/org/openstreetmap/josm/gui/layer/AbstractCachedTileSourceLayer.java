@@ -40,7 +40,7 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
     private volatile TileLoaderFactory loaderFactory;
 
     /**
-     * Creates an instance of class based on InageryInfo
+     * Creates an instance of class based on ImageryInfo
      *
      * @param info ImageryInfo describing the layer
      */
