@@ -254,10 +254,14 @@ public class VersionTable extends JTable implements ChangeListener, Destroyable 
 
         @Override
         public void destroy() {
-            if (changesetInfoAction != null)
+            if (changesetInfoAction != null) {
                 changesetInfoAction.destroy();
-            if (userInfoAction != null)
+                changesetInfoAction = null;
+            }
+            if (userInfoAction != null) {
                 userInfoAction.destroy();
+                userInfoAction = null;
+            }
         }
     }
 
