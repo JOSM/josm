@@ -23,7 +23,6 @@
         <dependency conf="api->default" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.13"/>
         <dependency conf="api->default" org="javax.json" name="javax.json-api" rev="1.1.4"/>
         <dependency conf="api->default" org="org.glassfish" name="javax.json" rev="1.1.4"/>
-        <dependency conf="api->default" org="commons-logging" name="commons-logging" rev="1.2"/>
         <dependency conf="api->default" org="org.apache.commons" name="commons-jcs-core" rev="3.0-SNAPSHOT"/>
         <dependency conf="api->default" org="org.apache.commons" name="commons-compress" rev="1.20"/>
         <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.8"/>
@@ -34,7 +33,6 @@
         <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.13"/>
         <dependency conf="sources->sources" org="javax.json" name="javax.json-api" rev="1.1.4"/>
         <dependency conf="sources->sources" org="org.glassfish" name="javax.json" rev="1.1.4"/>
-        <dependency conf="sources->sources" org="commons-logging" name="commons-logging" rev="1.2"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-jcs-core" rev="3.0-SNAPSHOT"/>
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-compress" rev="1.20"/>
         <dependency conf="sources->sources" org="org.tukaani" name="xz" rev="1.8"/>

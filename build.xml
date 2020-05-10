@@ -1068,7 +1068,9 @@ Build-Date: ${build.tstamp}
         <unzip dest="${build.dir}">
             <fileset refid="runtime.fileset"/>
             <patternset>
-                <exclude name="META-INF/**"/>
+                <exclude name="META-INF/*"/>
+                <exclude name="META-INF/maven/**"/>
+                <exclude name="META-INF/versions/**"/>
                 <exclude name="*"/>
                 <exclude name="org/openstreetmap/gui/jmapviewer/Demo*"/>
                 <exclude name="com/drew/imaging/FileTypeDetector*"/>
