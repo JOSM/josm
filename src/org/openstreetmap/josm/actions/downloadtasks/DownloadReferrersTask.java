@@ -110,7 +110,11 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         if (canceled)
             return;
         if (lastException != null) {
-            ExceptionUtil.explainException(lastException);
+            JOptionPane.showMessageDialog(
+                    MainApplication.getMainFrame(),
+                    ExceptionUtil.explainException(lastException),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
