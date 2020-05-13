@@ -38,6 +38,8 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Tagged;
@@ -188,6 +190,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected static final int MISSPELLED_VALUE_NO_FIX  = 1215;
     protected static final int UNUSUAL_UNICODE_CHAR_VALUE = 1216;
     protected static final int INVALID_PRESETS_TYPE     = 1217;
+    protected static final int MULTIPOLYGON_NO_AREA     = 1218;
+    protected static final int MULTIPOLYGON_INCOMPLETE  = 1219;
+    protected static final int MULTIPOLYGON_MAYBE_NO_AREA = 1220;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     protected EditableList sourcesList;
@@ -622,6 +627,10 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             }
         }
 
+        if (p instanceof Relation && p.hasTag("type", "multipolygon")) {
+            checkMultipolygonTags(p);
+        }
+
         if (checkPresetsTypes) {
             TagMap tags = p.getKeys();
             TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
@@ -657,6 +666,73 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                 }
             }
         }
+    }
+
+    private static final Collection<String> NO_AREA_KEYS = Arrays.asList("name", "area", "ref", "access", "operator");
+
+    private void checkMultipolygonTags(OsmPrimitive p) {
+        if (p.isAnnotated() || hasAcceptedPrimaryTagForMultipolygon(p))
+            return;
+        if (p.keySet().stream().anyMatch(k -> k.matches("^(abandoned|construction|demolished|disused|planned|razed|removed|was).*")))
+            return;
+
+        TestError.Builder builder = null;
+        if (p.hasKey("surface")) {
+            // accept often used tag surface=* as area tag
+            builder = TestError.builder(this, Severity.OTHER, MULTIPOLYGON_INCOMPLETE)
+                    .message(tr("Multipolygon tags"), marktr("only {0} tag"), "surface");
+        } else {
+            Map<String, String> filteredTags = p.getInterestingTags();
+            filteredTags.remove("type");
+            NO_AREA_KEYS.forEach(filteredTags::remove);
+            filteredTags.keySet().removeIf(key -> !key.matches("[a-z0-9:_]+"));
+
+            if (filteredTags.isEmpty()) {
+                builder = TestError.builder(this, Severity.ERROR, MULTIPOLYGON_NO_AREA)
+                        .message(tr("Multipolygon tags"), marktr("tag describing the area is missing"), new Object());
+
+            }
+        }
+        if (builder == null) {
+            // multipolygon has either no area tag or a rarely used one
+            builder = TestError.builder(this, Severity.WARNING, MULTIPOLYGON_MAYBE_NO_AREA)
+                    .message(tr("Multipolygon tags"), marktr("tag describing the area might be missing"), new Object());
+        }
+        errors.add(builder.primitives(p).build());
+    }
+
+    /**
+     * Check if a multipolygon has a main tag that describes the type of area. Accepts also some deprecated tags and typos.
+     * @param p the multipolygon
+     * @return true if the multipolygon has a main tag that (likely) describes the type of area.
+     */
+    private static boolean hasAcceptedPrimaryTagForMultipolygon(OsmPrimitive p) {
+        if (p.hasKey("landuse", "amenity", "building", "building:part", "area:highway", "shop", "place", "boundary",
+                "landform", "piste:type", "sport", "golf", "landcover", "aeroway", "office", "healthcare", "craft", "room")
+                || p.hasTagDifferent("natural", "tree", "peek", "saddle", "tree_row")
+                || p.hasTagDifferent("man_made", "survey_point", "mast", "flagpole", "manhole", "watertap")
+                || p.hasTagDifferent("highway", "crossing", "bus_stop", "turning_circle", "street_lamp",
+                        "traffic_signals", "stop", "milestone", "mini_roundabout", "motorway_junction", "passing_place",
+                        "speed_camera", "traffic_mirror", "trailhead", "turning_circle", "turning_loop", "toll_gantry")
+                || p.hasTagDifferent("tourism", "attraction", "artwork")
+                || p.hasTagDifferent("leisure", "picnic_table", "slipway", "firepit")
+                || p.hasTagDifferent("historic", "wayside_cross", "milestone"))
+            return true;
+        if (p.hasTag("barrier", "hedge", "retaining_wall")
+                || p.hasTag("public_transport", "platform", "station")
+                || p.hasTag("railway", "platform")
+                || p.hasTag("waterway", "riverbank", "dam", "rapids", "dock", "boatyard", "fuel")
+                || p.hasTag("indoor", "corridor", "room", "area")
+                || p.hasTag("power", "substation", "generator", "plant", "switchgear", "converter", "sub_station")
+                || p.hasTag("seamark:type", "harbour", "fairway", "anchorage", "landmark", "berth", "harbour_basin",
+                        "separation_zone")
+                || (p.get("seamark:type") != null && p.get("seamark:type").matches(".*\\_(area|zone)$")))
+            return true;
+        return p.hasTag("harbour", OsmUtils.TRUE_VALUE)
+                || p.hasTag("flood_prone", OsmUtils.TRUE_VALUE)
+                || p.hasTag("bridge", OsmUtils.TRUE_VALUE)
+                || p.hasTag("ruins", OsmUtils.TRUE_VALUE)
+                || p.hasTag("junction", OsmUtils.TRUE_VALUE);
     }
 
     private void checkSingleTagValueSimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key, String value) {

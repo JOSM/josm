@@ -3753,6 +3753,7 @@
   <relation id='-42029' action='modify'>
     <member type='way' ref='-41419' role='outer' />
     <member type='way' ref='-41421' role='outer' />
+    <tag k='josm_error_codes' v='1606,1610,1617' />
     <tag k='name' v='old style' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3783,6 +3784,7 @@
   <relation id='-42037' action='modify'>
     <member type='way' ref='-41585' role='inner' />
     <member type='way' ref='-41809' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 1 (02)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3799,6 +3801,7 @@
     <member type='way' ref='-41815' role='outer' />
     <member type='way' ref='-41667' role='outer' />
     <member type='way' ref='-41727' role='inner' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 3 (02)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3847,6 +3850,7 @@
     <member type='way' ref='-41851' role='inner' />
     <member type='way' ref='-41575' role='inner' />
     <member type='way' ref='-41545' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 2 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3856,6 +3860,7 @@
     <member type='way' ref='-41539' role='outer' />
     <member type='way' ref='-41761' role='inner' />
     <member type='way' ref='-41655' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 5 (02)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3863,6 +3868,7 @@
     <member type='way' ref='-41661' role='inner' />
     <member type='way' ref='-41473' role='inner' />
     <member type='way' ref='-41671' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 2 (02)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3901,6 +3907,7 @@
     <member type='way' ref='-41429' role='inner' />
     <member type='way' ref='-41567' role='inner' />
     <member type='way' ref='-41495' role='inner' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 6 (02)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3912,7 +3919,7 @@
     <member type='way' ref='-41633' role='outer' />
     <member type='way' ref='-41659' role='outer' />
     <member type='way' ref='-41651' role='outer' />
-    <tag k='josm_error_codes' v='1606,1617' />
+    <tag k='josm_error_codes' v='1606,1610,1617' />
     <tag k='name' v='07/04 - Mixed Geometry' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3978,6 +3985,7 @@
   <relation id='-42075' action='modify'>
     <member type='way' ref='-41845' role='outer' />
     <member type='way' ref='-41769' role='inner' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 7 (04) Inner' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -3992,6 +4000,7 @@
   <relation id='-42079' action='modify'>
     <member type='way' ref='-41741' role='inner' />
     <member type='way' ref='-41447' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 1 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4001,6 +4010,7 @@
     <member type='way' ref='-41639' role='inner' />
     <member type='way' ref='-41753' role='outer' />
     <member type='way' ref='-41521' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 5 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4020,7 +4030,7 @@
     <member type='node' ref='-39409' role='outer' />
     <member type='way' ref='-41737' role='' />
     <member type='relation' ref='-42089' role='' />
-    <tag k='josm_error_codes' v='1601,1602' />
+    <tag k='josm_error_codes' v='1601,1602,1610' />
     <tag k='name' v='06/05 - wrong roles' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4049,6 +4059,7 @@
     <member type='way' ref='-41679' role='outer' />
     <member type='way' ref='-41787' role='outer' />
     <member type='way' ref='-41839' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 6 (04) Inner' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4063,6 +4074,7 @@
   <relation id='-42095' action='modify'>
     <member type='way' ref='-41653' role='inner' />
     <member type='way' ref='-41833' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 8 (04) Inner' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4087,6 +4099,7 @@
     <member type='way' ref='-41501' role='outer' />
     <member type='way' ref='-41543' role='outer' />
     <member type='way' ref='-41477' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 6 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4094,12 +4107,14 @@
     <member type='way' ref='-41845' role='inner' />
     <member type='way' ref='-41687' role='outer' />
     <member type='way' ref='-41769' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 7 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>
   <relation id='-42101' action='modify'>
     <member type='way' ref='-41819' role='outer' />
     <member type='way' ref='-41439' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 4 (02)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4132,6 +4147,7 @@
     <member type='way' ref='-41841' role='outer' />
     <member type='way' ref='-41801' role='inner' />
     <member type='way' ref='-41437' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 7 (02)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4142,7 +4158,7 @@
     <member type='way' ref='-41747' role='outer' />
     <member type='way' ref='-41777' role='outer' />
     <tag k='comment' v='For this test the display style depends on the order of ways and is unpredictable' />
-    <tag k='josm_error_codes' v='1607' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='06/04 - Mismatching way styles' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4159,6 +4175,7 @@
   <relation id='-42111' action='modify'>
     <member type='way' ref='-41711' role='outer' />
     <member type='way' ref='-41765' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 5 (04) inner' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4181,6 +4198,7 @@
   <relation id='-42117' action='modify'>
     <member type='way' ref='-41493' role='outer' />
     <member type='way' ref='-41457' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 4 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4204,6 +4222,7 @@
     <member type='way' ref='-41565' role='inner' />
     <member type='way' ref='-41505' role='outer' />
     <member type='way' ref='-41459' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 8 (02)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4228,6 +4247,7 @@
     <member type='way' ref='-41749' role='inner' />
     <member type='way' ref='-41515' role='outer' />
     <member type='way' ref='-41657' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 3 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4243,6 +4263,7 @@
     <member type='way' ref='-41513' role='inner' />
     <member type='way' ref='-41597' role='outer' />
     <member type='way' ref='-41653' role='outer' />
+    <tag k='josm_error_codes' v='1610' />
     <tag k='name' v='Example 8 (04)' />
     <tag k='type' v='multipolygon' />
   </relation>

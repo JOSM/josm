@@ -120,37 +120,25 @@ public class MultipolygonTest extends Test {
 
     /**
      * Various style-related checks:<ul>
+     * <li>{@link #NO_STYLE}: No area style for multipolygon</li>
      * <li>{@link #INNER_STYLE_MISMATCH}: With the currently used mappaint style the style for inner way equals the multipolygon style</li>
-     * <li>{@link #OUTER_STYLE_MISMATCH}: Style for outer way mismatches</li>
+     * <li>{@link #OUTER_STYLE_MISMATCH}: With the currently used mappaint style the style for outer way mismatches the area style</li>
      * <li>{@link #OUTER_STYLE}: Area style on outer way</li>
      * </ul>
      * @param r relation
      * @param polygon multipolygon
      */
     private void checkStyleConsistency(Relation r, Multipolygon polygon) {
-        ElemStyles styles = MapPaintStyles.getStyles();
-        if (styles != null && !r.isBoundary()) {
+        if (MapPaintStyles.getStyles() != null && !r.isBoundary()) {
             AreaElement area = ElemStyles.getAreaElemStyle(r, false);
-            boolean areaStyle = area != null;
-            // If area style was not found for relation then use style of ways
             if (area == null) {
-                for (Way w : polygon.getOuterWays()) {
-                    area = ElemStyles.getAreaElemStyle(w, true);
-                    if (area != null) {
-                        break;
-                    }
-                }
-                if (area == null) {
-                    errors.add(TestError.builder(this, Severity.OTHER, NO_STYLE)
-                            .message(tr("No area style for multipolygon"))
-                            .primitives(r)
-                            .build());
-                }
-            }
-
-            if (area != null) {
+                errors.add(TestError.builder(this, Severity.OTHER, NO_STYLE)
+                        .message(tr("No area style for multipolygon"))
+                        .primitives(r)
+                        .build());
+            } else {
                 for (Way wInner : polygon.getInnerWays()) {
-                    if (area.equals(ElemStyles.getAreaElemStyle(wInner, false))) {
+                    if (wInner.isClosed() && area.equals(ElemStyles.getAreaElemStyle(wInner, false))) {
                         errors.add(TestError.builder(this, Severity.OTHER, INNER_STYLE_MISMATCH)
                                 .message(tr("With the currently used mappaint style the style for inner way equals the multipolygon style"))
                                 .primitives(Arrays.asList(r, wInner))
@@ -159,17 +147,17 @@ public class MultipolygonTest extends Test {
                     }
                 }
                 for (Way wOuter : polygon.getOuterWays()) {
+                    if (!wOuter.isArea())
+                        continue;
                     AreaElement areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
                     if (areaOuter != null) {
                         if (!area.equals(areaOuter)) {
-                            String message = !areaStyle ? tr("Style for outer way mismatches")
-                                    : tr("With the currently used mappaint style the style for outer way mismatches the area style");
                             errors.add(TestError.builder(this, Severity.OTHER, OUTER_STYLE_MISMATCH)
-                                    .message(message)
+                                    .message(tr("With the currently used mappaint style the style for outer way mismatches the area style"))
                                     .primitives(Arrays.asList(r, wOuter))
                                     .highlight(wOuter)
                                     .build());
-                        } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
+                        } else { /* style on outer way of multipolygon, but equal to polygon */
                             errors.add(TestError.builder(this, Severity.WARNING, OUTER_STYLE)
                                     .message(tr("Area style on outer way"))
                                     .primitives(Arrays.asList(r, wOuter))
