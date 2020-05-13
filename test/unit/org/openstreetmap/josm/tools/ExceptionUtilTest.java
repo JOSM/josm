@@ -435,8 +435,8 @@ public class ExceptionUtilTest {
                 "Please load the relation, remove the reference to the way, and upload again.</html>",
                 ExceptionUtil.explainPreconditionFailed(new OsmApiException(code, "Way 1 is still used by relation 1", "")));
 
-        assertEquals("<html><strong>Failed</strong> to delete <strong>way 1</strong>. It is still referred to by nodes [1, 2].<br>"+
-                "Please load the nodes, remove the reference to the way, and upload again.</html>",
+        assertEquals("<html><strong>Failed</strong> to upload <strong>way 1</strong>. It refers to deleted nodes [1, 2].<br>"+
+                "Please load the nodes, remove the reference in the way, and upload again.</html>",
                 ExceptionUtil.explainPreconditionFailed(new OsmApiException(code, "Way 1 requires the nodes with id in 1,2", "")));
     }
 }

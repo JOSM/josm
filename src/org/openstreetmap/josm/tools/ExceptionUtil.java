@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.ChangesetClosedException;
@@ -134,12 +135,30 @@ public final class ExceptionUtil {
             }
             return Pair.create(n, refs);
         }
-        m = Pattern.compile(".*Way (\\d+) requires the nodes with id in " + ids + ".*").matcher(msg);
+        m = Pattern.compile(".*Way ([-]*\\d+) requires the nodes with id in " + ids + ".*").matcher(msg);
         // ... ", which either do not exist, or are not visible"
         if (m.matches()) {
-            OsmPrimitive n = new Way(Long.parseLong(m.group(1)));
+            OsmPrimitive n = OsmPrimitiveType.WAY.newInstance(Long.parseLong(m.group(1)), true);
             for (String s : m.group(2).split(",")) {
                 refs.add(new Node(Long.parseLong(s)));
+            }
+            return Pair.create(n, refs);
+        }
+        m = Pattern.compile(".*Relation ([-]*\\d+) requires the nodes with id in " + ids + ".*").matcher(msg);
+        // ... ", which either do not exist, or are not visible"
+        if (m.matches()) {
+            OsmPrimitive n = OsmPrimitiveType.RELATION.newInstance(Long.parseLong(m.group(1)), true);
+            for (String s : m.group(2).split(",")) {
+                refs.add(new Node(Long.parseLong(s)));
+            }
+            return Pair.create(n, refs);
+        }
+        m = Pattern.compile(".*Relation ([-]*\\d+) requires the ways with id in " + ids + ".*").matcher(msg);
+        // ... ", which either do not exist, or are not visible"
+        if (m.matches()) {
+            OsmPrimitive n = OsmPrimitiveType.RELATION.newInstance(Long.parseLong(m.group(1)), true);
+            for (String s : m.group(2).split(",")) {
+                refs.add(new Way(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
         }
@@ -157,20 +176,11 @@ public final class ExceptionUtil {
         Pair<OsmPrimitive, Collection<OsmPrimitive>> conflict = parsePreconditionFailed(e.getErrorHeader());
         if (conflict != null) {
             OsmPrimitive firstRefs = conflict.b.iterator().next();
-            String objId = Long.toString(conflict.a.getId());
+            String objId = Long.toString(conflict.a.getUniqueId());
             Collection<Long> refIds = Utils.transform(conflict.b, OsmPrimitive::getId);
             String refIdsString = refIds.size() == 1 ? refIds.iterator().next().toString() : refIds.toString();
             if (conflict.a instanceof Node) {
-                if (firstRefs instanceof Node) {
-                    return "<html>" + trn(
-                            "<strong>Failed</strong> to delete <strong>node {0}</strong>."
-                            + " It is still referred to by node {1}.<br>"
-                            + "Please load the node, remove the reference to the node, and upload again.",
-                            "<strong>Failed</strong> to delete <strong>node {0}</strong>."
-                            + " It is still referred to by nodes {1}.<br>"
-                            + "Please load the nodes, remove the reference to the node, and upload again.",
-                            conflict.b.size(), objId, refIdsString) + "</html>";
-                } else if (firstRefs instanceof Way) {
+                if (firstRefs instanceof Way) {
                     return "<html>" + trn(
                             "<strong>Failed</strong> to delete <strong>node {0}</strong>."
                             + " It is still referred to by way {1}.<br>"
@@ -193,24 +203,17 @@ public final class ExceptionUtil {
                 }
             } else if (conflict.a instanceof Way) {
                 if (firstRefs instanceof Node) {
+                    // way p1 requires nodes
                     return "<html>" + trn(
-                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
-                            + " It is still referred to by node {1}.<br>"
-                            + "Please load the node, remove the reference to the way, and upload again.",
-                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
-                            + " It is still referred to by nodes {1}.<br>"
-                            + "Please load the nodes, remove the reference to the way, and upload again.",
-                            conflict.b.size(), objId, refIdsString) + "</html>";
-                } else if (firstRefs instanceof Way) {
-                    return "<html>" + trn(
-                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
-                            + " It is still referred to by way {1}.<br>"
-                            + "Please load the way, remove the reference to the way, and upload again.",
-                            "<strong>Failed</strong> to delete <strong>way {0}</strong>."
-                            + " It is still referred to by ways {1}.<br>"
-                            + "Please load the ways, remove the reference to the way, and upload again.",
+                            "<strong>Failed</strong> to upload <strong>way {0}</strong>."
+                            + " It refers to deleted node {1}.<br>"
+                            + "Please load the node, remove the reference in the way, and upload again.",
+                            "<strong>Failed</strong> to upload <strong>way {0}</strong>."
+                            + " It refers to deleted nodes {1}.<br>"
+                            + "Please load the nodes, remove the reference in the way, and upload again.",
                             conflict.b.size(), objId, refIdsString) + "</html>";
                 } else if (firstRefs instanceof Relation) {
+                    // way is used by relation
                     return "<html>" + trn(
                             "<strong>Failed</strong> to delete <strong>way {0}</strong>."
                             + " It is still referred to by relation {1}.<br>"
@@ -225,21 +228,21 @@ public final class ExceptionUtil {
             } else if (conflict.a instanceof Relation) {
                 if (firstRefs instanceof Node) {
                     return "<html>" + trn(
-                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
-                            + " It is still referred to by node {1}.<br>"
-                            + "Please load the node, remove the reference to the relation, and upload again.",
-                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
-                            + " It is still referred to by nodes {1}.<br>"
-                            + "Please load the nodes, remove the reference to the relation, and upload again.",
+                            "<strong>Failed</strong> to upload <strong>relation {0}</strong>."
+                            + " it refers to deleted node {1}.<br>"
+                            + "Please load the node, remove the reference in the relation, and upload again.",
+                            "<strong>Failed</strong> to upload <strong>relation {0}</strong>."
+                            + " it refers to deleted nodes {1}.<br>"
+                            + "Please load the nodes, remove the reference in the relation, and upload again.",
                             conflict.b.size(), objId, refIdsString) + "</html>";
                 } else if (firstRefs instanceof Way) {
                     return "<html>" + trn(
-                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
-                            + " It is still referred to by way {1}.<br>"
-                            + "Please load the way, remove the reference to the relation, and upload again.",
-                            "<strong>Failed</strong> to delete <strong>relation {0}</strong>."
-                            + " It is still referred to by ways {1}.<br>"
-                            + "Please load the ways, remove the reference to the relation, and upload again.",
+                            "<strong>Failed</strong> to upload <strong>relation {0}</strong>."
+                            + " It refers to deleted way {1}.<br>"
+                            + "Please load the way, remove the reference in the relation, and upload again.",
+                            "<strong>Failed</strong> to upload <strong>relation {0}</strong>."
+                            + " It refers to deleted ways {1}.<br>"
+                            + "Please load the ways, remove the reference in the relation, and upload again.",
                             conflict.b.size(), objId, refIdsString) + "</html>";
                 } else if (firstRefs instanceof Relation) {
                     return "<html>" + trn(

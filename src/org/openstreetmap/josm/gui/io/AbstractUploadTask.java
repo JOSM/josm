@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.net.HttpURLConnection;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -263,7 +264,14 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 "/Action/Upload#NodeStillInUseInWay"
         );
         if (ret == 0) {
-            DownloadReferrersAction.downloadReferrers(MainApplication.getLayerManager().getEditLayer(), Arrays.asList(conflict.a));
+            if (msg.contains("to delete")) {
+                DownloadReferrersAction.downloadReferrers(MainApplication.getLayerManager().getEditLayer(),
+                        Arrays.asList(conflict.a));
+            }
+            if (msg.contains("to upload") && !conflict.b.isEmpty()) {
+                MainApplication.worker.submit(new DownloadPrimitivesTask(
+                        MainApplication.getLayerManager().getEditLayer(), new ArrayList<>(conflict.b), false));
+            }
         }
     }
 
