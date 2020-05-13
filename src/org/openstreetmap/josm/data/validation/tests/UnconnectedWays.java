@@ -576,9 +576,8 @@ public abstract class UnconnectedWays extends Test {
         }
 
         private boolean isObstacle(Way w) {
-            return w.hasKey("barrier", "waterway") || isBuilding(w);
+            return w.hasKey("barrier", "waterway") || isBuilding(w) || w.hasTag("man_made", "embankment", "dyke");
         }
-
     }
 
     List<MyWaySegment> getWaySegments(Way w) {
