@@ -7,8 +7,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -44,13 +42,6 @@ import org.openstreetmap.josm.tools.PlatformManager;
 public class TextContextualPopupMenu extends JPopupMenu {
 
     private static final String EDITABLE = "editable";
-
-    private static final Map<String, ImageIcon> iconCache = new HashMap<>();
-
-    private static ImageIcon loadIcon(String iconName) {
-        return iconCache.computeIfAbsent(iconName,
-                x -> new ImageProvider(x).setOptional(true).setSize(ImageProvider.ImageSizes.SMALLICON).get());
-    }
 
     protected JTextComponent component;
     protected boolean undoRedo;
@@ -131,19 +122,19 @@ public class TextContextualPopupMenu extends JPopupMenu {
     private void addMenuEntries() {
         if (component.isEditable()) {
             if (undoRedo) {
-                add(new JMenuItem(undoAction));
-                add(new JMenuItem(redoAction));
+                addMenuEntry(new JMenuItem(undoAction), "undo");
+                addMenuEntry(new JMenuItem(redoAction), "redo");
                 addSeparator();
             }
-            addMenuEntry(component, tr("Cut"), DefaultEditorKit.cutAction, null);
+            addMenuEntry(component, tr("Cut"), DefaultEditorKit.cutAction, "cut");
         }
         addMenuEntry(component, tr("Copy"), DefaultEditorKit.copyAction, "copy");
         if (component.isEditable()) {
             addMenuEntry(component, tr("Paste"), DefaultEditorKit.pasteAction, "paste");
-            addMenuEntry(component, tr("Delete"), DefaultEditorKit.deleteNextCharAction, null);
+            addMenuEntry(component, tr("Delete"), DefaultEditorKit.deleteNextCharAction, "dialogs/delete");
         }
         addSeparator();
-        addMenuEntry(component, tr("Select All"), DefaultEditorKit.selectAllAction, null);
+        addMenuEntry(component, tr("Select All"), DefaultEditorKit.selectAllAction, "dialogs/select");
     }
 
     /**
@@ -212,14 +203,16 @@ public class TextContextualPopupMenu extends JPopupMenu {
         if (action != null) {
             JMenuItem mi = new JMenuItem(action);
             mi.setText(label);
-            if (iconName != null && Config.getPref().getBoolean("text.popupmenu.useicons", true)) {
-                ImageIcon icon = loadIcon(iconName);
-                if (icon != null) {
-                    mi.setIcon(icon);
-                }
-            }
-            add(mi);
+            addMenuEntry(mi, iconName);
         }
+    }
+
+    protected void addMenuEntry(JMenuItem mi, String iconName) {
+        if (iconName != null && Config.getPref().getBoolean("text.popupmenu.useicons", true)) {
+            ImageIcon icon = new ImageProvider(iconName).setSize(ImageProvider.ImageSizes.SMALLICON).get();
+            mi.setIcon(icon);
+        }
+        add(mi);
     }
 
     protected class UndoAction extends AbstractAction {
@@ -262,6 +255,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
          */
         public RedoAction() {
             super(tr("Redo"));
+            new ImageProvider("redo").getResource().attachImageIcon(this);
             setEnabled(false);
         }
 
