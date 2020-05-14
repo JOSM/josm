@@ -603,7 +603,6 @@ Build-Date: ${build.tstamp}
         -keep class org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory$PseudoClasses {
             static boolean *(org.openstreetmap.josm.gui.mappaint.Environment);
         }
-        -keep class org.apache.commons.logging.impl.*
 
         -keepclassmembers enum  * {
             public static **[] values();
@@ -1039,7 +1038,7 @@ Build-Date: ${build.tstamp}
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-jcs.jar" includes="org/apache/commons/jcs3/**/*.class"/>
         <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/jmapviewer.jar" includes="org/openstreetmap/gui/**/*.class"/>
         <exec executable="jdeps" dir="${modules.dir}">
-            <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.sun.*|com.google.*|org.tukaani.*|org.apache.commons.logging.*'"/>
+            <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.sun.*|com.google.*|org.tukaani.*'"/>
             <arg line="-dotoutput dots *.jar"/>
         </exec>
         <exec executable="dot" dir="${modules.dir}/dots">
@@ -1126,11 +1125,6 @@ Build-Date: ${build.tstamp}
                 <exclude name="org/apache/commons/compress/compressors/zstandard/**"/>
                 <exclude name="org/apache/commons/compress/parallel/**"/>
                 <exclude name="org/apache/commons/compress/utils/ArchiveUtils*"/>
-                <exclude name="org/apache/commons/logging/impl/AvalonLogger*"/>
-                <exclude name="org/apache/commons/logging/impl/Jdk13LumberjackLogger*"/>
-                <exclude name="org/apache/commons/logging/impl/Log4JLogger*"/>
-                <exclude name="org/apache/commons/logging/impl/LogKitLogger*"/>
-                <exclude name="org/apache/commons/logging/impl/ServletContextCleaner*"/>
                 <exclude name="org/apache/commons/jcs3/auxiliary/disk/jdbc/**"/>
                 <exclude name="org/apache/commons/jcs3/auxiliary/remote/http/client/**"/>
                 <exclude name="org/apache/commons/jcs3/auxiliary/remote/http/server/RemoteHttpCacheServlet*"/>
