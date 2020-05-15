@@ -230,4 +230,13 @@ public class SearchCompilerQueryWizardTest {
     public void testErroneous() {
         constructQuery("-(foo or bar)");
     }
+
+    /**
+     * Test for ticket <a href="https://josm.openstreetmap.de/ticket/19151>#19151</a>
+     */
+    @Test
+    public void testTicket19151() {
+        assertQueryEquals("  relation[\"type\"=\"multipolygon\"][!\"landuse\"][!\"area:highway\"];\n",
+                "type:relation and type=multipolygon and -landuse=* and -\"area:highway\"=*");
+    }
 }
