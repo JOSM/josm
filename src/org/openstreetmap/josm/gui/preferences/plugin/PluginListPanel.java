@@ -177,4 +177,14 @@ public class PluginListPanel extends VerticallyScrollablePanel {
         repaint();
         SwingUtilities.invokeLater(() -> scrollRectToVisible(visibleRect));
     }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return visibleRect.height / 4;
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return visibleRect.height;
+    }
 }
