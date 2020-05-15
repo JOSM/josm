@@ -1,23 +1,36 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
+import javax.swing.JList;
+import javax.swing.JTable;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.data.ReorderableModel;
 
 /**
- * Defines a table model that can be reordered.
+ * Defines a list/table model that can be reordered.
  * @param <T> item type
  * @since 15226
  */
-public interface ReorderableTableModel<T> extends TableModel, ReorderableModel<T> {
+public interface ReorderableTableModel<T> extends ReorderableModel<T> {
 
     /**
      * Returns the selection model.
      * @return the selection model (never null)
+     * @see JList#getSelectionModel()
+     * @see JTable#getSelectionModel()
      */
     ListSelectionModel getSelectionModel();
+
+    /**
+     * Returns the number of rows in the list/table.
+     * @return the number of rows in the list/table
+     * @see ListModel#getSize()
+     * @see TableModel#getRowCount()
+     */
+    int getRowCount();
 
     /**
      * Returns an array of all of the selected indices in the selection model, in increasing order.

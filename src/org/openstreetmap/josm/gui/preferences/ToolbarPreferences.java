@@ -48,6 +48,7 @@ import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 import javax.swing.MenuElement;
 import javax.swing.TransferHandler;
 import javax.swing.event.PopupMenuEvent;
@@ -70,6 +71,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.ReorderableTableModel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -707,21 +709,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         selected.remove(selectedList.getSelectedIndex());
                     }
                 } else if ("up".equals(e.getActionCommand())) {
-                    int i = selectedList.getSelectedIndex();
-                    ActionDefinition o = selected.get(i);
-                    if (i != 0) {
-                        selected.remove(i);
-                        selected.add(i-1, o);
-                        selectedList.setSelectedIndex(i-1);
-                    }
+                    selected.moveUp();
                 } else if ("down".equals(e.getActionCommand())) {
-                    int i = selectedList.getSelectedIndex();
-                    ActionDefinition o = selected.get(i);
-                    if (i != selected.size()-1) {
-                        selected.remove(i);
-                        selected.add(i+1, o);
-                        selectedList.setSelectedIndex(i+1);
-                    }
+                    selected.moveDown();
                 }
             }
         }
@@ -752,9 +742,31 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
 
+        private class ActionDefinitionModel extends DefaultListModel<ActionDefinition> implements ReorderableTableModel<ActionDefinition> {
+            @Override
+            public ListSelectionModel getSelectionModel() {
+                return selectedList.getSelectionModel();
+            }
+
+            @Override
+            public int getRowCount() {
+                return getSize();
+            }
+
+            @Override
+            public ActionDefinition getValue(int index) {
+                return getElementAt(index);
+            }
+
+            @Override
+            public ActionDefinition setValue(int index, ActionDefinition value) {
+                return set(index, value);
+            }
+        }
+
         private final Move moveAction = new Move();
 
-        private final DefaultListModel<ActionDefinition> selected = new DefaultListModel<>();
+        private final ActionDefinitionModel selected = new ActionDefinitionModel();
         private final JList<ActionDefinition> selectedList = new JList<>(selected);
 
         private final DefaultTreeModel actionsTreeModel;
