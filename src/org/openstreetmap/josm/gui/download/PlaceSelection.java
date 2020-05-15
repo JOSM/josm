@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -98,23 +97,23 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     protected JPanel buildSearchPanel() {
-        JPanel lpanel = new JPanel(new GridLayout(2, 2));
+        JPanel lpanel = new JPanel(new GridBagLayout());
         JPanel panel = new JPanel(new GridBagLayout());
 
-        lpanel.add(new JLabel(tr("Choose the server for searching:")));
-        lpanel.add(server);
+        lpanel.add(new JLabel(tr("Choose the server for searching:")), GBC.std(0, 0).weight(0, 0).insets(0, 0, 5, 0));
+        lpanel.add(server, GBC.std(1, 0).fill(GBC.HORIZONTAL));
         String s = Config.getPref().get("namefinder.server", SERVERS[0].name);
         for (int i = 0; i < SERVERS.length; ++i) {
             if (SERVERS[i].name.equals(s)) {
                 server.setSelectedIndex(i);
             }
         }
-        lpanel.add(new JLabel(tr("Enter a place name to search for:")));
+        lpanel.add(new JLabel(tr("Enter a place name to search for:")), GBC.std(0, 1).weight(0, 0).insets(0, 0, 5, 0));
 
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
         cbSearchExpression.setPossibleItemsTopDown(Config.getPref().getList(HISTORY_KEY, Collections.emptyList()));
-        lpanel.add(cbSearchExpression);
+        lpanel.add(cbSearchExpression, GBC.std(1, 1).fill(GBC.HORIZONTAL));
 
         panel.add(lpanel, GBC.std().fill(GBC.HORIZONTAL).insets(5, 5, 0, 5));
         SearchAction searchAction = new SearchAction();
