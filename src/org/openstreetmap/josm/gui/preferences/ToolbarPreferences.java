@@ -592,10 +592,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             @Override
             @SuppressWarnings("unchecked")
             protected Transferable createTransferable(JComponent c) {
-                List<ActionDefinition> actions = new ArrayList<>();
-                for (ActionDefinition o: ((JList<ActionDefinition>) c).getSelectedValuesList()) {
-                    actions.add(o);
-                }
+                List<ActionDefinition> actions = new ArrayList<>(((JList<ActionDefinition>) c).getSelectedValuesList());
                 return new ActionTransferable(actions);
             }
 
@@ -606,11 +603,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
             @Override
             public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
-                for (DataFlavor f : transferFlavors) {
-                    if (ACTION_FLAVOR.equals(f))
-                        return true;
-                }
-                return false;
+                return Arrays.stream(transferFlavors).anyMatch(ACTION_FLAVOR::equals);
             }
 
             @Override
