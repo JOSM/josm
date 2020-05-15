@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io.imagery;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -83,17 +84,32 @@ public class WMSImageryTest {
      */
     @Test
     public void testTicket16248() throws IOException, WMSGetCapabilitiesException {
-        tileServer.stubFor(
-                WireMock.get(WireMock.anyUrl())
-                .willReturn(WireMock.aResponse().withBody(
-                        Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16248, "capabilities.xml")))
-                        ))
-                );
+        byte[] capabilities = Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16248, "capabilities.xml")));
+        tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(capabilities)));
         WMSImagery wms = new WMSImagery(tileServer.url("any"));
         assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k?", wms.buildRootUrl());
         assertEquals("wms.hgis.cartomatic.pl", wms.getLayers().get(0).getName());
-        assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&"
-                + "LAYERS=wms.hgis.cartomatic.pl&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}",
+        assertEquals("http://wms.hgis.cartomatic.pl/topo/3857/m25k?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.3.0&SERVICE=WMS&REQUEST=GetMap&"
+                + "LAYERS=wms.hgis.cartomatic.pl&STYLES=&CRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}",
+                wms.buildGetMapUrl(wms.getLayers(), (List<String>) null, true));
+    }
+
+    /**
+     * Non-regression test for bug #19193.
+     * @throws IOException if any I/O error occurs
+     * @throws WMSGetCapabilitiesException never
+     */
+    @Test
+    public void testTicket19193() throws IOException, WMSGetCapabilitiesException {
+        byte[] capabilities = Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(19193, "capabilities.xml")));
+        tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(capabilities)));
+        WMSImagery wms = new WMSImagery(tileServer.url("any"));
+        assertEquals("https://inspire.brandenburg.de/services/gn_alkis_wms?", wms.buildRootUrl());
+        assertEquals(1, wms.getLayers().size());
+        assertNull(wms.getLayers().get(0).getName());
+        assertEquals("INSPIRE GN ALKIS BB", wms.getLayers().get(0).getTitle());
+        assertEquals("https://inspire.brandenburg.de/services/gn_alkis_wms?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.3.0&"
+                + "SERVICE=WMS&REQUEST=GetMap&LAYERS=null&STYLES=&CRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}",
                 wms.buildGetMapUrl(wms.getLayers(), (List<String>) null, true));
     }
 

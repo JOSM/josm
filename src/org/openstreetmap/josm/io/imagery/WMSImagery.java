@@ -55,7 +55,7 @@ public class WMSImagery {
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     // WMS 1.0 - 1.3.0
-    private static final QName CAPABILITITES_ROOT_130 = new QName("WMS_Capabilities", WMS_NS_URL);
+    private static final QName CAPABILITIES_ROOT_130  = new QName(WMS_NS_URL, "WMS_Capabilities");
     private static final QName QN_ABSTRACT            = new QName(WMS_NS_URL, "Abstract");
     private static final QName QN_CAPABILITY          = new QName(WMS_NS_URL, "Capability");
     private static final QName QN_CRS                 = new QName(WMS_NS_URL, "CRS");
@@ -373,7 +373,7 @@ public class WMSImagery {
     }
 
     private void attemptGetCapabilities(String url) throws IOException, WMSGetCapabilitiesException {
-        Logging.debug("Trying WMS getcapabilities with url {0}", url);
+        Logging.debug("Trying WMS GetCapabilities with url {0}", url);
         try (CachedFile cf = new CachedFile(url); InputStream in = cf.setHttpHeaders(headers).
                 setMaxAge(7 * CachedFile.DAYS).
                 setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince).
@@ -384,14 +384,13 @@ public class WMSImagery {
                 for (int event = reader.getEventType(); reader.hasNext(); event = reader.next()) {
                     if (event == XMLStreamReader.START_ELEMENT) {
                         if (tagEquals(CAPABILITIES_ROOT_111, reader.getName())) {
-                            // version 1.1.1
-                            this.version = reader.getAttributeValue(null, "version");
-                            if (this.version == null) {
-                                this.version = "1.1.1";
-                            }
+                            this.version = Utils.firstNotEmptyString("1.1.1",
+                                    reader.getAttributeValue(null, "version"));
                         }
-                        if (tagEquals(CAPABILITITES_ROOT_130, reader.getName())) {
-                            this.version = reader.getAttributeValue(WMS_NS_URL, "version");
+                        if (tagEquals(CAPABILITIES_ROOT_130, reader.getName())) {
+                            this.version = Utils.firstNotEmptyString("1.3.0",
+                                    reader.getAttributeValue(WMS_NS_URL, "version"),
+                                    reader.getAttributeValue(null, "version"));
                         }
                         if (tagEquals(QN_SERVICE, reader.getName())) {
                             parseService(reader);
