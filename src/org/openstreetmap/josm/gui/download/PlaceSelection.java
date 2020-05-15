@@ -15,9 +15,13 @@ import java.io.Reader;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -56,7 +60,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -73,19 +76,19 @@ public class PlaceSelection implements DownloadSelection {
     private JTable tblSearchResults;
     private DownloadDialog parent;
     private static final Server[] SERVERS = {
-        new Server("Nominatim", NameFinder.NOMINATIM_URL, tr("Class Type"), tr("Bounds"))
+        new Server("Nominatim", NameFinder::buildNominatimURL, tr("Class Type"), tr("Bounds"))
     };
-    private final JosmComboBox<Server> server = new JosmComboBox<>(SERVERS);
+    private final JosmComboBox<Server> serverComboBox = new JosmComboBox<>(SERVERS);
 
     private static class Server {
         public final String name;
-        public final String url;
+        public final BiFunction<String, Collection<SearchResult>, URL> urlFunction;
         public final String thirdcol;
         public final String fourthcol;
 
-        Server(String n, String u, String t, String f) {
+        Server(String n, BiFunction<String, Collection<SearchResult>, URL> u, String t, String f) {
             name = n;
-            url = u;
+            urlFunction = u;
             thirdcol = t;
             fourthcol = f;
         }
@@ -101,11 +104,11 @@ public class PlaceSelection implements DownloadSelection {
         JPanel panel = new JPanel(new GridBagLayout());
 
         lpanel.add(new JLabel(tr("Choose the server for searching:")), GBC.std(0, 0).weight(0, 0).insets(0, 0, 5, 0));
-        lpanel.add(server, GBC.std(1, 0).fill(GBC.HORIZONTAL));
+        lpanel.add(serverComboBox, GBC.std(1, 0).fill(GBC.HORIZONTAL));
         String s = Config.getPref().get("namefinder.server", SERVERS[0].name);
         for (int i = 0; i < SERVERS.length; ++i) {
             if (SERVERS[i].name.equals(s)) {
-                server.setSelectedIndex(i);
+                serverComboBox.setSelectedIndex(i);
             }
         }
         lpanel.add(new JLabel(tr("Enter a place name to search for:")), GBC.std(0, 1).weight(0, 0).insets(0, 0, 5, 0));
@@ -170,59 +173,84 @@ public class PlaceSelection implements DownloadSelection {
         tblSearchResults.clearSelection();
     }
 
+    /**
+     * Action to perform initial search, and (if query is unchanged) load more results.
+     */
     class SearchAction extends AbstractAction implements DocumentListener {
 
+        String lastSearchExpression;
+        boolean isSearchMore;
+
         SearchAction() {
-            putValue(NAME, tr("Search..."));
             new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
-            putValue(SHORT_DESCRIPTION, tr("Click to start searching for places"));
-            updateEnabledState();
+            updateState();
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!isEnabled() || cbSearchExpression.getText().trim().isEmpty())
+            String searchExpression = cbSearchExpression.getText();
+            if (!isEnabled() || searchExpression.trim().isEmpty())
                 return;
             cbSearchExpression.addCurrentItemToHistory();
             Config.getPref().putList(HISTORY_KEY, cbSearchExpression.getHistory());
-            NameQueryTask task = new NameQueryTask(cbSearchExpression.getText());
+            Server server = (Server) serverComboBox.getSelectedItem();
+            URL url = server.urlFunction.apply(searchExpression, isSearchMore ? model.getData() : Collections.emptyList());
+            NameQueryTask task = new NameQueryTask(url, data -> {
+                if (isSearchMore) {
+                    model.addData(data);
+                } else {
+                    model.setData(data);
+                }
+                Config.getPref().put("namefinder.server", server.name);
+                columnmodel.setHeadlines(server.thirdcol, server.fourthcol);
+                lastSearchExpression = searchExpression;
+                updateState();
+            });
             MainApplication.worker.submit(task);
         }
 
-        protected final void updateEnabledState() {
-            setEnabled(!cbSearchExpression.getText().trim().isEmpty());
+        protected final void updateState() {
+            String searchExpression = cbSearchExpression.getText();
+            setEnabled(!searchExpression.trim().isEmpty());
+            isSearchMore = Objects.equals(lastSearchExpression, searchExpression) && !model.getData().isEmpty();
+            if (isSearchMore) {
+                putValue(NAME, tr("Search more..."));
+                putValue(SHORT_DESCRIPTION, tr("Click to search for more places"));
+            } else {
+                putValue(NAME, tr("Search..."));
+                putValue(SHORT_DESCRIPTION, tr("Click to start searching for places"));
+            }
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-            updateEnabledState();
+            updateState();
         }
 
         @Override
         public void insertUpdate(DocumentEvent e) {
-            updateEnabledState();
+            updateState();
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-            updateEnabledState();
+            updateState();
         }
     }
 
-    class NameQueryTask extends PleaseWaitRunnable {
+    static class NameQueryTask extends PleaseWaitRunnable {
 
-        private final String searchExpression;
+        private final URL url;
+        private final Consumer<List<SearchResult>> dataConsumer;
         private HttpClient connection;
         private List<SearchResult> data;
         private boolean canceled;
-        private final Server useserver;
         private Exception lastException;
 
-        NameQueryTask(String searchExpression) {
+        NameQueryTask(URL url, Consumer<List<SearchResult>> dataConsumer) {
             super(tr("Querying name server"), false /* don't ignore exceptions */);
-            this.searchExpression = searchExpression;
-            useserver = (Server) server.getSelectedItem();
-            Config.getPref().put("namefinder.server", useserver.name);
+            this.url = url;
+            this.dataConsumer = dataConsumer;
         }
 
         @Override
@@ -243,17 +271,13 @@ public class PlaceSelection implements DownloadSelection {
                 ExceptionDialogUtil.explainException(lastException);
                 return;
             }
-            columnmodel.setHeadlines(useserver.thirdcol, useserver.fourthcol);
-            model.setData(this.data);
+            dataConsumer.accept(data);
         }
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            String urlString = useserver.url+Utils.encodeUrl(searchExpression);
-
             try {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
-                URL url = new URL(urlString);
                 synchronized (this) {
                     connection = HttpClient.create(url);
                     connection.connect();
@@ -264,7 +288,7 @@ public class PlaceSelection implements DownloadSelection {
             } catch (SAXParseException e) {
                 if (!canceled) {
                     // Nominatim sometimes returns garbage, see #5934, #10643
-                    Logging.log(Logging.LEVEL_WARN, tr("Error occurred with query ''{0}'': ''{1}''", urlString, e.getMessage()), e);
+                    Logging.log(Logging.LEVEL_WARN, tr("Error occurred with query ''{0}'': ''{1}''", url, e.getMessage()), e);
                     GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
                             MainApplication.getMainFrame(),
                             tr("Name server returned invalid data. Please try again."),
@@ -275,7 +299,7 @@ public class PlaceSelection implements DownloadSelection {
             } catch (IOException | ParserConfigurationException e) {
                 if (!canceled) {
                     OsmTransferException ex = new OsmTransferException(e);
-                    ex.setUrl(urlString);
+                    ex.setUrl(url.toString());
                     lastException = ex;
                 }
             }
@@ -308,6 +332,15 @@ public class PlaceSelection implements DownloadSelection {
                 this.data = new ArrayList<>(data);
             }
             fireTableDataChanged();
+        }
+
+        public void addData(List<SearchResult> data) {
+            this.data.addAll(data);
+            fireTableDataChanged();
+        }
+
+        public List<SearchResult> getData() {
+            return Collections.unmodifiableList(data);
         }
 
         @Override

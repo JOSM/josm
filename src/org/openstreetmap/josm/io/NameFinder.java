@@ -5,10 +5,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -50,13 +55,43 @@ public final class NameFinder {
     }
 
     /**
+     * Builds the Nominatim URL for performing the given search
+     * @param searchExpression the Nominatim query
+     * @return the Nominatim URL
+     */
+    public static URL buildNominatimURL(String searchExpression) {
+        return buildNominatimURL(searchExpression, Collections.emptyList());
+    }
+
+    /**
+     * Builds the Nominatim URL for performing the given search and excluding the results (of a previous search)
+     * @param searchExpression the Nominatim query
+     * @param excludeResults the results to exclude
+     * @return the Nominatim URL
+     * @see <a href="https://nominatim.org/release-docs/develop/api/Search/#result-limitation">Result limitation in Nominatim Documentation</a>
+     */
+    public static URL buildNominatimURL(String searchExpression, Collection<SearchResult> excludeResults) {
+        try {
+            final String excludeString = excludeResults.isEmpty()
+                    ? ""
+                    : excludeResults.stream()
+                    .map(SearchResult::getPlaceId)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(",", "&exclude_place_ids=", ""));
+            return new URL(NOMINATIM_URL_PROP.get() + Utils.encodeUrl(searchExpression) + excludeString);
+        } catch (MalformedURLException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    /**
      * Performs a Nominatim search.
      * @param searchExpression Nominatim search expression
      * @return search results
      * @throws IOException if any IO error occurs.
      */
     public static List<SearchResult> queryNominatim(final String searchExpression) throws IOException {
-        return query(new URL(NOMINATIM_URL_PROP.get() + Utils.encodeUrl(searchExpression)));
+        return query(buildNominatimURL(searchExpression));
     }
 
     /**
@@ -107,6 +142,7 @@ public final class NameFinder {
         private int zoom;
         private Bounds bounds;
         private PrimitiveId osmId;
+        private long placeId;
 
         /**
          * Returns the name.
@@ -181,6 +217,14 @@ public final class NameFinder {
         }
 
         /**
+         * Returns the Nominatim place id.
+         * @return the Nominatim place id
+         */
+        public long getPlaceId() {
+            return placeId;
+        }
+
+        /**
          * Returns the download area.
          * @return the download area
          */
@@ -248,6 +292,8 @@ public final class NameFinder {
                     if (osmId != null && osmType != null) {
                         currentResult.osmId = new SimplePrimitiveId(Long.parseLong(osmId), OsmPrimitiveType.from(osmType));
                     }
+                    currentResult.placeId = Optional.ofNullable(atts.getValue("place_id")).filter(s -> !s.isEmpty())
+                            .map(Long::parseLong).orElse(0L);
                     data.add(currentResult);
                 }
             } catch (NumberFormatException ex) {
