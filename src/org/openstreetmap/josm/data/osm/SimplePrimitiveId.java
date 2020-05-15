@@ -30,7 +30,7 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
     public static final Pattern MULTIPLE_IDS_PATTERN = Pattern.compile(ID_PATTERN.pattern() + "(-(\\d+))?");
 
     /**
-     * Create a new primtive id
+     * Create a new primitive id
      * @param id The id
      * @param type The type of the primitive
      */

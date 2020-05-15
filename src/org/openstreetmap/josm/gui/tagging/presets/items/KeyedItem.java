@@ -131,7 +131,7 @@ public abstract class KeyedItem extends TextItem {
 
         /**
          * Check if we encountered any primitive that had any keys
-         * @return <code>true</code> if any of the primtives had any tags.
+         * @return <code>true</code> if any of the primitives had any tags.
          */
         public boolean hadKeys() {
             return hadKeys;

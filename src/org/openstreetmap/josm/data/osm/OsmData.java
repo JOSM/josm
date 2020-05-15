@@ -131,7 +131,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
      * Gets a filtered collection of primitives matching the given predicate.
      * @param <T> The primitive type.
      * @param predicate The predicate to match
-     * @return The list of primtives.
+     * @return The list of primitives.
      * @since 10590
      */
     <T extends O> Collection<T> getPrimitives(Predicate<? super O> predicate);
