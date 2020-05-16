@@ -26,7 +26,6 @@ matrix:
     jdk: oraclejdk11
     env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
-  - wget https://www.apache.org/dist/ant/binaries/apache-ant-1.10.5-bin.tar.gz
-  - tar -xzvf apache-ant-1.10.5-bin.tar.gz
-  - export PATH=`pwd`/apache-ant-1.10.5/bin:$PATH
+  - "curl https://downloads.apache.org/ant/binaries/apache-ant-1.10.8-bin.tar.gz | tar -xzv"
+  - "export PATH=`pwd`/apache-ant-1.10.8/bin:$PATH"
   - if [ "$TRAVIS_OS_NAME" == "windows" ] ; then choco install jdk11 && export JAVA_HOME="/c/Program Files/Java/jdk-11" ; fi
