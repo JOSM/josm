@@ -66,6 +66,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.NetworkManager;
+import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
@@ -434,7 +435,7 @@ public final class PluginHandler {
      */
     public static boolean checkAndConfirmPluginUpdate(Component parent) {
         if (Preferences.main().getPluginSites().stream().anyMatch(NetworkManager::isOffline)) {
-            Logging.info(tr("{0} not available (offline mode)", tr("Plugin update")));
+            Logging.info(OfflineAccessException.forResource(tr("Plugin update")).getMessage());
             return false;
         }
         String message = null;

@@ -68,7 +68,7 @@ public enum OnlineResource {
     @Deprecated
     public final void checkOfflineAccess(String downloadString, String ignore) {
         if (NetworkManager.isOffline(downloadString)) {
-            throw new OfflineAccessException(tr("Unable to access ''{0}'': {1} not available (offline mode)", downloadString, getLocName()));
+            throw OfflineAccessException.forResource(downloadString);
         }
     }
 }

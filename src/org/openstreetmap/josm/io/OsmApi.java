@@ -255,7 +255,7 @@ public class OsmApi extends OsmConnection {
             }
             if (capabilities == null) {
                 if (NetworkManager.isOffline(OnlineResource.OSM_API)) {
-                    Logging.warn(tr("{0} not available (offline mode)", tr("OSM API")));
+                    Logging.warn(OfflineAccessException.forResource(tr("")).getMessage());
                 } else {
                     Logging.error(tr("Unable to initialize OSM API."));
                 }

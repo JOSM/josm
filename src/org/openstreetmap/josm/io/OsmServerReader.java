@@ -157,7 +157,7 @@ public abstract class OsmServerReader extends OsmConnection {
             boolean uncompressAccordingToContentDisposition, String httpMethod, byte[] requestBody) throws OsmTransferException {
         try {
             if (NetworkManager.isOffline(urlStr)) {
-                throw new OsmApiException(new OfflineAccessException(tr("{0} not available (offline mode)", urlStr)));
+                throw new OsmApiException(OfflineAccessException.forResource(urlStr));
             }
 
             URL url = null;
