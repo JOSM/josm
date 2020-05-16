@@ -465,7 +465,7 @@ public class CachedFile implements Closeable {
 
         // No local file + offline => nothing to do
         if (offline) {
-            return null;
+            throw new IOException(OfflineAccessException.forResource(urlStr).getMessage());
         }
 
         if (parameter != null) {
@@ -495,8 +495,6 @@ public class CachedFile implements Closeable {
             final HttpClient.Response con = activeConnection.connect();
             if (ifModifiedSince != null && con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
                 Logging.debug("304 Not Modified ({0})", urlStr);
-                if (localFile == null)
-                    throw new AssertionError();
                 Config.getPref().putList(prefKey,
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localPathEntry.get(1)));
                 return localFile;
