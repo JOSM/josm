@@ -651,7 +651,11 @@ public class MainApplication {
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
                 "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
                 "\t--skip-plugins                            "+tr("Skip loading plugins")+"\n\n"+
-                "\t--offline=<osm_api|josm_website|certificates|all> "+tr("Disable access to the given resource(s), separated by comma")+"\n\n"+
+                "\t--offline=" + Arrays.stream(OnlineResource.values()).map(OnlineResource::name).collect(
+                        Collectors.joining("|", "<", ">")) + "\n" +
+                "\t                                          "+tr("Disable access to the given resource(s), separated by comma") + "\n" +
+                "\t                                          "+Arrays.stream(OnlineResource.values()).map(OnlineResource::getLocName).collect(
+                        Collectors.joining("|", "<", ">")) + "\n\n" +
                 tr("options provided as Java system properties")+":\n"+
                 align("\t-Djosm.dir.name=JOSM") + tr("Change the JOSM directory name") + "\n\n" +
                 align("\t-Djosm.pref=" + tr("/PATH/TO/JOSM/PREF    ")) + tr("Set the preferences directory") + "\n" +

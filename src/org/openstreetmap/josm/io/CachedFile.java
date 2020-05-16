@@ -448,6 +448,9 @@ public class CachedFile implements Closeable {
                 age = System.currentTimeMillis() - Long.parseLong(localPathEntry.get(0));
                 if (offline || age < maxAgeMillis) {
                     return localFile;
+                } else if (NetworkManager.isOffline(OnlineResource.CACHE_UPDATES)) {
+                    Logging.warn(OfflineAccessException.forResource(tr("Cache update for {0}", urlStr)).getMessage());
+                    return localFile;
                 }
                 if (cachingStrategy == CachingStrategy.IfModifiedSince) {
                     ifModifiedSince = Long.valueOf(localPathEntry.get(0));
