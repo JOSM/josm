@@ -129,10 +129,6 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         return result;
     }
 
-    private static boolean isMultipolygon(OsmPrimitive p) {
-        return p instanceof Relation && ((Relation) p).isMultipolygon();
-    }
-
     private void updateMultipolygonsReferringTo(AbstractDatasetChangedEvent event) {
         updateMultipolygonsReferringTo(event, event.getPrimitives(), event.getDataset());
     }
@@ -148,7 +144,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         Collection<Map<Relation, Multipolygon>> maps = initialMaps;
         if (primitives != null) {
             for (OsmPrimitive p : primitives) {
-                if (isMultipolygon(p)) {
+                if (p.isMultipolygon()) {
                     if (maps == null) {
                         maps = getMapsFor(ds);
                     }
@@ -156,7 +152,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
 
                 } else if (p instanceof Way && p.getDataSet() != null) {
                     for (OsmPrimitive ref : p.getReferrers()) {
-                        if (isMultipolygon(ref)) {
+                        if (ref.isMultipolygon()) {
                             if (maps == null) {
                                 maps = getMapsFor(ds);
                             }
@@ -255,7 +251,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
         // can return all the data set primitives for this event
         Collection<Map<Relation, Multipolygon>> maps = null;
         for (OsmPrimitive p : event.getPrimitives()) {
-            if (isMultipolygon(p)) {
+            if (p.isMultipolygon()) {
                 if (maps == null) {
                     maps = getMapsFor(event.getDataset());
                 }
@@ -309,7 +305,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
                     ds = p.getDataSet();
                 }
                 for (OsmPrimitive ref : p.getReferrers()) {
-                    if (isMultipolygon(ref)) {
+                    if (ref.isMultipolygon()) {
                         if (maps == null) {
                             maps = getMapsFor(ds);
                         }
