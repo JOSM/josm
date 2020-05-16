@@ -30,6 +30,7 @@
         <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.13.0" transitive="false"/>
         <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.21.4"/>
         <dependency conf="api->default" org="oauth.signpost" name="signpost-core" rev="2.0.0"/>
+        <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2020.5.16"/>
         <!-- sources->sources -->
         <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.13"/>
         <dependency conf="sources->sources" org="javax.json" name="javax.json-api" rev="1.1.4"/>
@@ -41,6 +42,7 @@
         <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.13.0" transitive="false"/>
         <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.21.4"/>
         <dependency conf="sources->sources" org="oauth.signpost" name="signpost-core" rev="2.0.0"/>
+        <dependency conf="sources->sources" org="org.webjars.npm" name="tag2link" rev="2020.5.16"/>
         <!-- commonslang->default -->
         <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.10"/>
         <!-- jacocoant->default -->

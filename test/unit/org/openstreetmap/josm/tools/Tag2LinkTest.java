@@ -24,6 +24,15 @@ public class Tag2LinkTest {
     }
 
     /**
+     * Unit test of function {@link Tag2Link#initialize()}.
+     */
+    @Test
+    public void testInitialize() {
+        Tag2Link.initialize();
+        Assert.assertTrue("obtains at least 40 rules", Tag2Link.wikidataRules.size() > 40);
+    }
+
+    /**
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test

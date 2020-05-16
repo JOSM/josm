@@ -4,11 +4,10 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -23,8 +22,6 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.io.CachedFile;
-import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Extracts web links from OSM tags.
@@ -79,8 +76,7 @@ public final class Tag2Link {
     public static void initialize() {
         try {
             wikidataRules.clear();
-            fetchRulesViaSPARQL("resource://data/tag2link.wikidata.sparql", Config.getUrls().getJOSMWebsite() + "/remote/wikidata-sparql");
-            fetchRulesViaSPARQL("resource://data/tag2link.sophox.sparql", Config.getUrls().getJOSMWebsite() + "/remote/sophox-sparql");
+            initializeFromResources();
         } catch (Exception e) {
             Logging.error("Failed to initialize tag2link rules");
             Logging.error(e);
@@ -88,29 +84,21 @@ public final class Tag2Link {
     }
 
     /**
-     * Fetches rules from Wikidata using a SPARQL query.
+     * Initializes the tag2link rules from the resources.
      *
-     * @param query the SPARQL query
-     * @param server the query server
      * @throws IOException in case of I/O error
      */
-    private static void fetchRulesViaSPARQL(final String query, final String server) throws IOException {
-        final int initialSize = wikidataRules.size();
-        final String sparql;
-        try (CachedFile cachedFile = new CachedFile(query)) {
-            sparql = new String(cachedFile.getByteContent(), StandardCharsets.UTF_8);
-        }
-
+    private static void initializeFromResources() throws IOException {
+        final String resource = "META-INF/resources/webjars/tag2link/2020.5.16/index.json";
         final JsonArray rules;
-        try (CachedFile cachedFile = new CachedFile(server + "?query=" + Utils.encodeUrl(sparql));
-             BufferedReader reader = cachedFile.setHttpAccept("application/json").getContentReader();
-             JsonReader jsonReader = Json.createReader(reader)) {
-            rules = jsonReader.read().asJsonObject().getJsonObject("results").getJsonArray("bindings");
+        try (InputStream inputStream = Tag2Link.class.getClassLoader().getResourceAsStream(resource);
+             JsonReader jsonReader = Json.createReader(inputStream)) {
+            rules = jsonReader.readArray();
         }
 
         for (JsonValue rule : rules) {
-            final String key = rule.asJsonObject().getJsonObject("OSM_key").getString("value");
-            final String url = rule.asJsonObject().getJsonObject("formatter_URL").getString("value");
+            final String key = rule.asJsonObject().getString("key");
+            final String url = rule.asJsonObject().getString("url");
             if (key.startsWith("Key:")) {
                 wikidataRules.put(key.substring("Key:".length()), url);
             }
@@ -119,11 +107,11 @@ public final class Tag2Link {
         Stream.of("image", "url", "website", "wikidata", "wikimedia_commons")
                 .forEach(wikidataRules::remove);
 
-        final int size = wikidataRules.size() - initialSize;
+        final int size = wikidataRules.size();
         Logging.info(trn(
                 "Obtained {0} Tag2Link rule from {1}",
                 "Obtained {0} Tag2Link rules from {1}",
-                size, size, server));
+                size, size, resource));
     }
 
     /**
