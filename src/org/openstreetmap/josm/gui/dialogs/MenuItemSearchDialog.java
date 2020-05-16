@@ -87,6 +87,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
 
         @Override
         protected void filterItems() {
+            menu.imageryMenu.refreshImageryMenu();
             lsResultModel.setItems(menu.findMenuItems(edSearchText.getText(), true));
         }
     }
