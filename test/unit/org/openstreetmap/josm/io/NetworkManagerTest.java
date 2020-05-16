@@ -51,7 +51,7 @@ public class NetworkManagerTest {
      * Unit test of {@link NetworkManager#setOffline} and {@link NetworkManager#getOfflineResources}.
      */
     @Test
-    public void testOfflineRessources() {
+    public void testOfflineResources() {
         NetworkManager.setOnline(OnlineResource.ALL);
         assertTrue(NetworkManager.getOfflineResources().isEmpty());
         assertFalse(NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
