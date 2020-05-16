@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -37,6 +38,7 @@ import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -53,6 +55,8 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.datatransfer.ChangesetTransferable;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -278,6 +282,15 @@ public class ChangesetCacheManager extends JFrame {
         // activate DEL on the table
         tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "removeFromCache");
         tblChangesets.getActionMap().put("removeFromCache", actRemoveFromCacheAction);
+
+        tblChangesets.setTransferHandler(new TransferHandler() {
+            @Override
+            public void exportToClipboard(JComponent comp, Clipboard clip, int action) throws IllegalStateException {
+                List<Changeset> changesets = model.getSelectedChangesets();
+                ChangesetTransferable transferable = new ChangesetTransferable(changesets);
+                ClipboardUtils.copy(transferable);
+            }
+        });
 
         pnl.add(new JScrollPane(tblChangesets), BorderLayout.CENTER);
         pnl.add(buildChangesetTableActionPanel(), BorderLayout.WEST);

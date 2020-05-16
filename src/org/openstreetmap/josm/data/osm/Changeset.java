@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -488,5 +490,10 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
             discussion = new ArrayList<>();
         }
         discussion.add(comment);
+    }
+
+    @Override
+    public String toString() {
+        return tr("Changeset") + " " + id + ": " + getComment();
     }
 }
