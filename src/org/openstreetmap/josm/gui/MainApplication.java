@@ -1155,7 +1155,7 @@ public class MainApplication {
         if (!offline.isEmpty()) {
             Logging.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
                     "JOSM is running in offline mode. These resources will not be available: {0}",
-                    offline.size(), offline.size() == 1 ? offline.iterator().next() : Arrays.toString(offline.toArray())));
+                    offline.size(), offline.stream().map(OnlineResource::getLocName).collect(Collectors.joining(", "))));
         }
     }
 
