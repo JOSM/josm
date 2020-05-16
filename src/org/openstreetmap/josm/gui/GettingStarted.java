@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferenceListener;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.io.CacheCustomContent;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -106,8 +107,8 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
         }
 
         @Override
-        protected void checkOfflineAccess() {
-            OnlineResource.JOSM_WEBSITE.checkOfflineAccess(new WikiReader().getBaseUrlWiki(), Config.getUrls().getJOSMWebsite());
+        protected boolean isOffline() {
+            return NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE);
         }
 
         /**

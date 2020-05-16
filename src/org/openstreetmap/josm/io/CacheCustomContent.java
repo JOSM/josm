@@ -94,21 +94,11 @@ public abstract class CacheCustomContent<T extends Throwable> {
                 || !isCacheValid();
     }
 
-    private boolean isOffline() {
-        try {
-            checkOfflineAccess();
-            return false;
-        } catch (OfflineAccessException e) {
-            Logging.trace(e);
-            return true;
-        }
-    }
-
     /**
-     * Ensures underlying resource is not accessed in offline mode.
-     * @throws OfflineAccessException if resource is accessed in offline mode
+     * Checks underlying resource is not accessed in offline mode.
+     * @return whether resource is accessed in offline mode
      */
-    protected abstract void checkOfflineAccess();
+    protected abstract boolean isOffline();
 
     /**
      * Updates data if required

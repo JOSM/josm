@@ -208,8 +208,8 @@ public class OsmApi extends OsmConnection {
         }
 
         @Override
-        protected void checkOfflineAccess() {
-            OnlineResource.OSM_API.checkOfflineAccess(getBaseUrl(getServerUrlFromPref(), "0.6")+CAPABILITIES, getServerUrlFromPref());
+        protected boolean isOffline() {
+            return NetworkManager.isOffline(OnlineResource.OSM_API);
         }
 
         @Override

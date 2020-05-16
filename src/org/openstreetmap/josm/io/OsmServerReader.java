@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -157,8 +156,9 @@ public abstract class OsmServerReader extends OsmConnection {
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason,
             boolean uncompressAccordingToContentDisposition, String httpMethod, byte[] requestBody) throws OsmTransferException {
         try {
-            OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlStr, Config.getUrls().getJOSMWebsite());
-            OnlineResource.OSM_API.checkOfflineAccess(urlStr, OsmApi.getOsmApi().getServerUrl());
+            if (NetworkManager.isOffline(urlStr)) {
+                throw new OsmApiException(new OfflineAccessException(tr("{0} not available (offline mode)", urlStr)));
+            }
 
             URL url = null;
             try {

@@ -3,6 +3,8 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.spi.preferences.Config;
+
 /**
  * Online resources directly used by JOSM.
  * This does not include websites where user can sometimes be redirected through its web browser,
@@ -36,14 +38,36 @@ public enum OnlineResource {
     }
 
     /**
+     * Replies whether the given URL matches this online resource
+     * @return whether the given URL matches this online resource
+     */
+    public final boolean matches(String url) {
+        final String baseUrl;
+        switch (this) {
+            case ALL:
+                return true;
+            case OSM_API:
+                baseUrl = OsmApi.getOsmApi().getServerUrl();
+                break;
+            case JOSM_WEBSITE:
+                baseUrl = Config.getUrls().getJOSMWebsite();
+                break;
+            default:
+                return false;
+        }
+        return url.startsWith(baseUrl.substring(baseUrl.indexOf("://")), url.indexOf("://"));
+    }
+
+    /**
      * Ensures resource is not accessed in offline mode.
      * @param downloadString The attempted download string
-     * @param resourceString The resource download string that should not be accessed
+     * @param ignore ignored
      * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
+     * @deprecated use {@link NetworkManager#isOffline(String)}
      */
-    public final void checkOfflineAccess(String downloadString, String resourceString) {
-        if (NetworkManager.isOffline(this) && downloadString
-                .startsWith(resourceString.substring(resourceString.indexOf("://")), downloadString.indexOf("://"))) {
+    @Deprecated
+    public final void checkOfflineAccess(String downloadString, String ignore) {
+        if (NetworkManager.isOffline(downloadString)) {
             throw new OfflineAccessException(tr("Unable to access ''{0}'': {1} not available (offline mode)", downloadString, getLocName()));
         }
     }

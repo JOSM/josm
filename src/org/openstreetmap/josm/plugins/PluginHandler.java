@@ -66,8 +66,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.NetworkManager;
-import org.openstreetmap.josm.io.OfflineAccessException;
-import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
@@ -435,7 +433,7 @@ public final class PluginHandler {
      * @return true if a plugin update should be run; false, otherwise
      */
     public static boolean checkAndConfirmPluginUpdate(Component parent) {
-        if (!checkOfflineAccess()) {
+        if (Preferences.main().getPluginSites().stream().anyMatch(NetworkManager::isOffline)) {
             Logging.info(tr("{0} not available (offline mode)", tr("Plugin update")));
             return false;
         }
@@ -540,23 +538,6 @@ public final class PluginHandler {
             Config.getPref().put(togglePreferenceKey, "ask");
         }
         return ret == 0;
-    }
-
-    private static boolean checkOfflineAccess() {
-        if (NetworkManager.isOffline(OnlineResource.ALL)) {
-            return false;
-        }
-        if (NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE)) {
-            for (String updateSite : Preferences.main().getPluginSites()) {
-                try {
-                    OnlineResource.JOSM_WEBSITE.checkOfflineAccess(updateSite, Config.getUrls().getJOSMWebsite());
-                } catch (OfflineAccessException e) {
-                    Logging.trace(e);
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     /**

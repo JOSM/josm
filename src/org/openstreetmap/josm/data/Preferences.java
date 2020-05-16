@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,8 +41,7 @@ import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.io.OfflineAccessException;
-import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.DefaultPreferenceChangeEvent;
@@ -803,14 +801,7 @@ public class Preferences extends AbstractPreferences {
      */
     public Collection<String> getOnlinePluginSites() {
         Collection<String> pluginSites = new ArrayList<>(getPluginSites());
-        for (Iterator<String> it = pluginSites.iterator(); it.hasNext();) {
-            try {
-                OnlineResource.JOSM_WEBSITE.checkOfflineAccess(it.next(), Config.getUrls().getJOSMWebsite());
-            } catch (OfflineAccessException ex) {
-                Logging.log(Logging.LEVEL_WARN, ex);
-                it.remove();
-            }
-        }
+        pluginSites.removeIf(NetworkManager::isOffline);
         return pluginSites;
     }
 

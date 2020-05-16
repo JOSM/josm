@@ -73,6 +73,16 @@ public final class NetworkManager {
     }
 
     /**
+     * Determines if the given online resource specified as URL is currently offline.
+     * @param url the online resource specified as URL
+     * @return {@code true} if {@code url} is offline and should not be accessed
+     * @since 16426
+     */
+    public static boolean isOffline(String url) {
+        return OFFLINE_RESOURCES.stream().anyMatch(r -> r.matches(url));
+    }
+
+    /**
      * Determines if the given online resource is currently offline.
      * @param r the online resource
      * @return {@code true} if {@code r} is offline and should not be accessed

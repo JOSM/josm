@@ -53,13 +53,19 @@ public class NetworkManagerTest {
     @Test
     public void testOfflineResources() {
         NetworkManager.setOnline(OnlineResource.ALL);
+        assertFalse(NetworkManager.isOffline("http://www.example.com/"));
         assertTrue(NetworkManager.getOfflineResources().isEmpty());
         assertFalse(NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
         NetworkManager.setOffline(OnlineResource.JOSM_WEBSITE);
+        assertTrue(NetworkManager.isOffline("https://josm.openstreetmap.de/maps"));
+        assertFalse(NetworkManager.isOffline("http://www.example.com/"));
         assertTrue(NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
         NetworkManager.setOnline(OnlineResource.JOSM_WEBSITE);
+        assertFalse(NetworkManager.isOffline("https://josm.openstreetmap.de/maps"));
         assertFalse(NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
         NetworkManager.setOffline(OnlineResource.ALL);
+        assertTrue(NetworkManager.isOffline("https://josm.openstreetmap.de/maps"));
+        assertTrue(NetworkManager.isOffline("http://www.example.com/"));
         assertTrue(NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
         assertTrue(NetworkManager.isOffline(OnlineResource.OSM_API));
         NetworkManager.setOnline(OnlineResource.ALL);

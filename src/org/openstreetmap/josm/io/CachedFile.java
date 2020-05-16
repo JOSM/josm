@@ -434,13 +434,7 @@ public class CachedFile implements Closeable {
         Long ifModifiedSince = null;
         File localFile = null;
         List<String> localPathEntry = new ArrayList<>(Config.getPref().getList(prefKey));
-        boolean offline = false;
-        try {
-            checkOfflineAccess(urlStr);
-        } catch (OfflineAccessException e) {
-            Logging.trace(e);
-            offline = true;
-        }
+        boolean offline = NetworkManager.isOffline(urlStr);
         if (localPathEntry.size() == 2) {
             localFile = new File(localPathEntry.get(1));
             if (!localFile.exists()) {
@@ -531,11 +525,6 @@ public class CachedFile implements Closeable {
         }
 
         return localFile;
-    }
-
-    private static void checkOfflineAccess(String urlString) {
-        OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlString, Config.getUrls().getJOSMWebsite());
-        OnlineResource.OSM_API.checkOfflineAccess(urlString, OsmApi.getOsmApi().getServerUrl());
     }
 
     private static String truncatePath(String directory, String fileName) {

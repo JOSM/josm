@@ -14,7 +14,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CacheCustomContent;
-import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.InputSource;
@@ -62,12 +62,12 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
         }
 
         @Override
-        protected void checkOfflineAccess() {
+        protected boolean isOffline() {
             try {
-                String attributionUrl = getAttributionUrl().toExternalForm();
-                OnlineResource.ALL.checkOfflineAccess(attributionUrl, attributionUrl);
+                return NetworkManager.isOffline(getAttributionUrl().toExternalForm());
             } catch (MalformedURLException e) {
                 Logging.error(e);
+                return false;
             }
         }
     }
