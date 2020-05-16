@@ -79,9 +79,9 @@ public class WMSEndpointTileSourceTest {
         assertEquals("single_node_in_way", wmsImageryInfo.getDefaultLayers().get(0).getLayerName());
         WMSEndpointTileSource tileSource = new WMSEndpointTileSource(wmsImageryInfo, ProjectionRegistry.getProjection());
         tileSource.initProjection(Projections.getProjectionByCode("EPSG:3857"));
-        assertEquals("https://tools.geofabrik.de/osmi/views/geometry/wxs?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.1.1&SERVICE=WMS&"
+        assertEquals("https://tools.geofabrik.de/osmi/views/geometry/wxs?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.3.0&SERVICE=WMS&"
                 + "REQUEST=GetMap&LAYERS=single_node_in_way&STYLES=default&"
-                + "SRS=EPSG:3857&WIDTH=512&HEIGHT=512&"
+                + "CRS=EPSG:3857&WIDTH=512&HEIGHT=512&"
                 + "BBOX=20037506.6204108,-60112521.5836107,60112521.5836107,-20037506.6204108", tileSource.getTileUrl(1, 1, 1));
     }
 
