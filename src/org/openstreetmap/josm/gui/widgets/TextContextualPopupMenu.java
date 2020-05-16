@@ -126,15 +126,15 @@ public class TextContextualPopupMenu extends JPopupMenu {
                 addMenuEntry(new JMenuItem(redoAction), "redo");
                 addSeparator();
             }
-            addMenuEntry(component, tr("Cut"), DefaultEditorKit.cutAction, "cut");
+            addMenuEntry(component, tr("Cut"), DefaultEditorKit.cutAction, /* ICON */ "cut");
         }
-        addMenuEntry(component, tr("Copy"), DefaultEditorKit.copyAction, "copy");
+        addMenuEntry(component, tr("Copy"), DefaultEditorKit.copyAction, /* ICON */ "copy");
         if (component.isEditable()) {
-            addMenuEntry(component, tr("Paste"), DefaultEditorKit.pasteAction, "paste");
-            addMenuEntry(component, tr("Delete"), DefaultEditorKit.deleteNextCharAction, "dialogs/delete");
+            addMenuEntry(component, tr("Paste"), DefaultEditorKit.pasteAction, /* ICON */ "paste");
+            addMenuEntry(component, tr("Delete"), DefaultEditorKit.deleteNextCharAction, /* ICON */ "dialogs/delete");
         }
         addSeparator();
-        addMenuEntry(component, tr("Select All"), DefaultEditorKit.selectAllAction, "dialogs/select");
+        addMenuEntry(component, tr("Select All"), DefaultEditorKit.selectAllAction, /* ICON */ "dialogs/select");
     }
 
     /**
