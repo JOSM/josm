@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
@@ -68,6 +69,11 @@ public class OsmApi extends OsmConnection {
      * @since 5386
      */
     public static final int MAX_DOWNLOAD_THREADS = 2;
+
+    /**
+     * Defines whether all OSM API requests should be signed with an OAuth token (user-based bandwith limit instead of IP-based one)
+     */
+    public static final BooleanProperty USE_OAUTH_FOR_ALL_REQUESTS = new BooleanProperty("oauth.use-for-all-requests", true);
 
     // The collection of instantiated OSM APIs
     private static final Map<String, OsmApi> instances = new HashMap<>();

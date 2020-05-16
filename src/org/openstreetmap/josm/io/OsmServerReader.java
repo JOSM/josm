@@ -49,7 +49,9 @@ public abstract class OsmServerReader extends OsmConnection {
      */
     public OsmServerReader() {
         try {
-            doAuthenticate = OsmApi.isUsingOAuth() && CredentialsManager.getInstance().lookupOAuthAccessToken() != null;
+            doAuthenticate = OsmApi.isUsingOAuth()
+                    && CredentialsManager.getInstance().lookupOAuthAccessToken() != null
+                    && OsmApi.USE_OAUTH_FOR_ALL_REQUESTS.get();
         } catch (CredentialsAgentException e) {
             Logging.warn(e);
         }

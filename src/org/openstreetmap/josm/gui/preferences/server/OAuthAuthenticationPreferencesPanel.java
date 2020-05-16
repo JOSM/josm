@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -46,7 +47,8 @@ import org.openstreetmap.josm.tools.UserCancelException;
  * @since 2745
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {
-    private final JCheckBox cbShowAdvancedParameters = new JCheckBox();
+    private final JCheckBox cbUseForAllRequests = new JCheckBox();
+    private final JCheckBox cbShowAdvancedParameters = new JCheckBox(tr("Display Advanced OAuth Parameters"));
     private final JCheckBox cbSaveToPreferences = new JCheckBox(tr("Save to preferences"));
     private final JPanel pnlAuthorisationMessage = new JPanel(new BorderLayout());
     private final NotYetAuthorisedPanel pnlNotYetAuthorised = new NotYetAuthorisedPanel();
@@ -69,31 +71,18 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      */
     protected JPanel buildAdvancedPropertiesPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
 
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
-        gc.insets = new Insets(0, 0, 0, 3);
-        pnl.add(cbShowAdvancedParameters, gc);
+        cbUseForAllRequests.setText(tr("Use OAuth for all requests to {0}", OsmApi.getOsmApi().getServerUrl()));
+        cbUseForAllRequests.setToolTipText(tr("For user-based bandwith limit instead of IP-based one"));
+        pnl.add(cbUseForAllRequests, GBC.eol().fill(GBC.HORIZONTAL));
+
+        pnl.add(cbShowAdvancedParameters, GBC.eol().fill(GBC.HORIZONTAL));
         cbShowAdvancedParameters.setSelected(false);
         cbShowAdvancedParameters.addItemListener(
                 evt -> pnlAdvancedProperties.setVisible(evt.getStateChange() == ItemEvent.SELECTED)
         );
 
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        JMultilineLabel lbl = new JMultilineLabel(tr("Display Advanced OAuth Parameters"));
-        lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
-        pnl.add(lbl, gc);
-
-        gc.gridy = 1;
-        gc.gridx = 1;
-        gc.insets = new Insets(3, 0, 3, 0);
-        gc.fill = GridBagConstraints.BOTH;
-        gc.weightx = 1.0;
-        gc.weighty = 1.0;
-        pnl.add(pnlAdvancedProperties, gc);
+        pnl.add(pnlAdvancedProperties, GBC.eol().fill(GBC.HORIZONTAL).insets(0, 3, 0, 0));
         pnlAdvancedProperties.initialize(OsmApi.getOsmApi().getServerUrl());
         pnlAdvancedProperties.setBorder(
                 BorderFactory.createCompoundBorder(
@@ -152,6 +141,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      */
     public void initFromPreferences() {
         setApiUrl(OsmApi.getOsmApi().getServerUrl().trim());
+        cbUseForAllRequests.setSelected(OsmApi.USE_OAUTH_FOR_ALL_REQUESTS.get());
         refreshView();
     }
 
@@ -161,6 +151,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     public void saveToPreferences() {
         OAuthAccessTokenHolder.getInstance().setSaveToPreferences(cbSaveToPreferences.isSelected());
         OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
+        OsmApi.USE_OAUTH_FOR_ALL_REQUESTS.put(cbUseForAllRequests.isSelected());
         pnlAdvancedProperties.rememberPreferences();
     }
 
