@@ -8,6 +8,8 @@ import java.awt.Rectangle;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
+import org.openstreetmap.josm.data.osm.RelationMemberData;
+
 /**
  * RelationMemberListViewer is a UI component which displays the  list of relation members of two
  * version of a {@link org.openstreetmap.josm.data.osm.Relation} in a {@link org.openstreetmap.josm.data.osm.history.History}.
@@ -33,6 +35,10 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
             Rectangle rect = table.getCellRect(((DiffTableModel) e.getSource()).getFirstChange(), 0, true);
             table.scrollRectToVisible(rect);
         });
+        table.addMouseListener(new ShowHistoryAction.DoubleClickAdapter(e -> {
+            int row = table.rowAtPoint(e.getPoint());
+            return row <= 0 ? null : (RelationMemberData) tableModel.getValueAt(row, 0).value;
+        }));
         return table;
     }
 

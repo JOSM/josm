@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
@@ -22,9 +20,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
-import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -57,7 +53,10 @@ public class NodeListViewer extends HistoryViewerPanel {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.addMouseListener(new InternalPopupMenuLauncher());
-        table.addMouseListener(new DoubleClickAdapter(table));
+        table.addMouseListener(new ShowHistoryAction.DoubleClickAdapter(e -> {
+            int row = table.rowAtPoint(e.getPoint());
+            return row <= 0 ? null : primitiveIdAtRow(tableModel, row);
+        }));
         return table;
     }
 
@@ -126,47 +125,6 @@ public class NodeListViewer extends HistoryViewerPanel {
         }
     }
 
-    static class ShowHistoryAction extends AbstractAction {
-        private transient PrimitiveId primitiveId;
-
-        /**
-         * Constructs a new {@code ShowHistoryAction}.
-         */
-        ShowHistoryAction() {
-            putValue(NAME, tr("Show history"));
-            putValue(SHORT_DESCRIPTION, tr("Open a history browser with the history of this node"));
-            new ImageProvider("dialogs", "history").getResource().attachImageIcon(this, true);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (isEnabled()) {
-                run();
-            }
-        }
-
-        public void setPrimitiveId(PrimitiveId pid) {
-            this.primitiveId = pid;
-            updateEnabledState();
-        }
-
-        public void run() {
-            if (HistoryDataSet.getInstance().getHistory(primitiveId) == null) {
-                MainApplication.worker.submit(new HistoryLoadTask().add(primitiveId));
-            }
-            MainApplication.worker.submit(() -> {
-                final History h = HistoryDataSet.getInstance().getHistory(primitiveId);
-                if (h == null)
-                    return;
-                GuiHelper.runInEDT(() -> HistoryBrowserDialogManager.getInstance().show(h));
-            });
-        }
-
-        public void updateEnabledState() {
-            setEnabled(primitiveId != null && !primitiveId.isNew());
-        }
-    }
-
     private static PrimitiveId primitiveIdAtRow(DiffTableModel model, int row) {
         Long id = (Long) model.getValueAt(row, 0).value;
         return id == null ? null : new SimplePrimitiveId(id, OsmPrimitiveType.NODE);
@@ -185,27 +143,4 @@ public class NodeListViewer extends HistoryViewerPanel {
         }
     }
 
-    static class DoubleClickAdapter extends MouseAdapter {
-        private final JTable table;
-        private final ShowHistoryAction showHistoryAction;
-
-        DoubleClickAdapter(JTable table) {
-            this.table = table;
-            showHistoryAction = new ShowHistoryAction();
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() < 2)
-                return;
-            int row = table.rowAtPoint(e.getPoint());
-            if (row <= 0)
-                return;
-            PrimitiveId pid = primitiveIdAtRow((DiffTableModel) table.getModel(), row);
-            if (pid == null || pid.isNew())
-                return;
-            showHistoryAction.setPrimitiveId(pid);
-            showHistoryAction.run();
-        }
-    }
 }
