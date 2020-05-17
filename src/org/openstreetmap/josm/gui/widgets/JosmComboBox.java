@@ -153,6 +153,7 @@ public class JosmComboBox<E> extends JComboBox<E> {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     protected final JList<Object> getList() {
         return IntStream.range(0, getUI().getAccessibleChildrenCount(this))
                 .mapToObj(i -> getUI().getAccessibleChild(this, i))
