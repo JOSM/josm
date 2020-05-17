@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.spi.preferences;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
 import org.openstreetmap.josm.tools.StreamUtils;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Setting containing a {@link List} of {@link Map}s of {@link String} values.
@@ -30,7 +30,7 @@ public class MapListSetting extends AbstractSetting<List<Map<String, String>>> {
             return new MapListSetting(null);
         List<Map<String, String>> copy = value.stream()
                 .map(LinkedHashMap::new)
-                .map(Utils::toUnmodifiableMap)
+                .map(Collections::unmodifiableMap)
                 .collect(StreamUtils.toUnmodifiableList());
         return new MapListSetting(copy);
     }
