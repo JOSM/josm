@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -11,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -32,6 +34,8 @@ public class NoteInputDialog extends ExtendedDialog {
      */
     public NoteInputDialog(Component parent, String title, String buttonText) {
         super(parent, title, buttonText, tr("Cancel"));
+        setRememberWindowGeometry(getClass().getName() + ".geometry",
+                WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(400, 300)));
     }
 
     /**
