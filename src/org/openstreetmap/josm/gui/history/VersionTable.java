@@ -14,6 +14,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
@@ -95,6 +96,9 @@ public class VersionTable extends JTable implements ChangeListener, Destroyable 
                 }
             }
         });
+        getModel().addTableModelListener(e ->
+                IntStream.range(0, model.getHistory().getNumVersions()).filter(model::isCurrentPointInTime).findFirst().ifPresent(row ->
+                        scrollRectToVisible(getCellRect(row, 0, true))));
         getModel().addTableModelListener(e -> {
             adjustColumnWidth(this, 0, 0);
             adjustColumnWidth(this, 1, -8);
