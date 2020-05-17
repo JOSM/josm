@@ -776,10 +776,10 @@ public class MultiSplitLayout implements LayoutManager {
             return divider.getBounds().contains(x, y) ? divider : null;
         } else if (root instanceof Split) {
             Split split = (Split) root;
-            return split.getChildren().stream()
-                    .filter(child -> child.getBounds().contains(x, y))
-                    .map(child -> dividerAt(child, x, y))
-                    .findFirst().orElse(null);
+            for (Node child : split.getChildren()) {
+                if (child.getBounds().contains(x, y))
+                    return dividerAt(child, x, y);
+            }
         }
         return null;
     }
