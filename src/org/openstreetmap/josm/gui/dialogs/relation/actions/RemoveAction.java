@@ -33,7 +33,12 @@ public class RemoveAction extends AbstractRelationEditorAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        editorAccess.getMemberTableModel().remove(editorAccess.getMemberTable().getSelectedRows());
+        int[] selectedRows = editorAccess.getMemberTable().getSelectedRows();
+        editorAccess.getMemberTableModel().remove(selectedRows);
+        if (selectedRows.length > 0 && editorAccess.getMemberTableModel().getRowCount() > selectedRows[0]) {
+            // make first row of former selection visible, see #17952
+            editorAccess.getMemberTable().makeMemberVisible(selectedRows[0]);
+        }
     }
 
     @Override
