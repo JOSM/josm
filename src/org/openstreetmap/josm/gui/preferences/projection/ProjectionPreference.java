@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -353,19 +354,13 @@ public class ProjectionPreference implements SubPreferenceSetting {
     public void addGui(PreferenceTabbedPane gui) {
         final ProjectionChoice pc = setupProjectionCombo();
 
-        for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
-            if (coordinatesCombo.getItemAt(i).getId().equals(PROP_COORDINATES.get())) {
-                coordinatesCombo.setSelectedIndex(i);
-                break;
-            }
-        }
+        IntStream.range(0, coordinatesCombo.getItemCount())
+                .filter(i -> coordinatesCombo.getItemAt(i).getId().equals(PROP_COORDINATES.get())).findFirst()
+                .ifPresent(coordinatesCombo::setSelectedIndex);
 
-        for (int i = 0; i < unitsValues.length; ++i) {
-            if (unitsValues[i].equals(SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.get())) {
-                unitsCombo.setSelectedIndex(i);
-                break;
-            }
-        }
+        IntStream.range(0, unitsValues.length)
+                .filter(i -> unitsValues[i].equals(SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.get())).findFirst()
+                .ifPresent(unitsCombo::setSelectedIndex);
 
         projPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5, 5, 0, 5));

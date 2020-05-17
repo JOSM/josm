@@ -367,15 +367,6 @@ public class MergeNodesAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        boolean ok = OsmUtils.isOsmCollectionEditable(selection);
-        if (ok) {
-            for (OsmPrimitive osm : selection) {
-                if (!(osm instanceof Node)) {
-                    ok = false;
-                    break;
-                }
-            }
-        }
-        setEnabled(ok);
+        setEnabled(OsmUtils.isOsmCollectionEditable(selection) && selection.stream().allMatch(osm -> osm instanceof Node));
     }
 }

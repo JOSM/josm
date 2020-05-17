@@ -14,9 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -162,7 +160,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
 
     private List<User> getSelectedUsers() {
         int[] rows = userTable.getSelectedRows();
-        return rows.length == 0 ? Collections.emptyList() : model.getSelectedUsers(rows);
+        return model.getSelectedUsers(rows);
     }
 
     class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener {
@@ -360,32 +358,24 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
         }
 
         public void selectPrimitivesOwnedBy(int... rows) {
-            Set<User> users = new HashSet<>();
-            for (int index: rows) {
-                users.add(data.get(index).user);
-            }
+            Set<User> users = Arrays.stream(rows)
+                    .mapToObj(index -> data.get(index).user)
+                    .collect(Collectors.toSet());
             OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
             Collection<? extends IPrimitive> selected = ds.getAllSelected();
-            Collection<IPrimitive> byUser = new LinkedList<>();
-            for (IPrimitive p : selected) {
-                if (users.contains(p.getUser())) {
-                    byUser.add(p);
-                }
-            }
+            Collection<IPrimitive> byUser = selected.stream()
+                    .filter(p -> users.contains(p.getUser()))
+                    .collect(Collectors.toList());
             ds.setSelected(byUser);
         }
 
         public List<User> getSelectedUsers(int... rows) {
-            List<User> ret = new LinkedList<>();
             if (rows == null || rows.length == 0)
-                return ret;
-            for (int row: rows) {
-                if (data.get(row).user == null) {
-                    continue;
-                }
-                ret.add(data.get(row).user);
-            }
-            return ret;
+                return Collections.emptyList();
+            return Arrays.stream(rows)
+                    .filter(row -> data.get(row).user != null)
+                    .mapToObj(row -> data.get(row).user)
+                    .collect(Collectors.toList());
         }
     }
 }

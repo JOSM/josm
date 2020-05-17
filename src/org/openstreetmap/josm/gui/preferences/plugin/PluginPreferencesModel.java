@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.plugins.PluginException;
@@ -136,16 +138,10 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * @return the list of selected plugin information objects
      */
     public List<PluginInformation> getSelectedPlugins() {
-        List<PluginInformation> ret = new LinkedList<>();
-        for (PluginInformation pi: availablePlugins) {
-            if (selectedPluginsMap.get(pi) == null) {
-                continue;
-            }
-            if (selectedPluginsMap.get(pi)) {
-                ret.add(pi);
-            }
-        }
-        return ret;
+        return availablePlugins.stream()
+                .filter(pi -> selectedPluginsMap.get(pi) != null)
+                .filter(selectedPluginsMap::get)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -154,11 +150,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * @return the list of selected plugin information objects
      */
     public Set<String> getSelectedPluginNames() {
-        Set<String> ret = new HashSet<>();
-        for (PluginInformation pi: getSelectedPlugins()) {
-            ret.add(pi.name);
-        }
-        return ret;
+        return getSelectedPlugins().stream().map(pi -> pi.name).collect(Collectors.toSet());
     }
 
     /**
@@ -184,15 +176,10 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * @return the set of plugins waiting for update or download
      */
     public Set<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
-        Set<PluginInformation> ret = new HashSet<>();
-        for (String plugin: pendingDownloads) {
-            PluginInformation pi = getPluginInformation(plugin);
-            if (pi == null) {
-                continue;
-            }
-            ret.add(pi);
-        }
-        return ret;
+        return pendingDownloads.stream()
+                .map(this::getPluginInformation)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -237,10 +224,9 @@ public class PluginPreferencesModel extends ChangeNotifier {
      */
     public PluginInformation getPluginInformation(String name) {
         if (name != null) {
-            for (PluginInformation pi: availablePlugins) {
-                if (name.equals(pi.getName()) || name.equals(pi.provides))
-                    return pi;
-            }
+            return availablePlugins.stream()
+                    .filter(pi -> name.equals(pi.getName()) || name.equals(pi.provides))
+                    .findFirst().orElse(null);
         }
         return null;
     }
@@ -302,16 +288,10 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * @return the set of newly deactivated plugins
      */
     public List<PluginInformation> getNewlyDeactivatedPlugins() {
-        List<PluginInformation> ret = new LinkedList<>();
-        for (PluginInformation pi: availablePlugins) {
-            if (!currentActivePlugins.contains(pi.name)) {
-                continue;
-            }
-            if (selectedPluginsMap.get(pi) == null || !selectedPluginsMap.get(pi)) {
-                ret.add(pi);
-            }
-        }
-        return ret;
+        return availablePlugins.stream()
+                .filter(pi -> currentActivePlugins.contains(pi.name))
+                .filter(pi -> selectedPluginsMap.get(pi) == null || !selectedPluginsMap.get(pi))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -330,12 +310,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * @return the set of newly activated plugin names
      */
     public Set<String> getNewlyActivatedPluginNames() {
-        Set<String> ret = new HashSet<>();
-        List<PluginInformation> plugins = getNewlyActivatedPlugins();
-        for (PluginInformation pi: plugins) {
-            ret.add(pi.name);
-        }
-        return ret;
+        return getNewlyActivatedPlugins().stream().map(pi -> pi.name).collect(Collectors.toSet());
     }
 
     /**

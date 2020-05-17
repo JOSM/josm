@@ -9,6 +9,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -215,12 +216,9 @@ public class QuadStateCheckBox extends JCheckBox {
         /** Rotate to the next allowed state.*/
         private void nextState() {
             State current = getState();
-            for (int i = 0; i < allowed.length; i++) {
-                if (allowed[i] == current) {
-                    setState((i == allowed.length-1) ? allowed[0] : allowed[i+1]);
-                    break;
-                }
-            }
+            IntStream.range(0, allowed.length).filter(i -> allowed[i] == current)
+                    .findFirst()
+                    .ifPresent(i -> setState((i == allowed.length - 1) ? allowed[0] : allowed[i + 1]));
         }
 
         // ----------------------------------------------------------------------

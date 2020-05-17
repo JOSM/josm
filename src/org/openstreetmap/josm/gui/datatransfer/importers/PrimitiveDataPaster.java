@@ -10,6 +10,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.swing.TransferHandler.TransferSupport;
 
@@ -125,13 +127,10 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
     }
 
     private static void updateNodes(Map<Long, Long> newNodeIds, PrimitiveData data) {
-        List<Long> newNodes = new ArrayList<>();
-        for (Long oldNodeId : ((WayData) data).getNodeIds()) {
-            Long newNodeId = newNodeIds.get(oldNodeId);
-            if (newNodeId != null) {
-                newNodes.add(newNodeId);
-            }
-        }
+        List<Long> newNodes = ((WayData) data).getNodeIds().stream()
+                .map(newNodeIds::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         ((WayData) data).setNodeIds(newNodes);
     }
 

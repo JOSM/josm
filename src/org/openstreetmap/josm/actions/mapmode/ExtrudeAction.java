@@ -735,11 +735,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * @return {@code true} if {@code node} belongs only to {@code myWay}, false if there are more ways.
      */
     private static boolean hasNodeOtherWays(Node node, Way myWay) {
-        for (OsmPrimitive p : node.getReferrers()) {
-            if (p instanceof Way && p.isUsable() && p != myWay)
-                return true;
-        }
-        return false;
+        return node.getReferrers().stream()
+                .anyMatch(p -> p instanceof Way && p.isUsable() && p != myWay);
     }
 
     /**

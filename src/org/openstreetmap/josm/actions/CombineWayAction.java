@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.JOptionPane;
 
@@ -218,15 +219,10 @@ public class CombineWayAction extends JosmAction {
             if (w.getNodesCount() < 2) {
                 unreversedWays.add(w);
             } else {
-                boolean foundStartSegment = false;
                 int last = path.lastIndexOf(w.getNode(0));
 
-                for (int i = path.indexOf(w.getNode(0)); i <= last; i++) {
-                    if (path.get(i) == w.getNode(0) && i + 1 < path.size() && w.getNode(1) == path.get(i + 1)) {
-                        foundStartSegment = true;
-                        break;
-                    }
-                }
+                boolean foundStartSegment = IntStream.rangeClosed(path.indexOf(w.getNode(0)), last)
+                        .anyMatch(i -> path.get(i) == w.getNode(0) && i + 1 < path.size() && w.getNode(1) == path.get(i + 1));
                 if (foundStartSegment) {
                     unreversedWays.add(w);
                 } else {

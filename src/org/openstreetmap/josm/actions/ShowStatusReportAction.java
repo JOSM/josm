@@ -221,11 +221,9 @@ public final class ShowStatusReportAction extends JosmAction {
     }
 
     private static List<String> paramCleanup(Collection<String> params) {
-        List<String> result = new ArrayList<>(params.size());
-        for (String param : params) {
-            result.add(paramCleanup(param));
-        }
-        return result;
+        return params.stream()
+                .map(ShowStatusReportAction::paramCleanup)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -269,11 +267,8 @@ public final class ShowStatusReportAction extends JosmAction {
 
     private static void appendCollection(StringBuilder text, String label, Collection<String> col) {
         if (!col.isEmpty()) {
-            text.append(label).append(":\n");
-            for (String o : col) {
-                text.append(paramCleanup(o)).append('\n');
-            }
-            text.append('\n');
+            text.append(col.stream().map(o -> paramCleanup(o) + '\n')
+                    .collect(Collectors.joining("", label + ":\n", "\n")));
         }
     }
 

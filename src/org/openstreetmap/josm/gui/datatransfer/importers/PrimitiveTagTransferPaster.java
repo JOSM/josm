@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTagTransferData;
+import org.openstreetmap.josm.tools.StreamUtils;
 
 /**
  * This class helps pasting tags from other primitives. It handles resolving conflicts.
@@ -49,14 +50,11 @@ public class PrimitiveTagTransferPaster extends AbstractTagPaster {
         PrimitiveTagTransferData data = (PrimitiveTagTransferData) o;
 
         TagPasteSupport tagPaster = new TagPasteSupport(data, selection);
-        List<Command> commands = new ArrayList<>();
-        for (Tag tag : tagPaster.execute()) {
-            Map<String, String> tags = Collections.singletonMap(tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue());
-            ChangePropertyCommand cmd = new ChangePropertyCommand(OsmDataManager.getInstance().getEditDataSet(), selection, tags);
-            if (cmd.getObjectsNumber() > 0) {
-                commands.add(cmd);
-            }
-        }
+        List<Command> commands = tagPaster.execute().stream()
+                .map(tag -> Collections.singletonMap(tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue()))
+                .map(tags -> new ChangePropertyCommand(OsmDataManager.getInstance().getEditDataSet(), selection, tags))
+                .filter(cmd -> cmd.getObjectsNumber() > 0)
+                .collect(StreamUtils.toUnmodifiableList());
         commitCommands(selection, commands);
         return true;
     }
@@ -123,14 +121,10 @@ public class PrimitiveTagTransferPaster extends AbstractTagPaster {
          * @return true if this a heterogeneous source can be pasted without conflicts to targets
          */
         protected boolean canPasteFromHeterogeneousSourceWithoutConflict() {
-            for (OsmPrimitiveType type : OsmPrimitiveType.dataValues()) {
-                if (hasTargetPrimitives(type)) {
-                    TagCollection tc = data.getForPrimitives(type);
-                    if (!tc.isEmpty() && !tc.isApplicableToPrimitive())
-                        return false;
-                }
-            }
-            return true;
+            return OsmPrimitiveType.dataValues().stream()
+                    .filter(this::hasTargetPrimitives)
+                    .map(data::getForPrimitives)
+                    .allMatch(tc -> tc.isEmpty() || tc.isApplicableToPrimitive());
         }
 
         /**

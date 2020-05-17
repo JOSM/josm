@@ -7,7 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
+import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -33,14 +37,13 @@ public class CopyCoordinatesAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        StringBuilder s = new StringBuilder();
-        for (Node n : getSelectedNodes()) {
-            s.append(n.lat());
-            s.append(", ");
-            s.append(n.lon());
-            s.append('\n');
-        }
-        ClipboardUtils.copyString(s.toString().trim());
+        ICoordinateFormat coordinateFormat = CoordinateFormatManager.getDefaultFormat();
+        String string = getSelectedNodes().stream()
+                .map(Node::getCoor)
+                .filter(Objects::nonNull)
+                .map(c -> coordinateFormat.toString(c, ", "))
+                .collect(Collectors.joining("\n"));
+        ClipboardUtils.copyString(string);
     }
 
     @Override

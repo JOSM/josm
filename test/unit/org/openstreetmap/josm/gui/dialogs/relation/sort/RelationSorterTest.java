@@ -51,19 +51,11 @@ public class RelationSorterTest {
     }
 
     private Relation getRelation(String testType) {
-        for (Relation r: testDataset.getRelations()) {
-            if (testType.equals(r.get("test")))
-                return r;
-        }
-        return null;
+        return testDataset.getRelations().stream().filter(r -> testType.equals(r.get("test"))).findFirst().orElse(null);
     }
 
     private String[] getNames(List<RelationMember> members) {
-        String[] result = new String[members.size()];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = members.get(i).getMember().get("name");
-        }
-        return result;
+        return members.stream().map(member -> member.getMember().get("name")).toArray(String[]::new);
     }
 
     @Test

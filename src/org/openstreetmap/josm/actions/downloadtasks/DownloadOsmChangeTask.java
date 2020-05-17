@@ -15,6 +15,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.regex.Matcher;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
@@ -113,13 +114,10 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                 Map<OsmPrimitive, Date> toLoad = new HashMap<>();
                 for (OsmPrimitive p : downloadedData.allNonDeletedPrimitives()) {
                     if (p.isIncomplete()) {
-                        Date timestamp = null;
-                        for (OsmPrimitive ref : p.getReferrers()) {
-                            if (!ref.isTimestampEmpty()) {
-                                timestamp = ref.getTimestamp();
-                                break;
-                            }
-                        }
+                        Date timestamp = p.getReferrers().stream()
+                                .filter(ref -> !ref.isTimestampEmpty())
+                                .map(AbstractPrimitive::getTimestamp)
+                                .findFirst().orElse(null);
                         toLoad.put(p, timestamp);
                     }
                 }

@@ -6,8 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -121,13 +122,10 @@ public class MemberTransferHandler extends TransferHandler {
 
     protected <T extends PrimitiveId> void importData(MemberTable destination, int insertRow,
                                   Collection<T> memberData, AbstractRelationMemberConverter<T> toMemberFunction) {
-        final Collection<RelationMember> membersToAdd = new ArrayList<>(memberData.size());
-        for (T data : memberData) {
-            final RelationMember member = toMemberFunction.importPrimitive(destination, data);
-            if (member != null) {
-                membersToAdd.add(member);
-            }
-        }
+        final Collection<RelationMember> membersToAdd = memberData.stream()
+                .map(data -> toMemberFunction.importPrimitive(destination, data))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         destination.getMemberTableModel().addMembersAtIndexKeepingOldSelection(membersToAdd, insertRow);
     }
 

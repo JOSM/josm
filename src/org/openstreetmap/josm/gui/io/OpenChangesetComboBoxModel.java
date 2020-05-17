@@ -22,10 +22,8 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> 
     private transient Changeset selectedChangeset;
 
     protected Changeset getChangesetById(long id) {
-        for (Changeset cs : changesets) {
-            if (cs.getId() == id) return cs;
-        }
-        return null;
+        return changesets.stream().filter(cs -> cs.getId() == id)
+                .findFirst().orElse(null);
     }
 
     /**

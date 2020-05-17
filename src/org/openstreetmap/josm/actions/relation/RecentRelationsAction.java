@@ -74,12 +74,8 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
         List<Relation> recentRelations = getRecentRelationsOnActiveLayer();
         if (recentRelations == null || recentRelations.isEmpty())
             return null;
-        for (Relation relation: recentRelations) {
-            if (!isRelationListable(relation))
-                continue;
-            return relation;
-        }
-        return null;
+        return recentRelations.stream().filter(RecentRelationsAction::isRelationListable)
+                .findFirst().orElse(null);
     }
 
     /**

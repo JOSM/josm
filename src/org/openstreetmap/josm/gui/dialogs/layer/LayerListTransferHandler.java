@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -46,12 +47,7 @@ public class LayerListTransferHandler extends TransferHandler {
     }
 
     private static boolean onlyDataLayersSelected(LayerListModel tableModel) {
-        for (Layer l : tableModel.getSelectedLayers()) {
-            if (!(l instanceof OsmDataLayer)) {
-                return false;
-            }
-        }
-        return true;
+        return tableModel.getSelectedLayers().stream().allMatch(l -> l instanceof OsmDataLayer);
     }
 
     @Override
@@ -158,11 +154,7 @@ public class LayerListTransferHandler extends TransferHandler {
     }
 
     private static List<String> getNames(List<Layer> namesToAvoid) {
-        List<String> layerNames = new ArrayList<>();
-        for (Layer l: namesToAvoid) {
-            layerNames.add(l.getName());
-        }
-        return layerNames;
+        return namesToAvoid.stream().map(Layer::getName).collect(Collectors.toList());
     }
 
     private static String suggestNewLayerName(String name, Collection<String> layerNames) {

@@ -401,13 +401,7 @@ public class MapPaintDialog extends ToggleDialog {
             if (cbWireframe.isSelected())
                 return false;
             int[] pos = tblStyles.getSelectedRows();
-            if (pos.length == 0)
-                return false;
-            for (int i : pos) {
-                if (!model.getRow(i).isLocal())
-                    return false;
-            }
-            return true;
+            return pos.length > 0 && Arrays.stream(pos).allMatch(i -> model.getRow(i).isLocal());
         }
 
         @Override

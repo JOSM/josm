@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.JOptionPane;
 
@@ -233,12 +235,11 @@ public final class AlignInLineAction extends JosmAction {
     private static Command alignOnlyNodes(List<Node> nodes) throws InvalidSelection {
         // Choose nodes used as anchor points for projection.
         Node[] anchors = nodePairFurthestApart(nodes);
-        Collection<Command> cmds = new ArrayList<>(nodes.size());
         Line line = new Line(anchors[0], anchors[1]);
-        for (Node node: nodes) {
-            if (node != anchors[0] && node != anchors[1])
-                cmds.add(line.projectionCommand(node));
-        }
+        Collection<Command> cmds = nodes.stream()
+                .filter(node -> node != anchors[0] && node != anchors[1])
+                .map(line::projectionCommand)
+                .collect(Collectors.toList());
         return new SequenceCommand(tr("Align Nodes in Line"), cmds);
     }
 
@@ -311,10 +312,8 @@ public final class AlignInLineAction extends JosmAction {
                 // Self crossing, have to make 2 lines with 4 neighbors
                 // see #9081 comment 6
                 EastNorth c = node.getEastNorth();
-                double[] angle = new double[4];
-                for (int i = 0; i < 4; i++) {
-                    angle[i] = PolarCoor.computeAngle(neighbors.get(i).getEastNorth(), c);
-                }
+                double[] angle = IntStream.range(0, 4)
+                        .mapToDouble(i -> PolarCoor.computeAngle(neighbors.get(i).getEastNorth(), c)).toArray();
                 double[] deltaAngle = new double[3];
                 for (int i = 0; i < 3; i++) {
                     deltaAngle[i] = angle[i+1] - angle[0];

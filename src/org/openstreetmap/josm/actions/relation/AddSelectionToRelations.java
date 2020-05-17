@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.Objects;
 
 import javax.swing.JOptionPane;
 
@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -40,13 +41,10 @@ public class AddSelectionToRelations extends AbstractRelationAction implements D
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Collection<Command> cmds = new LinkedList<>();
-        for (Relation orig : Utils.filteredCollection(relations, Relation.class)) {
-            Command c = GenericRelationEditor.addPrimitivesToRelation(orig, MainApplication.getLayerManager().getActiveDataSet().getSelected());
-            if (c != null) {
-                cmds.add(c);
-            }
-        }
+        Collection<Command> cmds = Utils.filteredCollection(relations, Relation.class).stream()
+                .map(orig -> GenericRelationEditor.addPrimitivesToRelation(orig, MainApplication.getLayerManager().getActiveDataSet().getSelected()))
+                .filter(Objects::nonNull)
+                .collect(StreamUtils.toUnmodifiableList());
         if (!cmds.isEmpty()) {
             UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Add selection to relation"), cmds));
             new Notification(

@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
@@ -279,7 +280,7 @@ public class ImageryPreferenceTestIT {
         // |  4  C  2  |
         // |  8  3  7  |
         // +-----------+
-        for (LatLon candidate : new LatLon[] {
+        return Stream.of(
                 new LatLon(y1, x2),
                 new LatLon(y2, x3),
                 new LatLon(y3, x2),
@@ -288,12 +289,7 @@ public class ImageryPreferenceTestIT {
                 new LatLon(y1, x3),
                 new LatLon(y3, x3),
                 new LatLon(y3, x1)
-        }) {
-            if (shape.contains(candidate)) {
-                return candidate;
-            }
-        }
-        return center;
+        ).filter(shape::contains).findFirst().orElse(center);
     }
 
     private static LatLon getCenter(ImageryBounds bounds) {

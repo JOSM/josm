@@ -58,11 +58,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     private Relation getRelation(String testType) {
-        for (Relation r: testDataset.getRelations()) {
-            if (testType.equals(r.get("test")))
-                return r;
-        }
-        return null;
+        return testDataset.getRelations().stream().filter(r -> testType.equals(r.get("test"))).findFirst().orElse(null);
     }
 
     private String getConnections(List<WayConnectionType> connections) {

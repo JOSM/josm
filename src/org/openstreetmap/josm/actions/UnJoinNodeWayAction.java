@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -115,22 +116,15 @@ public class UnJoinNodeWayAction extends JosmAction {
      */
     private List<Node> cleanSelectedNodes(List<Way> selectedWays,
                                           List<Node> selectedNodes) {
-        List<Node> resultingNodes = new LinkedList<>();
 
         // List of node referenced by a route
-        for (Node n: selectedNodes) {
-            if (n.isReferredByWays(1)) {
-                resultingNodes.add(n);
-            }
-        }
+        List<Node> resultingNodes = selectedNodes.stream()
+                .filter(n -> n.isReferredByWays(1))
+                .collect(Collectors.toCollection(LinkedList::new));
         // If exactly one selected way, remove node not referencing par this way.
         if (selectedWays.size() == 1) {
             Way w = selectedWays.get(0);
-            for (Node n: new ArrayList<>(resultingNodes)) {
-                if (!w.containsNode(n)) {
-                    resultingNodes.remove(n);
-                }
-            }
+            resultingNodes.removeIf(n -> !w.containsNode(n));
         }
         // Warn if nodes were removed
         if (resultingNodes.size() != selectedNodes.size()) {

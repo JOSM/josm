@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Graphics2D;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -93,12 +95,10 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
             errorTree.put(e.getSeverity(), e);
         }
 
-        StringBuilder b = new StringBuilder();
-        for (Severity s : Severity.values()) {
-            if (errorTree.containsKey(s)) {
-                b.append(tr(s.toString())).append(": ").append(errorTree.get(s).size()).append("<br>");
-            }
-        }
+        String b = Arrays.stream(Severity.values())
+                .filter(errorTree::containsKey)
+                .map(s -> tr(s.toString()) + ": " + errorTree.get(s).size() + "<br>")
+                .collect(Collectors.joining());
 
         if (b.length() == 0)
             return "<html>" + tr("No validation errors") + "</html>";

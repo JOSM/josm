@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.gui.conflict.pair.ListRole.MY_ENTRIES;
 import static org.openstreetmap.josm.gui.conflict.pair.ListRole.THEIR_ENTRIES;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Arrays;
+
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -53,10 +55,7 @@ public enum ComparePairType {
      * @return true, if <code>role</code> is participating in this comparison pair; false, otherwise
      */
     public boolean isParticipatingIn(ListRole role) {
-        for (ListRole r: participatingRoles) {
-            if (r == role) return true;
-        }
-        return false;
+        return Arrays.stream(participatingRoles).anyMatch(r -> r == role);
     }
 
     /**

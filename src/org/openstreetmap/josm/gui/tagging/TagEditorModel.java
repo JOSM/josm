@@ -6,14 +6,17 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.table.AbstractTableModel;
@@ -252,11 +255,7 @@ public class TagEditorModel extends AbstractTableModel {
      */
     public TagModel get(String name) {
         String key = (name == null) ? "" : name;
-        for (TagModel tag : tags) {
-            if (tag.getName().equals(key))
-                return tag;
-        }
-        return null;
+        return tags.stream().filter(tag -> tag.getName().equals(key)).findFirst().orElse(null);
     }
 
     /**
@@ -345,16 +344,8 @@ public class TagEditorModel extends AbstractTableModel {
         if (tags == null)
             return;
         commitPendingEdit();
-        List<TagModel> toDelete = new ArrayList<>();
-        for (int tagIdx : tagIndices) {
-            TagModel tag = tags.get(tagIdx);
-            if (tag != null) {
-                toDelete.add(tag);
-            }
-        }
-        for (TagModel tag : toDelete) {
-            tags.remove(tag);
-        }
+        List<TagModel> toDelete = Arrays.stream(tagIndices).mapToObj(tags::get).filter(Objects::nonNull).collect(Collectors.toList());
+        toDelete.forEach(tags::remove);
         fireTableDataChanged();
         setDirty(true);
     }
@@ -505,13 +496,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @return true, if the tag model includes the tag; false, otherwise
      */
     public boolean includesTag(String key) {
-        if (key != null) {
-            for (TagModel tag : tags) {
-                if (tag.getName().equals(key))
-                    return true;
-            }
-        }
-        return false;
+        return key != null && tags.stream().anyMatch(tag -> tag.getName().equals(key));
     }
 
     protected Command createUpdateTagCommand(Collection<OsmPrimitive> primitives, TagModel tag) {
@@ -554,13 +539,10 @@ public class TagEditorModel extends AbstractTableModel {
      * @return the list of keys managed by this model
      */
     public List<String> getKeys() {
-        List<String> keys = new ArrayList<>();
-        for (TagModel tag: tags) {
-            if (!tag.getName().trim().isEmpty()) {
-                keys.add(tag.getName());
-            }
-        }
-        return keys;
+        return tags.stream()
+                .filter(tag -> !tag.getName().trim().isEmpty())
+                .map(TagModel::getName)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -615,11 +597,9 @@ public class TagEditorModel extends AbstractTableModel {
             return;
 
         commitPendingEdit();
-        Map<String, TagModel> modelTags = new HashMap<>();
-        for (int i = 0; i < getRowCount(); i++) {
-            TagModel tagModel = get(i);
-            modelTags.put(tagModel.getName(), tagModel);
-        }
+        Map<String, TagModel> modelTags = IntStream.range(0, getRowCount())
+                .mapToObj(this::get)
+                .collect(Collectors.toMap(TagModel::getName, tagModel -> tagModel, (a, b) -> b));
         for (Tag tag: tags) {
             TagModel existing = modelTags.get(tag.getKey());
 

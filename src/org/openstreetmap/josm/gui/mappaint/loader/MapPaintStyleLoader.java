@@ -3,10 +3,11 @@ package org.openstreetmap.josm.gui.mappaint.loader;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -61,11 +62,8 @@ public class MapPaintStyleLoader extends PleaseWaitRunnable {
      * @param sel the indices of styles to reload
      */
     public static void reloadStyles(final int... sel) {
-        List<StyleSource> toReload = new ArrayList<>();
         List<StyleSource> data = MapPaintStyles.getStyles().getStyleSources();
-        for (int i : sel) {
-            toReload.add(data.get(i));
-        }
+        List<StyleSource> toReload = Arrays.stream(sel).mapToObj(data::get).collect(Collectors.toList());
         MainApplication.worker.submit(new MapPaintStyleLoader(toReload));
     }
 

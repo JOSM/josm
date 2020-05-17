@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.AbstractListModel;
 
@@ -56,14 +57,10 @@ public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> 
     }
 
     protected boolean isReferringRelation(Relation parent) {
-        if (parent == null) return false;
-        for (RelationMember m: parent.getMembers()) {
-            if (m.isRelation()) {
-                Relation child = m.getRelation();
-                if (child.equals(relation)) return true;
-            }
-        }
-        return false;
+        return parent != null && parent.getMembers().stream()
+                .filter(RelationMember::isRelation)
+                .map(RelationMember::getRelation)
+                .anyMatch(child -> Objects.equals(child, relation));
     }
 
     /**

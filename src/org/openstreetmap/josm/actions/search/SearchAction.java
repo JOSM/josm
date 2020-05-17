@@ -9,17 +9,15 @@ import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -121,11 +119,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         while (searchHistory.size() > maxsize) {
             searchHistory.removeLast();
         }
-        Set<String> savedHistory = new LinkedHashSet<>(searchHistory.size());
-        for (SearchSetting item: searchHistory) {
-            savedHistory.add(item.writeToString());
-        }
-        Config.getPref().putList("search.history", new ArrayList<>(savedHistory));
+        List<String> savedHistory = searchHistory.stream()
+                .map(SearchSetting::writeToString)
+                .distinct()
+                .collect(Collectors.toList());
+        Config.getPref().putList("search.history", savedHistory);
     }
 
     /**
@@ -133,11 +131,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @return The list of search texts.
      */
     public static List<String> getSearchExpressionHistory() {
-        List<String> ret = new ArrayList<>(getSearchHistory().size());
-        for (SearchSetting ss: getSearchHistory()) {
-            ret.add(ss.text);
-        }
-        return ret;
+        return getSearchHistory().stream()
+                .map(ss -> ss.text)
+                .collect(Collectors.toList());
     }
 
     private static volatile SearchSetting lastSearch;

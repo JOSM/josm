@@ -1358,10 +1358,9 @@ public class MainApplication {
             Map<String, Throwable> networkErrors = NetworkManager.getNetworkErrors();
             boolean condition = !networkErrors.isEmpty();
             if (condition) {
-                Set<String> errors = new TreeSet<>();
-                for (Throwable t : networkErrors.values()) {
-                    errors.add(t.toString());
-                }
+                Set<String> errors = networkErrors.values().stream()
+                        .map(Throwable::toString)
+                        .collect(Collectors.toCollection(TreeSet::new));
                 return handleNetworkOrProxyErrors(condition, tr("Network errors occurred"),
                         tr("JOSM tried to access the following resources:<br>" +
                                 "{0}" +

@@ -6,8 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -144,11 +145,9 @@ public class EditableList extends JPanel {
      * @return All items as list of strings
      */
     public List<String> getItems() {
-        final List<String> items = new ArrayList<>(sourcesList.getModel().getSize());
-        for (int i = 0; i < sourcesList.getModel().getSize(); ++i) {
-            items.add(sourcesList.getModel().getElementAt(i));
-        }
-        return items;
+        return IntStream.range(0, sourcesList.getModel().getSize())
+                .mapToObj(i -> sourcesList.getModel().getElementAt(i))
+                .collect(Collectors.toList());
     }
 
     @Override

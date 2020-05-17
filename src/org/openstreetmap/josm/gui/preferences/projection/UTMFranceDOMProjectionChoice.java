@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -63,11 +64,7 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
     @Override
     public String[] allCodes() {
-        String[] res = new String[UTM_EPSGS.length];
-        for (int i = 0; i < UTM_EPSGS.length; ++i) {
-            res[i] = "EPSG:" + UTM_EPSGS[i];
-        }
-        return res;
+        return Arrays.stream(UTM_EPSGS).map(utmEpsg -> "EPSG:" + utmEpsg).toArray(String[]::new);
     }
 
     @Override

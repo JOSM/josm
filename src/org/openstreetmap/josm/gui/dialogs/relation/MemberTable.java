@@ -8,8 +8,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.DropMode;
@@ -115,12 +115,10 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     private transient ListSelectionListener highlighterListener = lse -> {
         if (MainApplication.isDisplayingMapView()) {
             Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
-            final Set<OsmPrimitive> toHighlight = new HashSet<>();
-            for (RelationMember r: sel) {
-                if (r.getMember().isUsable()) {
-                    toHighlight.add(r.getMember());
-                }
-            }
+            final Set<OsmPrimitive> toHighlight = sel.stream()
+                    .filter(r -> r.getMember().isUsable())
+                    .map(RelationMember::getMember)
+                    .collect(Collectors.toSet());
             SwingUtilities.invokeLater(() -> {
                 if (MainApplication.isDisplayingMapView() && highlightHelper.highlightOnly(toHighlight)) {
                     MainApplication.getMap().mapView.repaint();

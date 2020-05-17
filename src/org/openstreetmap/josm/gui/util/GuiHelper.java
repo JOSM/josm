@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.stream.Stream;
 
 import javax.swing.GrayFilter;
 import javax.swing.ImageIcon;
@@ -639,12 +640,10 @@ public final class GuiHelper {
         if ("km".equals(LanguageInfo.getJOSMLocaleCode())) {
             Collection<String> fonts = Arrays.asList(
                     GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-            for (String f : new String[]{"Khmer UI", "DaunPenh", "MoolBoran"}) {
-                if (fonts.contains(f)) {
-                    setUIFont(f);
-                    break;
-                }
-            }
+            Stream.of("Khmer UI", "DaunPenh", "MoolBoran")
+                    .filter(fonts::contains)
+                    .findFirst()
+                    .ifPresent(GuiHelper::setUIFont);
         }
     }
 

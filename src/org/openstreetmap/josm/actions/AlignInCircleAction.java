@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -127,13 +128,7 @@ public final class AlignInCircleAction extends JosmAction {
             List<Node> outside = new ArrayList<>();
 
             for (Node n: nodes) {
-                boolean isInside = false;
-                for (Way w: ways) {
-                    if (w.getNodes().contains(n)) {
-                        isInside = true;
-                        break;
-                    }
-                }
+                boolean isInside = ways.stream().anyMatch(w -> w.getNodes().contains(n));
                 if (isInside)
                     inside.add(n);
                 else
@@ -251,14 +246,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @return List of nodes with more than one referrer
      */
     private static List<Node> collectNodesWithExternReferers(List<Way> ways) {
-        List<Node> withReferrers = new ArrayList<>();
-        for (Way w: ways) {
-            for (Node n: w.getNodes()) {
-                if (n.getReferrers().size() > 1) {
-                    withReferrers.add(n);
-                }
-            }
-        }
+        List<Node> withReferrers = ways.stream().flatMap(w -> w.getNodes().stream()).filter(n -> n.getReferrers().size() > 1).collect(Collectors.toList());
         return withReferrers;
     }
 
@@ -315,13 +303,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @return true if action can be done
      */
     private static boolean actionAllowed(Collection<Node> nodes) {
-        boolean outside = false;
-        for (Node n: nodes) {
-            if (n.isOutsideDownloadArea()) {
-                outside = true;
-                break;
-            }
-        }
+        boolean outside = nodes.stream().anyMatch(Node::isOutsideDownloadArea);
         if (outside)
             new Notification(
                     tr("One or more nodes involved in this action is outside of the downloaded area."))
@@ -352,9 +334,8 @@ public final class AlignInCircleAction extends JosmAction {
         for (Way way: ways) {
             for (Node node: way.getNodes()) {
                 if (way.isFirstLastNode(node)) continue;
-                for (Way wayOther: ways) {
-                    if (way == wayOther) continue;
-                    if (node.getReferrers().contains(wayOther)) return false;
+                if (ways.stream().filter(wayOther -> way != wayOther).anyMatch(wayOther -> node.getReferrers().contains(wayOther))) {
+                    return false;
                 }
             }
         }

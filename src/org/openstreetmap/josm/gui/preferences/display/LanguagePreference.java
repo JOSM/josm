@@ -93,15 +93,10 @@ public class LanguagePreference implements SubPreferenceSetting {
             setSelectedItem(null);
             if (language != null) {
                 String lang = LanguageInfo.getJavaLocaleCode(language);
-                for (Locale locale: data) {
-                    if (locale == null) {
-                        continue;
-                    }
-                    if (locale.toString().equals(lang)) {
-                        setSelectedItem(locale);
-                        return;
-                    }
-                }
+                data.stream()
+                        .filter(locale -> locale != null && locale.toString().equals(lang))
+                        .findFirst()
+                        .ifPresent(this::setSelectedItem);
             }
         }
 

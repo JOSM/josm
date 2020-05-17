@@ -182,11 +182,7 @@ public class CombineWayActionTest {
     }
 
     private static double getOriginalLength(Collection<Way> ways) {
-        double len = 0;
-        for (Way w : ways) {
-            len += w.getLength();
-        }
-        return len;
+        return ways.stream().mapToDouble(Way::getLength).sum();
     }
 
 }

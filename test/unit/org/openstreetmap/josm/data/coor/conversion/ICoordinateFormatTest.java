@@ -7,6 +7,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -24,6 +25,7 @@ public class ICoordinateFormatTest {
     /**
      * Tests {@link ICoordinateFormat#latToString(org.openstreetmap.josm.data.coor.ILatLon)}
      * and {@link ICoordinateFormat#lonToString(org.openstreetmap.josm.data.coor.ILatLon)}
+     * and {@link ICoordinateFormat#toString(ILatLon, String)}
      * for various implementations.
      */
     @Test
@@ -31,8 +33,10 @@ public class ICoordinateFormatTest {
         LatLon c = new LatLon(47.000000, 19.000000);
         assertEquals("47.0", DecimalDegreesCoordinateFormat.INSTANCE.latToString(c));
         assertEquals("19.0", DecimalDegreesCoordinateFormat.INSTANCE.lonToString(c));
+        assertEquals("47.0 19.0", DecimalDegreesCoordinateFormat.INSTANCE.toString(c, " "));
         assertEquals("47°00'00.0\"N", DMSCoordinateFormat.INSTANCE.latToString(c));
         assertEquals("19°00'00.0\"E", DMSCoordinateFormat.INSTANCE.lonToString(c));
+        assertEquals("47°00'00.0\"N  19°00'00.0\"E", DMSCoordinateFormat.INSTANCE.toString(c, "  "));
         assertEquals("47°00.000'N", NauticalCoordinateFormat.INSTANCE.latToString(c));
         assertEquals("19°00.000'E", NauticalCoordinateFormat.INSTANCE.lonToString(c));
         assertEquals("5942074.0724311", ProjectedCoordinateFormat.INSTANCE.latToString(c));

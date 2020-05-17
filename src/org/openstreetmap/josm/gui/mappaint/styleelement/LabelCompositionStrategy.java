@@ -6,12 +6,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * <p>Provides an abstract parent class and three concrete sub classes for various
@@ -174,20 +176,12 @@ public interface LabelCompositionStrategy {
         }
 
         private static List<String> buildNameTags(List<String> nameTags) {
-            List<String> result = new ArrayList<>();
-            if (nameTags != null) {
-                for (String tag: nameTags) {
-                    if (tag == null) {
-                        continue;
-                    }
-                    tag = tag.trim();
-                    if (tag.isEmpty()) {
-                        continue;
-                    }
-                    result.add(tag);
-                }
+            if (nameTags == null) {
+                return new ArrayList<>();
             }
-            return result;
+            return nameTags.stream()
+                    .filter(tag -> !Utils.isStripEmpty(tag))
+                    .collect(Collectors.toList());
         }
 
         /**
@@ -251,13 +245,8 @@ public interface LabelCompositionStrategy {
         private String getPrimitiveName(IPrimitive n) {
             StringBuilder name = new StringBuilder();
             if (!n.hasKeys()) return null;
-            for (String rn : nameTags) {
-                String val = n.get(rn);
-                if (val != null) {
-                    name.append(val);
-                    break;
-                }
-            }
+            nameTags.stream().map(n::get).filter(Objects::nonNull).findFirst()
+                    .ifPresent(name::append);
             for (String rn : nameComplementTags) {
                 String comp = n.get(rn);
                 if (comp != null) {

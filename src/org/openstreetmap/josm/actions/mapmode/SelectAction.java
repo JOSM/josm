@@ -771,14 +771,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     }
 
     private static boolean doesImpactStatusLine(Collection<Node> affectedNodes, Collection<Way> selectedWays) {
-        for (Way w : selectedWays) {
-            for (Node n : w.getNodes()) {
-                if (affectedNodes.contains(n)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return selectedWays.stream()
+                .flatMap(w -> w.getNodes().stream())
+                .anyMatch(affectedNodes::contains);
     }
 
     /**

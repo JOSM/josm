@@ -6,10 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -47,13 +47,10 @@ public class ExportProfileAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        List<String> keys = new ArrayList<>();
         Map<String, Setting<?>> all = prefs.getAllSettings();
-        for (String key: all.keySet()) {
-            if (key.matches(prefPattern)) {
-                keys.add(key);
-            }
-        }
+        List<String> keys = all.keySet().stream()
+                .filter(key -> key.matches(prefPattern))
+                .collect(Collectors.toList());
         if (keys.isEmpty()) {
             JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                     tr("All the preferences of this group are default, nothing to save"), tr("Warning"), JOptionPane.WARNING_MESSAGE);

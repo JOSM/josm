@@ -1109,10 +1109,7 @@ public final class MapStatus extends JPanel implements
         // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
         int maxWays = Math.max(1, Config.getPref().getInt("selection.max-ways-for-statusline", 250));
         if (!ways.isEmpty() && ways.size() <= maxWays) {
-            dist = 0.0;
-            for (Way w : ways) {
-                dist += w.getLength();
-            }
+            dist = ways.stream().mapToDouble(Way::getLength).sum();
         }
         setDist(dist);
     }

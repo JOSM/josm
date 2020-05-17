@@ -7,8 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -58,17 +58,11 @@ public class PluginCheckBox extends JCheckBox implements ActionListener {
             PluginHandler.checkRequiredPluginsPreconditions(panel, ppModel.getAvailablePlugins(), pi, false);
         } else if (!isSelected()) {
             // If the plugin has been unselected, was it required by other plugins still selected ?
-            Set<String> otherPlugins = new HashSet<>();
-            for (PluginInformation p : ppModel.getAvailablePlugins()) {
-                if (!p.equals(pi) && p.requires != null && ppModel.isSelectedPlugin(p.getName())) {
-                    for (String s : p.getRequiredPlugins()) {
-                        if (s.equals(pi.getName()) || s.equals(pi.provides)) {
-                            otherPlugins.add(p.getName());
-                            break;
-                        }
-                    }
-                }
-            }
+            Set<String> otherPlugins = ppModel.getAvailablePlugins().stream()
+                    .filter(p -> !p.equals(pi) && p.requires != null && ppModel.isSelectedPlugin(p.getName()))
+                    .filter(p -> p.getRequiredPlugins().stream().anyMatch(s -> s.equals(pi.getName()) || s.equals(pi.provides)))
+                    .map(PluginInformation::getName)
+                    .collect(Collectors.toSet());
             if (!otherPlugins.isEmpty()) {
                 alertPluginStillRequired(panel, pi.getName(), otherPlugins);
             }

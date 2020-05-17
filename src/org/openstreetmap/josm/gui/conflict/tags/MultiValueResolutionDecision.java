@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -198,15 +199,7 @@ public class MultiValueResolutionDecision {
      * @since 7743
      */
     public boolean canSumAllNumeric() {
-        if (!canKeepAll()) {
-            return false;
-        }
-        for (String key : SUMMABLE_KEYS) {
-            if (getKey().matches(key)) {
-                return true;
-            }
-        }
-        return false;
+        return canKeepAll() && Arrays.stream(SUMMABLE_KEYS).anyMatch(key -> getKey().matches(key));
     }
 
     /**

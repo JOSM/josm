@@ -247,13 +247,7 @@ public final class CreateCircleAction extends JosmAction {
      * @return Modified nodes list ordered according hand traffic.
      */
     private static List<Node> orderNodesByTrafficHand(List<Node> nodes) {
-        boolean rightHandTraffic = true;
-        for (Node n: nodes) {
-            if (!RightAndLefthandTraffic.isRightHandTraffic(n.getCoor())) {
-                rightHandTraffic = false;
-                break;
-            }
-        }
+        boolean rightHandTraffic = nodes.stream().allMatch(n -> RightAndLefthandTraffic.isRightHandTraffic(n.getCoor()));
         if (rightHandTraffic == Geometry.isClockwise(nodes)) {
             Collections.reverse(nodes);
         }

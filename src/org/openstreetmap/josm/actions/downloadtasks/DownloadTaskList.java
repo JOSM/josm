@@ -150,12 +150,7 @@ public class DownloadTaskList {
      * @param potentiallyDeleted a set of ids to check update from the server
      */
     protected void updatePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
-        final List<OsmPrimitive> toSelect = new ArrayList<>();
-        for (OsmPrimitive primitive : potentiallyDeleted) {
-            if (primitive != null) {
-                toSelect.add(primitive);
-            }
-        }
+        final List<OsmPrimitive> toSelect = potentiallyDeleted.stream().filter(Objects::nonNull).collect(Collectors.toList());
         EventQueue.invokeLater(() -> UpdateSelectionAction.updatePrimitives(toSelect));
     }
 
@@ -278,13 +273,9 @@ public class DownloadTaskList {
 
             // FIXME: this is a hack. We assume that the user canceled the whole download if at
             // least one task was canceled or if it failed
-            //
-            for (DownloadTask task : tasks) {
-                if (task instanceof AbstractDownloadTask) {
-                    AbstractDownloadTask<?> absTask = (AbstractDownloadTask<?>) task;
-                    if (absTask.isCanceled() || absTask.isFailed())
-                        return;
-                }
+            if (Utils.filteredCollection(tasks, AbstractDownloadTask.class).stream()
+                    .anyMatch(absTask -> absTask.isCanceled() || absTask.isFailed())) {
+                return;
             }
             final DataSet editDataSet = MainApplication.getLayerManager().getEditDataSet();
             if (editDataSet != null && osmData) {

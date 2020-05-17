@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,7 @@ import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.StreamUtils;
 
 /**
  * Delete unnecessary nodes from a way
@@ -230,13 +232,10 @@ public class SimplifyWayAction extends JosmAction {
      * @return a set of nodes which occurs more than once in the way
      */
     private static Set<Node> getMultiUseNodes(Way w) {
-        Set<Node> multipleUseNodes = new HashSet<>();
         Set<Node> allNodes = new HashSet<>();
-        for (Node n : w.getNodes()) {
-            if (!allNodes.add(n))
-                multipleUseNodes.add(n);
-        }
-        return multipleUseNodes;
+        return w.getNodes().stream()
+                .filter(n -> !allNodes.add(n))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -247,14 +246,10 @@ public class SimplifyWayAction extends JosmAction {
      * @since 15419
      */
     public static void simplifyWays(List<Way> ways, double threshold) {
-        Collection<Command> allCommands = new LinkedList<>();
-        for (Way way : ways) {
-            SequenceCommand simplifyCommand = createSimplifyCommand(way, threshold);
-            if (simplifyCommand == null) {
-                continue;
-            }
-            allCommands.add(simplifyCommand);
-        }
+        Collection<Command> allCommands = ways.stream()
+                .map(way -> createSimplifyCommand(way, threshold))
+                .filter(Objects::nonNull)
+                .collect(StreamUtils.toUnmodifiableList());
         if (allCommands.isEmpty())
             return;
         SequenceCommand rootCommand = new SequenceCommand(

@@ -298,14 +298,10 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     }
 
     protected UploadStrategy getUploadStrategy() {
-        UploadStrategy strategy = null;
-        for (Entry<UploadStrategy, JRadioButton> e : rbStrategy.entrySet()) {
-            if (e.getValue().isSelected()) {
-                strategy = e.getKey();
-                break;
-            }
-        }
-        return strategy;
+        return rbStrategy.entrySet().stream()
+                .filter(e -> e.getValue().isSelected())
+                .map(Entry::getKey)
+                .findFirst().orElse(null);
     }
 
     protected int getChunkSize() {

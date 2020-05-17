@@ -2,12 +2,14 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -371,13 +373,10 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @return {@code true} if this model has the same members as {@code relation}
      */
     public boolean hasSameMembersAs(Relation relation) {
-        if (relation == null || relation.getMembersCount() != members.size())
-            return false;
-        for (int i = 0; i < relation.getMembersCount(); i++) {
-            if (!relation.getMember(i).equals(members.get(i)))
-                return false;
-        }
-        return true;
+        return relation != null
+                && relation.getMembersCount() == members.size()
+                && IntStream.range(0, relation.getMembersCount())
+                .allMatch(i -> relation.getMember(i).equals(members.get(i)));
     }
 
     /**
@@ -434,13 +433,10 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(
                 EnumSet.of(relation != null ? TaggingPresetType.forPrimitive(relation) : TaggingPresetType.RELATION),
                 presetHandler.getSelection().iterator().next().getKeys(), false);
-        Collection<String> potentialRoles = new TreeSet<>();
-        for (TaggingPreset tp : presets) {
-            String suggestedRole = tp.suggestRoleForOsmPrimitive(primitive);
-            if (suggestedRole != null) {
-                potentialRoles.add(suggestedRole);
-            }
-        }
+        Collection<String> potentialRoles = presets.stream()
+                .map(tp -> tp.suggestRoleForOsmPrimitive(primitive))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(TreeSet::new));
         // TODO: propose user to choose role among potential ones instead of picking first one
         final String role = potentialRoles.isEmpty() ? "" : potentialRoles.iterator().next();
         return new RelationMember(role == null ? "" : role, primitive);
@@ -514,41 +510,34 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @return a collection with the currently selected relation members
      */
     public Collection<RelationMember> getSelectedMembers() {
-        List<RelationMember> selectedMembers = new ArrayList<>();
-        for (int i : getSelectedIndices()) {
-            selectedMembers.add(members.get(i));
-        }
-        return selectedMembers;
+        return Arrays.stream(getSelectedIndices())
+                .mapToObj(members::get)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Replies the set of selected referers. Never null, but may be empty.
+     * Replies the set of selected referrers. Never null, but may be empty.
      *
-     * @return the set of selected referers
+     * @return the set of selected referrers
      */
     public Collection<OsmPrimitive> getSelectedChildPrimitives() {
-        Collection<OsmPrimitive> ret = new ArrayList<>();
-        for (RelationMember m: getSelectedMembers()) {
-            ret.add(m.getMember());
-        }
-        return ret;
+        return getSelectedMembers().stream()
+                .map(RelationMember::getMember)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Replies the set of selected referers. Never null, but may be empty.
+     * Replies the set of selected referrers. Never null, but may be empty.
      * @param referenceSet reference set
      *
-     * @return the set of selected referers
+     * @return the set of selected referrers
      */
     public Set<OsmPrimitive> getChildPrimitives(Collection<? extends OsmPrimitive> referenceSet) {
-        Set<OsmPrimitive> ret = new HashSet<>();
         if (referenceSet == null) return null;
-        for (RelationMember m: members) {
-            if (referenceSet.contains(m.getMember())) {
-                ret.add(m.getMember());
-            }
-        }
-        return ret;
+        return members.stream()
+                .filter(m -> referenceSet.contains(m.getMember()))
+                .map(RelationMember::getMember)
+                .collect(Collectors.toSet());
     }
 
     /**

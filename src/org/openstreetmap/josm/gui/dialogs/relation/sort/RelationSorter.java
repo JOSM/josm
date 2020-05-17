@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -109,15 +110,13 @@ public class RelationSorter {
         @Override
         public List<RelationMember> sortMembers(List<RelationMember> list) {
             final Map<String, RelationMember> platformByName = new HashMap<>();
-            for (RelationMember i : list) {
-                if (i.getRole().startsWith("platform")) {
-                    final RelationMember old = platformByName.put(getStopName(i.getMember()), i);
-                    if (old != null) {
-                        // Platform with same name present. Stop to avoid damaging complicated relations.
-                        // This case can happily be handled differently.
-                        return list;
-                    }
-                }
+            if (list.stream()
+                    .filter(i -> i.getRole().startsWith("platform"))
+                    .map(i -> platformByName.put(getStopName(i.getMember()), i))
+                    .anyMatch(Objects::nonNull)) {
+                // Platform with same name present. Stop to avoid damaging complicated relations.
+                // This case can happily be handled differently.
+                return list;
             }
             final List<RelationMember> sorted = new ArrayList<>(list.size());
             for (RelationMember i : list) {
@@ -198,7 +197,7 @@ public class RelationSorter {
      */
     public static List<RelationMember> sortMembersByConnectivity(List<RelationMember> defaultMembers) {
 
-        List<RelationMember> newMembers = new ArrayList<>();
+        List<RelationMember> newMembers;
 
         RelationNodeMap map = new RelationNodeMap(defaultMembers);
         // List of groups of linked members
@@ -231,11 +230,7 @@ public class RelationSorter {
             }
         }
 
-        for (List<Integer> tmpGroup : allGroups) {
-            for (Integer p : tmpGroup) {
-                newMembers.add(defaultMembers.get(p));
-            }
-        }
+        newMembers = allGroups.stream().flatMap(Collection::stream).map(defaultMembers::get).collect(Collectors.toList());
 
         // Finally, add members that have not been sorted at all
         for (Integer i : map.getNotSortableMembers()) {

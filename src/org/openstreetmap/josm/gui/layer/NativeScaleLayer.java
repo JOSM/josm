@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
@@ -232,11 +233,7 @@ public interface NativeScaleLayer {
 
         @Override
         public String toString() {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (Scale s: this.scales) {
-                stringBuilder.append(s.toString() + '\n');
-            }
-            return stringBuilder.toString();
+            return this.scales.stream().map(Scale::toString).collect(Collectors.joining("\n"));
         }
 
         private Scale getNextIn(Scale scale, double ratio) {

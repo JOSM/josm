@@ -26,9 +26,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -930,14 +930,10 @@ public class GenericRelationEditor extends RelationEditor {
     }
 
     protected static Set<String> findSuggestedRoles(final Collection<TaggingPreset> presets, OsmPrimitive p) {
-        final Set<String> roles = new HashSet<>();
-        for (TaggingPreset preset : presets) {
-            String role = preset.suggestRoleForOsmPrimitive(p);
-            if (role != null && !role.isEmpty()) {
-                roles.add(role);
-            }
-        }
-        return roles;
+        return presets.stream()
+                .map(preset -> preset.suggestRoleForOsmPrimitive(p))
+                .filter(role -> role != null && !role.isEmpty())
+                .collect(Collectors.toSet());
     }
 
     class MemberTableDblClickAdapter extends MouseAdapter {

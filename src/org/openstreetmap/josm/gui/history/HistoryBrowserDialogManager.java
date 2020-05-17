@@ -109,13 +109,9 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     }
 
     private boolean hasDialogWithCloseUpperLeftCorner(Point p) {
-        for (HistoryBrowserDialog dialog: dialogs.values()) {
-            Point corner = dialog.getLocation();
-            if (p.x >= corner.x -5 && corner.x + 5 >= p.x
-                    && p.y >= corner.y -5 && corner.y + 5 >= p.y)
-                return true;
-        }
-        return false;
+        return dialogs.values().stream()
+                .map(Component::getLocation)
+                .anyMatch(corner -> p.x >= corner.x - 5 && corner.x + 5 >= p.x && p.y >= corner.y - 5 && corner.y + 5 >= p.y);
     }
 
     private void placeOnScreen(HistoryBrowserDialog dialog) {

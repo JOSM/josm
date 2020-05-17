@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
@@ -50,11 +51,9 @@ public class PluginUpdatePolicyPanel extends JPanel {
             if (preferenceValue == null)
                 return null;
             String prefValue = preferenceValue.trim().toLowerCase(Locale.ENGLISH);
-            for (Policy p: Policy.values()) {
-                if (p.getPreferencesValue().equals(prefValue))
-                    return p;
-            }
-            return null;
+            return Arrays.stream(Policy.values())
+                    .filter(p -> p.getPreferencesValue().equals(prefValue))
+                    .findFirst().orElse(null);
         }
     }
 
@@ -192,22 +191,14 @@ public class PluginUpdatePolicyPanel extends JPanel {
     public void rememberInPreferences() {
 
         // remember policy for version based update
-        //
-        for (Policy p: Policy.values()) {
-            if (rbVersionBasedUpatePolicy.get(p).isSelected()) {
-                Config.getPref().put("pluginmanager.version-based-update.policy", p.getPreferencesValue());
-                break;
-            }
-        }
+        Arrays.stream(Policy.values())
+                .filter(p -> rbVersionBasedUpatePolicy.get(p).isSelected()).findFirst()
+                .ifPresent(p -> Config.getPref().put("pluginmanager.version-based-update.policy", p.getPreferencesValue()));
 
         // remember policy for time based update
-        //
-        for (Policy p: Policy.values()) {
-            if (rbTimeBasedUpatePolicy.get(p).isSelected()) {
-                Config.getPref().put("pluginmanager.time-based-update.policy", p.getPreferencesValue());
-                break;
-            }
-        }
+        Arrays.stream(Policy.values())
+                .filter(p -> rbTimeBasedUpatePolicy.get(p).isSelected()).findFirst()
+                .ifPresent(p -> Config.getPref().put("pluginmanager.time-based-update.policy", p.getPreferencesValue()));
 
         // remember update interval
         //

@@ -305,16 +305,10 @@ public class MenuScroller {
     private void refreshMenu() {
         if (menuItems != null && menuItems.length > 0) {
 
-            int allItemsHeight = 0;
-            for (Component item : menuItems) {
-                allItemsHeight += item.getPreferredSize().height;
-            }
-
+            int allItemsHeight = Arrays.stream(menuItems).mapToInt(item -> item.getPreferredSize().height).sum();
             int allowedHeight = WindowGeometry.getMaxDimensionOnScreen(menu).height - MainApplication.getMainFrame().getInsets().top;
-
-            boolean mustSCroll = allItemsHeight > allowedHeight;
-
-            if (mustSCroll) {
+            boolean mustScroll = allItemsHeight > allowedHeight;
+            if (mustScroll) {
                 firstIndex = Math.min(menuItems.length-1, Math.max(topFixedCount, firstIndex));
                 int scrollCount = computeScrollCount(firstIndex);
                 firstIndex = Math.min(menuItems.length - scrollCount, firstIndex);

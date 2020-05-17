@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -126,12 +127,8 @@ public class ImageryProvidersPanel extends JPanel {
                     table, value, isSelected, hasFocus, row, column);
             GuiHelper.setBackgroundReadable(label, UIManager.getColor("Table.background"));
             if (value != null) { // Fix #8159
-                String t = value.toString();
-                for (ImageryInfo l : layers) {
-                    if (l.getExtendedUrl().equals(t)) {
-                        GuiHelper.setBackgroundReadable(label, IMAGERY_BACKGROUND_COLOR.get());
-                        break;
-                    }
+                if (layers.stream().anyMatch(l -> Objects.equals(l.getExtendedUrl(), value.toString()))) {
+                    GuiHelper.setBackgroundReadable(label, IMAGERY_BACKGROUND_COLOR.get());
                 }
                 label.setToolTipText((String) value);
             }

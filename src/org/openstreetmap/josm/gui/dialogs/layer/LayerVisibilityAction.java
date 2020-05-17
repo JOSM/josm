@@ -398,10 +398,9 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         protected void updateSliderWhileEnabled(Collection<? extends Layer> usedLayers, boolean allHidden) {
-            double opacity = 0;
-            for (Layer l : usedLayers) {
-                opacity += l.getOpacity();
-            }
+            double opacity = usedLayers.stream()
+                    .mapToDouble(Layer::getOpacity)
+                    .sum();
             opacity /= usedLayers.size();
             if (opacity == 0) {
                 opacity = 1;

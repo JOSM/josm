@@ -31,12 +31,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -51,7 +54,6 @@ import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -825,12 +827,8 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     }
 
     private static boolean containsOnlyGpxTags(Tagged t) {
-        for (String key : t.getKeys().keySet()) {
-            if (!GpxConstants.WPT_KEYS.contains(key) && !key.startsWith(GpxConstants.GPX_PREFIX)) {
-                return false;
-            }
-        }
-        return true;
+        return t.getKeys().keySet().stream()
+                .allMatch(key -> GpxConstants.WPT_KEYS.contains(key) || key.startsWith(GpxConstants.GPX_PREFIX));
     }
 
     /**
@@ -889,13 +887,11 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         addStringIfPresent(wpt, n, GpxConstants.GPX_CMT, "comment");
         addStringIfPresent(wpt, n, GpxConstants.GPX_SRC, "source", "source:position");
 
-        Collection<GpxLink> links = new ArrayList<>();
-        for (String key : new String[]{"link", "url", "website", "contact:website"}) {
-            String value = gpxVal(n, key);
-            if (value != null) {
-                links.add(new GpxLink(value));
-            }
-        }
+        Collection<GpxLink> links = Stream.of("link", "url", "website", "contact:website")
+                .map(key -> gpxVal(n, key))
+                .filter(Objects::nonNull)
+                .map(GpxLink::new)
+                .collect(Collectors.toList());
         wpt.put(GpxConstants.META_LINKS, links);
 
         addStringIfPresent(wpt, n, GpxConstants.PT_SYM, "wpt_symbol");
@@ -967,16 +963,12 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     }
 
     private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
-        List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
-        possibleKeys.add(0, gpxKey);
-        for (String key : possibleKeys) {
-            String value = gpxVal(p, key);
-            // Sanity checks
-            if (value != null && (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value))) {
-                wpt.put(gpxKey, value);
-                break;
-            }
-        }
+        Stream.concat(Stream.of(gpxKey), Arrays.stream(osmKeys))
+                .map(key -> gpxVal(p, key))
+                // Sanity checks
+                .filter(value -> value != null && (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value)))
+                .findFirst()
+                .ifPresent(value -> wpt.put(gpxKey, value));
     }
 
     /**
@@ -1028,14 +1020,8 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         if (this.data.getDataSources().isEmpty())
             return true;
 
-        boolean layerBoundsPoint = false;
-        for (DataSource src : this.data.getDataSources()) {
-            if (src.bounds.contains(coor)) {
-                layerBoundsPoint = true;
-                break;
-            }
-        }
-        return layerBoundsPoint;
+        return this.data.getDataSources().stream()
+                .anyMatch(src -> src.bounds.contains(coor));
     }
 
     /**
@@ -1228,13 +1214,8 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      * @return <code>true</code>, if a save result in an empty data set.
      */
     private boolean isDataSetEmpty() {
-        if (data != null) {
-            for (OsmPrimitive osm : data.allNonDeletedPrimitives()) {
-                if (!osm.isDeleted() || !osm.isNewOrUndeleted())
-                    return false;
-            }
-        }
-        return true;
+        return data == null || data.allNonDeletedPrimitives().stream()
+                .allMatch(osm -> osm.isDeleted() && osm.isNewOrUndeleted());
     }
 
     @Override

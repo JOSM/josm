@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -119,13 +120,11 @@ public class SelectNonBranchingWaySequences {
      * @return a way by which to extend the selection, or null
      */
     private Way findWay(Collection<OsmPrimitive> selection) {
-        for (Node node : outerNodes) {
-            Way way = findWay(selection, node);
-            if (way != null)
-                return way;
-        }
+        return outerNodes.stream()
+                .map(node -> findWay(selection, node))
+                .filter(Objects::nonNull)
+                .findFirst().orElse(null);
 
-        return null;
     }
 
     /**

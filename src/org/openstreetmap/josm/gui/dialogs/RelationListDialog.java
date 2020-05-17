@@ -13,9 +13,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -502,14 +503,9 @@ public class RelationListDialog extends ToggleDialog
         public void removeRelations(Collection<? extends OsmPrimitive> removedPrimitives) {
             if (removedPrimitives == null) return;
             // extract the removed relations
-            //
-            Set<Relation> removedRelations = new HashSet<>();
-            for (OsmPrimitive p: removedPrimitives) {
-                if (!(p instanceof Relation)) {
-                    continue;
-                }
-                removedRelations.add((Relation) p);
-            }
+            Set<Relation> removedRelations = removedPrimitives.stream()
+                    .filter(p -> p instanceof Relation).map(p -> (Relation) p)
+                    .collect(Collectors.toSet());
             if (removedRelations.isEmpty())
                 return;
             int size = relations.size();
@@ -569,14 +565,10 @@ public class RelationListDialog extends ToggleDialog
          * @since 13957 (signature)
          */
         public List<IRelation<?>> getSelectedRelations() {
-            List<IRelation<?>> ret = new ArrayList<>();
-            for (int i = 0; i < getSize(); i++) {
-                if (!selectionModel.isSelectedIndex(i)) {
-                    continue;
-                }
-                ret.add(getVisibleRelation(i));
-            }
-            return ret;
+            return IntStream.range(0, getSize())
+                    .filter(selectionModel::isSelectedIndex)
+                    .mapToObj(this::getVisibleRelation)
+                    .collect(Collectors.toList());
         }
 
         /**

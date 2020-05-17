@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -107,14 +108,8 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
             throw new UserCancelException();
         }
 
-        boolean zipRequired = false;
-        for (Layer l : layers) {
-            SessionLayerExporter ex = exporters.get(l);
-            if (ex != null && ex.requiresZip()) {
-                zipRequired = true;
-                break;
-            }
-        }
+        boolean zipRequired = layers.stream().map(l -> exporters.get(l))
+                .anyMatch(ex -> ex != null && ex.requiresZip());
 
         FileFilter joz = new ExtensionFileFilter("joz", "joz", tr("Session file (archive) (*.joz)"));
         FileFilter jos = new ExtensionFileFilter("jos", "jos", tr("Session file (*.jos)"));
@@ -155,12 +150,10 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
             }
         }
 
-        List<Layer> layersOut = new ArrayList<>();
-        for (Layer layer : layers) {
-            if (exporters.get(layer) == null || !exporters.get(layer).shallExport()) continue;
-            // TODO: resolve dependencies for layers excluded by the user
-            layersOut.add(layer);
-        }
+        // TODO: resolve dependencies for layers excluded by the user
+        List<Layer> layersOut = layers.stream()
+                .filter(layer -> exporters.get(layer) != null && exporters.get(layer).shallExport())
+                .collect(Collectors.toList());
 
         int active = -1;
         Layer activeLayer = getLayerManager().getActiveLayer();

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
@@ -216,16 +217,10 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
      * upper left corner is close to <code>p</code>.
      */
     protected boolean hasEditorWithCloseUpperLeftCorner(Point p, RelationEditor thisEditor) {
-        for (RelationEditor editor: openDialogs.values()) {
-            if (editor == thisEditor) {
-                continue;
-            }
-            Point corner = editor.getLocation();
-            if (p.x >= corner.x -5 && corner.x + 5 >= p.x
-                    && p.y >= corner.y -5 && corner.y + 5 >= p.y)
-                return true;
-        }
-        return false;
+        return openDialogs.values().stream()
+                .filter(editor -> editor != thisEditor)
+                .map(Component::getLocation)
+                .anyMatch(corner -> p.x >= corner.x - 5 && corner.x + 5 >= p.x && p.y >= corner.y - 5 && corner.y + 5 >= p.y);
     }
 
     /**

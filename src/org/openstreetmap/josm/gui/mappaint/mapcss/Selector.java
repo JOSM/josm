@@ -234,12 +234,7 @@ public interface Selector {
             }
 
             private boolean firstAndLastOnly() {
-                for (Condition c : link.conds) {
-                    if (!(c instanceof IndexCondition) || !((IndexCondition) c).isFirstOrLast) {
-                        return false;
-                    }
-                }
-                return true;
+                return link.conds.stream().allMatch(c -> c instanceof IndexCondition && ((IndexCondition) c).isFirstOrLast);
             }
 
             @Override

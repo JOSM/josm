@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
@@ -15,8 +15,6 @@ import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.actions.AbstractMergeAction;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.IGpxTrack;
-import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -90,14 +88,11 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
     }
 
     PrecacheWmsTask createTask() {
-        List<LatLon> points = new ArrayList<>();
-        for (IGpxTrack trk : data.tracks) {
-            for (IGpxTrackSegment segment : trk.getSegments()) {
-                for (WayPoint p : segment.getWayPoints()) {
-                    points.add(p.getCoor());
-                }
-            }
-        }
+        List<LatLon> points = data.tracks.stream()
+                .flatMap(trk -> trk.getSegments().stream())
+                .flatMap(segment -> segment.getWayPoints().stream())
+                .map(WayPoint::getCoor)
+                .collect(Collectors.toList());
         for (WayPoint p : data.waypoints) {
             points.add(p.getCoor());
         }

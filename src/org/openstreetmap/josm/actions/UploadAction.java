@@ -215,10 +215,7 @@ public class UploadAction extends AbstractUploadAction {
         // FIXME: this should become an asynchronous task
         //
         if (apiData != null) {
-            for (UploadHook hook : UPLOAD_HOOKS) {
-                if (!hook.checkUpload(apiData))
-                    return false;
-            }
+            return UPLOAD_HOOKS.stream().allMatch(hook -> hook.checkUpload(apiData));
         }
 
         return true;

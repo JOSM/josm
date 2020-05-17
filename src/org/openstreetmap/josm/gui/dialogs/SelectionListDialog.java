@@ -17,10 +17,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -522,12 +522,10 @@ public class SelectionListDialog extends ToggleDialog {
             }
             if (history.getFirst().equals(selection)) return;
             history.addFirst(selection);
-            for (int i = 1; i < history.size(); ++i) {
-                if (history.get(i).equals(selection)) {
-                    history.remove(i);
-                    break;
-                }
-            }
+            IntStream.range(1, history.size())
+                    .filter(i -> history.get(i).equals(selection))
+                    .findFirst()
+                    .ifPresent(i -> history.remove(i));
             int maxsize = Config.getPref().getInt("select.history-size", SELECTION_HISTORY_SIZE);
             while (history.size() > maxsize) {
                 history.removeLast();
@@ -568,13 +566,10 @@ public class SelectionListDialog extends ToggleDialog {
          * @return chosen elements in the view
          */
         public synchronized Collection<OsmPrimitive> getSelected() {
-            Set<OsmPrimitive> sel = new HashSet<>();
-            for (int i = 0; i < getSize(); i++) {
-                if (selectionModel.isSelectedIndex(i)) {
-                    sel.add(selection.get(i));
-                }
-            }
-            return sel;
+            return IntStream.range(0, getSize())
+                    .filter(selectionModel::isSelectedIndex)
+                    .mapToObj(selection::get)
+                    .collect(Collectors.toSet());
         }
 
         /**

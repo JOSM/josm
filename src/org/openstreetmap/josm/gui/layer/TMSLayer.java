@@ -1,9 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -150,11 +151,10 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     }
 
     private static ScaleList initNativeScaleList() {
-        Collection<Double> scales = new ArrayList<>(AbstractTileSourceLayer.MAX_ZOOM);
-        for (int zoom = AbstractTileSourceLayer.MIN_ZOOM; zoom <= AbstractTileSourceLayer.MAX_ZOOM; zoom++) {
-            double scale = OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, zoom) / OsmMercator.DEFAUL_TILE_SIZE;
-            scales.add(scale);
-        }
+        Collection<Double> scales = IntStream.rangeClosed(AbstractTileSourceLayer.MIN_ZOOM, AbstractTileSourceLayer.MAX_ZOOM)
+                .mapToDouble(zoom -> OsmMercator.EARTH_RADIUS * Math.PI * 2 / Math.pow(2, zoom) / OsmMercator.DEFAUL_TILE_SIZE)
+                .boxed()
+                .collect(Collectors.toList());
         return new ScaleList(scales);
     }
 }

@@ -45,13 +45,7 @@ public class RelationTreeModel implements TreeModel {
      */
     protected int getNumRelationChildren(Relation parent) {
         if (parent == null) return 0;
-        int count = 0;
-        for (RelationMember member : parent.getMembers()) {
-            if (member.isRelation()) {
-                count++;
-            }
-        }
-        return count;
+        return (int) parent.getMembers().stream().filter(RelationMember::isRelation).count();
     }
 
     /**

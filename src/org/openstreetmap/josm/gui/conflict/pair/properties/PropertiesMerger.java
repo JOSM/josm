@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -107,12 +108,9 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
     protected static String referrersToString(List<OsmPrimitive> referrers) {
         if (referrers.isEmpty())
             return tr("(none)");
-        StringBuilder str = new StringBuilder("<html>");
-        for (OsmPrimitive r: referrers) {
-            str.append(Utils.escapeReservedCharactersHTML(r.getDisplayName(DefaultNameFormatter.getInstance()))).append("<br>");
-        }
-        str.append("</html>");
-        return str.toString();
+        return referrers.stream()
+                .map(r -> Utils.escapeReservedCharactersHTML(r.getDisplayName(DefaultNameFormatter.getInstance())) + "<br>")
+                .collect(Collectors.joining("", "<html>", "</html>"));
     }
 
     protected void updateCoordinates() {

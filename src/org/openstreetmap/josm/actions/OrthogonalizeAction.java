@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.JOptionPane;
 
@@ -507,10 +508,8 @@ public final class OrthogonalizeAction extends JosmAction {
          * @throws InvalidUserInputException if selected ways have an angle different from 90 or 180 degrees
          */
         public void calcDirections(Direction pInitialDirection) throws InvalidUserInputException {
-            final EastNorth[] en = new EastNorth[nNode]; // alias: wayNodes.get(i).getEastNorth() ---> en[i]
-            for (int i = 0; i < nNode; i++) {
-                en[i] = wayNodes.get(i).getEastNorth();
-            }
+            // alias: wayNodes.get(i).getEastNorth() ---> en[i]
+            final EastNorth[] en = IntStream.range(0, nNode).mapToObj(i -> wayNodes.get(i).getEastNorth()).toArray(EastNorth[]::new);
             Direction direction = pInitialDirection;
             segDirections[0] = direction;
             for (int i = 0; i < nSeg - 1; i++) {

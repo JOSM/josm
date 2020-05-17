@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.widgets.MultiSplitPane;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -349,11 +350,8 @@ public class DialogsPanel extends JPanel implements Destroyable {
      * map frame; null, if no such dialog exists
      *
      */
-    public <T> T getToggleDialog(Class<T> type) {
-        for (ToggleDialog td : allDialogs) {
-            if (type.isInstance(td))
-                return type.cast(td);
-        }
-        return null;
+    public <T extends ToggleDialog> T getToggleDialog(Class<T> type) {
+        return Utils.filteredCollection(allDialogs, type).stream()
+                .findFirst().orElse(null);
     }
 }

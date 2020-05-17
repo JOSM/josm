@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -407,12 +406,8 @@ public final class ConditionFactory {
 
         @Override
         protected boolean matches(Environment env) {
-            for (Map.Entry<String, String> kv: env.osm.getKeys().entrySet()) {
-                if (keyPattern.matcher(kv.getKey()).find() && pattern.matcher(kv.getValue()).find()) {
-                    return true;
-                }
-            }
-            return false;
+            return env.osm.getKeys().entrySet().stream()
+                    .anyMatch(kv -> keyPattern.matcher(kv.getKey()).find() && pattern.matcher(kv.getValue()).find());
         }
     }
 

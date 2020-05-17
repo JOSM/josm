@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -94,10 +93,7 @@ public class RelationMemberTransferable implements Transferable {
     }
 
     private PrimitiveTransferData getPrimitiveData() {
-        Collection<OsmPrimitive> primitives = new HashSet<>();
-        for (RelationMember member : members) {
-            primitives.add(member.getMember());
-        }
+        Collection<OsmPrimitive> primitives = members.stream().map(RelationMember::getMember).collect(Collectors.toSet());
         return PrimitiveTransferData.getData(primitives);
     }
 

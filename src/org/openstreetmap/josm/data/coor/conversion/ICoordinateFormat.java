@@ -34,4 +34,14 @@ public interface ICoordinateFormat {
      * @return formatted longitude
      */
     String lonToString(ILatLon ll);
+
+    /**
+     * Convert the coordinate to string: latitude + separator + longitude
+     * @param ll the coordinate
+     * @param separator the separator
+     * @return formatted coordinate
+     */
+    default String toString(ILatLon ll, String separator) {
+        return latToString(ll) + separator + lonToString(ll);
+    }
 }

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.IntStream;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -60,11 +61,7 @@ public class LambertProjectionChoice extends ListProjectionChoice {
 
     @Override
     public String[] allCodes() {
-        String[] codes = new String[4];
-        for (int zone = 0; zone < 4; zone++) {
-            codes[zone] = "EPSG:"+(27561+zone);
-        }
-        return codes;
+        return IntStream.range(0, 4).mapToObj(zone -> "EPSG:" + (27561 + zone)).toArray(String[]::new);
     }
 
     @Override

@@ -15,9 +15,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -230,11 +230,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
          * @return The children.
          */
         public Set<OsmPrimitive> getObjectsToDelete() {
-            Set<OsmPrimitive> ret = new HashSet<>();
-            for (RelationToChildReference ref: data) {
-                ret.add(ref.getChild());
-            }
-            return ret;
+            return data.stream().map(RelationToChildReference::getChild).collect(Collectors.toSet());
         }
 
         /**
@@ -250,11 +246,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
          * @return All parent relations of the references
          */
         public Set<OsmPrimitive> getParentRelations() {
-            Set<OsmPrimitive> ret = new HashSet<>();
-            for (RelationToChildReference ref: data) {
-                ret.add(ref.getParent());
-            }
-            return ret;
+            return data.stream().map(RelationToChildReference::getParent).collect(Collectors.toSet());
         }
 
         /**

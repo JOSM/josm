@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringJoiner;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -250,12 +252,10 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
             }
         }
 
-        for (int i = 0; i < getNumResolverTabs(); i++) {
-            if (!getResolver(i).getModel().isResolvedCompletely()) {
-                tpResolvers.setSelectedIndex(i);
-                break;
-            }
-        }
+        IntStream.range(0, getNumResolverTabs())
+                .filter(i -> !getResolver(i).getModel().isResolvedCompletely())
+                .findFirst()
+                .ifPresent(tpResolvers::setSelectedIndex);
     }
 
     protected void setCanceled(boolean canceled) {
@@ -420,7 +420,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
             } else {
                 setIcon(ImageProvider.get("data", "object"));
             }
-            StringBuilder text = new StringBuilder();
+            StringJoiner text = new StringJoiner(", ");
             for (Entry<OsmPrimitiveType, Integer> entry: stat.entrySet()) {
                 OsmPrimitiveType type = entry.getKey();
                 int numPrimitives = entry.getValue() == null ? 0 : entry.getValue();
@@ -434,10 +434,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
                 case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
                 default: throw new AssertionError();
                 }
-                if (text.length() > 0) {
-                    text.append(", ");
-                }
-                text.append(msg);
+                text.add(msg);
             }
             setText(text.toString());
         }

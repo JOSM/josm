@@ -71,11 +71,9 @@ public class UploadLayerTask extends AbstractIOTask {
     }
 
     protected OsmPrimitive getPrimitive(OsmPrimitiveType type, long id) {
-        for (OsmPrimitive p: toUpload) {
-            if (OsmPrimitiveType.from(p) == type && p.getId() == id)
-                return p;
-        }
-        return null;
+        return toUpload.stream()
+                .filter(p -> OsmPrimitiveType.from(p) == type && p.getId() == id)
+                .findFirst().orElse(null);
     }
 
     /**

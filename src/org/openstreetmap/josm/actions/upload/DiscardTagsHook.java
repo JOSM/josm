@@ -26,15 +26,8 @@ public class DiscardTagsHook implements UploadHook {
         List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
         Collection<String> discardableKeys = new HashSet<>(AbstractPrimitive.getDiscardableKeys());
 
-        boolean needsChange = false;
-        OUTER: for (OsmPrimitive osm : objectsToUpload) {
-            for (String key : osm.keySet()) {
-                if (discardableKeys.contains(key)) {
-                    needsChange = true;
-                    break OUTER;
-                }
-            }
-        }
+        boolean needsChange = objectsToUpload.stream().flatMap(osm -> osm.keySet().stream())
+                .anyMatch(discardableKeys::contains);
 
         if (needsChange) {
             Map<String, String> map = new HashMap<>();

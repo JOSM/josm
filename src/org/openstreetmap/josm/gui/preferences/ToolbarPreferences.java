@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -225,11 +226,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
          * @return {@code true} if this action has parameters
          */
         public boolean hasParameters() {
-            if (!(getAction() instanceof ParameterizedAction)) return false;
-            for (Object o: parameters.values()) {
-                if (o != null) return true;
-            }
-            return false;
+            return getAction() instanceof ParameterizedAction && parameters.values().stream().anyMatch(Objects::nonNull);
         }
     }
 

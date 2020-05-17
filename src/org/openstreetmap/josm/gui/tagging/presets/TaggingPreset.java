@@ -62,7 +62,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Link;
 import org.openstreetmap.josm.gui.tagging.presets.items.Optional;
 import org.openstreetmap.josm.gui.tagging.presets.items.PresetLink;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
-import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -70,6 +69,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
@@ -283,21 +283,6 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     }
 
     /**
-     * Returns the tags being directly applied (without UI element) by {@link Key} items
-     *
-     * @return a list of tags
-     */
-    private List<Tag> getDirectlyAppliedTags() {
-        List<Tag> tags = new ArrayList<>();
-        for (TaggingPresetItem item : data) {
-            if (item instanceof Key) {
-                tags.add(((Key) item).asTag());
-            }
-        }
-        return tags;
-    }
-
-    /**
      * Creates a panel for this preset. This includes general information such as name and supported {@link TaggingPresetType types}.
      * This includes the elements from the individual {@link TaggingPresetItem items}.
      *
@@ -316,7 +301,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 pp.add(la);
             }
         }
-        final List<Tag> directlyAppliedTags = getDirectlyAppliedTags();
+        final List<Tag> directlyAppliedTags = Utils.filteredCollection(data, Key.class).stream()
+                .map(Key::asTag)
+                .collect(Collectors.toList());
         if (!directlyAppliedTags.isEmpty()) {
             final JLabel label = new JLabel(ImageProvider.get("pastetags"));
             label.setToolTipText("<html>" + tr("This preset also sets: {0}", Utils.joinAsHtmlUnorderedList(directlyAppliedTags)));
@@ -376,21 +363,16 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * @return {@code true} if a dialog can be shown for this preset
      */
     public boolean isShowable() {
-        for (TaggingPresetItem i : data) {
-            if (!(i instanceof Optional || i instanceof Space || i instanceof Key))
-                return true;
-        }
-        return false;
+        return data.stream().anyMatch(i -> !(i instanceof Optional || i instanceof Space || i instanceof Key));
     }
 
     public String suggestRoleForOsmPrimitive(OsmPrimitive osm) {
         if (roles != null && osm != null) {
-            for (Role i : roles.roles) {
-                if (i.memberExpression != null && i.memberExpression.match(osm)
-                        && (i.types == null || i.types.isEmpty() || i.types.contains(TaggingPresetType.forPrimitive(osm)))) {
-                    return i.key;
-                }
-            }
+            return roles.roles.stream()
+                    .filter(i -> i.memberExpression != null && i.memberExpression.match(osm))
+                    .filter(i -> i.types == null || i.types.isEmpty() || i.types.contains(TaggingPresetType.forPrimitive(osm)))
+                    .map(i -> i.key)
+                    .findFirst().orElse(null);
         }
         return null;
     }
@@ -548,13 +530,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * @return A command that changes the tags.
      */
     public static Command createCommand(Collection<OsmPrimitive> sel, List<Tag> changedTags) {
-        List<Command> cmds = new ArrayList<>();
-        for (Tag tag: changedTags) {
-            ChangePropertyCommand cmd = new ChangePropertyCommand(sel, tag.getKey(), tag.getValue());
-            if (cmd.getObjectsNumber() > 0) {
-                cmds.add(cmd);
-            }
-        }
+        List<Command> cmds = changedTags.stream()
+                .map(tag -> new ChangePropertyCommand(sel, tag.getKey(), tag.getValue()))
+                .filter(cmd -> cmd.getObjectsNumber() > 0)
+                .collect(StreamUtils.toUnmodifiableList());
 
         if (cmds.isEmpty())
             return null;

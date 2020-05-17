@@ -265,12 +265,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         }
         if (syncAudioMarker == null) {
             // find the first audioMarker in this layer
-            for (Marker m : data) {
-                if (m instanceof AudioMarker) {
-                    syncAudioMarker = (AudioMarker) m;
-                    break;
-                }
-            }
+            syncAudioMarker = Utils.filteredCollection(data, AudioMarker.class).stream()
+                    .findFirst().orElse(syncAudioMarker);
         }
         if (syncAudioMarker == null)
             return false;
@@ -491,13 +487,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         public void mousePressed(MouseEvent e) {
             if (e.getButton() != MouseEvent.BUTTON1)
                 return;
-            boolean mousePressedInButton = false;
-            for (Marker mkr : data) {
-                if (mkr.containsPoint(e.getPoint())) {
-                    mousePressedInButton = true;
-                    break;
-                }
-            }
+            boolean mousePressedInButton = data.stream().anyMatch(mkr -> mkr.containsPoint(e.getPoint()));
             if (!mousePressedInButton)
                 return;
             mousePressed = true;

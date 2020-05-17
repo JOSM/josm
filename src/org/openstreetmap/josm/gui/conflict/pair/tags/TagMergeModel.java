@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -84,14 +85,8 @@ public class TagMergeModel extends DefaultTableModel {
      *
      */
     protected void refreshNumUndecidedTags() {
-        int newValue = 0;
-        for (TagMergeItem item: tagMergeItems) {
-            if (MergeDecisionType.UNDECIDED == item.getMergeDecision()) {
-                newValue++;
-            }
-        }
         int oldValue = numUndecidedTags;
-        numUndecidedTags = newValue;
+        numUndecidedTags = getNumUnresolvedConflicts();
         fireNumUndecidedTagsChanged(oldValue, numUndecidedTags);
     }
 
@@ -193,11 +188,8 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     public boolean isResolvedCompletely() {
-        for (TagMergeItem item: tagMergeItems) {
-            if (item.getMergeDecision() == MergeDecisionType.UNDECIDED)
-                return false;
-        }
-        return true;
+        return tagMergeItems.stream()
+                .noneMatch(item -> item.getMergeDecision() == MergeDecisionType.UNDECIDED);
     }
 
     public void decideRemaining(MergeDecisionType decision) {
@@ -208,21 +200,20 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     public int getNumResolvedConflicts() {
-        int n = 0;
-        for (TagMergeItem item: tagMergeItems) {
-            if (item.getMergeDecision() != MergeDecisionType.UNDECIDED) {
-                n++;
-            }
-        }
-        return n;
+        return (int) tagMergeItems.stream()
+                .filter(item -> item.getMergeDecision() != MergeDecisionType.UNDECIDED)
+                .count();
+    }
 
+    public int getNumUnresolvedConflicts() {
+        return (int) tagMergeItems.stream()
+                .filter(item -> item.getMergeDecision() == MergeDecisionType.UNDECIDED)
+                .count();
     }
 
     public int getFirstUndecided(int startIndex) {
-        for (int i = startIndex; i < tagMergeItems.size(); i++) {
-            if (tagMergeItems.get(i).getMergeDecision() == MergeDecisionType.UNDECIDED)
-                return i;
-        }
-        return -1;
+        return IntStream.range(startIndex, tagMergeItems.size())
+                .filter(i -> tagMergeItems.get(i).getMergeDecision() == MergeDecisionType.UNDECIDED)
+                .findFirst().orElse(-1);
     }
 }

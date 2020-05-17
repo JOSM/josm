@@ -11,10 +11,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -250,14 +252,9 @@ public class UploadSelectionDialog extends JDialog {
         public List<OsmPrimitive> getPrimitives(int... indices) {
             if (indices == null || indices.length == 0)
                 return Collections.emptyList();
-            List<OsmPrimitive> ret = new ArrayList<>(indices.length);
-            for (int i: indices) {
-                if (i < 0) {
-                    continue;
-                }
-                ret.add(data.get(i));
-            }
-            return ret;
+            return Arrays.stream(indices).filter(i -> i >= 0)
+                    .mapToObj(i -> data.get(i))
+                    .collect(Collectors.toList());
         }
     }
 

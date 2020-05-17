@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.corrector;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -69,15 +70,10 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     private interface IStringSwitcher extends Function<String, String> {
 
         static IStringSwitcher combined(IStringSwitcher... switchers) {
-            return key -> {
-                for (IStringSwitcher switcher : switchers) {
-                    final String newKey = switcher.apply(key);
-                    if (!key.equals(newKey)) {
-                        return newKey;
-                    }
-                }
-                return key;
-            };
+            return key -> Arrays.stream(switchers)
+                    .map(switcher -> switcher.apply(key))
+                    .filter(newKey -> !key.equals(newKey))
+                    .findFirst().orElse(key);
         }
     }
 
@@ -301,11 +297,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     }
 
     private static boolean ignoreKeyForCorrection(String key) {
-        for (Pattern ignoredKey : IGNORED_KEYS) {
-            if (ignoredKey.matcher(key).matches()) {
-                return true;
-            }
-        }
-        return false;
+        return IGNORED_KEYS.stream()
+                .anyMatch(ignoredKey -> ignoredKey.matcher(key).matches());
     }
 }

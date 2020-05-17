@@ -5,11 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.swing.JTable;
 
@@ -41,10 +39,8 @@ public class CopyAllKeyValueAction extends AbstractCopyAction {
 
     @Override
     protected Collection<String> getString(Tagged p, String key) {
-        List<String> r = new LinkedList<>();
-        for (Entry<String, String> kv : p.getKeys().entrySet()) {
-            r.add(new Tag(kv.getKey(), kv.getValue()).toString());
-        }
-        return r;
+        return p.getKeys().entrySet().stream()
+                .map(kv -> new Tag(kv.getKey(), kv.getValue()).toString())
+                .collect(Collectors.toList());
     }
 }

@@ -70,10 +70,9 @@ import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
+import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.data.gpx.GpxTimeOffset;
 import org.openstreetmap.josm.data.gpx.GpxTimezone;
-import org.openstreetmap.josm.data.gpx.IGpxTrack;
-import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -1262,22 +1261,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
         // Init variables
         long firstExifDate = imgs.get(0).getExifTime().getTime();
 
-        long firstGPXDate = -1;
         // Finds first GPX point
-        outer: for (IGpxTrack trk : gpx.tracks) {
-            for (IGpxTrackSegment segment : trk.getSegments()) {
-                for (WayPoint curWp : segment.getWayPoints()) {
-                    if (curWp.hasDate()) {
-                        firstGPXDate = curWp.getTimeInMillis();
-                        break outer;
-                    }
-                }
-            }
-        }
-
-        if (firstGPXDate < 0) {
-            throw new NoGpxTimestamps();
-        }
+        long firstGPXDate = gpx.tracks.stream()
+                .flatMap(trk -> trk.getSegments().stream())
+                .flatMap(segment -> segment.getWayPoints().stream())
+                .filter(WayPoint::hasDate)
+                .map(WayPoint::getTimeInMillis)
+                .findFirst()
+                .orElseThrow(NoGpxTimestamps::new);
 
         return GpxTimeOffset.milliseconds(firstExifDate - firstGPXDate).splitOutTimezone();
     }
@@ -1338,26 +1329,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
      * @return matching images
      */
     private List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
-        List<ImageEntry> dateImgLst = new ArrayList<>(yLayer.getImageData().getImages().size());
-        for (ImageEntry e : yLayer.getImageData().getImages()) {
-            if (!e.hasExifTime()) {
-                continue;
-            }
-
-            if (e.getExifCoor() != null && !exif) {
-                continue;
-            }
-
-            if (!tagged && e.isTagged() && e.getExifCoor() == null) {
-                continue;
-            }
-
-            dateImgLst.add(e);
-        }
-
-        dateImgLst.sort(Comparator.comparing(ImageEntry::getExifTime));
-
-        return dateImgLst;
+        return yLayer.getImageData().getImages().stream()
+                .filter(GpxImageEntry::hasExifTime)
+                .filter(e -> e.getExifCoor() == null || exif)
+                .filter(e -> tagged || !e.isTagged() || e.getExifCoor() != null)
+                .sorted(Comparator.comparing(ImageEntry::getExifTime))
+                .collect(Collectors.toList());
     }
 
     private GpxDataWrapper selectedGPX(boolean complain) {

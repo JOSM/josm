@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -202,12 +203,8 @@ public final class CustomConfigurator {
      * @param pattern - Regexp pattern forh preferences keys you need to export (".*imagery.*", for example)
      */
     public static void exportPreferencesKeysByPatternToFile(String fileName, boolean append, String pattern) {
-        List<String> keySet = new ArrayList<>();
         Map<String, Setting<?>> allSettings = Preferences.main().getAllSettings();
-        for (String key: allSettings.keySet()) {
-            if (key.matches(pattern))
-                keySet.add(key);
-        }
+        List<String> keySet = allSettings.keySet().stream().filter(key -> key.matches(pattern)).collect(Collectors.toList());
         exportPreferencesKeysToFile(fileName, append, keySet);
     }
 

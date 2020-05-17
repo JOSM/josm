@@ -105,12 +105,9 @@ public final class TagConflictResolutionUtil {
             tc.removeByKey(key);
         }
 
-        Collection<OsmPrimitive> taggedPrimitives = new ArrayList<>();
-        for (OsmPrimitive p: merged) {
-            if (p.isTagged()) {
-                taggedPrimitives.add(p);
-            }
-        }
+        Collection<OsmPrimitive> taggedPrimitives = merged.stream()
+                .filter(OsmPrimitive::isTagged)
+                .collect(Collectors.toList());
         if (taggedPrimitives.size() <= 1)
             return;
 

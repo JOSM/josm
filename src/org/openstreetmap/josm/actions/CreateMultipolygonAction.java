@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -446,15 +447,9 @@ public class CreateMultipolygonAction extends JosmAction {
         boolean moveTags = Config.getPref().getBoolean("multipoly.movetags", true);
 
         for (Entry<String, String> entry : values.entrySet()) {
-            List<OsmPrimitive> affectedWays = new ArrayList<>();
             String key = entry.getKey();
             String value = entry.getValue();
-
-            for (Way way : innerWays) {
-                if (value.equals(way.get(key))) {
-                    affectedWays.add(way);
-                }
-            }
+            List<OsmPrimitive> affectedWays = innerWays.stream().filter(way -> value.equals(way.get(key))).collect(Collectors.toList());
 
             if (moveTags) {
                 // remove duplicated tags from outer ways

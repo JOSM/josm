@@ -10,10 +10,11 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
@@ -79,12 +80,9 @@ public class PreferencesTable extends JTable {
      * @return newly created list of PrefEntry
      */
     public List<PrefEntry> getSelectedItems() {
-        List<PrefEntry> entries = new ArrayList<>();
-        for (int row : getSelectedRows()) {
-            PrefEntry p = (PrefEntry) model.getValueAt(row, -1);
-            entries.add(p);
-        }
-        return entries;
+        return Arrays.stream(getSelectedRows())
+                .mapToObj(row -> (PrefEntry) model.getValueAt(row, -1))
+                .collect(Collectors.toList());
     }
 
     /**

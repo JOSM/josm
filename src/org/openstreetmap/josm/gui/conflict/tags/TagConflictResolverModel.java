@@ -94,13 +94,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
         if (showTagsWithConflictsOnly) {
             keys.retainAll(keysWithConflicts);
             if (showTagsWithMultiValuesOnly) {
-                Set<String> keysWithMultiValues = new HashSet<>();
-                for (String key: keys) {
-                    if (decisions.get(key).canKeepAll()) {
-                        keysWithMultiValues.add(key);
-                    }
-                }
-                keys.retainAll(keysWithMultiValues);
+                keys.removeIf(key -> !decisions.get(key).canKeepAll());
             }
             for (String key: tags.getKeys()) {
                 if (!decisions.get(key).isDecided()) {

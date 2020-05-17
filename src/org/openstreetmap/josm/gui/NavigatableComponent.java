@@ -26,6 +26,7 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 
 import javax.swing.JComponent;
@@ -1137,11 +1138,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 }
                 if (ntref == null && preferredRefs != null && Utils.equalsEpsilon(distSq, minDistSq)) {
                     List<OsmPrimitive> ndRefs = nd.getReferrers();
-                    for (OsmPrimitive ref: preferredRefs) {
-                        if (ndRefs.contains(ref)) {
-                            ntref = nd;
-                            break;
-                        }
+                    if (preferredRefs.stream().anyMatch(ndRefs::contains)) {
+                        ntref = nd;
                     }
                 }
                 // find the nearest newest node that is within about the same
@@ -1385,16 +1383,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<Way> getNearestWays(Point p,
             Collection<Way> ignore, Predicate<OsmPrimitive> predicate) {
-        List<Way> nearestList = new ArrayList<>();
         Set<Way> wset = new HashSet<>();
 
-        for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
-            for (WaySegment ws : wss) {
-                if (wset.add(ws.way)) {
-                    nearestList.add(ws.way);
-                }
-            }
-        }
+        List<Way> nearestList = getNearestWaySegmentsImpl(p, predicate).values().stream()
+                .flatMap(Collection::stream)
+                .filter(ws -> wset.add(ws.way))
+                .map(ws -> ws.way)
+                .collect(Collectors.toList());
         if (ignore != null) {
             nearestList.removeAll(ignore);
         }
@@ -1598,33 +1593,24 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final List<OsmPrimitive> getAllNearest(Point p,
             Collection<OsmPrimitive> ignore, Predicate<OsmPrimitive> predicate) {
-        List<OsmPrimitive> nearestList = new ArrayList<>();
         Set<Way> wset = new HashSet<>();
 
         // add nearby ways
-        for (List<WaySegment> wss : getNearestWaySegmentsImpl(p, predicate).values()) {
-            for (WaySegment ws : wss) {
-                if (wset.add(ws.way)) {
-                    nearestList.add(ws.way);
-                }
-            }
-        }
+        List<OsmPrimitive> nearestList = getNearestWaySegmentsImpl(p, predicate).values().stream()
+                .flatMap(Collection::stream)
+                .filter(ws -> wset.add(ws.way))
+                .map(ws -> ws.way)
+                .collect(Collectors.toList());
 
         // add nearby nodes
-        for (List<Node> nlist : getNearestNodesImpl(p, predicate).values()) {
-            nearestList.addAll(nlist);
-        }
+        getNearestNodesImpl(p, predicate).values()
+                .forEach(nearestList::addAll);
 
         // add parent relations of nearby nodes and ways
-        Set<OsmPrimitive> parentRelations = new HashSet<>();
-        for (OsmPrimitive o : nearestList) {
-            for (OsmPrimitive r : o.getReferrers()) {
-                if (r instanceof Relation && predicate.test(r)) {
-                    parentRelations.add(r);
-                }
-            }
-        }
-        nearestList.addAll(parentRelations);
+        nearestList.stream()
+                .flatMap(o -> o.getReferrers().stream())
+                .filter(r -> r instanceof Relation && predicate.test(r))
+                .forEach(nearestList::add);
 
         if (ignore != null) {
             nearestList.removeAll(ignore);

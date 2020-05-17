@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -443,14 +444,9 @@ public final class ExpressionFactory {
 
         @Override
         public String toString() {
-            StringBuilder b = new StringBuilder("ArrayFunction~");
-            b.append(m.getName()).append('(');
-            for (int i = 0; i < args.size(); ++i) {
-                if (i > 0) b.append(',');
-                b.append(arrayComponentType).append(' ').append(args.get(i));
-            }
-            b.append(')');
-            return b.toString();
+            return args.stream()
+                    .map(arg -> arrayComponentType + " " + arg)
+                    .collect(Collectors.joining(",", "ArrayFunction~" + m.getName() + '(', ")"));
         }
     }
 }

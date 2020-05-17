@@ -211,9 +211,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 preset.nameTemplate.appendText(name, (TemplateEngineDataProvider) node);
             }
             if (node.isLatLonKnown() && Config.getPref().getBoolean("osm-primitives.showcoor")) {
-                name.append(" \u200E(")
-                    .append(CoordinateFormatManager.getDefaultFormat().latToString(node)).append(", ")
-                    .append(CoordinateFormatManager.getDefaultFormat().lonToString(node)).append(')');
+                name.append(" \u200E(");
+                name.append(CoordinateFormatManager.getDefaultFormat().toString(node, ", "));
+                name.append(')');
             }
         }
         decorateNameWithId(name, node);

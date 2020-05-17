@@ -3,8 +3,10 @@ package org.openstreetmap.josm.gui.preferences.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.tools.Utils;
 
@@ -56,11 +58,7 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
-        for (String code2 : CODES) {
-            if (code.equals(code2))
-                return Collections.singleton(code2);
-        }
-        return null;
+        return Arrays.stream(CODES).filter(code::equals).findFirst().map(Collections::singleton).orElse(null);
     }
 
     @Override
@@ -70,11 +68,8 @@ public class PuwgProjectionChoice extends ListProjectionChoice {
 
     @Override
     protected int zoneToIndex(String zone) {
-        for (int i = 0; i < CODES.length; i++) {
-            if (zone.equals(CODES[i])) {
-                return i;
-            }
-        }
-        return defaultIndex;
+        return IntStream.range(0, CODES.length)
+                .filter(i -> zone.equals(CODES[i]))
+                .findFirst().orElse(defaultIndex);
     }
 }

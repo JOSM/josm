@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.JList;
@@ -440,10 +441,9 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
         public synchronized int indexOf(OsmPrimitive my) {
             if (conflicts != null) {
-                for (int i = 0; i < conflicts.size(); i++) {
-                    if (conflicts.get(i).isMatchingMy(my))
-                        return i;
-                }
+                return IntStream.range(0, conflicts.size())
+                        .filter(i -> conflicts.get(i).isMatchingMy(my))
+                        .findFirst().orElse(-1);
             }
             return -1;
         }

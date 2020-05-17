@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ServiceConfigurationError;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.filechooser.FileFilter;
 
@@ -247,12 +248,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
         updateAllFormatsImporter();
-        List<ExtensionFileFilter> filters = new LinkedList<>();
-        for (FileImporter importer : importers) {
-            filters.add(importer.filter);
-        }
-        sort(filters);
-        return filters;
+        return importers.stream()
+                .map(importer -> importer.filter)
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -325,12 +324,9 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static void applyChoosableImportFileFilters(
             AbstractFileChooser fileChooser, String extension, Predicate<ExtensionFileFilter> additionalTypes) {
-        for (ExtensionFileFilter filter: getImportExtensionFileFilters()) {
-
-            if (additionalTypes.test(filter) || filter.acceptName("file."+extension)) {
-                fileChooser.addChoosableFileFilter(filter);
-            }
-        }
+        getImportExtensionFileFilters().stream()
+                .filter(filter -> additionalTypes.test(filter) || filter.acceptName("file."+extension))
+                .forEach(fileChooser::addChoosableFileFilter);
         fileChooser.setFileFilter(getDefaultImportExtensionFileFilter(extension));
     }
 

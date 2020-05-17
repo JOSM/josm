@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
@@ -869,14 +871,11 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
          * @return the list of currently selected layers. Never null, but may be empty.
          */
         public List<Layer> getSelectedLayers() {
-            List<Layer> selected = new ArrayList<>();
             List<Layer> layers = getLayers();
-            for (int i = 0; i < layers.size(); i++) {
-                if (selectionModel.isSelectedIndex(i)) {
-                    selected.add(layers.get(i));
-                }
-            }
-            return selected;
+            return IntStream.range(0, layers.size())
+                    .filter(selectionModel::isSelectedIndex)
+                    .mapToObj(layers::get)
+                    .collect(Collectors.toList());
         }
 
         /**
@@ -1018,19 +1017,12 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
          * for <code>source</code>. Never null, but can be empty.
          */
         public List<Layer> getPossibleMergeTargets(Layer source) {
-            List<Layer> targets = new ArrayList<>();
             if (source == null) {
-                return targets;
+                return new ArrayList<>();
             }
-            for (Layer target : getLayers()) {
-                if (source == target) {
-                    continue;
-                }
-                if (target.isMergable(source) && source.isMergable(target)) {
-                    targets.add(target);
-                }
-            }
-            return targets;
+            return getLayers().stream()
+                    .filter(target -> source != target && target.isMergable(source) && source.isMergable(target))
+                    .collect(Collectors.toList());
         }
 
         /**

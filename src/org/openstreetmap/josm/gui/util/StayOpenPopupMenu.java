@@ -55,14 +55,11 @@ public class StayOpenPopupMenu extends JPopupMenu {
                 Class<?> appContextClass = Class.forName("sun.awt.AppContext");
                 Field tableField = appContextClass.getDeclaredField("table");
                 ReflectionUtils.setObjectsAccessible(tableField);
-                Object mouseGrabber = null;
-                for (Entry<?, ?> e : ((Map<?, ?>)
-                        tableField.get(appContextClass.getMethod("getAppContext").invoke(appContextClass))).entrySet()) {
-                    if (MOUSE_GRABBER_KEY.equals(Objects.toString(e.getKey()))) {
-                        mouseGrabber = e.getValue();
-                        break;
-                    }
-                }
+                Object mouseGrabber = ((Map<?, ?>) tableField.get(appContextClass.getMethod("getAppContext").invoke(appContextClass)))
+                        .entrySet().stream()
+                        .filter(e -> MOUSE_GRABBER_KEY.equals(Objects.toString(e.getKey())))
+                        .map(Entry::getValue)
+                        .findFirst().orElse(null);
                 final ChangeListener changeListener = (ChangeListener) mouseGrabber;
                 final AWTEventListener awtEventListener = (AWTEventListener) mouseGrabber;
                 final MenuSelectionManager msm = MenuSelectionManager.defaultManager();

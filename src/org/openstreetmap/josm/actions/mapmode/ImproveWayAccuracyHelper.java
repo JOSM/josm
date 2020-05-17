@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.actions.mapmode;
 
 import java.awt.Point;
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
@@ -41,18 +41,11 @@ final class ImproveWayAccuracyHelper {
         }
 
         Node node = mv.getNearestNode(p, OsmPrimitive::isSelectable);
-        Way candidate = null;
 
         if (node != null) {
-            final Collection<OsmPrimitive> candidates = node.getReferrers();
-            for (OsmPrimitive refferer : candidates) {
-                if (refferer instanceof Way) {
-                    candidate = (Way) refferer;
-                    break;
-                }
-            }
-            if (candidate != null) {
-                return candidate;
+            Optional<Way> candidate = node.referrers(Way.class).findFirst();
+            if (candidate.isPresent()) {
+                return candidate.get();
             }
         }
 

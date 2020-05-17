@@ -7,12 +7,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTaskList;
-import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.NetworkManager;
@@ -57,10 +56,9 @@ public class UpdateDataAction extends JosmAction {
         if (!isEnabled() || editLayer == null || !editLayer.isDownloadable())
             return;
 
-        List<Area> areas = new ArrayList<>();
-        for (DataSource ds : editLayer.data.getDataSources()) {
-            areas.add(new Area(ds.bounds.asRect()));
-        }
+        List<Area> areas = editLayer.data.getDataSources().stream()
+                .map(ds -> new Area(ds.bounds.asRect()))
+                .collect(Collectors.toList());
 
         // The next two blocks removes every intersection from every DataSource Area
         // This prevents downloading the same data numerous times at intersections
@@ -77,13 +75,9 @@ public class UpdateDataAction extends JosmAction {
             }
         }
 
-        List<Area> areasToDownload = new ArrayList<>();
-        for (Area a : areas) {
-            if (a.isEmpty()) {
-                continue;
-            }
-            areasToDownload.add(a);
-        }
+        List<Area> areasToDownload = areas.stream()
+                .filter(a -> !a.isEmpty())
+                .collect(Collectors.toList());
 
         if (areasToDownload.isEmpty()) {
             // no bounds defined in the dataset? we update all primitives in the data set using a series of multi fetch requests

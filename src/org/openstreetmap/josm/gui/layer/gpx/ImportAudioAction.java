@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -92,23 +93,11 @@ public class ImportAudioAction extends AbstractAction {
                 JFileChooser.FILES_ONLY, "markers.lastaudiodirectory");
         if (fc != null) {
             File[] sel = fc.getSelectedFiles();
-            // sort files in increasing order of timestamp (this is the end time, but so
-            // long as they don't overlap, that's fine)
-            if (sel.length > 1) {
-                Arrays.sort(sel, Comparator.comparingLong(File::lastModified));
-            }
-            StringBuilder names = new StringBuilder();
-            for (File file : sel) {
-                if (names.length() == 0) {
-                    names.append(" (");
-                } else {
-                    names.append(", ");
-                }
-                names.append(file.getName());
-            }
-            if (names.length() > 0) {
-                names.append(')');
-            }
+            String names = Arrays.stream(sel)
+                    // sort files in increasing order of timestamp (this is the end time, but so long as they don't overlap, that's fine)
+                    .sorted(Comparator.comparingLong(File::lastModified))
+                    .map(File::getName)
+                    .collect(Collectors.joining(", ", " (", ")"));
             MarkerLayer ml = new MarkerLayer(new GpxData(),
                     tr("Audio markers from {0}", layer.getName()) + names, layer.getAssociatedFile(), layer);
             double firstStartTime = sel[0].lastModified() / 1000.0 - AudioUtil.getCalibratedDuration(sel[0]);

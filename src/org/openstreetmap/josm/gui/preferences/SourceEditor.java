@@ -37,6 +37,8 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -614,13 +616,10 @@ public abstract class SourceEditor extends JPanel {
          * @return the selected sources
          */
         public List<ExtendedSourceEntry> getSelected() {
-            List<ExtendedSourceEntry> ret = new ArrayList<>();
-            for (int i = 0; i < data.size(); i++) {
-                if (selectionModel.isSelectedIndex(i)) {
-                    ret.add(data.get(i));
-                }
-            }
-            return ret;
+            return IntStream.range(0, data.size())
+                    .filter(selectionModel::isSelectedIndex)
+                    .mapToObj(data::get)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -728,13 +727,10 @@ public abstract class SourceEditor extends JPanel {
          * @param idxs indexes to remove
          */
         public void removeIdxs(Collection<Integer> idxs) {
-            List<SourceEntry> newData = new ArrayList<>();
-            for (int i = 0; i < data.size(); ++i) {
-                if (!idxs.contains(i)) {
-                    newData.add(data.get(i));
-                }
-            }
-            data = newData;
+            data = IntStream.range(0, data.size())
+                    .filter(i -> !idxs.contains(i))
+                    .mapToObj(i -> data.get(i))
+                    .collect(Collectors.toList());
             fireTableDataChanged();
         }
 

@@ -8,10 +8,10 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
@@ -444,13 +444,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
 
         @Override
         public List<MultikeyInfo> getMultikeyCombinations() {
-            List<MultikeyInfo> result = new ArrayList<>();
-
-            for (int i = 0; i < filterModel.getRowCount(); i++) {
-                result.add(new MultikeyInfo(i, filterModel.getValue(i).text));
-            }
-
-            return result;
+            return IntStream.range(0, filterModel.getRowCount())
+                    .mapToObj(i -> new MultikeyInfo(i, filterModel.getValue(i).text))
+                    .collect(Collectors.toList());
         }
 
         protected final boolean isLastFilterValid() {

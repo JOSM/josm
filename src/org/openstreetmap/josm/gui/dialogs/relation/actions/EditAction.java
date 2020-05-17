@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -39,14 +39,10 @@ public class EditAction extends AbstractRelationEditorAction {
     }
 
     protected Collection<RelationMember> getMembersForCurrentSelection(Relation r) {
-        Collection<RelationMember> members = new HashSet<>();
         Collection<OsmPrimitive> selection = getLayer().data.getSelected();
-        for (RelationMember member: r.getMembers()) {
-            if (selection.contains(member.getMember())) {
-                members.add(member);
-            }
-        }
-        return members;
+        return r.getMembers().stream()
+                .filter(member -> selection.contains(member.getMember()))
+                .collect(Collectors.toSet());
     }
 
     @Override

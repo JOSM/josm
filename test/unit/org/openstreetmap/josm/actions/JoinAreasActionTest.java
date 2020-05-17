@@ -233,13 +233,10 @@ public class JoinAreasActionTest {
         if (r1.getMembersCount() != r2.getMembersCount()) return false;
         Set<RelationMember> matchCandidates = new HashSet<>(r2.getMembers());
         for (RelationMember rm : r1.getMembers()) {
-            RelationMember matched = null;
-            for (RelationMember cand : matchCandidates) {
-                if (!rm.getRole().equals(cand.getRole())) continue;
-                if (!isSemanticallyEqual(rm.getMember(), cand.getMember())) continue;
-                matched = cand;
-                break;
-            }
+            RelationMember matched = matchCandidates.stream()
+                    .filter(m -> rm.getRole().equals(m.getRole()))
+                    .filter(m -> isSemanticallyEqual(rm.getMember(), m.getMember()))
+                    .findFirst().orElse(null);
             if (matched == null) return false;
             matchCandidates.remove(matched);
         }

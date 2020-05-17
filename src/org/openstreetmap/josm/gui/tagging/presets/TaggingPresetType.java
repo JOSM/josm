@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
+import java.util.Arrays;
+
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 
@@ -77,11 +79,8 @@ public enum TaggingPresetType {
      * @return the {@code TaggingPresetType} from {@code type}
      */
     public static TaggingPresetType fromString(String type) {
-        for (TaggingPresetType t : TaggingPresetType.values()) {
-            if (t.getName().equals(type)) {
-                return t;
-            }
-        }
-        return null;
+        return Arrays.stream(TaggingPresetType.values())
+                .filter(t -> t.getName().equals(type))
+                .findFirst().orElse(null);
     }
 }

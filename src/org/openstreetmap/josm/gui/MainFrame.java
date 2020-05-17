@@ -13,8 +13,10 @@ import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -82,20 +84,18 @@ public class MainFrame extends JFrame {
 
         setJMenuBar(menu);
         geometry.applySafe(this);
-        List<Image> l = new LinkedList<>();
-        for (String file : new String[] {
+        List<Image> l = Stream.of(
                 /* ICON */ "logo_16x16x32",
                 /* ICON */ "logo_16x16x8",
                 /* ICON */ "logo_32x32x32",
                 /* ICON */ "logo_32x32x8",
                 /* ICON */ "logo_48x48x32",
                 /* ICON */ "logo_48x48x8",
-                /* ICON */ "logo"}) {
-            ImageIcon img = ImageProvider.getIfAvailable(file);
-            if (img != null) {
-                l.add(img.getImage());
-            }
-        }
+                /* ICON */ "logo")
+                .map(ImageProvider::getIfAvailable)
+                .filter(Objects::nonNull)
+                .map(ImageIcon::getImage)
+                .collect(Collectors.toList());
         setIconImages(l);
         addWindowListener(new ExitWindowAdapter());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

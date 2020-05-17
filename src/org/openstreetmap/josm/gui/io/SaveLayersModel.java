@@ -5,8 +5,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -119,27 +121,19 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersWithoutFilesAndSaveRequest() {
-        List<SaveLayerInfo> ret = new ArrayList<>();
-        if (layerInfo != null) {
-            for (SaveLayerInfo info: layerInfo) {
-                if (info.isDoSaveToFile() && info.getFile() == null) {
-                    ret.add(info);
-                }
-            }
+        if (layerInfo == null) {
+            return Collections.emptyList();
         }
-        return ret;
+        return layerInfo.stream().filter(info -> info.isDoSaveToFile() && info.getFile() == null).collect(Collectors.toList());
     }
 
     public List<SaveLayerInfo> getLayersWithIllegalFilesAndSaveRequest() {
-        List<SaveLayerInfo> ret = new ArrayList<>();
-        if (layerInfo != null) {
-            for (SaveLayerInfo info: layerInfo) {
-                if (info.isDoSaveToFile() && info.getFile() != null && info.getFile().exists() && !info.getFile().canWrite()) {
-                    ret.add(info);
-                }
-            }
+        if (layerInfo == null) {
+            return Collections.emptyList();
         }
-        return ret;
+        return layerInfo.stream()
+                .filter(info -> info.isDoSaveToFile() && info.getFile() != null && info.getFile().exists() && !info.getFile().canWrite())
+                .collect(Collectors.toList());
     }
 
     public List<SaveLayerInfo> getLayersWithConflictsAndUploadRequest() {
@@ -156,27 +150,17 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public List<SaveLayerInfo> getLayersToUpload() {
-        List<SaveLayerInfo> ret = new ArrayList<>();
-        if (layerInfo != null) {
-            for (SaveLayerInfo info: layerInfo) {
-                if (info.isDoUploadToServer()) {
-                    ret.add(info);
-                }
-            }
+        if (layerInfo == null) {
+            return Collections.emptyList();
         }
-        return ret;
+        return layerInfo.stream().filter(SaveLayerInfo::isDoUploadToServer).collect(Collectors.toList());
     }
 
     public List<SaveLayerInfo> getLayersToSave() {
-        List<SaveLayerInfo> ret = new ArrayList<>();
-        if (layerInfo != null) {
-            for (SaveLayerInfo info: layerInfo) {
-                if (info.isDoSaveToFile()) {
-                    ret.add(info);
-                }
-            }
+        if (layerInfo == null) {
+            return Collections.emptyList();
         }
-        return ret;
+        return layerInfo.stream().filter(SaveLayerInfo::isDoSaveToFile).collect(Collectors.toList());
     }
 
     public void setUploadState(AbstractModifiableLayer layer, UploadOrSaveState state) {
@@ -196,11 +180,9 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public SaveLayerInfo getSaveLayerInfo(AbstractModifiableLayer layer) {
-        for (SaveLayerInfo info: this.layerInfo) {
-            if (info.getLayer() == layer)
-                return info;
-        }
-        return null;
+        return this.layerInfo.stream()
+                .filter(info -> info.getLayer() == layer)
+                .findFirst().orElse(null);
     }
 
     public void resetSaveAndUploadState() {
@@ -221,24 +203,14 @@ public class SaveLayersModel extends DefaultTableModel {
     }
 
     public int getNumCancel() {
-        int ret = 0;
-        for (SaveLayerInfo info: layerInfo) {
-            if (UploadOrSaveState.CANCELED == info.getSaveState()
-                    || UploadOrSaveState.CANCELED == info.getUploadState()) {
-                ret++;
-            }
-        }
-        return ret;
+        return (int) layerInfo.stream()
+                .filter(info -> UploadOrSaveState.CANCELED == info.getSaveState() || UploadOrSaveState.CANCELED == info.getUploadState())
+                .count();
     }
 
     public int getNumFailed() {
-        int ret = 0;
-        for (SaveLayerInfo info: layerInfo) {
-            if (UploadOrSaveState.FAILED == info.getSaveState()
-                    || UploadOrSaveState.FAILED == info.getUploadState()) {
-                ret++;
-            }
-        }
-        return ret;
+        return (int) layerInfo.stream()
+                .filter(info -> UploadOrSaveState.FAILED == info.getSaveState() || UploadOrSaveState.FAILED == info.getUploadState())
+                .count();
     }
 }

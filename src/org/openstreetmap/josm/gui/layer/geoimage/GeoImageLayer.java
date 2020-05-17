@@ -796,14 +796,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         if (mapMode instanceof SelectAction || mapMode instanceof SelectLassoAction) {
             return true;
         }
-        if (supportedMapModes != null) {
-            for (MapMode supmmode: supportedMapModes) {
-                if (mapMode == supmmode) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return supportedMapModes != null && supportedMapModes.stream().anyMatch(supmmode -> mapMode == supmmode);
     }
 
     @Override

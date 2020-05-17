@@ -22,6 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -330,10 +332,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 if (requiresRestart)
                     return requiresRestart;
             }
-            for (PluginInformation pi : model.getNewlyActivatedPlugins()) {
-                if (!pi.canloadatruntime)
-                    return true;
-            }
+            return model.getNewlyActivatedPlugins().stream().anyMatch(pi -> !pi.canloadatruntime);
         }
         return false;
     }
@@ -435,13 +434,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             final Runnable pluginDownloadContinuation = () -> {
                 if (pluginDownloadTask.isCanceled())
                     return;
-                boolean restartRequired = false;
-                for (PluginInformation pi : pluginDownloadTask.getDownloadedPlugins()) {
-                    if (!model.getNewlyActivatedPlugins().contains(pi) || !pi.canloadatruntime) {
-                        restartRequired = true;
-                        break;
-                    }
-                }
+                boolean restartRequired = pluginDownloadTask.getDownloadedPlugins().stream()
+                        .anyMatch(pi -> !(model.getNewlyActivatedPlugins().contains(pi) && pi.canloadatruntime));
                 notifyDownloadResults(pnlPluginPreferences, pluginDownloadTask, restartRequired);
                 model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
                 model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
@@ -637,11 +631,9 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         protected List<String> getUpdateSites() {
             if (model.getSize() == 0)
                 return Collections.emptyList();
-            List<String> ret = new ArrayList<>(model.getSize());
-            for (int i = 0; i < model.getSize(); i++) {
-                ret.add(model.get(i));
-            }
-            return ret;
+            return IntStream.range(0, model.getSize())
+                    .mapToObj(model::get)
+                    .collect(Collectors.toList());
         }
     }
 

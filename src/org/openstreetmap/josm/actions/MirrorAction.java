@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.StreamUtils;
 
 /**
  * Mirror the selected nodes or ways along the vertical axis
@@ -73,12 +73,9 @@ public final class MirrorAction extends JosmAction {
         }
         double middle = (minEast + maxEast) / 2;
 
-        Collection<Command> cmds = new LinkedList<>();
-
-        for (Node n : nodes) {
-            cmds.add(new MoveCommand(n, 2 * (middle - n.getEastNorth().east()), 0.0));
-        }
-
+        Collection<Command> cmds = nodes.stream()
+                .map(n -> new MoveCommand(n, 2 * (middle - n.getEastNorth().east()), 0.0))
+                .collect(StreamUtils.toUnmodifiableList());
         UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Mirror"), cmds));
     }
 

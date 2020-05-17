@@ -13,6 +13,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -719,7 +720,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      * map frame; null, if no such dialog exists
      *
      */
-    public <T> T getToggleDialog(Class<T> type) {
+    public <T extends ToggleDialog> T getToggleDialog(Class<T> type) {
         return dialogsPanel.getToggleDialog(type);
     }
 
@@ -766,13 +767,9 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      * @return found panel
      */
     public <T> T getTopPanel(Class<T> type) {
-        int n = leftPanel.getComponentCount();
-        for (int i = 0; i < n; i++) {
-            Component c = leftPanel.getComponent(i);
-            if (type.isInstance(c))
-                return type.cast(c);
-        }
-        return null;
+        return Arrays.stream(leftPanel.getComponents())
+                .filter(type::isInstance)
+                .findFirst().map(type::cast).orElse(null);
     }
 
     /**

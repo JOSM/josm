@@ -14,6 +14,7 @@ import java.awt.event.ItemListener;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.net.ProxySelector;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -336,13 +337,9 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      * Saves the current values to the preferences
      */
     public void saveToPreferences() {
-        ProxyPolicy policy = null;
-        for (ProxyPolicy pp: ProxyPolicy.values()) {
-            if (rbProxyPolicy.get(pp).isSelected()) {
-                policy = pp;
-                break;
-            }
-        }
+        ProxyPolicy policy = Arrays.stream(ProxyPolicy.values())
+                .filter(pp -> rbProxyPolicy.get(pp).isSelected())
+                .findFirst().orElse(null);
         Config.getPref().put(DefaultProxySelector.PROXY_POLICY, Optional.ofNullable(policy).orElse(ProxyPolicy.NO_PROXY).getName());
         Config.getPref().put(DefaultProxySelector.PROXY_HTTP_HOST, tfProxyHttpHost.getText());
         Config.getPref().put(DefaultProxySelector.PROXY_HTTP_PORT, tfProxyHttpPort.getText());

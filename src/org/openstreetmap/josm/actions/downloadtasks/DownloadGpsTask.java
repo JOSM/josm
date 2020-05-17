@@ -178,19 +178,15 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             Layer active = MainApplication.getLayerManager().getActiveLayer();
             if (active instanceof GpxLayer && (merge || ((GpxLayer) active).data.fromServer))
                 return (GpxLayer) active;
-            for (GpxLayer l : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class)) {
-                if (merge || l.data.fromServer)
-                    return l;
-            }
-            return null;
+            return MainApplication.getLayerManager().getLayersOfType(GpxLayer.class).stream()
+                    .filter(l -> merge || l.data.fromServer)
+                    .findFirst().orElse(null);
         }
 
         private MarkerLayer findMarkerMergeLayer(GpxLayer fromLayer) {
-            for (MarkerLayer l : MainApplication.getLayerManager().getLayersOfType(MarkerLayer.class)) {
-                if (fromLayer != null && l.fromLayer == fromLayer)
-                    return l;
-            }
-            return null;
+            return MainApplication.getLayerManager().getLayersOfType(MarkerLayer.class).stream()
+                    .filter(l -> fromLayer != null && l.fromLayer == fromLayer)
+                    .findFirst().orElse(null);
         }
 
         @Override

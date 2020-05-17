@@ -23,7 +23,6 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
@@ -454,12 +453,10 @@ public final class Functions {
         if (env.parent == null) {
             if (env.osm != null) {
                 // we don't have a matched parent, so just search all referrers
-                for (IPrimitive parent : env.osm.getReferrers()) {
-                    String value = parent.get(key);
-                    if (value != null) {
-                        return value;
-                    }
-                }
+                return env.osm.getReferrers().stream()
+                        .map(parent -> parent.get(key))
+                        .filter(Objects::nonNull)
+                        .findFirst().orElse(null);
             }
             return null;
         }
@@ -616,9 +613,9 @@ public final class Functions {
         if (env.osm instanceof Relation) {
             List<String> roleList = Arrays.asList(roles);
             Relation rel = (Relation) env.osm;
-            for (RelationMember member : rel.getMembers()) {
-                if (roleList.contains(member.getRole())) rValue++;
-            }
+            rValue = (int) rel.getMembers().stream()
+                    .filter(member -> roleList.contains(member.getRole()))
+                    .count();
         }
         return rValue;
     }
@@ -1161,12 +1158,8 @@ public final class Functions {
      * @since 11247
      */
     public static boolean inside(Environment env, String codes) { // NO_UCD (unused code)
-        for (String code : codes.toUpperCase(Locale.ENGLISH).split(",")) {
-            if (Territories.isIso3166Code(code.trim(), center(env))) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(codes.toUpperCase(Locale.ENGLISH).split(","))
+                .anyMatch(code -> Territories.isIso3166Code(code.trim(), center(env)));
     }
 
     /**

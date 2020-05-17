@@ -4,8 +4,8 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -50,12 +50,9 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         final Relation newRelation = new Relation();
         tagEditorModel.applyToPrimitive(newRelation);
         getMemberTableModel().applyToRelation(newRelation);
-        List<RelationMember> newMembers = new ArrayList<>();
-        for (RelationMember rm: newRelation.getMembers()) {
-            if (!rm.getMember().isDeleted()) {
-                newMembers.add(rm);
-            }
-        }
+        List<RelationMember> newMembers = newRelation.getMembers().stream()
+                .filter(rm -> !rm.getMember().isDeleted())
+                .collect(Collectors.toList());
         if (newRelation.getMembersCount() != newMembers.size()) {
             newRelation.setMembers(newMembers);
             String msg = tr("One or more members of this new relation have been deleted while the relation editor\n" +

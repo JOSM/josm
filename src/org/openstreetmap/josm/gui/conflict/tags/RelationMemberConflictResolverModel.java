@@ -12,8 +12,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -69,14 +71,8 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      *
      */
     protected void updateNumConflicts() {
-        int count = 0;
-        for (RelationMemberConflictDecision decision: decisions) {
-            if (!decision.isDecided()) {
-                count++;
-            }
-        }
         int oldValue = numConflicts;
-        numConflicts = count;
+        numConflicts = (int) decisions.stream().filter(decision -> !decision.isDecided()).count();
         if (numConflicts != oldValue) {
             support.firePropertyChange(getProperty(), oldValue, numConflicts);
         }
@@ -234,10 +230,9 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      */
     void prepareDefaultRelationDecisions(boolean fireEvent) {
         if (primitives.stream().allMatch(Node.class::isInstance)) {
-            final Collection<OsmPrimitive> primitivesInDecisions = new HashSet<>();
-            for (final RelationMemberConflictDecision i : decisions) {
-                primitivesInDecisions.add(i.getOriginalPrimitive());
-            }
+            final Collection<OsmPrimitive> primitivesInDecisions = decisions.stream()
+                    .map(RelationMemberConflictDecision::getOriginalPrimitive)
+                    .collect(Collectors.toSet());
             if (primitivesInDecisions.size() == 1) {
                 for (final RelationMemberConflictDecision i : decisions) {
                     i.decide(RelationMemberConflictDecisionType.KEEP);
@@ -263,10 +258,9 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             if (!decisionsByPrimitive.keySet().containsAll(primitives)) {
                 // some primitives are not part of the relation, leave undecided
             } else {
-                final Collection<Iterator<RelationMemberConflictDecision>> iterators = new ArrayList<>(primitives.size());
-                for (final Collection<RelationMemberConflictDecision> i : decisionsByPrimitive.values()) {
-                    iterators.add(i.iterator());
-                }
+                final Collection<Iterator<RelationMemberConflictDecision>> iterators = decisionsByPrimitive.values().stream()
+                        .map(List::iterator)
+                        .collect(Collectors.toList());
                 while (iterators.stream().allMatch(Iterator::hasNext)) {
                     final List<RelationMemberConflictDecision> decisions = new ArrayList<>();
                     final Collection<String> roles = new HashSet<>();
@@ -363,10 +357,9 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     }
 
     protected RelationMemberConflictDecision getDecision(Relation relation, int pos) {
-        for (RelationMemberConflictDecision decision: decisions) {
-            if (decision.matches(relation, pos)) return decision;
-        }
-        return null;
+        return decisions.stream()
+                .filter(decision -> decision.matches(relation, pos))
+                .findFirst().orElse(null);
     }
 
     protected Command buildResolveCommand(Relation relation, OsmPrimitive newPrimitive) {
@@ -407,14 +400,10 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @return a list of commands
      */
     public List<Command> buildResolutionCommands(OsmPrimitive newPrimitive) {
-        List<Command> command = new LinkedList<>();
-        for (Relation relation : relations) {
-            Command cmd = buildResolveCommand(relation, newPrimitive);
-            if (cmd != null) {
-                command.add(cmd);
-            }
-        }
-        return command;
+        return relations.stream()
+                .map(relation -> buildResolveCommand(relation, newPrimitive))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     protected boolean isChanged(Relation relation, OsmPrimitive newPrimitive) {
@@ -448,12 +437,8 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * to the decisions managed by this model
      */
     public Set<Relation> getModifiedRelations(OsmPrimitive newPrimitive) {
-        Set<Relation> ret = new HashSet<>();
-        for (Relation relation: relations) {
-            if (isChanged(relation, newPrimitive)) {
-                ret.add(relation);
-            }
-        }
-        return ret;
+        return relations.stream()
+                .filter(relation -> isChanged(relation, newPrimitive))
+                .collect(Collectors.toSet());
     }
 }

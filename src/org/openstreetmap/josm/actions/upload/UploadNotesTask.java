@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -123,13 +124,11 @@ public class UploadNotesTask {
             }
             noteData.updateNotes(updatedNotes);
             if (!failedNotes.isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                for (Map.Entry<Note, Exception> entry : failedNotes.entrySet()) {
-                    sb.append(tr("Note {0} failed: {1}", entry.getKey().getId(), entry.getValue().getMessage()))
-                      .append('\n');
-                }
-                Logging.error("Notes failed to upload: " + sb.toString());
-                JOptionPane.showMessageDialog(MainApplication.getMap(), sb.toString(),
+                String message = failedNotes.entrySet().stream()
+                        .map(entry -> tr("Note {0} failed: {1}", entry.getKey().getId(), entry.getValue().getMessage()))
+                        .collect(Collectors.joining("\n"));
+                Logging.error("Notes failed to upload: " + message);
+                JOptionPane.showMessageDialog(MainApplication.getMap(), message,
                         tr("Notes failed to upload"), JOptionPane.ERROR_MESSAGE);
                 ExceptionDialogUtil.explainException(failedNotes.values().iterator().next());
             }

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
@@ -92,13 +93,8 @@ public class ParallelWays {
 
         // Ugly method of ensuring that the offset isn't inverted. I'm sure there is a better and more elegant way
         Way refWay = ways.get(refWayIndex);
-        boolean refWayReversed = true;
-        for (int i = 0; i < sortedNodes.size() - 1; i++) {
-            if (sortedNodes.get(i) == refWay.firstNode() && sortedNodes.get(i + 1) == refWay.getNode(1)) {
-                refWayReversed = false;
-                break;
-            }
-        }
+        boolean refWayReversed = IntStream.range(0, sortedNodes.size() - 1)
+                .noneMatch(i -> sortedNodes.get(i) == refWay.firstNode() && sortedNodes.get(i + 1) == refWay.getNode(1));
         if (refWayReversed) {
             Collections.reverse(sortedNodes); // need to keep the orientation of the reference way.
         }

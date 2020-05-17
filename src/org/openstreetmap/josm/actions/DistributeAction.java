@@ -114,12 +114,7 @@ public final class DistributeAction extends JosmAction {
                 // No self crossing way
                 return false;
             }
-            for (Node node: nodes) {
-                if (!w.containsNode(node)) {
-                    return false;
-                }
-            }
-            return true;
+            return nodes.stream().allMatch(w::containsNode);
         }
         return false;
     }

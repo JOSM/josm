@@ -3,10 +3,11 @@ package org.openstreetmap.josm.gui.widgets;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import javax.swing.JTable;
 import javax.swing.RowFilter;
@@ -85,10 +86,9 @@ public class FilterField extends JosmTextField {
                 } else {
                     expr = expr.replace("+", "\\+");
                     // split search string on whitespace, do case-insensitive AND search
-                    List<RowFilter<Object, Object>> andFilters = new ArrayList<>();
-                    for (String word : expr.split("\\s+")) {
-                        andFilters.add(RowFilter.regexFilter("(?i)" + word));
-                    }
+                    List<RowFilter<Object, Object>> andFilters = Arrays.stream(expr.split("\\s+"))
+                            .map(word -> RowFilter.regexFilter("(?i)" + word))
+                            .collect(Collectors.toList());
                     sorter.setRowFilter(RowFilter.andFilter(andFilters));
                 }
                 model.fireTableDataChanged();

@@ -410,10 +410,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             @Override
             protected int checkTableSelection(JTable table, Point p) {
                 int row = super.checkTableSelection(table, p);
-                List<IRelation<?>> rels = new ArrayList<>();
-                for (int i: table.getSelectedRows()) {
-                    rels.add((IRelation<?>) table.getValueAt(i, 0));
-                }
+                List<IRelation<?>> rels = Arrays.stream(table.getSelectedRows()).mapToObj(i -> (IRelation<?>) table.getValueAt(i, 0)).collect(Collectors.toList());
                 membershipMenuHandler.setPrimitives(rels);
                 return row;
             }
@@ -545,12 +542,10 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         MainApplication.getMap().relationListDialog.selectRelation(relation);
         OsmDataLayer layer = MainApplication.getLayerManager().getActiveDataLayer();
         if (!layer.isLocked()) {
-            List<RelationMember> members = new ArrayList<>();
-            for (IRelationMember<?> rm : ((MemberInfo) membershipData.getValueAt(row, 1)).role) {
-                if (rm instanceof RelationMember) {
-                    members.add((RelationMember) rm);
-                }
-            }
+            List<RelationMember> members = ((MemberInfo) membershipData.getValueAt(row, 1)).role.stream()
+                    .filter(rm -> rm instanceof RelationMember)
+                    .map(rm -> (RelationMember) rm)
+                    .collect(Collectors.toList());
             RelationEditor.getEditor(layer, relation, members).setVisible(true);
         }
     }
@@ -659,10 +654,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             }
         }
         for (Entry<String, Map<String, Integer>> e : valueCount.entrySet()) {
-            int count = 0;
-            for (Entry<String, Integer> e1 : e.getValue().entrySet()) {
-                count += e1.getValue();
-            }
+            int count = e.getValue().values().stream().mapToInt(i -> i).sum();
             if (count < newSelSize) {
                 e.getValue().put("", newSelSize - count);
             }

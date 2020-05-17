@@ -236,19 +236,14 @@ public class ValidatorDialog extends ToggleDialog
         }
 
         void updateEnabledState() {
-            boolean found = false;
             final DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
-            if (ds != null && !ds.selectionEmpty()) {
-                for (TestError e : tree.getErrors()) {
-                    for (OsmPrimitive p : e.getPrimitives()) {
-                        if (p.isSelected()) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
+            if (ds == null || ds.selectionEmpty()) {
+                setEnabled(false);
+            } else {
+                boolean found = tree.getErrors().stream()
+                        .anyMatch(e -> e.getPrimitives().stream().anyMatch(OsmPrimitive::isSelected));
+                setEnabled(found);
             }
-            setEnabled(found);
         }
     }
 

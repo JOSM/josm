@@ -603,12 +603,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
                 // Don't allow creation of self-overlapping ways
                 if (way != null) {
-                    int nodeCount = 0;
-                    for (Node p : way.getNodes()) {
-                        if (p.equals(n0)) {
-                            nodeCount++;
-                        }
-                    }
+                    long nodeCount = way.getNodes().stream().filter(p -> p.equals(n0)).count();
                     if (nodeCount > 1) {
                         way = null;
                     }
@@ -1319,11 +1314,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
          */
         if (ds != null && !ds.getSelectedWays().isEmpty() && !wayIsFinished && !alt) {
             Way w = ds.getSelectedWays().iterator().next();
-            for (Node m : w.getNodes()) {
-                if (m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
-                    rv.append(' ').append(tr("Finish drawing."));
-                    break;
-                }
+            if (w.getNodes().stream().anyMatch(m -> m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w))) {
+                rv.append(' ').append(tr("Finish drawing."));
             }
         }
         return rv.toString();

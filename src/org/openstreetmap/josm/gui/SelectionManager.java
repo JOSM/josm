@@ -394,20 +394,11 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                     continue;
                 }
                 if (alt) {
-                    for (Node n : w.getNodes()) {
-                        if (!n.isIncomplete() && selectionResult.contains(nc.getPoint2D(n))) {
-                            selection.add(w);
-                            break;
-                        }
+                    if (w.getNodes().stream().anyMatch(n -> !n.isIncomplete() && selectionResult.contains(nc.getPoint2D(n)))) {
+                        selection.add(w);
                     }
                 } else {
-                    boolean allIn = true;
-                    for (Node n : w.getNodes()) {
-                        if (!n.isIncomplete() && !selectionResult.contains(nc.getPoint(n))) {
-                            allIn = false;
-                            break;
-                        }
-                    }
+                    boolean allIn = w.getNodes().stream().allMatch(n -> n.isIncomplete() || selectionResult.contains(nc.getPoint(n)));
                     if (allIn) {
                         selection.add(w);
                     }

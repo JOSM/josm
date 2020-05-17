@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.history;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -42,10 +43,8 @@ class DiffTableModel extends AbstractTableModel {
     }
 
     public int getFirstChange() {
-        for (int i = 0; i < rows.size(); i++) {
-            if (rows.get(i).state != DiffItemType.SAME)
-                return i;
-        }
-        return -1;
+        return IntStream.range(0, rows.size())
+                .filter(i -> rows.get(i).state != DiffItemType.SAME)
+                .findFirst().orElse(-1);
     }
 }

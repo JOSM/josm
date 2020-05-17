@@ -7,12 +7,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import javax.accessibility.Accessible;
 import javax.swing.ComboBoxEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -79,10 +79,9 @@ public class JosmComboBox<E> extends JComboBox<E> {
      */
     public JosmComboBox(ComboBoxModel<E> aModel) {
         super(aModel);
-        List<E> list = new ArrayList<>(aModel.getSize());
-        for (int i = 0; i < aModel.getSize(); i++) {
-            list.add(aModel.getElementAt(i));
-        }
+        List<E> list = IntStream.range(0, aModel.getSize())
+                .mapToObj(aModel::getElementAt)
+                .collect(Collectors.toList());
         init(findPrototypeDisplayValue(list));
     }
 
@@ -154,15 +153,12 @@ public class JosmComboBox<E> extends JComboBox<E> {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     protected final JList<Object> getList() {
-        for (int i = 0; i < getUI().getAccessibleChildrenCount(this); i++) {
-            Accessible child = getUI().getAccessibleChild(this, i);
-            if (child instanceof ComboPopup) {
-                return ((ComboPopup) child).getList();
-            }
-        }
-        return null;
+        return IntStream.range(0, getUI().getAccessibleChildrenCount(this))
+                .mapToObj(i -> getUI().getAccessibleChild(this, i))
+                .filter(child -> child instanceof ComboPopup)
+                .map(child -> ((ComboPopup) child).getList())
+                .findFirst().orElse(null);
     }
 
     protected final void init(E prototype) {

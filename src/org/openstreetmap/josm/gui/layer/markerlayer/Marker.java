@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
@@ -116,12 +117,10 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
      * @return a new Marker object
      */
     public static Collection<Marker> createMarkers(WayPoint wpt, File relativePath, MarkerLayer parentLayer, double time, double offset) {
-        for (MarkerProducers maker : Marker.markerProducers) {
-            final Collection<Marker> markers = maker.createMarkers(wpt, relativePath, parentLayer, time, offset);
-            if (markers != null)
-                return markers;
-        }
-        return null;
+        return Marker.markerProducers.stream()
+                .map(maker -> maker.createMarkers(wpt, relativePath, parentLayer, time, offset))
+                .filter(Objects::nonNull)
+                .findFirst().orElse(null);
     }
 
     public static final String MARKER_OFFSET = "waypointOffset";
