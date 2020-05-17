@@ -1607,10 +1607,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 .forEach(nearestList::addAll);
 
         // add parent relations of nearby nodes and ways
-        nearestList.stream()
-                .flatMap(o -> o.getReferrers().stream())
-                .filter(r -> r instanceof Relation && predicate.test(r))
-                .forEach(nearestList::add);
+        Set<OsmPrimitive> parentRelations = nearestList.stream()
+                .flatMap(o -> o.referrers(Relation.class))
+                .filter(predicate)
+                .collect(Collectors.toSet());
+        nearestList.addAll(parentRelations);
 
         if (ignore != null) {
             nearestList.removeAll(ignore);
