@@ -1,12 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -86,17 +83,6 @@ public class OsmValidatorTest {
         assertFalse(OsmValidator.hasIgnoredError("1351"));
         assertTrue(OsmValidator.hasIgnoredError("1351:n_2449148994:w_236955234"));
         assertTrue(OsmValidator.hasIgnoredError("1351:n_6871910559:w_733713588"));
-    }
-
-    /**
-     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19053">Bug #19053</a>.
-     * {@link OsmValidator#cleanupIgnoredErrors()} must not combine primitives.
-     */
-    @Test
-    public void testCleanupIgnoredErrorsTicket19053() {
-        OsmValidator.addIgnoredError("3000_missing tag", "missing tag");
-        OsmValidator.cleanupIgnoredErrors();
-        assertEquals(Collections.emptyMap(), OsmValidator.getIgnoredErrors());
     }
 
     /**

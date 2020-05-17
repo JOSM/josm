@@ -293,7 +293,6 @@ public final class OsmValidator {
      *  Make sure that we don't keep single entries for a "group ignore".
      */
     static void cleanupIgnoredErrors() {
-        cleanup3000();
         if (ignoredErrors.size() > 1) {
             List<String> toRemove = new ArrayList<>();
 
@@ -315,12 +314,6 @@ public final class OsmValidator {
             ignoredErrors.clear();
             ignoredErrors.putAll(tmap);
         }
-    }
-
-    private static void cleanup3000() {
-        // see #19053
-        ignoredErrors.entrySet()
-                .removeIf(e -> e.getKey().equals("3000_" + e.getValue()));
     }
 
     private static boolean sameCode(String key1, String key2) {
