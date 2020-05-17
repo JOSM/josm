@@ -241,8 +241,8 @@ public class OsmServerBackreferenceReaderTest {
         Way w = lookupWay(ds, 0);
         assertNotNull(w);
 
-        DataSet referers = new OsmServerBackreferenceReader(n).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
-        printNumberOfPrimitives(referers);
+        DataSet referrers = new OsmServerBackreferenceReader(n).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referrers);
 
         Set<Long> expectedNodeIds = new HashSet<>();
         Set<Long> expectedWayIds = new HashSet<>();
@@ -259,30 +259,30 @@ public class OsmServerBackreferenceReaderTest {
             }
         }
 
-        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
-        assertEquals(expectedWayIds.size(), referers.getWays().size());
-        assertEquals(expectedRelationIds.size(), referers.getRelations().size());
+        assertEquals(expectedNodeIds.size(), referrers.getNodes().size());
+        assertEquals(expectedWayIds.size(), referrers.getWays().size());
+        assertEquals(expectedRelationIds.size(), referrers.getRelations().size());
 
-        for (Node node : referers.getNodes()) {
+        for (Node node : referrers.getNodes()) {
             assertTrue(expectedNodeIds.contains(node.getId()));
             assertFalse(node.isIncomplete());
         }
 
-        for (Way way : referers.getWays()) {
+        for (Way way : referrers.getWays()) {
             assertTrue(expectedWayIds.contains(way.getId()));
             assertEquals(n.getReferrers().contains(way), !way.isIncomplete());
         }
 
-        for (Relation relation : referers.getRelations()) {
+        for (Relation relation : referrers.getRelations()) {
             assertTrue(expectedRelationIds.contains(relation.getId()));
             assertFalse(relation.isIncomplete());
         }
     }
 
-    private void printNumberOfPrimitives(DataSet referers) {
-        System.out.println("#nodes=" + referers.getNodes().size() +
-                " #ways=" + referers.getWays().size() +
-                " #relations=" + referers.getRelations().size());
+    private void printNumberOfPrimitives(DataSet referrers) {
+        System.out.println("#nodes=" + referrers.getNodes().size() +
+                " #ways=" + referrers.getWays().size() +
+                " #relations=" + referrers.getRelations().size());
     }
 
     /**
@@ -295,8 +295,8 @@ public class OsmServerBackreferenceReaderTest {
         Node n = lookupNode(ds, 0);
         assertNotNull(n);
 
-        DataSet referers = new OsmServerBackreferenceReader(n).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
-        printNumberOfPrimitives(referers);
+        DataSet referrers = new OsmServerBackreferenceReader(n).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referrers);
 
         Set<Long> expectedNodeIds = new HashSet<>();
         Set<Long> expectedWayIds = new HashSet<>();
@@ -312,21 +312,21 @@ public class OsmServerBackreferenceReaderTest {
             }
         }
 
-        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
-        assertEquals(expectedWayIds.size(), referers.getWays().size());
-        assertEquals(expectedRelationIds.size(), referers.getRelations().size());
+        assertEquals(expectedNodeIds.size(), referrers.getNodes().size());
+        assertEquals(expectedWayIds.size(), referrers.getWays().size());
+        assertEquals(expectedRelationIds.size(), referrers.getRelations().size());
 
-        for (Node node : referers.getNodes()) {
+        for (Node node : referrers.getNodes()) {
             assertTrue(expectedNodeIds.contains(node.getId()));
             assertFalse(node.isIncomplete());
         }
 
-        for (Way way : referers.getWays()) {
+        for (Way way : referrers.getWays()) {
             assertTrue(expectedWayIds.contains(way.getId()));
             assertFalse(way.isIncomplete());
         }
 
-        for (Relation relation : referers.getRelations()) {
+        for (Relation relation : referrers.getRelations()) {
             assertTrue(expectedRelationIds.contains(relation.getId()));
             assertFalse(relation.isIncomplete());
         }
@@ -344,8 +344,8 @@ public class OsmServerBackreferenceReaderTest {
         // way with name "way-1" is referred to by two relations
         //
 
-        DataSet referers = new OsmServerBackreferenceReader(w).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
-        printNumberOfPrimitives(referers);
+        DataSet referrers = new OsmServerBackreferenceReader(w).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referrers);
 
         Set<Long> expectedNodeIds = new HashSet<>();
         Set<Long> expectedWayIds = new HashSet<>();
@@ -359,19 +359,19 @@ public class OsmServerBackreferenceReaderTest {
             }
         }
 
-        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
-        assertEquals(expectedWayIds.size(), referers.getWays().size());
-        assertEquals(expectedRelationIds.size(), referers.getRelations().size());
+        assertEquals(expectedNodeIds.size(), referrers.getNodes().size());
+        assertEquals(expectedWayIds.size(), referrers.getWays().size());
+        assertEquals(expectedRelationIds.size(), referrers.getRelations().size());
 
-        for (Way w1 : referers.getWays()) {
+        for (Way w1 : referrers.getWays()) {
             assertTrue(w1.isIncomplete());
         }
-        assertEquals(2, referers.getRelations().size());  // two relations referring to w
+        assertEquals(2, referrers.getRelations().size());  // two relations referring to w
 
-        Relation r = lookupRelation(referers, 0);
+        Relation r = lookupRelation(referrers, 0);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        r = lookupRelation(referers, 1);
+        r = lookupRelation(referrers, 1);
         assertFalse(r.isIncomplete());
     }
 
@@ -387,28 +387,28 @@ public class OsmServerBackreferenceReaderTest {
         // way with name "way-1" is referred to by two relations
         //
 
-        DataSet referers = new OsmServerBackreferenceReader(w).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(6, referers.getWays().size());  // 6 ways referred by two relations
-        for (Way w1 : referers.getWays()) {
+        DataSet referrers = new OsmServerBackreferenceReader(w).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
+        assertEquals(6, referrers.getWays().size());  // 6 ways referred by two relations
+        for (Way w1 : referrers.getWays()) {
             assertFalse(w1.isIncomplete());
         }
-        assertEquals(2, referers.getRelations().size());  // two relations referring to
+        assertEquals(2, referrers.getRelations().size());  // two relations referring to
         Set<Long> expectedNodeIds = new HashSet<>();
-        for (Way way : referers.getWays()) {
+        for (Way way : referrers.getWays()) {
             Way orig = (Way) ds.getPrimitiveById(way);
             for (Node n : orig.getNodes()) {
                 expectedNodeIds.add(n.getId());
             }
         }
-        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
-        for (Node n : referers.getNodes()) {
+        assertEquals(expectedNodeIds.size(), referrers.getNodes().size());
+        for (Node n : referrers.getNodes()) {
             assertTrue(expectedNodeIds.contains(n.getId()));
         }
 
-        Relation r = lookupRelation(referers, 0);
+        Relation r = lookupRelation(referrers, 0);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        r = lookupRelation(referers, 1);
+        r = lookupRelation(referrers, 1);
         assertFalse(r.isIncomplete());
     }
 
@@ -425,28 +425,28 @@ public class OsmServerBackreferenceReaderTest {
         //    relation-6, relation-7, relation-8, relation-9
         //
 
-        DataSet referers = new OsmServerBackreferenceReader(r).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
-        printNumberOfPrimitives(referers);
+        DataSet referrers = new OsmServerBackreferenceReader(r).setReadFull(false).parseOsm(NullProgressMonitor.INSTANCE);
+        printNumberOfPrimitives(referrers);
 
         Set<Long> referringRelationsIds = new HashSet<>();
-        Relation r6 = lookupRelation(referers, 6);
+        Relation r6 = lookupRelation(referrers, 6);
         assertNotNull(r6);
         assertFalse(r6.isIncomplete());
         referringRelationsIds.add(r6.getId());
-        Relation r7 = lookupRelation(referers, 7);
+        Relation r7 = lookupRelation(referrers, 7);
         assertNotNull(r7);
         assertFalse(r7.isIncomplete());
         referringRelationsIds.add(r7.getId());
-        Relation r8 = lookupRelation(referers, 8);
+        Relation r8 = lookupRelation(referrers, 8);
         assertNotNull(r8);
         assertFalse(r8.isIncomplete());
         referringRelationsIds.add(r8.getId());
-        Relation r9 = lookupRelation(referers, 9);
+        Relation r9 = lookupRelation(referrers, 9);
         assertNotNull(r9);
         assertFalse(r9.isIncomplete());
         referringRelationsIds.add(r9.getId());
 
-        for (Relation r1 : referers.getRelations()) {
+        for (Relation r1 : referrers.getRelations()) {
             if (!referringRelationsIds.contains(r1.getId())) {
                 assertTrue(r1.isIncomplete());
             }
@@ -477,8 +477,8 @@ public class OsmServerBackreferenceReaderTest {
             }
         }
 
-        assertEquals(expectedWayIds.size(), referers.getWays().size());
-        for (Way w1 : referers.getWays()) {
+        assertEquals(expectedWayIds.size(), referrers.getWays().size());
+        for (Way w1 : referrers.getWays()) {
             assertTrue(expectedWayIds.contains(w1.getId()));
             assertTrue(w1.isIncomplete());
         }
@@ -490,7 +490,7 @@ public class OsmServerBackreferenceReaderTest {
                 expectedNodeIds.addAll(getNodeIdsInRelation((Relation) ref, false));
             }
         }
-        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
+        assertEquals(expectedNodeIds.size(), referrers.getNodes().size());
     }
 
     protected static Set<Long> getNodeIdsInWay(Way way) {
@@ -543,24 +543,24 @@ public class OsmServerBackreferenceReaderTest {
         //    relation-6, relation-7, relation-8, relation-9
         //
 
-        DataSet referers = new OsmServerBackreferenceReader(r).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
+        DataSet referrers = new OsmServerBackreferenceReader(r).setReadFull(true).parseOsm(NullProgressMonitor.INSTANCE);
 
-        r = lookupRelation(referers, 6);
+        r = lookupRelation(referrers, 6);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        r = lookupRelation(referers, 7);
+        r = lookupRelation(referrers, 7);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        r = lookupRelation(referers, 8);
+        r = lookupRelation(referrers, 8);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
-        r = lookupRelation(referers, 9);
+        r = lookupRelation(referrers, 9);
         assertNotNull(r);
         assertFalse(r.isIncomplete());
 
         // all relations are fully loaded
         //
-        for (Relation r1 : referers.getRelations()) {
+        for (Relation r1 : referrers.getRelations()) {
             assertFalse(r1.isIncomplete());
         }
 
@@ -589,7 +589,7 @@ public class OsmServerBackreferenceReaderTest {
             }
         }
         for (long id : expectedWayIds) {
-            Way w = (Way) referers.getPrimitiveById(id, OsmPrimitiveType.WAY);
+            Way w = (Way) referrers.getPrimitiveById(id, OsmPrimitiveType.WAY);
             assertNotNull(w);
             assertFalse(w.isIncomplete());
         }
@@ -600,8 +600,8 @@ public class OsmServerBackreferenceReaderTest {
             expectedNodeIds.addAll(getNodeIdsInRelation(r1, true));
         }
 
-        assertEquals(expectedNodeIds.size(), referers.getNodes().size());
-        for (Node n : referers.getNodes()) {
+        assertEquals(expectedNodeIds.size(), referrers.getNodes().size());
+        for (Node n : referrers.getNodes()) {
             assertTrue(expectedNodeIds.contains(n.getId()));
         }
     }

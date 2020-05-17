@@ -203,7 +203,7 @@ public final class AlignInLineAction extends JosmAction {
             // Only ways selected -> For each way align their nodes taking care of intersection
             return alignMultiWay(selectedWays);
         } else if (selectedNodes.size() == 1) {
-            // Only 1 node selected -> align this node relative to referers way
+            // Only 1 node selected -> align this node relative to referrers way
             Node selectedNode = selectedNodes.get(0);
             List<Way> involvedWays;
             if (selectedWays.isEmpty())
@@ -265,19 +265,19 @@ public final class AlignInLineAction extends JosmAction {
             throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
         }
         Collection<Command> cmds = new ArrayList<>(nodes.size());
-        List<Way> referers = new ArrayList<>(ways.size());
+        List<Way> referrers = new ArrayList<>(ways.size());
         for (Node n: nodes) {
-            referers.clear();
+            referrers.clear();
             for (OsmPrimitive o: n.getReferrers()) {
                 if (ways.contains(o))
-                    referers.add((Way) o);
+                    referrers.add((Way) o);
             }
-            if (referers.size() == 1) {
-                Way way = referers.get(0);
+            if (referrers.size() == 1) {
+                Way way = referrers.get(0);
                 if (way.isFirstLastNode(n)) continue;
                 cmds.add(lines.get(way).projectionCommand(n));
-            } else if (referers.size() == 2) {
-                cmds.add(lines.get(referers.get(0)).intersectionCommand(n, lines.get(referers.get(1))));
+            } else if (referrers.size() == 2) {
+                cmds.add(lines.get(referrers.get(0)).intersectionCommand(n, lines.get(referrers.get(1))));
             } else
                 throw new InvalidSelection(tr("Intersection of three or more ways can not be solved. Abort."));
         }

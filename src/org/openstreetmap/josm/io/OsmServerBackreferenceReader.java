@@ -81,7 +81,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * Creates a back reference reader for given primitive
      *
      * @param primitive the primitive
-     * @param readFull <code>true</code>, if referers should be read fully (i.e. including their immediate children)
+     * @param readFull <code>true</code>, if referrers should be read fully (i.e. including their immediate children)
      *
      */
     public OsmServerBackreferenceReader(OsmPrimitive primitive, boolean readFull) {
@@ -92,9 +92,9 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     /**
      * Creates a back reference reader for given primitive id
      *
-     * @param id the id of the primitive whose referers are to be read
+     * @param id the id of the primitive whose referrers are to be read
      * @param type the type of the primitive
-     * @param readFull true, if referers should be read fully (i.e. including their immediate children)
+     * @param readFull true, if referrers should be read fully (i.e. including their immediate children)
      *
      * @throws IllegalArgumentException if id &lt;= 0
      * @throws IllegalArgumentException if type is null
@@ -198,9 +198,9 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * request.
      *
      * <ul>
-     *   <li>if this reader reads referers for a {@link org.openstreetmap.josm.data.osm.Node}, referring ways are always
+     *   <li>if this reader reads referrers for a {@link org.openstreetmap.josm.data.osm.Node}, referring ways are always
      *     read fully, unless {@link #setAllowIncompleteParentWays(boolean)} is set to true.</li>
-     *   <li>if this reader reads referers for an {@link Way} or a {@link Relation}, referring relations
+     *   <li>if this reader reads referrers for an {@link Way} or a {@link Relation}, referring relations
      *    are only read fully if {@link #setReadFull(boolean)} is set to true.</li>
      * </ul>
      *

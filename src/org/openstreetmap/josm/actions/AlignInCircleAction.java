@@ -115,7 +115,7 @@ public final class AlignInCircleAction extends JosmAction {
             fixNodes.add(w.firstNode());
             fixNodes.add(w.lastNode());
             fixNodes.addAll(nodes);
-            fixNodes.addAll(collectNodesWithExternReferers(ways));
+            fixNodes.addAll(collectNodesWithExternReferrers(ways));
             // Temporary closed way used to reorder nodes
             Way closedWay = new Way(w);
             closedWay.addNode(w.firstNode());
@@ -149,7 +149,7 @@ public final class AlignInCircleAction extends JosmAction {
             }
 
             fixNodes.addAll(inside);
-            fixNodes.addAll(collectNodesWithExternReferers(ways));
+            fixNodes.addAll(collectNodesWithExternReferrers(ways));
             nodes = collectNodesAnticlockwise(ways);
             if (nodes.size() < 4) {
                 new Notification(
@@ -245,7 +245,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @param ways Ways from witch nodes are selected
      * @return List of nodes with more than one referrer
      */
-    private static List<Node> collectNodesWithExternReferers(List<Way> ways) {
+    private static List<Node> collectNodesWithExternReferrers(List<Way> ways) {
         return ways.stream().flatMap(w -> w.getNodes().stream()).filter(n -> n.getReferrers().size() > 1).collect(Collectors.toList());
     }
 
