@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Rectangle;
 
 import javax.swing.JTable;
@@ -20,9 +22,11 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
 
     @Override
     protected JTable buildTable(PointInTimeType pointInTimeType) {
-        JTable table = new JTable(
-                model.getRelationMemberTableModel(pointInTimeType),
-                new RelationMemberTableColumnModel());
+        DiffTableModel tableModel = model.getRelationMemberTableModel(pointInTimeType);
+        RelationMemberTableColumnModel columnModel = new RelationMemberTableColumnModel();
+        JTable table = new JTable(tableModel, columnModel);
+        tableModel.addTableModelListener(new ReversedChangeListener(
+                table, columnModel, tr("The members of this relation are in reverse order")));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.getModel().addTableModelListener(e -> {

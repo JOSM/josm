@@ -12,8 +12,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
@@ -55,41 +53,12 @@ public class NodeListViewer extends HistoryViewerPanel {
         final DiffTableModel tableModel = model.getNodeListTableModel(pointInTimeType);
         final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
-        tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel));
+        tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel, tr("The nodes of this way are in reverse order")));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.addMouseListener(new InternalPopupMenuLauncher());
         table.addMouseListener(new DoubleClickAdapter(table));
         return table;
-    }
-
-    static final class ReversedChangeListener implements TableModelListener {
-        private final NodeListTableColumnModel columnModel;
-        private final JTable table;
-        private Boolean reversed;
-        private final String nonReversedText;
-        private final String reversedText;
-
-        ReversedChangeListener(JTable table, NodeListTableColumnModel columnModel) {
-            this.columnModel = columnModel;
-            this.table = table;
-            nonReversedText = tr("Nodes") + (table.getFont().canDisplay('\u25bc') ? " \u25bc" : " (1-n)");
-            reversedText = tr("Nodes") + (table.getFont().canDisplay('\u25b2') ? " \u25b2" : " (n-1)");
-        }
-
-        @Override
-        public void tableChanged(TableModelEvent e) {
-            if (e.getSource() instanceof DiffTableModel) {
-                final DiffTableModel mod = (DiffTableModel) e.getSource();
-                if (reversed == null || reversed != mod.isReversed()) {
-                    reversed = mod.isReversed();
-                    columnModel.getColumn(0).setHeaderValue(reversed ? reversedText : nonReversedText);
-                    table.getTableHeader().setToolTipText(
-                            reversed ? tr("The nodes of this way are in reverse order") : null);
-                    table.getTableHeader().repaint();
-                }
-            }
-        }
     }
 
     static class NodeListPopupMenu extends JPopupMenu {
