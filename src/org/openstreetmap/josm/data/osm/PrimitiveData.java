@@ -90,7 +90,7 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
      */
     @Deprecated
     public static <T extends PrimitiveData> List<T> getFilteredList(Collection<T> list, OsmPrimitiveType type) {
-        return list.stream().filter(p -> type.getDataClass().isInstance(p)).map(p -> (T) p).collect(Collectors.toList());
+        return list.stream().filter(p -> type.getDataClass().isInstance(p)).collect(Collectors.toList());
     }
 
     @Override

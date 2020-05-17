@@ -764,7 +764,7 @@ public class SearchCompiler {
             } else {
                 mv = osm.get(key);
                 if (!caseSensitive && mv == null) {
-                    mv = osm.keySet().stream().filter(key::equalsIgnoreCase).map(osm::get).findFirst().orElse(mv);
+                    mv = osm.keySet().stream().filter(key::equalsIgnoreCase).map(osm::get).findFirst().orElse(null);
                 }
             }
             return mv;
