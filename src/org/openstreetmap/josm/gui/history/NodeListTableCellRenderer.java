@@ -36,22 +36,18 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
         setIcon(nodeIcon);
     }
 
-    protected void renderNode(TwoColumnDiff.Item item, boolean isSelected) {
+    protected void renderNode(TwoColumnDiff.Item item, boolean isSelected, boolean hasFocus) {
         String text = "";
         setIcon(nodeIcon);
         if (item.value != null) {
             text = tr("Node {0}", item.value.toString());
         }
-        Color bgColor = item.state.getColor();
         if (item.state == DiffItemType.EMPTY) {
             text = "";
             setIcon(null);
         }
-        if (isSelected) {
-            bgColor = BGCOLOR_SELECTED;
-        }
         setText(text);
-        GuiHelper.setBackgroundReadable(this, bgColor);
+        GuiHelper.setBackgroundReadable(this, item.state.getColor(isSelected, hasFocus));
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
@@ -60,7 +56,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
             int row, int column) {
 
         if (value != null) {
-            renderNode((TwoColumnDiff.Item) value, isSelected);
+            renderNode((TwoColumnDiff.Item) value, isSelected, hasFocus);
         }
         return this;
     }

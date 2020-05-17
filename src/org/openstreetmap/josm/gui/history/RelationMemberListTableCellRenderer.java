@@ -40,7 +40,6 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         String text = member == null ? "" : member.getRole();
         setText(text);
         setToolTipText(text);
-        GuiHelper.setBackgroundReadable(this, diffItem.state.getColor());
     }
 
     protected void renderPrimitive(Item diffItem) {
@@ -56,7 +55,6 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         }
         setText(text);
         setToolTipText(text);
-        GuiHelper.setBackgroundReadable(this, diffItem.state.getColor());
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
@@ -77,6 +75,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         default: // Do nothing
         }
 
+        GuiHelper.setBackgroundReadable(this, member.state.getColor(isSelected, hasFocus));
         return this;
     }
 }

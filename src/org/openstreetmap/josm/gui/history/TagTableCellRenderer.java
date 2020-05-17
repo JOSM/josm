@@ -6,7 +6,6 @@ import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -33,25 +32,19 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
     }
 
     protected void setBackgroundReadable(String key, TagTableModel model, boolean isSelected, boolean hasFocus, boolean isValue) {
-        Color bgColor = UIManager.getColor("Table.background");
+        final TwoColumnDiff.Item.DiffItemType diffItemType;
         if ((!model.hasTag(key) && model.isCurrentPointInTime())
                 || (!model.oppositeHasTag(key) && model.isReferencePointInTime())) {
-            bgColor = TwoColumnDiff.Item.DiffItemType.DELETED.getColor();
+            diffItemType = TwoColumnDiff.Item.DiffItemType.DELETED;
         } else if ((!model.oppositeHasTag(key) && model.isCurrentPointInTime())
                 || (!model.hasTag(key) && model.isReferencePointInTime())) {
-            bgColor = TwoColumnDiff.Item.DiffItemType.INSERTED.getColor();
+            diffItemType = TwoColumnDiff.Item.DiffItemType.INSERTED;
         } else if (isValue && model.hasTag(key) && model.oppositeHasTag(key) && !model.hasSameValueAsOpposite(key)) {
-            bgColor = TwoColumnDiff.Item.DiffItemType.CHANGED.getColor();
+            diffItemType = TwoColumnDiff.Item.DiffItemType.CHANGED;
+        } else {
+            diffItemType = TwoColumnDiff.Item.DiffItemType.EMPTY;
         }
-        if (isSelected) {
-            if (hasFocus) {
-                bgColor = BGCOLOR_SELECTED_FOCUS;
-            } else {
-                bgColor = BGCOLOR_SELECTED;
-            }
-        }
-
-        GuiHelper.setBackgroundReadable(this, bgColor);
+        GuiHelper.setBackgroundReadable(this, diffItemType.getColor(isSelected, hasFocus));
     }
 
     @Override

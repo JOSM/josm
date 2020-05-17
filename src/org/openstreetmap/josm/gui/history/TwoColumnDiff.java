@@ -46,6 +46,16 @@ class TwoColumnDiff {
             public Color getColor() {
                 return color;
             }
+
+            public Color getColor(boolean isSelected, boolean hasFocus) {
+                if (isSelected && hasFocus) {
+                    return TagTableCellRenderer.BGCOLOR_SELECTED_FOCUS;
+                } else if (isSelected) {
+                    return TagTableCellRenderer.BGCOLOR_SELECTED;
+                } else {
+                    return getColor();
+                }
+            }
         }
 
         Item(DiffItemType state, Object value) {
