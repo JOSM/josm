@@ -116,17 +116,17 @@ public final class I18n {
         languages.put("es", PluralMode.MODE_NOTONE);
         languages.put("et", PluralMode.MODE_NOTONE);
         //languages.put("eu", PluralMode.MODE_NOTONE);
+        languages.put("fa", PluralMode.MODE_NONE);
         languages.put("fi", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
         //languages.put("he", PluralMode.MODE_NOTONE);
         languages.put("hu", PluralMode.MODE_NOTONE);
         languages.put("id", PluralMode.MODE_NONE);
-        //languages.put("is", PluralMode.MODE_NOTONE);
+        languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
         languages.put("ko", PluralMode.MODE_NONE);
-        // fully supported only with Java 8 and later (needs CLDR)
         languages.put("km", PluralMode.MODE_NONE);
         languages.put("lt", PluralMode.MODE_LT);
         languages.put("mr", PluralMode.MODE_NOTONE);
