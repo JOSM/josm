@@ -2,9 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.tools.Utils;
@@ -124,14 +122,10 @@ public interface IRelation<M extends IRelationMember<?>> extends IPrimitive {
      * @since 13957
      */
     default Collection<? extends IPrimitive> getIncompleteMembers() {
-        Set<IPrimitive> ret = new HashSet<>();
-        for (M rm : getMembers()) {
-            if (!rm.getMember().isIncomplete()) {
-                continue;
-            }
-            ret.add(rm.getMember());
-        }
-        return ret;
+        return getMembers().stream()
+                .filter(rm -> rm.getMember().isIncomplete())
+                .map(rm -> rm.getMember())
+                .collect(Collectors.toSet());
     }
 
     /**

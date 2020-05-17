@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -280,6 +282,18 @@ public class TestError implements Comparable<TestError> {
     }
 
     /**
+     * Gets all primitives of the given type affected by this error
+     * @param type restrict primitives to subclasses
+     * @param <T> type of primitives
+     * @return the primitives as Stream
+     */
+    public final <T extends OsmPrimitive> Stream<T> primitives(Class<T> type) {
+        return primitives.stream()
+                .filter(type::isInstance)
+                .map(type::cast);
+    }
+
+    /**
      * Gets the severity of this error
      * @return the severity of this error
      */
@@ -307,11 +321,7 @@ public class TestError implements Comparable<TestError> {
             }
             strings.add(type + '_' + o.getId());
         }
-        StringBuilder ignorestring = new StringBuilder(getIgnoreSubGroup());
-        for (String o : strings) {
-            ignorestring.append(':').append(o);
-        }
-        return ignorestring.toString();
+        return strings.stream().map(o -> ':' + o).collect(Collectors.joining("", getIgnoreSubGroup(), ""));
     }
 
     /**

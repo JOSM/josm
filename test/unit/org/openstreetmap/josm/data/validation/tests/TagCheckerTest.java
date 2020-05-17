@@ -6,9 +6,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -200,13 +200,11 @@ public class TagCheckerTest {
      */
     @Test
     public void testIgnoredTagsNotInPresets() throws IOException {
-        List<String> errors = new ArrayList<>();
         new TagChecker().initialize();
-        for (Tag tag : TagChecker.getIgnoredTags()) {
-            if (TagChecker.isTagInPresets(tag.getKey(), tag.getValue())) {
-                errors.add(tag.toString());
-            }
-        }
+        List<String> errors = TagChecker.getIgnoredTags().stream()
+                .filter(tag -> TagChecker.isTagInPresets(tag.getKey(), tag.getValue()))
+                .map(Tag::toString)
+                .collect(Collectors.toList());
         assertTrue(errors.toString(), errors.isEmpty());
     }
 

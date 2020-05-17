@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.search;
 
+import java.util.Arrays;
+
 /**
  * Search mode.
  * @since 12659 (extracted from {@code SearchAction})
@@ -35,10 +37,8 @@ public enum SearchMode {
      * @return search mode matching the given character code
      */
     public static SearchMode fromCode(char code) {
-        for (SearchMode mode: values()) {
-            if (mode.getCode() == code)
-                return mode;
-        }
-        return null;
+        return Arrays.stream(values())
+                .filter(mode -> mode.getCode() == code)
+                .findFirst().orElse(null);
     }
 }

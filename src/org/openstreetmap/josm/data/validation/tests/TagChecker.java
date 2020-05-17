@@ -636,12 +636,10 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             TaggingPresetType presetType = TaggingPresetType.forPrimitive(p);
             EnumSet<TaggingPresetType> presetTypes = EnumSet.of(presetType);
 
-            Collection<TaggingPreset> matchingPresets = new LinkedHashSet<>();
-            for (Entry<TaggingPreset, List<TaggingPresetItem>> e : presetIndex.entrySet()) {
-                if (TaggingPresetItem.matches(e.getValue(), tags)) {
-                    matchingPresets.add(e.getKey());
-                }
-            }
+            Collection<TaggingPreset> matchingPresets = presetIndex.entrySet().stream()
+                    .filter(e -> TaggingPresetItem.matches(e.getValue(), tags))
+                    .map(Entry::getKey)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
             Collection<TaggingPreset> matchingPresetsOK = matchingPresets.stream().filter(
                     tp -> tp.typeMatches(presetTypes)).collect(Collectors.toList());
             Collection<TaggingPreset> matchingPresetsKO = matchingPresets.stream().filter(

@@ -203,10 +203,7 @@ public final class MapRendererFactory {
      */
     public boolean isRegistered(Class<? extends AbstractMapRenderer> renderer) {
         CheckParameterUtil.ensureParameterNotNull(renderer);
-        for (Descriptor d: descriptors) {
-            if (d.getRenderer().equals(renderer)) return true;
-        }
-        return false;
+        return descriptors.stream().anyMatch(d -> d.getRenderer().equals(renderer));
     }
 
     /**

@@ -246,14 +246,9 @@ public class DuplicateRelation extends Test {
     @Override
     public Command fixError(TestError testError) {
         if (testError.getCode() == SAME_RELATION) return null;
-        Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        Set<Relation> relFix = new HashSet<>();
-
-        for (OsmPrimitive osm : sel) {
-            if (osm instanceof Relation && !osm.isDeleted()) {
-                relFix.add((Relation) osm);
-            }
-        }
+        Set<Relation> relFix = testError.primitives(Relation.class)
+                .filter(r -> !r.isDeleted())
+                .collect(Collectors.toSet());
 
         if (relFix.size() < 2)
             return null;
@@ -307,14 +302,8 @@ public class DuplicateRelation extends Test {
             || testError.getCode() == SAME_RELATION) return false;
 
         // We fix it only if there is no more than one relation that is relation member.
-        Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        Set<Relation> rels = new HashSet<>();
-
-        for (OsmPrimitive osm : sel) {
-            if (osm instanceof Relation) {
-                rels.add((Relation) osm);
-            }
-        }
+        Set<Relation> rels = testError.primitives(Relation.class)
+                .collect(Collectors.toSet());
 
         if (rels.size() < 2)
             return false;

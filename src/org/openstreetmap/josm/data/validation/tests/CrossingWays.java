@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -239,11 +240,7 @@ public abstract class CrossingWays extends Test {
             // ignore ways which have no common boundary tag value
             Set<String> s1 = getBoundaryTags(w1);
             Set<String> s2 = getBoundaryTags(w2);
-            for (String type : s1) {
-                if (s2.contains(type))
-                    return false;
-            }
-            return true;
+            return s1.stream().noneMatch(s2::contains);
         }
 
         /**
@@ -420,11 +417,9 @@ public abstract class CrossingWays extends Test {
      * @return A list with all the cells the segment crosses
      */
     public static List<List<WaySegment>> getSegments(Map<Point2D, List<WaySegment>> cellSegments, EastNorth n1, EastNorth n2) {
-        List<List<WaySegment>> cells = new ArrayList<>();
-        for (Point2D cell : ValUtil.getSegmentCells(n1, n2, OsmValidator.getGridDetail())) {
-            cells.add(cellSegments.computeIfAbsent(cell, k -> new ArrayList<>()));
-        }
-        return cells;
+        return ValUtil.getSegmentCells(n1, n2, OsmValidator.getGridDetail()).stream()
+                .map(cell -> cellSegments.computeIfAbsent(cell, k -> new ArrayList<>()))
+                .collect(Collectors.toList());
     }
 
     /**

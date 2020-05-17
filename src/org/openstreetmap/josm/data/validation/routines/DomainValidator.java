@@ -19,6 +19,7 @@ package org.openstreetmap.josm.data.validation.routines;
 import java.net.IDN;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -1911,11 +1912,10 @@ public final class DomainValidator extends AbstractValidator {
         if (inUse) {
             throw new IllegalStateException("Can only invoke this method before calling getInstance");
         }
-        String[] copy = new String[tlds.length];
         // Comparisons are always done with lower-case entries
-        for (int i = 0; i < tlds.length; i++) {
-            copy[i] = tlds[i].toLowerCase(Locale.ENGLISH);
-        }
+        String[] copy = Arrays.stream(tlds)
+                .map(tld -> tld.toLowerCase(Locale.ENGLISH))
+                .toArray(String[]::new);
         Arrays.sort(copy);
         switch(table) {
         case COUNTRY_CODE_MINUS:
@@ -2039,12 +2039,7 @@ public final class DomainValidator extends AbstractValidator {
         if (input == null) {
             return true;
         }
-        for (int i = 0; i < input.length(); i++) {
-            if (input.charAt(i) > 0x7F) { // CHECKSTYLE IGNORE MagicNumber
-                return false;
-            }
-        }
-        return true;
+        return IntStream.range(0, input.length()).noneMatch(i -> input.charAt(i) > 0x7F); // CHECKSTYLE IGNORE MagicNumber
     }
 
     /**

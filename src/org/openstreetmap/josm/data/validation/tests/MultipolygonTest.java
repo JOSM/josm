@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -190,13 +192,11 @@ public class MultipolygonTest extends Test {
                     .highlight(openNodes)
                     .build());
         }
-        Map<Long, RelationMember> wayMap = new HashMap<>();
-        for (int i = 0; i < r.getMembersCount(); i++) {
-            RelationMember mem = r.getMember(i);
-            if (!mem.isWay())
-                continue;
-            wayMap.put(mem.getWay().getUniqueId(), mem); // duplicate members were checked before
-        }
+
+        Map<Long, RelationMember> wayMap = r.getMembers().stream()
+                .filter(RelationMember::isWay)
+                .collect(Collectors.toMap(mem -> mem.getWay().getUniqueId(), mem -> mem, (a, b) -> b));
+        // duplicate members were checked before
         if (wayMap.isEmpty())
             return;
 
@@ -229,13 +229,8 @@ public class MultipolygonTest extends Test {
                 }
             }
         }
-        boolean checkRoles = true;
-        for (int i = oldErrorsSize; i < errors.size(); i++) {
-            if (errors.get(i).getSeverity() != Severity.OTHER) {
-                checkRoles = false;
-                break;
-            }
-        }
+        boolean checkRoles = IntStream.range(oldErrorsSize, errors.size())
+                .noneMatch(i -> errors.get(i).getSeverity() != Severity.OTHER);
         if (checkRoles) {
             // we found no intersection or crossing between the polygons and they are closed
             // now we can calculate the nesting level to verify the roles with some simple node checks
@@ -250,12 +245,7 @@ public class MultipolygonTest extends Test {
      * @return true if one or more ways are in the set of known ways
      */
     private static boolean hasIntersectionWay(PolyData pd, Set<Way> intersectionWays) {
-        for (Way w : intersectionWays) {
-            if (pd.getWayIds().contains(w.getUniqueId())) {
-                return true;
-            }
-        }
-        return false;
+        return intersectionWays.stream().anyMatch(w -> pd.getWayIds().contains(w.getUniqueId()));
     }
 
     /**
@@ -873,11 +863,9 @@ public class MultipolygonTest extends Test {
          * @return node of pd2 which is not an intersection node with pd1 or null if none is found
          */
         private Node getNonIntersectingNode(PolyData pd1, PolyData pd2) {
-            for (Node n : pd2.getNodes()) {
-                if (!sharedNodes.contains(n) || !pd1.getNodes().contains(n))
-                    return n;
-            }
-            return null;
+            return pd2.getNodes().stream()
+                    .filter(n -> !sharedNodes.contains(n) || !pd1.getNodes().contains(n))
+                    .findFirst().orElse(null);
         }
     }
 

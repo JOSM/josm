@@ -96,11 +96,8 @@ public class RelationChecker extends Test implements TaggingPresetListener {
             return;
         }
         for (TaggingPreset p : TaggingPresets.getTaggingPresets()) {
-            for (TaggingPresetItem i : p.data) {
-                if (i instanceof Roles) {
-                    relationpresets.add(p);
-                    break;
-                }
+            if (p.data.stream().anyMatch(i -> i instanceof Roles)) {
+                relationpresets.add(p);
             }
         }
     }

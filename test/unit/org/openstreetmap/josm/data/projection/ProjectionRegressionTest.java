@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -58,31 +57,20 @@ public class ProjectionRegressionTest {
     public static void main(String[] args) throws IOException {
         setUp();
 
-        Map<String, Projection> supportedCodesMap = new HashMap<>();
-        for (String code : Projections.getAllProjectionCodes()) {
-            supportedCodesMap.put(code, Projections.getProjectionByCode(code));
-        }
+        Map<String, Projection> supportedCodesMap = Projections.getAllProjectionCodes().stream()
+                .collect(Collectors.toMap(code -> code, Projections::getProjectionByCode));
 
         List<TestData> prevData = new ArrayList<>();
         if (new File(PROJECTION_DATA_FILE).exists()) {
             prevData = readData();
         }
-        Map<String, TestData> prevCodesMap = new HashMap<>();
-        for (TestData data : prevData) {
-            prevCodesMap.put(data.code, data);
-        }
+        Map<String, TestData> prevCodesMap = prevData.stream()
+                .collect(Collectors.toMap(data -> data.code, data -> data));
 
-        Set<String> codesToWrite = new TreeSet<>();
-        for (TestData data : prevData) {
-            if (supportedCodesMap.containsKey(data.code)) {
-                codesToWrite.add(data.code);
-            }
-        }
-        for (String code : supportedCodesMap.keySet()) {
-            if (!codesToWrite.contains(code)) {
-                codesToWrite.add(code);
-            }
-        }
+        Set<String> codesToWrite = new TreeSet<>(supportedCodesMap.keySet());
+        prevData.stream()
+                .filter(data -> supportedCodesMap.containsKey(data.code)).map(data -> data.code)
+                .forEach(codesToWrite::add);
 
         Random rand = new SecureRandom();
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(

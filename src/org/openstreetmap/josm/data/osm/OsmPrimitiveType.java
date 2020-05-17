@@ -100,11 +100,9 @@ public enum OsmPrimitiveType {
      * @see #fromApiTypeName
      */
     public static OsmPrimitiveType from(String value) {
-        for (OsmPrimitiveType type: values()) {
-            if (type.getAPIName().equalsIgnoreCase(value))
-                return type;
-        }
-        return null;
+        return Arrays.stream(values())
+                .filter(type -> type.getAPIName().equalsIgnoreCase(value))
+                .findFirst().orElse(null);
     }
 
     /**

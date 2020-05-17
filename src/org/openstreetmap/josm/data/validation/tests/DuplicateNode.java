@@ -9,12 +9,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -134,13 +134,10 @@ public class DuplicateNode extends Test {
 
             // multiple nodes at the same position -> check if all nodes have a distinct elevation
             List<Node> nodes = (List<Node>) v;
-            Set<String> eles = new HashSet<>();
-            for (Node n : nodes) {
-                String ele = n.get("ele");
-                if (ele != null) {
-                    eles.add(ele);
-                }
-            }
+            Set<String> eles = nodes.stream()
+                    .map(n -> n.get("ele"))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
             if (eles.size() == nodes.size()) {
                 // All nodes at this position have a distinct elevation.
                 // This is normal in some particular cases (for example, geodesic points in France)
@@ -309,9 +306,7 @@ public class DuplicateNode extends Test {
      */
     @Override
     public Command fixError(TestError testError) {
-        final Set<Node> nodes = testError.getPrimitives().stream()
-                .filter(Node.class::isInstance)
-                .map(Node.class::cast)
+        final Set<Node> nodes = testError.primitives(Node.class)
                 // Filter nodes that have already been deleted (see #5764 and #5773)
                 .filter(n -> !n.isDeleted())
                 .collect(Collectors.toCollection(LinkedHashSet::new));

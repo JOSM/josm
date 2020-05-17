@@ -201,13 +201,8 @@ public class FilterMatcher {
     }
 
     private static boolean oneParentWayNotFiltered(OsmPrimitive primitive, boolean hidden) {
-        List<OsmPrimitive> refs = primitive.getReferrers();
-        for (OsmPrimitive p: refs) {
-            if (p instanceof Way && !isFiltered(p, hidden))
-                return true;
-        }
-
-        return false;
+        return primitive.referrers(Way.class)
+                .anyMatch(p -> !isFiltered(p, hidden));
     }
 
     private static boolean allParentMultipolygonsFiltered(OsmPrimitive primitive, boolean hidden) {
@@ -222,12 +217,8 @@ public class FilterMatcher {
     }
 
     private static boolean oneParentMultipolygonNotFiltered(OsmPrimitive primitive, boolean hidden) {
-        for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(
-                primitive.getReferrers(), OsmPrimitive::isMultipolygon)) {
-            if (!isFiltered(r, hidden))
-                return true;
-        }
-        return false;
+        return new SubclassFilteredCollection<OsmPrimitive, Relation>(primitive.getReferrers(), OsmPrimitive::isMultipolygon).stream()
+                .anyMatch(r -> !isFiltered(r, hidden));
     }
 
     private static FilterType test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {

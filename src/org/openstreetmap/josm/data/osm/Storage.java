@@ -238,13 +238,10 @@ public class Storage<T> extends AbstractSet<T> {
 
     @Override
     public synchronized int hashCode() {
-        int h = 0;
-        if (hash != null) {
-            for (T t : this) {
-                h += hash.getHashCode(t);
-            }
+        if (hash == null) {
+            return 0;
         }
-        return h;
+        return this.stream().mapToInt(hash::getHashCode).sum();
     }
 
     @Override

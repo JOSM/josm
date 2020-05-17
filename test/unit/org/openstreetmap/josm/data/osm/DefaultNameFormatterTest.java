@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -145,10 +147,8 @@ public class DefaultNameFormatterTest {
         assertEquals("<ul><li>incomplete</li></ul>",
                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(new Node(1)));
 
-        List<Node> nodes = new ArrayList<>(10);
-        for (int i = 1; i <= 10; i++) {
-            nodes.add(new Node(i, 1));
-        }
+        List<Node> nodes = IntStream.rangeClosed(1, 10).mapToObj(i -> new Node(i, 1))
+                .collect(Collectors.toList());
         assertEquals("<ul><li>1</li><li>2</li><li>3</li><li>4</li><li>...</li></ul>",
                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(nodes, 5));
     }

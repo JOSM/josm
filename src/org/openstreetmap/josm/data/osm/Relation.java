@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -273,11 +272,11 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
 
             RelationData relationData = (RelationData) data;
 
-            List<RelationMember> newMembers = new ArrayList<>();
-            for (RelationMemberData member : relationData.getMembers()) {
-                newMembers.add(new RelationMember(member.getRole(), Optional.ofNullable(getDataSet().getPrimitiveById(member))
-                        .orElseThrow(() -> new AssertionError("Data consistency problem - relation with missing member detected"))));
-            }
+            List<RelationMember> newMembers = relationData.getMembers().stream()
+                    .map(member -> new RelationMember(member.getRole(), Optional
+                            .ofNullable(getDataSet().getPrimitiveById(member))
+                            .orElseThrow(() -> new AssertionError("Data consistency problem - relation with missing member detected"))))
+                    .collect(Collectors.toList());
             setMembers(newMembers);
         } finally {
             writeUnlock(locked);
@@ -509,10 +508,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
 
     @Override
     public boolean hasIncompleteMembers() {
-        for (RelationMember rm: members) {
-            if (rm.getMember().isIncomplete()) return true;
-        }
-        return false;
+        return Arrays.stream(members).anyMatch(rm -> rm.getMember().isIncomplete());
     }
 
     /**
@@ -522,14 +518,10 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
      */
     @Override
     public Collection<OsmPrimitive> getIncompleteMembers() {
-        Set<OsmPrimitive> ret = new HashSet<>();
-        for (RelationMember rm: members) {
-            if (!rm.getMember().isIncomplete()) {
-                continue;
-            }
-            ret.add(rm.getMember());
-        }
-        return ret;
+        return Arrays.stream(members)
+                .filter(rm -> rm.getMember().isIncomplete())
+                .map(RelationMember::getMember)
+                .collect(Collectors.toSet());
     }
 
     @Override

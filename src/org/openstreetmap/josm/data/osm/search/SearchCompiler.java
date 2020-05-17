@@ -743,11 +743,8 @@ public class SearchCompiler {
                     // The string search will just get a key like 'highway' and look that up as osm.get(key).
                     // But since we're doing a regex match we'll have to loop over all the keys to see if they match our regex,
                     // and only then try to match against the value
-                    for (String k: osm.keySet()) {
-                        if (keyPattern.matcher(k).find() && valuePattern.matcher(osm.get(k)).find()) {
-                            return true;
-                        }
-                    }
+                    return osm.keySet().stream()
+                            .anyMatch(k -> keyPattern.matcher(k).find() && valuePattern.matcher(osm.get(k)).find());
                 }
             } else {
                 String mv = getMv(osm);
@@ -767,12 +764,7 @@ public class SearchCompiler {
             } else {
                 mv = osm.get(key);
                 if (!caseSensitive && mv == null) {
-                    for (String k: osm.keySet()) {
-                        if (key.equalsIgnoreCase(k)) {
-                            mv = osm.get(k);
-                            break;
-                        }
-                    }
+                    mv = osm.keySet().stream().filter(key::equalsIgnoreCase).map(osm::get).findFirst().orElse(mv);
                 }
             }
             return mv;
@@ -983,33 +975,17 @@ public class SearchCompiler {
             case ANY_VALUE:
                 return osm.hasTag(key);
             case ANY_KEY:
-                for (String v:osm.getKeys().values()) {
-                    if (v.equals(value))
-                        return true;
-                }
-                return false;
+                return osm.getKeys().values().stream().anyMatch(v -> v.equals(value));
             case EXACT:
                 return value.equals(osm.get(key));
             case ANY_KEY_REGEXP:
-                for (String v:osm.getKeys().values()) {
-                    if (valuePattern.matcher(v).matches())
-                        return true;
-                }
-                return false;
+                return osm.getKeys().values().stream().anyMatch(v -> valuePattern.matcher(v).matches());
             case ANY_VALUE_REGEXP:
             case EXACT_REGEXP:
-                for (String k : osm.keySet()) {
-                    if (keyPattern.matcher(k).matches()
-                            && (mode == Mode.ANY_VALUE_REGEXP || valuePattern.matcher(osm.get(k)).matches()))
-                        return true;
-                }
-                return false;
+                return osm.keySet().stream().anyMatch(k -> keyPattern.matcher(k).matches()
+                        && (mode == Mode.ANY_VALUE_REGEXP || valuePattern.matcher(osm.get(k)).matches()));
             case MISSING_KEY_REGEXP:
-                for (String k:osm.keySet()) {
-                    if (keyPattern.matcher(k).matches())
-                        return false;
-                }
-                return true;
+                return osm.keySet().stream().noneMatch(k -> keyPattern.matcher(k).matches());
             }
             throw new AssertionError("Missed state");
         }
@@ -1278,18 +1254,11 @@ public class SearchCompiler {
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            for (OsmPrimitive ref: osm.getReferrers()) {
-                if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
-                    for (RelationMember m : ((Relation) ref).getMembers()) {
-                        if (m.getMember() == osm) {
-                            String testRole = m.getRole();
-                            if (role.equals(testRole == null ? "" : testRole))
-                                return true;
-                        }
-                    }
-                }
-            }
-            return false;
+            return osm.referrers(Relation.class)
+                    .filter(ref -> !ref.isIncomplete() && !ref.isDeleted())
+                    .flatMap(ref -> ref.getMembers().stream()).filter(m -> m.getMember() == osm)
+                    .map(RelationMember::getRole)
+                    .anyMatch(testRole -> role.equals(testRole == null ? "" : testRole));
         }
 
         @Override
@@ -1697,18 +1666,13 @@ public class SearchCompiler {
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            boolean isParent = false;
-
             if (osm instanceof Way) {
-                for (Node n : ((Way) osm).getNodes()) {
-                    isParent |= match.match(n);
-                }
+                return ((Way) osm).getNodes().stream().anyMatch(match::match);
             } else if (osm instanceof Relation) {
-                for (RelationMember member : ((Relation) osm).getMembers()) {
-                    isParent |= match.match(member.getMember());
-                }
+                return ((Relation) osm).getMembers().stream().anyMatch(member -> match.match(member.getMember()));
+            } else {
+                return false;
             }
-            return isParent;
         }
 
         @Override
@@ -1728,11 +1692,7 @@ public class SearchCompiler {
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            boolean isChild = false;
-            for (OsmPrimitive p : osm.getReferrers()) {
-                isChild |= match.match(p);
-            }
-            return isChild;
+            return osm.getReferrers().stream().anyMatch(match::match);
         }
 
         @Override
@@ -1930,13 +1890,7 @@ public class SearchCompiler {
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            for (TaggingPreset preset : this.presets) {
-                if (preset.test(osm)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return this.presets.stream().anyMatch(preset -> preset.test(osm));
         }
 
         private static boolean presetNameMatch(String name, TaggingPreset preset, boolean matchStrictly) {

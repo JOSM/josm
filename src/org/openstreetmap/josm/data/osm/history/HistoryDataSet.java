@@ -5,12 +5,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -111,11 +110,9 @@ public class HistoryDataSet implements LayerChangeListener {
         List<HistoryOsmPrimitive> versions = data.get(pid);
         if (versions == null)
             return null;
-        for (HistoryOsmPrimitive primitive: versions) {
-            if (primitive.matches(id, version))
-                return primitive;
-        }
-        return null;
+        return versions.stream()
+                .filter(primitive -> primitive.matches(id, version))
+                .findFirst().orElse(null);
     }
 
     /**
@@ -198,13 +195,10 @@ public class HistoryDataSet implements LayerChangeListener {
      * @return The ids
      */
     public Collection<Long> getChangesetIds() {
-        final Set<Long> ids = new HashSet<>();
-        for (Collection<HistoryOsmPrimitive> i : data.values()) {
-            for (HistoryOsmPrimitive j : i) {
-                ids.add(j.getChangesetId());
-            }
-        }
-        return ids;
+        return data.values().stream()
+                .flatMap(Collection::stream)
+                .map(HistoryOsmPrimitive::getChangesetId)
+                .collect(Collectors.toSet());
     }
 
     /* ------------------------------------------------------------------------------ */

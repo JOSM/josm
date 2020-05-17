@@ -34,27 +34,15 @@ public class WayConnectedToArea extends Test {
             return;
         }
 
-        boolean hasway = false;
         List<OsmPrimitive> r = w.firstNode().getReferrers();
-        for (OsmPrimitive p : r) {
-            if (p != w && p.hasKey(HIGHWAY)) {
-                hasway = true;
-                break;
-            }
-        }
+        boolean hasway = r.stream().anyMatch(p -> p != w && p.hasKey(HIGHWAY));
         if (!hasway) {
             for (OsmPrimitive p : r) {
                 testForError(w, w.firstNode(), p);
             }
         }
-        hasway = false;
         r = w.lastNode().getReferrers();
-        for (OsmPrimitive p : r) {
-            if (p != w && p.hasKey(HIGHWAY)) {
-                hasway = true;
-                break;
-            }
-        }
+        hasway = r.stream().anyMatch(p -> p != w && p.hasKey(HIGHWAY));
         if (!hasway) {
             for (OsmPrimitive p : r) {
                 testForError(w, w.lastNode(), p);
@@ -69,14 +57,10 @@ public class WayConnectedToArea extends Test {
         } else if (isArea(p)) {
             addPossibleError(w, wayNode, p, p);
         } else {
-            for (OsmPrimitive r : p.getReferrers()) {
-                if (r instanceof Relation
-                        && r.hasTag("type", "multipolygon")
-                        && isArea(r)) {
-                    addPossibleError(w, wayNode, p, r);
-                    break;
-                }
-            }
+            p.referrers(Relation.class)
+                    .filter(r -> r.isMultipolygon() && isArea(r))
+                    .findFirst()
+                    .ifPresent(r -> addPossibleError(w, wayNode, p, r));
         }
     }
 

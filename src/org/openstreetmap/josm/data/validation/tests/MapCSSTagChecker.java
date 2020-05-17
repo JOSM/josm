@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,6 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -462,10 +462,9 @@ public class MapCSSTagChecker extends Test.TagTest {
             }
             try {
                 final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
-                Collection<Command> cmds = new LinkedList<>();
-                for (FixCommand fixCommand : fixCommands) {
-                    cmds.add(fixCommand.createCommand(p, matchingSelector));
-                }
+                Collection<Command> cmds = fixCommands.stream()
+                        .map(fixCommand -> fixCommand.createCommand(p, matchingSelector))
+                        .collect(Collectors.toList());
                 if (deletion && !p.isDeleted()) {
                     cmds.add(new DeleteCommand(p));
                 }

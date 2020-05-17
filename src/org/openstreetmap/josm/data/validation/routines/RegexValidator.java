@@ -16,8 +16,12 @@
  */
 package org.openstreetmap.josm.data.validation.routines;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * <b>Regular Expression</b> validation (using JDK 1.4+ regex support).
@@ -137,15 +141,8 @@ public class RegexValidator extends AbstractValidator {
      */
     @Override
     public boolean isValid(String value) {
-        if (value == null) {
-            return false;
-        }
-        for (int i = 0; i < patterns.length; i++) {
-            if (patterns[i].matcher(value).matches()) {
-                return true;
-            }
-        }
-        return false;
+        return value != null
+                && IntStream.range(0, patterns.length).anyMatch(i -> patterns[i].matcher(value).matches());
     }
 
     @Override
@@ -165,15 +162,11 @@ public class RegexValidator extends AbstractValidator {
         if (value == null) {
             return null;
         }
-        for (int i = 0; i < patterns.length; i++) {
-            Matcher matcher = patterns[i].matcher(value);
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(value);
             if (matcher.matches()) {
                 int count = matcher.groupCount();
-                String[] groups = new String[count];
-                for (int j = 0; j < count; j++) {
-                    groups[j] = matcher.group(j+1);
-                }
-                return groups;
+                return IntStream.range(0, count).mapToObj(j -> matcher.group(j + 1)).toArray(String[]::new);
             }
         }
         return null;
@@ -191,21 +184,14 @@ public class RegexValidator extends AbstractValidator {
         if (value == null) {
             return null;
         }
-        for (int i = 0; i < patterns.length; i++) {
-            Matcher matcher = patterns[i].matcher(value);
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(value);
             if (matcher.matches()) {
                 int count = matcher.groupCount();
                 if (count == 1) {
                     return matcher.group(1);
                 }
-                StringBuilder buffer = new StringBuilder();
-                for (int j = 0; j < count; j++) {
-                    String component = matcher.group(j+1);
-                    if (component != null) {
-                        buffer.append(component);
-                    }
-                }
-                return buffer.toString();
+                return IntStream.range(0, count).mapToObj(j -> matcher.group(j + 1)).filter(Objects::nonNull).collect(Collectors.joining());
             }
         }
         return null;
@@ -217,15 +203,7 @@ public class RegexValidator extends AbstractValidator {
      */
     @Override
     public String toString() {
-        StringBuilder buffer = new StringBuilder(32);
-        buffer.append("RegexValidator{");
-        for (int i = 0; i < patterns.length; i++) {
-            if (i > 0) {
-                buffer.append(',');
-            }
-            buffer.append(patterns[i].pattern());
-        }
-        buffer.append('}');
-        return buffer.toString();
+        return Arrays.stream(patterns).map(Pattern::pattern)
+                .collect(Collectors.joining(",", "RegexValidator{", "}"));
     }
 }

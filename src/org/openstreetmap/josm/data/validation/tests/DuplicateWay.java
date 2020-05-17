@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -226,9 +227,9 @@ public class DuplicateWay extends Test {
                     lowestIndex = i;
                 }
             }
-            for (int i = lowestIndex; i < wNodes.size()-1; i++) {
-                wNodesToUse.add(wNodes.get(i));
-            }
+            IntStream.range(lowestIndex, wNodes.size() - 1)
+                    .mapToObj(wNodes::get)
+                    .forEach(wNodesToUse::add);
             for (int i = 0; i < lowestIndex; i++) {
                 wNodesToUse.add(wNodes.get(i));
             }
@@ -237,11 +238,10 @@ public class DuplicateWay extends Test {
             wNodesToUse.addAll(wNodes);
         }
         // Build the list of lat/lon
-        List<LatLon> wLat = new ArrayList<>(wNodesToUse.size());
-        for (Node node : wNodesToUse) {
-            wLat.add(node.getCoor());
-        }
-        return wLat;
+
+        return wNodesToUse.stream()
+                .map(Node::getCoor)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -249,14 +249,9 @@ public class DuplicateWay extends Test {
      */
     @Override
     public Command fixError(TestError testError) {
-        Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        Set<Way> wayz = new HashSet<>();
-
-        for (OsmPrimitive osm : sel) {
-            if (osm instanceof Way && !osm.isDeleted()) {
-                wayz.add((Way) osm);
-            }
-        }
+        Set<Way> wayz = testError.primitives(Way.class)
+                .filter(w -> !w.isDeleted())
+                .collect(Collectors.toSet());
 
         if (wayz.size() < 2)
             return null;
@@ -314,25 +309,13 @@ public class DuplicateWay extends Test {
         if (testError.getCode() != DUPLICATE_WAY) return false;
 
         // We fix it only if there is no more than one way that is relation member.
-        Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        Set<Way> wayz = new HashSet<>();
-
-        for (OsmPrimitive osm : sel) {
-            if (osm instanceof Way) {
-                wayz.add((Way) osm);
-            }
-        }
-
+        Set<Way> wayz = testError.primitives(Way.class).collect(Collectors.toSet());
         if (wayz.size() < 2)
             return false;
 
-        int waysWithRelations = 0;
-        for (Way w : wayz) {
-            List<Relation> rel = w.referrers(Relation.class).collect(Collectors.toList());
-            if (!rel.isEmpty()) {
-                ++waysWithRelations;
-            }
-        }
+        long waysWithRelations = wayz.stream()
+                .filter(w -> w.referrers(Relation.class).anyMatch(x -> true))
+                .count();
         return waysWithRelations <= 1;
     }
 }

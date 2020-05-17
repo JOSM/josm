@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.tools.Pair;
 
@@ -209,13 +211,7 @@ public class NodeGraph {
     }
 
     protected Set<Node> getTerminalNodes() {
-        Set<Node> ret = new LinkedHashSet<>();
-        for (Node n: getNodes()) {
-            if (isTerminalNode(n)) {
-                ret.add(n);
-            }
-        }
-        return ret;
+        return getNodes().stream().filter(this::isTerminalNode).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private List<NodePair> getConnectedPairs(Node node) {
@@ -247,12 +243,8 @@ public class NodeGraph {
     }
 
     protected List<Node> buildPathFromNodePairs(Deque<NodePair> path) {
-        List<Node> ret = new ArrayList<>(path.size() + 1);
-        for (NodePair pair : path) {
-            ret.add(pair.getA());
-        }
-        ret.add(path.peekLast().getB());
-        return ret;
+        return Stream.concat(path.stream().map(NodePair::getA), Stream.of(path.peekLast().getB()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -306,11 +298,10 @@ public class NodeGraph {
             // to find out.
             Set<Node> nodes = getTerminalNodes();
             nodes = nodes.isEmpty() ? getMostFrequentVisitedNodesFirst() : nodes;
-            for (Node n : nodes) {
-                List<Node> path = buildSpanningPath(n);
-                if (!path.isEmpty())
-                    return path;
-            }
+            return nodes.stream()
+                    .map(this::buildSpanningPath)
+                    .filter(path -> !path.isEmpty())
+                    .findFirst().orElse(null);
         }
         return null;
     }

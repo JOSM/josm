@@ -128,24 +128,12 @@ public class Multipolygon {
 
         boolean isOuterRole(String role) {
             if (role == null) return false;
-            for (String candidate: outerExactRoles) {
-                if (role.equals(candidate)) return true;
-            }
-            for (String candidate: outerRolePrefixes) {
-                if (role.startsWith(candidate)) return true;
-            }
-            return false;
+            return outerExactRoles.stream().anyMatch(role::equals) || outerRolePrefixes.stream().anyMatch(role::startsWith);
         }
 
         boolean isInnerRole(String role) {
             if (role == null) return false;
-            for (String candidate: innerExactRoles) {
-                if (role.equals(candidate)) return true;
-            }
-            for (String candidate: innerRolePrefixes) {
-                if (role.startsWith(candidate)) return true;
-            }
-            return false;
+            return innerExactRoles.stream().anyMatch(role::equals) || innerRolePrefixes.stream().anyMatch(role::startsWith);
         }
     }
 
@@ -481,11 +469,7 @@ public class Multipolygon {
         public boolean isClosed() {
             if (nodes.size() < 3 || !getFirstNode().equals(getLastNode()))
                 return false;
-            for (PolyData inner : inners) {
-                if (!inner.isClosed())
-                    return false;
-            }
-            return true;
+            return inners.stream().allMatch(PolyData::isClosed);
         }
 
         /**

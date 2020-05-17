@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
@@ -320,12 +321,9 @@ public class QuadBuckets<T extends IPrimitive> implements Collection<T> {
 
         int indexOf(QBLevel<T> findThis) {
             QBLevel<T>[] children = getChildren();
-            for (int i = 0; i < QuadTiling.TILES_PER_LEVEL; i++) {
-                if (children[i] == findThis) {
-                    return i;
-                }
-            }
-            return -1;
+            return IntStream.range(0, QuadTiling.TILES_PER_LEVEL)
+                    .filter(i -> children[i] == findThis)
+                    .findFirst().orElse(-1);
         }
 
         void removeFromParent() {
@@ -405,30 +403,17 @@ public class QuadBuckets<T extends IPrimitive> implements Collection<T> {
 
     @Override
     public boolean removeAll(Collection<?> objects) {
-        boolean changed = false;
-        for (Object o : objects) {
-            changed |= remove(o);
-        }
-        return changed;
+        return objects.stream().map(this::remove).reduce(false, (a, b) -> a || b);
     }
 
     @Override
     public boolean addAll(Collection<? extends T> objects) {
-        boolean changed = false;
-        for (T o : objects) {
-            changed |= add(o);
-        }
-        return changed;
+        return objects.stream().map(this::add).reduce(false, (a, b) -> a || b);
     }
 
     @Override
     public boolean containsAll(Collection<?> objects) {
-        for (Object o : objects) {
-            if (!this.contains(o)) {
-                return false;
-            }
-        }
-        return true;
+        return objects.stream().allMatch(this::contains);
     }
 
     @Override

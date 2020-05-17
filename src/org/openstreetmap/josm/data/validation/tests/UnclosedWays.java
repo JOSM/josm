@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -167,11 +168,7 @@ public class UnclosedWays extends Test {
      * @since 6390
      */
     public Set<String> getCheckedKeys() {
-        Set<String> keys = new HashSet<>();
-        for (UnclosedWaysCheck c : checks) {
-            keys.add(c.key);
-        }
-        return keys;
+        return Arrays.stream(checks).map(c -> c.key).collect(Collectors.toSet());
     }
 
     @Override

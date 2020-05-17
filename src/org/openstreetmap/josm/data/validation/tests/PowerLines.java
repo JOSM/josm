@@ -89,8 +89,7 @@ public class PowerLines extends Test {
     @Override
     public void endTest() {
         for (TestError e : potentialErrors) {
-            e.getPrimitives().stream()
-                    .map(Node.class::cast)
+            e.primitives(Node.class)
                     .filter(n -> !isInPowerStation(n))
                     .findAny()
                     .ifPresent(ignore -> errors.add(e));

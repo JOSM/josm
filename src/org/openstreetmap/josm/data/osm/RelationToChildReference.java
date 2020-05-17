@@ -2,10 +2,10 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * This is an extension of {@link RelationMember} that stores the parent relation and the index in it in addition to the role/child.
@@ -20,15 +20,10 @@ public class RelationToChildReference {
      */
     public static Set<RelationToChildReference> getRelationToChildReferences(OsmPrimitive child) {
         Set<Relation> parents = child.referrers(Relation.class).collect(Collectors.toSet());
-        Set<RelationToChildReference> references = new HashSet<>();
-        for (Relation parent: parents) {
-            for (int i = 0; i < parent.getMembersCount(); i++) {
-                if (parent.getMember(i).refersTo(child)) {
-                    references.add(new RelationToChildReference(parent, i, parent.getMember(i)));
-                }
-            }
-        }
-        return references;
+        return parents.stream().flatMap(parent1 -> IntStream.range(0, parent1.getMembersCount())
+                .filter(i -> parent1.getMember(i).refersTo(child))
+                .mapToObj(i -> new RelationToChildReference(parent1, i, parent1.getMember(i))))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -39,11 +34,9 @@ public class RelationToChildReference {
      * primitives
      */
     public static Set<RelationToChildReference> getRelationToChildReferences(Collection<? extends OsmPrimitive> children) {
-        Set<RelationToChildReference> references = new HashSet<>();
-        for (OsmPrimitive child: children) {
-            references.addAll(getRelationToChildReferences(child));
-        }
-        return references;
+        return children.stream()
+                .flatMap(child -> getRelationToChildReferences(child).stream())
+                .collect(Collectors.toSet());
     }
 
     private final Relation parent;

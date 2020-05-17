@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -25,12 +26,9 @@ public class History {
     }
 
     private static History filter(History history, FilterPredicate predicate) {
-        List<HistoryOsmPrimitive> out = new ArrayList<>();
-        for (HistoryOsmPrimitive primitive: history.versions) {
-            if (predicate.matches(primitive)) {
-                out.add(primitive);
-            }
-        }
+        List<HistoryOsmPrimitive> out = history.versions.stream()
+                .filter(predicate::matches)
+                .collect(Collectors.toList());
         return new History(history.id, history.type, out);
     }
 
@@ -174,11 +172,7 @@ public class History {
      * @return {@code true} if this history contains {@code version}, {@code false} otherwise
      */
     public boolean contains(long version) {
-        for (HistoryOsmPrimitive primitive: versions) {
-            if (primitive.matches(id, version))
-                return true;
-        }
-        return false;
+        return versions.stream().anyMatch(primitive -> primitive.matches(id, version));
     }
 
     /**
@@ -189,11 +183,9 @@ public class History {
      * @return the history primitive with version <code>version</code>
      */
     public HistoryOsmPrimitive getByVersion(long version) {
-        for (HistoryOsmPrimitive primitive: versions) {
-            if (primitive.matches(id, version))
-                return primitive;
-        }
-        return null;
+        return versions.stream()
+                .filter(primitive -> primitive.matches(id, version))
+                .findFirst().orElse(null);
     }
 
     /**

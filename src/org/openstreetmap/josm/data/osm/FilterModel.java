@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -87,10 +88,9 @@ public class FilterModel implements SortableModel<Filter> {
      * @param prefEntry preferences key
      */
     public void savePrefs(String prefEntry) {
-        Collection<FilterPreferenceEntry> entries = new ArrayList<>();
-        for (Filter flt : filters) {
-            entries.add(flt.getPreferenceEntry());
-        }
+        Collection<FilterPreferenceEntry> entries = filters.stream()
+                .map(Filter::getPreferenceEntry)
+                .collect(Collectors.toList());
         StructUtils.putListOfStructs(Config.getPref(), prefEntry, entries, FilterPreferenceEntry.class);
     }
 

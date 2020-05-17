@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
@@ -119,13 +120,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      * @since 1911
      */
     public boolean containsNode(Node node) {
-        if (node == null) return false;
-
-        for (Node n : nodes) {
-            if (n.equals(node))
-                return true;
-        }
-        return false;
+        return node != null && Arrays.asList(nodes).contains(node);
     }
 
     /**
@@ -325,11 +320,8 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         if (getNodesCount() != w.getNodesCount()) return false;
         if (!super.hasEqualSemanticAttributes(other, testInterestingTagsOnly))
             return false;
-        for (int i = 0; i < getNodesCount(); i++) {
-            if (!getNode(i).hasEqualSemanticAttributes(w.getNode(i)))
-                return false;
-        }
-        return true;
+        return IntStream.range(0, getNodesCount())
+                .allMatch(i -> getNode(i).hasEqualSemanticAttributes(w.getNode(i)));
     }
 
     /**
@@ -372,13 +364,9 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         boolean locked = writeLock();
         try {
             boolean closed = isClosed() && selection.contains(lastNode());
-            List<Node> copy = new ArrayList<>();
-
-            for (Node n: nodes) {
-                if (!selection.contains(n)) {
-                    copy.add(n);
-                }
-            }
+            List<Node> copy = Arrays.stream(nodes)
+                    .filter(n -> !selection.contains(n))
+                    .collect(Collectors.toList());
 
             int i = copy.size();
             if (closed && i > 2) {
@@ -523,10 +511,8 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         if (isIncomplete() || nodes.length <= 2) return false;
         /* circular ways have only inner nodes, so return true for them! */
         if (n == nodes[0] && n == nodes[nodes.length-1]) return true;
-        for (int i = 1; i < nodes.length - 1; ++i) {
-            if (nodes[i] == n) return true;
-        }
-        return false;
+        return IntStream.range(1, nodes.length - 1)
+                .anyMatch(i -> nodes[i] == n);
     }
 
     @Override

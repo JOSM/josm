@@ -212,10 +212,9 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             for (Way w : copyFrom.getWays()) {
                 Way newWay = new Way(w, false, false);
                 primMap.put(w, newWay);
-                List<Node> newNodes = new ArrayList<>();
-                for (Node n : w.getNodes()) {
-                    newNodes.add((Node) primMap.get(n));
-                }
+                List<Node> newNodes = w.getNodes().stream()
+                        .map(n -> (Node) primMap.get(n))
+                        .collect(Collectors.toList());
                 newWay.setNodes(newNodes);
                 addPrimitive(newWay);
             }

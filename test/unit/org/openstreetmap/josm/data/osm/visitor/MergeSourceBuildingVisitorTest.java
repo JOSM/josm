@@ -30,11 +30,9 @@ public class MergeSourceBuildingVisitorTest {
     protected OsmPrimitive lookupByName(Collection<? extends OsmPrimitive> primitives, String name) {
         if (primitives == null) return null;
         if (name == null) return null;
-        for (OsmPrimitive primitive: primitives) {
-            if (name.equals(primitive.get("name")))
-                return primitive;
-        }
-        return null;
+        return primitives.stream()
+                .filter(primitive -> name.equals(primitive.get("name")))
+                .findFirst().orElse(null);
     }
 
     /**

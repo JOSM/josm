@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -244,7 +245,6 @@ public class ConnectivityRelations extends Test {
      * @param roleLanes The lane counts for each relation role
      */
     private void checkForImpliedConnectivity(Relation relation, Map<String, Integer> roleLanes) {
-        boolean connImplied = true;
         Map<Integer, Map<Integer, Boolean>> connTagLanes = parseConnectivityTag(relation);
         // Don't flag connectivity as already implied when:
         // - Lane counts are different on the roads
@@ -255,21 +255,14 @@ public class ConnectivityRelations extends Test {
         // - Highways that appear to be merging have a different cumulative number of lanes than
         //   the highway that they're merging into
 
-        connImplied = checkMemberTagsForImpliedConnectivity(relation, roleLanes) && !checkForIntersectionAtMembers(relation);
-        // Check if connectivity tag implies default connectivity
-        if (connImplied) {
-            for (Entry<Integer, Map<Integer, Boolean>> to : connTagLanes.entrySet()) {
-                int fromLane = to.getKey();
-                for (Entry<Integer, Boolean> lane : to.getValue().entrySet()) {
-                    if (lane.getKey() != null && fromLane != lane.getKey()) {
-                        connImplied = false;
-                        break;
-                    }
-                }
-                if (!connImplied)
-                    break;
-            }
-        }
+        boolean connImplied = checkMemberTagsForImpliedConnectivity(relation, roleLanes) && !checkForIntersectionAtMembers(relation)
+                // Check if connectivity tag implies default connectivity
+                && connTagLanes.entrySet().stream()
+                .noneMatch(to -> {
+                    int fromLane = to.getKey();
+                    return to.getValue().entrySet().stream()
+                            .anyMatch(lane -> lane.getKey() != null && fromLane != lane.getKey());
+                });
 
         if (connImplied) {
             errors.add(TestError.builder(this, Severity.WARNING, CONNECTIVITY_IMPLIED)
@@ -292,24 +285,15 @@ public class ConnectivityRelations extends Test {
             Node viaNode = (Node) viaPrim;
             List<Way> parentWays = viaNode.getParentWays();
             if (parentWays.size() > 2) {
-                for (Way thisWay : parentWays) {
-                    if (!relationMembers.contains(thisWay) && thisWay.hasTag("highway")) {
-                        return true;
-                    }
-                }
+                return parentWays.stream()
+                        .anyMatch(thisWay -> !relationMembers.contains(thisWay) && thisWay.hasTag("highway"));
             }
         } else if (viaPrim.getType() == OsmPrimitiveType.WAY) {
             Way viaWay = (Way) viaPrim;
-            for (Node thisNode : viaWay.getNodes()) {
-                List<Way> parentWays = thisNode.getParentWays();
-                if (parentWays.size() > 2) {
-                    for (Way thisWay : parentWays) {
-                        if (!relationMembers.contains(thisWay) && thisWay.hasTag("highway")) {
-                            return true;
-                        }
-                    }
-                }
-            }
+            return viaWay.getNodes().stream()
+                    .map(Node::getParentWays).filter(parentWays -> parentWays.size() > 2)
+                    .flatMap(Collection::stream)
+                    .anyMatch(thisWay -> !relationMembers.contains(thisWay) && thisWay.hasTag("highway"));
         }
         return false;
     }
@@ -379,13 +363,7 @@ public class ConnectivityRelations extends Test {
         necessaryRoles.add(FROM);
         necessaryRoles.add(VIA);
         necessaryRoles.add(TO);
-
-        List<String> roleList = new ArrayList<>();
-        for (RelationMember relationMember: relation.getMembers()) {
-            roleList.add(relationMember.getRole());
-        }
-
-        return !roleList.containsAll(necessaryRoles);
+        return !relation.getMemberRoles().containsAll(necessaryRoles);
     }
 
     /**

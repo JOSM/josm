@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
@@ -87,15 +87,8 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
      * @param type primitive type
      * @return a filtered list for given primitive type
      */
-    @SuppressWarnings("unchecked")
     public static <T extends PrimitiveData> List<T> getFilteredList(Collection<T> list, OsmPrimitiveType type) {
-        List<T> ret = new ArrayList<>();
-        for (PrimitiveData p: list) {
-            if (type.getDataClass().isInstance(p)) {
-                ret.add((T) p);
-            }
-        }
-        return ret;
+        return list.stream().filter(p -> type.getDataClass().isInstance(p)).map(p -> (T) p).collect(Collectors.toList());
     }
 
     @Override

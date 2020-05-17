@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -28,10 +30,7 @@ public class SelfIntersectingWayTest {
     }
 
     private static List<Node> createNodes() {
-        List<Node> nodes = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            nodes.add(new Node(i+1));
-        }
+        List<Node> nodes = IntStream.range(0, 6).mapToObj(i -> new Node(i + 1)).collect(Collectors.toList());
         nodes.get(0).setCoor(new LatLon(34.2680, 133.563));
         nodes.get(1).setCoor(new LatLon(34.2509, 133.548));
         nodes.get(2).setCoor(new LatLon(34.2446, 133.566));

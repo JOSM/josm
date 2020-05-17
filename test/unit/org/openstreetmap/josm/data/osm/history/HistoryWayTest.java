@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Rule;
@@ -96,10 +96,7 @@ public class HistoryWayTest {
 
         way.addNode(1);
         way.addNode(2);
-        ArrayList<Long> ids = new ArrayList<>();
-        for (long id : way.getNodes()) {
-            ids.add(id);
-        }
+        List<Long> ids = way.getNodes();
 
         assertEquals(2, ids.size());
         assertEquals(1, (long) ids.get(0));

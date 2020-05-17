@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -219,13 +220,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         decorateNameWithId(name, node);
 
         String result = name.toString();
-        for (NameFormatterHook hook: formatHooks) {
-            String hookResult = hook.checkFormat(node, result);
-            if (hookResult != null)
-                return hookResult;
-        }
+        return formatHooks.stream().map(hook -> hook.checkFormat(node, result))
+                .filter(Objects::nonNull)
+                .findFirst().orElse(result);
 
-        return result;
     }
 
     private final Comparator<INode> nodeComparator = (n1, n2) -> format(n1).compareTo(format(n2));
@@ -311,13 +309,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         decorateNameWithId(name, way);
 
         String result = name.toString();
-        for (NameFormatterHook hook: formatHooks) {
-            String hookResult = hook.checkFormat(way, result);
-            if (hookResult != null)
-                return hookResult;
-        }
+        return formatHooks.stream().map(hook -> hook.checkFormat(way, result))
+                .filter(Objects::nonNull)
+                .findFirst().orElse(result);
 
-        return result;
     }
 
     private final Comparator<IWay<?>> wayComparator = (w1, w2) -> format(w1).compareTo(format(w2));
@@ -349,13 +344,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         decorateNameWithId(name, relation);
 
         String result = name.toString();
-        for (NameFormatterHook hook: formatHooks) {
-            String hookResult = hook.checkFormat(relation, result);
-            if (hookResult != null)
-                return hookResult;
-        }
+        return formatHooks.stream().map(hook -> hook.checkFormat(relation, result))
+                .filter(Objects::nonNull)
+                .findFirst().orElse(result);
 
-        return result;
     }
 
     private static StringBuilder formatRelationNameAndType(IRelation<?> relation, StringBuilder result, TaggingPreset preset) {
@@ -462,11 +454,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             else
                 return relation.getName();
         } else if (":LocationCode".equals(nameTag)) {
-            for (String m : relation.keySet()) {
-                if (m.endsWith(nameTag))
-                    return relation.get(m);
-            }
-            return null;
+            return relation.keySet().stream()
+                    .filter(m -> m.endsWith(nameTag))
+                    .map(relation::get)
+                    .findFirst().orElse(null);
         } else if (nameTag.startsWith("?") && OsmUtils.isTrue(relation.get(nameTag.substring(1)))) {
             return tr(nameTag.substring(1));
         } else if (nameTag.startsWith("?") && OsmUtils.isFalse(relation.get(nameTag.substring(1)))) {

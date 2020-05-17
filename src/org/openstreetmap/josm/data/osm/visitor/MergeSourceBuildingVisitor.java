@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,7 @@ import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * MergeSourceBuildingVisitor helps to build the "hull" of a collection of {@link OsmPrimitive}s
@@ -78,10 +78,7 @@ public class MergeSourceBuildingVisitor implements OsmPrimitiveVisitor {
         if (isAlreadyRemembered(w))
             return;
         WayData clone = w.save();
-        List<Long> newNodes = new ArrayList<>(w.getNodesCount());
-        for (Node n: w.getNodes()) {
-            newNodes.add(mappedPrimitives.get(n).getUniqueId());
-        }
+        List<Long> newNodes = Utils.transform(w.getNodes(), n -> mappedPrimitives.get(n).getUniqueId());
         clone.setNodeIds(newNodes);
         mappedPrimitives.put(w, clone);
     }

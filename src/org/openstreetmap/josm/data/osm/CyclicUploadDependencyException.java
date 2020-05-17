@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * This is an exception that is thrown if the user attempts to upload a list of relations with a cyclic dependency in them
@@ -37,17 +38,8 @@ public class CyclicUploadDependencyException extends Exception {
 
     @Override
     public String getMessage() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(tr("Cyclic dependency between relations:"))
-          .append('[');
-        for (int i = 0; i < cycle.size(); i++) {
-            if (i > 0) {
-                sb.append(',');
-            }
-            sb.append(formatRelation(cycle.get(i)));
-        }
-        sb.append(']');
-        return sb.toString();
+        return cycle.stream().map(this::formatRelation)
+                .collect(Collectors.joining(",", tr("Cyclic dependency between relations:") + '[', "]"));
     }
 
     /**
