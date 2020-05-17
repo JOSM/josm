@@ -3810,6 +3810,18 @@
             <check key="dispensing" text="Dispensing"/>
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pharmacy -->
+        <item name="Laboratory" icon="presets/health/laboratory.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:healthcare=laboratory" />
+            <space />
+            <key key="healthcare" value="laboratory" />
+            <optional>
+                <reference ref="name_operator" />
+                <combo key="healthcare:speciality" text="Speciality" values="biology,blood_check,clinical_pathology" values_context="healthcare" />
+                <reference ref="oh_wheelchair" />
+                <text key="ref" text="Reference" />
+                <reference ref="link_contact_address" />
+            </optional>
+        </item> <!-- Laboratory -->
         <separator/>
         <item name="Baby Hatch/Safe Haven" icon="presets/health/baby_hatch.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:amenity=baby_hatch" />

@@ -2991,6 +2991,10 @@ node[amenity=veterinary] {
     icon-image: "presets/health/veterinary.svg";
     set icon_z17;
 }
+node[healthcare=laboratory] {
+    icon-image: "presets/health/laboratory.svg";
+    set icon_z17;
+}
 area[amenity=library],
 area[amenity=police],
 area[amenity=ranger_station],
