@@ -371,8 +371,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return roles.roles.stream()
                     .filter(i -> i.memberExpression != null && i.memberExpression.match(osm))
                     .filter(i -> i.types == null || i.types.isEmpty() || i.types.contains(TaggingPresetType.forPrimitive(osm)))
+                    .findFirst()
                     .map(i -> i.key)
-                    .findFirst().orElse(null);
+                    .orElse(null);
         }
         return null;
     }

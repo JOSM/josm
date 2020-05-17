@@ -456,8 +456,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         } else if (":LocationCode".equals(nameTag)) {
             return relation.keySet().stream()
                     .filter(m -> m.endsWith(nameTag))
+                    .findFirst()
                     .map(relation::get)
-                    .findFirst().orElse(null);
+                    .orElse(null);
         } else if (nameTag.startsWith("?") && OsmUtils.isTrue(relation.get(nameTag.substring(1)))) {
             return tr(nameTag.substring(1));
         } else if (nameTag.startsWith("?") && OsmUtils.isFalse(relation.get(nameTag.substring(1)))) {

@@ -116,8 +116,9 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                     if (p.isIncomplete()) {
                         Date timestamp = p.getReferrers().stream()
                                 .filter(ref -> !ref.isTimestampEmpty())
+                                .findFirst()
                                 .map(AbstractPrimitive::getTimestamp)
-                                .findFirst().orElse(null);
+                                .orElse(null);
                         toLoad.put(p, timestamp);
                     }
                 }

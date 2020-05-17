@@ -300,8 +300,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     protected UploadStrategy getUploadStrategy() {
         return rbStrategy.entrySet().stream()
                 .filter(e -> e.getValue().isSelected())
+                .findFirst()
                 .map(Entry::getKey)
-                .findFirst().orElse(null);
+                .orElse(null);
     }
 
     protected int getChunkSize() {

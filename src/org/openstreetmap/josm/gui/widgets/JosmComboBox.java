@@ -158,8 +158,9 @@ public class JosmComboBox<E> extends JComboBox<E> {
         return IntStream.range(0, getUI().getAccessibleChildrenCount(this))
                 .mapToObj(i -> getUI().getAccessibleChild(this, i))
                 .filter(child -> child instanceof ComboPopup)
+                .findFirst()
                 .map(child -> ((ComboPopup) child).getList())
-                .findFirst().orElse(null);
+                .orElse(null);
     }
 
     protected final void init(E prototype) {

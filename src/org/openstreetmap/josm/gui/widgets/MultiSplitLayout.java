@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.swing.UIManager;
 
@@ -779,9 +778,9 @@ public class MultiSplitLayout implements LayoutManager {
             Split split = (Split) root;
             return split.getChildren().stream()
                     .filter(child -> child.getBounds().contains(x, y))
+                    .findFirst()
                     .map(child -> dividerAt(child, x, y))
-                    .filter(Objects::nonNull)
-                    .findFirst().orElse(null);
+                    .orElse(null);
         }
         return null;
     }
