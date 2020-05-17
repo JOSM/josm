@@ -410,7 +410,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             @Override
             protected int checkTableSelection(JTable table, Point p) {
                 int row = super.checkTableSelection(table, p);
-                List<IRelation<?>> rels = Arrays.stream(table.getSelectedRows()).mapToObj(i -> (IRelation<?>) table.getValueAt(i, 0)).collect(Collectors.toList());
+                List<IRelation<?>> rels = Arrays.stream(table.getSelectedRows())
+                        .mapToObj(i -> (IRelation<?>) table.getValueAt(i, 0))
+                        .collect(Collectors.toList());
                 membershipMenuHandler.setPrimitives(rels);
                 return row;
             }

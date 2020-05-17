@@ -42,7 +42,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements D
     @Override
     public void actionPerformed(ActionEvent e) {
         Collection<Command> cmds = Utils.filteredCollection(relations, Relation.class).stream()
-                .map(orig -> GenericRelationEditor.addPrimitivesToRelation(orig, MainApplication.getLayerManager().getActiveDataSet().getSelected()))
+                .map(r -> GenericRelationEditor.addPrimitivesToRelation(r, MainApplication.getLayerManager().getActiveDataSet().getSelected()))
                 .filter(Objects::nonNull)
                 .collect(StreamUtils.toUnmodifiableList());
         if (!cmds.isEmpty()) {

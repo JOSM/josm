@@ -284,7 +284,7 @@ public class ChangesetCacheManager extends JFrame {
 
         tblChangesets.setTransferHandler(new TransferHandler() {
             @Override
-            public void exportToClipboard(JComponent comp, Clipboard clip, int action) throws IllegalStateException {
+            public void exportToClipboard(JComponent comp, Clipboard clip, int action) {
                 List<Changeset> changesets = model.getSelectedChangesets();
                 ChangesetTransferable transferable = new ChangesetTransferable(changesets);
                 ClipboardUtils.copy(transferable);

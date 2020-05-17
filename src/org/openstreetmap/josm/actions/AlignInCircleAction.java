@@ -246,8 +246,7 @@ public final class AlignInCircleAction extends JosmAction {
      * @return List of nodes with more than one referrer
      */
     private static List<Node> collectNodesWithExternReferers(List<Way> ways) {
-        List<Node> withReferrers = ways.stream().flatMap(w -> w.getNodes().stream()).filter(n -> n.getReferrers().size() > 1).collect(Collectors.toList());
-        return withReferrers;
+        return ways.stream().flatMap(w -> w.getNodes().stream()).filter(n -> n.getReferrers().size() > 1).collect(Collectors.toList());
     }
 
     /**
