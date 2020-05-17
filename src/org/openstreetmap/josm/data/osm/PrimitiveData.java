@@ -86,7 +86,9 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
      * @param list list to filter
      * @param type primitive type
      * @return a filtered list for given primitive type
+     * @deprecated Use {@link Collection#stream()} instead
      */
+    @Deprecated
     public static <T extends PrimitiveData> List<T> getFilteredList(Collection<T> list, OsmPrimitiveType type) {
         return list.stream().filter(p -> type.getDataClass().isInstance(p)).map(p -> (T) p).collect(Collectors.toList());
     }
