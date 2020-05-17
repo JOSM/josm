@@ -624,6 +624,9 @@ public class MainApplication {
     }
 
     static String getHelp() {
+        // IMPORTANT: when changing the help texts, also update:
+        // - native/linux/tested/usr/share/man/man1/josm.1
+        // - native/linux/latest/usr/share/man/man1/josm-latest.1
         return tr("Java OpenStreetMap Editor")+" ["
                 +Version.getInstance().getAgentString()+"]\n\n"+
                 tr("usage")+":\n"+
