@@ -4,8 +4,9 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.time.DateTimeException;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -108,10 +109,9 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             // -- language list
             NodeList xmlNodeList = (NodeList) xpath.compile("/osm/user[1]/languages[1]/lang/text()").evaluate(document, XPathConstants.NODESET);
             if (xmlNodeList != null) {
-                List<String> languages = new LinkedList<>();
-                for (int i = 0; i < xmlNodeList.getLength(); i++) {
-                    languages.add(xmlNodeList.item(i).getNodeValue());
-                }
+                List<String> languages = IntStream.range(0, xmlNodeList.getLength())
+                        .mapToObj(i -> xmlNodeList.item(i).getNodeValue())
+                        .collect(Collectors.toList());
                 userInfo.setLanguages(languages);
             }
 

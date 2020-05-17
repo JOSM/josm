@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.Icon;
 
@@ -25,7 +26,6 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationData;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
@@ -221,12 +221,7 @@ public class PurgeCommand extends Command {
                 }
             }
         }
-        Set<Relation> childlessR = new HashSet<>();
-        for (Relation r : inR) {
-            if (numChilds.get(r).equals(0)) {
-                childlessR.add(r);
-            }
-        }
+        Set<Relation> childlessR = inR.stream().filter(r -> numChilds.get(r).equals(0)).collect(Collectors.toSet());
 
         List<Relation> outR = new ArrayList<>(inR.size());
         while (!childlessR.isEmpty()) {
@@ -408,10 +403,7 @@ public class PurgeCommand extends Command {
 
     private static boolean hasOnlyIncompleteMembers(
             Relation r, Collection<OsmPrimitive> toPurge, Collection<? extends OsmPrimitive> moreToPurge) {
-        for (RelationMember m : r.getMembers()) {
-            if (!m.getMember().isIncomplete() && !toPurge.contains(m.getMember()) && !moreToPurge.contains(m.getMember()))
-                return false;
-        }
-        return true;
+        return r.getMembers().stream()
+                .allMatch(m -> m.getMember().isIncomplete() || toPurge.contains(m.getMember()) || moreToPurge.contains(m.getMember()));
     }
 }

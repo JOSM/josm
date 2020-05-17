@@ -4,13 +4,15 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
@@ -41,13 +43,8 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * @return The selected changesets
      */
     public synchronized Set<Changeset> getSelectedChangesets() {
-        Set<Changeset> ret = new HashSet<>();
-        for (int i = 0; i < getSize(); i++) {
-            if (selectionModel.isSelectedIndex(i)) {
-                ret.add(data.get(i));
-            }
-        }
-        return ret;
+        return IntStream.range(0, getSize()).filter(selectionModel::isSelectedIndex)
+                .mapToObj(data::get).collect(Collectors.toSet());
     }
 
     /**
@@ -55,13 +52,8 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * @return The selected ids
      */
     public synchronized Set<Integer> getSelectedChangesetIds() {
-        Set<Integer> ret = new HashSet<>();
-        for (int i = 0; i < getSize(); i++) {
-            if (selectionModel.isSelectedIndex(i)) {
-                ret.add(data.get(i).getId());
-            }
-        }
-        return ret;
+        return IntStream.range(0, getSize()).filter(selectionModel::isSelectedIndex)
+                .mapToObj(data::get).map(Changeset::getId).collect(Collectors.toSet());
     }
 
     /**
@@ -114,13 +106,8 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
             setChangesets(null);
             return;
         }
-        Set<Changeset> changesets = new HashSet<>(ids.size());
-        for (int id: ids) {
-            if (id <= 0) {
-                continue;
-            }
-            changesets.add(new Changeset(id));
-        }
+        Set<Changeset> changesets = ids.stream().mapToInt(id -> id)
+                .filter(id -> id > 0).mapToObj(Changeset::new).collect(Collectors.toSet());
         setChangesets(changesets);
     }
 
@@ -133,14 +120,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
             setChangesets(null);
             return;
         }
-        Set<Changeset> changesets = new HashSet<>();
-        for (OsmPrimitive p: primitives) {
-            if (p.getChangesetId() <= 0) {
-                continue;
-            }
-            changesets.add(new Changeset(p.getChangesetId()));
-        }
-        setChangesets(changesets);
+        initFromChangesetIds(primitives.stream().map(AbstractPrimitive::getChangesetId).collect(Collectors.toList()));
     }
 
     /**
@@ -152,14 +132,7 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
             setChangesets(null);
             return;
         }
-        Set<Changeset> changesets = new HashSet<>();
-        for (OsmPrimitive p: ds.allPrimitives()) {
-            if (p.getChangesetId() <= 0) {
-                continue;
-            }
-            changesets.add(new Changeset(p.getChangesetId()));
-        }
-        setChangesets(changesets);
+        initFromChangesetIds(ds.allPrimitives().stream().map(AbstractPrimitive::getChangesetId).collect(Collectors.toList()));
     }
 
     @Override
@@ -191,16 +164,11 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * @return the selected open changesets
      */
     public synchronized List<Changeset> getSelectedOpenChangesets() {
-        List<Changeset> ret = new ArrayList<>();
-        for (int i = 0; i < getSize(); i++) {
-            if (selectionModel.isSelectedIndex(i)) {
-                Changeset cs = data.get(i);
-                if (cs.isOpen()) {
-                    ret.add(cs);
-                }
-            }
-        }
-        return ret;
+        return IntStream.range(0, getSize())
+                .filter(selectionModel::isSelectedIndex)
+                .mapToObj(data::get)
+                .filter(Changeset::isOpen)
+                .collect(Collectors.toList());
     }
 
     /* ---------------------------------------------------------------------------- */

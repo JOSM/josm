@@ -47,6 +47,7 @@ import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -94,12 +95,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          * @return the imagery type matching the given type string
          */
         public static ImageryType fromString(String s) {
-            for (ImageryType type : ImageryType.values()) {
-                if (type.getTypeString().equals(s)) {
-                    return type;
-                }
-            }
-            return null;
+            return Arrays.stream(ImageryType.values())
+                    .filter(type -> type.getTypeString().equals(s))
+                    .findFirst().orElse(null);
         }
     }
 
@@ -169,12 +167,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          * @return the imagery category matching the given category string
          */
         public static ImageryCategory fromString(String s) {
-            for (ImageryCategory category : ImageryCategory.values()) {
-                if (category.getCategoryString().equals(s)) {
-                    return category;
-                }
-            }
-            return null;
+            return Arrays.stream(ImageryCategory.values())
+                    .filter(category -> category.getCategoryString().equals(s))
+                    .findFirst().orElse(null);
         }
     }
 
@@ -402,15 +397,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             category = i.category != null ? i.category.getCategoryString() : null;
             if (i.bounds != null) {
                 bounds = i.bounds.encodeAsString(",");
-                StringBuilder shapesString = new StringBuilder();
-                for (Shape s : i.bounds.getShapes()) {
-                    if (shapesString.length() > 0) {
-                        shapesString.append(';');
-                    }
-                    shapesString.append(s.encodeAsString(","));
-                }
-                if (shapesString.length() > 0) {
-                    shapes = shapesString.toString();
+                String shapesString = Shape.encodeAsString(i.bounds.getShapes());
+                if (!shapesString.isEmpty()) {
+                    shapes = shapesString;
                 }
             }
             if (!i.serverProjections.isEmpty()) {
@@ -1092,20 +1081,19 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 13536
      */
     public static Collection<String> getActiveIds() {
-        ArrayList<String> ids = new ArrayList<>();
         IPreferences pref = Config.getPref();
-        if (pref != null) {
-            List<ImageryPreferenceEntry> entries = StructUtils.getListOfStructs(
-                pref, "imagery.entries", null, ImageryPreferenceEntry.class);
-            if (entries != null) {
-                for (ImageryPreferenceEntry prefEntry : entries) {
-                    if (prefEntry.id != null && !prefEntry.id.isEmpty())
-                        ids.add(prefEntry.id);
-                }
-                Collections.sort(ids);
-            }
+        if (pref == null) {
+            return Collections.emptyList();
         }
-        return ids;
+        List<ImageryPreferenceEntry> entries = StructUtils.getListOfStructs(pref, "imagery.entries", null, ImageryPreferenceEntry.class);
+        if (entries == null) {
+            return Collections.emptyList();
+        }
+        return entries.stream()
+                .filter(prefEntry -> prefEntry.id != null && !prefEntry.id.isEmpty())
+                .map(prefEntry -> prefEntry.id)
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -1229,7 +1217,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         CheckParameterUtil.ensureParameterNotNull(serverProjections, "serverProjections");
         this.serverProjections = serverProjections.stream()
                 .map(String::intern)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), Utils::toUnmodifiableList));
+                .collect(StreamUtils.toUnmodifiableList());
     }
 
     /**

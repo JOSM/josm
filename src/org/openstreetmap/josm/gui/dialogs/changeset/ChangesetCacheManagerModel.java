@@ -6,9 +6,9 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.table.AbstractTableModel;
@@ -101,11 +101,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @return a set of ids of the selected changesets
      */
     public Set<Integer> getSelectedChangesetIds() {
-        Set<Integer> ret = new HashSet<>();
-        for (Changeset cs: getSelectedChangesets()) {
-            ret.add(cs.getId());
-        }
-        return ret;
+        return getSelectedChangesets().stream().map(Changeset::getId).collect(Collectors.toSet());
     }
 
     /**

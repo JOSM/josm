@@ -4,8 +4,9 @@ package org.openstreetmap.josm.io.session;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -86,15 +87,10 @@ public class ImagerySessionImporter implements SessionLayerImporter {
     }
 
     private static Map<String, String> readProperties(Element elem) {
-        Map<String, String> attributes = new HashMap<>();
         NodeList nodes = elem.getChildNodes();
-        for (int i = 0; i < nodes.getLength(); ++i) {
-            Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE && node.getChildNodes().getLength() <= 1) {
-                Element e = (Element) node;
-                attributes.put(e.getTagName(), e.getTextContent());
-            }
-        }
-        return attributes;
+        return IntStream.range(0, nodes.getLength()).mapToObj(nodes::item)
+                .filter(node -> node.getNodeType() == Node.ELEMENT_NODE && node.getChildNodes().getLength() <= 1)
+                .map(node -> (Element) node)
+                .collect(Collectors.toMap(Element::getTagName, Node::getTextContent, (a, b) -> b));
     }
 }

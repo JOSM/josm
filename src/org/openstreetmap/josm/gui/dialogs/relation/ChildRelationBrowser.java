@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -301,10 +300,9 @@ public class ChildRelationBrowser extends JPanel {
             TreePath[] selection = childTree.getSelectionPaths();
             if (selection == null || selection.length == 0)
                 return;
-            Set<Relation> relations = new HashSet<>();
-            for (TreePath aSelection : selection) {
-                relations.add((Relation) aSelection.getLastPathComponent());
-            }
+            Set<Relation> relations = Arrays.stream(selection)
+                    .map(s -> (Relation) s.getLastPathComponent())
+                    .collect(Collectors.toSet());
             MainApplication.worker.submit(new DownloadRelationSetTask(getParentDialog(), relations));
         }
 

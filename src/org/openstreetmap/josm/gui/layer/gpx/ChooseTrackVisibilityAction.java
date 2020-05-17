@@ -13,13 +13,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JColorChooser;
@@ -296,13 +296,11 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             @Override
             protected void buttonAction(int buttonIndex, ActionEvent evt) {
                 if (buttonIndex == 0) {
-                    List<IGpxTrack> trks = new ArrayList<>();
-                    for (int i : table.getSelectedRows()) {
-                        Object trk = content[i][5];
-                        if (trk != null && trk instanceof IGpxTrack) {
-                            trks.add((IGpxTrack) trk);
-                        }
-                    }
+                    List<IGpxTrack> trks = Arrays.stream(table.getSelectedRows())
+                            .mapToObj(i -> content[i][5])
+                            .filter(trk -> trk instanceof IGpxTrack)
+                            .map(IGpxTrack.class::cast)
+                            .collect(Collectors.toList());
                     showColorDialog(trks);
                 } else {
                     super.buttonAction(buttonIndex, evt);

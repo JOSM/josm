@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -155,12 +156,8 @@ public final class Utils {
      */
     @SafeVarargs
     public static <T> T firstNonNull(T... items) {
-        for (T i : items) {
-            if (i != null) {
-                return i;
-            }
-        }
-        return null;
+        return Arrays.stream(items).filter(Objects::nonNull)
+                .findFirst().orElse(null);
     }
 
     /**
@@ -585,13 +582,9 @@ public final class Utils {
         int size = deps.size();
         List<T> sorted = new ArrayList<>();
         for (int i = 0; i < size; ++i) {
-            T parentless = null;
-            for (T key : deps.keySet()) {
-                if (deps.get(key).isEmpty()) {
-                    parentless = key;
-                    break;
-                }
-            }
+            T parentless = deps.keySet().stream()
+                    .filter(key -> deps.get(key).isEmpty())
+                    .findFirst().orElse(null);
             if (parentless == null) throw new JosmRuntimeException("parentless");
             sorted.add(parentless);
             deps.remove(parentless);
@@ -722,12 +715,9 @@ public final class Utils {
      * @since 15646
      */
     public static String firstNotEmptyString(String defaultString, String... candidates) {
-        for (String candidate : candidates) {
-            if (!Utils.isStripEmpty(candidate)) {
-                return candidate;
-            }
-        }
-        return defaultString;
+        return Arrays.stream(candidates)
+                .filter(candidate -> !Utils.isStripEmpty(candidate))
+                .findFirst().orElse(defaultString);
     }
 
     /**
@@ -738,14 +728,7 @@ public final class Utils {
      * @since 11435
      */
     public static boolean isStripEmpty(String str) {
-        if (str != null) {
-            for (int i = 0; i < str.length(); i++) {
-                if (!isStrippedChar(str.charAt(i), null)) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return str == null || IntStream.range(0, str.length()).allMatch(i -> isStrippedChar(str.charAt(i), null));
     }
 
     /**

@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,7 +18,6 @@ import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Add primitives to a data layer.
@@ -159,12 +157,9 @@ public class AddPrimitivesCommand extends Command {
         if (createdPrimitives != null)
             return createdPrimitives;
 
-        Collection<OsmPrimitive> prims = new HashSet<>();
-        for (PrimitiveData d : data) {
-            prims.add(Optional.ofNullable(getAffectedDataSet().getPrimitiveById(d)).orElseThrow(
-                    () -> new JosmRuntimeException("No primitive found for " + d)));
-        }
-        return prims;
+        return data.stream()
+                .map(d -> Objects.requireNonNull(getAffectedDataSet().getPrimitiveById(d), () -> "No primitive found for " + d))
+                .collect(Collectors.toSet());
     }
 
     @Override

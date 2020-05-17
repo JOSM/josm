@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -294,12 +295,8 @@ public class NmeaReader implements IGpxReader {
      * @return {@code true} if the {@code address} denotes the given NMEA sentence formatter of a known talker
      */
     static boolean isSentence(String address, Sentence formatter) {
-        for (TalkerId talker : TalkerId.values()) {
-            if (address.equals('$' + talker.name() + formatter.name())) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(TalkerId.values())
+                .anyMatch(talker -> address.equals('$' + talker.name() + formatter.name()));
     }
 
     // Parses split up sentences into WayPoints which are stored

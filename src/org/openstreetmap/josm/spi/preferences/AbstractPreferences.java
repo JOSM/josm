@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -157,13 +158,9 @@ public abstract class AbstractPreferences implements IPreferences {
      * @return The key names of the settings
      */
     public Map<String, String> getAllPrefix(String prefix) {
-        final Map<String, String> all = new TreeMap<>();
-        for (final Entry<String, Setting<?>> e : getAllSettings().entrySet()) {
-            if (e.getKey().startsWith(prefix) && (e.getValue() instanceof StringSetting)) {
-                all.put(e.getKey(), ((StringSetting) e.getValue()).getValue());
-            }
-        }
-        return all;
+        return getAllSettings().entrySet().stream()
+                .filter(e -> e.getKey().startsWith(prefix) && (e.getValue() instanceof StringSetting))
+                .collect(Collectors.toMap(Entry::getKey, e -> ((StringSetting) e.getValue()).getValue(), (a, b) -> b, TreeMap::new));
     }
 
     /**
@@ -172,12 +169,9 @@ public abstract class AbstractPreferences implements IPreferences {
      * @return The key names of the list settings
      */
     public List<String> getAllPrefixCollectionKeys(String prefix) {
-        final List<String> all = new LinkedList<>();
-        for (Entry<String, Setting<?>> entry : getAllSettings().entrySet()) {
-            if (entry.getKey().startsWith(prefix) && entry.getValue() instanceof ListSetting) {
-                all.add(entry.getKey());
-            }
-        }
-        return all;
+        return getAllSettings().entrySet().stream()
+                .filter(entry -> entry.getKey().startsWith(prefix) && entry.getValue() instanceof ListSetting)
+                .map(Entry::getKey)
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 }

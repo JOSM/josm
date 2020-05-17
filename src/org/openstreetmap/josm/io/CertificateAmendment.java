@@ -287,12 +287,8 @@ public final class CertificateAmendment {
     private static boolean certificateIsMissing(KeyStore keyStore, X509Certificate crt)
             throws KeyStoreException, InvalidAlgorithmParameterException {
         PKIXParameters params = new PKIXParameters(keyStore);
-        String id = crt.getSubjectX500Principal().getName();
-        for (TrustAnchor ta : params.getTrustAnchors()) {
-            X509Certificate cert = ta.getTrustedCert();
-            if (Objects.equals(id, cert.getSubjectX500Principal().getName()))
-                return false;
-        }
-        return true;
+        return params.getTrustAnchors().stream()
+                .map(TrustAnchor::getTrustedCert)
+                .noneMatch(c -> Objects.equals(crt.getSubjectX500Principal().getName(), c.getSubjectX500Principal().getName()));
     }
 }

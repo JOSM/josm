@@ -3,8 +3,11 @@ package org.openstreetmap.josm.spi.preferences;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.openstreetmap.josm.tools.StreamUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Setting containing a {@link List} of {@code List}s of {@link String} values.
@@ -28,10 +31,9 @@ public class ListListSetting extends AbstractSetting<List<List<String>>> {
      */
     public static ListListSetting create(Collection<Collection<String>> value) {
         if (value != null) {
-            List<List<String>> valueList = new ArrayList<>(value.size());
-            for (Collection<String> lst : value) {
-                valueList.add(new ArrayList<>(lst));
-            }
+            List<List<String>> valueList = value.stream()
+                    .map(ArrayList::new)
+                    .collect(Collectors.toList());
             return new ListListSetting(valueList);
         }
         return new ListListSetting(null);
@@ -42,12 +44,10 @@ public class ListListSetting extends AbstractSetting<List<List<String>>> {
         if (value == null)
             return new ListListSetting(null);
 
-        List<List<String>> copy = new ArrayList<>(value.size());
-        for (Collection<String> lst : value) {
-            List<String> lstCopy = new ArrayList<>(lst);
-            copy.add(Collections.unmodifiableList(lstCopy));
-        }
-        return new ListListSetting(Collections.unmodifiableList(copy));
+        List<List<String>> copy = value.stream()
+                .map(Utils::toUnmodifiableList)
+                .collect(StreamUtils.toUnmodifiableList());
+        return new ListListSetting(copy);
     }
 
     private void consistencyTest() {

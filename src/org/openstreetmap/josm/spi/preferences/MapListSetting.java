@@ -1,12 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.spi.preferences;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+
+import org.openstreetmap.josm.tools.StreamUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Setting containing a {@link List} of {@link Map}s of {@link String} values.
@@ -27,12 +28,11 @@ public class MapListSetting extends AbstractSetting<List<Map<String, String>>> {
     public MapListSetting copy() {
         if (value == null)
             return new MapListSetting(null);
-        List<Map<String, String>> copy = new ArrayList<>(value.size());
-        for (Map<String, String> map : value) {
-            Map<String, String> mapCopy = new LinkedHashMap<>(map);
-            copy.add(Collections.unmodifiableMap(mapCopy));
-        }
-        return new MapListSetting(Collections.unmodifiableList(copy));
+        List<Map<String, String>> copy = value.stream()
+                .map(LinkedHashMap::new)
+                .map(Utils::toUnmodifiableMap)
+                .collect(StreamUtils.toUnmodifiableList());
+        return new MapListSetting(copy);
     }
 
     private void consistencyTest() {

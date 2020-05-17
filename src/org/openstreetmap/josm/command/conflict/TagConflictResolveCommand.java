@@ -33,13 +33,7 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
      * @return the number of decided conflicts
      */
     public int getNumDecidedConflicts() {
-        int n = 0;
-        for (TagMergeItem item: mergeItems) {
-            if (item.getMergeDecision() != MergeDecisionType.UNDECIDED) {
-                n++;
-            }
-        }
-        return n;
+        return (int) mergeItems.stream().filter(item -> item.getMergeDecision() != MergeDecisionType.UNDECIDED).count();
     }
 
     /**

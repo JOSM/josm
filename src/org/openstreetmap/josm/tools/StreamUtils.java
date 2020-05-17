@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -56,5 +57,17 @@ public final class StreamUtils {
                 () -> new StringJoiner("</li><li>", "<ul><li>", "</li></ul>").setEmptyValue("<ul></ul>"),
                 StringJoiner::add, StringJoiner::merge, StringJoiner::toString
         );
+    }
+
+    /**
+     * Creates a new Collector that collects the items in an unmodifiable list
+     * @param <T> the type of the input elements
+     * @return a new Collector that collects the items in an unmodifiable list
+     * @see Utils#toUnmodifiableList
+     * @since xxx
+     */
+    public static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
+        // Java 10: use java.util.stream.Collectors.toUnmodifiableList
+        return Collectors.collectingAndThen(Collectors.toList(), Utils::toUnmodifiableList);
     }
 }

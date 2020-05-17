@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.imagery;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.function.BiPredicate;
 
@@ -34,12 +35,9 @@ public final class GetCapabilitiesParseHelper {
         }
 
         static TransferMode fromString(String s) {
-            for (TransferMode type : TransferMode.values()) {
-                if (type.getTypeString().equals(s)) {
-                    return type;
-                }
-            }
-            return null;
+            return Arrays.stream(TransferMode.values())
+                    .filter(type -> type.getTypeString().equals(s))
+                    .findFirst().orElse(null);
         }
     }
 

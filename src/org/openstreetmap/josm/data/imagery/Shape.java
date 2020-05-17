@@ -7,6 +7,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -42,15 +44,26 @@ public class Shape {
         // shape contents can be set later with addPoint()
     }
 
+    /**
+     * Encodes this as a string so that it may be parsed using {@link #Shape(String, String)}
+     * @param separator The separator
+     * @return The string encoded shape
+     */
     public String encodeAsString(String separator) {
-        StringBuilder sb = new StringBuilder();
-        for (Coordinate c : coords) {
-            if (sb.length() != 0) {
-                sb.append(separator);
-            }
-            sb.append(c.getLat()).append(separator).append(c.getLon());
-        }
-        return sb.toString();
+        return coords.stream()
+                .flatMap(c -> Stream.of(c.getLat(), c.getLon()))
+                .map(String::valueOf)
+                .collect(Collectors.joining(separator));
+    }
+
+    /**
+     * Encodes the shapes as a string using {@code ,} and {@code ;} as separators
+     * @return The string encoded shapes
+     */
+    public static String encodeAsString(List<Shape> shapes) {
+        return shapes.stream()
+                .map(s -> s.encodeAsString(","))
+                .collect(Collectors.joining(";"));
     }
 
     public List<Coordinate> getPoints() {
@@ -60,10 +73,9 @@ public class Shape {
     public boolean contains(LatLon latlon) {
         if (latlon == null)
             return false;
-        List<Node> nodes = new ArrayList<>(coords.size());
-        for (Coordinate c : coords) {
-            nodes.add(new Node(new LatLon(c.getLat(), c.getLon())));
-        }
+        List<Node> nodes = coords.stream()
+                .map(c -> new Node(new LatLon(c.getLat(), c.getLon())))
+                .collect(Collectors.toList());
         return Geometry.nodeInsidePolygon(new Node(latlon), nodes);
     }
 

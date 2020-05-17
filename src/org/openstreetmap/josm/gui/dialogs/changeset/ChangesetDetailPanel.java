@@ -15,8 +15,8 @@ import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -371,12 +371,9 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             if (ds == null) {
                 return;
             }
-            Set<OsmPrimitive> target = new HashSet<>();
-            for (OsmPrimitive p: ds.allPrimitives()) {
-                if (p.isUsable() && p.getChangesetId() == currentChangeset.getId()) {
-                    target.add(p);
-                }
-            }
+            Set<OsmPrimitive> target = ds.allPrimitives().stream()
+                    .filter(p -> p.isUsable() && p.getChangesetId() == currentChangeset.getId())
+                    .collect(Collectors.toSet());
             if (target.isEmpty()) {
                 alertNoPrimitivesToSelect();
                 return;
@@ -430,12 +427,9 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             if (ds == null) {
                 return;
             }
-            Set<OsmPrimitive> target = new HashSet<>();
-            for (OsmPrimitive p: ds.allPrimitives()) {
-                if (p.isUsable() && p.getChangesetId() == currentChangeset.getId()) {
-                    target.add(p);
-                }
-            }
+            Set<OsmPrimitive> target = ds.allPrimitives().stream()
+                    .filter(p -> p.isUsable() && p.getChangesetId() == currentChangeset.getId())
+                    .collect(Collectors.toSet());
             if (target.isEmpty()) {
                 alertNoPrimitivesToZoomTo();
                 return;

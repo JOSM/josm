@@ -17,7 +17,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -738,13 +737,11 @@ public class ChangesetCacheManager extends JFrame {
             setSelectedChangesets(null);
             return;
         }
-        Set<Changeset> toSelect = new HashSet<>();
         ChangesetCache cc = ChangesetCache.getInstance();
-        for (int id: ids) {
-            if (cc.contains(id)) {
-                toSelect.add(cc.get(id));
-            }
-        }
+        Set<Changeset> toSelect = ids.stream()
+                .filter(cc::contains)
+                .map(cc::get)
+                .collect(Collectors.toSet());
         setSelectedChangesets(toSelect);
     }
 

@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
@@ -265,12 +266,7 @@ public class ImageryLayerInfo {
                 if (!isKnownDefault) {
                     if (def.getId() != null) {
                         newKnownDefaults.add(def.getId());
-                        for (ImageryInfo i : layers) {
-                            if (isSimilar(def, i)) {
-                                isInUserList = true;
-                                break;
-                            }
-                        }
+                        isInUserList = layers.stream().anyMatch(i -> isSimilar(def, i));
                     } else {
                         Logging.error("Default imagery ''{0}'' has no id. Skipping.", def.getName());
                     }
@@ -361,10 +357,9 @@ public class ImageryLayerInfo {
      * Save the list of imagery entries to preferences.
      */
     public void save() {
-        List<ImageryPreferenceEntry> entries = new ArrayList<>();
-        for (ImageryInfo info : layers) {
-            entries.add(new ImageryPreferenceEntry(info));
-        }
+        List<ImageryPreferenceEntry> entries = layers.stream()
+                .map(ImageryPreferenceEntry::new)
+                .collect(Collectors.toList());
         StructUtils.putListOfStructs(Config.getPref(), "imagery.entries", entries, ImageryPreferenceEntry.class);
     }
 

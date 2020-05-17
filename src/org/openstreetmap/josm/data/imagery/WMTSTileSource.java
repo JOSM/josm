@@ -855,10 +855,9 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
         if (this.currentLayer != null) {
             this.currentTileMatrixSet = this.currentLayer.tileMatrixSet;
-            Collection<Double> scales = new ArrayList<>(currentTileMatrixSet.tileMatrix.size());
-            for (TileMatrix tileMatrix : currentTileMatrixSet.tileMatrix) {
-                scales.add(tileMatrix.scaleDenominator * 0.28e-03);
-            }
+            Collection<Double> scales = currentTileMatrixSet.tileMatrix.stream()
+                    .map(tileMatrix -> tileMatrix.scaleDenominator * 0.28e-03)
+                    .collect(Collectors.toList());
             this.nativeScaleList = new ScaleList(scales);
         }
         this.crsScale = getTileSize() * 0.28e-03 / this.tileProjection.getMetersPerUnit();
@@ -1060,13 +1059,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         CheckParameterUtil.ensureParameterNotNull(url, "url");
         Matcher m = Pattern.compile("\\{[^}]*\\}").matcher(url);
         while (m.find()) {
-            boolean isSupportedPattern = false;
-            for (String pattern : ALL_PATTERNS) {
-                if (m.group().matches(pattern)) {
-                    isSupportedPattern = true;
-                    break;
-                }
-            }
+            boolean isSupportedPattern = Arrays.stream(ALL_PATTERNS).anyMatch(pattern -> m.group().matches(pattern));
             if (!isSupportedPattern) {
                 throw new IllegalArgumentException(
                         tr("{0} is not a valid WMS argument. Please check this server URL:\n{1}", m.group(), url));
@@ -1088,19 +1081,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @return set of projection codes that this TileSource supports
      */
     public Collection<String> getSupportedProjections() {
-        Collection<String> ret = new LinkedHashSet<>();
-        if (currentLayer == null) {
-            for (Layer layer: this.layers) {
-                ret.add(layer.tileMatrixSet.crs);
-            }
-        } else {
-            for (Layer layer: this.layers) {
-                if (currentLayer.identifier.equals(layer.identifier)) {
-                    ret.add(layer.tileMatrixSet.crs);
-                }
-            }
-        }
-        return ret;
+        return this.layers.stream()
+                .filter(layer -> currentLayer == null || currentLayer.identifier.equals(layer.identifier))
+                .map(layer -> layer.tileMatrixSet.crs)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private int getTileYMax(int zoom, Projection proj) {

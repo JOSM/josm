@@ -228,15 +228,10 @@ public class ChangePropertyCommand extends Command {
                         objects.size(), entry.getKey(), entry.getValue(), objects.size());
             }
         } else {
-            boolean allnull = true;
-            for (Map.Entry<String, String> tag : this.tags.entrySet()) {
-                if (tag.getValue() != null && !tag.getValue().isEmpty()) {
-                    allnull = false;
-                    break;
-                }
-            }
+            boolean allNull = this.tags.entrySet().stream()
+                    .allMatch(tag -> tag.getValue() == null || tag.getValue().isEmpty());
 
-            if (allnull) {
+            if (allNull) {
                 /* I18n: plural form detected for objects only (but value < 2 not possible!), try to do your best for tags */
                 text = trn("Deleted {0} tags for {1} object", "Deleted {0} tags for {1} objects", objects.size(), tags.size(), objects.size());
             } else {

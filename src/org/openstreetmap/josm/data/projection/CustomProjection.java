@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -520,22 +521,10 @@ public class CustomProjection extends AbstractProjection {
                 throw new ProjectionConfigurationException(tr("Unable to parse value of parameter ''towgs84'' (''{0}'')", str), e);
             }
         }
-        boolean isCentric = true;
-        for (Double param : towgs84Param) {
-            if (param != 0) {
-                isCentric = false;
-                break;
-            }
-        }
+        boolean isCentric = towgs84Param.stream().noneMatch(param -> param != 0);
         if (isCentric)
             return Ellipsoid.WGS84.equals(ellps) ? WGS84Datum.INSTANCE : new CentricDatum(null, null, ellps);
-        boolean is3Param = true;
-        for (int i = 3; i < towgs84Param.size(); i++) {
-            if (towgs84Param.get(i) != 0) {
-                is3Param = false;
-                break;
-            }
-        }
+        boolean is3Param = IntStream.range(3, towgs84Param.size()).noneMatch(i -> towgs84Param.get(i) != 0);
         if (is3Param)
             return new ThreeParameterDatum(null, null, ellps,
                     towgs84Param.get(0),

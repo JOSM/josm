@@ -1700,12 +1700,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @return list of additional layer context menu entries
      */
     private List<Action> getMenuAdditions() {
-        final LinkedList<Action> menuAdds = new LinkedList<>();
-        for (MenuAddition menuAdd: menuAdditions) {
-            if (menuAdd.clazz.isInstance(this)) {
-                menuAdds.add(menuAdd.addition);
-            }
-        }
+        final LinkedList<Action> menuAdds = menuAdditions.stream()
+                .filter(menuAdd -> menuAdd.clazz.isInstance(this))
+                .map(menuAdd -> menuAdd.addition)
+                .collect(Collectors.toCollection(LinkedList::new));
         if (!menuAdds.isEmpty()) {
             menuAdds.addFirst(SeparatorLayerAction.INSTANCE);
         }

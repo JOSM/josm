@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -223,12 +222,8 @@ public class DeleteCommand extends Command {
         // Do nothing
     }
 
-    private EnumSet<OsmPrimitiveType> getTypesToDelete() {
-        EnumSet<OsmPrimitiveType> typesToDelete = EnumSet.noneOf(OsmPrimitiveType.class);
-        for (OsmPrimitive osm : toDelete) {
-            typesToDelete.add(OsmPrimitiveType.from(osm));
-        }
-        return typesToDelete;
+    private Set<OsmPrimitiveType> getTypesToDelete() {
+        return toDelete.stream().map(OsmPrimitiveType::from).collect(Collectors.toSet());
     }
 
     @Override
@@ -277,12 +272,7 @@ public class DeleteCommand extends Command {
         if (toDelete.size() == 1)
             return null;
         else {
-            List<PseudoCommand> children = new ArrayList<>(toDelete.size());
-            for (final OsmPrimitive osm : toDelete) {
-                children.add(new DeleteChildCommand(osm));
-            }
-            return children;
-
+            return toDelete.stream().map(DeleteChildCommand::new).collect(Collectors.toList());
         }
     }
 
@@ -368,13 +358,7 @@ public class DeleteCommand extends Command {
                 }
                 Collection<OsmPrimitive> referringPrimitives = n.getReferrers();
                 referringPrimitives.removeAll(primitivesToDelete);
-                int count = 0;
-                for (OsmPrimitive p : referringPrimitives) {
-                    if (!p.isDeleted()) {
-                        count++;
-                    }
-                }
-                if (count == 0) {
+                if (referringPrimitives.stream().allMatch(OsmPrimitive::isDeleted)) {
                     nodesToDelete.add(n);
                 }
             }

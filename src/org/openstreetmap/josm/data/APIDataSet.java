@@ -266,13 +266,8 @@ public class APIDataSet {
     protected List<Relation> filterRelationsNotReferringToNewRelations(Collection<Relation> relations) {
         List<Relation> ret = new LinkedList<>();
         for (Relation relation: relations) {
-            boolean refersToNewRelation = false;
-            for (RelationMember m : relation.getMembers()) {
-                if (m.isRelation() && m.getMember().isNewOrUndeleted()) {
-                    refersToNewRelation = true;
-                    break;
-                }
-            }
+            boolean refersToNewRelation = relation.getMembers().stream()
+                    .anyMatch(m -> m.isRelation() && m.getMember().isNewOrUndeleted());
             if (!refersToNewRelation) {
                 ret.add(relation);
             }

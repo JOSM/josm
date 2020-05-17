@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -650,13 +652,11 @@ public class SessionReader {
         String id = idEl.getTextContent();
         Element parametersEl = getElementByTagName(projectionChoiceEl, "parameters");
         if (parametersEl == null) return null;
-        Collection<String> parameters = new ArrayList<>();
         NodeList paramNl = parametersEl.getElementsByTagName("param");
         int length = paramNl.getLength();
-        for (int i = 0; i < length; i++) {
-            Element paramEl = (Element) paramNl.item(i);
-            parameters.add(paramEl.getTextContent());
-        }
+        Collection<String> parameters = IntStream.range(0, length)
+                .mapToObj(i -> (Element) paramNl.item(i)).map(Node::getTextContent)
+                .collect(Collectors.toList());
         return new SessionProjectionChoiceData(id, parameters);
     }
 

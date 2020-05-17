@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.Optional;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.StreamUtils;
 
 /**
  * GPX track.
@@ -36,13 +36,10 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
      * @param attributes track attributes
      */
     public GpxTrack(Collection<Collection<WayPoint>> trackSegs, Map<String, Object> attributes) {
-        List<IGpxTrackSegment> newSegments = new ArrayList<>();
-        for (Collection<WayPoint> trackSeg: trackSegs) {
-            if (trackSeg != null && !trackSeg.isEmpty()) {
-                newSegments.add(new GpxTrackSegment(trackSeg));
-            }
-        }
-        this.segments = Collections.unmodifiableList(newSegments);
+        this.segments = trackSegs.stream()
+                .filter(trackSeg -> trackSeg != null && !trackSeg.isEmpty())
+                .map(GpxTrackSegment::new)
+                .collect(StreamUtils.toUnmodifiableList());
         this.length = calculateLength();
         this.bounds = calculateBounds();
         this.attr = new HashMap<>(attributes);
@@ -64,12 +61,7 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
     }
 
     private double calculateLength() {
-        double result = 0.0; // in meters
-
-        for (IGpxTrackSegment trkseg : segments) {
-            result += trkseg.length();
-        }
-        return result;
+        return segments.stream().mapToDouble(IGpxTrackSegment::length).sum();
     }
 
     private Bounds calculateBounds() {

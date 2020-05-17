@@ -347,11 +347,9 @@ public class OffsetBookmark {
      * @return The bookmark if found, <code>null</code> if not.
      */
     public static OffsetBookmark getBookmarkByName(ImageryLayer layer, String name) {
-        for (OffsetBookmark b : allBookmarks) {
-            if (b.isUsable(layer) && name.equals(b.name))
-                return b;
-        }
-        return null;
+        return allBookmarks.stream()
+                .filter(b -> b.isUsable(layer) && name.equals(b.name))
+                .findFirst().orElse(null);
     }
 
     /**

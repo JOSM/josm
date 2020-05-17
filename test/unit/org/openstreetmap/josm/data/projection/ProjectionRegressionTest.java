@@ -12,12 +12,12 @@ import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -159,10 +159,7 @@ public class ProjectionRegressionTest {
     @Test
     public void testNonRegression() throws IOException {
         List<TestData> allData = readData();
-        Set<String> dataCodes = new HashSet<>();
-        for (TestData data : allData) {
-            dataCodes.add(data.code);
-        }
+        Set<String> dataCodes = allData.stream().map(data -> data.code).collect(Collectors.toSet());
 
         StringBuilder fail = new StringBuilder();
 

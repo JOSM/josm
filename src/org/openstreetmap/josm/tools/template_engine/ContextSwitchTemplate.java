@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -93,15 +95,10 @@ public class ContextSwitchTemplate implements TemplateEntry {
                 children = Collections.emptyList();
             }
 
-            List<OsmPrimitive> result = new ArrayList<>();
-            for (OsmPrimitive child: children) {
-                for (OsmPrimitive parent: child.getReferrers(true)) {
-                    if (condition == null || condition.match(parent)) {
-                        result.add(parent);
-                    }
-                }
-            }
-            return result;
+            return children.stream()
+                    .flatMap(child -> child.getReferrers(true).stream())
+                    .filter(parent -> condition == null || condition.match(parent))
+                    .collect(Collectors.toList());
         }
 
         @Override
@@ -204,18 +201,10 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         List<OsmPrimitive> getPrimitives(OsmPrimitive root) {
-            List<OsmPrimitive> result = new ArrayList<>();
-            for (OsmPrimitive o: lhs.getPrimitives(root)) {
-                if (condition == null || condition.match(o)) {
-                    result.add(o);
-                }
-            }
-            for (OsmPrimitive o: rhs.getPrimitives(root)) {
-                if (condition == null || (condition.match(o) && !result.contains(o))) {
-                    result.add(o);
-                }
-            }
-            return result;
+            return Stream.concat(lhs.getPrimitives(root).stream(), rhs.getPrimitives(root).stream())
+                    .filter(o -> condition == null || condition.match(o))
+                    .distinct()
+                    .collect(Collectors.toList());
         }
 
         @Override
@@ -264,14 +253,11 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         List<OsmPrimitive> getPrimitives(OsmPrimitive root) {
-            List<OsmPrimitive> result = new ArrayList<>();
             List<OsmPrimitive> lhsList = lhs.getPrimitives(root);
-            for (OsmPrimitive o: rhs.getPrimitives(root)) {
-                if (lhsList.contains(o) && (condition == null || condition.match(o))) {
-                    result.add(o);
-                }
-            }
-            return result;
+            return rhs.getPrimitives(root).stream()
+                    .filter(lhsList::contains)
+                    .filter(o -> condition == null || condition.match(o))
+                    .collect(Collectors.toList());
         }
 
         @Override

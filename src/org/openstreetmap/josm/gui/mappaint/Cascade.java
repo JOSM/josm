@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -239,7 +240,6 @@ public final class Cascade {
 
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder("Cascade{ ");
         // List properties in alphabetical order to be deterministic, without changing "prop" to a TreeMap
         // (no reason too, not sure about the potential memory/performance impact of such a change)
         TreeSet<String> props = new TreeSet<>();
@@ -256,10 +256,7 @@ public final class Cascade {
             sb.append("; ");
             props.add(sb.toString());
         }
-        for (String s : props) {
-            res.append(s);
-        }
-        return res.append('}').toString();
+        return props.stream().collect(Collectors.joining("", "Cascade{ ", "}"));
     }
 
     /**

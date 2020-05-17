@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.stream.IntStream;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -170,12 +171,9 @@ public final class XmlUtils {
      */
     public static Element getFirstChildElement(Node parent) {
         NodeList children = parent.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            if (child instanceof Element) {
-                return (Element) child;
-            }
-        }
-        return null;
+        return (Element) IntStream.range(0, children.getLength())
+                .mapToObj(children::item)
+                .filter(child -> child instanceof Element)
+                .findFirst().orElse(null);
     }
 }

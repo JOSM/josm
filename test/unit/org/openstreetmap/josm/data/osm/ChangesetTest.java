@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -64,11 +66,8 @@ public class ChangesetTest {
 
         // Add a map with too long values => IllegalArgumentException
         keys = new HashMap<>();
-        StringBuilder b = new StringBuilder(MAX_CHANGESET_TAG_LENGTH + 1);
-        for (int i = 0; i < MAX_CHANGESET_TAG_LENGTH + 1; i++) {
-           b.append("x");
-        }
-        keys.put("test", b.toString());
+        // Java 11: use String.repeat
+        keys.put("test", IntStream.range(0, MAX_CHANGESET_TAG_LENGTH + 1).mapToObj(i -> "x").collect(Collectors.joining()));
         try {
             cs.setKeys(keys);
             Assert.fail("Should have thrown an IllegalArgumentException as we gave a too long value.");

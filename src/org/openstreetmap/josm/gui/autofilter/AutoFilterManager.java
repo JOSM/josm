@@ -342,12 +342,9 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
      * @throws NullPointerException if key is null
      */
     public synchronized AutoFilterRule getAutoFilterRule(String key) {
-        for (AutoFilterRule r : rules) {
-            if (key.equals(r.getKey())) {
-                return r;
-            }
-        }
-        return null;
+        return rules.stream()
+                .filter(r -> Objects.equals(key, r.getKey()))
+                .findFirst().orElse(null);
     }
 
     /**

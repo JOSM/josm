@@ -217,13 +217,7 @@ public class Capabilities {
      * @return {@code true} if URL is blacklisted, {@code false} otherwise
      */
     public boolean isOnImageryBlacklist(String url) {
-        if (url != null && imageryBlacklist != null) {
-            for (String blacklistRegex : imageryBlacklist) {
-                if (url.matches(blacklistRegex))
-                    return true;
-            }
-        }
-        return false;
+        return url != null && imageryBlacklist.stream().anyMatch(url::matches);
     }
 
     /**

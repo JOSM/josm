@@ -201,13 +201,9 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
      * @return the extension if found, otherwise <code>null</code>
      */
     public GpxExtension find(String prefix, String key) {
-        for (GpxExtension child : this) {
-            GpxExtension ext = child.findExtension(prefix, key);
-            if (ext != null) {
-                return ext;
-            }
-        }
-        return null;
+        return this.stream()
+                .map(child -> child.findExtension(prefix, key)).filter(Objects::nonNull)
+                .findFirst().orElse(null);
     }
 
     /**

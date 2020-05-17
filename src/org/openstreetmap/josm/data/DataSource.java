@@ -3,10 +3,10 @@ package org.openstreetmap.josm.data;
 
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -103,12 +103,8 @@ public class DataSource {
         if (dataSources == null) {
             return null;
         }
-        List<Bounds> ret = new ArrayList<>(dataSources.size());
-        for (DataSource ds : dataSources) {
-            if (ds.bounds != null) {
-                ret.add(ds.bounds);
-            }
-        }
-        return ret;
+        return dataSources.stream()
+                .filter(ds -> ds.bounds != null).map(ds -> ds.bounds)
+                .collect(Collectors.toList());
     }
 }

@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -232,12 +233,10 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     protected Collection<String> getUserInputKeys() {
-        List<String> keys = new ArrayList<>();
-        for (UserInputTag tag : USER_INPUT_TAG_CACHE) {
-            if (!tag.defaultKey) {
-                keys.add(tag.key);
-            }
-        }
+        List<String> keys = USER_INPUT_TAG_CACHE.stream()
+                .filter(tag -> !tag.defaultKey)
+                .map(tag -> tag.key)
+                .collect(Collectors.toList());
         Collections.reverse(keys);
         return new LinkedHashSet<>(keys);
     }
@@ -254,12 +253,10 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     protected static Collection<String> getUserInputValues(String key) {
-        List<String> values = new ArrayList<>();
-        for (UserInputTag tag : USER_INPUT_TAG_CACHE) {
-            if (key.equals(tag.key)) {
-                values.add(tag.value);
-            }
-        }
+        List<String> values = USER_INPUT_TAG_CACHE.stream()
+                .filter(tag -> Objects.equals(key, tag.key))
+                .map(tag -> tag.value)
+                .collect(Collectors.toList());
         Collections.reverse(values);
         return new LinkedHashSet<>(values);
     }

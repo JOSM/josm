@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools.template_engine;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * {@link TemplateEntry} that concatenates several templates.
@@ -40,20 +41,12 @@ public final class CompoundTemplateEntry implements TemplateEntry {
 
     @Override
     public boolean isValid(TemplateEngineDataProvider dataProvider) {
-        for (TemplateEntry te: entries) {
-            if (!te.isValid(dataProvider))
-                return false;
-        }
-        return true;
+        return Arrays.stream(entries).allMatch(te -> te.isValid(dataProvider));
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-        for (TemplateEntry te: entries) {
-            result.append(te);
-        }
-        return result.toString();
+        return Arrays.stream(entries).map(String::valueOf).collect(Collectors.joining());
     }
 
     @Override

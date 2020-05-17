@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import org.openstreetmap.josm.tools.ListenerList;
 
@@ -74,12 +75,7 @@ public class ImageData {
      * @return {@code true} if data has been modified; {@code false}, otherwise
      */
     public boolean isModified() {
-        for (ImageEntry e : data) {
-            if (e.hasNewGpsData()) {
-                return true;
-            }
-        }
-        return false;
+        return data.stream().anyMatch(GpxImageEntry::hasNewGpsData);
     }
 
     /**

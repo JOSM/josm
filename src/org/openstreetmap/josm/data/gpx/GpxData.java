@@ -379,12 +379,7 @@ public class GpxData extends WithAttributes implements Data {
     }
 
     private boolean anySegmentOverlapsWith(GpxTrackSegmentSpan other) {
-        for (GpxTrackSegmentSpan s : getSegmentSpans()) {
-            if (s.overlapsWith(other)) {
-                return true;
-            }
-        }
-        return false;
+        return getSegmentSpans().stream().anyMatch(s -> s.overlapsWith(other));
     }
 
     /**

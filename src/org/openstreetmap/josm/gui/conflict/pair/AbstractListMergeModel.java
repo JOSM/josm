@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -368,10 +370,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
     }
 
     protected void alertCopyFailedForDeletedPrimitives(List<PrimitiveId> deletedIds) {
-        List<String> items = new ArrayList<>();
-        for (int i = 0; i < Math.min(MAX_DELETED_PRIMITIVE_IN_DIALOG, deletedIds.size()); i++) {
-            items.add(deletedIds.get(i).toString());
-        }
+        List<String> items = deletedIds.stream().limit(MAX_DELETED_PRIMITIVE_IN_DIALOG).map(Object::toString).collect(Collectors.toList());
         if (deletedIds.size() > MAX_DELETED_PRIMITIVE_IN_DIALOG) {
             items.add(tr("{0} more...", deletedIds.size() - MAX_DELETED_PRIMITIVE_IN_DIALOG));
         }
@@ -421,10 +420,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
     public void copyAll(ListRole source) {
         getMergedEntries().clear();
 
-        int[] rows = new int[entries.get(source).size()];
-        for (int i = 0; i < rows.length; i++) {
-            rows[i] = i;
-        }
+        int[] rows = IntStream.range(0, entries.get(source).size()).toArray();
         copy(source, rows, 0);
     }
 
@@ -587,13 +583,8 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
      * @return true, if the lists are equal; false otherwise
      */
     protected boolean myAndTheirEntriesEqual() {
-        if (getMyEntriesSize() != getTheirEntriesSize())
-            return false;
-        for (int i = 0; i < getMyEntriesSize(); i++) {
-            if (!isEqualEntry(getMyEntries().get(i), getTheirEntries().get(i)))
-                return false;
-        }
-        return true;
+        return getMyEntriesSize() == getTheirEntriesSize()
+                && IntStream.range(0, getMyEntriesSize()).allMatch(i -> isEqualEntry(getMyEntries().get(i), getTheirEntries().get(i)));
     }
 
     /**

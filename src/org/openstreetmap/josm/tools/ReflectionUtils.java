@@ -6,6 +6,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import org.openstreetmap.josm.plugins.PluginHandler;
 
@@ -62,12 +63,9 @@ public final class ReflectionUtils {
 
     private static <T extends Object> T findCaller(Function<StackTraceElement, T> getter, Collection<T> exclusions) {
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        for (int i = 3; i < stack.length; i++) {
-            T t = getter.apply(stack[i]);
-            if (exclusions == null || !exclusions.contains(t)) {
-                return t;
-            }
-        }
-        return null;
+        return IntStream.range(3, stack.length)
+                .mapToObj(i -> getter.apply(stack[i]))
+                .filter(t -> exclusions == null || !exclusions.contains(t))
+                .findFirst().orElse(null);
     }
 }

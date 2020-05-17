@@ -12,6 +12,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore.TrustedCertificateEntry;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
@@ -87,15 +88,11 @@ public class RemoteControlTest {
         assertEquals(connection.getResponseCode(), HttpURLConnection.HTTP_BAD_REQUEST);
         try (InputStream is = connection.getErrorStream()) {
             // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes
-            StringBuilder responseBody = new StringBuilder();
+            String responseBody;
             try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                String s;
-                while ((s = in.readLine()) != null) {
-                    responseBody.append(s);
-                    responseBody.append("\n");
-                }
+                responseBody = in.lines().collect(Collectors.joining("\n"));
             }
-            assert responseBody.toString().contains(RequestProcessor.getUsageAsHtml());
+            assert responseBody.contains(RequestProcessor.getUsageAsHtml());
         }
     }
 }

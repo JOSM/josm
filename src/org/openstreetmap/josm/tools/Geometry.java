@@ -759,12 +759,10 @@ public final class Geometry {
      * @return area of the multipolygon.
      */
     public static double multipolygonArea(Relation multipolygon) {
-        double area = 0.0;
         final Multipolygon mp = MultipolygonCache.getInstance().get(multipolygon);
-        for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
-            area += pd.getAreaAndPerimeter(Projections.getProjectionByCode("EPSG:54008")).getArea();
-        }
-        return area;
+        return mp.getCombinedPolygons().stream()
+                .mapToDouble(pd -> pd.getAreaAndPerimeter(Projections.getProjectionByCode("EPSG:54008")).getArea())
+                .sum();
     }
 
     /**
@@ -1052,17 +1050,12 @@ public final class Geometry {
             if (a1 == null
                     ? nodeInsidePolygon(nodes.get(0), out.nodes)
                     : PolygonIntersection.FIRST_INSIDE_SECOND == polygonIntersection(a1, out.area)) {
-                boolean insideInner = false;
                 // If inside an outer, check it is not inside an inner
-                for (JoinedPolygon in : outerInner.b) {
-                    if (a1 == null ? nodeInsidePolygon(nodes.get(0), in.nodes)
-                            : in.area.getBounds2D().contains(a1.getBounds2D())
-                                    && polygonIntersection(a1, in.area) == PolygonIntersection.FIRST_INSIDE_SECOND
-                                    && polygonIntersection(in.area, out.area) == PolygonIntersection.FIRST_INSIDE_SECOND) {
-                        insideInner = true;
-                        break;
-                    }
-                }
+                boolean insideInner = outerInner.b.stream().anyMatch(in -> a1 == null
+                        ? nodeInsidePolygon(nodes.get(0), in.nodes)
+                        : in.area.getBounds2D().contains(a1.getBounds2D())
+                        && polygonIntersection(a1, in.area) == PolygonIntersection.FIRST_INSIDE_SECOND
+                        && polygonIntersection(in.area, out.area) == PolygonIntersection.FIRST_INSIDE_SECOND);
                 if (!insideInner) {
                     // Final check using predicate
                     if (isOuterWayAMatch == null || isOuterWayAMatch.test(out.ways.get(0)
@@ -1183,14 +1176,9 @@ public final class Geometry {
                 }
             } else if (p.isMultipolygon()) {
                 Multipolygon mp = new Multipolygon((Relation) p);
-                boolean inside = true;
                 // a (valid) multipolygon is inside multiPolygon if all outer rings are inside
-                for (PolyData outer : mp.getOuterPolygons()) {
-                    if (!outer.isClosed() || !isPolygonInsideMultiPolygon(outer.getNodes(), outerInner, null)) {
-                        inside = false;
-                        break;
-                    }
-                }
+                boolean inside = mp.getOuterPolygons().stream()
+                        .allMatch(outer -> outer.isClosed() && isPolygonInsideMultiPolygon(outer.getNodes(), outerInner, null));
                 if (inside) {
                     res.add(p);
                 }

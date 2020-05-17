@@ -45,13 +45,7 @@ public class Condition implements TemplateEntry {
 
     @Override
     public boolean isValid(TemplateEngineDataProvider dataProvider) {
-
-        for (TemplateEntry entry: entries) {
-            if (entry.isValid(dataProvider))
-                return true;
-        }
-
-        return false;
+        return entries.stream().anyMatch(entry -> entry.isValid(dataProvider));
     }
 
     @Override

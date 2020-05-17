@@ -135,13 +135,10 @@ public class GpxExtension extends WithAttributes {
         if (prefix.equalsIgnoreCase(sPrefix) && key.equalsIgnoreCase(sKey)) {
             return this;
         } else {
-            for (GpxExtension child : getExtensions()) {
-                GpxExtension ext = child.findExtension(sPrefix, sKey);
-                if (ext != null) {
-                    return ext;
-                }
-            }
-            return null;
+            return getExtensions().stream()
+                    .map(child -> child.findExtension(sPrefix, sKey))
+                    .filter(Objects::nonNull)
+                    .findFirst().orElse(null);
         }
     }
 

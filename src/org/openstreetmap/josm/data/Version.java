@@ -5,9 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
@@ -93,11 +93,9 @@ public class Version {
 
         // the revision info
         //
-        StringBuilder sb = new StringBuilder();
-        for (Entry<Object, Object> property: properties.entrySet()) {
-            sb.append(property.getKey()).append(':').append(property.getValue()).append('\n');
-        }
-        releaseDescription = sb.toString();
+        releaseDescription = properties.entrySet().stream()
+                .map(property -> property.getKey() + ":" + property.getValue() + "\n")
+                .collect(Collectors.joining());
     }
 
     /**

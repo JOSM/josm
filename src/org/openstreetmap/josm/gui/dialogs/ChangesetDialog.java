@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -304,12 +305,9 @@ public class ChangesetDialog extends ToggleDialog {
         public void selectObjectsByChangesetIds(DataSet ds, Set<Integer> ids) {
             if (ds == null || ids == null)
                 return;
-            Set<OsmPrimitive> sel = new HashSet<>();
-            for (OsmPrimitive p: ds.allPrimitives()) {
-                if (ids.contains(p.getChangesetId())) {
-                    sel.add(p);
-                }
-            }
+            Set<OsmPrimitive> sel = ds.allPrimitives().stream()
+                    .filter(p -> ids.contains(p.getChangesetId()))
+                    .collect(Collectors.toSet());
             ds.setSelected(sel);
         }
 

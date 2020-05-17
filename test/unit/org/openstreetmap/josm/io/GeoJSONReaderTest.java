@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -159,11 +160,7 @@ public class GeoJSONReaderTest {
         ) {
             return false;
         }
-        for (int i = 0; i < ((Way) p1).getNodes().size(); i++) {
-            if (!areEqualNodes(((Way) p1).getNode(i), ((Way) p2).getNode(i))) {
-                return false;
-            }
-        }
-        return true;
+        return IntStream.range(0, ((Way) p1).getNodes().size())
+                .allMatch(i -> areEqualNodes(((Way) p1).getNode(i), ((Way) p2).getNode(i)));
     }
 }

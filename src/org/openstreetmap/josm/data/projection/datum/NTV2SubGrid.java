@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -170,18 +171,14 @@ public class NTV2SubGrid implements Serializable {
      * @return the Sub Grid containing the Coordinate or null
      */
     public NTV2SubGrid getSubGridForCoord(double lon, double lat) {
-        if (isCoordWithin(lon, lat)) {
-            if (subGrid == null)
-                return this;
-            else {
-                for (NTV2SubGrid aSubGrid : subGrid) {
-                    if (aSubGrid.isCoordWithin(lon, lat))
-                        return aSubGrid.getSubGridForCoord(lon, lat);
-                }
-                return this;
-            }
-        } else
-            return null;
+        return !isCoordWithin(lon, lat)
+                ? null
+                : subGrid == null
+                ? this
+                : Arrays.stream(subGrid)
+                .filter(aSubGrid -> aSubGrid.isCoordWithin(lon, lat))
+                .map(aSubGrid -> aSubGrid.getSubGridForCoord(lon, lat))
+                .findFirst().orElse(this);
     }
 
     /**

@@ -42,15 +42,11 @@ public final class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileS
 
     @Override
     public InputStream getNTV2GridShiftFile(String gridFileName) {
-        File grid = null;
         // Check is the grid is installed in default PROJ.4 directories
-        for (File dir : Platform.determinePlatform().accept(this)) {
-            File file = new File(dir, gridFileName);
-            if (file.exists() && file.isFile()) {
-                grid = file;
-                break;
-            }
-        }
+        File grid = Platform.determinePlatform().accept(this).stream()
+                .map(dir -> new File(dir, gridFileName))
+                .filter(file -> file.exists() && file.isFile())
+                .findFirst().orElse(null);
         // If not, search into PROJ_LIB directory
         if (grid == null) {
             String projLib = Utils.getSystemProperty("PROJ_LIB");

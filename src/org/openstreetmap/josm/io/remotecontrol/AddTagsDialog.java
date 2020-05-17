@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
@@ -103,30 +103,13 @@ public class AddTagsDialog extends ExtendedDialog {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            for (String k: valueCount.keySet()) {
-                if (sb.length() > 0) sb.append(", ");
-                sb.append(k);
-            }
-            return sb.toString();
+            return String.join(", ", valueCount.keySet());
         }
 
         private String getToolTip() {
-            StringBuilder sb = new StringBuilder(64);
-            sb.append("<html>")
-              .append(tr("Old values of"))
-              .append(" <b>")
-              .append(tag)
-              .append("</b><br/>");
-            for (Entry<String, Integer> e : valueCount.entrySet()) {
-                sb.append("<b>")
-                  .append(e.getValue())
-                  .append(" x </b>")
-                  .append(e.getKey())
-                  .append("<br/>");
-            }
-            sb.append("</html>");
-            return sb.toString();
+            return valueCount.entrySet().stream()
+                    .map(e -> "<b>" + e.getValue() + " x </b>" + e.getKey() + "<br/>")
+                    .collect(Collectors.joining("", "<html>" + tr("Old values of") + " <b>" + tag + "</b><br/>", "</html>"));
         }
     }
 

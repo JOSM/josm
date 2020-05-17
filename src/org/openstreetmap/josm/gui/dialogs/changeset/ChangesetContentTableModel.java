@@ -2,10 +2,11 @@
 package org.openstreetmap.josm.gui.dialogs.changeset;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JTable;
@@ -64,12 +65,10 @@ public class ChangesetContentTableModel extends AbstractTableModel {
      * @return the selected history primitives
      */
     public Set<HistoryOsmPrimitive> getSelectedPrimitives(JTable table) {
-        Set<HistoryOsmPrimitive> ret = new HashSet<>();
         int[] selection = table.getSelectedRows();
-        for (int i = 0; i < selection.length; i++) {
-            ret.add(data.get(table.convertRowIndexToModel(selection[i])).getPrimitive());
-        }
-        return ret;
+        return Arrays.stream(selection)
+                .mapToObj(i -> data.get(table.convertRowIndexToModel(i)).getPrimitive())
+                .collect(Collectors.toSet());
     }
 
     /**

@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -177,11 +178,9 @@ public class BasicChangesetQueryPanel extends JPanel {
     }
 
     protected BasicQuery getSelectedQuery() {
-        for (BasicQuery q : BasicQuery.values()) {
-            if (rbQueries.get(q).isSelected())
-                return q;
-        }
-        return null;
+        return Arrays.stream(BasicQuery.values())
+                .filter(q -> rbQueries.get(q).isSelected())
+                .findFirst().orElse(null);
     }
 
     /**

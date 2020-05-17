@@ -11,7 +11,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -262,13 +261,9 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         protected List<HistoryOsmPrimitive> filterPrimitivesWithUnloadedHistory(Collection<HistoryOsmPrimitive> primitives) {
-            List<HistoryOsmPrimitive> ret = new ArrayList<>(primitives.size());
-            for (HistoryOsmPrimitive p: primitives) {
-                if (HistoryDataSet.getInstance().getHistory(p.getPrimitiveId()) == null) {
-                    ret.add(p);
-                }
-            }
-            return ret;
+            return primitives.stream()
+                    .filter(p -> HistoryDataSet.getInstance().getHistory(p.getPrimitiveId()) == null)
+                    .collect(Collectors.toList());
         }
 
         public void showHistory(final Collection<HistoryOsmPrimitive> primitives) {

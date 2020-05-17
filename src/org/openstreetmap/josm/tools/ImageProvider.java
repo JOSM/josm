@@ -52,6 +52,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -1966,11 +1967,8 @@ public class ImageProvider {
     }
 
     private static Color parseRGB(String... s) {
-        int[] rgb = new int[3];
         try {
-            for (int i = 0; i < 3; i++) {
-                rgb[i] = Integer.parseInt(s[i]);
-            }
+            int[] rgb = IntStream.range(0, 3).map(i -> Integer.parseInt(s[i])).toArray();
             return new Color(rgb[0], rgb[1], rgb[2]);
         } catch (IllegalArgumentException e) {
             Logging.error(e);

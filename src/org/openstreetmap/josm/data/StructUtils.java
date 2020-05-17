@@ -122,13 +122,8 @@ public final class StructUtils {
     private static <T> List<Map<String, String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
         if (l == null)
             return null;
-        List<Map<String, String>> vals = new ArrayList<>();
-        for (T struct : l) {
-            if (struct != null) {
-                vals.add(serializeStruct(struct, klass));
-            }
-        }
-        return vals;
+        return l.stream().filter(Objects::nonNull)
+                .map(struct -> serializeStruct(struct, klass)).collect(Collectors.toList());
     }
 
     /**

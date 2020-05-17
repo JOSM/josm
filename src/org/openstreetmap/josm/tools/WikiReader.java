@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
@@ -102,14 +103,11 @@ public class WikiReader {
         }
     }
 
-    private static String readNormal(BufferedReader in, boolean html) throws IOException {
-        StringBuilder b = new StringBuilder();
-        for (String line = in.readLine(); line != null; line = in.readLine()) {
-            if (!line.contains("[[TranslatedPages]]")) {
-                b.append(line.replace(" />", ">")).append('\n');
-            }
-        }
-        return html ? "<html>" + b + "</html>" : b.toString();
+    private static String readNormal(BufferedReader in, boolean html) {
+        String string = in.lines()
+                .filter(line -> !line.contains("[[TranslatedPages]]"))
+                .map(line -> line.replace(" />", ">") + '\n').collect(Collectors.joining());
+        return html ? "<html>" + string + "</html>" : string;
     }
 
     protected String readFromTrac(BufferedReader in, URL url) throws IOException {

@@ -478,13 +478,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @return the number of members which refer to a particular primitive
      */
     public int getNumMembersWithPrimitive(OsmPrimitive primitive) {
-        int count = 0;
-        for (RelationMember member : members) {
-            if (member.getMember().equals(primitive)) {
-                count++;
-            }
-        }
-        return count;
+        return (int) members.stream().filter(member -> member.getMember().equals(primitive)).count();
     }
 
     /**
