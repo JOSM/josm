@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceConfigurationError;
@@ -133,17 +132,13 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     private final String description;
     private final String defaultExtension;
 
-    protected static void sort(List<ExtensionFileFilter> filters) {
-        filters.sort(new Comparator<ExtensionFileFilter>() {
-                private AllFormatsImporter all = new AllFormatsImporter();
-                @Override
-                public int compare(ExtensionFileFilter o1, ExtensionFileFilter o2) {
-                    if (o1.getDescription().equals(all.filter.getDescription())) return 1;
-                    if (o2.getDescription().equals(all.filter.getDescription())) return -1;
-                    return o1.getDescription().compareTo(o2.getDescription());
-                }
-            }
-        );
+    protected static Comparator<ExtensionFileFilter> comparator() {
+        AllFormatsImporter all = new AllFormatsImporter();
+        return (o1, o2) -> {
+            if (o1.getDescription().equals(all.filter.getDescription())) return 1;
+            if (o2.getDescription().equals(all.filter.getDescription())) return -1;
+            return o1.getDescription().compareTo(o2.getDescription());
+        };
     }
 
     /**
@@ -250,7 +245,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         updateAllFormatsImporter();
         return importers.stream()
                 .map(importer -> importer.filter)
-                .sorted()
+                .sorted(comparator())
                 .collect(Collectors.toList());
     }
 
@@ -263,15 +258,12 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 2029
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
-        List<ExtensionFileFilter> filters = new LinkedList<>();
-        for (FileExporter exporter : exporters) {
-            if (filters.contains(exporter.filter) || !exporter.isEnabled()) {
-                continue;
-            }
-            filters.add(exporter.filter);
-        }
-        sort(filters);
-        return filters;
+        return exporters.stream()
+                .filter(FileExporter::isEnabled)
+                .map(exporter -> exporter.filter)
+                .distinct()
+                .sorted(comparator())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -283,11 +275,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static ExtensionFileFilter getDefaultImportExtensionFileFilter(String extension) {
         if (extension == null) return new AllFormatsImporter().filter;
-        for (FileImporter importer : importers) {
-            if (extension.equals(importer.filter.getDefaultExtension()))
-                return importer.filter;
-        }
-        return new AllFormatsImporter().filter;
+        return importers.stream()
+                .filter(importer -> extension.equals(importer.filter.getDefaultExtension()))
+                .findFirst().map(importer -> importer.filter)
+                .orElseGet(() -> new AllFormatsImporter().filter);
     }
 
     /**
