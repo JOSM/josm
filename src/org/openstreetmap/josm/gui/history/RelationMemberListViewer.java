@@ -37,7 +37,7 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
         });
         table.addMouseListener(new ShowHistoryAction.DoubleClickAdapter(e -> {
             int row = table.rowAtPoint(e.getPoint());
-            return row <= 0 ? null : (RelationMemberData) tableModel.getValueAt(row, 0).value;
+            return row < 0 ? null : (RelationMemberData) tableModel.getValueAt(row, 0).value;
         }));
         return table;
     }

@@ -6,19 +6,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
 import java.util.function.Function;
 
 import javax.swing.AbstractAction;
 
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.history.History;
-import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Open a history browser with the history of this node
+ * Open a history browser with the history of an object.
  */
 class ShowHistoryAction extends AbstractAction {
     private transient PrimitiveId primitiveId;
@@ -28,7 +25,7 @@ class ShowHistoryAction extends AbstractAction {
      */
     ShowHistoryAction() {
         putValue(NAME, tr("Show history"));
-        putValue(SHORT_DESCRIPTION, tr("Open a history browser with the history of this node"));
+        putValue(SHORT_DESCRIPTION, tr("Display the history of the selected object."));
         new ImageProvider("dialogs", "history").getResource().attachImageIcon(this, true);
     }
 
@@ -45,15 +42,7 @@ class ShowHistoryAction extends AbstractAction {
     }
 
     public void run() {
-        if (HistoryDataSet.getInstance().getHistory(primitiveId) == null) {
-            MainApplication.worker.submit(new HistoryLoadTask().add(primitiveId));
-        }
-        MainApplication.worker.submit(() -> {
-            final History h = HistoryDataSet.getInstance().getHistory(primitiveId);
-            if (h == null)
-                return;
-            GuiHelper.runInEDT(() -> HistoryBrowserDialogManager.getInstance().show(h));
-        });
+        HistoryBrowserDialogManager.getInstance().showHistory(Collections.singleton(primitiveId));
     }
 
     public void updateEnabledState() {

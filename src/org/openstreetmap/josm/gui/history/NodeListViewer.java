@@ -55,7 +55,7 @@ public class NodeListViewer extends HistoryViewerPanel {
         table.addMouseListener(new InternalPopupMenuLauncher());
         table.addMouseListener(new ShowHistoryAction.DoubleClickAdapter(e -> {
             int row = table.rowAtPoint(e.getPoint());
-            return row <= 0 ? null : primitiveIdAtRow(tableModel, row);
+            return row < 0 ? null : primitiveIdAtRow(tableModel, row);
         }));
         return table;
     }

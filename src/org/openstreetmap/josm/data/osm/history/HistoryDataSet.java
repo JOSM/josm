@@ -12,7 +12,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -165,9 +164,7 @@ public class HistoryDataSet implements LayerChangeListener {
      * @throws NullPointerException if pid is null
      */
     public History getHistory(PrimitiveId pid) {
-        PrimitiveId key = pid instanceof IPrimitive ? ((IPrimitive) pid).getPrimitiveId()
-                        : pid instanceof HistoryOsmPrimitive ? ((HistoryOsmPrimitive) pid).getPrimitiveId()
-                        : pid;
+        PrimitiveId key = new SimplePrimitiveId(pid.getUniqueId(), pid.getType());
         List<HistoryOsmPrimitive> versions = data.get(Objects.requireNonNull(key, "key"));
         if (versions == null)
             return null;
