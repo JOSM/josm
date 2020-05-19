@@ -2,12 +2,9 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.awt.geom.Area;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -17,7 +14,6 @@ import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * One node data, consisting of one world coordinate waypoint.
@@ -346,45 +342,6 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     public boolean concernsArea() {
         // A node cannot be an area
-        return false;
-    }
-
-    /**
-     * Tests whether {@code this} node is connected to {@code otherNode} via at most {@code hops} nodes
-     * matching the {@code predicate} (which may be {@code null} to consider all nodes).
-     * @param otherNodes other nodes
-     * @param hops number of hops
-     * @param predicate predicate to match
-     * @return {@code true} if {@code this} node mets the conditions
-     * @deprecated Was used by UnconnectedWays test
-     */
-    @Deprecated
-    public boolean isConnectedTo(final Collection<Node> otherNodes, final int hops, Predicate<Node> predicate) {
-        CheckParameterUtil.ensureParameterNotNull(otherNodes);
-        CheckParameterUtil.ensureThat(!otherNodes.isEmpty(), "otherNodes must not be empty!");
-        CheckParameterUtil.ensureThat(hops >= 0, "hops must be non-negative!");
-        return hops == 0
-                ? isConnectedTo(otherNodes, hops, predicate, null)
-                : isConnectedTo(otherNodes, hops, predicate, new TreeSet<>());
-    }
-
-    @Deprecated
-    private boolean isConnectedTo(final Collection<Node> otherNodes, final int hops, Predicate<Node> predicate, Set<Node> visited) {
-        if (otherNodes.contains(this)) {
-            return true;
-        }
-        if (hops > 0 && visited != null) {
-            visited.add(this);
-            for (final Way w : getParentWays()) {
-                for (final Node n : w.getNodes()) {
-                    final boolean containsN = visited.contains(n);
-                    if (!containsN && (predicate == null || predicate.test(n))
-                            && n.isConnectedTo(otherNodes, hops - 1, predicate, visited)) {
-                        return true;
-                    }
-                }
-            }
-        }
         return false;
     }
 
