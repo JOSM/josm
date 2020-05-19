@@ -51,7 +51,6 @@ class ShowHistoryAction extends AbstractAction {
 
     static class DoubleClickAdapter extends MouseAdapter {
         private final Function<MouseEvent, PrimitiveId> primitiveIdFunction;
-        private final ShowHistoryAction showHistoryAction = new ShowHistoryAction();
 
         DoubleClickAdapter(Function<MouseEvent, PrimitiveId> primitiveIdFunction) {
             this.primitiveIdFunction = primitiveIdFunction;
@@ -64,8 +63,7 @@ class ShowHistoryAction extends AbstractAction {
             PrimitiveId pid = primitiveIdFunction.apply(e);
             if (pid == null || pid.isNew())
                 return;
-            showHistoryAction.setPrimitiveId(pid);
-            showHistoryAction.run();
+            HistoryBrowserDialogManager.getInstance().showHistory(Collections.singleton(pid));
         }
     }
 }

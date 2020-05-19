@@ -41,24 +41,18 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.history.History;
-import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
-import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
  * The panel which displays the content of a changeset in a scrollable table.
@@ -230,29 +224,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
     class ShowHistoryAction extends AbstractAction implements ListSelectionListener {
 
-        private final class ShowHistoryTask implements Runnable {
-            private final Collection<HistoryOsmPrimitive> primitives;
-
-            private ShowHistoryTask(Collection<HistoryOsmPrimitive> primitives) {
-                this.primitives = primitives;
-            }
-
-            @Override
-            public void run() {
-                try {
-                    for (HistoryOsmPrimitive p : primitives) {
-                        final History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
-                        if (h == null) {
-                            continue;
-                        }
-                        GuiHelper.runInEDT(() -> HistoryBrowserDialogManager.getInstance().show(h));
-                    }
-                } catch (final JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                    GuiHelper.runInEDT(() -> BugReportExceptionHandler.handleException(e));
-                }
-            }
-        }
-
         ShowHistoryAction() {
             putValue(NAME, tr("Show history"));
             new ImageProvider("dialogs", "history").getResource().attachImageIcon(this);
@@ -260,25 +231,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             updateEnabledState();
         }
 
-        protected List<HistoryOsmPrimitive> filterPrimitivesWithUnloadedHistory(Collection<HistoryOsmPrimitive> primitives) {
-            return primitives.stream()
-                    .filter(p -> HistoryDataSet.getInstance().getHistory(p.getPrimitiveId()) == null)
-                    .collect(Collectors.toList());
-        }
-
-        public void showHistory(final Collection<HistoryOsmPrimitive> primitives) {
-
-            List<HistoryOsmPrimitive> toLoad = filterPrimitivesWithUnloadedHistory(primitives);
-            if (!toLoad.isEmpty()) {
-                HistoryLoadTask task = new HistoryLoadTask(ChangesetContentPanel.this);
-                for (HistoryOsmPrimitive p: toLoad) {
-                    task.add(p);
-                }
-                MainApplication.worker.submit(task);
-            }
-
-            MainApplication.worker.submit(new ShowHistoryTask(primitives));
-        }
 
         protected final void updateEnabledState() {
             setEnabled(model.hasSelectedPrimitives());
@@ -288,7 +240,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public void actionPerformed(ActionEvent e) {
             Set<HistoryOsmPrimitive> selected = getSelectedPrimitives();
             if (selected.isEmpty()) return;
-            showHistory(selected);
+            HistoryBrowserDialogManager.getInstance().showHistory(selected);
         }
 
         @Override
