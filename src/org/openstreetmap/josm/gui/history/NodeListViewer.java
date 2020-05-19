@@ -71,7 +71,7 @@ public class NodeListViewer extends HistoryViewerPanel {
             add(showHistoryAction);
         }
 
-        public void prepare(PrimitiveId pid) {
+        void prepare(PrimitiveId pid) {
             zoomToNodeAction.setPrimitiveId(pid);
             zoomToNodeAction.updateEnabledState();
 
@@ -97,12 +97,9 @@ public class NodeListViewer extends HistoryViewerPanel {
             if (!isEnabled())
                 return;
             IPrimitive p = getPrimitiveToZoom();
-            if (p != null) {
-                OsmData<?, ?, ?, ?> ds = MainApplication.getLayerManager().getActiveData();
-                if (ds != null) {
-                    ds.setSelected(p.getPrimitiveId());
-                    AutoScaleAction.autoScale(AutoScaleMode.SELECTION);
-                }
+            if (p != null && p.isSelectable()) {
+                p.getDataSet().setSelected(p);
+                AutoScaleAction.autoScale(AutoScaleMode.SELECTION);
             }
         }
 
