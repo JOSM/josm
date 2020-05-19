@@ -227,17 +227,6 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
      * @since 16123
      */
     public void showHistory(Component parent, final Collection<? extends PrimitiveId> primitives) {
-        if (primitives.size() > Config.getPref().getInt("warn.open.maxhistory", 5) &&
-                /* I18N english text for value 1 makes no real sense, never called for values <= maxhistory (usually 5) */
-                JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
-                        "<html>" + trn(
-                                "You are about to open <b>{0}</b> history dialog.<br/>Do you want to continue?",
-                                "You are about to open <b>{0}</b> different history dialogs simultaneously.<br/>Do you want to continue?",
-                                primitives.size(), primitives.size()) + "</html>",
-                        tr("Confirmation"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)) {
-            return;
-        }
-
         final List<PrimitiveId> realPrimitives = new ArrayList<>(primitives);
         hooks.forEach(h -> h.modifyRequestedIds(realPrimitives));
         final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(realPrimitives, notNewPredicate);
@@ -247,6 +236,16 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
                     tr("Please select at least one already uploaded node, way, or relation."),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (notNewPrimitives.size() > Config.getPref().getInt("warn.open.maxhistory", 5) &&
+                /* I18N english text for value 1 makes no real sense, never called for values <= maxhistory (usually 5) */
+                JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(MainApplication.getMainFrame(),
+                        "<html>" + trn(
+                                "You are about to open <b>{0}</b> history dialog.<br/>Do you want to continue?",
+                                "You are about to open <b>{0}</b> different history dialogs simultaneously.<br/>Do you want to continue?",
+                                notNewPrimitives.size(), notNewPrimitives.size()) + "</html>",
+                        tr("Confirmation"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)) {
             return;
         }
 
