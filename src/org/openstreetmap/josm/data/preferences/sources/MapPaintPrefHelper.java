@@ -73,10 +73,7 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
         Config.getPref().putList("mappaint.style.known-defaults", new ArrayList<>(knownDefaults));
 
         // XML style is not bundled anymore
-        list.stream()
-                .filter(se -> "resource://styles/standard/elemstyles.xml".equals(se.url))
-                .findFirst()
-                .ifPresent(list::remove);
+        list.removeIf(se -> "resource://styles/standard/elemstyles.xml".equals(se.url));
 
         return changed;
     }

@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data;
 
 import java.util.EventObject;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -451,18 +450,8 @@ public final class UndoRedoHandler {
         if (dataSet == null)
             return;
         boolean changed = false;
-        for (Iterator<Command> it = commands.iterator(); it.hasNext();) {
-            if (it.next().getAffectedDataSet() == dataSet) {
-                it.remove();
-                changed = true;
-            }
-        }
-        for (Iterator<Command> it = redoCommands.iterator(); it.hasNext();) {
-            if (it.next().getAffectedDataSet() == dataSet) {
-                it.remove();
-                changed = true;
-            }
-        }
+        changed |= commands.removeIf(c -> c.getAffectedDataSet() == dataSet);
+        changed |= redoCommands.removeIf(c -> c.getAffectedDataSet() == dataSet);
         if (changed) {
             fireEvent(new CommandQueueCleanedEvent(this, dataSet));
             fireCommandsChanged();

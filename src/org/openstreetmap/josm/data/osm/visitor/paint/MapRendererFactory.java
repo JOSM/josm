@@ -8,7 +8,6 @@ import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -238,14 +237,7 @@ public final class MapRendererFactory {
     public void unregister(Class<? extends AbstractMapRenderer> renderer) {
         if (renderer == null) return;
         if (!isRegistered(renderer)) return;
-        Iterator<Descriptor> it = descriptors.iterator();
-        while (it.hasNext()) {
-            Descriptor d = it.next();
-            if (d.getRenderer().equals(renderer)) {
-                it.remove();
-                break;
-            }
-        }
+        descriptors.removeIf(d -> d.getRenderer().equals(renderer));
         if (activeRenderer != null && activeRenderer.equals(renderer)) {
             activateDefault();
         }

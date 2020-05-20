@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -322,13 +321,10 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         }
 
         // remove empty values
-        final Iterator<String> it = tags.keySet().iterator();
-        while (it.hasNext()) {
-            final String v = tags.get(it.next());
-            if (v == null || v.isEmpty()) {
-                it.remove();
-            }
-        }
+        tags.keySet().removeIf(key -> {
+            final String v = tags.get(key);
+            return v == null || v.isEmpty();
+        });
 
         // ignore source/comment to keep current values from models ?
         if (keepSourceComment) {

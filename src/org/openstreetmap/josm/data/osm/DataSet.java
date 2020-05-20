@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -819,17 +818,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             Set<Relation> result = new HashSet<>();
             for (Relation relation : getRelations()) {
                 List<RelationMember> members = relation.getMembers();
-
-                Iterator<RelationMember> it = members.iterator();
-                boolean removed = false;
-                while (it.hasNext()) {
-                    RelationMember member = it.next();
-                    if (member.getMember().equals(primitive)) {
-                        it.remove();
-                        removed = true;
-                    }
-                }
-
+                boolean removed = members.removeIf(member -> member.getMember().equals(primitive));
                 if (removed) {
                     relation.setMembers(members);
                     result.add(relation);

@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -320,15 +319,7 @@ public class TagEditorModel extends AbstractTableModel {
         commitPendingEdit();
         if (name == null)
             return;
-        Iterator<TagModel> it = tags.iterator();
-        boolean changed = false;
-        while (it.hasNext()) {
-            TagModel tm = it.next();
-            if (tm.getName().equals(name)) {
-                changed = true;
-                it.remove();
-            }
-        }
+        boolean changed = tags.removeIf(tm -> tm.getName().equals(name));
         if (changed) {
             fireTableDataChanged();
             setDirty(true);

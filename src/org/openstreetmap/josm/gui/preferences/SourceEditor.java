@@ -1429,11 +1429,8 @@ public abstract class SourceEditor extends JPanel {
                     }
                 }
                 readFile();
-                for (Iterator<ExtendedSourceEntry> it = sources.iterator(); it.hasNext();) {
-                    if ("xml".equals(it.next().styleType)) {
-                        Logging.debug("Removing XML source entry");
-                        it.remove();
-                    }
+                if (sources.removeIf(extendedSourceEntry -> "xml".equals(extendedSourceEntry.styleType))) {
+                    Logging.debug("Removing XML source entry");
                 }
             } catch (IOException e) {
                 if (canceled)
