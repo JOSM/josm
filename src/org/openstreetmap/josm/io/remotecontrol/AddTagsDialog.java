@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -263,7 +264,11 @@ public class AddTagsDialog extends ExtendedDialog {
     public static void addTags(final Map<String, String> args, final String sender, final Collection<? extends OsmPrimitive> primitives) {
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(() -> {
-                addTags(parseUrlTagsToKeyValues(args.get("addtags")), sender, primitives);
+                String[][] tags = parseUrlTagsToKeyValues(args.get("addtags"))
+                        .entrySet().stream()
+                        .map(e -> new String[]{e.getKey(), e.getValue()})
+                        .toArray(String[][]::new);
+                addTags(tags, sender, primitives);
             });
         }
     }
@@ -275,7 +280,8 @@ public class AddTagsDialog extends ExtendedDialog {
      * @since 15316
      */
     public static Map<String, String> parseUrlTagsToKeyValues(String urlSection) {
-        return TextTagParser.readTagsByRegexp(urlSection, "\\|", "(.*?)=(.*?)", false);
+        Map<String, String> tags = TextTagParser.readTagsByRegexp(urlSection, "\\|", "(.*?)=(.*?)", false);
+        return tags == null ? Collections.emptyMap() : tags;
     }
 
     /**
