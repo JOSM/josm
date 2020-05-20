@@ -276,7 +276,7 @@ public final class DistributeAction extends JosmAction {
     }
 
     /**
-     * Remove nodes without knowned coordinates from a collection.
+     * Remove nodes without known coordinates from a collection.
      * @param col Collection of nodes to check
      * @return Set of nodes without coordinates
      */
