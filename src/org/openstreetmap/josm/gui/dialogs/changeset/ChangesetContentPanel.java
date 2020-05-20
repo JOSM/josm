@@ -231,7 +231,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             updateEnabledState();
         }
 
-
         protected final void updateEnabledState() {
             setEnabled(model.hasSelectedPrimitives());
         }
