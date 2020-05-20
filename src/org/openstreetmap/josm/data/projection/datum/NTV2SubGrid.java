@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -178,6 +179,7 @@ public class NTV2SubGrid implements Serializable {
                 : Arrays.stream(subGrid)
                 .filter(aSubGrid -> aSubGrid.isCoordWithin(lon, lat))
                 .map(aSubGrid -> aSubGrid.getSubGridForCoord(lon, lat))
+                .filter(Objects::nonNull)
                 .findFirst().orElse(this);
     }
 
