@@ -634,7 +634,7 @@ public final class I18n {
     }
 
     /**
-     * Updates the default locale : overrides the numbering system, if defined in internal boudnaries.xml for the current language/country.
+     * Updates the default locale: overrides the numbering system, if defined in internal boundaries.xml for the current language/country.
      * @since 16109
      */
     public static void initializeNumberingFormat() {
