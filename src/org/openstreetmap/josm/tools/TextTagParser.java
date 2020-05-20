@@ -4,7 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -51,7 +51,7 @@ public final class TextTagParser {
     public static Map<String, String> readTagsByRegexp(String text, String splitRegex, String tagRegex, boolean unescapeTextInQuotes) {
          String[] lines = text.split(splitRegex);
          Pattern p = Pattern.compile(tagRegex);
-         Map<String, String> tags = new HashMap<>();
+         Map<String, String> tags = new LinkedHashMap<>();
          String k;
          String v;
          for (String line: lines) {

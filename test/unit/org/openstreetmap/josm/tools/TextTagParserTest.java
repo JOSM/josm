@@ -3,8 +3,11 @@ package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Rule;
@@ -171,5 +174,16 @@ public class TextTagParserTest {
         expected.put("name", "Main street");
         expected.put("url", "https://example.com/?id=1");
         assertEquals(expected, TextTagParser.readTagsFromText("name=Main street\nurl=https://example.com/?id=1"));
+    }
+
+    /**
+     * Tests that the tags ordering is stable.
+     */
+    @Test
+    public void testStableOrder() {
+        List<String> expected = Arrays.asList("foo4", "foo3", "foo2", "foo1");
+        ArrayList<String> actual = new ArrayList<>(TextTagParser.readTagsByRegexp(
+                "foo4=bar4 foo3=bar3 foo2=bar2 foo1=bar1", " ", "(.*?)=(.*?)", true).keySet());
+        assertEquals(expected, actual);
     }
 }
