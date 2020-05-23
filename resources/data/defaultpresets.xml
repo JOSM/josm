@@ -4934,6 +4934,7 @@
             <combo key="access" text="General Access" values="yes,private,delivery,customers,permissive,no" />
             <reference ref="wheelchair" />
             <optional>
+                <combo key="door" text="Door" values="yes,no,folding,hinged,loadingdock,overhead,revolving,sliding,trapdoor,no" match="key" />
                 <text key="ref" text="Entrance number" />
                 <text key="addr:flats" text="Flat numbers" />
             </optional>
