@@ -5177,7 +5177,7 @@
             <combo key="lamp_mount" text="Mounted on" values="bent_mast,straight_mast,suspended,wall" values_context="lamp_mount" match="key" />
             <combo key="opening_hours" text="Operation times" values="Mo-Fr 22:00-05:00" values_no_i18n="true" />
         </item> <!-- Street Lamp -->
-        <item name="Street cabinet" icon="presets/misc/street_cabinet.svg" type="node" preset_name_label="true">
+        <item name="Street cabinet" icon="presets/misc/street_cabinet.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
             <optional>
@@ -5573,7 +5573,7 @@
             </optional>
         </item> <!-- Power Compensator -->
         <separator/>
-        <item name="Power Street Cabinet" icon="presets/power/cable_distribution_cabinet.svg" type="node" preset_name_label="true">
+        <item name="Power Street Cabinet" icon="presets/power/cable_distribution_cabinet.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
             <key key="street_cabinet" value="power" />
@@ -5710,7 +5710,7 @@
         </item> <!-- Power Cable -->
     </group> <!-- Power -->
     <group name="Telecom" icon="presets/telecom/telecom.svg">
-        <item name="Telecom Street Cabinet" icon="presets/telecom/telecom_cabinet.svg" type="node" preset_name_label="true">
+        <item name="Telecom Street Cabinet" icon="presets/telecom/telecom_cabinet.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=street_cabinet" />
             <key key="man_made" value="street_cabinet" />
             <key key="street_cabinet" value="telecom" />

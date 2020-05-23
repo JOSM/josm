@@ -1254,12 +1254,9 @@ area[power=substation],
 area[power=compensator],
 area[power=converter],
 area[power=switchgear],
-area[power=generator] {
+area[power=generator],
+area[man_made=street_cabinet][street_cabinet=power] {
     fill-color: power#eeeeee;
-}
-node[man_made=street_cabinet] {
-    icon-image: "presets/misc/street_cabinet.svg";
-    set icon_z17;
 }
 node[man_made=street_cabinet][street_cabinet=power] {
     icon-image: "presets/power/cable_distribution_cabinet.svg";
@@ -1373,6 +1370,7 @@ node[power_source] {
 /* man_made tags */
 /*****************/
 
+area[man_made=street_cabinet][street_cabinet!=power], /* power street cabinet has own style above */
 area[man_made=beacon],
 area[man_made=bridge],
 area[bridge:support],
@@ -1386,6 +1384,10 @@ area[man_made=lighthouse],
 area[man_made=monitoring_station],
 area[man_made=mineshaft] {
     fill-color: manmade#d8d8d8;
+}
+node[man_made=street_cabinet][street_cabinet!=power] {
+    icon-image: "presets/misc/street_cabinet.svg";
+    set icon_z17;
 }
 node[man_made=beacon] {
     icon-image: "presets/landmark/beacon.svg";
@@ -1609,7 +1611,8 @@ node[man_made=cutline] {
 
 area[telecom=exchange],
 area[telecom=connection_point],
-area[telecom=service_device] {
+area[telecom=service_device],
+area[man_made=street_cabinet][street_cabinet=telecom] {
     fill-color: telecom#d8d8d8; /* same as man_made */
 }
 node[telecom=exchange] {
