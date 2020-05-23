@@ -76,7 +76,7 @@ public final class ImageEntry extends GpxImageEntry {
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + ((thumbnail == null) ? 0 : thumbnail.hashCode());
+        return Objects.hash(super.hashCode(), thumbnail);
     }
 
     @Override

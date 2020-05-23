@@ -13,6 +13,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -490,11 +491,7 @@ public class WindowGeometry {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((extent == null) ? 0 : extent.hashCode());
-        result = prime * result + ((topLeft == null) ? 0 : topLeft.hashCode());
-        return result;
+        return Objects.hash(extent, topLeft);
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools.template_engine;
 
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * {@link TemplateEntry} that inserts the value of a variable.
@@ -82,11 +83,7 @@ public class Variable implements TemplateEntry {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (special ? 1231 : 1237);
-        result = prime * result + ((variableName == null) ? 0 : variableName.hashCode());
-        return result;
+        return Objects.hash(special, variableName);
     }
 
     @Override

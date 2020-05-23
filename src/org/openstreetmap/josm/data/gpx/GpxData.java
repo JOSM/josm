@@ -999,15 +999,15 @@ public class GpxData extends WithAttributes implements Data {
 
     @Override
     public synchronized int hashCode() {
-        final int prime = 31;
-        int result = prime + super.hashCode();
-        result = prime * result + ((namespaces == null) ? 0 : namespaces.hashCode());
-        result = prime * result + ((layerPrefs == null) ? 0 : layerPrefs.hashCode());
-        result = prime * result + ((dataSources == null) ? 0 : dataSources.hashCode());
-        result = prime * result + ((privateRoutes == null) ? 0 : privateRoutes.hashCode());
-        result = prime * result + ((privateTracks == null) ? 0 : privateTracks.hashCode());
-        result = prime * result + ((privateWaypoints == null) ? 0 : privateWaypoints.hashCode());
-        return result;
+        return Objects.hash(
+                super.hashCode(),
+                namespaces,
+                layerPrefs,
+                dataSources,
+                privateRoutes,
+                privateTracks,
+                privateWaypoints
+        );
     }
 
     @Override

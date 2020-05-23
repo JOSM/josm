@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,7 +54,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         public int hashCode() {
-            return 31 + ((condition == null) ? 0 : condition.hashCode());
+            return Objects.hash(condition);
         }
 
         @Override
@@ -103,7 +104,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         public int hashCode() {
-            return 31 * super.hashCode() + ((childCondition == null) ? 0 : childCondition.hashCode());
+            return Objects.hash(super.hashCode(), childCondition);
         }
 
         @Override
@@ -166,7 +167,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         public int hashCode() {
-            return 31 * super.hashCode() + ((parentCondition == null) ? 0 : parentCondition.hashCode());
+            return Objects.hash(super.hashCode(), parentCondition);
         }
 
         @Override
@@ -209,11 +210,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((lhs == null) ? 0 : lhs.hashCode());
-            result = prime * result + ((rhs == null) ? 0 : rhs.hashCode());
-            return result;
+            return Objects.hash(super.hashCode(), lhs, rhs);
         }
 
         @Override
@@ -262,11 +259,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = super.hashCode();
-            result = prime * result + ((lhs == null) ? 0 : lhs.hashCode());
-            result = prime * result + ((rhs == null) ? 0 : rhs.hashCode());
-            return result;
+            return Objects.hash(lhs, rhs);
         }
 
         @Override
@@ -395,11 +388,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((context == null) ? 0 : context.hashCode());
-        result = prime * result + ((template == null) ? 0 : template.hashCode());
-        return result;
+        return Objects.hash(context, template);
     }
 
     @Override

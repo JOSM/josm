@@ -3,6 +3,8 @@ package org.openstreetmap.josm.tools.template_engine;
 
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 
+import java.util.Objects;
+
 /**
  * Conditional {@link TemplateEntry} that executes another template in case a search expression applies
  * to the given data provider.
@@ -39,11 +41,7 @@ public class SearchExpressionCondition implements TemplateEntry {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((condition == null) ? 0 : condition.hashCode());
-        result = prime * result + ((text == null) ? 0 : text.hashCode());
-        return result;
+        return Objects.hash(condition, text);
     }
 
     @Override

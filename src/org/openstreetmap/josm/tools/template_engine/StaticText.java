@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.template_engine;
 
+import java.util.Objects;
+
 /**
  * {@link TemplateEntry} representing a static string.
  * <p>
@@ -35,7 +37,7 @@ public class StaticText implements TemplateEntry {
 
     @Override
     public int hashCode() {
-        return 31 + ((staticText == null) ? 0 : staticText.hashCode());
+        return Objects.hash(staticText);
     }
 
     @Override

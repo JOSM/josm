@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.data.Bounds;
 
@@ -77,10 +78,7 @@ public class GpxTrackSegment extends WithAttributes implements IGpxTrackSegment 
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime + super.hashCode();
-        result = prime * result + ((wayPoints == null) ? 0 : wayPoints.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), wayPoints);
     }
 
     @Override

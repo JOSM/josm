@@ -353,12 +353,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(yOffset);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Double.hashCode(yOffset);
     }
 
     @Override

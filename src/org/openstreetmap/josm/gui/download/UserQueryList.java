@@ -624,11 +624,7 @@ public final class UserQueryList extends SearchTextResultListPanel<UserQueryList
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((itemKey == null) ? 0 : itemKey.hashCode());
-            result = prime * result + ((query == null) ? 0 : query.hashCode());
-            return result;
+            return Objects.hash(itemKey, query);
         }
 
         @Override

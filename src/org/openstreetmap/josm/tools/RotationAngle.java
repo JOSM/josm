@@ -81,11 +81,7 @@ public interface RotationAngle {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            long temp = Double.doubleToLongBits(angle);
-            result = prime * result + (int) (temp ^ (temp >>> 32));
-            return result;
+            return Double.hashCode(angle);
         }
 
         @Override

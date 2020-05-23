@@ -421,11 +421,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((lhs == null) ? 0 : lhs.hashCode());
-            result = prime * result + ((rhs == null) ? 0 : rhs.hashCode());
-            return result;
+            return Objects.hash(lhs, lhs);
         }
 
         @Override
@@ -529,11 +525,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + (defaultValue ? 1231 : 1237);
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            return result;
+            return Objects.hash(defaultValue, key);
         }
 
         @Override
@@ -852,13 +844,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + compareMode;
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
-            result = prime * result + ((referenceValue == null) ? 0 : referenceValue.hashCode());
-            return result;
+            return Objects.hash(compareMode, key, referenceNumber, referenceValue);
         }
 
         @Override
@@ -1009,14 +995,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime * result + ((keyPattern == null) ? 0 : keyPattern.hashCode());
-            result = prime * result + ((mode == null) ? 0 : mode.hashCode());
-            result = prime * result + ((value == null) ? 0 : value.hashCode());
-            result = prime * result + ((valuePattern == null) ? 0 : valuePattern.hashCode());
-            return result;
+            return Objects.hash(key, keyPattern, mode, value, valuePattern);
         }
 
         @Override
@@ -1116,12 +1095,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + (caseSensitive ? 1231 : 1237);
-            result = prime * result + ((search == null) ? 0 : search.hashCode());
-            result = prime * result + ((searchRegex == null) ? 0 : searchRegex.hashCode());
-            return result;
+            return Objects.hash(caseSensitive, search, searchRegex);
         }
 
         @Override
@@ -1335,11 +1309,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + (modulo ? 1231 : 1237);
-            result = prime * result + nth;
-            return result;
+            return Objects.hash(modulo, nth);
         }
 
         @Override
@@ -1391,11 +1361,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + (int) (max ^ (max >>> 32));
-            result = prime * result + (int) (min ^ (min >>> 32));
-            return result;
+            return Objects.hash(max, min);
         }
 
         @Override

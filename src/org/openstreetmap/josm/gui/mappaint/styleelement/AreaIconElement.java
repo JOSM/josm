@@ -71,12 +71,7 @@ public class AreaIconElement extends StyleElement {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((iconImage == null) ? 0 : iconImage.hashCode());
-        result = prime * result + ((iconImageAngle == null) ? 0 : iconImageAngle.hashCode());
-        result = prime * result + ((iconPosition == null) ? 0 : iconPosition.hashCode());
-        return result;
+        return Objects.hash(super.hashCode(), iconImage, iconImageAngle, iconPosition);
     }
 
     @Override

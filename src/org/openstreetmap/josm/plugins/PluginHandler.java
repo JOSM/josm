@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
@@ -221,9 +222,7 @@ public final class PluginHandler {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = prime + ((name == null) ? 0 : name.hashCode());
-            return prime * result + ((reason == null) ? 0 : reason.hashCode());
+            return Objects.hash(name, reason);
         }
 
         @Override

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer.imagery;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -322,12 +323,7 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (autoLoad ? 1231 : 1237);
-        result = prime * result + (autoZoom ? 1231 : 1237);
-        result = prime * result + (showErrors ? 1231 : 1237);
-        return result;
+        return Objects.hash(autoLoad, autoZoom, showErrors);
     }
 
     @Override

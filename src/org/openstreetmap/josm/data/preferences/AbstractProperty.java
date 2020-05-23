@@ -8,6 +8,8 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ListenableWeakReference;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
+import java.util.Objects;
+
 /**
  * Captures the common functionality of preference properties
  * @param <T> The type of object accessed by this property
@@ -28,11 +30,7 @@ public abstract class AbstractProperty<T> {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getOuterType().hashCode();
-            result = prime * result + ((listener == null) ? 0 : listener.hashCode());
-            return result;
+            return Objects.hash(getOuterType(), listener);
         }
 
         @Override
@@ -317,11 +315,7 @@ public abstract class AbstractProperty<T> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((preferences == null) ? 0 : preferences.hashCode());
-        return result;
+        return Objects.hash(key, preferences);
     }
 
     @Override

@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.tagging.ac;
 
+import java.util.Objects;
+
 /**
  * Represents an entry in the set of auto completion values.
  *
@@ -85,12 +87,7 @@ public class AutoCompletionItem implements Comparable<AutoCompletionItem> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((priority == null) ? 0 : priority.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return Objects.hash(priority, value);
     }
 
     @Override

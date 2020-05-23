@@ -287,15 +287,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        long temp = Double.doubleToLongBits(lat);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(lon);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = getTimeInMillis();
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Objects.hash(super.hashCode(), lat, lon, getTimeInMillis());
     }
 
     @Override

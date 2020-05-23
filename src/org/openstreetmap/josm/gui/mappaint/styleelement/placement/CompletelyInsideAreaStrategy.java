@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.styleelement.placement;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Objects;
 
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
@@ -121,14 +122,7 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(offsetX);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(offsetY);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return Objects.hash(offsetX, offsetY);
     }
 
     @Override
