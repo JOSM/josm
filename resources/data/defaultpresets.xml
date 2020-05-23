@@ -518,7 +518,7 @@
     <optional>
       <combo key="climbing:orientation" text="Orientation" values="N,NE,E,SE,S,SW,W,NW" values_no_i18n="true" values_sort="false"/>
       <combo key="climbing:quality" text="Rock/ice quality" values="fragile,medium,solid" />
-      <combo key="climbing:rock" text="Rock type" rows="3" values="limestone,sandstone,granite,basalt,slate" />
+      <combo key="climbing:rock" text="Rock type" values="limestone,sandstone,granite,basalt,slate" />
       <check key="climbing:summit_log" text="Summit/route log/register" />
       <check key="indoor" text="Climbing routes indoor" />
       <check key="outdoor" text="Climbing routes outdoor" />           
@@ -2369,7 +2369,7 @@
             <key key="shop" value="car_repair" />
             <reference ref="car_brands" />
             <reference ref="name_operator_oh_wheelchair" />
-            <multiselect key="service" text="Service" text_context="shop=car_repair" values="dealer;repair;parts;tyres" />
+            <multiselect key="service" text="Service" text_context="shop=car_repair" values="dealer;repair;parts;tyres" rows="5" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Repair -->
         <item name="Parts" icon="presets/vehicle/car_parts.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3791,7 +3791,7 @@
             <key key="amenity" value="school" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="min_age" />
-            <multiselect key="isced:level" text="ISCED level" values="0;1;2;3;4" />
+            <multiselect key="isced:level" text="ISCED level" values="0;1;2;3;4" rows="6" />
             <reference ref="link_contact_address" />
             <preset_link preset_name="Building" />
         </item> <!-- School -->
@@ -3800,7 +3800,7 @@
             <space />
             <key key="amenity" value="university" />
             <reference ref="name_operator_oh_wheelchair" />
-            <multiselect key="isced:level" text="ISCED level" values="4;5;6;7;8" />
+            <multiselect key="isced:level" text="ISCED level" values="4;5;6;7;8" rows="6" />
             <reference ref="link_contact_address" />
         </item> <!-- University -->
         <item name="College" icon="presets/education/college.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3808,7 +3808,7 @@
             <space />
             <key key="amenity" value="college" />
             <reference ref="name_operator_oh_wheelchair" />
-            <multiselect key="isced:level" text="ISCED level" values="3;4;5;6;7" />
+            <multiselect key="isced:level" text="ISCED level" values="3;4;5;6;7" rows="6" />
             <reference ref="link_contact_address" />
         </item> <!-- College -->
          <item name="Driving School" icon="presets/education/driving_school.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -4032,7 +4032,7 @@
             <text key="operator" text="Operator" />
             <space />
             <combo key="siren:type" text="Type" values="pneumatic,electronic,mechanical" />
-            <multiselect key="siren:purpose" text="Purpose" values="tornado;fire;air_raid;civil_defense" values_searchable="true" />
+            <multiselect key="siren:purpose" text="Purpose" values="tornado;fire;air_raid;civil_defense" rows="5" values_searchable="true" />
             <text key="siren:range" text="Range (in meters)" />
         </item> <!-- Siren -->
     </group> <!-- Emergency -->
@@ -4366,7 +4366,7 @@
             <key key="amenity" value="compressed_air" />
             <reference ref="name_ref_operator" />
             <reference ref="fee" />
-            <multiselect key="valves" text="Valves" values="dunlop;schrader;sclaverand;regina" display_values="Dunlop (Woods);Schrader;Sclaverand (Presta);Regina" values_searchable="true" />
+            <multiselect key="valves" text="Valves" values="dunlop;schrader;sclaverand;regina" rows="5" display_values="Dunlop (Woods);Schrader;Sclaverand (Presta);Regina" values_searchable="true" />
         </item> <!-- Compressed Air -->
         <separator/>
         <item name="Advertising Column" icon="presets/leisure/advertising_column.svg" type="node,closedway" preset_name_label="true">
