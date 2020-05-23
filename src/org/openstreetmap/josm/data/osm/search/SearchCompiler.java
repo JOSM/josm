@@ -421,7 +421,7 @@ public class SearchCompiler {
 
         @Override
         public int hashCode() {
-            return Objects.hash(lhs, lhs);
+            return Objects.hash(lhs, rhs);
         }
 
         @Override
