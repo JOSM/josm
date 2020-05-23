@@ -883,7 +883,7 @@
             <space />
             <label text="Transport mode restrictions" />
             <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" match="key" values_searchable="true" />
-            <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
+            <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" match="key" />
             <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
             <space />
             <label text="Vehicles per type" />
@@ -982,7 +982,7 @@
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" values_context="trail_visibility" values_sort="false" />
                 <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" />
-                <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" />
+                <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <combo key="wheelchair" text="Wheelchairs" values="yes,designated,limited,no" />
                 <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" />
