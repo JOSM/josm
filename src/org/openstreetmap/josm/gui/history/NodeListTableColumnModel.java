@@ -12,6 +12,9 @@ import javax.swing.table.TableColumn;
  */
 public class NodeListTableColumnModel extends DefaultTableColumnModel {
 
+    static final int INDEX_COLUMN = 0;
+    static final int NODE_COLUMN = 1;
+
     /**
      * Constructs a new {@code NodeListTableColumnModel}.
      */
@@ -22,8 +25,12 @@ public class NodeListTableColumnModel extends DefaultTableColumnModel {
     protected void createColumns() {
         NodeListTableCellRenderer renderer = new NodeListTableCellRenderer();
 
-        // column 0 - Nodes
-        TableColumn col = new TableColumn(0);
+        TableColumn col = new TableColumn(INDEX_COLUMN, 0);
+        col.setHeaderValue(tr("\u2116"));
+        col.setCellRenderer(renderer);
+        addColumn(col);
+
+        col = new TableColumn(NODE_COLUMN);
         col.setHeaderValue(tr("Nodes"));
         col.setCellRenderer(renderer);
         addColumn(col);

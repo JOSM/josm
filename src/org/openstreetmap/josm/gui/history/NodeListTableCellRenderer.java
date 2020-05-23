@@ -36,7 +36,15 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
         setIcon(nodeIcon);
     }
 
-    protected void renderNode(TwoColumnDiff.Item item, boolean isSelected, boolean hasFocus) {
+    protected void renderIndex(DiffTableModel model, int row) {
+        int rowNumber = model.getRowNumber(row);
+        setText(rowNumber > 0 ? Integer.toString(rowNumber) : "");
+        setToolTipText(null);
+        setHorizontalAlignment(CENTER);
+        setIcon(null);
+    }
+
+    protected void renderNode(TwoColumnDiff.Item item) {
         String text = "";
         setIcon(nodeIcon);
         if (item.value != null) {
@@ -47,7 +55,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
             setIcon(null);
         }
         setText(text);
-        GuiHelper.setBackgroundReadable(this, item.state.getColor(isSelected, hasFocus));
+        setHorizontalAlignment(LEFT);
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
@@ -55,8 +63,16 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
 
-        if (value != null) {
-            renderNode((TwoColumnDiff.Item) value, isSelected, hasFocus);
+        if (value == null) return this;
+        TwoColumnDiff.Item item = (TwoColumnDiff.Item) value;
+        GuiHelper.setBackgroundReadable(this, item.state.getColor(isSelected, hasFocus));
+        switch(column) {
+        case NodeListTableColumnModel.INDEX_COLUMN:
+            renderIndex((DiffTableModel) table.getModel(), row);
+            break;
+        case NodeListTableColumnModel.NODE_COLUMN:
+            renderNode(item);
+            break;
         }
         return this;
     }

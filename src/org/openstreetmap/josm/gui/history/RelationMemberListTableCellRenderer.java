@@ -35,11 +35,21 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         }
     }
 
+    protected void renderIndex(DiffTableModel model, int row) {
+        int rowNumber = model.getRowNumber(row);
+        setText(rowNumber > 0 ? Integer.toString(rowNumber) : "");
+        setToolTipText(null);
+        setHorizontalAlignment(CENTER);
+        renderIcon(null);
+    }
+
     protected void renderRole(Item diffItem) {
         RelationMemberData member = (RelationMemberData) diffItem.value;
         String text = member == null ? "" : member.getRole();
         setText(text);
         setToolTipText(text);
+        setHorizontalAlignment(LEFT);
+        renderIcon(null);
     }
 
     protected void renderPrimitive(Item diffItem) {
@@ -55,6 +65,8 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         }
         setText(text);
         setToolTipText(text);
+        setHorizontalAlignment(LEFT);
+        renderIcon((RelationMemberData) diffItem.value);
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null
@@ -64,18 +76,22 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
 
         if (value == null) return this;
         Item member = (TwoColumnDiff.Item) value;
-        renderIcon((RelationMemberData) member.value);
+        Item.DiffItemType type = member.state;
         switch(column) {
-        case 0:
+        case RelationMemberTableColumnModel.INDEX_COLUMN:
+            type = Item.DiffItemType.EMPTY;
+            renderIndex(((DiffTableModel) table.getModel()), row);
+            break;
+        case RelationMemberTableColumnModel.ROLE_COLUMN:
             renderRole(member);
             break;
-        case 1:
+        case RelationMemberTableColumnModel.OBJECT_COLUMN:
             renderPrimitive(member);
             break;
         default: // Do nothing
         }
 
-        GuiHelper.setBackgroundReadable(this, member.state.getColor(isSelected, hasFocus));
+        GuiHelper.setBackgroundReadable(this, type.getColor(isSelected, hasFocus));
         return this;
     }
 }
