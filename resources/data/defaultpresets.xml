@@ -6077,7 +6077,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Boutique -->
-        <item name="Shoes" icon="presets/shop/shoes.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Shoes" icon="presets/shop/shoes.svg" type="node,closedway,multipolygon" name_context="shop" preset_name_label="true">
             <link wiki="Tag:shop=shoes" />
             <space />
             <key key="shop" value="shoes" />
