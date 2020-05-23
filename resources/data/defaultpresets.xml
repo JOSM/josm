@@ -58,7 +58,7 @@
     </chunk>
     <chunk id="highway_yesno_incline">
         <reference ref="highway_yesno" />
-        <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down"/>
+        <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
     </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width">
         <check key="oneway" text="Oneway" />
@@ -138,7 +138,7 @@
         <combo key="service_times" text="Service Times" delimiter="|" values="18:00|sunset,sunrise|Su 09:30,11:00|Sa,Su,PH 09:00|Sa 18:00; Su 10:45|Fr 08:00-18:00; Apr 10-15 off; Jun 07:00-20:00; Aug off; Dec 24 08:00-24:00|Sa 10:00+|week 01-53/2 Fr 09:00-12:00; week 02-52/2 We 09:00-12:00" values_no_i18n="true" />
     </chunk>
     <chunk id="oh">
-        <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Su 09:00-21:00|Mo-Sa 08:00-18:00|Mo-Fr 09:00-17:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00; Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 01-53/2 Fr 09:00-12:00; week 02-52/2 We 09:00-12:00" values_no_i18n="true" />
+        <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Su 09:00-21:00|Mo-Sa 08:00-18:00|Mo-Fr 09:00-17:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00; Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 01-53/2 Fr 09:00-12:00; week 02-52/2 We 09:00-12:00" values_no_i18n="true" values_sort="false" />
     </chunk>
     <chunk id="wheelchair">
         <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
@@ -215,7 +215,7 @@
         <combo key="fee" text="Fee" values="yes,no" />
     </chunk>
     <chunk id="fee_interval">
-        <combo key="fee" text="Fee" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
+        <combo key="fee" text="Fee" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_no_i18n="true" values_sort="false" />
     </chunk>
     <chunk id="parking_name_type_ref">
         <text key="name" text="Name" />
@@ -224,7 +224,7 @@
     </chunk>
     <chunk id="parking_access_fee_operator_surface_smoothness">
         <space />
-        <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
+        <reference ref="POI_access" />
         <reference ref="fee_interval" />
         <text key="operator" text="Operator" />
         <reference ref="surface_smoothness" />
@@ -233,15 +233,18 @@
         <combo key="maxstay" text="Time Limit" values="30 minutes,60 minutes,180 minutes,1 hour,1.5 hours,1 day,3 days,2 weeks,4 months,1.5 years,unlimited,no,load-unload" values_no_i18n="true" values_sort="false" />
     </chunk>
     <chunk id="supervised">
-        <combo key="supervised" text="Supervised" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
+        <combo key="supervised" text="Supervised" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
     </chunk>
     <chunk id="supervised_lit_oh">
         <reference ref="supervised" />
-        <combo key="lit" text="Lit" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
+        <combo key="lit" text="Lit" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
         <reference ref="oh" />
     </chunk>
-    <chunk id="general_access">
-        <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_searchable="true" />
+    <chunk id="highway_access">
+        <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" />
+    </chunk>
+    <chunk id="POI_access">
+        <combo key="access" text="General Access" values="yes,private,customers,permissive,no" />
     </chunk>
     <chunk id="name_wikipedia">
         <text key="name" text="Name" />
@@ -255,7 +258,7 @@
     <chunk id="route_hikebike_optionals">
         <text key="ref" text="Reference" />
         <text key="operator" text="Operator" />
-        <text key="distance" text="Distance (km)"/>
+        <text key="distance" text="Distance (kilometers)"/>
         <text key="ascent" text="Ascent (m)"/>
         <text key="descent" text="Descent (m)"/>
         <check key="roundtrip" text="Roundtrip"/>
@@ -373,7 +376,7 @@
         </optional>
     </chunk>
     <chunk id="power_pole">
-        <text key="height" text="Height (meters)" />
+        <text key="height" text="Height (meters)" length="7" />
         <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
         <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
         <check key="location:transition" text="Location transition" disable_off="true" />
@@ -521,16 +524,10 @@
       <check key="outdoor" text="Climbing routes outdoor" />           
       <text key="website" text="Official web site (e.g. operator)" />
       <text key="url" text="Unofficial web site" />
-      <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|sunset-sunrise open; sunrise-sunset closed|Mar-Jun closed; Jul-Feb Mo-Su,PH sunrise-sunset|Mo-Fr 15:00-22:00; Sa-Su 11:00-22:00" values_no_i18n="true"/>
+      <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|sunset-sunrise open; sunrise-sunset closed|Mar-Jun closed; Jul-Feb Mo-Su,PH sunrise-sunset|Mo-Fr 15:00-22:00; Sa-Su 11:00-22:00" values_no_i18n="true" values_sort="false" />
       <combo key="fee" text="Fee" values="yes,no,Sa-Su 08:00-20:00"/>
-      <combo key="access" text="Access" values="yes,no,customers,private" />
+      <reference ref="POI_access" />
     </optional>
-  </chunk>
-  <chunk id="nudism">
-    <combo key="nudism" text="Nudism" values="yes,no,obligatory,designated,customary,permissive" />
-  </chunk>
-  <chunk id="wall_material">
-    <combo key="material" text="Material" values="adobe,brick,concrete,masonry,reinforced_concrete,stone" />
   </chunk>
   <!--  Groups -->
   <group name="Highways" icon="presets/transport/way/way_secondary.svg">
@@ -957,7 +954,7 @@
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
-                <reference ref="general_access" />
+                <reference ref="highway_access" />
                 <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
@@ -973,7 +970,7 @@
                 <reference ref="name_layer" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
-                <combo key="sac_scale" text="SAC Scale" values_searchable="true">
+                <combo key="sac_scale" text="SAC Scale" values_searchable="true" values_sort="false">
                     <list_entry value="hiking" display_value="T1 - hiking trail" short_description="Trail well cleared. Area flat or slightly sloped, no fall hazard" />
                     <list_entry value="mountain_hiking" display_value="T2 - mountain hiking trail" short_description="Trail with continuous line and balanced ascent. Terrain partially steep, fall hazard possible" />
                     <list_entry value="demanding_mountain_hiking" display_value="T3 - difficult, exposed hiking trail" short_description="exposed sites may be secured with ropes or chains, possible need to use hands for balance. Partly exposed sites with fall hazard, scree, pathless jagged rocks" />
@@ -1012,7 +1009,7 @@
             <check key="oneway:bicycle" text="Oneway (bicycle)" />
             <space />
             <optional text="Edit Highway Attributes:">
-                <combo key="highway" text="Highway" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" values_context="Highway" />
+                <combo key="highway" text="Highway" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,residential,living_street,service,bus_guideway,construction" values_context="Highway" values_sort="false" />
                 <check key="oneway" text="Oneway" />
             </optional>
         </item> <!-- Cycle Lane/Track -->
@@ -1135,7 +1132,7 @@
                 <check key="crossing:island" text="With island" />
                 <check key="button_operated" text="Button operated" />
                 <check key="traffic_signals:sound" text="Sound signals" />
-                <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
+                <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
                 <check key="bicycle" text="Cross by bicycle" />
                 <check key="horse" text="Cross on horseback" />
             </optional>
@@ -1178,7 +1175,7 @@
             </combo>
             <combo key="crossing_ref" text="Crossing type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" values_searchable="true" />
             <combo key="kerb" text="Kerb" values="flush,lowered,no,raised,rolled,yes" values_context="kerb" />
-            <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" />
+            <combo key="supervised" text="Crossing attendant" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
             <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             <check key="crossing:island" text="With island" />
             <check key="bicycle" text="Cross by bicycle" />
@@ -1312,7 +1309,7 @@
                 <check key="indoor" text="Indoor" />
                 <reference ref="fee" />
                 <combo key="goods" text="Freight elevator" values="yes,designated,no" />
-                <combo key="access" text="Access" values="yes,no,customers,private" />
+                <reference ref="POI_access" />
                 <combo key="surveillance" text="Surveillance Camera" values="indoor,outdoor" />
             </optional>
         </item> <!-- Elevator -->
@@ -1327,7 +1324,7 @@
             <key key="mountain_pass" value="yes" />
             <optional>
                 <text key="name" text="Name" />
-                <text key="ele" text="Elevation" />
+                <text key="ele" text="Elevation (meters)" lenght="10" />
                 <text key="wikipedia" text="Wikipedia" />
             </optional>
         </item> <!-- Mountain Pass -->
@@ -1429,19 +1426,19 @@
             <key key="barrier" value="wall" />
             <reference ref="optional_height" />
             <combo key="wall" text="Type" values="castle_wall,dry_stone,flood_wall,noise_barrier,seawall" values_searchable="true" />
-            <reference ref="wall_material" />
+            <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
         </item> <!-- Wall -->
         <item name="City Wall" icon="presets/barrier/city_wall.svg" type="way,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:barrier=city_wall" />
             <key key="barrier" value="city_wall" />
             <reference ref="optional_height" />
-            <reference ref="wall_material" />
+            <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
         </item> <!-- City Wall -->
         <item name="Retaining Wall" icon="presets/barrier/retaining_wall.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=retaining_wall" />
             <key key="barrier" value="retaining_wall" />
             <reference ref="optional_height" />
-            <reference ref="wall_material" />
+            <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
         </item> <!-- Retaining Wall -->
         <item name="Jersey Barrier" icon="presets/barrier/jersey_barrier.svg"  type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=jersey_barrier" />
@@ -1474,14 +1471,14 @@
             <key key="barrier" value="gate" />
             <reference ref="barrier_5" />
             <reference ref="optional_maxheight_maxwidth" />
-            <reference ref="general_access" />
+            <reference ref="highway_access" />
         </item> <!-- Gate -->
         <item name="Lift Gate" icon="presets/barrier/lift_gate.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=lift_gate" />
             <key key="barrier" value="lift_gate" />
             <reference ref="barrier_5" />
             <reference ref="optional_maxwidth" />
-            <reference ref="general_access" />
+            <reference ref="highway_access" />
         </item> <!-- Lift Gate -->
         <item name="Swing Gate" icon="presets/barrier/swing_gate.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=swing_gate" />
@@ -1489,7 +1486,7 @@
             <combo key="swing_gate:type" text="Type" values="single,double" values_context="swing_gate" />
             <reference ref="barrier_5" />
             <reference ref="optional_maxwidth" />
-            <reference ref="general_access" />
+            <reference ref="highway_access" />
         </item> <!-- Swing Gate -->
         <item name="Hampshire Gate" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=hampshire_gate" />
@@ -1685,7 +1682,7 @@
             <space />
             <key key="waterway" value="waterfall" />
             <reference ref="name_wikipedia" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
         </item> <!-- Waterfall -->
         <item name="Weir" icon="presets/nautical/weir.svg" type="node,way" preset_name_label="true">
             <link wiki="Tag:waterway=weir" />
@@ -1772,7 +1769,7 @@
             <check key="salt" text="Salt Water" disable_off="true" />
             <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
             <text key="wikipedia" text="Wikipedia" />
             <reference ref="water_access" />
         </item> <!-- Water -->
@@ -1817,10 +1814,10 @@
             <optional>
                 <reference ref="supervised" />
                 <reference ref="oh_wheelchair" />
-                <reference ref="general_access" />
+                <reference ref="POI_access" />
                 <combo key="surface" text="Surface" values="gravel,pebblestone,sand" />
                 <combo key="sport" text="Sport" values="swimming,surfing" />
-                <reference ref="nudism" />
+                <combo key="nudism" text="Nudism" values="yes,no,obligatory,designated,customary,permissive" />
             </optional>
         </item> <!-- Beach -->
         <item name="Bay" icon="presets/nautical/bay.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
@@ -1865,7 +1862,7 @@
                 <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
                 <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
                 <reference ref="fee" />
-                <combo key="ferry" text="Highway type the ferry connects" values="trunk,primary,secondary,tertiary,unclassified" values_context="Highway" />
+                <combo key="ferry" text="Highway type the ferry connects" values="trunk,primary,secondary,tertiary,unclassified" values_context="Highway" values_sort="false" />
                 <check key="ferry:cable" text="Reaction ferry" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
@@ -2921,7 +2918,7 @@
             <space />
             <key key="tourism" value="alpine_hut" />
             <reference ref="name_operator" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
             <text key="rooms" text="Rooms" />
             <text key="beds" text="Beds" />
             <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
@@ -2936,14 +2933,14 @@
             <space />
             <key key="tourism" value="wilderness_hut" />
             <reference ref="name_operator" />
-            <combo key="access" text="Access rights" values="yes,permissive,customers,private" />
+            <reference ref="POI_access" />
             <text key="capacity" text="Capacity" />
             <reference ref="fee" />
             <check key="toilets" text="Toilets" />
             <check key="shower" text="Shower" />
             <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
             <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
             <text key="description" text="Closer description" />
             <space />
             <reference ref="link_contact_address_payment" />
@@ -2956,8 +2953,8 @@
             <key key="tourism" value="caravan_site" />
             <reference ref="name_operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5" />
-            <reference ref="wheelchair" />
-            <space />
+            <reference ref="oh_wheelchair" />
+            <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
             <text key="capacity" text="Number of places" />
             <reference ref="fee_interval" />
             <combo key="sanitary_dump_station" text="Dump Station" values="yes,public,customers,no" />
@@ -2974,6 +2971,9 @@
             <key key="tourism" value="camp_site" />
             <reference ref="name_operator" />
             <combo key="stars" text="Stars" values="1,2,3,4,5" />
+            <reference ref="oh_wheelchair" />
+            <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
+            <text key="capacity" text="Number of places" />
             <checkgroup columns="2">
                 <check key="tents" text="Tents allowed" />
                 <check key="caravans" text="Caravans allowed" />
@@ -2986,7 +2986,7 @@
             <reference ref="wheelchair" />
             <reference ref="internet" />
             <space />
-            <reference ref="nudism" />
+            <combo key="nudism" text="Nudism" values="yes,no,obligatory,designated,customary,permissive" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Campsite -->
         <item name="Camp pitch" icon="presets/accommodation/camp_pitch.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3019,7 +3019,7 @@
             <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
             <reference ref="oh" />
-            <combo key="opening_hours:kitchen" text="Kitchen Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Su 09:00-21:00|Mo-Sa 08:00-18:00|Mo-Fr 09:00-17:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00; Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 01-53/2 Fr 09:00-12:00; week 02-52/2 We 09:00-12:00" values_no_i18n="true" />
+            <combo key="opening_hours:kitchen" text="Kitchen Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Su 09:00-21:00|Mo-Sa 08:00-18:00|Mo-Fr 09:00-17:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00; Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 01-53/2 Fr 09:00-12:00; week 02-52/2 We 09:00-12:00" values_no_i18n="true" values_sort="false" />
             <reference ref="wheelchair" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
@@ -3217,7 +3217,7 @@
             <key key="tourism" value="information" />
             <key key="information" value="guidepost" />
             <reference ref="name_ref_operator" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
             <optional text="Routes shown for:">
                 <check key="hiking" text="Hiking" />
                 <check key="bicycle" text="Cycling" />
@@ -3234,7 +3234,7 @@
             <key key="tourism" value="information" />
             <key key="information" value="route_marker" />
             <reference ref="name_ref_operator" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
             <optional text="Routes shown for:">
                 <check key="hiking" text="Hiking" />
                 <check key="bicycle" text="Cycling" />
@@ -3300,7 +3300,7 @@
             <space />
             <key key="leisure" value="bandstand" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="access" text="Access" values="yes,permissive,private" />
+            <reference ref="POI_access" />
         </item> <!-- Bandstand -->
         <item name="Zoo" icon="presets/leisure/zoo.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:tourism=zoo" />
@@ -3360,7 +3360,7 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="fee_interval" />
             <space />
-            <reference ref="nudism" />
+            <combo key="nudism" text="Nudism" values="yes,no,obligatory,designated,customary,permissive" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Beach Resort -->
         <item name="Swimming Pool" icon="presets/sport/swimming.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3369,7 +3369,7 @@
             <space />
             <label text="Used for the water area only." />
             <space />
-            <combo key="access" text="Access" values="yes,customers,private" />
+            <reference ref="POI_access" />
         </item> <!-- Swimming Pool -->
         <item name="Dive centre" icon="presets/leisure/dive_centre.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=dive_centre" />
@@ -3392,7 +3392,7 @@
             <space />
             <key key="leisure" value="sauna" />
             <reference ref="name_operator_oh_wheelchair" />
-            <combo key="access" text="Access" values="yes,permissive,private" />
+            <reference ref="POI_access" />
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Sauna -->
@@ -3876,7 +3876,7 @@
             <text key="defibrillator:location" text="Location description" />
             <text key="phone" text="Phone number" />
             <label text="Use E.123 format, e.g. +49 11223 456 7890" />
-            <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
+            <reference ref="POI_access" />
             <check key="indoor" text="Located inside a building?" />
             <!-- lastcheck is in use for aed devices, but not yet well discussed or documented
             <optional>
@@ -4059,7 +4059,7 @@
             <space />
             <key key="amenity" value="toilets" />
             <optional>
-                <combo key="access" text="Access rights" values="yes,permissive,customers" />
+                <reference ref="POI_access" />
                 <checkgroup columns="3">
                     <check key="female" text="Female" text_context="restroom" />
                     <check key="male" text="Male" text_context="restroom" />
@@ -4079,7 +4079,7 @@
             <link wiki="Tag:amenity=shower" />
             <space />
             <key key="amenity" value="shower" />
-            <combo key="access" text="Access rights" values="yes,permissive,customers" />
+            <reference ref="POI_access" />
             <optional>
                 <checkgroup columns="3">
                     <check key="female" text="Female" text_context="restroom" />
@@ -4244,10 +4244,10 @@
             <check key="sanitary_dump_station:pump-out" text="Suction pumpout" />
             <check key="sanitary_dump_station:round_drain" text="Gravity drain for hose" />
             <check key="sanitary_dump_station:basin" text="Casette or Elsan Disposal" />
-            <combo key="access" text="Access" values="yes,customers,no" />
+            <reference ref="POI_access" />
             <reference ref="fee" />
             <text key="operator" text="Operator" />
-            <combo key="opening_hours" text="Operation times" values="24/7" values_no_i18n="true" />
+            <combo key="opening_hours" text="Operation times" delimiter="|" values="24/7|Mo-Su 08:00-22:00" values_no_i18n="true" />
         </item> <!-- Sanitary Dump Station -->
         <separator/>
         <item name="Bench" icon="presets/leisure/bench.svg" type="node,way" preset_name_label="true">
@@ -4278,7 +4278,7 @@
             <link wiki="Tag:amenity=hunting_stand" />
             <space />
             <key key="amenity" value="hunting_stand" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
             <check key="shelter" text="Shelter" />
             <check key="hide" text="Hide" text_context="hunting stand" />
             <check key="lockable" text="Lockable" />
@@ -4317,8 +4317,7 @@
             <link wiki="Tag:amenity=compressed_air" />
             <space />
             <key key="amenity" value="compressed_air" />
-            <reference ref="name_ref" />
-            <text key="operator" text="Operator" />
+            <reference ref="name_ref_operator" />
             <reference ref="fee" />
             <multiselect key="valves" text="Valves" values="dunlop;schrader;sclaverand;regina" display_values="Dunlop (Woods);Schrader;Sclaverand (Presta);Regina" values_searchable="true" />
         </item> <!-- Compressed Air -->
@@ -4522,7 +4521,7 @@
             <combo key="leisure" text="Type" values="sports_centre" />
             <reference ref="climbing_styles" />
             <text key="climbing:routes" text="Number of routes" />
-            <text key="ele" text="Usual elevation at the bottom of the routes" />
+            <text key="ele" text="Usual elevation at the bottom of the routes" lenght="10" />
             <space />
             <combo key="climbing:length" text="Usual route length (m)" values="8,10,12,15,20,25,30,35,40" values_no_i18n="true" />
             <combo key="climbing:length:min" text="Minimal climbing length (m)" values="8,10,12,15,20,25,30,35,40" values_no_i18n="true" />
@@ -4895,7 +4894,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
-                <text key="height" text="Height (meters)" />
+                <text key="height" text="Height (meters)" length="7" />
             </optional>
             <preset_link preset_name="Address" />
         </item> <!-- Building -->
@@ -4906,7 +4905,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
-                <text key="height" text="Height (meters)" />
+                <text key="height" text="Height (meters)" length="7" />
             </optional>
             <preset_link preset_name="Address" />
         </item> <!-- Residential Building -->
@@ -4917,7 +4916,7 @@
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <combo key="building:min_level" text="Skipped Levels" values="1,2,3,4,5,6,7,8,9,10" text_context="building" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
             <text key="min_height" text="Skipped height (meters)" />
         </item> <!-- Building part -->
         <item name="Entrance" icon="presets/misc/entrance_yes.svg" type="node" preset_name_label="true">
@@ -4932,7 +4931,7 @@
                 <list_entry value="staircase" icon="presets/misc/entrance_yes.svg" />
                 <list_entry value="home" icon="presets/misc/entrance_yes.svg" />
             </combo>
-            <combo key="access" text="Access" values="yes,delivery,private,no" />
+            <combo key="access" text="General Access" values="yes,private,delivery,customers,permissive,no" />
             <reference ref="wheelchair" />
             <optional>
                 <text key="ref" text="Entrance number" />
@@ -4956,7 +4955,7 @@
             <text key="name" text="Name" />
             <combo key="tower:type" text="Tower type" values="bell_tower,communication,cooling,defensive,observation,radar,watchtower" values_searchable="true" />
             <optional>
-                <text key="height" text="Height (meters)" />
+                <text key="height" text="Height (meters)" length="7" />
                 <text key="operator" text="Operator" />
             </optional>
         </item> <!-- Tower -->
@@ -4980,7 +4979,7 @@
             <space />
             <key key="man_made" value="chimney" />
             <reference ref="name_operator" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
         </item> <!-- Chimney -->
         <item name="Kiln" icon="presets/misc/kiln.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=kiln" />
@@ -5224,9 +5223,8 @@
             <link wiki="Tag:man_made=survey_point" />
             <space />
             <key key="man_made" value="survey_point" />
-            <text key="name" text="Name" />
-            <text key="ref" text="Reference" />
-            <text key="ele" text="Elevation" />
+            <reference ref="name_ref" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
             <combo key="material" text="Material" values="andesite,brass,bronze,concrete,granite,metal,steel,stone" />
         </item> <!-- Survey Point -->
         <item name="Surveillance Camera" icon="presets/service/surveillance.svg" type="node" preset_name_label="true">
@@ -5249,7 +5247,7 @@
             <optional>
                 <text key="camera:direction" text="Direction in degrees" match="key" />
                 <text key="camera:angle" text="Inclination in degrees" match="key" />
-                <text key="height" text="Height (meters)" />
+                <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Surveillance Camera -->
     </group> <!-- Man Made -->
@@ -5591,7 +5589,7 @@
             <link wiki="Tag:building=transformer_tower" />
             <space />
             <key key="building" value="transformer_tower" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
             <reference ref="ref_operator" />
             <preset_link preset_name="Power Substation" />
         </item> <!-- Transformer Tower -->
@@ -5609,7 +5607,7 @@
             <link wiki="Tag:power=portal" />
             <space />
             <key key="power" value="portal" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
             <combo key="structure" text="Type of construction" values="lattice,tubular,solid" />
             <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
@@ -5621,7 +5619,7 @@
             <link wiki="Tag:power=tower" />
             <space />
             <key key="power" value="tower" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
             <combo key="structure" text="Type of construction" values="lattice,tubular,solid" />
             <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
             <combo key="colour" text="Color (HTML name or hexadecimal code)" values="black,red,white,gray,red/white" values_context="color" />
@@ -7153,7 +7151,7 @@
             <space />
             <key key="natural" value="peak" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
         </item> <!-- Peak -->
         <item name="Saddle" icon="presets/landmark/saddle.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=saddle" />
@@ -7161,7 +7159,7 @@
             <space/>
             <key key="natural" value="saddle" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
         </item> <!-- Saddle -->
         <item name="Glacier" icon="presets/landmark/glacier.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=glacier" />
@@ -7169,7 +7167,7 @@
             <space />
             <key key="natural" value="glacier" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
         </item> <!-- Glacier -->
         <item name="Volcano" icon="presets/landmark/volcano.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=volcano" />
@@ -7177,7 +7175,7 @@
             <space />
             <key key="natural" value="volcano" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
             <optional>
                 <combo key="volcano:status" text="Current Status" values="active,dormant,extinct" />
                 <combo key="volcano:type" text="Type" values="stratovolcano,shield,scoria" />
@@ -7189,7 +7187,7 @@
             <space />
             <key key="natural" value="ridge" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation" />
+            <text key="ele" text="Elevation (meters)" lenght="10" />
         </item> <!-- Ridge -->
         <item name="Valley" icon="presets/landmark/valley.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=valley" />
@@ -7204,7 +7202,7 @@
             <space />
             <key key="natural" value="cliff" />
             <text key="name" text="Name" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
         </item> <!-- Cliff -->
         <item name="Cave Entrance" icon="presets/landmark/cave_entrance.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:natural=cave_entrance" />
@@ -7213,7 +7211,7 @@
             <key key="natural" value="cave_entrance" />
             <reference ref="name_wikipedia" />
             <reference ref="oh_wheelchair" />
-            <reference ref="general_access" />
+            <reference ref="POI_access" />
             <reference ref="fee" />
         </item> <!-- Cave Entrance -->
         <separator/>
@@ -7254,7 +7252,7 @@
             <optional>
                 <reference ref="genus_species_taxon" />
                 <space />
-                <text key="height" text="Height (meters)" />
+                <text key="height" text="Height (meters)" length="7" />
                 <text key="diameter_crown" text="Diameter crown (meters)" />
                 <text key="circumference" text="Circumference (meters)" />
                 <space />
@@ -7270,7 +7268,7 @@
             <reference ref="leaf" />
             <optional>
                 <reference ref="genus_species_taxon" />
-                <text key="height" text="Height (meters)" />
+                <text key="height" text="Height (meters)" length="7" />
             </optional>
         </item> <!-- Tree Row -->
         <item name="Wood" icon="presets/landmark/forest.svg" type="closedway,multipolygon" name_context="natural" preset_name_label="true">
@@ -7658,6 +7656,8 @@
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
+            <space />
+            <preset_link preset_name="Contact (Schema with 'contact:*' Prefix)" text="Similar tags but different tagging schema:" text_context="Contact" />
         </item> <!-- Contact (Common Schema) -->
         <item name="Contact (Schema with 'contact:*' Prefix)" icon="presets/misc/contact.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Key:contact" />
@@ -7671,6 +7671,8 @@
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
+            <space />
+            <preset_link preset_name="Contact (Common Schema)" text="Similar tags but different tagging schema:" text_context="Contact" />
         </item> <!-- Contact (Schema with 'contact:*' Prefix) -->
         <item name="Description" icon="presets/misc/description.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Key:description" />
@@ -7987,7 +7989,7 @@
                 <reference ref="name_ref"/>
                 <text key="network" text="Network" />
                 <text key="operator" text="Operator" />
-                <text key="distance" text="Distance (km)"/>
+                <text key="distance" text="Distance (kilometers)"/>
                 <roles>
                     <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
                     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry"/>
@@ -8049,7 +8051,7 @@
             <space />
             <key key="type" value="destination_sign" />
             <text key="destination" text="Destination written on sign (w/o distance)" />
-            <text key="distance" text="Distance (km)" />
+            <text key="distance" text="Distance (kilometers)" />
             <text key="time" text="Time (hh:mm, for trekking)" />
             <text key="colour:back" text="Colour of background" />
             <text key="colour:text" text="Colour of text" />
@@ -8091,7 +8093,7 @@
             <key key="type" value="bridge" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
             <reference ref="name_ref" />
-            <text key="height" text="Height (meters)" />
+            <text key="height" text="Height (meters)" length="7" />
             <text key="length" text="Length (meters)" />
             <text key="operator" text="Operator" />
             <roles>
