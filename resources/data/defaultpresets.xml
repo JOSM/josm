@@ -907,6 +907,7 @@
             <text key="maxspeed:forward" text="Max. speed in way direction" />
             <text key="maxspeed:backward" text="Max. speed opposed to way direction" />
             <text key="maxspeed:hgv" text="Max. speed Heavy Goods Vehicles (km/h)" match="key" />
+            <text key="maxspeed:advisory" text="Signposted advisory max. speed (km/h)" />
             <text key="minspeed" text="Min. speed (km/h)" match="key" />
             <text key="maxweight" text="Max. weight (tonnes)" match="key" />
             <text key="maxaxleload" text="Max. axleload (tonnes)" match="key" />
