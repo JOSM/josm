@@ -3583,6 +3583,16 @@
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Library -->
+        <item name="Public bookcase" icon="presets/education/public_bookcase.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=public_bookcase" />
+            <space />
+            <key key="amenity" value="public_bookcase" />
+            <text key="name" text="Name" />
+            <combo key="public_bookcase:type" text="Type" values="building,glass_cabinet,metal_cabinet,wooden_cabinet,movable_cabinet,phone_box,reading_box,sculpture,shelf,shelter" />
+            <text key="operator" text="Operator" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="POI_access" />
+        </item> <!-- Public bookcase -->
         <item name="Arts Centre" icon="presets/sightseeing/arts_centre.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=arts_centre" />
             <space />

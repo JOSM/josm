@@ -3014,6 +3014,7 @@ node[healthcare=laboratory] {
     set icon_z17;
 }
 area[amenity=library],
+area[amenity=public_bookcase],
 area[amenity=police],
 area[amenity=ranger_station],
 area[amenity=fire_station],
@@ -3035,6 +3036,10 @@ area[amenity=watering_place] {
 }
 node[amenity=library] {
     icon-image: "presets/education/library.svg";
+    set icon_z17;
+}
+node[amenity=public_bookcase] {
+    icon-image: "presets/education/public_bookcase.svg";
     set icon_z17;
 }
 node[amenity=police] {
