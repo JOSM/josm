@@ -57,6 +57,14 @@ public final class GuiSizesHelper {
     }
 
     /**
+     * Sets coefficient of monitor pixel density.
+     * @param pixelDensity coefficient of monitor pixel density to be set.
+     */
+    public static void setPixelDensity(float pixelDensity) {
+        screenDPI = pixelDensity * 96f;
+    }
+
+    /**
      * Check if a high DPI resolution is used
      * @return <code>true</code> for HIDPI screens
      */

@@ -1317,18 +1317,55 @@ public class ImageProvider {
      * @return cursor with a given file name, optionally decorated with an overlay image
      */
     public static Cursor getCursor(String name, String overlay) {
-        ImageIcon img = get("cursor", name);
-        if (overlay != null) {
-            img = new ImageProvider("cursor", name).setMaxSize(ImageSizes.CURSOR)
-                .addOverlay(new ImageOverlay(new ImageProvider("cursor/modifier/" + overlay)
-                    .setMaxSize(ImageSizes.CURSOROVERLAY))).get();
-        }
         if (GraphicsEnvironment.isHeadless()) {
             Logging.debug("Cursors are not available in headless mode. Returning null for ''{0}''", name);
             return null;
         }
-        return Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
-                "crosshair".equals(name) ? new Point(10, 10) : new Point(3, 2), "Cursor");
+
+        Point hotSpot = new Point();
+        Image image = getCursorImage(name, overlay, hotSpot);
+
+        return Toolkit.getDefaultToolkit().createCustomCursor(image, hotSpot, name);
+    }
+
+    /**
+     * Load a cursor image with a given file name, optionally decorated with an overlay image
+     *
+     * @param name the cursor image filename in "cursor" directory
+     * @param overlay optional overlay image
+     * @param hotSpot will be set to the properly scaled hotspot of the cursor
+     * @return cursor with a given file name, optionally decorated with an overlay image
+     */
+    static Image getCursorImage(String name, String overlay, /* out */ Point hotSpot) {
+        ImageProvider imageProvider = new ImageProvider("cursor", name);
+        if (overlay != null) {
+            imageProvider
+                .setMaxSize(ImageSizes.CURSOR)
+                .addOverlay(new ImageOverlay(new ImageProvider("cursor/modifier/" + overlay)
+                                                .setMaxSize(ImageSizes.CURSOROVERLAY)));
+        }
+        hotSpot.setLocation("crosshair".equals(name) ? new Point(10, 10) : new Point(3, 2));
+        ImageIcon imageIcon = imageProvider.get();
+        Image image = imageIcon.getImage();
+        int width = image.getWidth(null);
+        int height = image.getHeight(null);
+
+        // AWT will resize the cursor to bestCursorSize internally anyway, but miss to scale the hotspot as well
+        // (bug JDK-8238734).  So let's do this ourselves, and also scale the hotspot accordingly.
+        Dimension bestCursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(width, height);
+        if (bestCursorSize.width != 0 && bestCursorSize.height != 0) {
+            // In principle, we could pass the MultiResolutionImage itself to AWT, but due to bug JDK-8240568,
+            // this results in bad alpha blending and thus jaggy edges.  So let's select the best variant ourselves.
+            image = HiDPISupport.getResolutionVariant(image, bestCursorSize.width, bestCursorSize.height);
+            if (bestCursorSize.width != image.getWidth(null) || bestCursorSize.height != image.getHeight(null)) {
+                image = image.getScaledInstance(bestCursorSize.width, bestCursorSize.height, Image.SCALE_DEFAULT);
+            }
+
+            hotSpot.x = hotSpot.x * bestCursorSize.width / width;
+            hotSpot.y = hotSpot.y * bestCursorSize.height / height;
+        }
+
+        return image;
     }
 
     /** 90 degrees in radians units */

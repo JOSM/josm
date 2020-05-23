@@ -1,24 +1,40 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.Transparency;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -69,6 +85,11 @@ public class ImageProviderTest {
     @BeforeClass
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
+    }
+
+    @Before
+    public void resetPixelDensity() {
+        GuiSizesHelper.setPixelDensity(1.0f);
     }
 
     /**
@@ -147,5 +168,134 @@ public class ImageProviderTest {
                 EnumSet.of(GetPaddedOptions.NO_DEFAULT, GetPaddedOptions.NO_DEPRECATED)));
         assertNotNull(ImageProvider.getPadded(OsmUtils.createPrimitive("way waterway=stream"), iconSize, noDefault));
         assertNotNull(ImageProvider.getPadded(OsmUtils.createPrimitive("relation type=route route=railway"), iconSize, noDefault));
+    }
+
+    /**
+     * Test getting a bounded icon given some UI scaling configured.
+     */
+    @Test
+    public void testGetImageIconBounded() {
+        int scale = 2;
+        GuiSizesHelper.setPixelDensity(scale);
+
+        ImageProvider imageProvider = new ImageProvider("open").setOptional(true);
+        ImageResource resource = imageProvider.getResource();
+        Dimension iconDimension = ImageProvider.ImageSizes.SMALLICON.getImageDimension();
+        ImageIcon icon = resource.getImageIconBounded(iconDimension);
+        Image image = icon.getImage();
+        List<Image> resolutionVariants = HiDPISupport.getResolutionVariants(image);
+        if (resolutionVariants.size() > 1) {
+            assertEquals(2, resolutionVariants.size());
+            int expectedVirtualWidth = ImageProvider.ImageSizes.SMALLICON.getVirtualWidth();
+            assertEquals(expectedVirtualWidth * scale, resolutionVariants.get(0).getWidth(null));
+            assertEquals((int) Math.round(expectedVirtualWidth * scale * HiDPISupport.getHiDPIScale()),
+                         resolutionVariants.get(1).getWidth(null));
+        }
+    }
+
+    public static final int ORIGINAL_CURSOR_SIZE = 32;
+
+    /**
+     * Test getting an image for a crosshair cursor.
+     */
+    @Test
+    public void testGetCursorImageForCrosshair() {
+        if (GraphicsEnvironment.isHeadless()) {
+            // TODO mock Toolkit.getDefaultToolkit().getBestCursorSize()
+            return;
+        }
+        Point hotSpot = new Point();
+        Image image = ImageProvider.getCursorImage("crosshair", null, hotSpot);
+        assertCursorDimensionsCorrect(new Point.Double(10.0, 10.0), image, hotSpot);
+    }
+
+    /**
+     * Test getting an image for a custom cursor with overlay.
+     */
+    @Test
+    public void testGetCursorImageWithOverlay() {
+        if (GraphicsEnvironment.isHeadless()) {
+            // TODO mock Toolkit.getDefaultToolkit().getBestCursorSize()
+            return;
+        }
+        Point hotSpot = new Point();
+        Image image = ImageProvider.getCursorImage("normal", "selection", hotSpot);
+        assertCursorDimensionsCorrect(new Point.Double(3.0, 2.0), image, hotSpot);
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getWidth(null), TYPE_INT_ARGB);
+        bufferedImage.getGraphics().drawImage(image, 0, 0, null);
+
+        // check that the square of 1/4 size right lower to the center has some non-emtpy pixels
+        boolean nonEmptyPixelExistsRightLowerToCenter = false;
+        for (int x = image.getWidth(null) / 2; x < image.getWidth(null) * 3 / 4; ++x) {
+            for (int y = image.getHeight(null) / 2; y < image.getWidth(null) * 3 / 4; ++y) {
+                if (bufferedImage.getRGB(x, y) != 0)
+                    nonEmptyPixelExistsRightLowerToCenter = true;
+            }
+        }
+        assertTrue(nonEmptyPixelExistsRightLowerToCenter);
+    }
+
+    private void assertCursorDimensionsCorrect(Point.Double originalHotspot, Image image, Point hotSpot) {
+        Dimension bestCursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(ORIGINAL_CURSOR_SIZE, ORIGINAL_CURSOR_SIZE);
+        Image bestCursorImage = HiDPISupport.getResolutionVariant(image, bestCursorSize.width, bestCursorSize.height);
+        int bestCursorImageWidth = bestCursorImage.getWidth(null);
+        assertEquals((int) Math.round(bestCursorSize.getWidth()), bestCursorImageWidth);
+        int bestCursorImageHeight = bestCursorImage.getHeight(null);
+        assertEquals((int) Math.round(bestCursorSize.getHeight()), bestCursorImageHeight);
+        assertEquals(originalHotspot.x / ORIGINAL_CURSOR_SIZE * bestCursorImageWidth, hotSpot.x, 1 /* at worst one pixel off */);
+        assertEquals(originalHotspot.y / ORIGINAL_CURSOR_SIZE * bestCursorImageHeight, hotSpot.y, 1 /* at worst one pixel off */);
+    }
+
+
+    /**
+     * Test getting a cursor
+     */
+    @Ignore("manual execution only, as the look of the cursor cannot be checked automatedly")
+    @Test
+    public void testGetCursor() throws InterruptedException {
+        JFrame frame = new JFrame();
+        frame.setSize(500, 500);
+        frame.setLayout(new GridLayout(2, 2));
+        JPanel leftUpperPanel = new JPanel(), rightUpperPanel = new JPanel(), leftLowerPanel = new JPanel(), rightLowerPanel = new JPanel();
+        leftUpperPanel.setBackground(Color.DARK_GRAY);
+        rightUpperPanel.setBackground(Color.DARK_GRAY);
+        leftLowerPanel.setBackground(Color.DARK_GRAY);
+        rightLowerPanel.setBackground(Color.DARK_GRAY);
+        frame.add(leftUpperPanel);
+        frame.add(rightUpperPanel);
+        frame.add(leftLowerPanel);
+        frame.add(rightLowerPanel);
+
+        leftUpperPanel.setCursor(ImageProvider.getCursor("normal", "select_add")); // contains diagonal sensitive to alpha blending
+        rightUpperPanel.setCursor(ImageProvider.getCursor("crosshair", "joinway")); // combination of overlay and hotspot not top left
+        leftLowerPanel.setCursor(ImageProvider.getCursor("hand", "parallel_remove")); // reasonably nice bitmap cursor
+        rightLowerPanel.setCursor(ImageProvider.getCursor("rotate", null)); // ugly bitmap cursor, cannot do much here
+
+        frame.setVisible(true);
+
+        // hover over the four quadrant to observe different cursors
+
+        // draw red dot at hotspot when clicking
+        frame.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Graphics graphics = frame.getGraphics();
+                graphics.setColor(Color.RED);
+                graphics.drawRect(e.getX(), e.getY(), 1, 1);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) { }
+
+            @Override
+            public void mouseReleased(MouseEvent e) { }
+
+            @Override
+            public void mouseEntered(MouseEvent e) { }
+
+            @Override
+            public void mouseExited(MouseEvent e) { }
+        });
+        Thread.sleep(9000); // test would time out after 10s
     }
 }

@@ -32,11 +32,13 @@ public final class HiDPISupport {
     private static final Class<? extends Image> baseMultiResolutionImageClass;
     private static final Constructor<? extends Image> baseMultiResolutionImageConstructor;
     private static final Method resolutionVariantsMethod;
+    private static final Method resolutionVariantMethod;
 
     static {
         baseMultiResolutionImageClass = initBaseMultiResolutionImageClass();
         baseMultiResolutionImageConstructor = initBaseMultiResolutionImageConstructor();
         resolutionVariantsMethod = initResolutionVariantsMethod();
+        resolutionVariantMethod = initResolutionVariantMethod();
     }
 
     private HiDPISupport() {
@@ -56,9 +58,9 @@ public final class HiDPISupport {
     public static Image getMultiResolutionImage(Image base, ImageResource ir) {
         double uiScale = getHiDPIScale();
         if (uiScale != 1.0 && baseMultiResolutionImageConstructor != null) {
-            ImageIcon zoomed = ir.getImageIcon(new Dimension(
+            ImageIcon zoomed = ir.getImageIconAlreadyScaled(new Dimension(
                     (int) Math.round(base.getWidth(null) * uiScale),
-                    (int) Math.round(base.getHeight(null) * uiScale)), false);
+                    (int) Math.round(base.getHeight(null) * uiScale)), false, true);
             Image mrImg = getMultiResolutionImage(Arrays.asList(base, zoomed.getImage()));
             if (mrImg != null) return mrImg;
         }
@@ -138,13 +140,36 @@ public final class HiDPISupport {
     }
 
     /**
+     * Wrapper for method <code>java.awt.image.MultiResolutionImage#getResolutionVariant(double destImageWidth, double destImageHeight)</code>.
+     * <p>
+     * Will return the argument, in case it is not a multi-resolution image.
+     * @param img the image
+     * @return if <code>img</code> is a <code>java.awt.image.BaseMultiResolutionImage</code>,
+     * then the result of the method <code>#getResolutionVariant(destImageWidth, destImageHeight)</code>,
+     * otherwise the image itself
+     */
+    public static Image getResolutionVariant(Image img, double destImageWidth, double destImageHeight) {
+        if (baseMultiResolutionImageClass == null || resolutionVariantsMethod == null) {
+            return img;
+        }
+        if (baseMultiResolutionImageClass.isInstance(img)) {
+            try {
+                return (Image) resolutionVariantMethod.invoke(img, destImageWidth, destImageHeight);
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                Logging.error("Unexpected error while calling method: " + ex);
+            }
+        }
+        return img;
+    }
+
+    /**
      * Detect the GUI scale for HiDPI mode.
      * <p>
      * This method may not work as expected for a multi-monitor setup. It will
      * only take the default screen device into account.
      * @return the GUI scale for HiDPI mode, a value of 1.0 means standard mode.
      */
-    private static double getHiDPIScale() {
+    static double getHiDPIScale() {
         if (GraphicsEnvironment.isHeadless())
             return 1.0;
         GraphicsConfiguration gc = GraphicsEnvironment
@@ -230,6 +255,17 @@ public final class HiDPISupport {
         try {
             return baseMultiResolutionImageClass != null
                     ? baseMultiResolutionImageClass.getMethod("getResolutionVariants")
+                    : null;
+        } catch (NoSuchMethodException ex) {
+            Logging.error("Cannot find expected method: " + ex);
+            return null;
+        }
+    }
+
+    private static Method initResolutionVariantMethod() {
+        try {
+            return baseMultiResolutionImageClass != null
+                    ? baseMultiResolutionImageClass.getMethod("getResolutionVariant", Double.TYPE, Double.TYPE)
                     : null;
         } catch (NoSuchMethodException ex) {
             Logging.error("Cannot find expected method: " + ex);

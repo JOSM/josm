@@ -153,38 +153,51 @@ public class ImageResource {
      * @return ImageIcon object for the image of this resource, scaled according to dim
      * @since 12722
      */
-    public ImageIcon getImageIcon(Dimension dim, boolean multiResolution) {
+    ImageIcon getImageIcon(Dimension dim, boolean multiResolution) {
+        return getImageIconAlreadyScaled(GuiSizesHelper.getDimensionDpiAdjusted(dim), multiResolution, false);
+    }
+
+    /**
+     * Get an ImageIcon object for the image of this resource. A potential UI scaling is assumed
+     * to be already taken care of, so dim is already scaled accordingly.
+     * @param  dim The requested dimensions. Use (-1,-1) for the original size and (width, -1)
+     *         to set the width, but otherwise scale the image proportionally.
+     * @param  multiResolution If true, return a multi-resolution image
+     * (java.awt.image.MultiResolutionImage in Java 9), otherwise a plain {@link BufferedImage}.
+     * When running Java 8, this flag has no effect and a plain image will be returned in any case.
+     * @param highResolution whether the high resolution variant should be used for overlays
+     * @return ImageIcon object for the image of this resource, scaled according to dim
+     */
+    ImageIcon getImageIconAlreadyScaled(Dimension dim, boolean multiResolution, boolean highResolution) {
         CheckParameterUtil.ensureThat((dim.width > 0 || dim.width == -1) && (dim.height > 0 || dim.height == -1),
                 () -> dim + " is invalid");
+
         BufferedImage img = imgCache.get(dim);
         if (img == null) {
             if (svg != null) {
-                Dimension realDim = GuiSizesHelper.getDimensionDpiAdjusted(dim);
-                img = ImageProvider.createImageFromSvg(svg, realDim);
+                img = ImageProvider.createImageFromSvg(svg, dim);
                 if (img == null) {
                     return null;
                 }
             } else {
                 if (baseImage == null) throw new AssertionError();
 
-                int realWidth = GuiSizesHelper.getSizeDpiAdjusted(dim.width);
-                int realHeight = GuiSizesHelper.getSizeDpiAdjusted(dim.height);
                 ImageIcon icon = new ImageIcon(baseImage);
-                if (realWidth == -1 && realHeight == -1) {
-                    realWidth = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconWidth());
-                    realHeight = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconHeight());
-                } else if (realWidth == -1) {
-                    realWidth = Math.max(1, icon.getIconWidth() * realHeight / icon.getIconHeight());
-                } else if (realHeight == -1) {
-                    realHeight = Math.max(1, icon.getIconHeight() * realWidth / icon.getIconWidth());
+                if (dim.width == -1 && dim.height == -1) {
+                    dim.width = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconWidth());
+                    dim.height = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconHeight());
+                } else if (dim.width == -1) {
+                    dim.width = Math.max(1, icon.getIconWidth() * dim.height / icon.getIconHeight());
+                } else if (dim.height == -1) {
+                    dim.height = Math.max(1, icon.getIconHeight() * dim.width / icon.getIconWidth());
                 }
-                Image i = icon.getImage().getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH);
-                img = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
+                Image i = icon.getImage().getScaledInstance(dim.width, dim.height, Image.SCALE_SMOOTH);
+                img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
                 img.getGraphics().drawImage(i, 0, 0, null);
             }
             if (overlayInfo != null) {
                 for (ImageOverlay o : overlayInfo) {
-                    o.process(img);
+                    o.process(img, highResolution);
                 }
             }
             if (isDisabled) {

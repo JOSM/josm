@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -66,6 +68,17 @@ public class ImageOverlay implements ImageProcessor {
      */
     @Override
     public BufferedImage process(BufferedImage ground) {
+        return process(ground, false);
+    }
+
+    /**
+     * Handle overlay. The image passed as argument is modified!
+     *
+     * @param ground the base image for the overlay (gets modified!)
+     * @param highResolution whether the high resolution variant should be used to overlay
+     * @return the modified image (same as argument)
+     */
+    BufferedImage process(BufferedImage ground, boolean highResolution) {
         /* get base dimensions for calculation */
         int w = ground.getWidth();
         int h = ground.getHeight();
@@ -77,9 +90,14 @@ public class ImageOverlay implements ImageProcessor {
         if (offsetTop > 0 && offsetBottom > 0) {
             height = (int) (h*(offsetBottom-offsetTop));
         }
-        ImageIcon overlay;
         image = new ImageProvider(image).setMaxSize(new Dimension(width, height));
-        overlay = image.get();
+        ImageIcon overlay = image.get();
+        if (highResolution) {
+            List<Image> resolutionVariants = HiDPISupport.getResolutionVariants(overlay.getImage());
+            if (resolutionVariants.size() >= 2) {
+                overlay = new ImageIcon(resolutionVariants.get(1));
+            }
+        }
         int x, y;
         if (width == -1 && offsetLeft < 0) {
             x = (int) (w*offsetRight) - overlay.getIconWidth();
