@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.DropMode;
+import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -22,6 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
+import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.ZoomToAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -30,6 +32,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
+import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -69,6 +72,9 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        HistoryInfoAction historyAction = MainApplication.getMenu().historyinfo;
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(historyAction.getShortcut().getKeyStroke(), "historyAction");
+        getActionMap().put("historyAction", historyAction);
 
         installCustomNavigation(0);
         initHighlighting();
@@ -99,6 +105,13 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         menu.addSeparator();
         menu.add(new SelectPreviousGapAction());
         menu.add(new SelectNextGapAction());
+        menu.add(new HistoryInfoAction() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                Collection<OsmPrimitive> sel = getMemberTableModel().getSelectedChildPrimitives();
+                HistoryBrowserDialogManager.getInstance().showHistory(sel);
+            }
+        });
         return menu;
     }
 
