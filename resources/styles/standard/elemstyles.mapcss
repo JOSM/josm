@@ -2564,6 +2564,9 @@ node[police=yes] {
 area[amenity=pub],
 area[amenity=biergarten],
 area[amenity=nightclub],
+area[amenity=amusement_arcade],
+area[amenity=adult_gaming_centre],
+area[amenity=gambling],
 area[amenity=stripclub],
 area[amenity=casino],
 area[amenity=brothel],
@@ -2585,6 +2588,18 @@ node[amenity=biergarten] {
 }
 node[amenity=nightclub] {
     icon-image: "presets/leisure/nightclub.svg";
+    set icon_z17;
+}
+node[amenity=amusement_arcade] {
+    icon-image: "presets/leisure/amusement_arcade.svg";
+    set icon_z17;
+}
+node[amenity=adult_gaming_centre] {
+    icon-image: "presets/leisure/adult_gaming_centre.svg";
+    set icon_z17;
+}
+node[amenity=gambling] {
+    icon-image: "presets/leisure/gambling.svg";
     set icon_z17;
 }
 node[amenity=stripclub] {

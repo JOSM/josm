@@ -3489,6 +3489,69 @@
             <reference ref="name_ref_operator" />
         </item> <!-- Bird Hide -->
         <separator/>
+        <item name="Amusement arcade" icon="presets/leisure/amusement_arcade.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:leisure=amusement_arcade" />
+            <space />
+            <key key="leisure" value="amusement_arcade" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
+            <space />
+            <reference ref="internet_smoking" />
+            <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Adult gaming centre" text="Similar but different tags:" />
+            <preset_link preset_name="Gambling" text="Similar but different tags:" />
+            <preset_link preset_name="Casino" text="Similar but different tags:" />
+            <preset_link preset_name="Bookmaker" text="Similar but different tags:" />
+            <preset_link preset_name="Lottery" text="Similar but different tags:" />
+        </item> <!-- Amusement arcade -->
+        <item name="Adult gaming centre" icon="presets/leisure/adult_gaming_centre.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:leisure=adult_gaming_centre" />
+            <space />
+            <key key="leisure" value="adult_gaming_centre" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
+            <space />
+            <reference ref="internet_smoking" />
+            <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Amusement arcade" text="Similar but different tags:" />
+            <preset_link preset_name="Adult gaming centre" text="Similar but different tags:" />
+            <preset_link preset_name="Gambling" text="Similar but different tags:" />
+            <preset_link preset_name="Casino" text="Similar but different tags:" />
+            <preset_link preset_name="Bookmaker" text="Similar but different tags:" />
+            <preset_link preset_name="Lottery" text="Similar but different tags:" />
+        </item> <!-- Adult gaming centre -->
+        <item name="Gambling" icon="presets/leisure/gambling.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=gambling" />
+            <space />
+            <key key="amenity" value="gambling" />
+            <multiselect key="gambling" text="Type" values="yes;lottery;pachinko;slot_machines;bingo;betting;poker" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
+            <space />
+            <reference ref="internet_smoking" />
+            <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Amusement arcade" text="Similar but different tags:" />
+            <preset_link preset_name="Adult gaming centre" text="Similar but different tags:" />
+            <preset_link preset_name="Casino" text="Similar but different tags:" />
+            <preset_link preset_name="Bookmaker" text="Similar but different tags:" />
+            <preset_link preset_name="Lottery" text="Similar but different tags:" />
+        </item> <!-- Gambling -->
+        <item name="Casino" icon="presets/leisure/casino.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=casino" />
+            <space />
+            <key key="amenity" value="casino" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
+            <space />
+            <reference ref="internet_smoking" />
+            <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Amusement arcade" text="Similar but different tags:" />
+            <preset_link preset_name="Adult gaming centre" text="Similar but different tags:" />
+            <preset_link preset_name="Gambling" text="Similar but different tags:" />
+            <preset_link preset_name="Bookmaker" text="Similar but different tags:" />
+            <preset_link preset_name="Lottery" text="Similar but different tags:" />
+        </item> <!-- Casino -->
+        <separator/>
         <item name="Night Club" icon="presets/leisure/nightclub.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=nightclub" />
             <space />
@@ -3500,21 +3563,12 @@
             <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Night Club -->
-        <item name="Casino" icon="presets/leisure/casino.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=casino" />
-            <space />
-            <key key="amenity" value="casino" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <space />
-            <reference ref="internet_smoking" />
-            <space />
-            <reference ref="link_contact_address_payment" />
-        </item> <!-- Casino -->
         <item name="Strip Club" icon="presets/leisure/stripclub.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=stripclub" />
             <space />
             <key key="amenity" value="stripclub" />
             <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
             <space />
             <reference ref="internet_smoking" />
             <space />
@@ -6561,6 +6615,11 @@
             <key key="shop" value="bookmaker" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Amusement arcade" text="Similar but different tags:" />
+            <preset_link preset_name="Adult gaming centre" text="Similar but different tags:" />
+            <preset_link preset_name="Gambling" text="Similar but different tags:" />
+            <preset_link preset_name="Casino" text="Similar but different tags:" />
+            <preset_link preset_name="Lottery" text="Similar but different tags:" />
         </item> <!-- Bookmaker -->
         <item name="Lottery" icon="presets/shop/lottery.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=lottery" />
@@ -6568,6 +6627,11 @@
             <key key="shop" value="lottery" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Amusement arcade" text="Similar but different tags:" />
+            <preset_link preset_name="Adult gaming centre" text="Similar but different tags:" />
+            <preset_link preset_name="Gambling" text="Similar but different tags:" />
+            <preset_link preset_name="Casino" text="Similar but different tags:" />
+            <preset_link preset_name="Bookmaker" text="Similar but different tags:" />
         </item> <!-- Lottery -->
         <item name="Bag" icon="presets/shop/bag.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=bag" />
