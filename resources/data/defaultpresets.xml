@@ -2836,7 +2836,6 @@
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Residential Building" />
         </item> <!-- Hotel -->
@@ -2851,7 +2850,6 @@
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Motel -->
@@ -2867,7 +2865,6 @@
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Guest House/Bed & Breakfast -->
@@ -2881,7 +2878,6 @@
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Apartment -->
         <item name="Chalet" icon="presets/accommodation/chalet.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -2895,7 +2891,6 @@
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Chalet -->
@@ -2910,7 +2905,6 @@
             <reference ref="wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Hostel -->
@@ -2925,7 +2919,6 @@
             <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Alpine Hut -->
@@ -2943,7 +2936,6 @@
             <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
             <text key="ele" text="Elevation (meters)" lenght="10" />
             <text key="description" text="Closer description" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Wilderness Hut -->
@@ -2963,7 +2955,6 @@
             <check key="tents" text="Tents allowed" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Caravan Site/RV Park -->
         <item name="Campsite" icon="presets/accommodation/camping.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3025,7 +3016,6 @@
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Restaurant -->
@@ -3041,7 +3031,6 @@
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
@@ -3055,7 +3044,6 @@
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Food Court -->
         <item name="Cafe" icon="presets/food/cafe.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3070,7 +3058,6 @@
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Cafe -->
@@ -3085,7 +3072,6 @@
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Ice cream -->
@@ -3101,7 +3087,6 @@
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Pub -->
@@ -3114,7 +3099,6 @@
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Beer Garden -->
@@ -3127,7 +3111,6 @@
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <preset_link preset_name="Diet" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Bar -->
@@ -3310,7 +3293,6 @@
             <reference ref="name_oh_wheelchair" />
             <combo key="zoo" text="Type" values="aviary,birds,butterfly,enclosure,falconry,petting_zoo,reptile,safari_park,wildlife_park" />
             <text key="wikipedia" text="Wikipedia" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Zoo -->
         <item name="Animal enclosure" icon="presets/attraction/animal.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3334,7 +3316,6 @@
             <space />
             <key key="tourism" value="theme_park" />
             <reference ref="name_operator_oh_wheelchair" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Amusement/Theme Park -->
         <item name="Water Park" icon="presets/leisure/water_park.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3342,7 +3323,6 @@
             <space />
             <key key="leisure" value="water_park" />
             <reference ref="name_operator_oh_wheelchair" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Public bath" text="Similar but different tags:" />
             <preset_link preset_name="Sports Centre" text="Similar but different tags:" />
@@ -3361,7 +3341,6 @@
                 <check key="unisex" text="Unisex" text_context="restroom" />
             </checkgroup>
             <reference ref="fee" />
-            <space />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Water Park" text="Similar but different tags:" />
             <preset_link preset_name="Sports Centre" text="Similar but different tags:" />
@@ -3372,7 +3351,6 @@
             <key key="leisure" value="resort" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="fee_interval" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Resort -->
         <item name="Beach Resort" icon="presets/leisure/beach_resort.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3398,7 +3376,6 @@
             <space />
             <key key="amenity" value="dive_centre" />
             <reference ref="name_operator_oh_wheelchair" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Dive centre -->
         <item name="Fitness Station" icon="presets/leisure/fitness_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3415,7 +3392,6 @@
             <key key="leisure" value="sauna" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="POI_access" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Sauna -->
         <item name="Horse Riding" icon="presets/leisure/horse_riding.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3424,7 +3400,6 @@
             <key key="leisure" value="horse_riding" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="fee" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Horse Riding -->
         <item name="Hackerspace" icon="presets/leisure/hackerspace.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3432,7 +3407,6 @@
             <space />
             <key key="leisure" value="hackerspace" />
             <reference ref="name_operator_oh_wheelchair" />
-            <space />
             <reference ref="link_contact_address" />
         </item> <!-- Hackerspace -->
         <item name="Outdoor seating" icon="presets/leisure/outdoor_seating.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3560,7 +3534,6 @@
             <reference ref="min_age" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Night Club -->
         <item name="Strip Club" icon="presets/leisure/stripclub.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3571,7 +3544,6 @@
             <reference ref="min_age" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Strip Club -->
         <item name="Brothel" icon="presets/leisure/brothel.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3581,7 +3553,6 @@
             <reference ref="name_operator_oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
-            <space />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Brothel -->
     </group> <!-- Leisure -->
@@ -7743,7 +7714,6 @@
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
-            <space />
             <preset_link preset_name="Contact (Schema with 'contact:*' Prefix)" text="Similar tags but different tagging schema:" text_context="Contact" />
         </item> <!-- Contact (Common Schema) -->
         <item name="Contact (Schema with 'contact:*' Prefix)" icon="presets/misc/contact.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
@@ -7758,7 +7728,6 @@
             <space />
             <text key="wikipedia" text="Wikipedia" />
             <text key="image" text="Image" />
-            <space />
             <preset_link preset_name="Contact (Common Schema)" text="Similar tags but different tagging schema:" text_context="Contact" />
         </item> <!-- Contact (Schema with 'contact:*' Prefix) -->
         <item name="Description" icon="presets/misc/description.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
@@ -7768,7 +7737,6 @@
             <label text="It might be viewable to the end user (perhaps using a search system or a map with pop-ups)." text_context="description=*" />
             <space />
             <text key="description" text="Description" match="key" />
-            <space />
             <preset_link preset_name="Note" text="Similar but different tags:" />
             <preset_link preset_name="Fixme" text="Similar but different tags:" />
         </item> <!-- Description -->
@@ -7778,7 +7746,6 @@
             <label text="An important hint for other mappers (not for the end user)." text_context="note=*" />
             <space />
             <text key="note" text="Note" text_context="the tag note=*" match="key" />
-            <space />
             <preset_link preset_name="Fixme" text="Similar but different tags:" />
             <preset_link preset_name="Description" text="Similar but different tags:" />
         </item> <!-- Note -->
@@ -7788,7 +7755,6 @@
             <label text="A hint for other mappers (not for the end user), that an object needs an improvement."  text_context="fixme=*"/>
             <space />
             <text key="fixme" text="Fixme" match="key" />
-            <space />
             <preset_link preset_name="Note" text="Similar but different tags:" />
             <preset_link preset_name="Description" text="Similar but different tags:" />
         </item> <!-- Fixme -->
