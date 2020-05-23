@@ -3344,7 +3344,28 @@
             <reference ref="name_operator_oh_wheelchair" />
             <space />
             <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Public bath" text="Similar but different tags:" />
+            <preset_link preset_name="Sports Centre" text="Similar but different tags:" />
         </item> <!-- Water Park -->
+        <item name="Public bath" icon="presets/leisure/public_bath.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=public_bath" />
+            <space />
+            <key key="amenity" value="public_bath" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <combo key="bath:type" text="Type" values="hammam,hot_spring,lake,onsen,river,sento,thermal" values_context="bath:type" />
+            <check key="bath:open_air" text="Open air" />
+            <check key="shower" text="Shower" />
+            <checkgroup columns="3">
+                <check key="female" text="Female" text_context="restroom" />
+                <check key="male" text="Male" text_context="restroom" />
+                <check key="unisex" text="Unisex" text_context="restroom" />
+            </checkgroup>
+            <reference ref="fee" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+            <preset_link preset_name="Water Park" text="Similar but different tags:" />
+            <preset_link preset_name="Sports Centre" text="Similar but different tags:" />
+        </item> <!-- Public bath -->
         <item name="Resort" icon="presets/leisure/resort.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:leisure=resort" />
             <space />
@@ -7684,8 +7705,8 @@
             <space />
             <text key="description" text="Description" match="key" />
             <space />
-            <preset_link preset_name="Note" text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
-            <preset_link preset_name="Fixme" text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
+            <preset_link preset_name="Note" text="Similar but different tags:" />
+            <preset_link preset_name="Fixme" text="Similar but different tags:" />
         </item> <!-- Description -->
         <item name="Note" icon="presets/misc/note.svg" name_context="the tag note=*" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Key:note" />
@@ -7694,8 +7715,8 @@
             <space />
             <text key="note" text="Note" text_context="the tag note=*" match="key" />
             <space />
-            <preset_link preset_name="Fixme" text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
-            <preset_link preset_name="Description" text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
+            <preset_link preset_name="Fixme" text="Similar but different tags:" />
+            <preset_link preset_name="Description" text="Similar but different tags:" />
         </item> <!-- Note -->
         <item name="Fixme" icon="presets/misc/fixme.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Key:fixme" />
@@ -7704,8 +7725,8 @@
             <space />
             <text key="fixme" text="Fixme" match="key" />
             <space />
-            <preset_link preset_name="Note" text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
-            <preset_link preset_name="Description" text="Similar but different tags:" text_context="note=*, fixme=*, description=*" />
+            <preset_link preset_name="Note" text="Similar but different tags:" />
+            <preset_link preset_name="Description" text="Similar but different tags:" />
         </item> <!-- Fixme -->
     </group> <!-- Annotation -->
     <group name="Relations" icon="presets/misc/relations.svg">
