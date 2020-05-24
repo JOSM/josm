@@ -2557,6 +2557,18 @@ node[police=yes] {
     set icon_z17;
 }
 
+/*******************/
+/* healthcare tags */
+/*******************/
+
+area[healthcare=laboratory] {
+    fill-color: healthcare#3771c8;
+}
+node[healthcare=laboratory] {
+    icon-image: "presets/health/laboratory.svg";
+    set icon_z17;
+}
+
 /****************/
 /* amenity tags */
 /****************/
@@ -3007,10 +3019,6 @@ node[amenity=dentist] {
 }
 node[amenity=veterinary] {
     icon-image: "presets/health/veterinary.svg";
-    set icon_z17;
-}
-node[healthcare=laboratory] {
-    icon-image: "presets/health/laboratory.svg";
     set icon_z17;
 }
 area[amenity=library],
