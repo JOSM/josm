@@ -259,7 +259,7 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
         @Override
         public int hashCode() {
-            return Objects.hash(lhs, rhs);
+            return Objects.hash(super.hashCode(), lhs, rhs);
         }
 
         @Override
