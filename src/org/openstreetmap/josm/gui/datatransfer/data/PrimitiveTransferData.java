@@ -6,9 +6,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -63,7 +64,7 @@ public final class PrimitiveTransferData implements Serializable {
      */
     private PrimitiveTransferData(Collection<? extends OsmPrimitive> primitives, ReferenceGetter referencedGetter) {
         // convert to hash set first to remove duplicates
-        HashSet<OsmPrimitive> visited = new HashSet<>(primitives);
+        Set<OsmPrimitive> visited = new LinkedHashSet<>(primitives);
         this.direct = new ArrayList<>(visited.size());
 
         this.referenced = new ArrayList<>();
