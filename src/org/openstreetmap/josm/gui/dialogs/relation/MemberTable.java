@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.actions.AbstractShowHistoryAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
@@ -105,7 +106,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         menu.addSeparator();
         menu.add(new SelectPreviousGapAction());
         menu.add(new SelectNextGapAction());
-        menu.add(new HistoryInfoAction() {
+        menu.add(new AbstractShowHistoryAction() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 Collection<OsmPrimitive> sel = getMemberTableModel().getSelectedChildPrimitives();

@@ -34,6 +34,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.actions.AbstractShowHistoryAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
@@ -222,12 +223,10 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
     }
 
-    class ShowHistoryAction extends AbstractAction implements ListSelectionListener {
+    class ShowHistoryAction extends AbstractShowHistoryAction implements ListSelectionListener {
 
         ShowHistoryAction() {
-            putValue(NAME, tr("Show history"));
-            new ImageProvider("dialogs", "history").getResource().attachImageIcon(this);
-            putValue(SHORT_DESCRIPTION, tr("Download and show the history of the selected objects"));
+            super();
             updateEnabledState();
         }
 

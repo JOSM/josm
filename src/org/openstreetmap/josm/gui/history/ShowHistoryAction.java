@@ -1,33 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
 import java.util.function.Function;
 
-import javax.swing.AbstractAction;
-
+import org.openstreetmap.josm.actions.AbstractShowHistoryAction;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Open a history browser with the history of an object.
  */
-class ShowHistoryAction extends AbstractAction {
+class ShowHistoryAction extends AbstractShowHistoryAction {
     private transient PrimitiveId primitiveId;
-
-    /**
-     * Constructs a new {@code ShowHistoryAction}.
-     */
-    ShowHistoryAction() {
-        putValue(NAME, tr("Show history"));
-        putValue(SHORT_DESCRIPTION, tr("Display the history of the selected object."));
-        new ImageProvider("dialogs", "history").getResource().attachImageIcon(this, true);
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {

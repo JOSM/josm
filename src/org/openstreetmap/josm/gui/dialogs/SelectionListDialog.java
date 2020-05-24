@@ -37,6 +37,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 
+import org.openstreetmap.josm.actions.AbstractShowHistoryAction;
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
@@ -347,14 +348,12 @@ public class SelectionListDialog extends ToggleDialog {
     /**
      * The action for showing history information of the current history item.
      */
-    class ShowHistoryAction extends AbstractAction implements ListSelectionListener, DataSelectionListener {
+    class ShowHistoryAction extends AbstractShowHistoryAction implements ListSelectionListener, DataSelectionListener {
         /**
          * Constructs a new {@code ShowHistoryAction}.
          */
         ShowHistoryAction() {
-            putValue(NAME, tr("History"));
-            putValue(SHORT_DESCRIPTION, tr("Display the history of the selected objects."));
-            new ImageProvider("dialogs", "history").getResource().attachImageIcon(this, true);
+            super();
             updateEnabledState(model.getSize());
         }
 
@@ -370,7 +369,7 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState(int osmSelectionSize) {
-            // See #10830 - allow to click on history button is a single object is selected, even if not selected again in the list
+            // See #10830 - allow to click on history button if a single object is selected, even if not selected again in the list
             setEnabled(!model.isSelectionEmpty() || osmSelectionSize == 1);
         }
 
