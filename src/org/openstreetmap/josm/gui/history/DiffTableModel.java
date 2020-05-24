@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.history;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import javax.swing.table.AbstractTableModel;
@@ -51,19 +52,16 @@ class DiffTableModel extends AbstractTableModel {
     }
 
     void computeRowNumbers() {
-        rowNumbers = new int[rows.size()];
-        int rowNumber = reversed ? rows.size() : 1;
-        int i = 0;
-        for (TwoColumnDiff.Item item : rows) {
+        AtomicInteger rowNumber = new AtomicInteger(reversed ? rows.size() : 1);
+        rowNumbers = rows.stream().mapToInt(item -> {
             if (item.state == DiffItemType.EMPTY) {
-                rowNumbers[i] = -1;
+                return -1;
             } else if (reversed) {
-                rowNumbers[i] = rowNumber--;
+                return rowNumber.getAndDecrement();
             } else {
-                rowNumbers[i] = rowNumber++;
+                return rowNumber.getAndIncrement();
             }
-            i++;
-        }
+        }).toArray();
     }
 
     public int getRowNumber(int rowIndex) {
