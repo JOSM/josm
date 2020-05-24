@@ -868,6 +868,9 @@ public class MainApplication {
 
         setupCallbacks();
 
+        // Configure Look and feel before showing SplashScreen (#19290)
+        setupUIManager();
+
         final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(SplashScreen::new);
         // splash can be null sometimes on Linux, in this case try to load JOSM silently
         final SplashProgressMonitor monitor = splash != null ? splash.getProgressMonitor() : new SplashProgressMonitor(null, e -> {
@@ -902,7 +905,6 @@ public class MainApplication {
         }
 
         monitor.indeterminateSubTask(tr("Setting defaults"));
-        setupUIManager();
         toolbar = new ToolbarPreferences();
         ProjectionPreference.setProjection();
         setupNadGridSources();
