@@ -9,7 +9,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Superclass of "History" actions in various parts of JOSM.
- * @since xxx
+ * @since 16495
  */
 public abstract class AbstractShowHistoryAction extends AbstractAction {
     /**
