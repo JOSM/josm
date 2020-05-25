@@ -3423,6 +3423,14 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="max_age" />
         </item> <!-- Playground -->
+        <item name="Playground device" icon="presets/leisure/playground_device.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Key:playground" />
+            <space />
+            <combo key="playground" text="Type" values="activitypanel,aerialrotator,balancebeam,basketrotator,basketswing,climbingframe,climbingwall,cushion,exercise,hopscotch,horizontal_bar,map,playhouse,roundabout,sandpit,seesaw,sledding,slide,splash_pad,springy,structure,swing,teenshelter,trampoline,water,youth_bench,zipwire" values_context="playground" match="key!" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="max_age" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+        </item> <!-- Playground device -->
         <item name="Picnic Site" icon="presets/leisure/picnic.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:tourism=picnic_site" />
             <space />

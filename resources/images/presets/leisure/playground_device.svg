@@ -14,7 +14,7 @@
    height="13"
    viewBox="0 0 14 13"
    id="svg2"
-   sodipodi:docname="Playground-16c.svg"
+   sodipodi:docname="Playground-16cc.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata9">
@@ -44,8 +44,8 @@
      id="namedview5"
      showgrid="true"
      inkscape:zoom="31.098545"
-     inkscape:cx="9.9107639"
-     inkscape:cy="7.3043439"
+     inkscape:cx="11.582868"
+     inkscape:cy="8.5262661"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -62,7 +62,7 @@
      id="canvas"
      style="visibility:hidden;fill:none;stroke:none" />
   <path
-     style="fill:#0e8517;stroke-width:1.33332765"
+     style="fill:#ff6600;stroke-width:1.33332765;fill-opacity:1"
      d="M 3.40625,0 C 2.65262,0.047193 1.998524,0.7448953 2,1.5 2.000287,2.2852156 2.714784,2.9994517 3.5,2.9994517 4.285216,2.9994517 4.999713,2.2852156 5,1.5 5.0016,0.6823545 4.222298,-0.0511045 3.40625,0 Z m 8,3 C 10.65262,3.0471927 9.998524,3.7448953 10,4.5 c 2.87e-4,0.7852156 0.714784,1.4994517 1.5,1.4994517 0.785216,0 1.499713,-0.7142361 1.5,-1.4994517 C 13.001599,3.6823545 12.222298,2.9488956 11.40625,3 Z M 3,3.5 C 1.52901,3.5 1.134165,5.3734067 1.03125,6.375 L 0,6 v 1.4501818 l 5.96875,2.125 L 5,13 H 9 L 8.0625,10.325182 14,12.450182 V 11 L 13.0625,10.65625 C 13.226562,9.794922 13.75,6.5 12,6.5 c -1.638462,0 -1.915209,2.244501 -1.96875,3.09375 l -5.9375,-2.125 C 4.285012,6.337531 4.614,3.5 3,3.5 Z"
      id="playground"
      inkscape:connector-curvature="0"

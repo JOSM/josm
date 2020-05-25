@@ -1882,6 +1882,17 @@ node[leisure=swimming_pool] {
     icon-image: "presets/sport/swimming.svg";
     set icon_z17;
 }
+area[playground]:closed {
+    fill-color: playground#c7f1a3;
+}
+way[playground] {
+    width: 2;
+    color: playground#c7f1a3;
+}
+node[playground] {
+    icon-image: "presets/leisure/playground_device.svg";
+    set icon_z17;
+}
 area[leisure=fitness_station],
 area[leisure=miniature_golf],
 area[leisure=dog_park],
