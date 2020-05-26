@@ -466,7 +466,7 @@ way[destination][!oneway?][junction!=roundabout][highway] {
   suggestAlternative: "destination:backward";
 }
 
-/* #11389 */
+/* #11389, #19010 */
 way["maxspeed:forward"=*"maxspeed:backward"][!maxspeed] {
   throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
   suggestAlternative: "maxspeed";
@@ -482,12 +482,48 @@ way["maxspeed:forward"=*maxspeed]["maxspeed:backward"=*maxspeed][maxspeed] {
   fixRemove: "maxspeed:forward";
   fixRemove: "maxspeed:backward";
 }
-way["maxspeed:forward"]["maxspeed:backward"][maxspeed]!.AllSameMaxspeed {
+way["cycleway:left"=*"cycleway:right"][!cycleway] {
+  throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
+  suggestAlternative: "cycleway";
+  group: tr("suspicious tag combination");
+  fixChangeKey: "cycleway:left=>cycleway";
+  fixRemove: "cycleway:right";
+}
+way["cycleway:left"=*cycleway]["cycleway:right"=*cycleway][cycleway] {
+  throwWarning: tr("Same value of {0}, {1} and {2}", "{0.key}", "{1.key}", "{2.key}");
+  set AllSameCycleway;
+  suggestAlternative: "cycleway";
+  group: tr("suspicious tag combination");
+  fixRemove: "cycleway:left";
+  fixRemove: "cycleway:right";
+}
+way["sidewalk:left"=*"sidewalk:right"][!sidewalk] {
+  throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
+  suggestAlternative: "sidewalk";
+  group: tr("suspicious tag combination");
+  fixChangeKey: "sidewalk:left=>sidewalk";
+  fixRemove: "sidewalk:right";
+}
+way["sidewalk:left"=*sidewalk]["sidewalk:right"=*sidewalk][sidewalk] {
+  throwWarning: tr("Same value of {0}, {1} and {2}", "{0.key}", "{1.key}", "{2.key}");
+  set AllSameSidewalk;
+  suggestAlternative: "sidewalk";
+  group: tr("suspicious tag combination");
+  fixRemove: "sidewalk:left";
+  fixRemove: "sidewalk:right";
+}
+way["maxspeed:forward"]["maxspeed:backward"][maxspeed]!.AllSameMaxspeed,
+way["cycleway:left"]["cycleway:right"][cycleway]!.AllSameCycleway,
+way["sidewalk:left"]["sidewalk:right"][sidewalk]!.AllSameSidewalk {
   throwWarning: tr("{0} and {1} together with {2} and conflicting values", "{0.key}", "{1.key}", "{2.key}");
   group: tr("suspicious tag combination");
 }
 way["maxspeed:forward"][maxspeed][!"maxspeed:backward"],
-way["maxspeed:backward"][maxspeed][!"maxspeed:forward"] {
+way["maxspeed:backward"][maxspeed][!"maxspeed:forward"],
+way["cycleway:left"][cycleway][!"cycleway:right"],
+way["cycleway:right"][cycleway][!"cycleway:left"],
+way["sidewalk:left"][sidewalk][!"sidewalk:right"],
+way["sidewalk:right"][sidewalk][!"sidewalk:left"] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
   group: tr("suspicious tag combination");
 }
