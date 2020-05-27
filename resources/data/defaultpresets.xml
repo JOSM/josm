@@ -4955,7 +4955,7 @@
         <item name="Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building" />
             <space />
-            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,farm_auxiliary,fire_station,garage,garages,gasometer,greenhouse,hangar,hospital,industrial,kindergarten,manufacture,mosque,office,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,farm_auxiliary,fire_station,garage,garages,gasometer,greenhouse,hangar,hospital,industrial,kindergarten,manufacture,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -4977,7 +4977,7 @@
         <item name="Building part" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building:part" />
             <space />
-            <combo key="building:part" text="Building part" values="allotment_house,bakehouse,barn,college,commercial,construction,cowshed,farm_auxiliary,garage,garages,greenhouse,hangar,hospital,industrial,office,retail,roof,ruins,school,shed,supermarket,toilets,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building:part" text="Building part" values="allotment_house,bakehouse,barn,college,commercial,construction,cowshed,farm_auxiliary,garage,garages,greenhouse,hangar,hospital,industrial,office,parking,retail,roof,ruins,school,shed,supermarket,toilets,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <combo key="building:min_level" text="Skipped Levels" values="1,2,3,4,5,6,7,8,9,10" text_context="building" />
