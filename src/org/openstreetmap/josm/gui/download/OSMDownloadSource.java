@@ -10,10 +10,12 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -130,8 +132,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
     }
 
     /**
-     * @return The possible downloads that JOSM can make in the default Download
-     *         screen
+     * @return The possible downloads that JOSM can make in the default Download screen
      * @since 16503
      */
     public static List<IDownloadSourceType> getDownloadTypes() {
@@ -152,38 +153,30 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
 
     /**
      * @param type The IDownloadSourceType object to remove
-     * @return true See {@link List#remove}, but it also returns false if the
-     * parameter is a class from JOSM core.
+     * @return {@code true} if this download types contained the specified object
      * @since 16503
      */
     public static boolean removeDownloadType(IDownloadSourceType type) {
-        boolean modified = false;
-        if (!(type instanceof OsmDataDownloadType) && !(type instanceof GpsDataDownloadType)
-                && !(type instanceof NotesDataDownloadType)) {
-            modified = DOWNLOAD_SOURCES.remove(type);
+        if (type instanceof OsmDataDownloadType || type instanceof GpsDataDownloadType || type instanceof NotesDataDownloadType) {
+            throw new IllegalArgumentException(type.getClass().getName());
         }
-        return modified;
+        return DOWNLOAD_SOURCES.remove(type);
     }
 
     /**
      * Add a download type to the default JOSM download window
      *
      * @param type The initialized type to download
-     * @return See {@link List#add}, but it also returns false if the class
-     * already has an instance in the list or it is a class from JOSM core.
+     * @return {@code true} (as specified by {@link Collection#add}), but it also returns false if the class already has an instance in the list
      * @since 16503
      */
     public static boolean addDownloadType(IDownloadSourceType type) {
-        boolean modified = false;
-        if (!(type instanceof OsmDataDownloadType) && !(type instanceof GpsDataDownloadType)
-                && !(type instanceof NotesDataDownloadType)
-                || DOWNLOAD_SOURCES.stream()
-                        .noneMatch(possibility -> type.getClass().isInstance(possibility))) {
-            modified = DOWNLOAD_SOURCES.add(type);
-        } else {
-            throw new IllegalArgumentException("There can only be one instance of a class added, and it cannot be a built-in class.");
+        if (type instanceof OsmDataDownloadType || type instanceof GpsDataDownloadType || type instanceof NotesDataDownloadType) {
+            throw new IllegalArgumentException(type.getClass().getName());
+        } else if (getDownloadType(type.getClass()) != null) {
+            return false;
         }
-        return modified;
+        return DOWNLOAD_SOURCES.add(type);
     }
 
     /**
@@ -194,9 +187,9 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         private final JLabel sizeCheck = new JLabel();
 
         /** This is used to keep track of the components for download sources, and to dynamically update/remove them */
-        private JPanel downloadSourcesPanel;
+        private final JPanel downloadSourcesPanel;
 
-        private ChangeListener checkboxChangeListener;
+        private final ChangeListener checkboxChangeListener;
 
         /**
          * Label used in front of data types available for download. Made public for reuse in other download dialogs.
@@ -284,18 +277,16 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
              * If none of those are selected, then the corresponding dialog is shown to inform the user.
              */
             if (DOWNLOAD_SOURCES.stream().noneMatch(IDownloadSourceType::isEnabled)) {
-                StringBuilder line1 = new StringBuilder("<html>").append(tr("None of"));
-                StringBuilder line2 = new StringBuilder(tr("Please choose to either download"));
-
-                DOWNLOAD_SOURCES.forEach(type -> {
-                    line1.append(" <strong>").append(type.getCheckBox().getText()).append("</strong> ");
-                    line2.append(' ').append(type.getCheckBox().getText()).append(tr(", or"));
-                });
-                line1.append(tr("is enabled.")).append("<br>");
-                line2.append(tr(" all.")).append("</html>");
+                String sources = DOWNLOAD_SOURCES.stream()
+                        .map(type -> type.getCheckBox().getText())
+                        .collect(Collectors.joining(", "));
+                String message = "<html>"
+                        + tr("None of {0} is enabled!", sources)
+                        + "<br>"
+                        + tr("Please select at least one of {0}.", sources);
                 JOptionPane.showMessageDialog(
                         this.getParent(),
-                        line1.append(line2).toString(),
+                        message,
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
@@ -312,36 +303,33 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
          * Replies true if the user selected to download OSM data
          *
          * @return true if the user selected to download OSM data
-         * @deprecated since xxx -- use {@link OSMDownloadSource#getDownloadTypes} with
-         *             {@code get(0).getCheckBox().isSelected()}
+         * @deprecated since xxx -- use {@code getDownloadType(OsmDataDownloadType.class).getCheckBox().isSelected()}
          */
         @Deprecated
         public boolean isDownloadOsmData() {
-            return DOWNLOAD_SOURCES.get(0).getCheckBox().isSelected();
+            return getDownloadType(OsmDataDownloadType.class).getCheckBox().isSelected();
         }
 
         /**
          * Replies true if the user selected to download GPX data
          *
          * @return true if the user selected to download GPX data
-         * @deprecated since xxx -- use {@link OSMDownloadSource#getDownloadTypes} with
-         *             {@code get(1).getCheckBox().isSelected()}
+         * @deprecated since xxx -- use {@code getDownloadType(GpsDataDownloadType.class).getCheckBox().isSelected()}
          */
         @Deprecated
         public boolean isDownloadGpxData() {
-            return DOWNLOAD_SOURCES.get(1).getCheckBox().isSelected();
+            return getDownloadType(GpsDataDownloadType.class).getCheckBox().isSelected();
         }
 
         /**
          * Replies true if user selected to download notes
          *
          * @return true if user selected to download notes
-         * @deprecated since xxx -- use {@link OSMDownloadSource#getDownloadTypes} with
-         *             {@code get(2).getCheckBox().isSelected()}
+         * @deprecated since xxx -- use {@code getDownloadType(NotesDataDownloadType.class).getCheckBox().isSelected()}
          */
         @Deprecated
         public boolean isDownloadNotes() {
-            return DOWNLOAD_SOURCES.get(2).getCheckBox().isSelected();
+            return getDownloadType(NotesDataDownloadType.class).getCheckBox().isSelected();
         }
 
         @Override
@@ -387,7 +375,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
      */
     static class OSMDownloadData {
 
-        private List<IDownloadSourceType> downloadPossibilities;
+        private final List<IDownloadSourceType> downloadPossibilities;
 
         /**
          * @param downloadPossibilities A list of DataDownloadTypes (instantiated, with
