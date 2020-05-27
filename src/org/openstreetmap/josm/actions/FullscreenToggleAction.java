@@ -51,6 +51,11 @@ public class FullscreenToggleAction extends ToggleAction {
     }
 
     @Override
+    protected void installAdapters() {
+        // not needed
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
         Config.getPref().putBoolean("draw.fullscreen", isSelected());

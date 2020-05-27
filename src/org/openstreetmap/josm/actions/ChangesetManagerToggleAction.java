@@ -38,6 +38,11 @@ public class ChangesetManagerToggleAction extends ToggleAction {
     }
 
     @Override
+    protected void installAdapters() {
+        // do nothing
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
         notifySelectedState();

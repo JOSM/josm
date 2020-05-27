@@ -33,7 +33,7 @@ public class DownloadPrimitiveAction extends JosmAction {
      */
     public DownloadPrimitiveAction() {
         super(tr("Download object..."), "downloadprimitive", tr("Download OSM object by ID"),
-                SHORTCUT, true);
+                SHORTCUT, true, false);
         setHelpId(ht("/Action/DownloadObject"));
     }
 

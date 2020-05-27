@@ -51,7 +51,7 @@ public class CloseChangesetAction extends JosmAction {
             Shortcut.registerShortcut("system:closechangeset",
                 tr("File: {0}", tr("Close open changesets")),
                 KeyEvent.VK_Q, Shortcut.ALT_CTRL),
-            true
+            true, false
         );
         setHelpId(ht("/Action/CloseChangeset"));
         setEnabled(!NetworkManager.isOffline(OnlineResource.OSM_API));

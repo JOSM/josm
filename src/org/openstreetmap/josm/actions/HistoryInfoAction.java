@@ -35,10 +35,8 @@ public class HistoryInfoAction extends JosmAction {
     public HistoryInfoAction() {
         super(tr("History"), "dialogs/history",
                 tr("Display history information about OSM ways, nodes, or relations."),
-                SHORTCUT, false);
+                SHORTCUT, true, "action/historyinfo", false);
         setHelpId(ht("/Action/ObjectHistory"));
-        setToolbarId("action/historyinfo");
-        MainApplication.getToolbar().register(this);
         setEnabled(true);
     }
 

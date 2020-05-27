@@ -63,7 +63,7 @@ public final class AboutAction extends JosmAction {
     public AboutAction() {
         super(tr("About"), "logo", tr("Display the about screen."),
             Shortcut.registerShortcut("system:about", tr("About"),
-            KeyEvent.VK_F1, Shortcut.SHIFT), true);
+            KeyEvent.VK_F1, Shortcut.SHIFT), true, false);
     }
 
     JPanel buildAboutPanel() {

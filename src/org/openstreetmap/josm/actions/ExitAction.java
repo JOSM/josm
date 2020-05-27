@@ -21,7 +21,7 @@ public class ExitAction extends JosmAction {
      */
     public ExitAction() {
         super(tr("Exit"), "exit", tr("Exit the application."),
-                Shortcut.registerShortcut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, Shortcut.CTRL), true);
+                Shortcut.registerShortcut("system:menuexit", tr("Exit"), KeyEvent.VK_Q, Shortcut.CTRL), true, false);
         setHelpId(ht("/Action/Exit"));
     }
 
