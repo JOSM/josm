@@ -26,14 +26,16 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class HistoryInfoAction extends JosmAction {
 
+    /** Action shortcut, made public in order to be used from {@code GettingStarted} page. */
+    public static final Shortcut SHORTCUT = Shortcut.registerShortcut("core:historyinfo", tr("History"), KeyEvent.VK_H, Shortcut.CTRL);
+
     /**
      * Constructs a new {@code HistoryInfoAction}.
      */
     public HistoryInfoAction() {
         super(tr("History"), "dialogs/history",
                 tr("Display history information about OSM ways, nodes, or relations."),
-                Shortcut.registerShortcut("core:historyinfo",
-                        tr("History"), KeyEvent.VK_H, Shortcut.CTRL), false);
+                SHORTCUT, false);
         setHelpId(ht("/Action/ObjectHistory"));
         setToolbarId("action/historyinfo");
         MainApplication.getToolbar().register(this);
