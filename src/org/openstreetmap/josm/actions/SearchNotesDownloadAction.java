@@ -34,7 +34,7 @@ public class SearchNotesDownloadAction extends JosmAction {
 
     /** Constructs a new note search action */
     public SearchNotesDownloadAction() {
-        super(tr("Search Notes..."), "note_search", tr("Download notes from the note search API"), null, false);
+        super(tr("Search Notes..."), "note_search", tr("Download notes from the note search API"), null, false, false);
     }
 
     @Override

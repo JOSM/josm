@@ -92,6 +92,11 @@ public final class SaveAction extends SaveActionBase {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         Layer activeLayer = getLayerManager().getActiveLayer();
         boolean en = activeLayer != null

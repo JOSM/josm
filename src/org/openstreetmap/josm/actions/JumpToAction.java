@@ -55,7 +55,10 @@ public class JumpToAction extends JosmAction {
     public JumpToAction() {
         super(tr("Jump to Position"), (ImageProvider) null, tr("Opens a dialog that allows to jump to a specific location"),
                 Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump to Position")),
-                        KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", true);
+                        KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", false);
+        // make this action listen to mapframe change events
+        MainApplication.addMapFrameListener((o, n) -> updateEnabledState());
+
         setHelpId(ht("/Action/JumpToPosition"));
     }
 
@@ -240,12 +243,5 @@ public class JumpToAction extends JosmAction {
     @Override
     protected void updateEnabledState() {
         setEnabled(MainApplication.isDisplayingMapView());
-    }
-
-    @Override
-    protected void installAdapters() {
-        super.installAdapters();
-        // make this action listen to mapframe change events
-        MainApplication.addMapFrameListener((o, n) -> updateEnabledState());
     }
 }

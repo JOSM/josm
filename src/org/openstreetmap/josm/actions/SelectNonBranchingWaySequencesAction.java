@@ -34,6 +34,11 @@ public class SelectNonBranchingWaySequencesAction extends JosmAction {
         ws.extend(ds);
     }
 
+    @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
     /**
      * Update the enabled state of the action when something in
      * the JOSM state changes, i.e. when a layer is removed or added.

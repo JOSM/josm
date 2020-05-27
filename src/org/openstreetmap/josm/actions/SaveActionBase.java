@@ -174,6 +174,11 @@ public abstract class SaveActionBase extends DiskAccessAction {
     protected abstract File getFile(Layer layer);
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         Layer activeLayer = getLayerManager().getActiveLayer();
         setEnabled(activeLayer != null && activeLayer.isSavable());

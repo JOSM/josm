@@ -37,6 +37,11 @@ public class SelectAllAction extends JosmAction {
         ds.setSelected(ds.getPrimitives(t -> t.isSelectable()));
     }
 
+    @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
     /**
      * Refreshes the enabled state
      */

@@ -40,7 +40,7 @@ public class FullscreenToggleAction extends ToggleAction {
               null, /* no icon */
               tr("Toggle fullscreen view"),
               Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle fullscreen view"), KeyEvent.VK_F11, Shortcut.DIRECT),
-              false /* register */
+              false /* register */, null, false
         );
         setHelpId(ht("/Action/FullscreenView"));
         setToolbarId("fullscreen");
@@ -48,11 +48,6 @@ public class FullscreenToggleAction extends ToggleAction {
         gd = GraphicsEnvironment.isHeadless() ? null : GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         setSelected(Config.getPref().getBoolean("draw.fullscreen", false));
         notifySelectedState();
-    }
-
-    @Override
-    protected void installAdapters() {
-        // not needed
     }
 
     @Override

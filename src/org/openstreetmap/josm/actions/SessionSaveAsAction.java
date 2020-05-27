@@ -62,7 +62,8 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
      * Constructs a new {@code SessionSaveAsAction}.
      */
     public SessionSaveAsAction() {
-        this(true, true);
+        this(true, false);
+        updateEnabledState();
     }
 
     /**

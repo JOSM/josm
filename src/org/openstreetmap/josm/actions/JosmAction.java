@@ -153,7 +153,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     }
 
     /**
-     * Constructs a new {@code JosmAction}.
+     * Constructs a new {@code JosmAction} and installs layer changed and selection changed adapters.
      *
      * Use this super constructor to setup your action.
      *

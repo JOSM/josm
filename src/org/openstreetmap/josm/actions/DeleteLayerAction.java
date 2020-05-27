@@ -40,6 +40,11 @@ public final class DeleteLayerAction extends JosmAction {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         setEnabled(getLayerManager().getActiveLayer() != null);
     }

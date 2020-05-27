@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -25,21 +26,16 @@ public class ChangesetManagerToggleAction extends ToggleAction {
      */
     public ChangesetManagerToggleAction() {
         super(tr("Changeset Manager"),
-              "dialogs/changeset/changesetmanager",
+                new ImageProvider("dialogs/changeset/changesetmanager").setOptional(true),
               tr("Toggle visibility of Changeset Manager window"),
               Shortcut.registerShortcut("menu:windows:changesetdialog",
                       tr("Toggle visibility of Changeset Manager window"),
                       KeyEvent.VK_C, Shortcut.ALT_CTRL),
-              true /* register shortcut */
+              true /* register shortcut */, null, false
         );
         notifySelectedState();
         changesetCacheManagerClosedHandler = new ChangesetCacheManagerClosedHandler();
         setHelpId(ht("/Dialog/ChangesetManager"));
-    }
-
-    @Override
-    protected void installAdapters() {
-        // do nothing
     }
 
     @Override

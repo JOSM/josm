@@ -63,6 +63,11 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
         }
 
         @Override
+        protected boolean listenToSelectionChange() {
+            return false;
+        }
+
+        @Override
         public void updateEnabledState() {
             setEnabled(MainApplication.isDisplayingMapView()
                     && (MainApplication.getLayerManager().getActiveData() != null || mapHasGpxOrMarkerLayer()));

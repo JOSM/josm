@@ -36,6 +36,11 @@ public class WireframeToggleAction extends ToggleAction {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         setEnabled(getLayerManager().getActiveData() != null);
     }

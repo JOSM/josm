@@ -34,7 +34,7 @@ public class HelpAction extends JosmAction {
     private HelpAction(boolean shortcut) {
         super(tr("Help"), "help", null,
                 shortcut ? Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.DIRECT) : null,
-                true);
+                true, false);
         setEnabled(!NetworkManager.isOffline(OnlineResource.JOSM_WEBSITE));
     }
 

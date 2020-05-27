@@ -41,6 +41,11 @@ public class UpdateDataAction extends JosmAction {
         setHelpId(ht("/Action/UpdateData"));
     }
 
+    @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
     /**
      * Refreshes the enabled state
      */

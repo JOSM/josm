@@ -38,6 +38,11 @@ public abstract class AbstractAudioAction extends JosmAction {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         setEnabled(isAudioMarkerPresent());
     }

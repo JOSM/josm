@@ -31,7 +31,7 @@ public class ReportBugAction extends JosmAction {
     public ReportBugAction(String text) {
         super(tr("Report bug"), "bug", tr("Report a ticket to JOSM bugtracker"),
                 Shortcut.registerShortcut("reportbug", tr("Report a ticket to JOSM bugtracker"),
-                        KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), true);
+                        KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), true, false);
         this.text = text;
     }
 

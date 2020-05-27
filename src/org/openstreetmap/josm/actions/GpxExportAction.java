@@ -114,6 +114,11 @@ public class GpxExportAction extends DiskAccessAction {
         }
     }
 
+    @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
     /**
      * Refreshes the enabled state
      */

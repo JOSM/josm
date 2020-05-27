@@ -40,6 +40,11 @@ public final class DownloadOsmInViewAction extends JosmAction {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         setEnabled(getLayerManager().getActiveLayer() != null
                 && !NetworkManager.isOffline(OnlineResource.OSM_API));

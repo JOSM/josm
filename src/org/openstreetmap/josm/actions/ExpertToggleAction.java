@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ListenerList;
 
 /**
@@ -109,10 +110,10 @@ public class ExpertToggleAction extends ToggleAction {
      */
     public ExpertToggleAction() {
         super(tr("Expert Mode"),
-              "expert",
+                new ImageProvider("expert").setOptional(true),
               tr("Enable/disable expert mode"),
               null,
-              false /* register toolbar */
+              false /* register toolbar */, null, false
         );
         setToolbarId("expertmode");
         if (MainApplication.getToolbar() != null) {

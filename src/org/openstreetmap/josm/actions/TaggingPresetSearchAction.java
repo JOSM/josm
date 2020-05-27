@@ -35,6 +35,11 @@ public class TaggingPresetSearchAction extends JosmAction {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         setEnabled(hasActiveDataLayer());
     }

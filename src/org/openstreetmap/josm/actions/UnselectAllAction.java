@@ -32,6 +32,11 @@ public class UnselectAllAction extends JosmAction {
         getLayerManager().getActiveData().setSelected();
     }
 
+    @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
     /**
      * Refreshes the enabled state
      */

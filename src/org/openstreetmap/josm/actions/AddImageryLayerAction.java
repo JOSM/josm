@@ -297,6 +297,11 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         setEnabled(!info.isBlacklisted());
     }

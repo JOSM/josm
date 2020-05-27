@@ -36,6 +36,11 @@ public final class ZoomOutAction extends JosmAction {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+   @Override
     protected void updateEnabledState() {
         setEnabled(!getLayerManager().getLayers().isEmpty());
     }

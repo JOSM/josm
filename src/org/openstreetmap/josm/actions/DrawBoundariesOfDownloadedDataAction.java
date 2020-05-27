@@ -27,6 +27,11 @@ public class DrawBoundariesOfDownloadedDataAction extends PreferenceToggleAction
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         setEnabled(MainApplication.getLayerManager().getEditLayer() != null);
     }

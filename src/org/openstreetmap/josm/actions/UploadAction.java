@@ -146,6 +146,11 @@ public class UploadAction extends AbstractUploadAction {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
         setEnabled(editLayer != null && editLayer.requiresUploadToServer());

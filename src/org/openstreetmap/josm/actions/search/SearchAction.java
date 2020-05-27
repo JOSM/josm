@@ -482,6 +482,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
+    @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
     /**
      * Refreshes the enabled state
      */

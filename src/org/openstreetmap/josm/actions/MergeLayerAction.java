@@ -151,6 +151,11 @@ public class MergeLayerAction extends AbstractMergeAction {
     }
 
     @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
+
+    @Override
     protected void updateEnabledState() {
         GuiHelper.runInEDT(() -> {
                 final Layer sourceLayer = getSourceLayer();
