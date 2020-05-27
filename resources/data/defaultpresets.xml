@@ -7468,7 +7468,7 @@
             <link wiki="Tag:landuse=farmland" />
             <space />
             <key key="landuse" value="farmland" />
-            <combo key="crop" text="Crop" values="corn,grass,rice,wheat,hop,cereal,tea,sugarcane" values_context="crop" />
+            <combo key="crop" text="Crop" values="barley,cereal,corn,grass,hop,rape,rice,soy,sugarcane,tea,wheat" values_context="crop" />
             <reference ref="optional_name" />
         </item> <!-- Farmland -->
         <item name="Meadow" icon="presets/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
