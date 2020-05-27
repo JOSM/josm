@@ -7481,7 +7481,7 @@
             <link wiki="Tag:landuse=orchard" />
             <space />
             <key key="landuse" value="orchard" />
-            <combo key="trees" text="Trees" values="almond_trees,apple_trees,banana_plants,cherry_trees,coconut_palms,coffea_plants,hazel_plants,oil_palms,olive_trees,orange_trees,peach_trees,persimmon_trees,plum_trees,tea_plants,walnut_trees" />
+            <combo key="trees" text="Trees" values="almond_trees,apple_trees,apricot_trees,avocado_trees,banana_plants,blueberry_plants,cacao_trees,cherimoya_trees,cherry_trees,chestnut_trees,coconut_palms,coffea_plants,date_palms,hazel_plants,hop_plants,lemon_trees,macadamia_trees,mango_trees,oil_palms,olive_trees,orange_trees,papaya_trees,peach_trees,pear_trees,pecan_trees,persimmon_trees,pineapple_plants,pistachio_trees,pitaya_plants,plum_trees,pomegranate_trees,tea_plants,walnut_trees" />
             <reference ref="optional_name" />
         </item> <!-- Orchard -->
         <item name="Vineyard" icon="presets/landuse/vineyard.svg" type="closedway,multipolygon" preset_name_label="true">
