@@ -623,7 +623,6 @@ public final class DomainValidator extends AbstractValidator {
         "erni", // erni ERNI Group Holding AG
         "esq", // esq Charleston Road Registry Inc.
         "estate", // estate Trixy Park, LLC
-        "esurance", // esurance Esurance Insurance Company
         "etisalat", // etisalat Emirates Telecommunications Corporation (trading as Etisalat)
         "eurovision", // eurovision European Broadcasting Union (EBU)
         "eus", // eus Puntueus Fundazioa
