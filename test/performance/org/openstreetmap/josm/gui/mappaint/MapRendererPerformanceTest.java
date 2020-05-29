@@ -23,7 +23,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.TestUtils;
@@ -45,6 +44,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -83,11 +83,11 @@ public class MapRendererPerformanceTest {
     private static final EnumMap<Feature, BooleanStyleSetting> filters = new EnumMap<>(Feature.class);
 
     /**
-     * Global timeout applied to all test methods.
+     * Setup tests
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public Timeout globalTimeout = Timeout.seconds(15*60);
+    public JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().preferences().timeout(15 * 60 * 1000);
 
     /**
      * Initializes test environment.
