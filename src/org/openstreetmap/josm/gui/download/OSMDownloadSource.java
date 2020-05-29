@@ -303,7 +303,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
          * Replies true if the user selected to download OSM data
          *
          * @return true if the user selected to download OSM data
-         * @deprecated since xxx -- use {@code getDownloadType(OsmDataDownloadType.class).getCheckBox().isSelected()}
+         * @deprecated since 16503 -- use {@code getDownloadType(OsmDataDownloadType.class).getCheckBox().isSelected()}
          */
         @Deprecated
         public boolean isDownloadOsmData() {
@@ -314,7 +314,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
          * Replies true if the user selected to download GPX data
          *
          * @return true if the user selected to download GPX data
-         * @deprecated since xxx -- use {@code getDownloadType(GpsDataDownloadType.class).getCheckBox().isSelected()}
+         * @deprecated since 16503 -- use {@code getDownloadType(GpsDataDownloadType.class).getCheckBox().isSelected()}
          */
         @Deprecated
         public boolean isDownloadGpxData() {
@@ -325,7 +325,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
          * Replies true if user selected to download notes
          *
          * @return true if user selected to download notes
-         * @deprecated since xxx -- use {@code getDownloadType(NotesDataDownloadType.class).getCheckBox().isSelected()}
+         * @deprecated since 16503 -- use {@code getDownloadType(NotesDataDownloadType.class).getCheckBox().isSelected()}
          */
         @Deprecated
         public boolean isDownloadNotes() {

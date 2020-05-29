@@ -64,7 +64,7 @@ public final class StreamUtils {
      * @param <T> the type of the input elements
      * @return a new Collector that collects the items in an unmodifiable list
      * @see Utils#toUnmodifiableList
-     * @since xxx
+     * @since 16436
      */
     public static <T> Collector<T, ?, List<T>> toUnmodifiableList() {
         // Java 10: use java.util.stream.Collectors.toUnmodifiableList
