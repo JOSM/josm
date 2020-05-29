@@ -1174,7 +1174,6 @@ public final class DomainValidator extends AbstractValidator {
         "schwarz", // schwarz Schwarz Domains und Services GmbH &amp; Co. KG
         "science", // science dot Science Limited
         "scjohnson", // scjohnson Johnson Shareholdings, Inc.
-        "scor", // scor SCOR SE
         "scot", // scot Dot Scot Registry Limited
         "search", // search Charleston Road Registry Inc.
         "seat", // seat SEAT, S.A. (Sociedad Unipersonal)
