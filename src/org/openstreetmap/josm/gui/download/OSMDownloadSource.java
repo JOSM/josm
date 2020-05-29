@@ -277,16 +277,9 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
              * If none of those are selected, then the corresponding dialog is shown to inform the user.
              */
             if (DOWNLOAD_SOURCES.stream().noneMatch(IDownloadSourceType::isEnabled)) {
-                String sources = DOWNLOAD_SOURCES.stream()
-                        .map(type -> type.getCheckBox().getText())
-                        .collect(Collectors.joining(", "));
-                String message = "<html>"
-                        + tr("None of {0} is enabled!", sources)
-                        + "<br>"
-                        + tr("Please select at least one of {0}.", sources);
                 JOptionPane.showMessageDialog(
                         this.getParent(),
-                        message,
+                        tr("Please select at least one download source."),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );
