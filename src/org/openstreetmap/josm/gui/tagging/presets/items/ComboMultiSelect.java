@@ -515,23 +515,16 @@ public abstract class ComboMultiSelect extends KeyedItem {
     protected String getSelectedValue() {
         Object obj = getSelectedItem();
         String display = obj == null ? getDisplayIfNull() : obj.toString();
-        String value = null;
 
-        if (display != null) {
-            for (PresetListEntry entry : presetListEntries) {
-                String k = entry.toString();
-                if (k.equals(display)) {
-                    value = entry.value;
-                    break;
-                }
-            }
-            if (value == null) {
-                value = display;
-            }
-        } else {
-            value = "";
+        if (display == null) {
+            return "";
         }
-        return Utils.removeWhiteSpaces(value);
+        return presetListEntries.stream()
+                .filter(entry -> Objects.equals(entry.toString(), display))
+                .findFirst()
+                .map(entry -> entry.value)
+                .map(Utils::removeWhiteSpaces)
+                .orElse(display);
     }
 
     @Override
