@@ -65,6 +65,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
         JTable table = new JTable(tagTableModel, new TagTableColumnModel());
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        table.getTableHeader().setReorderingAllowed(false);
         table.setTransferHandler(new TagInfoTransferHandler());
         table.addFocusListener(new RepaintOnFocusChange());
         JPopupMenu tagMenu = new JPopupMenu();

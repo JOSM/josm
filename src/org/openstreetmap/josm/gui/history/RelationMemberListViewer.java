@@ -35,6 +35,7 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
                 table, columnModel, tr("The members of this relation are in reverse order")));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        table.getTableHeader().setReorderingAllowed(false);
         table.addMouseListener(new InternalPopupMenuLauncher());
         table.getModel().addTableModelListener(e -> {
             Rectangle rect = table.getCellRect(((DiffTableModel) e.getSource()).getFirstChange(), 0, true);

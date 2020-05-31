@@ -43,6 +43,7 @@ public class NodeListViewer extends HistoryViewerPanel {
         tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel, tr("The nodes of this way are in reverse order")));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        table.getTableHeader().setReorderingAllowed(false);
         table.addMouseListener(new InternalPopupMenuLauncher());
         table.addMouseListener(new ShowHistoryAction.DoubleClickAdapter(e -> {
             int row = table.rowAtPoint(e.getPoint());
