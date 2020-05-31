@@ -512,8 +512,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         return null;
     }
 
-    @Override
-    public void addCommands(List<Tag> changedTags) {
+    protected String getSelectedValue() {
         Object obj = getSelectedItem();
         String display = obj == null ? getDisplayIfNull() : obj.toString();
         String value = null;
@@ -532,7 +531,12 @@ public abstract class ComboMultiSelect extends KeyedItem {
         } else {
             value = "";
         }
-        value = Utils.removeWhiteSpaces(value);
+        return Utils.removeWhiteSpaces(value);
+    }
+
+    @Override
+    public void addCommands(List<Tag> changedTags) {
+        String value = getSelectedValue();
 
         // no change if same as before
         if (originalValue == null) {

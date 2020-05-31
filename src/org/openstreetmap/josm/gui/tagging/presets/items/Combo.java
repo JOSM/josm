@@ -135,7 +135,7 @@ public class Combo extends ComboMultiSelect {
     }
 
     protected Color getColor() {
-        String colorString = String.valueOf(getSelectedItem());
+        String colorString = String.valueOf(getSelectedValue());
         return colorString.startsWith("#")
                 ? ColorHelper.html2color(colorString)
                 : CSSColors.get(colorString);
