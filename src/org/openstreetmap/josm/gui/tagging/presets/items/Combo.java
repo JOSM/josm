@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -106,6 +107,7 @@ public class Combo extends ComboMultiSelect {
             JButton button = new JButton(new ChooseColorAction());
             button.setOpaque(true);
             button.setBorderPainted(false);
+            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             p.add(button, GBC.eol().fill(GBC.VERTICAL));
             ActionListener updateColor = ignore -> button.setBackground(getColor());
             updateColor.actionPerformed(null);
