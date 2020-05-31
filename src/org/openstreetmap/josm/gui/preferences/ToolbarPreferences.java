@@ -69,6 +69,7 @@ import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -1015,11 +1016,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             control.setFloatable(false);
             control.setComponentPopupMenu(popupMenu);
         });
-        Config.getPref().addPreferenceChangeListener(e -> {
-            if ("toolbar.visible".equals(e.getKey())) {
-                refreshToolbarControl();
-            }
-        });
+        MapFrame.TOOLBAR_VISIBLE.addListener(e -> refreshToolbarControl());
     }
 
     private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
@@ -1201,7 +1198,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
 
-        boolean visible = Config.getPref().getBoolean("toolbar.visible", true);
+        boolean visible = MapFrame.TOOLBAR_VISIBLE.get();
 
         control.setFocusTraversalKeysEnabled(!unregisterTab);
         control.setVisible(visible && control.getComponentCount() != 0);

@@ -51,8 +51,8 @@ public class DialogsToggleAction extends ToggleAction {
         if (MainApplication.isDisplayingMapView()) {
             boolean selected = isSelected();
             if (!selected) {
-                toolbarPreviouslyVisible = Config.getPref().getBoolean("toolbar.visible", true);
-                sideToolbarPreviouslyVisible = Config.getPref().getBoolean("sidetoolbar.visible", true);
+                toolbarPreviouslyVisible = MapFrame.TOOLBAR_VISIBLE.get();
+                sideToolbarPreviouslyVisible = MapFrame.SIDE_TOOLBAR_VISIBLE.get();
             }
             MapFrame map = MainApplication.getMap();
             map.setDialogsPanelVisible(selected);
@@ -60,10 +60,10 @@ public class DialogsToggleAction extends ToggleAction {
             MainApplication.getMenu().setVisible(selected || Config.getPref().getBoolean("menu.always-visible", true));
             // Toolbars listen to preference changes, use it here
             if (!Config.getPref().getBoolean("toolbar.always-visible", true) && (!selected || toolbarPreviouslyVisible)) {
-                Config.getPref().putBoolean("toolbar.visible", selected);
+                MapFrame.TOOLBAR_VISIBLE.put(selected);
             }
             if (!Config.getPref().getBoolean("sidetoolbar.always-visible", true) && (!selected || sideToolbarPreviouslyVisible)) {
-                Config.getPref().putBoolean("sidetoolbar.visible", selected);
+                MapFrame.SIDE_TOOLBAR_VISIBLE.put(selected);
             }
             map.mapView.rememberLastPositionOnScreen();
         }

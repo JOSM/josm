@@ -56,6 +56,7 @@ import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.SelectLassoAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
 import org.openstreetmap.josm.data.ViewportData;
+import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
@@ -82,7 +83,6 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.AdvancedKeyPressDetector;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -107,6 +107,14 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      * @since 12347
      */
     public static final BooleanProperty MODELESS = new BooleanProperty("modeless", false);
+    /**
+     * Whether the toolbar is visible
+     */
+    public static final BooleanProperty TOOLBAR_VISIBLE = new BooleanProperty("toolbar.visible", true);
+    /**
+     * Whether the side toolbar is visible
+     */
+    public static final BooleanProperty SIDE_TOOLBAR_VISIBLE = new BooleanProperty("sidetoolbar.visible", true);
     /**
      * The current mode, this frame operates.
      */
@@ -345,7 +353,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         MainApplication.getMenu().modeMenu.removeAll();
         rememberToggleDialogWidth();
         dialogsPanel.destroy();
-        Config.getPref().removePreferenceChangeListener(sidetoolbarPreferencesChangedListener);
+        SIDE_TOOLBAR_VISIBLE.removeListener(sidetoolbarPreferencesChangedListener);
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i) {
             if (toolBarActions.getComponent(i) instanceof Destroyable) {
                 ((Destroyable) toolBarActions.getComponent(i)).destroy();
@@ -545,13 +553,9 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             final ScrollViewport svp = new ScrollViewport(sideToolBar, ScrollViewport.VERTICAL_DIRECTION);
             sideToolBar = svp;
         }
-        sideToolBar.setVisible(Config.getPref().getBoolean("sidetoolbar.visible", true));
-        sidetoolbarPreferencesChangedListener = e -> {
-            if ("sidetoolbar.visible".equals(e.getKey())) {
-                sideToolBar.setVisible(Config.getPref().getBoolean("sidetoolbar.visible"));
-            }
-        };
-        Config.getPref().addPreferenceChangeListener(sidetoolbarPreferencesChangedListener);
+        sideToolBar.setVisible(SIDE_TOOLBAR_VISIBLE.get());
+        sidetoolbarPreferencesChangedListener = e -> sideToolBar.setVisible(e.getProperty().get());
+        SIDE_TOOLBAR_VISIBLE.addListener(sidetoolbarPreferencesChangedListener);
 
         /**
          * sideToolBar: add it to the panel
@@ -632,7 +636,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             add(new AbstractAction(tr("Hide edit toolbar")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Config.getPref().putBoolean("sidetoolbar.visible", false);
+                    SIDE_TOOLBAR_VISIBLE.put(false);
                 }
             });
             add(doNotHide);
@@ -801,7 +805,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      */
     private static final CopyOnWriteArrayList<MapModeChangeListener> mapModeChangeListeners = new CopyOnWriteArrayList<>();
 
-    private transient PreferenceChangedListener sidetoolbarPreferencesChangedListener;
+    private transient AbstractProperty.ValueChangeListener<Boolean> sidetoolbarPreferencesChangedListener;
     /**
      * Adds a mapMode change listener
      *
