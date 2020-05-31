@@ -21,8 +21,11 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Version;
@@ -91,6 +94,8 @@ public final class ShowStatusReportAction extends JosmAction {
             .append(runtimeVersion != null ? runtimeVersion : getSystemProperty("java.version")).append(", ")
             .append(getSystemProperty("java.vendor")).append(", ")
             .append(getSystemProperty("java.vm.name"))
+            .append("\nLook and Feel: ")
+            .append(Optional.ofNullable(UIManager.getLookAndFeel()).map(laf -> laf.getClass().getName()).orElse("null"))
             .append("\nScreen: ");
         if (!GraphicsEnvironment.isHeadless()) {
             text.append(Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()).map(gd -> {
