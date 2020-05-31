@@ -822,10 +822,10 @@ public class MainMenu extends JMenuBar {
         viewMenu.addSeparator();
         viewMenu.add(new PreferenceToggleAction(tr("Main toolbar"),
                 tr("Toggles the visibility of the main toolbar (i.e., the horizontal toolbar)"),
-                MapFrame.TOOLBAR_VISIBLE.getKey(), MapFrame.TOOLBAR_VISIBLE.getDefaultValue()).getCheckbox());
+                MapFrame.TOOLBAR_VISIBLE).getCheckbox());
         viewMenu.add(new PreferenceToggleAction(tr("Edit toolbar"),
                 tr("Toggles the visibility of the edit toolbar (i.e., the vertical tool)"),
-                MapFrame.SIDE_TOOLBAR_VISIBLE.getKey(), MapFrame.SIDE_TOOLBAR_VISIBLE.getDefaultValue()).getCheckbox());
+                MapFrame.SIDE_TOOLBAR_VISIBLE).getCheckbox());
         // -- dialogs panel toggle action
         final JCheckBoxMenuItem dialogsToggle = new JCheckBoxMenuItem(dialogsToggleAction);
         dialogsToggle.setAccelerator(dialogsToggleAction.getShortcut().getKeyStroke());

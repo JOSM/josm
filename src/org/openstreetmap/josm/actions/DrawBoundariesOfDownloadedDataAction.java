@@ -21,8 +21,7 @@ public class DrawBoundariesOfDownloadedDataAction extends PreferenceToggleAction
     public DrawBoundariesOfDownloadedDataAction() {
         super(tr("Draw boundaries of downloaded data"),
                 tr("Enable/disable hatched background rendering of areas outside of the downloaded areas."),
-                DrawingPreference.SOURCE_BOUNDS_PROP.getKey(),
-                DrawingPreference.SOURCE_BOUNDS_PROP.getDefaultValue()
+                DrawingPreference.SOURCE_BOUNDS_PROP
         );
     }
 
