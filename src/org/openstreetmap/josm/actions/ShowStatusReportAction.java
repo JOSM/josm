@@ -101,8 +101,11 @@ public final class ShowStatusReportAction extends JosmAction {
             text.append(Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()).map(gd -> {
                         StringBuilder b = new StringBuilder(gd.getIDstring());
                         DisplayMode dm = gd.getDisplayMode();
-                        if (dm != null) {
+                        // Java 11 implements DisplayMode#toString
+                        if (dm != null && dm.toString().contains("java.awt.DisplayMode")) {
                             b.append(' ').append(dm.getWidth()).append('x').append(dm.getHeight());
+                        } else if (dm != null) {
+                            b.append(' ').append(dm.toString());
                         }
                         return b.toString();
                     }).collect(Collectors.joining(", ")));
