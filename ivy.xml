@@ -42,7 +42,7 @@
         <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.13.0" transitive="false"/>
         <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.21.4"/>
         <dependency conf="sources->sources" org="oauth.signpost" name="signpost-core" rev="2.0.0"/>
-        <dependency conf="sources->sources" org="org.webjars.npm" name="tag2link" rev="2020.5.16"/>
+        <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2020.5.16"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->
         <!-- commonslang->default -->
         <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.10"/>
         <!-- jacocoant->default -->
