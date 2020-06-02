@@ -283,7 +283,7 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="compile-cots" depends="init" description="Compiles third-party dependencies not retrieved with Ivy">
         <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/google/**,com/kitfox/**,oauth/**" excludes="**/package-info.java" nowarn="on" encoding="iso-8859-1"
+        <javac srcdir="${src.dir}" includes="com/kitfox/**" excludes="**/package-info.java" nowarn="on" encoding="iso-8859-1"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
