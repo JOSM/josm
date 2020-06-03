@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2020020101, Last Updated Sat Feb  1 07:07:01 2020 UTC
+        // Taken from Version 2020060300, Last Updated Wed Jun  3 07:07:01 2020 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -338,6 +338,7 @@ public final class DomainValidator extends AbstractValidator {
         "ally", // ally Ally Financial Inc.
         "alsace", // alsace REGION D ALSACE
         "alstom", // alstom ALSTOM
+        "amazon", // amazon Amazon Registry Services, Inc.
         "americanexpress", // americanexpress American Express Travel Related Services Company, Inc.
         "americanfamily", // americanfamily AmFam, Inc.
         "amex", // amex American Express Travel Related Services Company, Inc.
@@ -1424,6 +1425,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--c1avg", // орг Public Interest Registry
         "xn--c2br7g", // नेट VeriSign Sarl
         "xn--cck2b3b", // ストア Amazon Registry Services, Inc.
+        "xn--cckwcxetd", // アマゾン Amazon Registry Services, Inc.
         "xn--cg4bki", // 삼성 SAMSUNG SDS CO., LTD
         "xn--czr694b", // 商标 HU YI GLOBAL INFORMATION RESOURCES(HOLDING) COMPANY.HONGKONG LIMITED
         "xn--czrs0t", // 商店 Wild Island, LLC
@@ -1448,6 +1450,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--imr513n", // 餐厅 HU YI GLOBAL INFORMATION RESOURCES (HOLDING) COMPANY. HONGKONG LIMITED
         "xn--io0a7i", // 网络 Computer Network Information Center of Chinese Academy of Sciences （China Internet Network Information Center）
         "xn--j1aef", // ком VeriSign Sarl
+        "xn--jlq480n2rg", // 亚马逊 Amazon Registry Services, Inc.
         "xn--jlq61u9w7b", // 诺基亚 Nokia Corporation
         "xn--jvr189m", // 食品 Amazon Registry Services, Inc.
         "xn--kcrx77d1x4a", // 飞利浦 Koninklijke Philips N.V.
