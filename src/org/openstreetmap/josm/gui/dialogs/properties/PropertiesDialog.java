@@ -16,13 +16,13 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -672,8 +672,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             for (IPrimitive ref: primitive.getReferrers(true)) {
                 if (ref instanceof IRelation && !ref.isIncomplete() && !ref.isDeleted()) {
                     IRelation<?> r = (IRelation<?>) ref;
-                    MemberInfo mi = Optional.ofNullable(roles.get(r)).orElseGet(() -> new MemberInfo(newSel));
-                    roles.put(r, mi);
+                    MemberInfo mi = roles.computeIfAbsent(r, ignore -> new MemberInfo(newSel));
                     int i = 1;
                     for (IRelationMember<?> m : r.getMembers()) {
                         if (m.getMember() == primitive) {
@@ -974,7 +973,12 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                 }
             } else if (e.getSource() == membershipTable) {
                 int row = membershipTable.rowAtPoint(e.getPoint());
-                if (row > -1) {
+                int col = membershipTable.columnAtPoint(e.getPoint());
+                if (row > -1 && col == 1) {
+                    final Relation relation = (Relation) membershipData.getValueAt(row, 0);
+                    final MemberInfo memberInfo = (MemberInfo) membershipData.getValueAt(row, 1);
+                    RelationRoleEditor.editRole(relation, memberInfo);
+                } else if (row > -1) {
                     editMembership(row);
                 }
             } else {
@@ -1023,6 +1027,10 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                 selection = null;
             }
             return Utils.shortenString(positionString, 20);
+        }
+
+        List<IRelationMember<?>> getRole() {
+            return Collections.unmodifiableList(role);
         }
 
         String getRoleString() {
