@@ -196,6 +196,7 @@ public abstract class HttpClient {
         } finally {
             if (!successfulConnection) {
                 performDisconnection();
+                progressMonitor.finishTask();
             }
         }
     }
