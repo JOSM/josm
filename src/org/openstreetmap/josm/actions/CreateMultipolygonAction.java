@@ -114,9 +114,11 @@ public class CreateMultipolygonAction extends JosmAction {
 
             // to avoid EDT violations
             SwingUtilities.invokeLater(() -> {
-                    UndoRedoHandler.getInstance().add(command);
+                UndoRedoHandler.getInstance().add(command);
                 final Relation relation = (Relation) MainApplication.getLayerManager().getEditDataSet()
                         .getPrimitiveById(commandAndRelation.b);
+                if (relation == null || relation.getDataSet() == null)
+                    return; // should not happen
 
                 // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
                 // knows about the new relation before we try to select it.
@@ -126,12 +128,18 @@ public class CreateMultipolygonAction extends JosmAction {
                     MainApplication.getMap().relationListDialog.selectRelation(relation);
                     if (Config.getPref().getBoolean("multipoly.show-relation-editor", false)) {
                         //Open relation edit window, if set up in preferences
+                        // see #19346 un-select updated multipolygon
+                        MainApplication.getLayerManager().getEditDataSet().clearSelection(relation);
                         RelationEditor editor = RelationEditor
                                 .getEditor(MainApplication.getLayerManager().getEditLayer(), relation, null);
                         editor.setModal(true);
                         editor.setVisible(true);
                     } else {
                         MainApplication.getLayerManager().getEditLayer().setRecentRelation(relation);
+                        if (multipolygonRelation == null) {
+                            // see #19346 select new multipolygon
+                            MainApplication.getLayerManager().getEditDataSet().setSelected(relation);
+                        }
                     }
                 });
             });
