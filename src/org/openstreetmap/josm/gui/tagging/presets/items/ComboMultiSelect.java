@@ -13,12 +13,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -113,13 +115,20 @@ public abstract class ComboMultiSelect extends KeyedItem {
                 return lbl;
             }
 
+            if (index == -1) {
+                // Take the longest element for the preferred width (#19321)
+                // We do not want the editor to have the maximum height of all entries. Return a dummy with bogus height.
+                IntStream.range(0, list.getModel().getSize())
+                        .mapToObj(i -> getListCellRendererComponent(list, list.getModel().getElementAt(i), i, isSelected, cellHasFocus))
+                        .map(Component::getPreferredSize)
+                        .max(Comparator.comparingInt(dim -> dim.width))
+                        .ifPresent(dim -> lbl.setPreferredSize(new Dimension(dim.width, 10)));
+                return lbl;
+            }
+
             // Only return cached size, item is not shown
             if (!list.isShowing() && item.preferredWidth != -1 && item.preferredHeight != -1) {
-                if (index == -1) {
-                    lbl.setPreferredSize(new Dimension(item.preferredWidth, 10));
-                } else {
-                    lbl.setPreferredSize(new Dimension(item.preferredWidth, item.preferredHeight));
-                }
+                lbl.setPreferredSize(new Dimension(item.preferredWidth, item.preferredHeight));
                 return lbl;
             }
 
@@ -143,11 +152,6 @@ public abstract class ComboMultiSelect extends KeyedItem {
             item.preferredWidth = (short) lbl.getPreferredSize().width;
             item.preferredHeight = (short) lbl.getPreferredSize().height;
 
-            // We do not want the editor to have the maximum height of all
-            // entries. Return a dummy with bogus height.
-            if (index == -1) {
-                lbl.setPreferredSize(new Dimension(lbl.getPreferredSize().width, 10));
-            }
             return lbl;
         }
     }
