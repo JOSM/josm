@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
+import java.util.Collections;
 import java.util.EventObject;
 import java.util.LinkedList;
 import java.util.List;
@@ -237,19 +238,19 @@ public final class UndoRedoHandler {
     /**
      * Returns all commands that were made on the dataset, that can be undone.
      * @return all commands that were made on the dataset, that can be undone
-     * @since 14281
+     * @since 14281, 16567 (signature)
      */
-    public LinkedList<Command> getUndoCommands() {
-        return new LinkedList<>(commands);
+    public List<Command> getUndoCommands() {
+        return Collections.unmodifiableList(commands);
     }
 
     /**
      * Returns all commands that were made and undone on the dataset, that can be redone.
      * @return all commands that were made and undone on the dataset, that can be redone.
-     * @since 14281
+     * @since 14281, 16567 (signature)
      */
-    public LinkedList<Command> getRedoCommands() {
-        return new LinkedList<>(redoCommands);
+    public List<Command> getRedoCommands() {
+        return Collections.unmodifiableList(redoCommands);
     }
 
     /**
