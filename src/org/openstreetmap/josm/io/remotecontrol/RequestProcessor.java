@@ -6,12 +6,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -23,6 +23,13 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
@@ -389,25 +396,16 @@ public class RequestProcessor extends Thread {
     }
 
     /**
-     * Returns the JSON information for all handlers.
-     * @return the JSON information for all handlers
+     * Returns the JSON information for the given (if null: all) handlers.
+     * @param handlers the handlers
+     * @return the JSON information for the given (if null: all) handlers
      */
-    public static String getHandlersInfoAsJSON() {
-        StringBuilder r = new StringBuilder();
-        boolean first = true;
-        r.append('[');
-
-        for (Entry<String, Class<? extends RequestHandler>> p : handlers.entrySet()) {
-            if (first) {
-                first = false;
-            } else {
-                r.append(", ");
-            }
-            r.append(getHandlerInfoAsJSON(p.getKey()));
+    public static JsonArray getHandlersInfoAsJSON(Collection<String> handlers) {
+        JsonArrayBuilder json = Json.createArrayBuilder();
+        for (String s : Utils.firstNonNull(handlers, RequestProcessor.handlers.keySet())) {
+            json.add(getHandlerInfoAsJSON(s));
         }
-        r.append(']');
-
-        return r.toString();
+        return json.build();
     }
 
     /**
@@ -415,72 +413,36 @@ public class RequestProcessor extends Thread {
      * @param cmd handler key
      * @return JSON information for the given handler
      */
-    public static String getHandlerInfoAsJSON(String cmd) {
-        try (StringWriter w = new StringWriter()) {
-            RequestHandler handler = null;
-            try {
-                Class<?> c = handlers.get(cmd);
-                if (c == null) return null;
-                handler = handlers.get(cmd).getConstructor().newInstance();
-            } catch (ReflectiveOperationException ex) {
-                Logging.error(ex);
-                return null;
-            }
-
-            try (PrintWriter r = new PrintWriter(w)) {
-                printJsonInfo(cmd, r, handler);
-                return w.toString();
-            }
-        } catch (IOException e) {
-            Logging.error(e);
+    public static JsonObject getHandlerInfoAsJSON(String cmd) {
+        RequestHandler handler;
+        try {
+            Class<?> c = handlers.get(cmd);
+            if (c == null) return null;
+            handler = handlers.get(cmd).getConstructor().newInstance();
+        } catch (ReflectiveOperationException ex) {
+            Logging.warn("Unknown handler " + cmd);
+            Logging.error(ex);
             return null;
         }
+        return getHandlerInfoAsJSON(cmd, handler);
     }
 
-    private static void printJsonInfo(String cmd, PrintWriter r, RequestHandler handler) {
-        r.printf("{ \"request\" : \"%s\"", cmd);
+    private static JsonObject getHandlerInfoAsJSON(String cmd, RequestHandler handler) {
+        JsonObjectBuilder json = Json.createObjectBuilder();
+        json.add("request", cmd);
         if (handler.getUsage() != null) {
-            r.printf(", \"usage\" : \"%s\"", handler.getUsage());
+            json.add("usage", handler.getUsage());
         }
-        r.append(", \"parameters\" : [");
+        json.add("parameters", toJsonArray(handler.getMandatoryParams()));
+        json.add("optional", toJsonArray(handler.getOptionalParams()));
+        json.add("examples", toJsonArray(handler.getUsageExamples(cmd.substring(1))));
+        return json.build();
+    }
 
-        String[] params = handler.getMandatoryParams();
-        if (params != null) {
-            for (int i = 0; i < params.length; i++) {
-                if (i == 0) {
-                    r.append('\"');
-                } else {
-                    r.append(", \"");
-                }
-                r.append(params[i]).append('\"');
-            }
-        }
-        r.append("], \"optional\" : [");
-        String[] optional = handler.getOptionalParams();
-        if (optional != null) {
-            for (int i = 0; i < optional.length; i++) {
-                if (i == 0) {
-                    r.append('\"');
-                } else {
-                    r.append(", \"");
-                }
-                r.append(optional[i]).append('\"');
-            }
-        }
-
-        r.append("], \"examples\" : [");
-        String[] examples = handler.getUsageExamples(cmd.substring(1));
-        if (examples != null) {
-            for (int i = 0; i < examples.length; i++) {
-                if (i == 0) {
-                    r.append('\"');
-                } else {
-                    r.append(", \"");
-                }
-                r.append(examples[i]).append('\"');
-            }
-        }
-        r.append("]}");
+    private static JsonArray toJsonArray(String[] strings) {
+        return Arrays.stream(strings)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Json::createArrayBuilder))
+                .build();
     }
 
     /**
