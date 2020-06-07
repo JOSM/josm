@@ -18,8 +18,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -408,10 +410,12 @@ public class ImageryProvidersPanel extends JPanel {
         }
 
         private <T> void doCleanupResidualBounds(Map<Integer, T> map, Consumer<T> removalEffect) {
-            for (Integer i : map.keySet()) {
-                int viewIndex = defaultTable.convertRowIndexToView(i);
+            for (Iterator<Entry<Integer, T>> it = map.entrySet().iterator(); it.hasNext();) {
+                Entry<Integer, T> e = it.next();
+                int viewIndex = defaultTable.convertRowIndexToView(e.getKey());
                 if (!defaultTable.getSelectionModel().isSelectedIndex(viewIndex)) {
-                    removalEffect.accept(map.remove(i));
+                    it.remove();
+                    removalEffect.accept(e.getValue());
                 }
             }
         }

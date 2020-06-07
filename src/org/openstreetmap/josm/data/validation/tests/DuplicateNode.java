@@ -186,9 +186,10 @@ public class DuplicateNode extends Test {
                                 boolean typed = false;
                                 Way w = (Way) sp;
                                 Map<String, String> keys = w.getKeys();
-                                for (String type: typeMap.keySet()) {
-                                    if (keys.containsKey(type)) {
-                                        typeMap.put(type, Boolean.TRUE);
+                                for (Iterator<Entry<String, Boolean>> itt = typeMap.entrySet().iterator(); itt.hasNext();) {
+                                    Entry<String, Boolean> e = itt.next();
+                                    if (keys.containsKey(e.getKey())) {
+                                        e.setValue(Boolean.TRUE);
                                         typed = true;
                                     }
                                 }
