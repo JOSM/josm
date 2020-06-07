@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -131,6 +132,7 @@ public class ImageryReader implements Closeable {
         /** In case of mirror parsing this contains the mirror entry */
         private ImageryInfo mirrorEntry;
         private ImageryBounds bounds;
+        private Map<ImageryBounds, ImageryBounds> boundsInterner = new HashMap<>();
         private Shape shape;
         // language of last element, does only work for simple ENTRY_ATTRIBUTE's
         private String lang;
@@ -541,7 +543,7 @@ public class ImageryReader implements Closeable {
                 }
                 break;
             case BOUNDS:
-                entry.setBounds(bounds);
+                entry.setBounds(intern(bounds));
                 bounds = null;
                 break;
             case SHAPE:
@@ -566,6 +568,10 @@ public class ImageryReader implements Closeable {
             default:
                 // nothing to do for these or the unknown type
             }
+        }
+
+        private ImageryBounds intern(ImageryBounds imageryBounds) {
+            return boundsInterner.computeIfAbsent(imageryBounds, ignore -> imageryBounds);
         }
     }
 
