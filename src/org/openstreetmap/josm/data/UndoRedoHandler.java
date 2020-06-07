@@ -22,19 +22,19 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public final class UndoRedoHandler {
 
     /**
-     * All commands that were made on the dataset. Don't write from outside!
+     * All commands that were made on the dataset
      *
      * @see #getLastCommand()
      * @see #getUndoCommands()
      */
-    public final LinkedList<Command> commands = new LinkedList<>();
+    private final LinkedList<Command> commands = new LinkedList<>();
 
     /**
      * The stack for redoing commands
 
      * @see #getRedoCommands()
      */
-    public final LinkedList<Command> redoCommands = new LinkedList<>();
+    private final LinkedList<Command> redoCommands = new LinkedList<>();
 
     private final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<>();
     private final LinkedList<CommandQueuePreciseListener> preciseListenerCommands = new LinkedList<>();
