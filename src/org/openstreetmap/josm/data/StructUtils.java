@@ -151,7 +151,7 @@ public final class StructUtils {
         }
 
         HashMap<String, String> hash = new LinkedHashMap<>();
-        for (Field f : klass.getDeclaredFields()) {
+        for (Field f : getDeclaredFieldsInClassOrSuperTypes(klass)) {
             if (f.getAnnotation(StructEntry.class) == null) {
                 continue;
             }
@@ -200,14 +200,9 @@ public final class StructUtils {
         }
         for (Map.Entry<String, String> keyValue : hash.entrySet()) {
             Object value;
-            Field f;
-            try {
-                f = klass.getDeclaredField(keyValue.getKey().replace('-', '_'));
-            } catch (NoSuchFieldException ex) {
-                Logging.trace(ex);
-                continue;
-            }
-            if (f.getAnnotation(StructEntry.class) == null) {
+            Field f = getDeclaredFieldInClassOrSuperTypes(klass, keyValue.getKey().replace('-', '_'));
+
+            if (f == null || f.getAnnotation(StructEntry.class) == null) {
                 continue;
             }
             ReflectionUtils.setObjectsAccessible(f);
@@ -243,6 +238,29 @@ public final class StructUtils {
             }
         }
         return struct;
+    }
+
+    private static <T> Field getDeclaredFieldInClassOrSuperTypes(Class<T> clazz, String fieldName) {
+        Class<?> tClass = clazz;
+        do {
+            try {
+                return tClass.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException ex) {
+                Logging.trace(ex);
+            }
+            tClass = tClass.getSuperclass();
+        } while (tClass != null);
+        return null;
+    }
+
+    private static <T> Field[] getDeclaredFieldsInClassOrSuperTypes(Class<T> clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class<?> tclass = clazz;
+        do {
+            Collections.addAll(fields, tclass.getDeclaredFields());
+            tclass = tclass.getSuperclass();
+        } while (tclass != null);
+        return fields.toArray(new Field[] {});
     }
 
     @SuppressWarnings("rawtypes")

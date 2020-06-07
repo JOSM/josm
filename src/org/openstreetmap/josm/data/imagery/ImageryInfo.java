@@ -3,21 +3,17 @@ package org.openstreetmap.josm.data.imagery;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Image;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,25 +22,17 @@ import java.util.stream.Collectors;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.stream.JsonCollectors;
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.Attributed;
-import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
-import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
-import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
-import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.StructUtils.StructEntry;
-import org.openstreetmap.josm.io.Capabilities;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.spi.preferences.IPreferences;
+import org.openstreetmap.josm.data.sources.ISourceCategory;
+import org.openstreetmap.josm.data.sources.ISourceType;
+import org.openstreetmap.josm.data.sources.SourceBounds;
+import org.openstreetmap.josm.data.sources.SourceInfo;
+import org.openstreetmap.josm.data.sources.SourcePreferenceEntry;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
-import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.StreamUtils;
@@ -55,12 +43,13 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author Frederik Ramm
  */
-public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInfo>, Attributed {
+public class ImageryInfo extends
+        SourceInfo<ImageryInfo.ImageryCategory, ImageryInfo.ImageryType, ImageryInfo.ImageryBounds, ImageryInfo.ImageryPreferenceEntry> {
 
     /**
      * Type of imagery entry.
      */
-    public enum ImageryType {
+    public enum ImageryType implements ISourceType<ImageryType> {
         /** A WMS (Web Map Service) entry. **/
         WMS("wms"),
         /** A TMS (Tile Map Service) entry. **/
@@ -85,6 +74,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          * @return the unique string identifying this type
          * @since 6690
          */
+        @Override
         public final String getTypeString() {
             return typeString;
         }
@@ -99,13 +89,23 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                     .filter(type -> type.getTypeString().equals(s))
                     .findFirst().orElse(null);
         }
+
+        @Override
+        public ImageryType getFromString(String s) {
+            return fromString(s);
+        }
+
+        @Override
+        public ImageryType getDefault() {
+            return WMS;
+        }
     }
 
     /**
      * Category of imagery entry.
      * @since 13792
      */
-    public enum ImageryCategory {
+    public enum ImageryCategory implements ISourceCategory<ImageryCategory> {
         /** A aerial or satellite photo. **/
         PHOTO(/* ICON(data/imagery/) */ "photo", tr("Aerial or satellite photo")),
         /** A map of digital terrain model, digital surface model or contour lines. **/
@@ -137,6 +137,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          * Returns the unique string identifying this category.
          * @return the unique string identifying this category
          */
+        @Override
         public final String getCategoryString() {
             return category;
         }
@@ -145,6 +146,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          * Returns the description of this category.
          * @return the description of this category
          */
+        @Override
         public final String getDescription() {
             return description;
         }
@@ -155,6 +157,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          * @return the category icon at the given size
          * @since 15049
          */
+        @Override
         public final ImageIcon getIcon(ImageSizes size) {
             return iconCache
                     .computeIfAbsent(size, x -> Collections.synchronizedMap(new EnumMap<>(ImageryCategory.class)))
@@ -171,13 +174,23 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                     .filter(category -> category.getCategoryString().equals(s))
                     .findFirst().orElse(null);
         }
+
+        @Override
+        public ImageryCategory getDefault() {
+            return OTHER;
+        }
+
+        @Override
+        public ImageryCategory getFromString(String s) {
+            return fromString(s);
+        }
     }
 
     /**
      * Multi-polygon bounds for imagery backgrounds.
      * Used to display imagery coverage in preferences and to determine relevant imagery entries based on edit location.
      */
-    public static class ImageryBounds extends Bounds {
+    public static class ImageryBounds extends SourceBounds {
 
         /**
          * Constructs a new {@code ImageryBounds} from string.
@@ -187,97 +200,15 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         public ImageryBounds(String asString, String separator) {
             super(asString, separator);
         }
-
-        private List<Shape> shapes = new ArrayList<>();
-
-        /**
-         * Adds a new shape to this bounds.
-         * @param shape The shape to add
-         */
-        public final void addShape(Shape shape) {
-            this.shapes.add(shape);
-        }
-
-        /**
-         * Sets the list of shapes defining this bounds.
-         * @param shapes The list of shapes defining this bounds.
-         */
-        public final void setShapes(List<Shape> shapes) {
-            this.shapes = shapes;
-        }
-
-        /**
-         * Returns the list of shapes defining this bounds.
-         * @return The list of shapes defining this bounds
-         */
-        public final List<Shape> getShapes() {
-            return shapes;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(super.hashCode(), shapes);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            if (!super.equals(o)) return false;
-            ImageryBounds that = (ImageryBounds) o;
-            return Objects.equals(shapes, that.shapes);
-        }
     }
 
-    /** original name of the imagery entry in case of translation call, for multiple languages English when possible */
-    private String origName;
-    /** (original) language of the translated name entry */
-    private String langName;
-    /** whether this is a entry activated by default or not */
-    private boolean defaultEntry;
-    /** Whether this service requires a explicit EULA acceptance before it can be activated */
-    private String eulaAcceptanceRequired;
-    /** type of the imagery servics - WMS, TMS, ... */
-    private ImageryType imageryType = ImageryType.WMS;
     private double pixelPerDegree;
     /** maximum zoom level for TMS imagery */
     private int defaultMaxZoom;
     /** minimum zoom level for TMS imagery */
     private int defaultMinZoom;
-    /** display bounds of imagery, displayed in prefs and used for automatic imagery selection */
-    private ImageryBounds bounds;
     /** projections supported by WMS servers */
     private List<String> serverProjections = Collections.emptyList();
-    /** description of the imagery entry, should contain notes what type of data it is */
-    private String description;
-    /** language of the description entry */
-    private String langDescription;
-    /** Text of a text attribution displayed when using the imagery */
-    private String attributionText;
-    /** Link to the privacy policy of the operator */
-    private String privacyPolicyURL;
-    /** Link to a reference stating the permission for OSM usage */
-    private String permissionReferenceURL;
-    /** Link behind the text attribution displayed when using the imagery */
-    private String attributionLinkURL;
-    /** Image of a graphical attribution displayed when using the imagery */
-    private String attributionImage;
-    /** Link behind the graphical attribution displayed when using the imagery */
-    private String attributionImageURL;
-    /** Text with usage terms displayed when using the imagery */
-    private String termsOfUseText;
-    /** Link behind the text with usage terms displayed when using the imagery */
-    private String termsOfUseURL;
-    /** country code of the imagery (for country specific imagery) */
-    private String countryCode = "";
-    /**
-      * creation date of the imagery (in the form YYYY-MM-DD;YYYY-MM-DD, where
-      * DD and MM as well as a second date are optional).
-      *
-      * Also used as time filter for WMS time={time} parameter (such as Sentinel-2)
-      * @since 11570
-      */
-    private String date;
     /**
       * marked as best in other editors
       * @since 11575
@@ -288,64 +219,29 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
       * @since 13536
       */
     private boolean overlay;
-    /**
-      * list of old IDs, only for loading, not handled anywhere else
-      * @since 13536
-      */
-    private Collection<String> oldIds;
-    /** mirrors of different type for this entry */
-    private List<ImageryInfo> mirrors;
-    /** icon used in menu */
-    private String icon;
-    /** is the geo reference correct - don't offer offset handling */
-    private boolean isGeoreferenceValid;
-    /** which layers should be activated by default on layer addition. **/
-    private List<DefaultLayer> defaultLayers = Collections.emptyList();
-    /** HTTP headers **/
-    private Map<String, String> customHttpHeaders = Collections.emptyMap();
-    /** Should this map be transparent **/
-    private boolean transparent = true;
-    private int minimumTileExpire = (int) TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get());
-    /** category of the imagery */
-    private ImageryCategory category;
-    /** category of the imagery (input string, not saved, copied or used otherwise except for error checks) */
-    private String categoryOriginalString;
-    /** when adding a field, also adapt the:
-     * {@link #ImageryPreferenceEntry ImageryPreferenceEntry object}
-     * {@link #ImageryPreferenceEntry#ImageryPreferenceEntry(ImageryInfo) ImageryPreferenceEntry constructor}
-     * {@link #ImageryInfo(ImageryPreferenceEntry) ImageryInfo constructor}
-     * {@link #ImageryInfo(ImageryInfo) ImageryInfo constructor}
-     * {@link #equalsPref(ImageryPreferenceEntry) equalsPref method}
-     **/
 
+    /** mirrors of different type for this entry */
+    protected List<ImageryInfo> mirrors;
     /**
      * Auxiliary class to save an {@link ImageryInfo} object in the preferences.
      */
-    public static class ImageryPreferenceEntry {
-        @StructEntry String name;
+    /** is the geo reference correct - don't offer offset handling */
+    private boolean isGeoreferenceValid;
+    /** Should this map be transparent **/
+    private boolean transparent = true;
+    private int minimumTileExpire = (int) TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get());
+
+    /**
+     * The ImageryPreferenceEntry class for storing data in JOSM preferences.
+     *
+     * @author Frederik Ramm, modified by Taylor Smock
+     */
+    public static class ImageryPreferenceEntry extends SourcePreferenceEntry<ImageryInfo> {
         @StructEntry String d;
-        @StructEntry String id;
-        @StructEntry String type;
-        @StructEntry String url;
         @StructEntry double pixel_per_eastnorth;
-        @StructEntry String eula;
-        @StructEntry String attribution_text;
-        @StructEntry String attribution_url;
-        @StructEntry String permission_reference_url;
-        @StructEntry String logo_image;
-        @StructEntry String logo_url;
-        @StructEntry String terms_of_use_text;
-        @StructEntry String terms_of_use_url;
-        @StructEntry String country_code = "";
-        @StructEntry String date;
         @StructEntry int max_zoom;
         @StructEntry int min_zoom;
-        @StructEntry String cookies;
-        @StructEntry String bounds;
-        @StructEntry String shapes;
         @StructEntry String projections;
-        @StructEntry String icon;
-        @StructEntry String description;
         @StructEntry MultiMap<String, String> noTileHeaders;
         @StructEntry MultiMap<String, String> noTileChecksums;
         @StructEntry int tileSize = -1;
@@ -354,17 +250,14 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @StructEntry boolean bestMarked;
         @StructEntry boolean modTileFeatures;
         @StructEntry boolean overlay;
-        @StructEntry String default_layers;
-        @StructEntry Map<String, String> customHttpHeaders;
         @StructEntry boolean transparent;
         @StructEntry int minimumTileExpire;
-        @StructEntry String category;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
          */
         public ImageryPreferenceEntry() {
-            // Do nothing
+            super();
         }
 
         /**
@@ -372,36 +265,12 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
          * @param i The corresponding imagery info
          */
         public ImageryPreferenceEntry(ImageryInfo i) {
-            name = i.name;
-            id = i.id;
-            type = i.imageryType.getTypeString();
-            url = i.url;
+            super(i);
             pixel_per_eastnorth = i.pixelPerDegree;
-            eula = i.eulaAcceptanceRequired;
-            attribution_text = i.attributionText;
-            attribution_url = i.attributionLinkURL;
-            permission_reference_url = i.permissionReferenceURL;
-            date = i.date;
             bestMarked = i.bestMarked;
             overlay = i.overlay;
-            logo_image = i.attributionImage;
-            logo_url = i.attributionImageURL;
-            terms_of_use_text = i.termsOfUseText;
-            terms_of_use_url = i.termsOfUseURL;
-            country_code = i.countryCode;
             max_zoom = i.defaultMaxZoom;
             min_zoom = i.defaultMinZoom;
-            cookies = i.cookies;
-            icon = intern(i.icon);
-            description = i.description;
-            category = i.category != null ? i.category.getCategoryString() : null;
-            if (i.bounds != null) {
-                bounds = i.bounds.encodeAsString(",");
-                String shapesString = Shape.encodeAsString(i.bounds.getShapes());
-                if (!shapesString.isEmpty()) {
-                    shapes = shapesString;
-                }
-            }
             if (!i.serverProjections.isEmpty()) {
                 projections = String.join(",", i.serverProjections);
             }
@@ -421,10 +290,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
             valid_georeference = i.isGeoreferenceValid();
             modTileFeatures = i.isModTileFeatures();
-            if (!i.defaultLayers.isEmpty()) {
-                default_layers = i.defaultLayers.stream().map(DefaultLayer::toJson).collect(JsonCollectors.toJsonArray()).toString();
-            }
-            customHttpHeaders = i.customHttpHeaders;
             transparent = i.isTransparent();
             minimumTileExpire = i.minimumTileExpire;
         }
@@ -493,7 +358,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.cookies = cookies;
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
         if (t != null) {
-            this.imageryType = t;
+            this.sourceType = t;
         } else if (type != null && !type.isEmpty()) {
             throw new IllegalArgumentException("unknown type: "+type);
         }
@@ -525,8 +390,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         description = e.description;
         cookies = e.cookies;
         eulaAcceptanceRequired = e.eula;
-        imageryType = ImageryType.fromString(e.type);
-        if (imageryType == null) throw new IllegalArgumentException("unknown type");
+        sourceType = ImageryType.fromString(e.type);
+        if (sourceType == null) throw new IllegalArgumentException("unknown type");
         pixelPerDegree = e.pixel_per_eastnorth;
         defaultMaxZoom = e.max_zoom;
         defaultMinZoom = e.min_zoom;
@@ -546,7 +411,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             // split generates null element on empty string which gives one element Array[null]
             setServerProjections(Arrays.asList(e.projections.split(",")));
         }
-        attributionText = intern(e.attribution_text);
+        attributionText = Utils.intern(e.attribution_text);
         attributionLinkURL = e.attribution_url;
         permissionReferenceURL = e.permission_reference_url;
         attributionImage = e.logo_image;
@@ -556,8 +421,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         overlay = e.overlay;
         termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
-        countryCode = intern(e.country_code);
-        icon = intern(e.icon);
+        countryCode = Utils.intern(e.country_code);
+        icon = Utils.intern(e.icon);
         if (e.noTileHeaders != null) {
             noTileHeaders = e.noTileHeaders.toMap();
         }
@@ -573,7 +438,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 defaultLayers = jsonReader.
                         readArray().
                         stream().
-                        map(x -> DefaultLayer.fromJson((JsonObject) x, imageryType)).
+                        map(x -> DefaultLayer.fromJson((JsonObject) x, sourceType)).
                         collect(Collectors.toList());
             }
         }
@@ -602,7 +467,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.langName = i.langName;
         this.defaultEntry = i.defaultEntry;
         this.eulaAcceptanceRequired = null;
-        this.imageryType = i.imageryType;
+        this.sourceType = i.sourceType;
         this.pixelPerDegree = i.pixelPerDegree;
         this.defaultMaxZoom = i.defaultMaxZoom;
         this.defaultMinZoom = i.defaultMinZoom;
@@ -623,19 +488,76 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.bestMarked = i.bestMarked;
         this.overlay = i.overlay;
         // do not copy field {@code mirrors}
-        this.icon = intern(i.icon);
+        this.icon = Utils.intern(i.icon);
         this.isGeoreferenceValid = i.isGeoreferenceValid;
         setDefaultLayers(i.defaultLayers);
         setCustomHttpHeaders(i.customHttpHeaders);
         this.transparent = i.transparent;
         this.minimumTileExpire = i.minimumTileExpire;
-        this.categoryOriginalString = intern(i.categoryOriginalString);
+        this.categoryOriginalString = Utils.intern(i.categoryOriginalString);
         this.category = i.category;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(url, imageryType);
+    /**
+     * Adds a mirror entry. Mirror entries are completed with the data from the master entry
+     * and only describe another method to access identical data.
+     *
+     * @param entry the mirror to be added
+     * @since 9658
+     */
+    public void addMirror(ImageryInfo entry) {
+        if (mirrors == null) {
+            mirrors = new ArrayList<>();
+        }
+        mirrors.add(entry);
+    }
+
+    /**
+     * Returns the mirror entries. Entries are completed with master entry data.
+     *
+     * @return the list of mirrors
+     * @since 9658
+     */
+    public List<ImageryInfo> getMirrors() {
+        List<ImageryInfo> l = new ArrayList<>();
+        if (mirrors != null) {
+            int num = 1;
+            for (ImageryInfo i : mirrors) {
+                ImageryInfo n = new ImageryInfo(this);
+                if (i.defaultMaxZoom != 0) {
+                    n.defaultMaxZoom = i.defaultMaxZoom;
+                }
+                if (i.defaultMinZoom != 0) {
+                    n.defaultMinZoom = i.defaultMinZoom;
+                }
+                n.setServerProjections(i.getServerProjections());
+                n.url = i.url;
+                n.sourceType = i.sourceType;
+                if (i.getTileSize() != 0) {
+                    n.setTileSize(i.getTileSize());
+                }
+                if (i.getPrivacyPolicyURL() != null) {
+                    n.setPrivacyPolicyURL(i.getPrivacyPolicyURL());
+                }
+                if (n.id != null) {
+                    n.id = n.id + "_mirror" + num;
+                }
+                if (num > 1) {
+                    n.name = tr("{0} mirror server {1}", n.name, num);
+                    if (n.origName != null) {
+                        n.origName += " mirror server " + num;
+                    }
+                } else {
+                    n.name = tr("{0} mirror server", n.name);
+                    if (n.origName != null) {
+                        n.origName += " mirror server";
+                    }
+                }
+                l.add(n);
+                ++num;
+            }
+        }
+        return l;
     }
 
     /**
@@ -647,109 +569,38 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @param other the ImageryInfo object to compare to
      * @return true if they are equal
      */
-    public boolean equalsPref(ImageryInfo other) {
-        if (other == null) {
+    @Override
+    public boolean equalsPref(SourceInfo<ImageryInfo.ImageryCategory, ImageryInfo.ImageryType,
+            ImageryInfo.ImageryBounds, ImageryInfo.ImageryPreferenceEntry> other) {
+        if (!(other instanceof ImageryInfo)) {
             return false;
         }
+        ImageryInfo realOther = (ImageryInfo) other;
 
         // CHECKSTYLE.OFF: BooleanExpressionComplexity
-        return
-                Objects.equals(this.name, other.name) &&
-                Objects.equals(this.id, other.id) &&
-                Objects.equals(this.url, other.url) &&
-                Objects.equals(this.modTileFeatures, other.modTileFeatures) &&
-                Objects.equals(this.bestMarked, other.bestMarked) &&
-                Objects.equals(this.overlay, other.overlay) &&
-                Objects.equals(this.isGeoreferenceValid, other.isGeoreferenceValid) &&
-                Objects.equals(this.cookies, other.cookies) &&
-                Objects.equals(this.eulaAcceptanceRequired, other.eulaAcceptanceRequired) &&
-                Objects.equals(this.imageryType, other.imageryType) &&
-                Objects.equals(this.defaultMaxZoom, other.defaultMaxZoom) &&
-                Objects.equals(this.defaultMinZoom, other.defaultMinZoom) &&
-                Objects.equals(this.bounds, other.bounds) &&
-                Objects.equals(this.serverProjections, other.serverProjections) &&
-                Objects.equals(this.attributionText, other.attributionText) &&
-                Objects.equals(this.attributionLinkURL, other.attributionLinkURL) &&
-                Objects.equals(this.permissionReferenceURL, other.permissionReferenceURL) &&
-                Objects.equals(this.attributionImageURL, other.attributionImageURL) &&
-                Objects.equals(this.attributionImage, other.attributionImage) &&
-                Objects.equals(this.termsOfUseText, other.termsOfUseText) &&
-                Objects.equals(this.termsOfUseURL, other.termsOfUseURL) &&
-                Objects.equals(this.countryCode, other.countryCode) &&
-                Objects.equals(this.date, other.date) &&
-                Objects.equals(this.icon, other.icon) &&
-                Objects.equals(this.description, other.description) &&
-                Objects.equals(this.noTileHeaders, other.noTileHeaders) &&
-                Objects.equals(this.noTileChecksums, other.noTileChecksums) &&
-                Objects.equals(this.metadataHeaders, other.metadataHeaders) &&
-                Objects.equals(this.defaultLayers, other.defaultLayers) &&
-                Objects.equals(this.customHttpHeaders, other.customHttpHeaders) &&
-                Objects.equals(this.transparent, other.transparent) &&
-                Objects.equals(this.minimumTileExpire, other.minimumTileExpire) &&
-                Objects.equals(this.category, other.category);
+        return super.equalsPref(realOther) &&
+                Objects.equals(this.bestMarked, realOther.bestMarked) &&
+                Objects.equals(this.overlay, realOther.overlay) &&
+                Objects.equals(this.isGeoreferenceValid, realOther.isGeoreferenceValid) &&
+                Objects.equals(this.defaultMaxZoom, realOther.defaultMaxZoom) &&
+                Objects.equals(this.defaultMinZoom, realOther.defaultMinZoom) &&
+                Objects.equals(this.serverProjections, realOther.serverProjections) &&
+                Objects.equals(this.transparent, realOther.transparent) &&
+                Objects.equals(this.minimumTileExpire, realOther.minimumTileExpire);
         // CHECKSTYLE.ON: BooleanExpressionComplexity
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ImageryInfo that = (ImageryInfo) o;
-        return imageryType == that.imageryType && Objects.equals(url, that.url);
-    }
-
-    private static final Map<String, String> localizedCountriesCache = new HashMap<>();
-    static {
-        localizedCountriesCache.put("", tr("Worldwide"));
-    }
-
-    /**
-     * Returns a localized name for the given country code, or "Worldwide" if empty.
-     * This function falls back on the English name, and uses the ISO code as a last-resortvalue.
-     *
-     * @param countryCode An ISO 3166 alpha-2 country code or a UN M.49 numeric-3 area code
-     * @return The name of the country appropriate to the current locale.
-     * @see Locale#getDisplayCountry
-     * @since 15158
-     */
-    public static String getLocalizedCountry(String countryCode) {
-        return localizedCountriesCache.computeIfAbsent(countryCode, code -> new Locale("en", code).getDisplayCountry());
-    }
-
-    @Override
-    public String toString() {
-        // Used in imagery preferences filtering, so must be efficient
-        return new StringBuilder(name)
-                .append('[').append(countryCode)
-                // appending the localized country in toString() allows us to filter imagery preferences table with it!
-                .append("] ('").append(getLocalizedCountry(countryCode)).append(')')
-                .append(" - ").append(url)
-                .append(" - ").append(imageryType)
-                .toString();
-    }
-
-    @Override
-    public int compareTo(ImageryInfo in) {
-        int i = countryCode.compareTo(in.countryCode);
-        if (i == 0) {
-            i = name.toLowerCase(Locale.ENGLISH).compareTo(in.name.toLowerCase(Locale.ENGLISH));
-        }
-        if (i == 0) {
-            i = url.compareTo(in.url);
-        }
-        if (i == 0) {
-            i = Double.compare(pixelPerDegree, in.pixelPerDegree);
+    public int compareTo(SourceInfo<ImageryInfo.ImageryCategory, ImageryInfo.ImageryType,
+            ImageryInfo.ImageryBounds, ImageryInfo.ImageryPreferenceEntry> other) {
+        int i = super.compareTo(other);
+        if (other instanceof ImageryInfo) {
+            ImageryInfo in = (ImageryInfo) other;
+            if (i == 0) {
+                i = Double.compare(pixelPerDegree, in.pixelPerDegree);
+            }
         }
         return i;
-    }
-
-    /**
-     * Determines if URL is equal to given imagery info.
-     * @param in imagery info
-     * @return {@code true} if URL is equal to given imagery info
-     */
-    public boolean equalsBaseValues(ImageryInfo in) {
-        return url.equals(in.url);
     }
 
     /**
@@ -778,165 +629,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Sets the imagery polygonial bounds.
-     * @param b The imagery bounds (non-rectangular)
-     */
-    public void setBounds(ImageryBounds b) {
-        this.bounds = b;
-    }
-
-    /**
-     * Returns the imagery polygonial bounds.
-     * @return The imagery bounds (non-rectangular)
-     */
-    public ImageryBounds getBounds() {
-        return bounds;
-    }
-
-    @Override
-    public boolean requiresAttribution() {
-        return attributionText != null || attributionLinkURL != null || attributionImage != null
-                || termsOfUseText != null || termsOfUseURL != null;
-    }
-
-    @Override
-    public String getAttributionText(int zoom, ICoordinate topLeft, ICoordinate botRight) {
-        return attributionText;
-    }
-
-    @Override
-    public String getAttributionLinkURL() {
-        return attributionLinkURL;
-    }
-
-    /**
-     * Return the permission reference URL.
-     * @return The url
-     * @see #setPermissionReferenceURL
-     * @since 11975
-     */
-    public String getPermissionReferenceURL() {
-        return permissionReferenceURL;
-    }
-
-    /**
-     * Return the privacy policy URL.
-     * @return The url
-     * @see #setPrivacyPolicyURL
-     * @since 16127
-     */
-    public String getPrivacyPolicyURL() {
-        return privacyPolicyURL;
-    }
-
-    @Override
-    public Image getAttributionImage() {
-        ImageIcon i = ImageProvider.getIfAvailable(attributionImage);
-        if (i != null) {
-            return i.getImage();
-        }
-        return null;
-    }
-
-    /**
-     * Return the raw attribution logo information (an URL to the image).
-     * @return The url text
-     * @since 12257
-     */
-    public String getAttributionImageRaw() {
-        return attributionImage;
-    }
-
-    @Override
-    public String getAttributionImageURL() {
-        return attributionImageURL;
-    }
-
-    @Override
-    public String getTermsOfUseText() {
-        return termsOfUseText;
-    }
-
-    @Override
-    public String getTermsOfUseURL() {
-        return termsOfUseURL;
-    }
-
-    /**
-     * Set the attribution text
-     * @param text The text
-     * @see #getAttributionText(int, ICoordinate, ICoordinate)
-     */
-    public void setAttributionText(String text) {
-        attributionText = intern(text);
-    }
-
-    /**
-     * Set the attribution image
-     * @param url The url of the image.
-     * @see #getAttributionImageURL()
-     */
-    public void setAttributionImageURL(String url) {
-        attributionImageURL = url;
-    }
-
-    /**
-     * Set the image for the attribution
-     * @param res The image resource
-     * @see #getAttributionImage()
-     */
-    public void setAttributionImage(String res) {
-        attributionImage = res;
-    }
-
-    /**
-     * Sets the URL the attribution should link to.
-     * @param url The url.
-     * @see #getAttributionLinkURL()
-     */
-    public void setAttributionLinkURL(String url) {
-        attributionLinkURL = url;
-    }
-
-    /**
-     * Sets the permission reference URL.
-     * @param url The url.
-     * @see #getPermissionReferenceURL()
-     * @since 11975
-     */
-    public void setPermissionReferenceURL(String url) {
-        permissionReferenceURL = url;
-    }
-
-    /**
-     * Sets the privacy policy URL.
-     * @param url The url.
-     * @see #getPrivacyPolicyURL()
-     * @since 16127
-     */
-    public void setPrivacyPolicyURL(String url) {
-        privacyPolicyURL = url;
-    }
-
-    /**
-     * Sets the text to display to the user as terms of use.
-     * @param text The text
-     * @see #getTermsOfUseText()
-     */
-    public void setTermsOfUseText(String text) {
-        termsOfUseText = text;
-    }
-
-    /**
-     * Sets a url that links to the terms of use text.
-     * @param text The url.
-     * @see #getTermsOfUseURL()
-     */
-    public void setTermsOfUseURL(String text) {
-        termsOfUseURL = text;
-    }
-
-    /**
      * Sets the extended URL of this entry.
      * @param url Entry extended URL containing in addition of service URL, its type and min/max zoom info
      */
@@ -945,7 +637,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
         // Default imagery type is WMS
         this.url = url;
-        this.imageryType = ImageryType.WMS;
+        this.sourceType = ImageryType.WMS;
 
         defaultMaxZoom = 0;
         defaultMinZoom = 0;
@@ -953,7 +645,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             Matcher m = Pattern.compile(type.getTypeString()+"(?:\\[(?:(\\d+)[,-])?(\\d+)\\])?:(.*)").matcher(url);
             if (m.matches()) {
                 this.url = m.group(3);
-                this.imageryType = type;
+                this.sourceType = type;
                 if (m.group(2) != null) {
                     defaultMaxZoom = Integer.parseInt(m.group(2));
                 }
@@ -970,60 +662,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 setServerProjections(Arrays.asList(m.group(1).split(",")));
             }
         }
-    }
-
-    /**
-     * Returns the entry name.
-     * @return The entry name
-     * @since 6968
-     */
-    public String getOriginalName() {
-        return this.origName != null ? this.origName : this.name;
-    }
-
-    /**
-     * Sets the entry name and handle translation.
-     * @param language The used language
-     * @param name The entry name
-     * @since 8091
-     */
-    public void setName(String language, String name) {
-        boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
-        if (LanguageInfo.isBetterLanguage(langName, language)) {
-            this.name = isdefault ? tr(name) : name;
-            this.langName = language;
-        }
-        if (origName == null || isdefault) {
-            this.origName = name;
-        }
-    }
-
-    /**
-     * Store the id of this info to the preferences and clear it afterwards.
-     */
-    public void clearId() {
-        if (this.id != null) {
-            Collection<String> newAddedIds = new TreeSet<>(Config.getPref().getList("imagery.layers.addedIds"));
-            newAddedIds.add(this.id);
-            Config.getPref().putList("imagery.layers.addedIds", new ArrayList<>(newAddedIds));
-        }
-        setId(null);
-    }
-
-    /**
-     * Determines if this entry is enabled by default.
-     * @return {@code true} if this entry is enabled by default, {@code false} otherwise
-     */
-    public boolean isDefaultEntry() {
-        return defaultEntry;
-    }
-
-    /**
-     * Sets the default state of this entry.
-     * @param defaultEntry {@code true} if this entry has to be enabled by default, {@code false} otherwise
-     */
-    public void setDefaultEntry(boolean defaultEntry) {
-        this.defaultEntry = defaultEntry;
     }
 
     /**
@@ -1052,55 +690,13 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         return this.defaultMinZoom;
     }
 
-    /**
-     * Returns the description text when existing.
-     * @return The description
-     * @since 8065
-     */
-    public String getDescription() {
-        return this.description;
-    }
-
-    /**
-     * Sets the description text when existing.
-     * @param language The used language
-     * @param description the imagery description text
-     * @since 8091
-     */
-    public void setDescription(String language, String description) {
-        boolean isdefault = LanguageInfo.getJOSMLocaleCode(null).equals(language);
-        if (LanguageInfo.isBetterLanguage(langDescription, language)) {
-            this.description = isdefault ? tr(description) : description;
-            this.langDescription = intern(language);
-        }
-    }
-
-    /**
-     * Return the sorted list of activated Imagery IDs.
-     * @return sorted list of activated Imagery IDs
-     * @since 13536
-     */
-    public static Collection<String> getActiveIds() {
-        IPreferences pref = Config.getPref();
-        if (pref == null) {
-            return Collections.emptyList();
-        }
-        List<ImageryPreferenceEntry> entries = StructUtils.getListOfStructs(pref, "imagery.entries", null, ImageryPreferenceEntry.class);
-        if (entries == null) {
-            return Collections.emptyList();
-        }
-        return entries.stream()
-                .filter(prefEntry -> prefEntry.id != null && !prefEntry.id.isEmpty())
-                .map(prefEntry -> prefEntry.id)
-                .sorted()
-                .collect(Collectors.toList());
-    }
 
     /**
      * Returns a tool tip text for display.
      * @return The text
      * @since 8065
      */
+    @Override
     public String getToolTipText() {
         StringBuilder res = new StringBuilder(getName());
         boolean html = false;
@@ -1133,73 +729,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Returns the EULA acceptance URL, if any.
-     * @return The URL to an EULA text that has to be accepted before use, or {@code null}
-     */
-    public String getEulaAcceptanceRequired() {
-        return eulaAcceptanceRequired;
-    }
-
-    /**
-     * Sets the EULA acceptance URL.
-     * @param eulaAcceptanceRequired The URL to an EULA text that has to be accepted before use
-     */
-    public void setEulaAcceptanceRequired(String eulaAcceptanceRequired) {
-        this.eulaAcceptanceRequired = eulaAcceptanceRequired;
-    }
-
-    /**
-     * Returns the ISO 3166-1-alpha-2 country code.
-     * @return The country code (2 letters)
-     */
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    /**
-     * Sets the ISO 3166-1-alpha-2 country code.
-     * @param countryCode The country code (2 letters)
-     */
-    public void setCountryCode(String countryCode) {
-        this.countryCode = intern(countryCode);
-    }
-
-    /**
-     * Returns the date information.
-     * @return The date (in the form YYYY-MM-DD;YYYY-MM-DD, where
-     * DD and MM as well as a second date are optional)
-     * @since 11570
-     */
-    public String getDate() {
-        return date;
-    }
-
-    /**
-     * Sets the date information.
-     * @param date The date information
-     * @since 11570
-     */
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    /**
-     * Returns the entry icon.
-     * @return The entry icon
-     */
-    public String getIcon() {
-        return icon;
-    }
-
-    /**
-     * Sets the entry icon.
-     * @param icon The entry icon
-     */
-    public void setIcon(String icon) {
-        this.icon = intern(icon);
-    }
-
-    /**
      * Get the projections supported by the server. Only relevant for
      * WMS-type ImageryInfo at the moment.
      * @return null, if no projections have been specified; the list
@@ -1225,7 +754,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @return The extended URL
      */
     public String getExtendedUrl() {
-        return imageryType.getTypeString() + (defaultMaxZoom != 0
+        return sourceType.getTypeString() + (defaultMaxZoom != 0
             ? ('['+(defaultMinZoom != 0 ? (Integer.toString(defaultMinZoom) + ',') : "")+defaultMaxZoom+']') : "") + ':' + url;
     }
 
@@ -1254,181 +783,61 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Determines if this entry requires attribution.
-     * @return {@code true} if some attribution text has to be displayed, {@code false} otherwise
-     */
-    public boolean hasAttribution() {
-        return attributionText != null;
-    }
-
-    /**
-     * Copies attribution from another {@code ImageryInfo}.
-     * @param i The other imagery info to get attribution from
-     */
-    public void copyAttribution(ImageryInfo i) {
-        this.attributionImage = i.attributionImage;
-        this.attributionImageURL = i.attributionImageURL;
-        this.attributionText = i.attributionText;
-        this.attributionLinkURL = i.attributionLinkURL;
-        this.termsOfUseText = i.termsOfUseText;
-        this.termsOfUseURL = i.termsOfUseURL;
-    }
-
-    /**
-     * Applies the attribution from this object to a tile source.
-     * @param s The tile source
-     */
-    public void setAttribution(AbstractTileSource s) {
-        if (attributionText != null) {
-            if ("osm".equals(attributionText)) {
-                s.setAttributionText(new Mapnik().getAttributionText(0, null, null));
-            } else {
-                s.setAttributionText(attributionText);
-            }
-        }
-        if (attributionLinkURL != null) {
-            if ("osm".equals(attributionLinkURL)) {
-                s.setAttributionLinkURL(new Mapnik().getAttributionLinkURL());
-            } else {
-                s.setAttributionLinkURL(attributionLinkURL);
-            }
-        }
-        if (attributionImage != null) {
-            ImageIcon i = ImageProvider.getIfAvailable(null, attributionImage);
-            if (i != null) {
-                s.setAttributionImage(i.getImage());
-            }
-        }
-        if (attributionImageURL != null) {
-            s.setAttributionImageURL(attributionImageURL);
-        }
-        if (termsOfUseText != null) {
-            s.setTermsOfUseText(termsOfUseText);
-        }
-        if (termsOfUseURL != null) {
-            if ("osm".equals(termsOfUseURL)) {
-                s.setTermsOfUseURL(new Mapnik().getTermsOfUseURL());
-            } else {
-                s.setTermsOfUseURL(termsOfUseURL);
-            }
-        }
-    }
-
-    /**
      * Returns the imagery type.
      * @return The imagery type
+     * @see SourceInfo#getSourceType
      */
     public ImageryType getImageryType() {
-        return imageryType;
+        return super.getSourceType();
     }
 
     /**
      * Sets the imagery type.
      * @param imageryType The imagery type
+     * @see SourceInfo#setSourceType
      */
     public void setImageryType(ImageryType imageryType) {
-        this.imageryType = imageryType;
+        super.setSourceType(imageryType);
     }
 
     /**
      * Returns the imagery category.
      * @return The imagery category
+     * @see SourceInfo#getSourceCategory
      * @since 13792
      */
     public ImageryCategory getImageryCategory() {
-        return category;
+        return super.getSourceCategory();
     }
 
     /**
      * Sets the imagery category.
      * @param category The imagery category
+     * @see SourceInfo#setSourceCategory
      * @since 13792
      */
     public void setImageryCategory(ImageryCategory category) {
-        this.category = category;
+        super.setSourceCategory(category);
     }
 
     /**
      * Returns the imagery category original string (don't use except for error checks).
      * @return The imagery category original string
+     * @see SourceInfo#getSourceCategoryOriginalString
      * @since 13792
      */
     public String getImageryCategoryOriginalString() {
-        return categoryOriginalString;
+        return super.getSourceCategoryOriginalString();
     }
 
     /**
      * Sets the imagery category original string (don't use except for error checks).
      * @param categoryOriginalString The imagery category original string
+     * @see SourceInfo#setSourceCategoryOriginalString
      * @since 13792
      */
     public void setImageryCategoryOriginalString(String categoryOriginalString) {
-        this.categoryOriginalString = intern(categoryOriginalString);
-    }
-
-    /**
-     * Returns true if this layer's URL is matched by one of the regular
-     * expressions kept by the current OsmApi instance.
-     * @return {@code true} is this entry is blacklisted, {@code false} otherwise
-     */
-    public boolean isBlacklisted() {
-        Capabilities capabilities = OsmApi.getOsmApi().getCapabilities();
-        return capabilities != null && capabilities.isOnImageryBlacklist(this.url);
-    }
-
-    /**
-     * Sets the map of &lt;header name, header value&gt; that if any of this header
-     * will be returned, then this tile will be treated as "no tile at this zoom level"
-     *
-     * @param noTileHeaders Map of &lt;header name, header value&gt; which will be treated as "no tile at this zoom level"
-     * @since 9613
-     */
-    public void setNoTileHeaders(MultiMap<String, String> noTileHeaders) {
-       if (noTileHeaders == null || noTileHeaders.isEmpty()) {
-           this.noTileHeaders = null;
-       } else {
-            this.noTileHeaders = noTileHeaders.toMap();
-       }
-    }
-
-    @Override
-    public Map<String, Set<String>> getNoTileHeaders() {
-        return noTileHeaders;
-    }
-
-    /**
-     * Sets the map of &lt;checksum type, checksum value&gt; that if any tile with that checksum
-     * will be returned, then this tile will be treated as "no tile at this zoom level"
-     *
-     * @param noTileChecksums Map of &lt;checksum type, checksum value&gt; which will be treated as "no tile at this zoom level"
-     * @since 9613
-     */
-    public void setNoTileChecksums(MultiMap<String, String> noTileChecksums) {
-        if (noTileChecksums == null || noTileChecksums.isEmpty()) {
-            this.noTileChecksums = null;
-        } else {
-            this.noTileChecksums = noTileChecksums.toMap();
-        }
-    }
-
-    @Override
-    public Map<String, Set<String>> getNoTileChecksums() {
-        return noTileChecksums;
-    }
-
-    /**
-     * Returns the map of &lt;header name, metadata key&gt; indicating, which HTTP headers should
-     * be moved to metadata
-     *
-     * @param metadataHeaders map of &lt;header name, metadata key&gt; indicating, which HTTP headers should be moved to metadata
-     * @since 8418
-     */
-    public void setMetadataHeaders(Map<String, String> metadataHeaders) {
-        if (metadataHeaders == null || metadataHeaders.isEmpty()) {
-            this.metadataHeaders = null;
-        } else {
-            this.metadataHeaders = metadataHeaders;
-        }
+        super.setSourceCategoryOriginalString(categoryOriginalString);
     }
 
     /**
@@ -1484,125 +893,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
-     * Adds an old Id.
-     *
-     * @param id the Id to be added
-     * @since 13536
-     */
-    public void addOldId(String id) {
-       if (oldIds == null) {
-           oldIds = new ArrayList<>();
-       }
-       oldIds.add(id);
-    }
-
-    /**
-     * Get old Ids.
-     *
-     * @return collection of ids
-     * @since 13536
-     */
-    public Collection<String> getOldIds() {
-        return oldIds;
-    }
-
-    /**
-     * Adds a mirror entry. Mirror entries are completed with the data from the master entry
-     * and only describe another method to access identical data.
-     *
-     * @param entry the mirror to be added
-     * @since 9658
-     */
-    public void addMirror(ImageryInfo entry) {
-       if (mirrors == null) {
-           mirrors = new ArrayList<>();
-       }
-       mirrors.add(entry);
-    }
-
-    /**
-     * Returns the mirror entries. Entries are completed with master entry data.
-     *
-     * @return the list of mirrors
-     * @since 9658
-     */
-    public List<ImageryInfo> getMirrors() {
-       List<ImageryInfo> l = new ArrayList<>();
-       if (mirrors != null) {
-           int num = 1;
-           for (ImageryInfo i : mirrors) {
-               ImageryInfo n = new ImageryInfo(this);
-               if (i.defaultMaxZoom != 0) {
-                   n.defaultMaxZoom = i.defaultMaxZoom;
-               }
-               if (i.defaultMinZoom != 0) {
-                   n.defaultMinZoom = i.defaultMinZoom;
-               }
-               n.setServerProjections(i.getServerProjections());
-               n.url = i.url;
-               n.imageryType = i.imageryType;
-               if (i.getTileSize() != 0) {
-                   n.setTileSize(i.getTileSize());
-               }
-               if (i.getPrivacyPolicyURL() != null) {
-                   n.setPrivacyPolicyURL(i.getPrivacyPolicyURL());
-               }
-               if (n.id != null) {
-                   n.id = n.id + "_mirror"+num;
-               }
-               if (num > 1) {
-                   n.name = tr("{0} mirror server {1}", n.name, num);
-                   if (n.origName != null) {
-                       n.origName += " mirror server " + num;
-                   }
-               } else {
-                   n.name = tr("{0} mirror server", n.name);
-                   if (n.origName != null) {
-                       n.origName += " mirror server";
-                   }
-               }
-               l.add(n);
-               ++num;
-           }
-       }
-       return l;
-    }
-
-    /**
-     * Returns default layers that should be shown for this Imagery (if at all supported by imagery provider)
-     * If no layer is set to default and there is more than one imagery available, then user will be asked to choose the layer
-     * to work on
-     * @return Collection of the layer names
-     */
-    public List<DefaultLayer> getDefaultLayers() {
-        return defaultLayers;
-    }
-
-    /**
-     * Sets the default layers that user will work with
-     * @param layers set the list of default layers
-     */
-    public void setDefaultLayers(List<DefaultLayer> layers) {
-        this.defaultLayers = Utils.toUnmodifiableList(layers);
-    }
-
-    /**
-     * Returns custom HTTP headers that should be sent with request towards imagery provider
-     * @return headers
-     */
-    public Map<String, String> getCustomHttpHeaders() {
-        return customHttpHeaders;
-    }
-
-    /**
-     * Sets custom HTTP headers that should be sent with request towards imagery provider
-     * @param customHttpHeaders http headers
-     */
-    public void setCustomHttpHeaders(Map<String, String> customHttpHeaders) {
-        this.customHttpHeaders = Utils.toUnmodifiableMap(customHttpHeaders);
-    }
-
-    /**
      * Determines if this imagery should be transparent.
      * @return should this imagery be transparent
      */
@@ -1654,7 +944,12 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
     }
 
-    private static String intern(String string) {
-        return string == null ? null : string.intern();
+    /**
+     * Return the sorted list of activated source IDs.
+     * @return sorted list of activated source IDs
+     * @since 13536
+     */
+    public static Collection<String> getActiveIds() {
+        return getActiveIds(ImageryInfo.class);
     }
 }

@@ -1910,4 +1910,14 @@ public final class Utils {
         // remove extra whitespaces
         return rawString.trim();
     }
+
+    /**
+     * Intern a string
+     * @param string The string to intern
+     * @return The interned string
+     * @since 16545
+     */
+    public static String intern(String string) {
+        return string == null ? null : string.intern();
+    }
 }
