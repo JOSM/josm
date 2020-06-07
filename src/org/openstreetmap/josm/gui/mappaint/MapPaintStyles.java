@@ -23,6 +23,9 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.spi.preferences.IPreferences;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
@@ -44,6 +47,24 @@ public final class MapPaintStyles {
 
     private static final ListenerList<MapPaintSylesUpdateListener> listeners = ListenerList.createUnchecked();
 
+    private static final class MapPaintStylesPreferenceListener implements PreferenceChangedListener {
+        private final IPreferences pref;
+
+        MapPaintStylesPreferenceListener(IPreferences pref) {
+            this.pref = pref;
+        }
+
+        @Override
+        public void preferenceChanged(PreferenceChangeEvent e) {
+            if (e.getKey().contains("mappaint")) {
+                // We need to remove this from the listeners, so that we don't recursively call ourselves.
+                pref.removePreferenceChangeListener(this);
+                MapPaintStyles.readFromPreferences();
+                pref.addPreferenceChangeListener(this);
+            }
+        }
+    }
+
     static {
         listeners.addListener(new MapPaintSylesUpdateListener() {
             @Override
@@ -56,6 +77,7 @@ public final class MapPaintStyles {
                 mapPaintStylesUpdated();
             }
         });
+        Config.getPref().addPreferenceChangeListener(new MapPaintStylesPreferenceListener(Config.getPref()));
     }
 
     private static ElemStyles styles = new ElemStyles();
