@@ -63,14 +63,8 @@
         <property name="script-build.dir" location="${base.dir}/build2"/>
         <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${resources.dir}/data/projection/custom-epsg"/>
-        <property name="error_prone_core.jar" location="${tools.dir}/error_prone_core.jar"/>
-        <property name="error_prone_javac.jar" location="${tools.dir}/error_prone_javac.jar"/>
-        <property name="auto-value-annotations.jar" location="${tools.dir}/auto-value-annotations.jar"/>
-        <property name="dataflow.jar" location="${tools.dir}/dataflow-shaded.jar"/>
-        <property name="javacutil.jar" location="${tools.dir}/javacutil.jar"/>
-        <property name="failureaccess.jar" location="${tools.dir}/failureaccess.jar"/>
+        <property name="error_prone_javac.jar" location="${tools.dir}/error_prone/javac.jar"/>
         <property name="commons-lang3.jar" location="${tools.dir}/commons-lang3.jar"/>
-        <property name="jformatstring.jar" location="${spotbugs.dir}/jFormatString-3.0.0.jar"/>
         <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
         <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
         <property name="dist-sources.jar" location="${dist.dir}/josm-custom-sources.jar"/>
@@ -104,14 +98,6 @@
         <condition property="java.library.dir" value="jmods" else="lib">
             <isset property="isJava9"/>
         </condition>
-        <path id="processor.path">
-            <pathelement location="${error_prone_core.jar}"/>
-            <pathelement location="${dataflow.jar}"/>
-            <pathelement location="${javacutil.jar}"/>
-            <pathelement location="${failureaccess.jar}"/>
-            <pathelement location="${jformatstring.jar}"/>
-            <pathelement location="${auto-value-annotations.jar}"/>
-        </path>
     </target>
 
     <!--
@@ -293,14 +279,16 @@ Build-Date: ${build.tstamp}
         </javac>
     </target>
     <target name="compile" depends="init,javacc,compile-cots" unless="compile.notRequired" description="Compiles JOSM">
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone.classpath" conf="errorprone"/>
+        <ivy:retrieve log="download-only" file="${tools.ivy}" pattern="${tools.dir}/error_prone/[artifact].[ext]" conf="errorprone"/>
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
-            excludes="com/**,oauth/**,org/apache/commons/**,**/package-info.java"
+            excludes="com/**,org/apache/commons/**,**/package-info.java"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-J-Xbootclasspath/p:${error_prone_javac.jar}" unless:set="isJava9"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
             <compilerarg value="-processorpath"/>
-            <compilerarg pathref="processor.path"/>
+            <compilerarg pathref="errorprone.classpath"/>
             <compilerarg value="-Xlint:cast"/>
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:dep-ann"/>
@@ -314,7 +302,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xlint:unchecked"/>
             <!-- Undocumented argument to ignore "Sun internal proprietary API" warning, see http://stackoverflow.com/a/13862308/2257172 -->
             <compilerarg value="-XDignore.symbol.file"/>
-            <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:ImmutableEnumChecker:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:FloatingPointLiteralPrecision:OFF -Xep:ShortCircuitBoolean:OFF -Xep:StringSplitter:OFF -Xep:JdkObsolete:OFF -Xep:UnnecessaryParentheses:OFF -Xep:EqualsGetClass:OFF -Xep:ThreadPriorityCheck:OFF -Xep:UndefinedEquals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:OverrideThrowableToString:OFF -Xep:JavaTimeDefaultTimeZone:OFF -Xep:UnusedVariable:OFF -Xep:EqualsUsingHashCode:OFF -Xep:BadImport:OFF -Xep:UnnecessaryLambda:OFF -Xep:AnnotateFormatMethod:OFF -Xep:MutablePublicArray:OFF"/>
+            <compilerarg value="-Xplugin:ErrorProne -XepExcludedPaths:.*/parsergen/.* -Xep:ReferenceEquality:OFF -Xep:ImmutableEnumChecker:OFF -Xep:FutureReturnValueIgnored:OFF -Xep:FloatingPointLiteralPrecision:OFF -Xep:ShortCircuitBoolean:OFF -Xep:StringSplitter:OFF -Xep:JdkObsolete:OFF -Xep:UnnecessaryParentheses:OFF -Xep:EqualsGetClass:OFF -Xep:ThreadPriorityCheck:OFF -Xep:UndefinedEquals:OFF -Xep:MixedMutabilityReturnType:OFF -Xep:OverrideThrowableToString:OFF -Xep:JavaTimeDefaultTimeZone:OFF -Xep:UnusedVariable:OFF -Xep:EqualsUsingHashCode:OFF -Xep:BadImport:OFF -Xep:UnnecessaryLambda:OFF -Xep:AnnotateFormatMethod:OFF -Xep:MutablePublicArray:OFF -Xep:StaticAssignmentInConstructor:OFF"/>
             <compilerarg line="-Xmaxwarns 1000"/>
             <classpath>
                 <path refid="runtime.path"/>
@@ -1146,7 +1134,7 @@ Build-Date: ${build.tstamp}
     <target name="bootstrap-workspace" description="Copy libraries from ivy cache to workspace folders for IDE" depends="resolve">
         <delete dir="${lib.dir}"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[type].[ext]" conf="compile,runtime,sources,test"/>
-        <ivy:retrieve pattern="${lib.dir}/tools/[artifact]-[type].[ext]" conf="javacc,checkstyle,pmd,spotbugs" file="${tools.ivy}"/>
+        <ivy:retrieve pattern="${lib.dir}/tools/[artifact]-[type].[ext]" conf="javacc,checkstyle,pmd,spotbugs,errorprone" file="${tools.ivy}"/>
     </target>
     <target name="ivy-report" description="Generates Ivy reports of dependency resolving" depends="resolve">
         <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>

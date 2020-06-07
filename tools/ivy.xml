@@ -8,6 +8,7 @@
         <conf name="proguard" description="Everything needed for running ProGuard"/>
         <conf name="pmd" description="Everything needed for running PMD"/>
         <conf name="spotbugs" description="Everything needed for running SpotBugs"/>
+        <conf name="errorprone" description="Everything needed for running error-prone"/>
     </configurations>
     <dependencies>
         <!-- javacc->default -->
@@ -26,5 +27,7 @@
         <!-- spotbugs->default -->
         <dependency org="com.github.spotbugs" name="spotbugs" rev="4.0.1" conf="spotbugs->default"/>
         <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.0.1" conf="spotbugs->default"/>
+        <!-- errorprone->default -->
+        <dependency org="com.google.errorprone" name="error_prone_core" rev="2.4.0" conf="errorprone->default"/>
     </dependencies>
 </ivy-module>

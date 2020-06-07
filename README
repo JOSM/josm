@@ -154,7 +154,6 @@ This is an overview of the files and directories in the JOSM code repository:
     - appbundler-1.0ea.jar  used to build Mac OS X package
     - checkstyle/           libs and config files for checkstyle (automatically detects code style
                             problems in source code); can be launched as an ant target in build.xml
-    - error_prone_ant.jar   used to detect code errors during compilation
     - ivy/                  Apache Ivy binary, configuration file, and downloaded dependencies 
     - jacocoant.jar         used to include coverage data into JUnit test reports
     - japicc/               used to generate a compatibility report between optimized jar and normal one
@@ -194,7 +193,6 @@ There are some third party libraries which are directly included in the source c
 * Metadata Extractor: Read EXIF Metadata of photos
     -> https://github.com/drewnoakes/metadata-extractor
 * Signpost: OAuth library
-    src/oauth, src/com/google
     -> https://github.com/mttkay/signpost
 * MultiSplitPane: Small lib for GUI layout management
     src/org/openstreetmap/josm/gui/MultiSplitLayout.java, MultiSplitPane.java
