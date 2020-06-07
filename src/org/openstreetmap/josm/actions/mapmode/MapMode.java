@@ -43,7 +43,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * @param cursor cursor displayed when map mode is active
      * @since 11713
      */
-    public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, Cursor cursor) {
+    protected MapMode(String name, String iconName, String tooltip, Shortcut shortcut, Cursor cursor) {
         super(name, "mapmode/"+iconName, tooltip, shortcut, false);
         this.cursor = cursor;
         putValue("active", Boolean.FALSE);
@@ -57,7 +57,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * @param cursor cursor displayed when map mode is active
      * @since 11713
      */
-    public MapMode(String name, String iconName, String tooltip, Cursor cursor) {
+    protected MapMode(String name, String iconName, String tooltip, Cursor cursor) {
         putValue(NAME, name);
         new ImageProvider("mapmode", iconName).getResource().attachImageIcon(this);
         putValue(SHORT_DESCRIPTION, tooltip);

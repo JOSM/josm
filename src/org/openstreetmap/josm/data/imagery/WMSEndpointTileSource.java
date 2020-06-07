@@ -85,7 +85,7 @@ public class WMSEndpointTileSource extends AbstractWMSTileSource implements Temp
     }
 
     /**
-     *
+     * Returns list of EPSG codes that current layer selection supports.
      * @return list of EPSG codes that current layer selection supports (this may differ from layer to layer)
      */
     public List<String> getServerProjections() {

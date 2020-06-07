@@ -21,6 +21,7 @@ public class CacheEntry implements Serializable {
     }
 
     /**
+     * Returns cache entry content.
      * @return cache entry content
      */
     public byte[] getContent() {

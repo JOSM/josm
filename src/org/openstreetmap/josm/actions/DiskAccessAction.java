@@ -25,7 +25,7 @@ public abstract class DiskAccessAction extends JosmAction {
      * @param shortcut A ready-created shortcut object or {@code null} if you don't want a shortcut
      * @since 1084
      */
-    public DiskAccessAction(String name, String iconName, String tooltip, Shortcut shortcut) {
+    protected DiskAccessAction(String name, String iconName, String tooltip, Shortcut shortcut) {
         super(name, iconName, tooltip, shortcut, true);
     }
 
@@ -41,7 +41,7 @@ public abstract class DiskAccessAction extends JosmAction {
      * @param installAdapters False, if you don't want to install layer changed and selection changed adapters
      * @since 5438
      */
-    public DiskAccessAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register,
+    protected DiskAccessAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register,
             String toolbarId, boolean installAdapters) {
         super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
     }

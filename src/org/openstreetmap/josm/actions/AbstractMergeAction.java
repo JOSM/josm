@@ -96,7 +96,7 @@ public abstract class AbstractMergeAction extends JosmAction {
      *            the user CANNOT configure a shortcut for your action.
      * @param register register this action for the toolbar preferences?
      */
-    public AbstractMergeAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
+    protected AbstractMergeAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
         super(name, iconName, tooltip, shortcut, register);
     }
 
@@ -114,7 +114,7 @@ public abstract class AbstractMergeAction extends JosmAction {
      * @param toolbar identifier for the toolbar preferences. The iconName is used, if this parameter is null
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public AbstractMergeAction(String name, String iconName, String tooltip, Shortcut shortcut,
+    protected AbstractMergeAction(String name, String iconName, String tooltip, Shortcut shortcut,
     boolean register, String toolbar, boolean installAdapters) {
         super(name, iconName, tooltip, shortcut, register, toolbar, installAdapters);
     }

@@ -1277,6 +1277,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     /**
+     * Determines if this Dataset contains no primitives.
      * @return true if this Dataset contains no primitives
      * @since 14835
      */

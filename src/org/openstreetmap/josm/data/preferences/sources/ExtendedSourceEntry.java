@@ -41,6 +41,7 @@ public class ExtendedSourceEntry extends SourceEntry implements Comparable<Exten
     }
 
     /**
+     * Returns string representation for GUI list or menu entry.
      * @return string representation for GUI list or menu entry
      */
     public String getDisplayName() {

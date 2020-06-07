@@ -27,7 +27,7 @@ public abstract class PairTable extends OsmPrimitivesTable {
      * @param cm column model
      * @param sm selection model
      */
-    public PairTable(String name, AbstractListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model,
+    protected PairTable(String name, AbstractListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model,
             OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
         super(dm, cm, sm);
         this.model = model;

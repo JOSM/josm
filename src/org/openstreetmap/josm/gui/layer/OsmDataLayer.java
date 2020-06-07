@@ -845,6 +845,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     }
 
     /**
+     * Converts a node to a waypoint.
      * @param n the {@code Node} to convert
      * @return {@code WayPoint} object
      * @since 13210
@@ -854,6 +855,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     }
 
     /**
+     * Converts a node to a waypoint.
      * @param n the {@code Node} to convert
      * @param time a timestamp value in milliseconds from the epoch.
      * @return {@code WayPoint} object

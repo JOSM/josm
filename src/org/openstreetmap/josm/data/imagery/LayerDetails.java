@@ -44,6 +44,7 @@ public class LayerDetails {
     }
 
     /**
+     * Returns projections that are supported by this layer.
      * @return projections that are supported by this layer
      */
     public Collection<String> getCrs() {
@@ -56,7 +57,7 @@ public class LayerDetails {
     }
 
     /**
-     *
+     * Returns styles defined for this layer.
      * @return styles defined for this layer
      */
     public Map<String, String> getStyles() {
@@ -69,7 +70,8 @@ public class LayerDetails {
     }
 
     /**
-     * @return title "Human readable" title of this layer
+     * Returns "Human readable" title of this layer
+     * @return "Human readable" title of this layer
      * @see LayerDetails#getName()
      */
     public String getTitle() {
@@ -77,7 +79,8 @@ public class LayerDetails {
     }
 
     /**
-     * @param title set title of this layer
+     * Sets title of this layer
+     * @param title title of this layer
      * @see LayerDetails#getName()
      */
     public void setTitle(String title) {
@@ -103,7 +106,8 @@ public class LayerDetails {
     }
 
     /**
-     * @param name sets the name of this Layer
+     * Sets the name of this Layer.
+     * @param name the name of this Layer
      * @see LayerDetails#getName()
      */
     public void setName(String name) {
@@ -128,7 +132,7 @@ public class LayerDetails {
     }
 
     /**
-     *
+     * Returns bounds within layer might be queried.
      * @return bounds within layer might be queried
      */
     public Bounds getBounds() {
@@ -136,7 +140,7 @@ public class LayerDetails {
     }
 
     /**
-     * sets bounds of this layer
+     * Sets bounds of this layer
      * @param bounds of this layer
      */
     public void setBounds(Bounds bounds) {
@@ -150,8 +154,8 @@ public class LayerDetails {
     }
 
     /**
-     *
-     * @return parent layer for his layer
+     * Returns parent layer for this layer.
+     * @return parent layer for this layer
      */
     public LayerDetails getParent() {
         return parentLayer;
@@ -167,7 +171,7 @@ public class LayerDetails {
     }
 
     /**
-     *
+     * Returns children layers of this layer.
      * @return children layers of this layer
      */
     public List<LayerDetails> getChildren() {
@@ -183,6 +187,7 @@ public class LayerDetails {
     }
 
     /**
+     * Returns abstract of this layer.
      * @return "Narrative description of the layer"
      */
     public String getAbstract() {
@@ -198,6 +203,7 @@ public class LayerDetails {
     }
 
     /**
+     * Returns flattened stream of this layer and its children.
      * @return flattened stream of this layer and its children (as well as recursively children of its children)
      */
     public Stream<LayerDetails> flattened() {

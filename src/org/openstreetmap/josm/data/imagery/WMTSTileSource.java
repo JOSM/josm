@@ -174,7 +174,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
 
         /**
-         *
+         * Returns identifier of this TileMatrixSet.
          * @return identifier of this TileMatrixSet
          */
         public String getIdentifier() {
@@ -182,7 +182,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
 
         /**
-         *
+         * Returns projection of this tileMatrix.
          * @return projection of this tileMatrix
          */
         public String getCrs() {
@@ -253,7 +253,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
 
         /**
-         *
+         * Returns identifier of this layer.
          * @return identifier of this layer
          */
         public String getIdentifier() {
@@ -261,7 +261,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
 
         /**
-         *
+         * Returns style of this layer.
          * @return style of this layer
          */
         public String getStyle() {
@@ -269,7 +269,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
 
         /**
-         *
+         * Returns tileMatrixSet of this layer.
          * @return tileMatrixSet of this layer
          */
         public TileMatrixSet getTileMatrixSet() {
@@ -1068,6 +1068,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     /**
+     * Group layers by name and tile matrix set.
      * @param layers to be grouped
      * @return list with entries - grouping identifier + list of layers
      */
@@ -1078,6 +1079,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     /**
+     * Returns set of projection codes that this TileSource supports.
      * @return set of projection codes that this TileSource supports
      */
     public Collection<String> getSupportedProjections() {

@@ -43,7 +43,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @param tooltip A longer description of the action that will be displayed in the tooltip
      * @param shortcut A ready-created shortcut object or {@code null} if you don't want a shortcut
      */
-    public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut) {
+    protected SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut) {
         super(name, iconName, tooltip, shortcut);
     }
 
@@ -56,7 +56,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @param quiet whether the quiet exporter is called
      * @since 15496
      */
-    public SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut, boolean quiet) {
+    protected SaveActionBase(String name, String iconName, String tooltip, Shortcut shortcut, boolean quiet) {
         super(name, iconName, tooltip, shortcut);
         this.quiet = quiet;
     }

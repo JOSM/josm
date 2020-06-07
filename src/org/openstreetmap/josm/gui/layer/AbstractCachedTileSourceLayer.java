@@ -44,7 +44,7 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
      *
      * @param info ImageryInfo describing the layer
      */
-    public AbstractCachedTileSourceLayer(ImageryInfo info) {
+    protected AbstractCachedTileSourceLayer(ImageryInfo info) {
         super(info);
 
         if (loaderFactoryOverride != null) {
@@ -111,6 +111,7 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
     }
 
     /**
+     * Returns cache configured object for specified cache region.
      * @param name of cache region
      * @return cache configured object for specified cache region
      */

@@ -377,7 +377,8 @@ public class BBox {
     }
 
     /**
-     * @return true if the bbox covers a part of the planets surface
+     * Determines if the bbox covers a part of the planet surface.
+     * @return true if the bbox covers a part of the planet surface.
      * Height and width must be non-negative, but may (both) be 0.
      * @since 11269
      */
@@ -386,7 +387,8 @@ public class BBox {
     }
 
     /**
-     * @return true if the bbox  is avalid and covers a part of the planets surface
+     * Determines if the bbox is valid and covers a part of the planet surface.
+     * @return true if the bbox is valid and covers a part of the planet surface
      * @since 11269
      */
     public boolean isInWorld() {

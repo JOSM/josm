@@ -76,7 +76,7 @@ public abstract class AbstractToStringProperty<T> extends AbstractProperty<T> {
      * @param defaultValue The default value.
      * @see AbstractProperty#AbstractProperty(String, Object)
      */
-    public AbstractToStringProperty(String key, T defaultValue) {
+    protected AbstractToStringProperty(String key, T defaultValue) {
         super(key, defaultValue);
         storeDefaultValue();
     }

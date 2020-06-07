@@ -106,7 +106,7 @@ public class Test implements OsmPrimitiveVisitor {
          * @param name The test name
          * @param description The test description
          */
-        public TagTest(String name, String description) {
+        protected TagTest(String name, String description) {
             super(name, description);
         }
 
@@ -114,7 +114,7 @@ public class Test implements OsmPrimitiveVisitor {
          * Constructs a new {@code TagTest} with given name.
          * @param name The test name
          */
-        public TagTest(String name) {
+        protected TagTest(String name) {
             super(name);
         }
 
@@ -376,8 +376,9 @@ public class Test implements OsmPrimitiveVisitor {
     }
 
     /**
+     * Returns the name of this class.
      * @return the name of this class (for ToolTip)
-     * since 15972
+     * @since 15972
      */
     public Object getSource() {
         return "Java: " + this.getClass().getName();

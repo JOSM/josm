@@ -244,6 +244,7 @@ public class WMSImagery {
     }
 
     /**
+     * Returns root URL of services in this GetCapabilities.
      * @return root URL of services in this GetCapabilities
      */
     public String buildRootUrl() {
@@ -271,6 +272,7 @@ public class WMSImagery {
     }
 
     /**
+     * Returns root URL of services without the GetCapabilities call.
      * @return root URL of services without the GetCapabilities call
      * @since 15209
      */
@@ -303,6 +305,14 @@ public class WMSImagery {
     }
 
     /**
+     * Returns URL for accessing GetMap service. String will contain following parameters:
+     * * {proj} - that needs to be replaced with projection (one of {@link #getServerProjections(List)})
+     * * {width} - that needs to be replaced with width of the tile
+     * * {height} - that needs to be replaces with height of the tile
+     * * {bbox} - that needs to be replaced with area that should be fetched (in {proj} coordinates)
+     *
+     * Format of the response will be calculated using {@link #getPreferredFormat()}
+     *
      * @param selectedLayers selected layers as subset of the tree returned by {@link #getLayers()}
      * @param selectedStyles selected styles for all selectedLayers
      * @param transparent whether returned images should contain transparent pixels (if supported by format)
@@ -314,6 +324,12 @@ public class WMSImagery {
     }
 
     /**
+     * Returns URL for accessing GetMap service. String will contain following parameters:
+     * * {proj} - that needs to be replaced with projection (one of {@link #getServerProjections(List)})
+     * * {width} - that needs to be replaced with width of the tile
+     * * {height} - that needs to be replaces with height of the tile
+     * * {bbox} - that needs to be replaced with area that should be fetched (in {proj} coordinates)
+     *
      * @param selectedLayers selected layers as subset of the tree returned by {@link #getLayers()}
      * @param selectedStyles selected styles for all selectedLayers
      * @param format format of the response - one of {@link #getFormats()}
@@ -331,6 +347,12 @@ public class WMSImagery {
     }
 
     /**
+     * Returns URL for accessing GetMap service. String will contain following parameters:
+     * * {proj} - that needs to be replaced with projection (one of {@link #getServerProjections(List)})
+     * * {width} - that needs to be replaced with width of the tile
+     * * {height} - that needs to be replaces with height of the tile
+     * * {bbox} - that needs to be replaced with area that should be fetched (in {proj} coordinates)
+     *
      * @param selectedLayers selected layers as list of strings
      * @param selectedStyles selected styles of layers as list of strings
      * @param format format of the response - one of {@link #getFormats()}
@@ -523,6 +545,7 @@ public class WMSImagery {
     }
 
     /**
+     * Determines if this service operates at protocol level below WMS 1.3.0
      * @return if this service operates at protocol level below 1.3.0
      */
     public boolean belowWMS130() {
@@ -708,8 +731,9 @@ public class WMSImagery {
     }
 
     /**
+     * Returns collection of LayerDetails specified by defaultLayers.
      * @param defaultLayers default layers that should select layer object
-     * @return collection of LayerDetails specified by DefaultLayers
+     * @return collection of LayerDetails specified by defaultLayers
      */
     public List<LayerDetails> getLayers(List<DefaultLayer> defaultLayers) {
         Collection<String> layerNames = defaultLayers.stream().map(DefaultLayer::getLayerName).collect(Collectors.toList());
@@ -720,6 +744,7 @@ public class WMSImagery {
     }
 
     /**
+     * Returns title of this service.
      * @return title of this service
      */
     public String getTitle() {

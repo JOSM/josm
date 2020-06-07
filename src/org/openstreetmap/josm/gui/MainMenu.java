@@ -470,6 +470,7 @@ public class MainMenu extends JMenuBar {
     };
 
     /**
+     * Returns the default position of new top-level menus.
      * @return the default position of new top-level menus
      * @since 6088
      */

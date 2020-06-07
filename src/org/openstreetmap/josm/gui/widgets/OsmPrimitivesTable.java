@@ -35,7 +35,7 @@ public abstract class OsmPrimitivesTable extends JosmTable {
      * @param cm column model
      * @param sm selection model
      */
-    public OsmPrimitivesTable(OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
+    protected OsmPrimitivesTable(OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
         super(dm, cm, sm);
         addMouseListener(new PopupMenuLauncher(getPopUpMenu()));
         addMouseListener(new DblClickHandler());

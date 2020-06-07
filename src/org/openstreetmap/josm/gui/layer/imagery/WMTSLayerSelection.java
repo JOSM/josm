@@ -132,6 +132,7 @@ public class WMTSLayerSelection extends JPanel {
     }
 
     /**
+     * Returns selected layer.
      * @return selected layer
      */
     public Layer getSelectedLayer() {

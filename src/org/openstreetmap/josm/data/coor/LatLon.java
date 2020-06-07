@@ -181,6 +181,7 @@ public class LatLon extends Coordinate implements ILatLon {
     }
 
     /**
+     * Determines if the other point has almost the same lat/lon values.
      * @param other other lat/lon
      * @return <code>true</code> if the other point has almost the same lat/lon
      * values, only differing by no more than 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.

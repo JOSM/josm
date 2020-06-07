@@ -8,7 +8,7 @@ import java.util.Map;
  * Class containing all options that are passed from Layer to TileJob
  *
  * @author Wiktor Niesiobedzki
- *
+ * @since 13733
  */
 public class TileJobOptions {
 
@@ -33,7 +33,7 @@ public class TileJobOptions {
     }
 
     /**
-     *
+     * Returns socket connection timeout in milliseconds.
      * @return socket connection timeout in milliseconds
      */
     public int getConnectionTimeout() {
@@ -41,7 +41,7 @@ public class TileJobOptions {
     }
 
     /**
-     *
+     * Returns socket read timeout in milliseconds.
      * @return socket read timeout in milliseconds
      */
     public int getReadTimeout() {
@@ -49,7 +49,7 @@ public class TileJobOptions {
     }
 
     /**
-     *
+     * Returns unmodifiable map with headers to be sent to tile server.
      * @return unmodifiable map with headers to be sent to tile server
      */
     public Map<String, String> getHeaders() {
@@ -57,7 +57,7 @@ public class TileJobOptions {
     }
 
     /**
-     *
+     * Returns minimum cache expire time in seconds for downloaded tiles.
      * @return minimum cache expire time in seconds for downloaded tiles
      */
     public long getMinimumExpiryTime() {

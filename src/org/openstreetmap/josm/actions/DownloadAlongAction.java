@@ -59,7 +59,7 @@ public abstract class DownloadAlongAction extends JosmAction {
      *            the user CANNOT configure a shortcut for your action.
      * @param registerInToolbar register this action for the toolbar preferences?
      */
-    public DownloadAlongAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
+    protected DownloadAlongAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
         super(name, iconName, tooltip, shortcut, registerInToolbar);
     }
 

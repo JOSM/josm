@@ -24,7 +24,7 @@ public abstract class CorrectionTableModel<C extends Correction> extends Abstrac
      * Constructs a new {@code CorrectionTableModel}.
      * @param corrections list of corrections
      */
-    public CorrectionTableModel(List<C> corrections) {
+    protected CorrectionTableModel(List<C> corrections) {
         this.corrections = corrections;
         apply = new boolean[this.corrections.size()];
         Arrays.fill(apply, true);

@@ -71,6 +71,7 @@ public class AutoCompletionList extends AbstractTableModel {
     }
 
     /**
+     * Returns the current filter expression.
      * @return the current filter expression; null, if no filter expression is set
      */
     public String getFilter() {

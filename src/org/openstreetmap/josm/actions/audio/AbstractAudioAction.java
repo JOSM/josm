@@ -21,7 +21,7 @@ public abstract class AbstractAudioAction extends JosmAction {
      * @param shortcut a ready-created shortcut object or null if you don't want a shortcut
      * @param registerInToolbar register this action for the toolbar preferences?
      */
-    public AbstractAudioAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
+    protected AbstractAudioAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
         super(name, iconName, tooltip, shortcut, registerInToolbar);
         updateEnabledState();
     }

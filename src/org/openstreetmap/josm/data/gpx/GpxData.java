@@ -1165,6 +1165,7 @@ public class GpxData extends WithAttributes implements Data {
     }
 
     /**
+     * Determines whether anything has been modified.
      * @return whether anything has been modified (e.g. colors)
      * @since 15496
      */
@@ -1213,13 +1214,15 @@ public class GpxData extends WithAttributes implements Data {
         }
 
         /**
-         * @return the URI of the namesapce
+         * Returns the URI of the namespace.
+         * @return the URI of the namespace
          */
         public String getURI() {
             return uri;
         }
 
         /**
+         * Returns the prefix of the namespace.
          * @return the prefix of the namespace, determined from URI if possible
          */
         public String getPrefix() {
@@ -1227,6 +1230,7 @@ public class GpxData extends WithAttributes implements Data {
         }
 
         /**
+         * Returns the location of the schema.
          * @return the location of the schema
          */
         public String getLocation() {

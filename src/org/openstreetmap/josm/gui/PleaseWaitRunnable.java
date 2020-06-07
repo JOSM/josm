@@ -34,7 +34,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * Create the runnable object with a given message for the user.
      * @param title message for the user
      */
-    public PleaseWaitRunnable(String title) {
+    protected PleaseWaitRunnable(String title) {
         this(title, false);
     }
 
@@ -46,7 +46,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * exception will be handled by showing a dialog. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
-    public PleaseWaitRunnable(String title, boolean ignoreException) {
+    protected PleaseWaitRunnable(String title, boolean ignoreException) {
         this(title, new PleaseWaitProgressMonitor(title), ignoreException);
     }
 
@@ -60,7 +60,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * then use false unless you read result of task (because exception will get lost if you don't)
      * @throws IllegalArgumentException if parent is null
      */
-    public PleaseWaitRunnable(Component parent, String title, boolean ignoreException) {
+    protected PleaseWaitRunnable(Component parent, String title, boolean ignoreException) {
         CheckParameterUtil.ensureParameterNotNull(parent, "parent");
         this.title = title;
         this.progressMonitor = new PleaseWaitProgressMonitor(parent, title);
@@ -76,7 +76,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      * exception will be handled by showing a dialog. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
-    public PleaseWaitRunnable(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
+    protected PleaseWaitRunnable(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
         this.title = title;
         this.progressMonitor = progressMonitor == null ? new PleaseWaitProgressMonitor(title) : progressMonitor;
         this.ignoreException = ignoreException;

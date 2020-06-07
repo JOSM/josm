@@ -198,7 +198,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
     /**
      * Constructs a new {@code ListMergeModel}.
      */
-    public AbstractListMergeModel() {
+    protected AbstractListMergeModel() {
         entries = new EnumMap<>(ListRole.class);
         for (ListRole role : ListRole.values()) {
             entries.put(role, new ArrayList<T>());

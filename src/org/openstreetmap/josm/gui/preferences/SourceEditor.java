@@ -145,7 +145,7 @@ public abstract class SourceEditor extends JPanel {
      * @param sourceProviders the list of additional source providers, from plugins
      * @param handleIcons {@code true} if icons may be managed, {@code false} otherwise
      */
-    public SourceEditor(SourceType sourceType, String availableSourcesUrl, List<SourceProvider> sourceProviders, boolean handleIcons) {
+    protected SourceEditor(SourceType sourceType, String availableSourcesUrl, List<SourceProvider> sourceProviders, boolean handleIcons) {
 
         this.sourceType = sourceType;
         this.canEnable = sourceType == SourceType.MAP_PAINT_STYLE || sourceType == SourceType.TAGCHECKER_RULE;

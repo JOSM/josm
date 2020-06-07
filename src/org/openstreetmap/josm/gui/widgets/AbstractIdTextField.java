@@ -20,7 +20,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
      * Constructs a new {@link AbstractIdTextField}
      * @param klass The validator class
      */
-    public AbstractIdTextField(Class<T> klass) {
+    protected AbstractIdTextField(Class<T> klass) {
         this(klass, 0);
     }
 
@@ -30,7 +30,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
      * @param columns The number of columns to use to calculate the preferred width
      * @see JosmTextField#JosmTextField(int)
      */
-    public AbstractIdTextField(Class<T> klass, int columns) {
+    protected AbstractIdTextField(Class<T> klass, int columns) {
         super(columns);
         T validator = null;
         try {

@@ -5,7 +5,7 @@ package org.openstreetmap.josm.data.osm;
  * An interface allowing injection of hashcode and equality implementation
  * based on some inner state of an object for a set.
  * It supports two type parameters to implement effective foreign key implementation
- * inside (@link Storage}, but for basic use, both type parameters are the same.
+ * inside {@link Storage}, but for basic use, both type parameters are the same.
  *
  * For use cases, see {@link Storage}.
  * @author nenik

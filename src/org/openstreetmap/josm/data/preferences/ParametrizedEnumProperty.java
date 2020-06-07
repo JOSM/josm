@@ -14,7 +14,7 @@ public abstract class ParametrizedEnumProperty<T extends Enum<T>> {
     protected final T defaultValue;
     protected final Class<T> enumClass;
 
-    public ParametrizedEnumProperty(Class<T> enumClass, T defaultValue) {
+    protected ParametrizedEnumProperty(Class<T> enumClass, T defaultValue) {
         this.defaultValue = defaultValue;
         this.enumClass = enumClass;
     }

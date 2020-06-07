@@ -64,7 +64,7 @@ public abstract class StyleElement implements StyleKeys {
      * @param defaultSelectedHandling true if default behavior for selected objects
      * is enabled, false if a style for selected state is given explicitly
      */
-    public StyleElement(float majorZIndex, float zIndex, float objectZIndex, boolean isModifier, boolean defaultSelectedHandling) {
+    protected StyleElement(float majorZIndex, float zIndex, float objectZIndex, boolean isModifier, boolean defaultSelectedHandling) {
         this.majorZIndex = majorZIndex;
         this.zIndex = zIndex;
         this.objectZIndex = objectZIndex;

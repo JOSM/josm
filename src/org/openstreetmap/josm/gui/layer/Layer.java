@@ -167,7 +167,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * Create the layer and fill in the necessary components.
      * @param name Layer name
      */
-    public Layer(String name) {
+    protected Layer(String name) {
         this.propertyChangeSupport = new PropertyChangeSupport(this);
         setName(name);
     }
@@ -194,6 +194,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     public abstract Icon getIcon();
 
     /**
+     * Determines whether the layer has / can handle colors.
      * @return whether the layer has / can handle colors.
      * @since 15496
      */
@@ -219,6 +220,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     }
 
     /**
+     * Returns a small tooltip hint about some statistics for this layer.
      * @return A small tooltip hint about some statistics for this layer.
      */
     public abstract String getToolTipText();
@@ -233,6 +235,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     public abstract void mergeFrom(Layer from);
 
     /**
+     * Determines if the other layer can be merged into this layer.
      * @param other The other layer that is tested to be mergable with this.
      * @return Whether the other layer can be merged into this layer.
      */

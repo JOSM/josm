@@ -101,7 +101,7 @@ public abstract class Plugin implements MapFrameListener {
      *
      * @param info the plugin information describing the plugin.
      */
-    public Plugin(PluginInformation info) {
+    protected Plugin(PluginInformation info) {
         this.info = info;
     }
 

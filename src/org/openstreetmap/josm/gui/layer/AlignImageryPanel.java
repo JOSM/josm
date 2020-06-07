@@ -83,6 +83,7 @@ public class AlignImageryPanel extends JPanel {
     }
 
     /**
+     * Adds a nag panel for a given imagery info.
      * @param infoToAdd ImageryInfo for which the nag panel should be created
      */
     public static void addNagPanelIfNeeded(ImageryInfo infoToAdd) {

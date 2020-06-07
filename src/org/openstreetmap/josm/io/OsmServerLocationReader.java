@@ -46,7 +46,7 @@ public class OsmServerLocationReader extends OsmServerReader {
         protected final Compression compression;
         protected InputStream in;
 
-        public Parser(ProgressMonitor progressMonitor, Compression compression) {
+        protected Parser(ProgressMonitor progressMonitor, Compression compression) {
             this.progressMonitor = progressMonitor;
             this.compression = compression;
         }

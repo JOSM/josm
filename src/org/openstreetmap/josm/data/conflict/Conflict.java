@@ -97,7 +97,7 @@ public class Conflict<T extends OsmPrimitive> {
     }
 
     /**
-     *
+     * Determines if my primitive was deleted but it has set non deleted status.
      * @return True if my primitive was deleted but it has set non deleted status because it's referred by another
      * primitive and references to deleted primitives are not allowed.
      */

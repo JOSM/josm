@@ -99,7 +99,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * @param options options of the request
      * @param downloadJobExecutor that will be executing the jobs
      */
-    public JCSCachedTileLoaderJob(ICacheAccess<K, V> cache,
+    protected JCSCachedTileLoaderJob(ICacheAccess<K, V> cache,
             TileJobOptions options,
             ThreadPoolExecutor downloadJobExecutor) {
         CheckParameterUtil.ensureParameterNotNull(cache, "cache");
@@ -116,7 +116,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * @param cache cache instance that we will work on
      * @param options of the request
      */
-    public JCSCachedTileLoaderJob(ICacheAccess<K, V> cache,
+    protected JCSCachedTileLoaderJob(ICacheAccess<K, V> cache,
             TileJobOptions options) {
         this(cache, options, DEFAULT_DOWNLOAD_JOB_DISPATCHER);
     }
@@ -173,8 +173,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     /**
-     *
-     * @return checks if object from cache has sufficient data to be returned
+     * Checks if object from cache has sufficient data to be returned.
+     * @return {@code true} if object from cache has sufficient data to be returned
      */
     protected boolean isObjectLoadable() {
         if (cacheData == null) {
@@ -194,6 +194,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     }
 
     /**
+     * Returns key under which discovered server settings will be kept.
      * @return key under which discovered server settings will be kept
      */
     protected String getServerKey() {

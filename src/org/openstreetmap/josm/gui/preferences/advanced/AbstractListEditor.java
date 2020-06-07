@@ -27,7 +27,7 @@ public abstract class AbstractListEditor<T> extends ExtendedDialog {
      * @param title        The text that will be shown in the window titlebar
      * @param entry        Preference entry
      */
-    public AbstractListEditor(Component parent, String title, PrefEntry entry) {
+    protected AbstractListEditor(Component parent, String title, PrefEntry entry) {
         super(parent, title, tr("OK"), tr("Cancel"));
         this.entry = entry;
         setButtonIcons("ok", "cancel");

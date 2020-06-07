@@ -214,7 +214,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * Creates Tile Source based Imagery Layer based on Imagery Info
      * @param info imagery info
      */
-    public AbstractTileSourceLayer(ImageryInfo info) {
+    protected AbstractTileSourceLayer(ImageryInfo info) {
         super(info);
         setBackgroundLayer(true);
         this.setVisible(true);
@@ -708,6 +708,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     /**
+     * Returns maximum max zoom level, that will be shown on layer.
      * @param ts TileSource for which we want to know maximum zoom level
      * @return maximum max zoom level, that will be shown on layer
      */
@@ -716,6 +717,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     /**
+     * Returns minimum zoom level, that will be shown on layer.
      * @param ts TileSource for which we want to know minimum zoom level
      * @return minimum zoom level, that will be shown on layer
      */
@@ -773,8 +775,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     /**
-     *
-     * @return if its allowed to zoom in
+     * Determines if it is allowed to zoom in.
+     * @return if it is allowed to zoom in
      */
     public boolean zoomIncreaseAllowed() {
         boolean zia = currentZoomLevel < this.getMaxZoomLvl();
@@ -1821,6 +1823,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         /**
+         * Determines if the task is finished.
          * @return true, if all is done
          */
         public boolean isFinished() {
@@ -1828,6 +1831,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         /**
+         * Returns total number of tiles to download.
          * @return total number of tiles to download
          */
         public int getTotalCount() {
@@ -1859,6 +1863,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         /**
+         * Returns tile loader that is used to load the tiles.
          * @return tile loader that is used to load the tiles
          */
         public TileLoader getTileLoader() {

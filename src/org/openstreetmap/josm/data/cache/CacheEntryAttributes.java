@@ -53,6 +53,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Determines if the entry is marked as "no tile at this zoom level".
      * @return if the entry is marked as "no tile at this zoom level"
      */
     public boolean isNoTileAtZoom() {
@@ -68,6 +69,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Returns ETag header value, that was returned for this entry.
      * @return ETag header value, that was returned for this entry.
      */
     public String getEtag() {
@@ -100,6 +102,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Returns last modification of the object in cache in milliseconds from Epoch.
      * @return last modification of the object in cache in milliseconds from Epoch
      */
     public long getLastModification() {
@@ -116,6 +119,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Returns when the object expires in milliseconds from Epoch.
      * @return when the object expires in milliseconds from Epoch
      */
     public long getExpirationTime() {
@@ -142,6 +146,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Returns HTTP response code.
      * @return http status code
      * @since 8389
      */
@@ -177,6 +182,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Returns error message returned while retrieving this object.
      * @return error message returned while retrieving this object
      */
     public String getErrorMessage() {
@@ -184,6 +190,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Sets error related to this object.
      * @param error error related to this object
      * @since 10469
      */
@@ -192,6 +199,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Sets error message related to this object.
      * @param message error message related to this object
      */
     public void setErrorMessage(String message) {
@@ -199,16 +207,16 @@ public class CacheEntryAttributes extends ElementAttributes {
     }
 
     /**
+     * Sets exception that caused error.
      * @param e exception that caused error
-     *
      */
     public void setException(Exception e) {
         attrs.put(EXCEPTION, e.getClass().getCanonicalName());
     }
 
     /**
+     * Returns optional exception that was thrown when fetching resource.
      * @return Optional exception that was thrown when fetching resource
-     *
      */
     public Optional<Class<? extends Exception>> getException() {
         String className = attrs.get(EXCEPTION);

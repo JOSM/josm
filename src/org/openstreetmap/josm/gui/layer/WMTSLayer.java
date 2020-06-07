@@ -114,6 +114,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
     }
 
     /**
+     * Returns cache region for WMTS layer.
      * @return cache region for WMTS layer
      */
     public static CacheAccess<String, BufferedImageCacheEntry> getCache() {

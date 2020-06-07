@@ -23,7 +23,7 @@ public abstract class DefaultPreferenceSetting implements PreferenceSetting {
      *
      * (Not an expert option by default.)
      */
-    public DefaultPreferenceSetting() {
+    protected DefaultPreferenceSetting() {
         this(false);
     }
 
@@ -32,7 +32,7 @@ public abstract class DefaultPreferenceSetting implements PreferenceSetting {
      *
      * @param isExpert true, if it is an expert option
      */
-    public DefaultPreferenceSetting(boolean isExpert) {
+    protected DefaultPreferenceSetting(boolean isExpert) {
         this.isExpert = isExpert;
     }
 

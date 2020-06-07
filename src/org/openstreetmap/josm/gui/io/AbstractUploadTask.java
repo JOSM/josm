@@ -52,7 +52,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * exception will be handled by showing a dialog. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
-    public AbstractUploadTask(String title, boolean ignoreException) {
+    protected AbstractUploadTask(String title, boolean ignoreException) {
         super(title, ignoreException);
     }
 
@@ -64,7 +64,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * exception will be handled by showing a dialog. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
-    public AbstractUploadTask(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
+    protected AbstractUploadTask(String title, ProgressMonitor progressMonitor, boolean ignoreException) {
         super(title, progressMonitor, ignoreException);
     }
 
@@ -72,7 +72,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * Constructs a new {@code AbstractUploadTask}.
      * @param title message for the user
      */
-    public AbstractUploadTask(String title) {
+    protected AbstractUploadTask(String title) {
         super(title);
     }
 

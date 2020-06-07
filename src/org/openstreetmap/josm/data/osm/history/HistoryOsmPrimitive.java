@@ -53,7 +53,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
      *
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp) {
+    protected HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp) {
         this(id, version, visible, user, changesetId, timestamp, true);
     }
 
@@ -72,7 +72,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp,
+    protected HistoryOsmPrimitive(long id, long version, boolean visible, User user, long changesetId, Date timestamp,
             boolean checkHistoricParams) {
         ensurePositiveLong(id, "id");
         ensurePositiveLong(version, "version");
@@ -94,7 +94,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
      * Constructs a new {@code HistoryOsmPrimitive} from an existing {@link OsmPrimitive}.
      * @param p the primitive
      */
-    public HistoryOsmPrimitive(OsmPrimitive p) {
+    protected HistoryOsmPrimitive(OsmPrimitive p) {
         this(p.getId(), p.getVersion(), p.isVisible(), p.getUser(), p.getChangesetId(), p.getTimestamp());
     }
 

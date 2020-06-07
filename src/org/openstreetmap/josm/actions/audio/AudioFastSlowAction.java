@@ -26,7 +26,7 @@ public abstract class AudioFastSlowAction extends AbstractAudioAction {
      * @param shortcut a ready-created shortcut object.
      * @param fast {@code true} to increase speed (faster audio), {@code false} to decrease it (slower audio).
      */
-    public AudioFastSlowAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean fast) {
+    protected AudioFastSlowAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean fast) {
         super(name, iconName, tooltip, shortcut, true);
         multiplier = Config.getPref().getDouble("audio.fastfwdmultiplier", 1.3);
         if (!fast)

@@ -38,7 +38,7 @@ public abstract class AbstractPasteAction extends JosmAction implements FlavorLi
      *            the user CANNOT configure a shortcut for your action.
      * @param registerInToolbar register this action for the toolbar preferences?
      */
-    public AbstractPasteAction(String name, String iconName, String tooltip, Shortcut shortcut,
+    protected AbstractPasteAction(String name, String iconName, String tooltip, Shortcut shortcut,
             boolean registerInToolbar) {
         this(name, iconName, tooltip, shortcut, registerInToolbar, null);
     }
@@ -56,7 +56,7 @@ public abstract class AbstractPasteAction extends JosmAction implements FlavorLi
      * @param registerInToolbar register this action for the toolbar preferences?
      * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
      */
-    public AbstractPasteAction(String name, String iconName, String tooltip, Shortcut shortcut,
+    protected AbstractPasteAction(String name, String iconName, String tooltip, Shortcut shortcut,
             boolean registerInToolbar, String toolbarId) {
         super(name, iconName, tooltip, shortcut, registerInToolbar, toolbarId, true);
         transferHandler = new OsmTransferHandler();

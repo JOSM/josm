@@ -95,7 +95,7 @@ public interface DataSelectionListener {
         private final DataSet source;
         private final Set<OsmPrimitive> old;
 
-        public AbstractSelectionEvent(DataSet source, Set<OsmPrimitive> old) {
+        protected AbstractSelectionEvent(DataSet source, Set<OsmPrimitive> old) {
             CheckParameterUtil.ensureParameterNotNull(source, "source");
             CheckParameterUtil.ensureParameterNotNull(old, "old");
             this.source = source;

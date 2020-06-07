@@ -407,7 +407,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
      * Constructs a new {@code ListMerger}.
      * @param model list merger model
      */
-    public AbstractListMerger(AbstractListMergeModel<T, C> model) {
+    protected AbstractListMerger(AbstractListMergeModel<T, C> model) {
         this.model = model;
         model.addChangeListener(this);
         build();

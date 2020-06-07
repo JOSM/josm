@@ -122,7 +122,8 @@ public interface MapViewPaintable {
         }
 
         /**
-         * @return true if this {@link MapViewPaintable} is used as a temporary layer.
+         * Determines if this {@link MapViewPaintable} is used as a temporary layer
+         * @return true if this {@code MapViewPaintable} is used as a temporary layer.
          */
         public boolean isTemporaryLayer() {
             return temporaryLayer;

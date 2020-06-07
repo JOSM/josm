@@ -189,6 +189,7 @@ public class MultiSplitLayout implements LayoutManager {
     }
 
     /**
+     * Returns the value of the floatingDividers property.
      * @return the value of the floatingDividers property
      * @see #setFloatingDividers
      */
@@ -714,6 +715,7 @@ public class MultiSplitLayout implements LayoutManager {
         }
 
         /**
+         * Returns the invalid Node.
          * @return the invalid Node.
          */
         public Node getNode() {

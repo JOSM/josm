@@ -46,7 +46,7 @@ public abstract class AbstractUploadDialog extends JDialog implements IUploadDia
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public AbstractUploadDialog(Window owner, ModalityType modalityType) {
+    protected AbstractUploadDialog(Window owner, ModalityType modalityType) {
         super(owner, modalityType);
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractUploadDialog extends JDialog implements IUploadDia
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public AbstractUploadDialog(Window owner, String title, ModalityType modalityType, GraphicsConfiguration gc) {
+    protected AbstractUploadDialog(Window owner, String title, ModalityType modalityType, GraphicsConfiguration gc) {
         super(owner, title, modalityType, gc);
     }
 
@@ -124,7 +124,7 @@ public abstract class AbstractUploadDialog extends JDialog implements IUploadDia
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public AbstractUploadDialog(Window owner, String title, ModalityType modalityType) {
+    protected AbstractUploadDialog(Window owner, String title, ModalityType modalityType) {
         super(owner, title, modalityType);
     }
 
@@ -151,7 +151,7 @@ public abstract class AbstractUploadDialog extends JDialog implements IUploadDia
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public AbstractUploadDialog(Window owner, String title) {
+    protected AbstractUploadDialog(Window owner, String title) {
         super(owner, title);
     }
 
@@ -176,7 +176,7 @@ public abstract class AbstractUploadDialog extends JDialog implements IUploadDia
      * @see java.awt.GraphicsEnvironment#isHeadless
      * @see JComponent#getDefaultLocale
      */
-    public AbstractUploadDialog(Window owner) {
+    protected AbstractUploadDialog(Window owner) {
         super(owner);
     }
 

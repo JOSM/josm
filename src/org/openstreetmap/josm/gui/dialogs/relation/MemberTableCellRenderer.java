@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 /**
  * This is the {@link TableCellRenderer} used in the tables of
  * {@link org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberMerger}.
- *
+ * @since 1790
  */
 public abstract class MemberTableCellRenderer extends JLabel implements TableCellRenderer {
     public static final Color BGCOLOR_IN_JOSM_SELECTION = new Color(235, 255, 177);
@@ -24,7 +24,7 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
     /**
      * constructor
      */
-    public MemberTableCellRenderer() {
+    protected MemberTableCellRenderer() {
         setIcon(null);
         setOpaque(true);
     }

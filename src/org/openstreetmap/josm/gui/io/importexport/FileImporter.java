@@ -40,7 +40,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
      * Constructs a new {@code FileImporter} with the given extension file filter.
      * @param filter The extension file filter
      */
-    public FileImporter(ExtensionFileFilter filter) {
+    protected FileImporter(ExtensionFileFilter filter) {
         this.filter = filter;
         this.enabled = true;
     }

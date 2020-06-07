@@ -20,7 +20,7 @@ public abstract class AbstractModifiableLayer extends Layer implements DownloadF
      * Constructs a new {@code ModifiableLayer}.
      * @param name Layer name
      */
-    public AbstractModifiableLayer(String name) {
+    protected AbstractModifiableLayer(String name) {
         super(name);
     }
 

@@ -1032,6 +1032,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     }
 
     /**
+     * Returns the last used height stored in preferences or preferredHeight.
      * @return the last used height stored in preferences or preferredHeight
      * @since 14425
      */

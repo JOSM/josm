@@ -40,6 +40,7 @@ public class DefaultLayer {
     }
 
     /**
+     * Returns layer name of the default layer.
      * @return layer name of the default layer
      */
     public String getLayerName() {
@@ -47,6 +48,7 @@ public class DefaultLayer {
     }
 
     /**
+     * Returns default tileMatrixSet. Only usable for WMTS
      * @return default tileMatrixSet. Only usable for WMTS
      */
     public String getTileMatrixSet() {
@@ -54,6 +56,7 @@ public class DefaultLayer {
     }
 
     /**
+     * Returns style for this WMS / WMTS layer to use.
      * @return style for this WMS / WMTS layer to use
      */
     public String getStyle() {
@@ -61,6 +64,7 @@ public class DefaultLayer {
     }
 
     /**
+     * Returns JSON representation of the default layer object.
      * @return JSON representation of the default layer object
      */
     public JsonObject toJson() {

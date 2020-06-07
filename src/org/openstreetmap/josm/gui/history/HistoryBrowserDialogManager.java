@@ -68,7 +68,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
     private static final List<HistoryHook> hooks = new ArrayList<>();
 
-    protected HistoryBrowserDialogManager() {
+    private HistoryBrowserDialogManager() {
         MainApplication.getLayerManager().addLayerChangeListener(this);
     }
 

@@ -232,7 +232,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          * then use false unless you read result of task (because exception will get lost if you don't)
          * @param zoomAfterDownload If true, the map view will zoom to download area after download
          */
-        public AbstractInternalTask(DownloadParams settings, String title, boolean ignoreException, boolean zoomAfterDownload) {
+        protected AbstractInternalTask(DownloadParams settings, String title, boolean ignoreException, boolean zoomAfterDownload) {
             super(title, ignoreException);
             this.settings = Objects.requireNonNull(settings);
             this.zoomAfterDownload = zoomAfterDownload;
@@ -248,7 +248,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          * then use false unless you read result of task (because exception will get lost if you don't)
          * @param zoomAfterDownload If true, the map view will zoom to download area after download
          */
-        public AbstractInternalTask(DownloadParams settings, String title, ProgressMonitor progressMonitor, boolean ignoreException,
+        protected AbstractInternalTask(DownloadParams settings, String title, ProgressMonitor progressMonitor, boolean ignoreException,
                 boolean zoomAfterDownload) {
             super(title, progressMonitor, ignoreException);
             this.settings = Objects.requireNonNull(settings);

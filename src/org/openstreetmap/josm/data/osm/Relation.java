@@ -181,7 +181,7 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
         visitor.visit(this);
     }
 
-    protected Relation(long id, boolean allowNegative) {
+    Relation(long id, boolean allowNegative) {
         super(id, allowNegative);
     }
 

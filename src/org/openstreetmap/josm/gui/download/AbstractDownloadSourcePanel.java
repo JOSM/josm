@@ -26,7 +26,7 @@ public abstract class AbstractDownloadSourcePanel<T> extends JPanel {
      * Called when creating a new {@link AbstractDownloadSourcePanel} for the given download source
      * @param downloadSource The download source this panel is for
      */
-    public AbstractDownloadSourcePanel(final DownloadSource<T> downloadSource) {
+    protected AbstractDownloadSourcePanel(final DownloadSource<T> downloadSource) {
         Objects.requireNonNull(downloadSource);
         this.downloadSource = downloadSource;
     }

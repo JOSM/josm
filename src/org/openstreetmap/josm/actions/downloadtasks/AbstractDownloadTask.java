@@ -24,7 +24,7 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
     /**
      * Constructs a new {@code AbstractDownloadTask}.
      */
-    public AbstractDownloadTask() {
+    protected AbstractDownloadTask() {
         errorMessages = new ArrayList<>();
     }
 

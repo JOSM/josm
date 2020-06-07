@@ -128,7 +128,7 @@ public final class Node extends OsmPrimitive implements INode {
         }
     }
 
-    protected Node(long id, boolean allowNegative) {
+    Node(long id, boolean allowNegative) {
         super(id, allowNegative);
     }
 

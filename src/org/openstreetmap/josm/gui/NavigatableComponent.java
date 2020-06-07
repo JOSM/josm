@@ -430,6 +430,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
+     * Returns geographic coordinates from a specific pixel coordination on the screen.
      * @param x X-Pixelposition to get coordinate from
      * @param y Y-Pixelposition to get coordinate from
      *
@@ -491,6 +492,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
+     * Returns minimum bounds that will cover a given rectangle.
      * @param r rectangle
      * @return Minimum bounds that will cover rectangle
      */
@@ -1235,7 +1237,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * The result *order* depends on the current map selection state.
-     * Segments within 10px of p are searched and sorted by their distance to @param p,
+     * Segments within 10px of p are searched and sorted by their distance to {@code p},
      * then, within groups of equally distant segments, prefer those that are selected.
      *
      * @param p the point for which to search the nearest segments.
@@ -1636,6 +1638,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
+     * Returns the projection to be used in calculating stuff.
      * @return The projection to be used in calculating stuff.
      */
     public Projection getProjection() {

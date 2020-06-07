@@ -39,7 +39,7 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
     /**
      * Constructs a new {@code SearchTextResultListPanel}.
      */
-    public SearchTextResultListPanel() {
+    protected SearchTextResultListPanel() {
         super(new BorderLayout());
 
         edSearchText = new JosmTextField();

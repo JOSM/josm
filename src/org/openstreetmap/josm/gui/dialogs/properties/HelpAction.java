@@ -34,7 +34,7 @@ public abstract class HelpAction extends AbstractAction {
     /**
      * Constructs a new {@code HelpAction}.
      */
-    public HelpAction() {
+    protected HelpAction() {
         putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help for selected object"));
         new ImageProvider("dialogs", "search").getResource().attachImageIcon(this, true);
         putValue(ACCELERATOR_KEY, getKeyStroke());

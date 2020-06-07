@@ -199,6 +199,7 @@ public class SessionReader {
     }
 
     /**
+     * Returns list of layers that are later added to the mapview.
      * @return list of layers that are later added to the mapview
      */
     public List<Layer> getLayers() {
@@ -206,6 +207,7 @@ public class SessionReader {
     }
 
     /**
+     * Returns active layer.
      * @return active layer, or {@code null} if not set
      * @since 6271
      */
@@ -215,6 +217,7 @@ public class SessionReader {
     }
 
     /**
+     * Returns actions executed in EDT after layers have been added.
      * @return actions executed in EDT after layers have been added (message dialog, etc.)
      */
     public List<Runnable> getPostLoadTasks() {
@@ -222,7 +225,7 @@ public class SessionReader {
     }
 
     /**
-     * Return the viewport (map position and scale).
+     * Returns the viewport (map position and scale).
      * @return the viewport; can be null when no viewport info is found in the file
      */
     public SessionViewportData getViewport() {
@@ -230,7 +233,7 @@ public class SessionReader {
     }
 
     /**
-     * Return the projection choice data.
+     * Returns the projection choice data.
      * @return the projection; can be null when no projection info is found in the file
      */
     public SessionProjectionChoiceData getProjectionChoice() {

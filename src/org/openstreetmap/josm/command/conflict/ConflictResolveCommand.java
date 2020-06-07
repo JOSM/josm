@@ -28,7 +28,7 @@ public abstract class ConflictResolveCommand extends Command {
      * Constructs a new {@code ConflictResolveCommand} in the context of a given data set.
      * @param ds the data set. Must not be null.
      */
-    public ConflictResolveCommand(DataSet ds) {
+    protected ConflictResolveCommand(DataSet ds) {
         super(ds);
     }
 

@@ -84,7 +84,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
      * @param tc the text component. Must not be null.
      * @throws IllegalArgumentException if tc is null
      */
-    public AbstractTextComponentValidator(JTextComponent tc) {
+    protected AbstractTextComponentValidator(JTextComponent tc) {
         this(tc, true);
     }
 
@@ -94,7 +94,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
      * @param tc text component
      * @param addActionListener {@code true} to add the action listener
      */
-    public AbstractTextComponentValidator(JTextComponent tc, boolean addActionListener) {
+    protected AbstractTextComponentValidator(JTextComponent tc, boolean addActionListener) {
         this(tc, true, true, addActionListener);
     }
 
@@ -105,7 +105,8 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
      * @param addDocumentListener {@code true} to add the document listener
      * @param addActionListener {@code true} to add the action listener
      */
-    public AbstractTextComponentValidator(JTextComponent tc, boolean addFocusListener, boolean addDocumentListener, boolean addActionListener) {
+    protected AbstractTextComponentValidator(
+            JTextComponent tc, boolean addFocusListener, boolean addDocumentListener, boolean addActionListener) {
         CheckParameterUtil.ensureParameterNotNull(tc, "tc");
         this.tc = tc;
         if (addFocusListener) {

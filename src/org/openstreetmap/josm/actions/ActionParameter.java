@@ -16,7 +16,7 @@ public abstract class ActionParameter<T> {
      * Constructs a new ActionParameter.
      * @param name parameter name (the key)
      */
-    public ActionParameter(String name) {
+    protected ActionParameter(String name) {
         this.name = name;
     }
 

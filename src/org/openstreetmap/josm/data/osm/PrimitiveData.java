@@ -31,7 +31,7 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
      * @param id id
      * @since 12017
      */
-    public PrimitiveData(long id) {
+    protected PrimitiveData(long id) {
         this.id = id;
     }
 
@@ -39,7 +39,7 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
      * Constructs a new {@code PrimitiveData} from an existing one.
      * @param data the data to copy
      */
-    public PrimitiveData(PrimitiveData data) {
+    protected PrimitiveData(PrimitiveData data) {
         cloneFrom(data);
     }
 

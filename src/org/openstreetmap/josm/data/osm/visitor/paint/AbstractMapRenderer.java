@@ -74,7 +74,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @throws IllegalArgumentException if {@code g} is null
      * @throws IllegalArgumentException if {@code nc} is null
      */
-    public AbstractMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
+    protected AbstractMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         CheckParameterUtil.ensureParameterNotNull(g);
         CheckParameterUtil.ensureParameterNotNull(nc);
         this.g = g;

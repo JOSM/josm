@@ -32,7 +32,7 @@ public abstract class AbstractCopyAction extends AbstractAction {
      * @param keySupplier a supplier which returns the selected key for a given row index
      * @param objectSupplier a supplier which returns the selected tagged object(s)
      */
-    public AbstractCopyAction(JTable tagTable, IntFunction<String> keySupplier, Supplier<Collection<? extends Tagged>> objectSupplier) {
+    protected AbstractCopyAction(JTable tagTable, IntFunction<String> keySupplier, Supplier<Collection<? extends Tagged>> objectSupplier) {
         this.tagTable = Objects.requireNonNull(tagTable);
         this.keySupplier = Objects.requireNonNull(keySupplier);
         this.objectSupplier = Objects.requireNonNull(objectSupplier);

@@ -658,7 +658,7 @@ public final class Functions {
      * Function associated to the logical "&gt;=" operator.
      * @param a first value
      * @param b second value
-     * @return {@code true} if {@code a &gt;= b}
+     * @return {@code true} if {@code a >= b}
      */
     public static boolean greater_equal(float a, float b) { // NO_UCD (unused code)
         return a >= b;
@@ -668,7 +668,7 @@ public final class Functions {
      * Function associated to the logical "&lt;=" operator.
      * @param a first value
      * @param b second value
-     * @return {@code true} if {@code a &lt;= b}
+     * @return {@code true} if {@code a <= b}
      */
     public static boolean less_equal(float a, float b) { // NO_UCD (unused code)
         return a <= b;
@@ -678,7 +678,7 @@ public final class Functions {
      * Function associated to the logical "&gt;" operator.
      * @param a first value
      * @param b second value
-     * @return {@code true} if {@code a &gt; b}
+     * @return {@code true} if {@code a > b}
      */
     public static boolean greater(float a, float b) { // NO_UCD (unused code)
         return a > b;
@@ -688,7 +688,7 @@ public final class Functions {
      * Function associated to the logical "&lt;" operator.
      * @param a first value
      * @param b second value
-     * @return {@code true} if {@code a &lt; b}
+     * @return {@code true} if {@code a < b}
      */
     public static boolean less(float a, float b) { // NO_UCD (unused code)
         return a < b;

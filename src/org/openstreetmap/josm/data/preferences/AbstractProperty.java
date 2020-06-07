@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ListenableWeakReference;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
-
-import java.util.Objects;
 
 /**
  * Captures the common functionality of preference properties
@@ -159,7 +159,7 @@ public abstract class AbstractProperty<T> {
      * @param defaultValue The default value
      * @since 5464
      */
-    public AbstractProperty(String key, T defaultValue) {
+    protected AbstractProperty(String key, T defaultValue) {
         // Config.getPref() should not change in production but may change during tests.
         preferences = Config.getPref();
         this.key = key;

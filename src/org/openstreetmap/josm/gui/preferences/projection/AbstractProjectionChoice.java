@@ -23,7 +23,7 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
      * @param name short name of the projection choice as shown in the GUI
      * @param id unique identifier for the projection choice
      */
-    public AbstractProjectionChoice(String name, String id) {
+    protected AbstractProjectionChoice(String name, String id) {
         this.name = name;
         this.id = id;
     }

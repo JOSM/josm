@@ -43,7 +43,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
      * @param info tile source info
      * @param tileProjection the tile projection
      */
-    public AbstractWMSTileSource(TileSourceInfo info, Projection tileProjection) {
+    protected AbstractWMSTileSource(TileSourceInfo info, Projection tileProjection) {
         super(info);
         this.tileProjection = tileProjection;
     }

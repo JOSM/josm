@@ -77,7 +77,7 @@ public abstract class StyleSource extends SourceEntry {
      * @param name The name for this StyleSource
      * @param title The title that can be used as menu entry
      */
-    public StyleSource(String url, String name, String title) {
+    protected StyleSource(String url, String name, String title) {
         super(SourceType.MAP_PAINT_STYLE, url, name, title, true);
     }
 
@@ -85,7 +85,7 @@ public abstract class StyleSource extends SourceEntry {
      * Constructs a new {@link StyleSource}
      * @param entry The entry to copy the data (url, name, ...) from.
      */
-    public StyleSource(SourceEntry entry) {
+    protected StyleSource(SourceEntry entry) {
         super(entry);
     }
 

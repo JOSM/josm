@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 public interface Datum {
 
     /**
+     * Returns a human readable name of this projection.
      * @return a human readable name of this projection
      */
     String getName();
@@ -25,6 +26,7 @@ public interface Datum {
     String getProj4Id();
 
     /**
+     * Returns the ellipsoid associated with this datum.
      * @return the ellipsoid associated with this datum
      */
     Ellipsoid getEllipsoid();

@@ -181,7 +181,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         visitor.visit(this);
     }
 
-    protected Way(long id, boolean allowNegative) {
+    Way(long id, boolean allowNegative) {
         super(id, allowNegative);
     }
 

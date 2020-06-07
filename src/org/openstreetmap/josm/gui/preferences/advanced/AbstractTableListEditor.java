@@ -47,7 +47,7 @@ public abstract class AbstractTableListEditor<T> extends AbstractListEditor<T> {
      * @param title        The text that will be shown in the window titlebar
      * @param entry        Preference entry
      */
-    public AbstractTableListEditor(Component parent, String title, PrefEntry entry) {
+    protected AbstractTableListEditor(Component parent, String title, PrefEntry entry) {
         super(parent, title, entry);
         entryModel = newEntryListModel();
         entryList = new JList<>(entryModel);

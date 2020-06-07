@@ -16,7 +16,9 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
  * @since 16503
  */
 public interface IDownloadSourceType {
+
     /**
+     * Returns the checkbox to be added to the UI.
      * @return The checkbox to be added to the UI
      */
     default JCheckBox getCheckBox() {
@@ -24,17 +26,20 @@ public interface IDownloadSourceType {
     }
 
     /**
+     * Returns the checkbox to be added to the UI.
      * @param checkboxChangeListener The listener for checkboxes (may be {@code null})
      * @return The checkbox to be added to the UI
      */
     JCheckBox getCheckBox(ChangeListener checkboxChangeListener);
 
     /**
+     * Returns the download task class which will be getting the data.
      * @return The {@link DownloadTask} class which will be getting the data
      */
     Class<? extends AbstractDownloadTask<?>> getDownloadClass();
 
     /**
+     * Determines the last state of the download type.
      * @return The boolean indicating the last state of the download type
      */
     default boolean isEnabled() {
@@ -42,6 +47,7 @@ public interface IDownloadSourceType {
     }
 
     /**
+     * Returns the boolean property for this particular download type.
      * @return The boolean property for this particular download type
      */
     BooleanProperty getBooleanProperty();

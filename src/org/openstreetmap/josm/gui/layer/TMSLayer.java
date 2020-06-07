@@ -139,6 +139,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     }
 
     /**
+     * Returns cache for TMS region.
      * @return cache for TMS region
      */
     public static CacheAccess<String, BufferedImageCacheEntry> getCache() {

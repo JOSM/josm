@@ -12,10 +12,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 16495
  */
 public abstract class AbstractShowHistoryAction extends AbstractAction {
+
     /**
      * Constructs a new {@code AbstractShowHistoryAction}.
      */
-    public AbstractShowHistoryAction() {
+    protected AbstractShowHistoryAction() {
         putValue(NAME, tr("History"));
         putValue(SHORT_DESCRIPTION, tr("Download and show the history of the selected objects"));
         new ImageProvider("dialogs", "history").getResource().attachImageIcon(this, true);

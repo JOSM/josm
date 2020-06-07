@@ -372,6 +372,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
     }
 
     /**
+     * Returns the linked MarkerLayer.
      * @return the linked MarkerLayer (imported from the same file)
      * @since 15496
      */
@@ -380,6 +381,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
     }
 
     /**
+     * Sets the linked MarkerLayer.
      * @param linkedMarkerLayer the linked MarkerLayer
      * @since 15496
      */

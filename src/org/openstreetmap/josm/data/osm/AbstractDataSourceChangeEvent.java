@@ -23,7 +23,7 @@ public abstract class AbstractDataSourceChangeEvent implements DataSourceChangeE
      * @param source The DataSet that is originating the change
      * @param old    The previous set of DataSources
      */
-    public AbstractDataSourceChangeEvent(DataSet source, Set<DataSource> old) {
+    protected AbstractDataSourceChangeEvent(DataSet source, Set<DataSource> old) {
         CheckParameterUtil.ensureParameterNotNull(source, "source");
         CheckParameterUtil.ensureParameterNotNull(old, "old");
         this.source = source;

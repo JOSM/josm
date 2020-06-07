@@ -67,6 +67,7 @@ public class WindowsShortcut {
     }
 
     /**
+     * Returns the name of the filesystem object pointed to by this shortcut.
      * @return the name of the filesystem object pointed to by this shortcut
      */
     public String getRealFilename() {

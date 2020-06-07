@@ -450,8 +450,7 @@ public class UnGlueAction extends JosmAction {
 
     /**
      * dupe all nodes that are selected, and put the copies on the selected way
-     * @throws UserCancelException
-     *
+     * @throws UserCancelException if user cancels choice
      */
     private void unglueOneWayAnyNodes() throws UserCancelException {
         final PropertiesMembershipChoiceDialog dialog =

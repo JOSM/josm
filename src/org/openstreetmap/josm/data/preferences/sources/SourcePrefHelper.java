@@ -29,7 +29,7 @@ public abstract class SourcePrefHelper {
      * @param type The source type
      * @since 12825
      */
-    public SourcePrefHelper(String pref, SourceType type) {
+    protected SourcePrefHelper(String pref, SourceType type) {
         this.pref = pref;
         this.type = type;
     }

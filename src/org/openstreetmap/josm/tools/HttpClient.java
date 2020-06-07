@@ -512,6 +512,7 @@ public abstract class HttpClient {
         public abstract Map<String, List<String>> getHeaderFields();
 
         /**
+         * Indicates that other requests to the server are unlikely in the near future.
          * @see HttpURLConnection#disconnect()
          */
         public abstract void disconnect();

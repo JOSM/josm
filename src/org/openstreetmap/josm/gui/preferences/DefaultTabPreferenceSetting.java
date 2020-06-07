@@ -29,19 +29,19 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
     /**
      * Constructs a new {@code DefaultTabPreferenceSetting}.
      */
-    public DefaultTabPreferenceSetting() {
+    protected DefaultTabPreferenceSetting() {
         this(null, null, null);
     }
 
-    public DefaultTabPreferenceSetting(String iconName, String title, String description) {
+    protected DefaultTabPreferenceSetting(String iconName, String title, String description) {
         this(iconName, title, description, false);
     }
 
-    public DefaultTabPreferenceSetting(String iconName, String title, String description, boolean isExpert) {
+    protected DefaultTabPreferenceSetting(String iconName, String title, String description, boolean isExpert) {
         this(iconName, title, description, isExpert, null);
     }
 
-    public DefaultTabPreferenceSetting(String iconName, String title, String description, boolean isExpert, JTabbedPane tabpane) {
+    protected DefaultTabPreferenceSetting(String iconName, String title, String description, boolean isExpert, JTabbedPane tabpane) {
         super(isExpert);
         this.iconName = iconName;
         this.description = description;

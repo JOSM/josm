@@ -26,7 +26,7 @@ public abstract class FileExporter implements ActiveLayerChangeListener {
      * Constructs a new {@code FileExporter}.
      * @param filter The extension file filter
      */
-    public FileExporter(ExtensionFileFilter filter) {
+    protected FileExporter(ExtensionFileFilter filter) {
         this.filter = filter;
         this.enabled = true;
     }

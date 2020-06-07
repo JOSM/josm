@@ -93,6 +93,7 @@ public class GpxExtension extends WithAttributes {
     }
 
     /**
+     * Returns the qualified name of the XML element.
      * @return the qualified name of the XML element
      */
     public String getQualifiedName() {
@@ -100,6 +101,7 @@ public class GpxExtension extends WithAttributes {
     }
 
     /**
+     * Returns the prefix of the XML namespace.
      * @return the prefix of the XML namespace
      */
     public String getPrefix() {
@@ -107,6 +109,7 @@ public class GpxExtension extends WithAttributes {
     }
 
     /**
+     * Returns the key (local element name) of the extension.
      * @return the key (local element name) of the extension
      */
     public String getKey() {
@@ -114,11 +117,12 @@ public class GpxExtension extends WithAttributes {
     }
 
     /**
+     * Returns the flattened extension key of this extension.
      * @return the flattened extension key of this extension, used for conversion to OSM layers
      */
     public String getFlatKey() {
         String ret = "";
-        if (parent != null && parent instanceof GpxExtension) {
+        if (parent instanceof GpxExtension) {
             GpxExtension ext = (GpxExtension) parent;
             ret = ext.getFlatKey() + ":";
         }
@@ -143,6 +147,7 @@ public class GpxExtension extends WithAttributes {
     }
 
     /**
+     * Returns the value of the extension.
      * @return the value of the extension
      */
     public String getValue() {
@@ -150,6 +155,7 @@ public class GpxExtension extends WithAttributes {
     }
 
     /**
+     * Sets the value.
      * @param value the value to set
      */
     public void setValue(String value) {
@@ -203,6 +209,7 @@ public class GpxExtension extends WithAttributes {
     }
 
     /**
+     * Determines if this extension should be written.
      * @return if this extension should be written, used for hiding colors during export without removing them
      */
     public boolean isVisible() {
@@ -210,6 +217,7 @@ public class GpxExtension extends WithAttributes {
     }
 
     /**
+     * Returns the parent element of this extension.
      * @return the parent element of this extension, can be another extension or gpx elements (data, track, segment, ...)
      */
     public IWithAttributes getParent() {

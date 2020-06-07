@@ -134,7 +134,7 @@ public abstract class Command implements PseudoCommand {
      * @throws IllegalArgumentException if data is null
      * @since 11240
      */
-    public Command(DataSet data) {
+    protected Command(DataSet data) {
         CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.data = data;
     }

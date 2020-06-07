@@ -184,7 +184,7 @@ public abstract class AbstractMergePanel extends JPanel {
     /**
      * Create a new merge panel.
      */
-    public AbstractMergePanel() {
+    protected AbstractMergePanel() {
         super(new GridBagLayout());
     }
 

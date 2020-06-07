@@ -65,7 +65,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
      * @param downloadReferrers if the referrers of the object should be downloaded as well,
      *     i.e., parent relations, and for nodes, additionally, parent ways
      * @param full if the members of a relation should be downloaded as well
-     * @param newLayerName the name to use for the new layer, can be {@code null}.
+     * @param newLayerName the name to use for the new layer, can be null.
      * @param monitor ProgressMonitor to use, or null to create a new one
      */
     public DownloadPrimitivesWithReferrersTask(boolean newLayer, List<PrimitiveId> ids, boolean downloadReferrers,

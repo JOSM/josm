@@ -249,6 +249,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
     }
 
     /**
+     * Determines if this collection contains writable extensions.
      * @return <code>true</code> if this collection contains writable extensions
      */
     public boolean isVisible() {

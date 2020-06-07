@@ -33,6 +33,7 @@ public class TilePosition {
     }
 
     /**
+     * Returns the x position.
      * @return the x position
      */
     public int getX() {
@@ -40,6 +41,7 @@ public class TilePosition {
     }
 
     /**
+     * Returns the y position.
      * @return the y position
      */
     public int getY() {
@@ -47,6 +49,7 @@ public class TilePosition {
     }
 
     /**
+     * Returns the zoom.
      * @return the zoom
      */
     public int getZoom() {

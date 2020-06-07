@@ -303,7 +303,7 @@ public abstract class CrossingWays extends Test {
      * @param code The test code
      * @since 12958
      */
-    public CrossingWays(String title, int code) {
+    protected CrossingWays(String title, int code) {
         super(title, tr("This test checks if two roads, railways, waterways or buildings crosses in the same layer, " +
                 "but are not connected by a node."));
         this.code = code;

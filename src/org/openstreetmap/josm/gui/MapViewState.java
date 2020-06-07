@@ -333,6 +333,7 @@ public final class MapViewState implements Serializable {
     }
 
     /**
+     * Creates a new state that is moved to an east/north coordinate.
      * @param mapViewPoint The reference point.
      * @param newEastNorthThere The east/north coordinate that should be there.
      * @return The new state.

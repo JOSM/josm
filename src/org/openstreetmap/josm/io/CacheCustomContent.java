@@ -72,7 +72,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @param ident ident that identifies the stored file. Includes file-ending.
      * @param updateInterval update interval in seconds. -1 means always
      */
-    public CacheCustomContent(String ident, int updateInterval) {
+    protected CacheCustomContent(String ident, int updateInterval) {
         this.ident = ident;
         this.updateInterval = updateInterval;
         this.path = new File(Config.getDirs().getCacheDirectory(true), ident);

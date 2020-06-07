@@ -62,6 +62,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
     }
 
     /**
+     * Returns a new {@link ThreadPoolExecutor}.
      * @param nameFormat see {@link Utils#newThreadFactory(String, int)}
      * @param workers number of worker thread to keep
      * @return new ThreadPoolExecutor that will use a @see HostLimitQueue based queue
@@ -71,6 +72,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
     }
 
     /**
+     * Returns a new {@link ThreadPoolExecutor}.
      * @param nameFormat see {@link Utils#newThreadFactory(String, int)}
      * @param workers number of worker thread to keep
      * @param hostLimit number of concurrent downloads per host allowed
@@ -88,8 +90,9 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
     }
 
     /**
+     * Returns a new {@link ThreadPoolExecutor}.
      * @param name name of threads
-     * @return new ThreadPoolExecutor that will use a @see HostLimitQueue based queue, with default number of threads
+     * @return new ThreadPoolExecutor that will use a {@link HostLimitQueue} based queue, with default number of threads
      */
     public static ThreadPoolExecutor getNewThreadPoolExecutor(String name) {
         return getNewThreadPoolExecutor(name, THREAD_LIMIT.get().intValue());
@@ -111,6 +114,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
     }
 
     /**
+     * Returns cache statistics as string.
      * @return cache statistics as string
      */
     public String getStats() {
@@ -147,6 +151,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
     }
 
     /**
+     * Returns download executor that is used by this factory.
      * @return download executor that is used by this factory
      */
     public ThreadPoolExecutor getDownloadExecutor() {

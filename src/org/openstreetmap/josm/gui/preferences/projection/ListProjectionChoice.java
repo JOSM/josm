@@ -32,7 +32,7 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
      * @param label a label shown left to the combo-box
      * @param defaultIndex the default index for the combo-box
      */
-    public ListProjectionChoice(String name, String id, String[] entries, String label, int defaultIndex) {
+    protected ListProjectionChoice(String name, String id, String[] entries, String label, int defaultIndex) {
         super(name, id);
         this.entries = Utils.copyArray(entries);
         this.label = label;
@@ -46,7 +46,7 @@ public abstract class ListProjectionChoice extends AbstractProjectionChoice {
      * @param entries the list of display entries for the combo-box
      * @param label a label shown left to the combo-box
      */
-    public ListProjectionChoice(String name, String id, String[] entries, String label) {
+    protected ListProjectionChoice(String name, String id, String[] entries, String label) {
         this(name, id, entries, label, 0);
     }
 

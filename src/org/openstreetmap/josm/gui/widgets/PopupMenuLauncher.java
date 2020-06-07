@@ -148,6 +148,7 @@ public class PopupMenuLauncher extends MouseAdapter {
     }
 
     /**
+     * Returns the popup menu.
      * @return the popup menu if defined, {@code null} otherwise.
      * @since 5884
      */

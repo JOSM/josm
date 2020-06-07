@@ -210,9 +210,8 @@ public abstract class UnconnectedWays extends Test {
      * @param title The test title
      * @since 6691
      */
-    public UnconnectedWays(String title) {
+    protected UnconnectedWays(String title) {
         this(title, UNCONNECTED_WAYS, false);
-
     }
 
     /**
@@ -222,7 +221,7 @@ public abstract class UnconnectedWays extends Test {
      * @param isHighwayTest use {@code true} if test concerns highways or railways
      * @since 14468
      */
-    public UnconnectedWays(String title, int code, boolean isHighwayTest) {
+    protected UnconnectedWays(String title, int code, boolean isHighwayTest) {
         super(title, tr("This test checks if a way has an endpoint very near to another way."));
         this.code = code;
         this.isHighwayTest = isHighwayTest;

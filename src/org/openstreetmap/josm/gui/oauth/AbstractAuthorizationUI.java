@@ -27,7 +27,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
      * Constructs a new {@code AbstractAuthorizationUI} without API URL.
      * @since 10189
      */
-    public AbstractAuthorizationUI() {
+    protected AbstractAuthorizationUI() {
     }
 
     /**
@@ -35,7 +35,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
      * @param apiUrl The OSM API URL
      * @since 5422
      */
-    public AbstractAuthorizationUI(String apiUrl) {
+    protected AbstractAuthorizationUI(String apiUrl) {
         setApiUrl(apiUrl);
     }
 

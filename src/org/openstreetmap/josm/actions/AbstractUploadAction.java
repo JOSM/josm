@@ -28,7 +28,7 @@ public abstract class AbstractUploadAction extends JosmAction {
      *            the user CANNOT configure a shortcut for your action.
      * @param registerInToolbar register this action for the toolbar preferences?
      */
-    public AbstractUploadAction(String name, String iconName, String tooltip, Shortcut shortcut,
+    protected AbstractUploadAction(String name, String iconName, String tooltip, Shortcut shortcut,
             boolean registerInToolbar) {
         super(name, iconName, tooltip, shortcut, registerInToolbar);
     }

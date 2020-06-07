@@ -146,7 +146,7 @@ public final class MapPaintStyles {
     }
 
     /**
-     * Image provider for icon. Note that this is a provider only. A @link{ImageProvider#get()} call may still fail!
+     * Image provider for icon. Note that this is a provider only. A {@link ImageProvider#get()} call may still fail!
      *
      * @param ref reference to the requested icon
      * @param test if <code>true</code> than the icon is request is tested

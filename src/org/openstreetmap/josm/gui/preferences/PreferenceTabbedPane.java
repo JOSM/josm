@@ -193,7 +193,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     @FunctionalInterface
     public interface ValidationListener {
         /**
-         *
+         * Determines if preferences can be saved.
          * @return True if preferences can be saved
          */
         boolean validatePreferences();

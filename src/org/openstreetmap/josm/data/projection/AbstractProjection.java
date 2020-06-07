@@ -180,6 +180,7 @@ public abstract class AbstractProjection implements Projection {
     }
 
     /**
+     * Returns The EPSG Code of this CRS.
      * @return The EPSG Code of this CRS, null if it doesn't have one.
      */
     public abstract Integer getEpsgCode();

@@ -360,6 +360,7 @@ public class Bounds {
     }
 
     /**
+     * Returns center of the bounding box.
      * @return Center of the bounding box.
      */
     public LatLon getCenter() {

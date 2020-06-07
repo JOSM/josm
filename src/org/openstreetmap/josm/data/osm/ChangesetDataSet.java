@@ -176,6 +176,7 @@ public class ChangesetDataSet {
     }
 
     /**
+     * Returns an unmodifiable set of all primitives in this dataset.
      * @return an unmodifiable set of all primitives in this dataset.
      * @since 14946
      */

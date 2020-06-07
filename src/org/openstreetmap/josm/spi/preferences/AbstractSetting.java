@@ -13,11 +13,12 @@ public abstract class AbstractSetting<T> implements Setting<T> {
     protected final T value;
     protected Long time;
     protected boolean isNew;
+
     /**
      * Constructs a new {@code AbstractSetting} with the given value
      * @param value The setting value
      */
-    public AbstractSetting(T value) {
+    protected AbstractSetting(T value) {
         this.value = value;
         this.time = null;
         this.isNew = false;

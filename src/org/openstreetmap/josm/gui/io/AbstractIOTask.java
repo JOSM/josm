@@ -17,7 +17,7 @@ public abstract class AbstractIOTask implements Runnable {
     /**
      * Constructs a new {@code AbstractIOTask}.
      */
-    public AbstractIOTask() {
+    protected AbstractIOTask() {
         canceled = false;
         failed = false;
         lastException = null;

@@ -110,6 +110,7 @@ public class HeadersTable extends JPanel {
     }
 
     /**
+     * Returns headers provided by user.
      * @return headers provided by user
      */
     public Map<String, String> getHeaders() {

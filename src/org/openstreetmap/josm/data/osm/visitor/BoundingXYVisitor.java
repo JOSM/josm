@@ -134,6 +134,7 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor, PrimitiveVisitor 
     }
 
     /**
+     * Returns the bounding box.
      * @return The bounding box or <code>null</code> if no coordinates have passed
      */
     public ProjectionBounds getBounds() {

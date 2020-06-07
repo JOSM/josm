@@ -78,7 +78,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @param toolbarId identifier for the toolbar preferences
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public JosmAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar,
+    protected JosmAction(String name, ImageProvider icon, String tooltip, Shortcut shortcut, boolean registerInToolbar,
             String toolbarId, boolean installAdapters) {
         super(name);
         if (icon != null) {
@@ -126,7 +126,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar,
+    protected JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar,
             String toolbarId, boolean installAdapters) {
         this(name, iconName == null ? null : new ImageProvider(iconName).setOptional(true), tooltip, shortcut, registerInToolbar,
                 toolbarId == null ? iconName : toolbarId, installAdapters);
@@ -148,7 +148,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @param registerInToolbar register this action for the toolbar preferences?
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar, boolean installAdapters) {
+    protected JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar, boolean installAdapters) {
         this(name, iconName, tooltip, shortcut, registerInToolbar, null, installAdapters);
     }
 
@@ -167,14 +167,14 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      *            the user CANNOT configure a shortcut for your action.
      * @param registerInToolbar register this action for the toolbar preferences?
      */
-    public JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
+    protected JosmAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
         this(name, iconName, tooltip, shortcut, registerInToolbar, null, true);
     }
 
     /**
      * Constructs a new {@code JosmAction}.
      */
-    public JosmAction() {
+    protected JosmAction() {
         this(true);
     }
 
@@ -183,7 +183,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      *
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public JosmAction(boolean installAdapters) {
+    protected JosmAction(boolean installAdapters) {
         setHelpId();
         if (installAdapters) {
             installAdapters();
@@ -202,7 +202,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @param shortcuts ready-created shortcut objects
      * @since 14012
      */
-    public JosmAction(String name, String iconName, String tooltip, List<Shortcut> shortcuts) {
+    protected JosmAction(String name, String iconName, String tooltip, List<Shortcut> shortcuts) {
         this(name, iconName, tooltip, shortcuts.get(0), true, null, true);
         for (int i = 1; i < shortcuts.size(); i++) {
             MainApplication.registerActionShortcut(this, shortcuts.get(i));

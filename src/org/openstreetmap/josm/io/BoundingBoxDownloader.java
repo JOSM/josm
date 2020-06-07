@@ -255,6 +255,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
     }
 
     /**
+     * Determines if download is complete for the given bounding box.
      * @return true if download is complete for the given bounding box (not filtered)
      */
     public boolean considerAsFullDownload() {

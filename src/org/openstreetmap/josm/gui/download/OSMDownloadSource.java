@@ -131,6 +131,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
     }
 
     /**
+     * Returns the possible downloads that JOSM can make in the default Download screen.
      * @return The possible downloads that JOSM can make in the default Download screen
      * @since 16503
      */
@@ -151,6 +152,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
     }
 
     /**
+     * Removes a download source type.
      * @param type The IDownloadSourceType object to remove
      * @return {@code true} if this download types contained the specified object
      * @since 16503
@@ -359,7 +361,6 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
                 sizeCheck.setForeground(Color.darkGray);
             }
         }
-
     }
 
     /**
@@ -370,6 +371,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         private final List<IDownloadSourceType> downloadPossibilities;
 
         /**
+         * Constructs a new {@code OSMDownloadData}.
          * @param downloadPossibilities A list of DataDownloadTypes (instantiated, with
          *                              options set)
          */
@@ -378,6 +380,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         }
 
         /**
+         * Returns the download possibilities.
          * @return A list of DataDownloadTypes (instantiated, with options set)
          */
         public List<IDownloadSourceType> getDownloadPossibilities() {

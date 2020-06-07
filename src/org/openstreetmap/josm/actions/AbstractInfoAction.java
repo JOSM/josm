@@ -29,7 +29,7 @@ public abstract class AbstractInfoAction extends JosmAction {
      * Constructs a new {@code AbstractInfoAction}.
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public AbstractInfoAction(boolean installAdapters) {
+    protected AbstractInfoAction(boolean installAdapters) {
         super(installAdapters);
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractInfoAction extends JosmAction {
      * @param toolbarId identifier for the toolbar preferences. The iconName is used, if this parameter is null
      * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
      */
-    public AbstractInfoAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register,
+    protected AbstractInfoAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register,
             String toolbarId, boolean installAdapters) {
         super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
     }

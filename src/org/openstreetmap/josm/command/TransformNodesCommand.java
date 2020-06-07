@@ -50,7 +50,7 @@ public abstract class TransformNodesCommand extends Command {
      * @throws NullPointerException if objects is null or contain null item
      * @throws NoSuchElementException if objects is empty
      */
-    public TransformNodesCommand(Collection<? extends OsmPrimitive> objects) {
+    protected TransformNodesCommand(Collection<? extends OsmPrimitive> objects) {
         super(objects.iterator().next().getDataSet());
         this.nodes = AllNodesVisitor.getAllNodes(objects);
         storeOldState();

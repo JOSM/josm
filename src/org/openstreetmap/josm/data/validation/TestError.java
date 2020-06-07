@@ -530,6 +530,7 @@ public class TestError implements Comparable<TestError> {
     }
 
     /**
+     * Returns a new {@link MultipleNameVisitor} for the list of primitives affected by this error.
      * @return Name visitor (used in cell renderer and for sorting)
      */
     public MultipleNameVisitor getNameVisitor() {

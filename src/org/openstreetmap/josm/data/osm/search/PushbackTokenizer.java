@@ -37,6 +37,7 @@ public class PushbackTokenizer {
         }
 
         /**
+         * Returns the range start.
          * @return The start
          */
         public long getStart() {
@@ -44,6 +45,7 @@ public class PushbackTokenizer {
         }
 
         /**
+         * Returns the range end.
          * @return The end (inclusive)
          */
         public long getEnd() {

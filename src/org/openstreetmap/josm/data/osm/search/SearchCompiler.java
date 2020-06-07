@@ -334,7 +334,7 @@ public class SearchCompiler {
 
         protected final Match match;
 
-        public UnaryMatch(Match match) {
+        protected UnaryMatch(Match match) {
             if (match == null) {
                 // "operator" (null) should mean the same as "operator()"
                 // (Always). I.e. match everything
@@ -382,7 +382,7 @@ public class SearchCompiler {
          * @param lhs Left hand side
          * @param rhs Right hand side
          */
-        public AbstractBinaryMatch(Match lhs, Match rhs) {
+        protected AbstractBinaryMatch(Match lhs, Match rhs) {
             this.lhs = lhs;
             this.rhs = rhs;
         }

@@ -21,7 +21,7 @@ public abstract class AbstractDatum implements Datum {
      * @param proj4Id The Proj4 identifier
      * @param ellps The ellipsoid
      */
-    public AbstractDatum(String name, String proj4Id, Ellipsoid ellps) {
+    protected AbstractDatum(String name, String proj4Id, Ellipsoid ellps) {
         this.name = name;
         this.proj4Id = proj4Id;
         this.ellps = ellps;
