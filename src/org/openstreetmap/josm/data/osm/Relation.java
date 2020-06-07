@@ -483,12 +483,13 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
                 if (rm.getMember().getDataSet() != dataSet)
                     throw new DataIntegrityProblemException(
                             String.format("Relation member must be part of the same dataset as relation(%s, %s)",
-                                    getPrimitiveId(), rm.getMember().getPrimitiveId()));
+                                    getPrimitiveId(), rm.getMember().getPrimitiveId()),
+                            null, this, rm.getMember());
             }
             if (Config.getPref().getBoolean("debug.checkDeleteReferenced", true)) {
                 for (RelationMember rm: members) {
                     if (rm.getMember().isDeleted())
-                        throw new DataIntegrityProblemException("Deleted member referenced: " + toString());
+                        throw new DataIntegrityProblemException("Deleted member referenced: " + toString(), null, this, rm.getMember());
                 }
             }
         }

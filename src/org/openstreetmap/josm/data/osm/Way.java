@@ -535,15 +535,17 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
                 if (n.isDeleted())
                     throw new DataIntegrityProblemException("Deleted node referenced: " + toString(),
                             "<html>" + tr("Deleted node referenced by {0}",
-                                    DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
+                                    DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>",
+                            this, n);
             }
             if (Config.getPref().getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {
                     if (n.isVisible() && !n.isIncomplete() && !n.isLatLonKnown())
                         throw new DataIntegrityProblemException("Complete visible node with null coordinates: " + toString(),
                                 "<html>" + tr("Complete node {0} with null coordinates in way {1}",
-                                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(n),
-                                DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
+                                        DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(n),
+                                        DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>",
+                                this, n);
                 }
             }
         }

@@ -495,8 +495,8 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
         update(() -> {
             if (getPrimitiveById(primitive) != null)
                 throw new DataIntegrityProblemException(
-                        tr("Unable to add primitive {0} to the dataset because it is already included",
-                                primitive.toString()));
+                        tr("Unable to add primitive {0} to the dataset because it is already included", primitive.toString()),
+                        null, primitive);
 
             allPrimitives.add(primitive);
             primitive.setDataset(this);
