@@ -52,7 +52,7 @@ public class RedoAction extends JosmAction implements CommandQueueListener {
         } else {
             putValue(NAME, tr("Redo ..."));
             setTooltip(tr("Redo {0}",
-                    UndoRedoHandler.getInstance().getRedoCommands().getFirst().getDescriptionText()));
+                    UndoRedoHandler.getInstance().getRedoCommands().get(0).getDescriptionText()));
         }
     }
 }
