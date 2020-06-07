@@ -60,8 +60,9 @@ public class Combo extends ComboMultiSelect {
         combobox = new JosmComboBox<>(presetListEntries.toArray(new PresetListEntry[0]));
         component = combobox;
         combobox.setRenderer(getListCellRenderer());
-        combobox.setEditable(editable);
+        combobox.setEditable(true); // fix incorrect height, see #6157
         combobox.reinitialize(presetListEntries);
+        combobox.setEditable(editable); // see #6157
         AutoCompletingTextField tf = new AutoCompletingTextField();
         initAutoCompletionField(tf, key);
         if (Config.getPref().getBoolean("taggingpreset.display-keys-as-hint", true)) {
