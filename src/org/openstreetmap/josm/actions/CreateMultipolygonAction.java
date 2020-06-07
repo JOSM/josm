@@ -111,28 +111,29 @@ public class CreateMultipolygonAction extends JosmAction {
                 return;
             }
             final Command command = commandAndRelation.a;
-            final Relation relation = commandAndRelation.b;
 
             // to avoid EDT violations
             SwingUtilities.invokeLater(() -> {
                     UndoRedoHandler.getInstance().add(command);
+                final Relation relation = (Relation) MainApplication.getLayerManager().getEditDataSet()
+                        .getPrimitiveById(commandAndRelation.b);
 
-                    // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
-                    // knows about the new relation before we try to select it.
-                    // (Yes, we are already in event dispatch thread. But DatasetEventManager
-                    // uses 'SwingUtilities.invokeLater' to fire events so we have to do the same.)
-                    SwingUtilities.invokeLater(() -> {
-                            MainApplication.getMap().relationListDialog.selectRelation(relation);
-                            if (Config.getPref().getBoolean("multipoly.show-relation-editor", false)) {
-                                //Open relation edit window, if set up in preferences
-                                RelationEditor editor = RelationEditor.getEditor(
-                                        MainApplication.getLayerManager().getEditLayer(), relation, null);
-                                editor.setModal(true);
-                                editor.setVisible(true);
-                            } else {
-                                MainApplication.getLayerManager().getEditLayer().setRecentRelation(relation);
-                            }
-                    });
+                // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
+                // knows about the new relation before we try to select it.
+                // (Yes, we are already in event dispatch thread. But DatasetEventManager
+                // uses 'SwingUtilities.invokeLater' to fire events so we have to do the same.)
+                SwingUtilities.invokeLater(() -> {
+                    MainApplication.getMap().relationListDialog.selectRelation(relation);
+                    if (Config.getPref().getBoolean("multipoly.show-relation-editor", false)) {
+                        //Open relation edit window, if set up in preferences
+                        RelationEditor editor = RelationEditor
+                                .getEditor(MainApplication.getLayerManager().getEditLayer(), relation, null);
+                        editor.setModal(true);
+                        editor.setVisible(true);
+                    } else {
+                        MainApplication.getLayerManager().getEditLayer().setRecentRelation(relation);
+                    }
+                });
             });
         }
     }
