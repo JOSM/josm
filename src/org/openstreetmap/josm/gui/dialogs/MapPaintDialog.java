@@ -59,7 +59,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSettingGroupGui;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
@@ -179,7 +179,7 @@ public class MapPaintDialog extends ToggleDialog {
 
     @Override
     public void showNotify() {
-        MapPaintStyles.addMapPaintSylesUpdateListener(model);
+        MapPaintStyles.addMapPaintStylesUpdateListener(model);
         model.mapPaintStylesUpdated();
         MainApplication.getMenu().wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
     }
@@ -187,10 +187,10 @@ public class MapPaintDialog extends ToggleDialog {
     @Override
     public void hideNotify() {
         MainApplication.getMenu().wireFrameToggleAction.removeButtonModel(cbWireframe.getModel());
-        MapPaintStyles.removeMapPaintSylesUpdateListener(model);
+        MapPaintStyles.removeMapPaintStylesUpdateListener(model);
     }
 
-    protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
+    protected class StylesModel extends AbstractTableModel implements MapPaintStylesUpdateListener {
 
         private final Class<?>[] columnClasses = {Boolean.class, StyleSource.class};
 

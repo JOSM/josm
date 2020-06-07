@@ -66,7 +66,7 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationLi
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStylesUpdateListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -94,7 +94,7 @@ implements PropertyChangeListener, PreferenceChangedListener,
 LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     static {
-        MapPaintStyles.addMapPaintSylesUpdateListener(new MapPaintSylesUpdateListener() {
+        MapPaintStyles.addMapPaintStylesUpdateListener(new MapPaintStylesUpdateListener() {
             @Override
             public void mapPaintStylesUpdated() {
                 SwingUtilities.invokeLater(() ->

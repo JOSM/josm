@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.Utils;
  * This class manages the list of available map paint styles and gives access to
  * the ElemStyles singleton.
  *
- * On change, {@link MapPaintSylesUpdateListener#mapPaintStylesUpdated()} is fired
+ * On change, {@link MapPaintStylesUpdateListener#mapPaintStylesUpdated()} is fired
  * for all listeners.
  */
 public final class MapPaintStyles {
@@ -45,7 +45,7 @@ public final class MapPaintStyles {
             "presets/misc/deprecated.svg",
             "misc/deprecated.png");
 
-    private static final ListenerList<MapPaintSylesUpdateListener> listeners = ListenerList.createUnchecked();
+    private static final ListenerList<MapPaintStylesUpdateListener> listeners = ListenerList.createUnchecked();
 
     private static final class MapPaintStylesPreferenceListener implements PreferenceChangedListener {
         private final IPreferences pref;
@@ -66,7 +66,7 @@ public final class MapPaintStyles {
     }
 
     static {
-        listeners.addListener(new MapPaintSylesUpdateListener() {
+        listeners.addListener(new MapPaintStylesUpdateListener() {
             @Override
             public void mapPaintStylesUpdated() {
                 SwingUtilities.invokeLater(styles::clearCached);
@@ -315,7 +315,7 @@ public final class MapPaintStyles {
                 source.loadStyleSource(true);
             }
         }
-        fireMapPaintSylesUpdated();
+        fireMapPaintStylesUpdated();
     }
 
     private static void loadStyleForFirstTime(StyleSource source) {
@@ -372,7 +372,7 @@ public final class MapPaintStyles {
         }
         styles.setStyleSources(data);
         MapPaintPrefHelper.INSTANCE.put(data);
-        fireMapPaintSylesUpdated();
+        fireMapPaintStylesUpdated();
     }
 
     /**
@@ -412,7 +412,7 @@ public final class MapPaintStyles {
         if (sel.length == 1) {
             fireMapPaintStyleEntryUpdated(sel[0]);
         } else {
-            fireMapPaintSylesUpdated();
+            fireMapPaintStylesUpdated();
         }
     }
 
@@ -443,14 +443,14 @@ public final class MapPaintStyles {
 
     private static void refreshStyles() {
         MapPaintPrefHelper.INSTANCE.put(styles.getStyleSources());
-        fireMapPaintSylesUpdated();
+        fireMapPaintStylesUpdated();
     }
 
     /***********************************
-     * MapPaintSylesUpdateListener &amp; related code
+     * MapPaintStylesUpdateListener &amp; related code
      *  (get informed when the list of MapPaint StyleSources changes)
      */
-    public interface MapPaintSylesUpdateListener {
+    public interface MapPaintStylesUpdateListener {
         /**
          * Called on any style source changes that are not handled by {@link #mapPaintStyleEntryUpdated(int)}
          */
@@ -467,7 +467,7 @@ public final class MapPaintStyles {
      * Add a listener that listens to global style changes.
      * @param listener The listener
      */
-    public static void addMapPaintSylesUpdateListener(MapPaintSylesUpdateListener listener) {
+    public static void addMapPaintStylesUpdateListener(MapPaintStylesUpdateListener listener) {
         listeners.addListener(listener);
     }
 
@@ -475,15 +475,15 @@ public final class MapPaintStyles {
      * Removes a listener that listens to global style changes.
      * @param listener The listener
      */
-    public static void removeMapPaintSylesUpdateListener(MapPaintSylesUpdateListener listener) {
+    public static void removeMapPaintStylesUpdateListener(MapPaintStylesUpdateListener listener) {
         listeners.removeListener(listener);
     }
 
     /**
      * Notifies all listeners that there was any update to the map paint styles
      */
-    public static void fireMapPaintSylesUpdated() {
-        listeners.fireEvent(MapPaintSylesUpdateListener::mapPaintStylesUpdated);
+    public static void fireMapPaintStylesUpdated() {
+        listeners.fireEvent(MapPaintStylesUpdateListener::mapPaintStylesUpdated);
     }
 
     /**

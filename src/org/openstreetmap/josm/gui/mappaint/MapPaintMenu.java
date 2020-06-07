@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStylesUpdateListener;
 import org.openstreetmap.josm.gui.util.StayOpenCheckBoxMenuItem;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * The View -&gt; Map Paint Styles menu
  * @since 5086
  */
-public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
+public class MapPaintMenu extends JMenu implements MapPaintStylesUpdateListener {
 
     private static class MapPaintAction extends JosmAction {
 
@@ -87,7 +87,7 @@ public class MapPaintMenu extends JMenu implements MapPaintSylesUpdateListener {
     public MapPaintMenu() {
         super(tr("Map Paint Styles"));
         setIcon(ImageProvider.get("dialogs", "mapstyle", ImageProvider.ImageSizes.MENU));
-        MapPaintStyles.addMapPaintSylesUpdateListener(this);
+        MapPaintStyles.addMapPaintStylesUpdateListener(this);
         putClientProperty("help", ht("/Dialog/MapPaint"));
     }
 

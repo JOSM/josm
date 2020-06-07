@@ -40,7 +40,7 @@ public class MapPaintStyleLoader extends PleaseWaitRunnable {
 
     @Override
     protected void finish() {
-        MapPaintStyles.fireMapPaintSylesUpdated();
+        MapPaintStyles.fireMapPaintStylesUpdated();
     }
 
     @Override
