@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.Data;
+import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.notes.Note;
@@ -20,7 +22,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * Class to hold and perform operations on a set of notes
  */
-public class NoteData {
+public class NoteData implements Data {
 
     /**
      * A listener that can be informed on note data changes.
@@ -308,5 +310,10 @@ public class NoteData {
      */
     public void removeNoteDataUpdateListener(NoteDataUpdateListener listener) {
         listeners.removeListener(listener);
+    }
+
+    @Override
+    public Collection<DataSource> getDataSources() {
+        return Collections.emptyList(); // Notes don't currently store data sources
     }
 }

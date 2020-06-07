@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ import org.openstreetmap.josm.tools.ListenerList;
  * Class to hold {@link ImageEntry} and the current selection
  * @since 14590
  */
-public class ImageData {
+public class ImageData implements Data {
     /**
      * A listener that is informed when the current selection change
      */
@@ -338,5 +339,10 @@ public class ImageData {
      */
     public void removeImageDataUpdateListener(ImageDataUpdateListener listener) {
         listeners.removeListener(listener);
+    }
+
+    @Override
+    public Collection<DataSource> getDataSources() {
+        return Collections.emptyList();
     }
 }

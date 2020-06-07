@@ -40,6 +40,7 @@ import org.openstreetmap.josm.actions.mapmode.SelectLassoAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.ImageData.ImageDataUpdateListener;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -1007,5 +1008,10 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     @Override
     public String getChangesetSourceTag() {
         return "Geotagged Images";
+    }
+
+    @Override
+    public Data getData() {
+        return data;
     }
 }

@@ -13,6 +13,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import javax.swing.text.View;
 
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
@@ -477,5 +479,16 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
     @Override
     public String getChangesetSourceTag() {
         return "Notes";
+    }
+
+    @Override
+    public boolean autosave(File file) throws IOException {
+        new NoteExporter().exportData(file, this);
+        return true;
+    }
+
+    @Override
+    public Data getData() {
+        return getNoteData();
     }
 }

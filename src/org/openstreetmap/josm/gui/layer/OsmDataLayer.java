@@ -54,6 +54,7 @@ import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -111,6 +112,7 @@ import org.openstreetmap.josm.gui.io.AbstractUploadDialog;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadLayerTask;
 import org.openstreetmap.josm.gui.io.importexport.NoteExporter;
+import org.openstreetmap.josm.gui.io.importexport.OsmExporter;
 import org.openstreetmap.josm.gui.io.importexport.OsmImporter;
 import org.openstreetmap.josm.gui.io.importexport.ValidatorErrorExporter;
 import org.openstreetmap.josm.gui.io.importexport.WMSLayerImporter;
@@ -1300,5 +1302,16 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     @Override
     public boolean isUploadInProgress() {
         return isUploadInProgress.get();
+    }
+
+    @Override
+    public Data getData() {
+        return getDataSet();
+    }
+
+    @Override
+    public boolean autosave(File file) throws IOException {
+        new OsmExporter().exportData(file, this, true /* no backup with appended ~ */);
+        return true;
     }
 }

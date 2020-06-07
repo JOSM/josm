@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.osm.Lockable;
 import org.openstreetmap.josm.gui.io.AbstractIOTask;
 import org.openstreetmap.josm.gui.io.AbstractUploadDialog;
@@ -101,5 +105,29 @@ public abstract class AbstractModifiableLayer extends Layer implements DownloadF
     public boolean isLocked() {
         // Override if needed
         return false;
+    }
+
+    /**
+     * Perform the autosave action for the layer
+     *
+     * @param file The file to save to
+     * @return {@code true} if the layer was successfully saved
+     * @throws IOException If there was an IO exception from saving
+     * @since 16548
+     */
+    public boolean autosave(File file) throws IOException {
+        // Override if needed;
+        return false;
+    }
+
+    /**
+     * Get the data for the modifiable layer
+     *
+     * @return The data object
+     * @since 16548
+     */
+    public Data getData() {
+        // Override if needed;
+        return null;
     }
 }

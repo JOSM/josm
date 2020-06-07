@@ -27,6 +27,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListene
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -545,5 +546,10 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
     public String getChangesetSourceTag() {
         // no i18n for international values
         return isLocalFile ? "survey" : null;
+    }
+
+    @Override
+    public Data getData() {
+        return data;
     }
 }
