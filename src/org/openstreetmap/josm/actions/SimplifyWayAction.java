@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -114,6 +116,18 @@ public class SimplifyWayAction extends JosmAction {
      * @since 15419
      */
     public static double askSimplifyWays(String text, boolean auto) {
+        return askSimplifyWays(Collections.emptyList(), text, auto);
+    }
+
+    /**
+     * Asks the user for max-err value used to simplify ways, if not remembered before
+     * @param ways the ways that are being simplified (to show estimated number of nodes to be removed)
+     * @param text the text being shown
+     * @param auto whether it's called automatically (conversion) or by the user
+     * @return the max-err value or -1 if canceled
+     * @since 16566
+     */
+    public static double askSimplifyWays(List<Way> ways, String text, boolean auto) {
         IPreferences s = Config.getPref();
         String key = "simplify-way." + (auto ? "auto." : "");
         String keyRemember = key + "remember";
@@ -134,10 +148,21 @@ public class SimplifyWayAction extends JosmAction {
         p.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 5));
         JPanel q = new JPanel(new GridBagLayout());
         q.add(new JLabel(tr("Maximum error (meters): ")));
-        JSpinner n = new JSpinner(new SpinnerNumberModel(
-                s.getDouble(keyError, 3.0), 0.01, null, 0.5));
+        SpinnerNumberModel errorModel = new SpinnerNumberModel(
+                s.getDouble(keyError, 3.0), 0.01, null, 0.5);
+        JSpinner n = new JSpinner(errorModel);
         ((JSpinner.DefaultEditor) n.getEditor()).getTextField().setColumns(4);
         q.add(n);
+
+        JLabel nodesToRemove = new JLabel();
+        SimplifyChangeListener l = new SimplifyChangeListener(nodesToRemove, errorModel, ways);
+        if (!ways.isEmpty()) {
+            errorModel.addChangeListener(l);
+            l.stateChanged(null);
+            q.add(nodesToRemove, GBC.std().insets(5, 0, 0, 0));
+            errorModel.getChangeListeners();
+        }
+
         q.setBorder(BorderFactory.createEmptyBorder(14, 0, 10, 0));
         p.add(q, GBC.eol());
         JCheckBox c = new JCheckBox(tr("Do not ask again"));
@@ -156,6 +181,10 @@ public class SimplifyWayAction extends JosmAction {
 
         int ret = ed.showDialog().getValue();
         double val = (double) n.getValue();
+        if (l.lastCommand != null && l.lastCommand.equals(UndoRedoHandler.getInstance().getLastCommand())) {
+            UndoRedoHandler.getInstance().undo();
+            l.lastCommand = null;
+        }
         if (ret == 1) {
             s.putDouble(keyError, val);
             if (c.isSelected()) {
@@ -187,7 +216,7 @@ public class SimplifyWayAction extends JosmAction {
             String lengthstr = SystemOfMeasurement.getSystemOfMeasurement().getDistText(
                     ways.stream().mapToDouble(Way::getLength).sum());
 
-            double err = askSimplifyWays(trn(
+            double err = askSimplifyWays(ways, trn(
                     "You are about to simplify {0} way with a total length of {1}.",
                     "You are about to simplify {0} ways with a total length of {1}.",
                     ways.size(), ways.size(), lengthstr), false);
@@ -243,19 +272,51 @@ public class SimplifyWayAction extends JosmAction {
      *
      * @param ways the ways to simplify
      * @param threshold the max error threshold
+     * @return The number of nodes removed from the ways (does not double-count)
+     * @since 16566
+     */
+    public static int simplifyWaysCountNodesRemoved(List<Way> ways, double threshold) {
+        Command command = buildSimplifyWaysCommand(ways, threshold);
+        if (command == null) {
+            return 0;
+        }
+        return (int) command.getParticipatingPrimitives().stream()
+                .filter(Node.class::isInstance)
+                .count();
+    }
+
+    /**
+     * Runs the commands to simplify the ways with the given threshold
+     *
+     * @param ways the ways to simplify
+     * @param threshold the max error threshold
      * @since 15419
      */
     public static void simplifyWays(List<Way> ways, double threshold) {
+        Command command = buildSimplifyWaysCommand(ways, threshold);
+        if (command != null) {
+            UndoRedoHandler.getInstance().add(command);
+        }
+    }
+
+    /**
+     * Creates the commands to simplify the ways with the given threshold
+     *
+     * @param ways the ways to simplify
+     * @param threshold the max error threshold
+     * @return The command to simplify ways
+     * @since 16566 (private)
+     */
+    private static SequenceCommand buildSimplifyWaysCommand(List<Way> ways, double threshold) {
         Collection<Command> allCommands = ways.stream()
                 .map(way -> createSimplifyCommand(way, threshold))
                 .filter(Objects::nonNull)
                 .collect(StreamUtils.toUnmodifiableList());
         if (allCommands.isEmpty())
-            return;
-        SequenceCommand rootCommand = new SequenceCommand(
+            return null;
+        return new SequenceCommand(
                 trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
                 allCommands);
-        UndoRedoHandler.getInstance().add(rootCommand);
     }
 
     /**
@@ -433,5 +494,34 @@ public class SimplifyWayAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         updateEnabledStateOnModifiableSelection(selection);
+    }
+
+    private static class SimplifyChangeListener implements ChangeListener {
+        Command lastCommand;
+        private final JLabel nodesToRemove;
+        private final SpinnerNumberModel errorModel;
+        private final List<Way> ways;
+
+        SimplifyChangeListener(JLabel nodesToRemove, SpinnerNumberModel errorModel, List<Way> ways) {
+            this.nodesToRemove = nodesToRemove;
+            this.errorModel = errorModel;
+            this.ways = ways;
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if (Objects.equals(UndoRedoHandler.getInstance().getLastCommand(), lastCommand)) {
+                UndoRedoHandler.getInstance().undo();
+            }
+            double threshold = errorModel.getNumber().doubleValue();
+            int removeNodes = simplifyWaysCountNodesRemoved(ways, threshold);
+            nodesToRemove.setText(trn(
+                    "(about {0} node to remove)",
+                    "(about {0} nodes to remove)", removeNodes, removeNodes));
+            lastCommand = SimplifyWayAction.buildSimplifyWaysCommand(ways, threshold);
+            if (lastCommand != null) {
+                UndoRedoHandler.getInstance().add(lastCommand);
+            }
+        }
     }
 }
