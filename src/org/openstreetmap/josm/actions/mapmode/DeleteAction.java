@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -160,6 +161,16 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         // if c is null, an error occurred or the user aborted. Don't do anything in that case.
         if (c != null) {
             UndoRedoHandler.getInstance().add(c);
+            if (changesHiddenWay(c)) {
+                final ConfirmDeleteDialog ed = new ConfirmDeleteDialog();
+                ed.setContent(tr("Are you sure that you want to delete elements with attached ways that are hidden by filters?"));
+                ed.toggleEnable("deletedHiddenElements");
+                if (ed.showDialog().getValue() != 1) {
+                    UndoRedoHandler.getInstance().undo(1);
+                    return;
+                }
+            }
+
             //FIXME: This should not be required, DeleteCommand should update the selection, otherwise undo/redo won't work.
             lm.getEditDataSet().setSelected();
         }
@@ -425,4 +436,19 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         // We don't have a mouse event, so we pass the old mouse event but the new modifiers.
         giveUserFeedback(oldEvent, modifiers);
     }
+
+    private boolean changesHiddenWay(Command c) {
+        return c.getParticipatingPrimitives().stream().anyMatch(OsmPrimitive::isDisabledAndHidden);
+    }
+
+    static class ConfirmDeleteDialog extends ExtendedDialog {
+        ConfirmDeleteDialog() {
+            super(MainApplication.getMainFrame(),
+                    tr("Delete elements"),
+                    tr("Delete them"), tr("Undo delete"));
+            setButtonIcons("dialogs/delete", "cancel");
+            setCancelButton(2);
+        }
+    }
+
 }
