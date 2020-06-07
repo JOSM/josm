@@ -52,12 +52,12 @@ public class QuadBucketsTest {
         int expectedCount = allNodes.size();
         for (OsmPrimitive o: allNodes) {
             ds.removePrimitive(o);
-            Assert.assertEquals(--expectedCount, nodes.size());
+            checkIterator(nodes, --expectedCount);
         }
         expectedCount = allWays.size();
         for (OsmPrimitive o: allWays) {
             ds.removePrimitive(o);
-            Assert.assertEquals(--expectedCount, ways.size());
+            checkIterator(ways, --expectedCount);
         }
         for (OsmPrimitive o: allRelations) {
             ds.removePrimitive(o);
@@ -65,6 +65,16 @@ public class QuadBucketsTest {
         Assert.assertTrue(nodes.isEmpty());
         Assert.assertTrue(ways.isEmpty());
         Assert.assertTrue(relations.isEmpty());
+    }
+
+    private void checkIterator(Iterable<? extends OsmPrimitive> col, int expectedCount) {
+        int count = 0;
+        Iterator<? extends OsmPrimitive> it = col.iterator();
+        while (it.hasNext()) {
+            count++;
+            it.next();
+        }
+        Assert.assertEquals(expectedCount, count);
     }
 
     /**
