@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE updateProfile [
+  <!ENTITY file SYSTEM "file:///tmp/passwd">
+]>
+<presets xmlns="http://josm.openstreetmap.de/tagging-preset-1.0">
+    &file;
+</presets>

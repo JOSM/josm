@@ -5,6 +5,7 @@ import static org.CustomMatchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -63,6 +64,21 @@ public class TaggingPresetReaderTest {
         assertTrue(abc.data.stream().allMatch(Key.class::isInstance));
         final List<String> keys = abc.data.stream().map(x -> ((Key) x).key).collect(Collectors.toList());
         assertEquals("[A1, A2, A3, B1, B2, B3, C1, C2, C3]", keys.toString());
+    }
+
+    /**
+     * Test external entity resolving.
+     * See #19286
+     */
+    @Test
+    public void testExternalEntityResolving() throws IOException {
+        try {
+            TaggingPresetReader.readAll(TestUtils.getTestDataRoot() + "preset_external_entity.xml", true);
+            fail("Reading a file with external entities should throw an SAXParseException!");
+        } catch (SAXException e) {
+            String expected = "DOCTYPE is disallowed when the feature \"http://apache.org/xml/features/disallow-doctype-decl\" set to true.";
+            assertEquals(expected, e.getMessage());
+        }
     }
 
     /**

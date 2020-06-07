@@ -35,6 +35,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public final class XmlUtils {
 
+    private static final String FEATURE_DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
+
     private XmlUtils() {
         // Hide default constructor for utils classes
     }
@@ -100,6 +102,7 @@ public final class XmlUtils {
     public static SAXParser newSafeSAXParser() throws ParserConfigurationException, SAXException {
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
         parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        parserFactory.setFeature(FEATURE_DISALLOW_DOCTYPE_DECL, true);
         parserFactory.setNamespaceAware(true);
         return parserFactory.newSAXParser();
     }
