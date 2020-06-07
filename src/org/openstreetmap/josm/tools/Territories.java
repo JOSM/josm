@@ -127,7 +127,7 @@ public final class Territories {
     /**
      * Initializes territories using the internal data only.
      */
-    public static void initializeInternalData() {
+    public static synchronized void initializeInternalData() {
         iso3166Cache = new HashMap<>();
         taginfoCache = new TreeMap<>();
         customTagsCache = new TreeMap<>();
@@ -166,7 +166,8 @@ public final class Territories {
         } catch (IOException | IllegalDataException ex) {
             throw new JosmRuntimeException(ex);
         } finally {
-            MultipolygonCache.getInstance().clear(dataSet);
+            if (dataSet != null)
+                MultipolygonCache.getInstance().clear(dataSet);
             if (!Logging.isDebugEnabled()) {
                 // unset dataSet to save memory, see #18907
                 dataSet = null;
