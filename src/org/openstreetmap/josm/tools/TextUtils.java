@@ -12,7 +12,7 @@ public final class TextUtils {
     }
 
     /**
-     * Inserts zero width space character (U+8203) after each slash/amperand to wrap long URLs.
+     * Inserts zero width space character (U+8203) after each slash/ampersand to wrap long URLs.
      * @param url URL
      * @return wrapped URL
      * @since 13978
