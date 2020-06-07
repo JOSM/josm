@@ -64,19 +64,19 @@ public class RenderBenchmarkCollector {
 
         @Override
         public void renderStart(double circum) {
-            timeStart = System.currentTimeMillis();
+            timeStart = getCurrentTimeMilliseconds();
             super.renderStart(circum);
         }
 
         @Override
         public boolean renderSort() {
-            timeGenerateDone = System.currentTimeMillis();
+            timeGenerateDone = getCurrentTimeMilliseconds();
             return super.renderSort();
         }
 
         @Override
         public boolean renderDraw(List<StyleRecord> allStyleElems) {
-            timeSortingDone = System.currentTimeMillis();
+            timeSortingDone = getCurrentTimeMilliseconds();
             return super.renderDraw(allStyleElems);
         }
 
@@ -98,7 +98,7 @@ public class RenderBenchmarkCollector {
 
         @Override
         public void renderDone() {
-            timeFinished = System.currentTimeMillis();
+            timeFinished = getCurrentTimeMilliseconds();
             super.renderDone();
         }
 
@@ -109,6 +109,10 @@ public class RenderBenchmarkCollector {
         public long getDrawTime() {
             return timeFinished - timeGenerateDone;
         }
+    }
+
+    public static long getCurrentTimeMilliseconds() {
+        return System.nanoTime() / 1000000; // System.currentTimeMillis has low accuracy, sometimes multiples of 16ms
     }
 
     /**

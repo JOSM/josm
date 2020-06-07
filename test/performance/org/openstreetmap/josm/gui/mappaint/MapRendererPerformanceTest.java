@@ -3,14 +3,15 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,7 +35,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
 import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
@@ -45,9 +45,10 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Performance test of map renderer.
@@ -99,11 +100,27 @@ public class MapRendererPerformanceTest {
 
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         g = (Graphics2D) img.getGraphics();
-        g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
+        g.setClip(0, 0, IMG_WIDTH, IMG_HEIGHT);
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
-        nc = MainApplication.getMap().mapView;
-        nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
+        g.fillRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
+
+        nc = new NavigatableComponent() {
+            {
+                setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
+                updateLocationState();
+            }
+
+            @Override
+            protected boolean isVisibleOnScreen() {
+                return true;
+            }
+
+            @Override
+            public Point getLocationOnScreen() {
+                return new Point(0, 0);
+            }
+        };
+        nc.zoomTo(BOUNDS_CITY_ALL);
 
         MapPaintStyles.readFromPreferences();
 
@@ -174,8 +191,8 @@ public class MapRendererPerformanceTest {
         public double scale = 0;
         public LatLon center = LL_CITY;
         public Bounds bounds;
-        public int noWarmup = 3;
-        public int noIterations = 7;
+        public int noWarmup = 20;
+        public int noIterations = 30;
         public boolean dumpImage = DUMP_IMAGE;
         public boolean clearStyleCache = true;
         public String label = "";
@@ -207,20 +224,15 @@ public class MapRendererPerformanceTest {
             }
 
             StyledMapRenderer renderer = new StyledMapRenderer(g, nc, false);
+            assertEquals(IMG_WIDTH, (int) nc.getState().getViewWidth());
+            assertEquals(IMG_HEIGHT, (int) nc.getState().getViewHeight());
 
             int noTotal = noWarmup + noIterations;
             for (int i = 1; i <= noTotal; i++) {
                 g.setColor(Color.BLACK);
-                g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
+                g.fillRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
                 if (clearStyleCache) {
                     MapPaintStyles.getStyles().clearCached();
-                }
-                System.gc();
-                System.runFinalization();
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException ex) {
-                    Logging.warn(ex);
                 }
                 BenchmarkData data = new BenchmarkData();
                 renderer.setBenchmarkFactory(() -> data);
@@ -233,9 +245,9 @@ public class MapRendererPerformanceTest {
                     totalTimes.add(data.getGenerateTime() + data.getSortTime() + data.getDrawTime());
                 }
                 if (i == 1) {
-                    dumpElementCount(data);
+                    data.dumpElementCount();
                 }
-                dumpTimes(data);
+                data.dumpTimes();
                 if (dumpImage && i == noTotal) {
                     dumpRenderedImage(label);
                 }
@@ -275,8 +287,6 @@ public class MapRendererPerformanceTest {
         test.bounds = BOUNDS_CITY_ALL;
         test.label = "big";
         test.dumpImage = false;
-        test.noWarmup = 3;
-        test.noIterations = 10;
         test.mpGenerate = true;
         test.clearStyleCache = true;
         test.run();
@@ -284,8 +294,6 @@ public class MapRendererPerformanceTest {
 
     private static void testDrawFeature(Feature feature) throws IOException {
         PerformanceTester test = new PerformanceTester();
-        test.noWarmup = 3;
-        test.noIterations = 10;
         test.mpDraw = true;
         test.clearStyleCache = false;
         if (feature != null) {
@@ -301,6 +309,7 @@ public class MapRendererPerformanceTest {
             setFilterStyleActive(false);
         }
         MapPaintStyleLoader.reloadStyles(filterStyleIdx);
+        dsCity.clearMappaintCache();
         test.run();
     }
 
@@ -332,22 +341,13 @@ public class MapRendererPerformanceTest {
             if (filterStyle.active != active) {
                 MapPaintStyles.toggleStyleActive(filterStyleIdx);
             }
-            Assert.assertEquals(active, filterStyle.active);
+            // Assert.assertEquals(active, filterStyle.active);
         }
     }
 
     private static void dumpRenderedImage(String id) throws IOException {
         File outputfile = new File("test-neubrandenburg-"+id+".png");
         ImageIO.write(img, "png", outputfile);
-    }
-
-    public static void dumpTimes(BenchmarkData bd) {
-        System.out.print(String.format("gen. %3d, sort %3d, draw %3d%n", bd.getGenerateTime(), bd.getSortTime(), bd.getDrawTime()));
-    }
-
-    public static void dumpElementCount(BenchmarkData bd) {
-        System.out.println(bd.recordElementStats().entrySet().stream()
-                .map(e -> e.getKey().getSimpleName().replace("Element", "") + ":" + e.getValue()).collect(Collectors.joining(" ")));
     }
 
     public static class BenchmarkData extends CapturingBenchmark {
@@ -360,17 +360,20 @@ public class MapRendererPerformanceTest {
             return super.renderDraw(allStyleElems);
         }
 
-        private Map<Class<? extends StyleElement>, Integer> recordElementStats() {
-            Map<Class<? extends StyleElement>, Integer> styleElementCount = new HashMap<>();
-            for (StyleRecord r : allStyleElems) {
-                Class<? extends StyleElement> klass = r.getStyle().getClass();
-                Integer count = styleElementCount.get(klass);
-                if (count == null) {
-                    count = 0;
-                }
-                styleElementCount.put(klass, count + 1);
-            }
-            return styleElementCount;
+        private Map<Class<? extends StyleElement>, Long> recordElementStats() {
+            return allStyleElems.stream()
+                    .collect(Collectors.groupingBy(r -> r.getStyle().getClass(), Collectors.counting()));
+        }
+
+        public void dumpTimes() {
+            System.out.print(String.format("gen. %4d, sort %4d, draw %4d%n", getGenerateTime(), getSortTime(), getDrawTime()));
+        }
+
+        public void dumpElementCount() {
+            System.out.println(recordElementStats().entrySet().stream()
+                    .sorted(Comparator.comparing(e -> e.getKey().getSimpleName()))
+                    .map(e -> e.getKey().getSimpleName().replace("Element", "") + ":" + e.getValue())
+                    .collect(Collectors.joining(" ")));
         }
     }
 }
