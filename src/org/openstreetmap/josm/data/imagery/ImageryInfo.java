@@ -788,7 +788,7 @@ public class ImageryInfo extends
      * @see SourceInfo#getSourceType
      */
     public ImageryType getImageryType() {
-        return super.getSourceType();
+        return super.getSourceType() != null ? super.getSourceType() : ImageryType.WMS.getDefault();
     }
 
     /**
