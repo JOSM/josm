@@ -75,7 +75,7 @@ public class FixDataHookTest {
         APIDataSet ads = new APIDataSet();
         ads.init(new DataSet(emptyWay, emptyRelation, w1, w2, w3, w4, w5, w6, w7, r1, r2));
 
-        UndoRedoHandler.getInstance().getUndoCommands().clear();
+        assertEquals(0, UndoRedoHandler.getInstance().getUndoCommands().size());
         new FixDataHook().checkUpload(ads);
         assertEquals(1, UndoRedoHandler.getInstance().getUndoCommands().size());
 
