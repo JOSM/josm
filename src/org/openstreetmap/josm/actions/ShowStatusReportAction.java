@@ -276,6 +276,22 @@ public final class ShowStatusReportAction extends JosmAction {
         }
     }
 
+    private static String valueCleanup(Object value) {
+        String valueString = value.toString();
+        if (valueString.length() > 512 && value instanceof Collection<?>) {
+            valueString = ((Collection<?>) value).stream().map(v -> {
+                if (v instanceof Map<?, ?>) {
+                    LinkedHashMap<Object, Object> map = new LinkedHashMap<>(((Map<?, ?>) v));
+                    map.computeIfPresent("icon", (k, icon) -> Utils.shortenString(icon.toString(), 32)); // see #19058
+                    return map.toString();
+                } else {
+                    return String.valueOf(v);
+                }
+            }).collect(Collectors.joining(",\n  ", "[", "\n]"));
+        }
+        return paramCleanup(valueString);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         StringBuilder text = new StringBuilder();
@@ -294,7 +310,7 @@ public final class ShowStatusReportAction extends JosmAction {
             }
             text.append(paramCleanup(key))
                     .append('=')
-                    .append(paramCleanup(setting.getValue().toString()))
+                    .append(valueCleanup(setting.getValue()))
                     .append('\n');
         });
 
