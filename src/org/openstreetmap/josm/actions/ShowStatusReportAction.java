@@ -9,8 +9,10 @@ import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,6 +106,8 @@ public final class ShowStatusReportAction extends JosmAction {
                         if (dm != null) {
                             // Java 11: use DisplayMode#toString
                             b.append(' ').append(dm.getWidth()).append('x').append(dm.getHeight());
+                            AffineTransform transform = gd.getDefaultConfiguration().getDefaultTransform();
+                            b.append(" (scaling ").append(transform.getScaleX()).append("x").append(transform.getScaleY()).append(")");
                         }
                         return b.toString();
                     }).collect(Collectors.joining(", ")));
@@ -112,6 +116,15 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("\nMaximum Screen Size: ")
             .append((int) maxScreenSize.getWidth()).append('x')
             .append((int) maxScreenSize.getHeight()).append('\n');
+        if (!GraphicsEnvironment.isHeadless()) {
+            Dimension bestCursorSize16 = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
+            Dimension bestCursorSize32 = Toolkit.getDefaultToolkit().getBestCursorSize(32, 32);
+            text.append("Best cursor sizes: 16x16 -> ")
+                    .append(bestCursorSize16.width).append("x").append(bestCursorSize16.height)
+                    .append(", 32x32 -> ")
+                    .append(bestCursorSize32.width).append("x").append(bestCursorSize32.height)
+                    .append("\n");
+        }
 
         if (PlatformManager.isPlatformUnixoid()) {
             PlatformHookUnixoid platform = (PlatformHookUnixoid) PlatformManager.getPlatform();
