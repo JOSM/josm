@@ -124,13 +124,13 @@ public abstract class RequestHandler {
     public abstract PermissionPrefWithDefault getPermissionPref();
 
     /**
-     * Returns the mandatory parameters. Both used to enfore their presence at runtime and for documentation.
+     * Returns the mandatory parameters. Both used to enforce their presence at runtime and for documentation.
      * @return the mandatory parameters
      */
     public abstract String[] getMandatoryParams();
 
     /**
-     * Returns the optional parameters. Both used to enfore their presence at runtime and for documentation.
+     * Returns the optional parameters. Both used to enforce their presence at runtime and for documentation.
      * @return the optional parameters
      */
     public String[] getOptionalParams() {
