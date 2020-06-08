@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JLabel;
@@ -16,6 +17,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -64,9 +66,10 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
         }
         final DataSet ds = convert();
         if (ds != null) {
-            double err = SimplifyWayAction.askSimplifyWays(tr("Would you like to simplify the ways in the converted layer?"), true);
+            List<Way> ways = new ArrayList<>(ds.getWays());
+            double err = SimplifyWayAction.askSimplifyWays(ways, tr("Would you like to simplify the ways in the converted layer?"), true);
             if (err > 0) {
-                SimplifyWayAction.simplifyWays(new ArrayList<>(ds.getWays()), err);
+                SimplifyWayAction.simplifyWays(ways, err);
             }
             final OsmDataLayer osmLayer = new OsmDataLayer(ds, tr("Converted from: {0}", layer.getName()), null);
             if (layer.getAssociatedFile() != null) {
