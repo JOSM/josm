@@ -764,4 +764,66 @@ public class SearchCompilerTest {
         result.name = name;
         return result;
     }
+
+    /**
+     * Search for {@code nodes:2}.
+     * @throws SearchParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testNodeCount() throws SearchParseError {
+        final SearchContext sc = new SearchContext("nodes:2");
+        sc.match(sc.n1, false);
+        sc.match(sc.w1, true);
+        Node n3 = new Node(new LatLon(0, 5));
+        sc.ds.addPrimitive(n3);
+        sc.w1.addNode(n3);
+        sc.match(sc.w1, false);
+        sc.match(sc.r1, false);
+    }
+
+    /**
+     * Search for {@code ways:2}.
+     * @throws SearchParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testWayCount() throws SearchParseError {
+        final SearchContext sc = new SearchContext("ways:2");
+        sc.match(sc.n1, true);
+        sc.ds.addPrimitive(new Way(sc.w2, true));
+        sc.match(sc.n1, false);
+        sc.match(sc.w1, false);
+        sc.match(sc.r1, true);
+        sc.r1.addMember(new RelationMember("", sc.n1));
+        sc.match(sc.r1, true);
+    }
+
+    /**
+     * Search for {@code members:2}.
+     * @throws SearchParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testMemberCount() throws SearchParseError {
+        final SearchContext sc = new SearchContext("members:2");
+        sc.match(sc.n1, false);
+        sc.match(sc.w1, false);
+        sc.match(sc.r1, true);
+        sc.r1.addMember(new RelationMember("", sc.n1));
+        sc.match(sc.r1, false);
+    }
+
+    /**
+     * Search for {@code role:foo}.
+     * @throws SearchParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testRole() throws SearchParseError {
+        final SearchContext sc = new SearchContext("role:foo");
+        sc.match(sc.r1, false);
+        sc.match(sc.w1, false);
+        sc.match(sc.n1, false);
+        sc.match(sc.n2, false);
+        sc.r1.addMember(new RelationMember("foo", sc.n1));
+        sc.match(sc.n1, true);
+        sc.match(sc.n2, false);
+    }
 }
