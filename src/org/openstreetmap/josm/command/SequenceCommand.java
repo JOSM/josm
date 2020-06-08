@@ -74,6 +74,34 @@ public class SequenceCommand extends Command {
         this(name, Arrays.asList(sequenz));
     }
 
+    /**
+     * Convenient constructor, if the commands are known at compile time.
+     * @param name The description text to be used for the sequence command, if one is created.
+     * @param sequenz The sequence that should be executed.
+     * @return Either a SequenceCommand, or the only command in the potential sequence
+     * @since 16573
+     */
+    public static Command wrapIfNeeded(String name, Command... sequenz) {
+        if (sequenz.length == 1) {
+            return sequenz[0];
+        }
+        return new SequenceCommand(name, sequenz);
+    }
+
+    /**
+     * Convenient constructor, if the commands are known at compile time.
+     * @param name The description text to be used for the sequence command, if one is created.
+     * @param sequenz The sequence that should be executed.
+     * @return Either a SequenceCommand, or the only command in the potential sequence
+     * @since 16573
+     */
+    public static Command wrapIfNeeded(String name, Collection<Command> sequenz) {
+        if (sequenz.size() == 1) {
+            return sequenz.iterator().next();
+        }
+        return new SequenceCommand(name, sequenz);
+    }
+
     @Override public boolean executeCommand() {
         for (int i = 0; i < sequence.length; i++) {
             boolean result = sequence[i].executeCommand();

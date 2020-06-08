@@ -462,7 +462,7 @@ public class DeleteCommand extends Command {
             cmds.add(new DeleteCommand(primitivesToDelete.iterator().next().getDataSet(), primitivesToDelete));
         }
 
-        return new SequenceCommand(tr("Delete"), cmds);
+        return SequenceCommand.wrapIfNeeded(tr("Delete"), cmds);
     }
 
     /**
