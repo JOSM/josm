@@ -4,7 +4,9 @@ package org.openstreetmap.josm.command;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -296,5 +298,18 @@ public class SequenceCommandTest {
         public String toString() {
             return "FailingCommand";
         }
+    }
+
+    /**
+     * Test {@link SequenceCommand#wrapIfNeeded}
+     */
+    @Test
+    public void testWrapIfNeeded() {
+        DataSet ds = new DataSet();
+        TestCommand command1 = new TestCommand(ds, Collections.<OsmPrimitive>singletonList(testData.existingNode));
+        TestCommand command2 = new TestCommand(ds, Collections.<OsmPrimitive>singletonList(testData.existingNode2));
+        assertSame(command1, SequenceCommand.wrapIfNeeded("foo", command1));
+        assertNotSame(command1, SequenceCommand.wrapIfNeeded("foo", command1, command2));
+        assertEquals(new SequenceCommand("foo", command1, command2), SequenceCommand.wrapIfNeeded("foo", command1, command2));
     }
 }
