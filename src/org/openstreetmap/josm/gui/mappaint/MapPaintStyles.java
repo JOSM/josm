@@ -49,14 +49,17 @@ public final class MapPaintStyles {
 
     private static final class MapPaintStylesPreferenceListener implements PreferenceChangedListener {
         private final IPreferences pref;
+        /** Preferences to ignore (i.e., if they change, don't reload) */
+        private final List<String> preferenceIgnoreList;
 
         MapPaintStylesPreferenceListener(IPreferences pref) {
             this.pref = pref;
+            this.preferenceIgnoreList = Arrays.asList("mappaint.style.entries", "mappaint.style.known-defaults");
         }
 
         @Override
         public void preferenceChanged(PreferenceChangeEvent e) {
-            if (e.getKey().contains("mappaint")) {
+            if (e.getKey().contains("mappaint") && !this.preferenceIgnoreList.contains(e.getKey())) {
                 // We need to remove this from the listeners, so that we don't recursively call ourselves.
                 pref.removePreferenceChangeListener(this);
                 MapPaintStyles.readFromPreferences();
