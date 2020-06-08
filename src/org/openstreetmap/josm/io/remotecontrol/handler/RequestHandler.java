@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -37,14 +38,10 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class RequestHandler {
 
-    /** preference key to determine if all Remote Control actions must be confirmed manually */
-    public static final String globalConfirmationKey = "remotecontrol.always-confirm";
-    /** whether remote control actions must be confirmed manually by default */
-    public static final boolean globalConfirmationDefault = false;
-    /** preference key to determine if remote control loads data in a new layer */
-    public static final String loadInNewLayerKey = "remotecontrol.new-layer";
-    /** whether remote control loads data in a new layer by default */
-    public static final boolean loadInNewLayerDefault = false;
+    /** preference to determine if all Remote Control actions must be confirmed manually */
+    public static final BooleanProperty GLOBAL_CONFIRMATION = new BooleanProperty("remotecontrol.always-confirm", false);
+    /** preference to determine if remote control loads data in a new layer */
+    public static final BooleanProperty LOAD_IN_NEW_LAYER = new BooleanProperty("remotecontrol.new-layer", false);
 
     protected static final Pattern SPLITTER_COMMA = Pattern.compile(",\\s*");
     protected static final Pattern SPLITTER_SEMIC = Pattern.compile(";\\s*");
@@ -198,7 +195,7 @@ public abstract class RequestHandler {
         /* Does the user want to confirm everything?
          * If yes, display specific confirmation message.
          */
-        if (Config.getPref().getBoolean(globalConfirmationKey, globalConfirmationDefault)) {
+        if (GLOBAL_CONFIRMATION.get()) {
             // Ensure dialog box does not exceed main window size
             Integer maxWidth = (int) Math.max(200, MainApplication.getMainFrame().getWidth()*0.6);
             String message = "<html><div>" + getPermissionMessage() +
@@ -340,7 +337,7 @@ public abstract class RequestHandler {
     }
 
     private boolean isLoadInNewLayer() {
-        return get("new_layer", Boolean::parseBoolean, () -> Config.getPref().getBoolean(loadInNewLayerKey, loadInNewLayerDefault));
+        return get("new_layer", Boolean::parseBoolean, LOAD_IN_NEW_LAYER::get);
     }
 
     protected DownloadParams getDownloadParams() {

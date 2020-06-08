@@ -103,10 +103,8 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
 
         remote.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 
-        loadInNewLayer.setSelected(Config.getPref().getBoolean(
-                RequestHandler.loadInNewLayerKey, RequestHandler.loadInNewLayerDefault));
-        alwaysAskUserConfirm.setSelected(Config.getPref().getBoolean(
-                RequestHandler.globalConfirmationKey, RequestHandler.globalConfirmationDefault));
+        loadInNewLayer.setSelected(RequestHandler.LOAD_IN_NEW_LAYER.get());
+        alwaysAskUserConfirm.setSelected(RequestHandler.GLOBAL_CONFIRMATION.get());
 
         ActionListener remoteControlEnabled = e -> GuiHelper.setEnabledRec(wrapper, enableRemoteControl.isSelected());
         enableRemoteControl.addActionListener(remoteControlEnabled);
@@ -122,8 +120,8 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
             for (Entry<PermissionPrefWithDefault, JCheckBox> p : prefs.entrySet()) {
                 Config.getPref().putBoolean(p.getKey().pref, p.getValue().isSelected());
             }
-            Config.getPref().putBoolean(RequestHandler.loadInNewLayerKey, loadInNewLayer.isSelected());
-            Config.getPref().putBoolean(RequestHandler.globalConfirmationKey, alwaysAskUserConfirm.isSelected());
+            RequestHandler.LOAD_IN_NEW_LAYER.put(loadInNewLayer.isSelected());
+            RequestHandler.GLOBAL_CONFIRMATION.put(alwaysAskUserConfirm.isSelected());
         }
         if (changed) {
             if (enabled) {
