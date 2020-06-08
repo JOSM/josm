@@ -12,6 +12,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -102,5 +104,24 @@ public class FunctionsTest {
         assertEquals(1L, Functions.to_long("1"));
         assertEquals(1f, Functions.to_float("1"), 1e-10);
         assertEquals(1d, Functions.to_double("1"), 1e-10);
+    }
+
+    /**
+     * Unit test of {@link Functions#JOSM_pref}
+     */
+    @Test
+    public void testPref() {
+        String key = "Functions.JOSM_pref";
+        assertEquals("foobar", Functions.JOSM_pref(null, key, "foobar"));
+        Config.getPref().put(key, "baz");
+        GuiHelper.runInEDTAndWait(() -> {
+            // await org.openstreetmap.josm.gui.mappaint.ElemStyles.clearCached
+        });
+        assertEquals("baz", Functions.JOSM_pref(null, key, "foobar"));
+        Config.getPref().put(key, null);
+        GuiHelper.runInEDTAndWait(() -> {
+            // await org.openstreetmap.josm.gui.mappaint.ElemStyles.clearCached
+        });
+        assertEquals("foobar", Functions.JOSM_pref(null, key, "foobar"));
     }
 }
