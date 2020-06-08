@@ -382,7 +382,7 @@ public class SearchDialog extends ExtendedDialog {
                 .addKeyword("nodes:<i>20-</i>", "nodes:", tr("ways with at least 20 nodes, or relations containing at least 20 nodes"))
                 .addKeyword("ways:<i>3-</i>", "ways:", tr("nodes with at least 3 referring ways, or relations containing at least 3 ways"))
                 .addKeyword("tags:<i>5-10</i>", "tags:", tr("objects having 5 to 10 tags"))
-                .addKeyword("role:", "role:", tr("objects with given role in a relation"))
+                .addKeyword("members:<i>2</i>", "members:", tr("relations with 2 members"))
                 .addKeyword("areasize:<i>-100</i>", "areasize:", tr("closed ways with an area of 100 m\u00b2"))
                 .addKeyword("waylength:<i>200-</i>", "waylength:", tr("ways with a length of 200 m or more")),
                 GBC.eol());
@@ -398,6 +398,7 @@ public class SearchDialog extends ExtendedDialog {
                 .addTitle(tr("related objects"))
                 .addKeyword("child <i>expr</i>", "child ", tr("all children of objects matching the expression"), "child building")
                 .addKeyword("parent <i>expr</i>", "parent ", tr("all parents of objects matching the expression"), "parent bus_stop")
+                .addKeyword("role:", "role:", tr("objects with given role in a relation"))
                 .addKeyword("hasRole:<i>stop</i>", "hasRole:", tr("relation containing a member of role <i>stop</i>"))
                 .addKeyword("role:<i>stop</i>", "role:", tr("objects being part of a relation as role <i>stop</i>"))
                 .addKeyword("nth:<i>7</i>", "nth:",

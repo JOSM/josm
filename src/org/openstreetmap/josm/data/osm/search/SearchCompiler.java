@@ -126,7 +126,7 @@ public class SearchCompiler {
 
     public static class CoreSimpleMatchFactory implements SimpleMatchFactory {
         private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
-                "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "deleted", "selected",
+                "changeset", "nodes", "ways", "members", "tags", "areasize", "waylength", "modified", "deleted", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
                 "allindownloadedarea", "timestamp", "nth", "nth%", "hasRole", "preset");
 
@@ -172,6 +172,8 @@ public class SearchCompiler {
                         return new NodeCountRange(tokenizer);
                     case "ways":
                         return new WayCountRange(tokenizer);
+                    case "members":
+                        return new MemberCountRange(tokenizer);
                     case "tags":
                         return new TagCountRange(tokenizer);
                     case "areasize":
@@ -1431,6 +1433,34 @@ public class SearchCompiler {
         @Override
         protected String getString() {
             return "ways";
+        }
+    }
+
+    /*
+     * Matches relations with a certain number of members
+     */
+    private static class MemberCountRange extends RangeMatch {
+        MemberCountRange(Range range) {
+            super(range);
+        }
+
+        MemberCountRange(PushbackTokenizer tokenizer) throws SearchParseError {
+            this(tokenizer.readRange(tr("Range of numbers expected")));
+        }
+
+        @Override
+        protected Long getNumber(OsmPrimitive osm) {
+            if (osm instanceof Relation) {
+                Relation r = (Relation) osm;
+                return (long) r.getMembersCount();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        protected String getString() {
+            return "members";
         }
     }
 
