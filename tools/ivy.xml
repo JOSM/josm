@@ -9,6 +9,7 @@
         <conf name="pmd" description="Everything needed for running PMD"/>
         <conf name="spotbugs" description="Everything needed for running SpotBugs"/>
         <conf name="errorprone" description="Everything needed for running error-prone"/>
+        <conf name="errorprone_javac" description="Everything needed for running javac from error-prone"/>
     </configurations>
     <dependencies>
         <!-- javacc->default -->
@@ -29,5 +30,7 @@
         <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.0.1" conf="spotbugs->default"/>
         <!-- errorprone->default -->
         <dependency org="com.google.errorprone" name="error_prone_core" rev="2.4.0" conf="errorprone->default"/>
+        <!-- errorprone->default -->
+        <dependency org="com.google.errorprone" name="javac" rev="9+181-r4173-1" conf="errorprone_javac->default"/>
     </dependencies>
 </ivy-module>
