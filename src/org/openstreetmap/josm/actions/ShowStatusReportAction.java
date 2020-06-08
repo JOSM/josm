@@ -107,7 +107,7 @@ public final class ShowStatusReportAction extends JosmAction {
                             // Java 11: use DisplayMode#toString
                             b.append(' ').append(dm.getWidth()).append('x').append(dm.getHeight());
                             AffineTransform transform = gd.getDefaultConfiguration().getDefaultTransform();
-                            b.append(" (scaling ").append(transform.getScaleX()).append("x").append(transform.getScaleY()).append(")");
+                            b.append(" (scaling ").append(transform.getScaleX()).append('x').append(transform.getScaleY()).append(')');
                         }
                         return b.toString();
                     }).collect(Collectors.joining(", ")));
@@ -120,10 +120,10 @@ public final class ShowStatusReportAction extends JosmAction {
             Dimension bestCursorSize16 = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
             Dimension bestCursorSize32 = Toolkit.getDefaultToolkit().getBestCursorSize(32, 32);
             text.append("Best cursor sizes: 16x16 -> ")
-                    .append(bestCursorSize16.width).append("x").append(bestCursorSize16.height)
+                    .append(bestCursorSize16.width).append('x').append(bestCursorSize16.height)
                     .append(", 32x32 -> ")
-                    .append(bestCursorSize32.width).append("x").append(bestCursorSize32.height)
-                    .append("\n");
+                    .append(bestCursorSize32.width).append('x').append(bestCursorSize32.height)
+                    .append('\n');
         }
 
         if (PlatformManager.isPlatformUnixoid()) {
