@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +35,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.actions.AdaptableAction;
+import org.openstreetmap.josm.actions.CreateMultipolygonAction;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -47,6 +48,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
@@ -54,6 +56,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorter;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -69,6 +72,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
@@ -400,16 +404,29 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 UndoRedoHandler.getInstance().add(cmd);
             }
         } else if (answer == DIALOG_ANSWER_NEW_RELATION) {
-            final Relation r = new Relation();
-            final Collection<RelationMember> members = new HashSet<>();
+            Relation calculated = null;
+            if (getChangedTags().stream().anyMatch(t -> "boundary".equals(t.get("type")) || "multipolygon".equals(t.get("type")))) {
+                Pair<Relation, Relation> res = CreateMultipolygonAction.createMultipolygonRelation(ds.getSelectedWays(), true);
+                if (res != null) {
+                    calculated = res.b;
+                }
+            }
+            final Relation r = calculated != null ? calculated : new Relation();
+            final Collection<RelationMember> members = new LinkedHashSet<>();
+            members.addAll(r.getMembers());
             for (Tag t : getChangedTags()) {
                 r.put(t.getKey(), t.getValue());
             }
             for (OsmPrimitive osm : ds.getSelected()) {
+                if (r == calculated && osm instanceof Way)
+                    continue;
                 String role = suggestRoleForOsmPrimitive(osm);
                 RelationMember rm = new RelationMember(role == null ? "" : role, osm);
                 r.addMember(rm);
                 members.add(rm);
+            }
+            if (r.isMultipolygon() && r != calculated) {
+                r.setMembers(RelationSorter.sortMembersByConnectivity(r.getMembers()));
             }
             SwingUtilities.invokeLater(() -> RelationEditor.getEditor(
                     MainApplication.getLayerManager().getEditLayer(), r, members).setVisible(true));
