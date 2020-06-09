@@ -31,6 +31,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
@@ -69,6 +70,7 @@ public class RequestProcessor extends Thread {
                     .add("major", RemoteControl.protocolMajorVersion)
                     .add("minor", RemoteControl.protocolMinorVersion))
             .add("application", "JOSM RemoteControl")
+            .add("version", Version.getInstance().getVersion())
             .build().toString();
 
     /** The socket this processor listens on */
