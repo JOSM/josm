@@ -64,10 +64,12 @@ public class RequestProcessor extends Thread {
      * interface extensions. Change major number in case of incompatible
      * changes.
      */
-    public static final String PROTOCOLVERSION = "{\"protocolversion\": {\"major\": " +
-        RemoteControl.protocolMajorVersion + ", \"minor\": " +
-        RemoteControl.protocolMinorVersion +
-        "}, \"application\": \"JOSM RemoteControl\"}";
+    public static final String PROTOCOLVERSION = Json.createObjectBuilder()
+            .add("protocolversion", Json.createObjectBuilder()
+                    .add("major", RemoteControl.protocolMajorVersion)
+                    .add("minor", RemoteControl.protocolMinorVersion))
+            .add("application", "JOSM RemoteControl")
+            .build().toString();
 
     /** The socket this processor listens on */
     private final Socket request;
