@@ -1,9 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -74,5 +77,22 @@ public class ImageryHandlerTest {
     @Test
     public void testNominalRequest() throws Exception {
         newHandler("https://localhost?url=foo").handle();
+    }
+
+    /**
+     * Unit test for {@link ImageryHandler#buildImageryInfo()}
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testBuildImageryInfo() throws Exception {
+        String url = "https://localhost/imagery?title=osm"
+                + "&type=tms&min_zoom=3&max_zoom=23"
+                + "&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png";
+        ImageryInfo imageryInfo = newHandler(url).buildImageryInfo();
+        assertEquals("osm", imageryInfo.getName());
+        assertEquals(ImageryInfo.ImageryType.TMS, imageryInfo.getImageryType());
+        assertEquals("https://a.tile.openstreetmap.org/{zoom}/{x}/{y}.png", imageryInfo.getUrl());
+        assertEquals(3, imageryInfo.getMinZoom());
+        assertEquals(23, imageryInfo.getMaxZoom());
     }
 }
