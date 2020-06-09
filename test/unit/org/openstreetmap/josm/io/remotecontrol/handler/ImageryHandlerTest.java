@@ -1,7 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -80,13 +85,26 @@ public class ImageryHandlerTest {
     }
 
     /**
+     * Unit test for {@link ImageryHandler#getOptionalParams()}
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testOptionalParams() throws Exception {
+        List<String> optionalParams = Arrays.asList(newHandler("").getOptionalParams());
+        assertThat(optionalParams, hasItem("type"));
+        assertThat(optionalParams, hasItem("min-zoom"));
+        assertThat(optionalParams, hasItem("max-zoom"));
+        assertThat(optionalParams, hasItem("category"));
+    }
+
+    /**
      * Unit test for {@link ImageryHandler#buildImageryInfo()}
      * @throws Exception if any error occurs
      */
     @Test
     public void testBuildImageryInfo() throws Exception {
         String url = "https://localhost/imagery?title=osm"
-                + "&type=tms&min_zoom=3&max_zoom=23"
+                + "&type=tms&min_zoom=3&max_zoom=23&category=osmbasedmap&country_code=XA"
                 + "&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png";
         ImageryInfo imageryInfo = newHandler(url).buildImageryInfo();
         assertEquals("osm", imageryInfo.getName());
@@ -94,5 +112,7 @@ public class ImageryHandlerTest {
         assertEquals("https://a.tile.openstreetmap.org/{zoom}/{x}/{y}.png", imageryInfo.getUrl());
         assertEquals(3, imageryInfo.getMinZoom());
         assertEquals(23, imageryInfo.getMaxZoom());
+        assertEquals(ImageryInfo.ImageryCategory.OSMBASEDMAP, imageryInfo.getImageryCategory());
+        assertEquals("XA", imageryInfo.getCountryCode());
     }
 }

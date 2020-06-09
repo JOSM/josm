@@ -5,13 +5,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
 
+import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
-import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -39,7 +41,9 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     public String[] getOptionalParams() {
-        return new String[] {"title", "type", "cookies", "min_zoom", "max_zoom"};
+        return StructUtils.serializeStruct(new ImageryPreferenceEntry(), ImageryPreferenceEntry.class,
+                StructUtils.SerializeOptions.INCLUDE_NULL, StructUtils.SerializeOptions.INCLUDE_DEFAULT
+        ).keySet().toArray(new String[0]);
     }
 
     @Override
@@ -47,45 +51,11 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
         return PermissionPrefWithDefault.LOAD_IMAGERY;
     }
 
-    protected static ImageryInfo findBingEntry() {
-        return ImageryLayerInfo.instance.getDefaultLayers().stream()
-                .filter(i -> ImageryType.BING == i.getImageryType())
-                .findFirst().orElse(null);
-    }
-
     protected ImageryInfo buildImageryInfo() {
-        String url = args.get("url");
-        String title = args.get("title");
-        String type = args.get("type");
-        final ImageryInfo bing = ImageryType.BING.getTypeString().equals(type) ? findBingEntry() : null;
-        if ((title == null || title.isEmpty()) && bing != null) {
-            title = bing.getName();
-        }
-        if (title == null || title.isEmpty()) {
-            title = tr("Remote imagery");
-        }
-        String cookies = args.get("cookies");
-        final ImageryInfo imgInfo = new ImageryInfo(title, url, type, null, cookies);
-        if (bing != null) {
-            imgInfo.setIcon(bing.getIcon());
-        }
-        String minZoom = args.get("min_zoom");
-        if (minZoom != null && !minZoom.isEmpty()) {
-            try {
-                imgInfo.setDefaultMinZoom(Integer.parseInt(minZoom));
-            } catch (NumberFormatException e) {
-                Logging.error(e);
-            }
-        }
-        String maxZoom = args.get("max_zoom");
-        if (maxZoom != null && !maxZoom.isEmpty()) {
-            try {
-                imgInfo.setDefaultMaxZoom(Integer.parseInt(maxZoom));
-            } catch (NumberFormatException e) {
-                Logging.error(e);
-            }
-        }
-        return imgInfo;
+        args.computeIfAbsent("type", ignore -> ImageryType.WMS.getDefault().getTypeString());
+        args.computeIfAbsent("name", ignore -> args.getOrDefault("title", tr("Remote imagery")));
+        ImageryPreferenceEntry imageryPreferenceEntry = StructUtils.deserializeStruct(args, ImageryPreferenceEntry.class);
+        return new ImageryInfo(imageryPreferenceEntry);
     }
 
     @Override
@@ -110,11 +80,10 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
 
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
-        String url = args != null ? args.get("url") : null;
-        String type = args != null ? args.get("type") : null;
-        String cookies = args != null ? args.get("cookies") : null;
         try {
-            ImageryLayer.create(new ImageryInfo(null, url, type, null, cookies));
+            CheckParameterUtil.ensureParameterNotNull(args);
+            CheckParameterUtil.ensureParameterNotNull(args.get("url"));
+            ImageryLayer.create(buildImageryInfo());
         } catch (IllegalArgumentException e) {
             throw new RequestHandlerBadRequestException(e.getMessage(), e);
         }

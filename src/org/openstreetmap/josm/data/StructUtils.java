@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public final class StructUtils {
      * Annotation used for converting objects to String Maps and vice versa.
      * Indicates that a certain field should be considered in the conversion process. Otherwise it is ignored.
      *
-     * @see #serializeStruct(java.lang.Object, java.lang.Class)
+     * @see #serializeStruct
      * @see #deserializeStruct(java.util.Map, java.lang.Class)
      */
     @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
@@ -62,7 +63,7 @@ public final class StructUtils {
      * Annotation used for converting objects to String Maps.
      * Indicates that a certain field should be written to the map, even if the value is the same as the default value.
      *
-     * @see #serializeStruct(java.lang.Object, java.lang.Class)
+     * @see #serializeStruct
      */
     @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
     public @interface WriteExplicitly { }
@@ -127,6 +128,20 @@ public final class StructUtils {
     }
 
     /**
+     * Options for {@link #serializeStruct}
+     */
+    public enum SerializeOptions {
+        /**
+         * Serialize {@code null} values
+         */
+        INCLUDE_NULL,
+        /**
+         * Serialize default values
+         */
+        INCLUDE_DEFAULT
+    }
+
+    /**
      * Convert an object to a String Map, by using field names and values as map key and value.
      *
      * The field value is converted to a String.
@@ -140,9 +155,11 @@ public final class StructUtils {
      * @param <T> the class of the object <code>struct</code>
      * @param struct the object to be converted
      * @param klass the class T
+     * @param options optional serialization options
      * @return the resulting map (same data content as <code>struct</code>)
      */
-    public static <T> HashMap<String, String> serializeStruct(T struct, Class<T> klass) {
+    public static <T> HashMap<String, String> serializeStruct(T struct, Class<T> klass, SerializeOptions... options) {
+        List<SerializeOptions> optionsList = Arrays.asList(options);
         T structPrototype;
         try {
             structPrototype = klass.getConstructor().newInstance();
@@ -159,14 +176,18 @@ public final class StructUtils {
                 ReflectionUtils.setObjectsAccessible(f);
                 Object fieldValue = f.get(struct);
                 Object defaultFieldValue = f.get(structPrototype);
-                if (fieldValue != null && (
-                        f.getAnnotation(WriteExplicitly.class) != null ||
-                        !Objects.equals(fieldValue, defaultFieldValue))) {
+                boolean serializeNull = optionsList.contains(SerializeOptions.INCLUDE_NULL) || fieldValue != null;
+                boolean serializeDefault = optionsList.contains(SerializeOptions.INCLUDE_DEFAULT)
+                        || f.getAnnotation(WriteExplicitly.class) != null
+                        || !Objects.equals(fieldValue, defaultFieldValue);
+                if (serializeNull && serializeDefault) {
                     String key = f.getName().replace('_', '-');
                     if (fieldValue instanceof Map) {
                         hash.put(key, mapToJson((Map<?, ?>) fieldValue));
                     } else if (fieldValue instanceof MultiMap) {
                         hash.put(key, multiMapToJson((MultiMap<?, ?>) fieldValue));
+                    } else if (fieldValue == null) {
+                        hash.put(key, null);
                     } else {
                         hash.put(key, fieldValue.toString());
                     }
