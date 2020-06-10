@@ -53,6 +53,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
@@ -136,6 +137,11 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         public NamedColorProperty toProperty() {
             return new NamedColorProperty(info.getCategory(), info.getSource(),
                     info.getName(), info.getDefaultValue());
+        }
+
+        @Override
+        public String toString() {
+            return "ColorEntry{" + getDisplay() + ' ' + ColorHelper.color2html(getDisplayColor()) + '}';
         }
     }
 
@@ -258,6 +264,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         colorEdit = new JButton(tr("Choose"));
         colorEdit.addActionListener(e -> {
             int sel = colors.getSelectedRow();
+            sel = colors.convertRowIndexToModel(sel);
             ColorEntry ce = tableModel.getEntry(sel);
             JColorChooser chooser = new JColorChooser(ce.getDisplayColor());
             int answer = JOptionPane.showConfirmDialog(
@@ -272,6 +279,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         defaultSet = new JButton(tr("Reset to default"));
         defaultSet.addActionListener(e -> {
             int sel = colors.getSelectedRow();
+            sel = colors.convertRowIndexToModel(sel);
             ColorEntry ce = tableModel.getEntry(sel);
             Color c = ce.info.getDefaultValue();
             if (c != null) {
@@ -292,6 +300,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         remove = new JButton(tr("Remove"));
         remove.addActionListener(e -> {
             int sel = colors.getSelectedRow();
+            sel = colors.convertRowIndexToModel(sel);
             tableModel.removeEntry(sel);
         });
         remove.setEnabled(false);
@@ -299,6 +308,8 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         defaultSet.setEnabled(false);
 
         colors = new JTable(tableModel);
+        colors.setAutoCreateRowSorter(true);
+        FilterField colorFilter = new FilterField().filter(colors, tableModel);
         colors.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent me) {
@@ -352,6 +363,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panel.add(colorFilter, GBC.eol().fill(GBC.HORIZONTAL));
         JScrollPane scrollpane = new JScrollPane(colors);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         panel.add(scrollpane, GBC.eol().fill(GBC.BOTH));
@@ -424,7 +436,11 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
 
     private void updateEnabledState() {
         int sel = colors.getSelectedRow();
-        ColorEntry ce = sel >= 0 && sel < tableModel.getRowCount() ? tableModel.getEntry(sel) : null;
+        if (sel < 0 || sel >= tableModel.getRowCount()) {
+            return;
+        }
+        sel = colors.convertRowIndexToModel(sel);
+        ColorEntry ce = tableModel.getEntry(sel);
         remove.setEnabled(ce != null && isRemoveColor(ce));
         colorEdit.setEnabled(ce != null);
         defaultSet.setEnabled(ce != null && !ce.isDefault());
