@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Arrays;
+import java.util.Objects;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -113,7 +114,12 @@ public class HistoryBrowser extends JPanel implements Destroyable {
      * @param history the history
      */
     public void populate(History history) {
+        boolean samePrimitive = model.getHistory() != null && Objects.equals(model.getHistory().getPrimitiveId(), history.getPrimitiveId());
         model.setHistory(history);
+        if (samePrimitive) {
+            // no need to rebuild the UI
+            return;
+        }
 
         tpViewers.removeAll();
 
