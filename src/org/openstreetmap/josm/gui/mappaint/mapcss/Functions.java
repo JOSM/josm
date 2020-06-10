@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -767,13 +768,17 @@ public final class Functions {
     /**
      * Obtains the JOSM'key {@link org.openstreetmap.josm.data.Preferences} string for key {@code key},
      * and defaults to {@code def} if that is null.
+     *
+     * If the default value can be {@linkplain Cascade#convertTo converted} to a {@link Color},
+     * the {@link NamedColorProperty} is retrieved as string.
+     *
      * @param env the environment
      * @param key Key in JOSM preference
      * @param def Default value
      * @return value for key, or default value if not found
      */
     public static String JOSM_pref(Environment env, String key, String def) { // NO_UCD (unused code)
-        return MapPaintStyles.getStyles().getPreferenceCached(key, def);
+        return MapPaintStyles.getStyles().getPreferenceCached(env != null ? env.source : null, key, def);
     }
 
     /**

@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -603,17 +605,28 @@ public class ElemStyles implements PreferenceChangedListener {
      * as frequent preference lookup (using <code>Config.getPref().get()</code>) for
      * each primitive can be slow during rendering.
      *
+     * If the default value can be {@linkplain Cascade#convertTo converted} to a {@link Color},
+     * the {@link NamedColorProperty} is retrieved as string.
+     *
+     * @param source style source
      * @param key preference key
      * @param def default value
      * @return the corresponding preference value
      * @see org.openstreetmap.josm.data.Preferences#get(String, String)
      */
-    public String getPreferenceCached(String key, String def) {
+    public String getPreferenceCached(StyleSource source, String key, String def) {
         String res;
         if (preferenceCache.containsKey(key)) {
             res = preferenceCache.get(key);
         } else {
-            res = Config.getPref().get(key, null);
+            Color realDef = Cascade.convertTo(def, Color.class);
+            if (realDef != null) {
+                String prefName = source != null ? source.getFileNamePart() : "unknown";
+                NamedColorProperty property = new NamedColorProperty(NamedColorProperty.COLOR_CATEGORY_MAPPAINT, prefName, key, realDef);
+                res = ColorHelper.color2html(property.get());
+            } else {
+                res = Config.getPref().get(key, null);
+            }
             preferenceCache.put(key, res);
         }
         return res != null ? res : def;

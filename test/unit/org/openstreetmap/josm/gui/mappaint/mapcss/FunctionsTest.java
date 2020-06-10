@@ -5,12 +5,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openstreetmap.josm.data.osm.OsmPrimitiveType.NODE;
 
+import java.util.Collections;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -112,6 +115,7 @@ public class FunctionsTest {
     @Test
     public void testPref() {
         String key = "Functions.JOSM_pref";
+        Config.getPref().put(key, null);
         assertEquals("foobar", Functions.JOSM_pref(null, key, "foobar"));
         Config.getPref().put(key, "baz");
         GuiHelper.runInEDTAndWait(() -> {
@@ -123,5 +127,29 @@ public class FunctionsTest {
             // await org.openstreetmap.josm.gui.mappaint.ElemStyles.clearCached
         });
         assertEquals("foobar", Functions.JOSM_pref(null, key, "foobar"));
+        Config.getPref().put(key, null);
     }
+
+    /**
+     * Unit test of {@link Functions#JOSM_pref}, color handling
+     */
+    @Test
+    public void testPrefColor() {
+        String key = "Functions.JOSM_pref";
+        String colorKey = NamedColorProperty.NAMED_COLOR_PREFIX + NamedColorProperty.COLOR_CATEGORY_MAPPAINT + ".unknown." + key;
+        Config.getPref().put(colorKey, null);
+        assertEquals("#000000", Functions.JOSM_pref(null, key, "#000000"));
+        Config.getPref().putList(colorKey, Collections.singletonList("#00FF00"));
+        GuiHelper.runInEDTAndWait(() -> {
+            // await org.openstreetmap.josm.gui.mappaint.ElemStyles.clearCached
+        });
+        assertEquals("#00FF00", Functions.JOSM_pref(null, key, "#000000"));
+        Config.getPref().put(colorKey, null);
+        GuiHelper.runInEDTAndWait(() -> {
+            // await org.openstreetmap.josm.gui.mappaint.ElemStyles.clearCached
+        });
+        assertEquals("#000000", Functions.JOSM_pref(null, key, "#000000"));
+        Config.getPref().put(colorKey, null);
+    }
+
 }
