@@ -92,22 +92,6 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         return dialogs.containsKey(id);
     }
 
-    private void show(long id, HistoryBrowserDialog dialog) {
-        if (dialogs.containsValue(dialog)) {
-            show(id);
-        } else {
-            placeOnScreen(dialog);
-            dialog.setVisible(true);
-            dialogs.put(id, dialog);
-        }
-    }
-
-    private void show(long id) {
-        if (dialogs.containsKey(id)) {
-            dialogs.get(id).toFront();
-        }
-    }
-
     private boolean hasDialogWithCloseUpperLeftCorner(Point p) {
         return dialogs.values().stream()
                 .map(Component::getLocation)
@@ -165,9 +149,12 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         if (h == null)
             return;
         if (existsDialog(h.getId())) {
-            show(h.getId());
+            dialogs.get(h.getId()).toFront();
         } else {
-            show(h.getId(), new HistoryBrowserDialog(h));
+            HistoryBrowserDialog dialog = new HistoryBrowserDialog(h);
+            placeOnScreen(dialog);
+            dialog.setVisible(true);
+            dialogs.put(h.getId(), dialog);
         }
     }
 
