@@ -15,7 +15,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
+import org.openstreetmap.josm.actions.RestorePropertyAction;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyAllKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyValueAction;
@@ -71,20 +76,27 @@ public class TagInfoViewer extends HistoryViewerPanel {
         JPopupMenu tagMenu = new JPopupMenu();
 
         IntFunction<String> tagKeyFn = x -> (String) table.getValueAt(x, 0);
+        IntFunction<String> tagValueFn = x -> tagTableModel.getValue(tagKeyFn.apply(x));
         IntFunction<Map<String, Integer>> tagValuesFn = x -> {
-            String key = tagTableModel.getValue((String) table.getValueAt(x, 0));
-            if (key != null) {
-                return Collections.singletonMap(key, 1);
-            }
-            return Collections.emptyMap();
+            String value = tagValueFn.apply(x);
+            return value != null ? Collections.singletonMap(value, 1) : Collections.emptyMap();
         };
         Supplier<Collection<? extends Tagged>> objectSp = () -> Collections.singletonList(model.getPointInTime(pointInTime));
+        Supplier<OsmPrimitive> primitiveSupplier = () -> {
+            DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
+            PrimitiveId primitiveId = model.getPointInTime(pointInTime);
+            if (dataSet == null || primitiveId == null) {
+                return null;
+            }
+            return dataSet.getPrimitiveById(primitiveId.getUniqueId(), primitiveId.getType());
+        };
 
         tagMenu.add(trackJosmAction(new CopyValueAction(table, tagKeyFn, objectSp)));
         final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction(table, tagKeyFn, objectSp);
         tagMenu.add(trackJosmAction(copyKeyValueAction));
         tagMenu.addPopupMenuListener(copyKeyValueAction);
         tagMenu.add(trackJosmAction(new CopyAllKeyValueAction(table, tagKeyFn, objectSp)));
+        tagMenu.add(new RestorePropertyAction(tagKeyFn, tagValueFn, primitiveSupplier, table.getSelectionModel()));
         tagMenu.addSeparator();
         tagMenu.add(trackJosmAction(new HelpTagAction(table, tagKeyFn, tagValuesFn)));
         tagMenu.add(trackJosmAction(new TaginfoAction(tr("Go to Taginfo"), table, tagKeyFn, tagValuesFn, null, null, null)));
