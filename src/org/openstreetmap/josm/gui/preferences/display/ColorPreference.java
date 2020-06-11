@@ -206,7 +206,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             if (columnIndex == 1 && aValue instanceof Color) {
                 data.get(rowIndex).info.setValue((Color) aValue);
-                fireTableRowsUpdated(rowIndex, rowIndex);
+                fireTableCellUpdated(rowIndex, columnIndex);
             }
         }
     }
@@ -264,8 +264,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         colorEdit = new JButton(tr("Choose"));
         colorEdit.addActionListener(e -> {
             int sel = colors.getSelectedRow();
-            sel = colors.convertRowIndexToModel(sel);
-            ColorEntry ce = tableModel.getEntry(sel);
+            ColorEntry ce = (ColorEntry) colors.getValueAt(sel, 0);
             JColorChooser chooser = new JColorChooser(ce.getDisplayColor());
             int answer = JOptionPane.showConfirmDialog(
                     gui, chooser,
@@ -279,8 +278,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         defaultSet = new JButton(tr("Reset to default"));
         defaultSet.addActionListener(e -> {
             int sel = colors.getSelectedRow();
-            sel = colors.convertRowIndexToModel(sel);
-            ColorEntry ce = tableModel.getEntry(sel);
+            ColorEntry ce = (ColorEntry) colors.getValueAt(sel, 0);
             Color c = ce.info.getDefaultValue();
             if (c != null) {
                 colors.setValueAt(c, sel, 1);
@@ -289,13 +287,13 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         JButton defaultAll = new JButton(tr("Set all to default"));
         defaultAll.addActionListener(e -> {
             List<ColorEntry> data = tableModel.getData();
-            for (int i = 0; i < data.size(); ++i) {
-                ColorEntry ce = data.get(i);
+            for (ColorEntry ce : data) {
                 Color c = ce.info.getDefaultValue();
                 if (c != null) {
-                    colors.setValueAt(c, i, 1);
+                    ce.info.setValue(c);
                 }
             }
+            tableModel.fireTableDataChanged();
         });
         remove = new JButton(tr("Remove"));
         remove.addActionListener(e -> {
@@ -436,11 +434,10 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
 
     private void updateEnabledState() {
         int sel = colors.getSelectedRow();
-        if (sel < 0 || sel >= tableModel.getRowCount()) {
+        if (sel < 0 || sel >= colors.getRowCount()) {
             return;
         }
-        sel = colors.convertRowIndexToModel(sel);
-        ColorEntry ce = tableModel.getEntry(sel);
+        ColorEntry ce = (ColorEntry) colors.getValueAt(sel, 0);
         remove.setEnabled(ce != null && isRemoveColor(ce));
         colorEdit.setEnabled(ce != null);
         defaultSet.setEnabled(ce != null && !ce.isDefault());
