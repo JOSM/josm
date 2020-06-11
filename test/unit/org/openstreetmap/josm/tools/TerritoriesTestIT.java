@@ -8,7 +8,6 @@ import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.hot.sds.SeparateDataStorePlugin;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -23,7 +22,7 @@ public class TerritoriesTestIT {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().projection().main();
+    public JOSMTestRules rules = new JOSMTestRules().projection();
 
 
     /**
@@ -31,7 +30,6 @@ public class TerritoriesTestIT {
      */
     @Test
     public void testUtilityClass() {
-        new SeparateDataStorePlugin(null);
         Logging.clearLastErrorAndWarnings();
         Territories.initialize();
         assertEquals("no errors or warnings", Collections.emptyList(), Logging.getLastErrorAndWarnings());
