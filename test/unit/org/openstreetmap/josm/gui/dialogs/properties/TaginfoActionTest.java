@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.dialogs.properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import javax.swing.Action;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.Tag;
@@ -29,6 +31,16 @@ public class TaginfoActionTest {
         assertEquals("https://taginfo.openstreetmap.org/keys/railway", action.getTaginfoUrlForTag(new Tag("railway")));
         assertEquals("https://taginfo.openstreetmap.org/tags/railway=tram", action.getTaginfoUrlForTag(new Tag("railway", "tram")));
         assertEquals("https://taginfo.openstreetmap.org/relations/route", action.getTaginfoUrlForRelationType("route"));
+    }
+
+    /**
+     * Unit test of {@link TaginfoAction#toTagHistoryAction()}
+     */
+    @Test
+    public void testCustomInstance() {
+        TaginfoAction action = new TaginfoAction(() -> null, () -> null).withTaginfoUrl("example.com", "https://taginfo.example.com////");
+        assertEquals("example.com", action.getValue(Action.NAME));
+        assertEquals("https://taginfo.example.com/keys/railway", action.getTaginfoUrlForTag(new Tag("railway")));
     }
 
     /**

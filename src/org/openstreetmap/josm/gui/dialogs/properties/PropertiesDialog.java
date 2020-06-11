@@ -191,9 +191,9 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final transient DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
     private final HelpAction helpTagAction = new HelpTagAction(tagTable, editHelper::getDataKey, editHelper::getDataValues);
     private final HelpAction helpRelAction = new HelpMembershipAction(membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
-    private final TaginfoAction taginfoAction = new TaginfoAction(tr("Go to Taginfo"),
+    private final TaginfoAction taginfoAction = new TaginfoAction(
             tagTable, editHelper::getDataKey, editHelper::getDataValues,
-            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), null);
+            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
     private final TaginfoAction tagHistoryAction = taginfoAction.toTagHistoryAction();
     private final Collection<TaginfoAction> taginfoNationalActions = new ArrayList<>();
     private final PasteValueAction pasteValueAction = new PasteValueAction();
@@ -374,9 +374,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         if (!newSel.isEmpty()) {
             final LatLon center = newSel.iterator().next().getBBox().getCenter();
             Territories.getRegionalTaginfoUrls(center).stream()
-                    .map(taginfo -> new TaginfoAction(tr("Go to Taginfo ({0})", taginfo.toString()),
-                            tagTable, editHelper::getDataKey, editHelper::getDataValues,
-                            membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), taginfo.getUrl())
+                    .map(taginfo -> taginfoAction.withTaginfoUrl(tr("Go to Taginfo ({0})", taginfo.toString()), taginfo.getUrl())
                     ).forEach(taginfoNationalActions::add);
             taginfoNationalActions.stream().map(membershipMenu::add).forEach(membershipMenuTagInfoNatItems::add);
             taginfoNationalActions.stream().map(tagMenu::add).forEach(tagMenuTagInfoNatItems::add);

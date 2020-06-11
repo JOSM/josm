@@ -34,9 +34,9 @@ public class TaginfoAction extends AbstractAction {
 
     private TaginfoAction(String name, Supplier<Tag> tagSupplier, Supplier<String> relationTypeSupplier, String taginfoUrl) {
         super(name);
-        this.tagSupplier = tagSupplier;
-        this.relationTypeSupplier = relationTypeSupplier;
-        this.taginfoUrl = taginfoUrl;
+        this.tagSupplier = Objects.requireNonNull(tagSupplier);
+        this.relationTypeSupplier = Objects.requireNonNull(relationTypeSupplier);
+        this.taginfoUrl = withoutTrailingSlash(Objects.requireNonNull(taginfoUrl));
     }
 
     /**
@@ -46,35 +46,30 @@ public class TaginfoAction extends AbstractAction {
      * @since 16275
      */
     public TaginfoAction(Supplier<Tag> tagSupplier, Supplier<String> relationTypeSupplier) {
-        super(tr("Go to Taginfo"));
+        this(tr("Go to Taginfo"), tagSupplier, relationTypeSupplier, TAGINFO_URL_PROP.get());
         new ImageProvider("dialogs/taginfo").getResource().attachImageIcon(this, true);
-        putValue(SHORT_DESCRIPTION, tr("Launch browser with Taginfo statistics for selected object"));
-        this.tagSupplier = Objects.requireNonNull(tagSupplier);
-        this.relationTypeSupplier = Objects.requireNonNull(relationTypeSupplier);
-        this.taginfoUrl = getTaginfoUrl(null);
     }
 
     /**
      * Constructs a new {@code TaginfoAction} with a given URL and optional name suffix.
-     * @param name the action's text as displayed on the menu (if it is added to a menu)
      * @param tagTable The tag table. Cannot be null
      * @param tagKeySupplier Finds the key from given row of tag table. Cannot be null
      * @param tagValuesSupplier Finds the values from given row of tag table (map of values and number of occurrences). Cannot be null
      * @param membershipTable The membership table. Can be null
      * @param memberValueSupplier Finds the parent relation from given row of membership table. Can be null
-     * @param taginfoUrl Taginfo URL. Can be null
-     * @since 15565
+     * @since 16597
      */
-    public TaginfoAction(String name, JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
-                         JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier, String taginfoUrl) {
-        super(name);
-        new ImageProvider("dialogs/taginfo").getResource().attachImageIcon(this, true);
-        putValue(SHORT_DESCRIPTION, tr("Launch browser with Taginfo statistics for selected object"));
-        this.taginfoUrl = getTaginfoUrl(taginfoUrl);
+    public TaginfoAction(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier,
+                         JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier) {
+        this(getTagSupplier(tagTable, tagKeySupplier, tagValuesSupplier),
+                getRelationTypeSupplier(membershipTable, memberValueSupplier));
+    }
+
+    private static Supplier<Tag> getTagSupplier(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier) {
         Objects.requireNonNull(tagTable);
         Objects.requireNonNull(tagKeySupplier);
         Objects.requireNonNull(tagValuesSupplier);
-        this.tagSupplier = () -> {
+        return () -> {
             if (tagTable.getSelectedRowCount() == 1) {
                 final int row = tagTable.getSelectedRow();
                 final String key = Utils.encodeUrl(tagKeySupplier.apply(row)).replaceAll("\\+", "%20");
@@ -84,7 +79,10 @@ public class TaginfoAction extends AbstractAction {
             }
             return null;
         };
-        this.relationTypeSupplier = () -> membershipTable != null && membershipTable.getSelectedRowCount() == 1
+    }
+
+    private static Supplier<String> getRelationTypeSupplier(JTable membershipTable, IntFunction<IRelation<?>> memberValueSupplier) {
+        return () -> membershipTable != null && membershipTable.getSelectedRowCount() == 1
                 ? memberValueSupplier.apply(membershipTable.getSelectedRow()).get("type") : null;
     }
 
@@ -99,13 +97,6 @@ public class TaginfoAction extends AbstractAction {
         if (type != null) {
             OpenBrowser.displayUrl(getTaginfoUrlForRelationType(type));
         }
-    }
-
-    private static String getTaginfoUrl(String taginfoUrl) {
-        if (taginfoUrl == null) {
-            taginfoUrl = TAGINFO_URL_PROP.get();
-        }
-        return withoutTrailingSlash(taginfoUrl);
     }
 
     private static String withoutTrailingSlash(String url) {
@@ -135,12 +126,24 @@ public class TaginfoAction extends AbstractAction {
     }
 
     /**
+     * Returns a new action which launches the Taginfo instance from the given URL
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param taginfoUrl Taginfo URL
+     * @since 16597
+     */
+    public TaginfoAction withTaginfoUrl(String name, String taginfoUrl) {
+        TaginfoAction action = new TaginfoAction(name, tagSupplier, relationTypeSupplier, taginfoUrl);
+        new ImageProvider("dialogs/taginfo").getResource().attachImageIcon(action, true);
+        return action;
+    }
+
+    /**
      * Returns a new action which launches https://taghistory.raifer.tech/ for the given tag
      * @return a new action
      * @since 16596
      */
     public TaginfoAction toTagHistoryAction() {
-        String url = withoutTrailingSlash(TAG_HISTORY_URL_PROP.get());
+        String url = TAG_HISTORY_URL_PROP.get();
         return new TaginfoAction(tr("Go to OSM Tag History"), tagSupplier, relationTypeSupplier, url) {
             @Override
             public String getTaginfoUrlForTag(Tag tag) {
