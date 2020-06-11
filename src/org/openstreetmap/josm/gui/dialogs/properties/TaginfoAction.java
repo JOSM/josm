@@ -73,7 +73,7 @@ public class TaginfoAction extends AbstractAction {
         return () -> {
             if (tagTable.getSelectedRowCount() == 1) {
                 final int row = tagTable.getSelectedRow();
-                final String key = Utils.encodeUrl(tagKeySupplier.apply(row)).replaceAll("\\+", "%20");
+                final String key = tagKeySupplier.apply(row);
                 Map<String, Integer> values = tagValuesSupplier.apply(row);
                 String value = values.size() == 1 ? values.keySet().iterator().next() : null;
                 return new Tag(key, value);
@@ -111,10 +111,14 @@ public class TaginfoAction extends AbstractAction {
      */
     public String getTaginfoUrlForTag(Tag tag) {
         if (tag.getValue().isEmpty()) {
-            return taginfoUrl + "/keys/" + tag.getKey();
+            return taginfoUrl + "/keys/" + encodeKeyValue(tag.getKey());
         } else {
-            return taginfoUrl + "/tags/" + tag.getKey() + '=' + Utils.encodeUrl(tag.getValue()).replaceAll("\\+", "%20");
+            return taginfoUrl + "/tags/" + encodeKeyValue(tag.getKey()) + '=' + encodeKeyValue(tag.getValue());
         }
+    }
+
+    private static String encodeKeyValue(String string) {
+        return Utils.encodeUrl(string).replaceAll("\\+", "%20");
     }
 
     /**

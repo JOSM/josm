@@ -30,6 +30,8 @@ public class TaginfoActionTest {
         TaginfoAction action = new TaginfoAction(() -> null, () -> null);
         assertEquals("https://taginfo.openstreetmap.org/keys/railway", action.getTaginfoUrlForTag(new Tag("railway")));
         assertEquals("https://taginfo.openstreetmap.org/tags/railway=tram", action.getTaginfoUrlForTag(new Tag("railway", "tram")));
+        assertEquals("https://taginfo.openstreetmap.org/tags/addr%3Acity=Bassum%3ACity",
+                action.getTaginfoUrlForTag(new Tag("addr:city", "Bassum:City")));
         assertEquals("https://taginfo.openstreetmap.org/relations/route", action.getTaginfoUrlForRelationType("route"));
     }
 
@@ -47,10 +49,12 @@ public class TaginfoActionTest {
      * Unit test of {@link TaginfoAction#toTagHistoryAction()}
      */
     @Test
-    public void testTagHistoryUrls() {
+    public void testTagHistoryUrls() throws Exception {
         TaginfoAction action = new TaginfoAction(() -> null, () -> null).toTagHistoryAction();
         assertEquals("https://taghistory.raifer.tech/#***/railway/", action.getTaginfoUrlForTag(new Tag("railway")));
         assertEquals("https://taghistory.raifer.tech/#***/railway/tram", action.getTaginfoUrlForTag(new Tag("railway", "tram")));
+        assertEquals("https://taghistory.raifer.tech/#***/addr:city/Bassum:City",
+                action.getTaginfoUrlForTag(new Tag("addr:city", "Bassum:City")));
         assertNull(action.getTaginfoUrlForRelationType("route"));
     }
 }
