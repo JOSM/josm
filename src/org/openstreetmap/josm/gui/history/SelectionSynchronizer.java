@@ -9,6 +9,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.gui.util.TableHelper;
+
 /**
  * Helper class to ensure that two (or more) {@link javax.swing.JTable}s always
  * have the same entries selected.
@@ -50,13 +52,14 @@ public class SelectionSynchronizer implements ListSelectionListener {
         }
         preventRecursion = true;
         DefaultListSelectionModel referenceModel = (DefaultListSelectionModel) e.getSource();
-        int i = referenceModel.getMinSelectionIndex();
-        int j = referenceModel.getMaxSelectionIndex();
         for (ListSelectionModel model : participants) {
             if (model == e.getSource()) {
                 continue;
             }
-            model.setSelectionInterval(i, j);
+            model.clearSelection();
+            for (int i : TableHelper.getSelectedIndices(referenceModel)) {
+                model.addSelectionInterval(i, i);
+            }
         }
         preventRecursion = false;
     }
