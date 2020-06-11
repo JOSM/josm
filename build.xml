@@ -413,6 +413,7 @@ Build-Date: ${build.tstamp}
                 target="${java.lang.version}" source="${java.lang.version}" debug="on"
                 includeantruntime="false" encoding="UTF-8">
                 <compilerarg value="-Xlint:all"/>
+                <compilerarg value="-Xlint:-path"/><!-- Suppress "bad path element .../xmpcore-6.0.6.jar: no such file or directory" warning, see https://github.com/drewnoakes/metadata-extractor/pull/483 -->
                 <compilerarg value="-Xlint:-serial"/>
                 <classpath>
                     <cp-elements/>
