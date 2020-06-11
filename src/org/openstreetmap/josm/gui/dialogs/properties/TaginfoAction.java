@@ -26,10 +26,18 @@ import org.openstreetmap.josm.tools.Utils;
 public class TaginfoAction extends AbstractAction {
 
     private static final StringProperty TAGINFO_URL_PROP = new StringProperty("taginfo.url", "https://taginfo.openstreetmap.org/");
+    private static final StringProperty TAG_HISTORY_URL_PROP = new StringProperty("taghistory.url", "https://taghistory.raifer.tech/#***");
 
     private final Supplier<Tag> tagSupplier;
     private final Supplier<String> relationTypeSupplier;
-    private final String taginfoUrl;
+    protected final String taginfoUrl;
+
+    private TaginfoAction(String name, Supplier<Tag> tagSupplier, Supplier<String> relationTypeSupplier, String taginfoUrl) {
+        super(name);
+        this.tagSupplier = tagSupplier;
+        this.relationTypeSupplier = relationTypeSupplier;
+        this.taginfoUrl = taginfoUrl;
+    }
 
     /**
      * Constructs a new {@code TaginfoAction}.
@@ -84,12 +92,12 @@ public class TaginfoAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         Tag tag = tagSupplier.get();
         if (tag != null) {
-            openTaginfoForTag(tag, taginfoUrl);
+            OpenBrowser.displayUrl(getTaginfoUrlForTag(tag));
             return;
         }
         String type = relationTypeSupplier.get();
         if (type != null) {
-            openTaginfoForRelationType(type, taginfoUrl);
+            OpenBrowser.displayUrl(getTaginfoUrlForRelationType(type));
         }
     }
 
@@ -97,32 +105,52 @@ public class TaginfoAction extends AbstractAction {
         if (taginfoUrl == null) {
             taginfoUrl = TAGINFO_URL_PROP.get();
         }
-        return taginfoUrl.endsWith("/") ? taginfoUrl : taginfoUrl + '/';
+        return withoutTrailingSlash(taginfoUrl);
+    }
+
+    private static String withoutTrailingSlash(String url) {
+        return Utils.strip(url, "/");
     }
 
     /**
      * Opens Taginfo for the given tag or key (if the tag value is null)
      * @param tag the tag
-     * @param taginfoUrl Taginfo URL (may be null)
-     * @since 16275
+     * @since 16596
      */
-    public static void openTaginfoForTag(Tag tag, String taginfoUrl) {
-        taginfoUrl = getTaginfoUrl(taginfoUrl);
+    public String getTaginfoUrlForTag(Tag tag) {
         if (tag.getValue().isEmpty()) {
-            OpenBrowser.displayUrl(taginfoUrl + "keys/" + tag.getKey());
+            return taginfoUrl + "/keys/" + tag.getKey();
         } else {
-            OpenBrowser.displayUrl(taginfoUrl + "tags/" + tag.getKey() + '=' + Utils.encodeUrl(tag.getValue()).replaceAll("\\+", "%20"));
+            return taginfoUrl + "/tags/" + tag.getKey() + '=' + Utils.encodeUrl(tag.getValue()).replaceAll("\\+", "%20");
         }
     }
 
     /**
      * Opens Taginfo for the given relation type
      * @param type the relation type
-     * @param taginfoUrl Taginfo URL (may be null)
-     * @since 16275
+     * @since 16596
      */
-    public static void openTaginfoForRelationType(String type, String taginfoUrl) {
-        taginfoUrl = getTaginfoUrl(taginfoUrl);
-        OpenBrowser.displayUrl(taginfoUrl + "relations/" + type);
+    public String getTaginfoUrlForRelationType(String type) {
+        return taginfoUrl + "/relations/" + type;
+    }
+
+    /**
+     * Returns a new action which launches https://taghistory.raifer.tech/ for the given tag
+     * @return a new action
+     * @since 16596
+     */
+    public TaginfoAction toTagHistoryAction() {
+        String url = withoutTrailingSlash(TAG_HISTORY_URL_PROP.get());
+        return new TaginfoAction(tr("Go to OSM Tag History"), tagSupplier, relationTypeSupplier, url) {
+            @Override
+            public String getTaginfoUrlForTag(Tag tag) {
+                return String.join("/", taginfoUrl, tag.getKey(), tag.getValue());
+            }
+
+            @Override
+            public String getTaginfoUrlForRelationType(String type) {
+                return null;
+            }
+        };
     }
 }

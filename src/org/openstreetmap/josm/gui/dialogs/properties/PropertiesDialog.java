@@ -194,6 +194,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final TaginfoAction taginfoAction = new TaginfoAction(tr("Go to Taginfo"),
             tagTable, editHelper::getDataKey, editHelper::getDataValues,
             membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0), null);
+    private final TaginfoAction tagHistoryAction = taginfoAction.toTagHistoryAction();
     private final Collection<TaginfoAction> taginfoNationalActions = new ArrayList<>();
     private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction(
@@ -456,6 +457,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagMenu.add(searchActionSame);
         tagMenu.addSeparator();
         tagMenu.add(helpTagAction);
+        tagMenu.add(tagHistoryAction);
         tagMenu.add(taginfoAction);
         tagMenu.addPopupMenuListener(new AbstractTag2LinkPopupListener() {
             @Override

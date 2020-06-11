@@ -213,7 +213,9 @@ public abstract class KeyedItem extends TextItem {
         JPopupMenu popupMenu = new JPopupMenu();
         popupMenu.add(tr("Key: {0}", key)).setEnabled(false);
         popupMenu.add(new HelpTagAction(() -> tag));
-        popupMenu.add(new TaginfoAction(() -> tag, () -> null));
+        TaginfoAction taginfoAction = new TaginfoAction(() -> tag, () -> null);
+        popupMenu.add(taginfoAction.toTagHistoryAction());
+        popupMenu.add(taginfoAction);
         return popupMenu;
     }
 

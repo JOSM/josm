@@ -99,7 +99,9 @@ public class TagInfoViewer extends HistoryViewerPanel {
         tagMenu.add(new RestorePropertyAction(tagKeyFn, tagValueFn, primitiveSupplier, table.getSelectionModel()));
         tagMenu.addSeparator();
         tagMenu.add(trackJosmAction(new HelpTagAction(table, tagKeyFn, tagValuesFn)));
-        tagMenu.add(trackJosmAction(new TaginfoAction(tr("Go to Taginfo"), table, tagKeyFn, tagValuesFn, null, null, null)));
+        TaginfoAction taginfoAction = new TaginfoAction(tr("Go to Taginfo"), table, tagKeyFn, tagValuesFn, null, null, null);
+        tagMenu.add(trackJosmAction(taginfoAction.toTagHistoryAction()));
+        tagMenu.add(trackJosmAction(taginfoAction));
 
         table.addMouseListener(new PopupMenuLauncher(tagMenu));
         return table;
