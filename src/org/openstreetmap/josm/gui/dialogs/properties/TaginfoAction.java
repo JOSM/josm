@@ -65,7 +65,8 @@ public class TaginfoAction extends AbstractAction {
                 getRelationTypeSupplier(membershipTable, memberValueSupplier));
     }
 
-    private static Supplier<Tag> getTagSupplier(JTable tagTable, IntFunction<String> tagKeySupplier, IntFunction<Map<String, Integer>> tagValuesSupplier) {
+    private static Supplier<Tag> getTagSupplier(JTable tagTable, IntFunction<String> tagKeySupplier,
+                                                IntFunction<Map<String, Integer>> tagValuesSupplier) {
         Objects.requireNonNull(tagTable);
         Objects.requireNonNull(tagKeySupplier);
         Objects.requireNonNull(tagValuesSupplier);
