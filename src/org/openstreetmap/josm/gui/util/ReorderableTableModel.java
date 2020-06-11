@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
+import java.util.Arrays;
+
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.ListModel;
@@ -134,12 +136,7 @@ public interface ReorderableTableModel<T> extends ReorderableModel<T> {
         if (!doMove(delta, selectedRows))
             return false;
         final ListSelectionModel selectionModel = getSelectionModel();
-        selectionModel.setValueIsAdjusting(true);
-        selectionModel.clearSelection();
-        for (int row: selectedRows) {
-            selectionModel.addSelectionInterval(row + delta, row + delta);
-        }
-        selectionModel.setValueIsAdjusting(false);
+        TableHelper.setSelectedIndices(selectionModel, Arrays.stream(selectedRows).map(i -> i + delta));
         return true;
     }
 }

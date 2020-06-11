@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.util;
 
 import java.awt.Component;
+import java.util.stream.IntStream;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -145,5 +146,19 @@ public final class TableHelper {
         int[] rv = new int[n];
         System.arraycopy(rvTmp, 0, rv, 0, n);
         return rv;
+    }
+
+    /**
+     * Selects the given indices in the selection model
+     * @param selectionModel list selection model.
+     * @param indices the indices to select
+     * @see ListSelectionModel#addSelectionInterval(int, int)
+     * @since 16601
+     */
+    public static void setSelectedIndices(ListSelectionModel selectionModel, IntStream indices) {
+        selectionModel.setValueIsAdjusting(true);
+        selectionModel.clearSelection();
+        indices.filter(i -> i >= 0).forEach(i -> selectionModel.addSelectionInterval(i, i));
+        selectionModel.setValueIsAdjusting(false);
     }
 }

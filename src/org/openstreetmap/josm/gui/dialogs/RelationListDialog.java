@@ -81,6 +81,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.AbstractTag2LinkPopupListener;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -308,8 +309,8 @@ public class RelationListDialog extends ToggleDialog
             model.setSelectedRelations(null);
         } else {
             model.setSelectedRelations(relations);
-            Integer i = model.getVisibleRelationIndex(relations.iterator().next());
-            if (i != null) {
+            int i = model.getVisibleRelations().indexOf(relations.iterator().next());
+            if (i >= 0) {
                 // Not all relations have to be in the list
                 // (for example when the relation list is hidden, it's not updated with new relations)
                 displaylist.scrollRectToVisible(displaylist.getCellBounds(i, i));
@@ -583,27 +584,14 @@ public class RelationListDialog extends ToggleDialog
          * @since 13957 (signature)
          */
         public void setSelectedRelations(Collection<? extends IRelation<?>> sel) {
-            selectionModel.setValueIsAdjusting(true);
-            selectionModel.clearSelection();
             if (sel != null && !sel.isEmpty()) {
                 if (!getVisibleRelations().containsAll(sel)) {
                     resetFilter();
                 }
-                for (IRelation<?> r: sel) {
-                    Integer i = getVisibleRelationIndex(r);
-                    if (i != null) {
-                        selectionModel.addSelectionInterval(i, i);
-                    }
-                }
+                TableHelper.setSelectedIndices(selectionModel, sel.stream().mapToInt(getVisibleRelations()::indexOf));
+            } else {
+                TableHelper.setSelectedIndices(selectionModel, IntStream.empty());
             }
-            selectionModel.setValueIsAdjusting(false);
-        }
-
-        private Integer getVisibleRelationIndex(IRelation<?> rel) {
-            int i = getVisibleRelations().indexOf(rel);
-            if (i < 0)
-                return null;
-            return i;
         }
 
         public void updateTitle() {

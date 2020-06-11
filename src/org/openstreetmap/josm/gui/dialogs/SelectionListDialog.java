@@ -78,6 +78,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.util.AbstractTag2LinkPopupListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -577,17 +578,8 @@ public class SelectionListDialog extends ToggleDialog {
          * @param sel the collection of primitives to select
          */
         public synchronized void setSelected(Collection<OsmPrimitive> sel) {
-            selectionModel.setValueIsAdjusting(true);
-            selectionModel.clearSelection();
-            if (sel != null) {
-                for (OsmPrimitive p: sel) {
-                    int i = selection.indexOf(p);
-                    if (i >= 0) {
-                        selectionModel.addSelectionInterval(i, i);
-                    }
-                }
-            }
-            selectionModel.setValueIsAdjusting(false);
+            TableHelper.setSelectedIndices(selectionModel,
+                    sel != null ? sel.stream().mapToInt(selection::indexOf) : IntStream.empty());
         }
 
         @Override

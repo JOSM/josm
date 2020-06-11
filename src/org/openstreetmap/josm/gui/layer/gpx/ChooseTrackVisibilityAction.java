@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.JColorChooser;
@@ -45,6 +46,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -218,14 +220,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             return;
         }
         ListSelectionModel s = table.getSelectionModel();
-        s.setValueIsAdjusting(true);
-        s.clearSelection();
-        for (int i = 0; i < layer.trackVisibility.length; i++) {
-            if (layer.trackVisibility[i]) {
-                s.addSelectionInterval(i, i);
-            }
-        }
-        s.setValueIsAdjusting(false);
+        TableHelper.setSelectedIndices(s,
+                IntStream.range(0, layer.trackVisibility.length).filter(i -> layer.trackVisibility[i]));
     }
 
     /** listens to selection changes in the table and redraws the map */

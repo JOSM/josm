@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 
 /**
  * This is the model that backs a list of changesets
@@ -61,17 +62,8 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
      * @param changesets The changesets
      */
     public synchronized void setSelectedChangesets(Collection<Changeset> changesets) {
-        selectionModel.setValueIsAdjusting(true);
-        selectionModel.clearSelection();
-        if (changesets != null) {
-            for (Changeset cs: changesets) {
-                int idx = data.indexOf(cs);
-                if (idx >= 0) {
-                    selectionModel.addSelectionInterval(idx, idx);
-                }
-            }
-        }
-        selectionModel.setValueIsAdjusting(false);
+        TableHelper.setSelectedIndices(selectionModel,
+                changesets != null ? changesets.stream().mapToInt(data::indexOf) : IntStream.empty());
     }
 
     protected void setChangesets(Collection<Changeset> changesets) {

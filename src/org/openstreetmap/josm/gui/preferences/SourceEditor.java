@@ -744,15 +744,7 @@ public abstract class SourceEditor extends JPanel {
                 data.add(new SourceEntry(info.type, info.url, info.name, info.getDisplayName(), true));
             }
             fireTableDataChanged();
-            selectionModel.setValueIsAdjusting(true);
-            selectionModel.clearSelection();
-            for (ExtendedSourceEntry info: sources) {
-                int pos = data.indexOf(info);
-                if (pos >= 0) {
-                    selectionModel.addSelectionInterval(pos, pos);
-                }
-            }
-            selectionModel.setValueIsAdjusting(false);
+            TableHelper.setSelectedIndices(selectionModel, sources.stream().mapToInt(data::indexOf));
         }
 
         /**

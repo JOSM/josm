@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.StayOpenPopupMenu;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -333,12 +334,7 @@ public class MapPaintDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             int[] pos = tblStyles.getSelectedRows();
             MapPaintStyles.toggleStyleActive(pos);
-            selectionModel.setValueIsAdjusting(true);
-            selectionModel.clearSelection();
-            for (int p: pos) {
-                selectionModel.addSelectionInterval(p, p);
-            }
-            selectionModel.setValueIsAdjusting(false);
+            TableHelper.setSelectedIndices(selectionModel, Arrays.stream(pos));
         }
     }
 
@@ -370,13 +366,7 @@ public class MapPaintDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             int[] sel = tblStyles.getSelectedRows();
             MapPaintStyles.moveStyles(sel, increment);
-
-            selectionModel.setValueIsAdjusting(true);
-            selectionModel.clearSelection();
-            for (int row: sel) {
-                selectionModel.addSelectionInterval(row + increment, row + increment);
-            }
-            selectionModel.setValueIsAdjusting(false);
+            TableHelper.setSelectedIndices(selectionModel, Arrays.stream(sel).map(row -> row + increment));
             model.ensureSelectedIsVisible();
         }
 
@@ -413,14 +403,8 @@ public class MapPaintDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             final int[] rows = tblStyles.getSelectedRows();
             MapPaintStyleLoader.reloadStyles(rows);
-            MainApplication.worker.submit(() -> SwingUtilities.invokeLater(() -> {
-                selectionModel.setValueIsAdjusting(true);
-                selectionModel.clearSelection();
-                for (int r: rows) {
-                    selectionModel.addSelectionInterval(r, r);
-                }
-                selectionModel.setValueIsAdjusting(false);
-            }));
+            MainApplication.worker.submit(() -> SwingUtilities.invokeLater(() ->
+                    TableHelper.setSelectedIndices(selectionModel, Arrays.stream(rows))));
         }
     }
 

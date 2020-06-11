@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.table.AbstractTableModel;
@@ -18,6 +19,7 @@ import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
 import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 
 /**
  * This is the model for the changeset cache manager dialog.
@@ -110,17 +112,8 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @param selected the collection of changesets to select. Ignored if empty.
      */
     public void setSelectedChangesets(Collection<Changeset> selected) {
-        selectionModel.setValueIsAdjusting(true);
-        selectionModel.clearSelection();
-        if (selected != null) {
-            for (Changeset cs: selected) {
-                final int idx = data.indexOf(cs);
-                if (idx >= 0) {
-                    selectionModel.addSelectionInterval(idx, idx);
-                }
-            }
-        }
-        GuiHelper.runInEDTAndWait(() -> selectionModel.setValueIsAdjusting(false));
+        GuiHelper.runInEDTAndWait(() -> TableHelper.setSelectedIndices(selectionModel,
+                selected != null ? selected.stream().mapToInt(data::indexOf) : IntStream.empty()));
     }
 
     @Override

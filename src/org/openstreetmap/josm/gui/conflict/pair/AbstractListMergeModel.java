@@ -12,6 +12,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -521,12 +523,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
             mergedEntries.add(row -1, n);
         }
         fireModelDataChanged();
-        mergedEntriesSelectionModel.setValueIsAdjusting(true);
-        mergedEntriesSelectionModel.clearSelection();
-        for (int row: rows) {
-            mergedEntriesSelectionModel.addSelectionInterval(row-1, row-1);
-        }
-        mergedEntriesSelectionModel.setValueIsAdjusting(false);
+        TableHelper.setSelectedIndices(mergedEntriesSelectionModel, Arrays.stream(rows).map(row -> row - 1));
     }
 
     /**
@@ -549,12 +546,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
             mergedEntries.add(row +1, n);
         }
         fireModelDataChanged();
-        mergedEntriesSelectionModel.setValueIsAdjusting(true);
-        mergedEntriesSelectionModel.clearSelection();
-        for (int row: rows) {
-            mergedEntriesSelectionModel.addSelectionInterval(row+1, row+1);
-        }
-        mergedEntriesSelectionModel.setValueIsAdjusting(false);
+        TableHelper.setSelectedIndices(mergedEntriesSelectionModel, Arrays.stream(rows).map(row -> row + 1));
     }
 
     /**
