@@ -249,7 +249,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
     }
 
     /**
-     * Sets the source polygonial bounds.
+     * Sets the source polygonal bounds.
      * @param b The source bounds (non-rectangular)
      */
     public void setBounds(V b) {
@@ -257,7 +257,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
     }
 
     /**
-     * Returns the source polygonial bounds.
+     * Returns the source polygonal bounds.
      * @return The source bounds (non-rectangular)
      */
     public V getBounds() {

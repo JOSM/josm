@@ -628,6 +628,12 @@ public class ImageryInfo extends
         this.defaultMinZoom = defaultMinZoom;
     }
 
+    @Override
+    public void setBounds(ImageryBounds b) {
+        // for binary compatibility
+        this.bounds = b;
+    }
+
     /**
      * Sets the extended URL of this entry.
      * @param url Entry extended URL containing in addition of service URL, its type and min/max zoom info
