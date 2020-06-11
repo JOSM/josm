@@ -321,8 +321,6 @@ public class OptionParserTest {
 
     @Test
     public void testMultipleShort() {
-        thrown.expect(OptionParseException.class);
-        thrown.expectMessage("test: unrecognized option '-ft'");
         AtomicReference<String> argFound = new AtomicReference<>();
         AtomicBoolean usedFlag = new AtomicBoolean();
         AtomicBoolean unusedFlag = new AtomicBoolean();
@@ -334,14 +332,7 @@ public class OptionParserTest {
                 .addShortAlias("flag", "f")
                 .addFlagParameter("fleg", () -> unusedFlag.set(true));
 
-        List<String> remaining = parser.parseOptions(Arrays.asList("-ft=arg", "x"));
-
-        assertEquals(Arrays.asList("x"), remaining);
-        assertEquals("arg", argFound.get());
-        assertTrue(usedFlag.get());
-        assertFalse(unusedFlag.get());
-
-        remaining = parser.parseOptions(Arrays.asList("-ft", "arg", "x"));
+        List<String> remaining = parser.parseOptions(Arrays.asList("-ft", "arg", "x"));
 
         assertEquals(Arrays.asList("x"), remaining);
         assertEquals("arg", argFound.get());
