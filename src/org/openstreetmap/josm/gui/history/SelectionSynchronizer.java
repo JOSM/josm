@@ -3,9 +3,11 @@ package org.openstreetmap.josm.gui.history;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.stream.IntStream;
 
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -22,6 +24,7 @@ public class SelectionSynchronizer implements ListSelectionListener {
 
     private final Set<ListSelectionModel> participants;
     private boolean preventRecursion;
+    private BiFunction<Integer, ListSelectionModel, IntStream> selectionIndexMapper = (i, model) -> IntStream.of(i);
 
     /**
      * Constructs a new {@code SelectionSynchronizer}.
@@ -46,19 +49,24 @@ public class SelectionSynchronizer implements ListSelectionListener {
         model.addListSelectionListener(this);
     }
 
+    void setSelectionIndexMapper(BiFunction<Integer, ListSelectionModel, IntStream> selectionIndexMapper) {
+        this.selectionIndexMapper = Objects.requireNonNull(selectionIndexMapper);
+    }
+
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (preventRecursion) {
             return;
         }
         preventRecursion = true;
-        DefaultListSelectionModel referenceModel = (DefaultListSelectionModel) e.getSource();
+        ListSelectionModel referenceModel = (ListSelectionModel) e.getSource();
         int[] selectedIndices = TableHelper.getSelectedIndices(referenceModel);
         for (ListSelectionModel model : participants) {
-            if (model == e.getSource()) {
+            if (model == referenceModel) {
                 continue;
             }
-            TableHelper.setSelectedIndices(model, Arrays.stream(selectedIndices));
+            TableHelper.setSelectedIndices(model,
+                    Arrays.stream(selectedIndices).flatMap(i -> selectionIndexMapper.apply(i, referenceModel)));
         }
         preventRecursion = false;
     }

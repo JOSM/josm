@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
+import java.util.Objects;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -49,7 +50,14 @@ public class NodeListViewer extends HistoryViewerPanel {
             int row = table.rowAtPoint(e.getPoint());
             return primitiveIdAtRow(tableModel, row);
         }));
+        enableSemanticSelectionSynchronization(table.getSelectionModel(),
+                tableModel, model.getNodeListTableModel(pointInTimeType.opposite()),
+                this::isSemanticallyEquivalent);
         return table;
+    }
+
+    private boolean isSemanticallyEquivalent(TwoColumnDiff.Item o1, TwoColumnDiff.Item o2) {
+        return o1.value != null && Objects.equals(o1.value, o2.value); //compare node IDs
     }
 
     private static PrimitiveId primitiveIdAtRow(DiffTableModel model, int row) {

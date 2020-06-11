@@ -4,11 +4,14 @@ package org.openstreetmap.josm.gui.history;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.util.function.BiPredicate;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
@@ -91,6 +94,24 @@ public abstract class HistoryViewerPanel extends HistoryBrowserPanel {
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
         add(embedInScrollPane(buildTable(PointInTimeType.CURRENT_POINT_IN_TIME)), gc);
+    }
+
+    /**
+     * Enables semantic highlighting for the {@link org.openstreetmap.josm.data.StructUtils.SerializeOptions}
+     * @param thisSelectionModel selection model
+     * @param thisModel table model (corresponding to the selection model)
+     * @param otherModel table model for the other point in time
+     * @param isSemanticallyEquivalent predicate to determine whether the items should be highlighted
+     */
+    protected void enableSemanticSelectionSynchronization(ListSelectionModel thisSelectionModel,
+                                                          DiffTableModel thisModel, DiffTableModel otherModel,
+                                                          BiPredicate<TwoColumnDiff.Item, TwoColumnDiff.Item> isSemanticallyEquivalent) {
+        selectionSynchronizer.setSelectionIndexMapper((selection, sourceSelectionModel) -> {
+            DiffTableModel sourceModel = sourceSelectionModel == thisSelectionModel ? thisModel : otherModel;
+            DiffTableModel destinationModel = sourceSelectionModel == thisSelectionModel ? otherModel : thisModel;
+            return IntStream.range(0, destinationModel.getRowCount())
+                    .filter(i -> isSemanticallyEquivalent.test(sourceModel.getValueAt(selection, 0), destinationModel.getValueAt(i, 0)));
+        });
     }
 
     static class ListPopupMenu extends JPopupMenu {

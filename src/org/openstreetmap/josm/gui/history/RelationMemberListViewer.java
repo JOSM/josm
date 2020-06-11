@@ -35,6 +35,9 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
                 table, columnModel, tr("The members of this relation are in reverse order")));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
+        enableSemanticSelectionSynchronization(table.getSelectionModel(),
+                tableModel, model.getRelationMemberTableModel(pointInTimeType.opposite()),
+                this::isSemanticallyEquivalent);
         table.getTableHeader().setReorderingAllowed(false);
         table.addMouseListener(new InternalPopupMenuLauncher());
         table.getModel().addTableModelListener(e -> {
@@ -46,6 +49,14 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
             return primitiveIdAtRow(tableModel, row);
         }));
         return table;
+    }
+
+    private boolean isSemanticallyEquivalent(TwoColumnDiff.Item o1, TwoColumnDiff.Item o2) {
+        RelationMemberData rm1 = (RelationMemberData) o1.value;
+        RelationMemberData rm2 = (RelationMemberData) o2.value;
+        return rm1 != null && rm2 != null
+                && rm1.getMemberId() == rm2.getMemberId()
+                && rm1.getMemberType() == rm2.getMemberType();
     }
 
     /**
