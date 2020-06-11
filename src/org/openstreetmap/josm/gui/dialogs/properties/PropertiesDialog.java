@@ -115,6 +115,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.TaginfoRegionalInstance;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -196,6 +197,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             membershipTable, x -> (IRelation<?>) membershipData.getValueAt(x, 0));
     private final TaginfoAction tagHistoryAction = taginfoAction.toTagHistoryAction();
     private final Collection<TaginfoAction> taginfoNationalActions = new ArrayList<>();
+    private transient int taginfoNationalHash;
     private final PasteValueAction pasteValueAction = new PasteValueAction();
     private final CopyValueAction copyValueAction = new CopyValueAction(
             tagTable, editHelper::getDataKey, OsmDataManager.getInstance()::getInProgressISelection);
@@ -370,15 +372,23 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     }
 
     private void setupTaginfoNationalActions(Collection<? extends IPrimitive> newSel) {
-        destroyTaginfoNationalActions();
-        if (!newSel.isEmpty()) {
-            final LatLon center = newSel.iterator().next().getBBox().getCenter();
-            Territories.getRegionalTaginfoUrls(center).stream()
-                    .map(taginfo -> taginfoAction.withTaginfoUrl(tr("Go to Taginfo ({0})", taginfo.toString()), taginfo.getUrl())
-                    ).forEach(taginfoNationalActions::add);
-            taginfoNationalActions.stream().map(membershipMenu::add).forEach(membershipMenuTagInfoNatItems::add);
-            taginfoNationalActions.stream().map(tagMenu::add).forEach(tagMenuTagInfoNatItems::add);
+        if (newSel.isEmpty()) {
+            return;
         }
+        final LatLon center = newSel.iterator().next().getBBox().getCenter();
+        List<TaginfoRegionalInstance> regionalInstances = Territories.getRegionalTaginfoUrls(center);
+        int newHashCode = regionalInstances.hashCode();
+        if (newHashCode == taginfoNationalHash) {
+            // taginfoNationalActions are still valid
+            return;
+        }
+        taginfoNationalHash = newHashCode;
+        destroyTaginfoNationalActions();
+        regionalInstances.stream()
+                .map(taginfo -> taginfoAction.withTaginfoUrl(tr("Go to Taginfo ({0})", taginfo.toString()), taginfo.getUrl()))
+                .forEach(taginfoNationalActions::add);
+        taginfoNationalActions.stream().map(membershipMenu::add).forEach(membershipMenuTagInfoNatItems::add);
+        taginfoNationalActions.stream().map(tagMenu::add).forEach(tagMenuTagInfoNatItems::add);
     }
 
     /**
