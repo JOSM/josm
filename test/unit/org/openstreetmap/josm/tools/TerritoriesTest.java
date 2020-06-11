@@ -8,9 +8,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,6 +34,7 @@ public class TerritoriesTest {
 
     /**
      * Tests that {@code Territories} satisfies utility class criteria.
+     *
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
@@ -60,8 +61,8 @@ public class TerritoriesTest {
      */
     @Test
     public void testTaginfoGeofabrik_nominal() {
-        Map<String, TaginfoRegionalInstance> cache = new TreeMap<>();
-        Territories.initializeExternalData(cache, "foo", TestUtils.getTestDataRoot() + "/taginfo/geofabrik-index-v1-nogeom.json");
+        Territories.initializeExternalData("foo", TestUtils.getTestDataRoot() + "/taginfo/geofabrik-index-v1-nogeom.json");
+        Map<String, TaginfoRegionalInstance> cache = Territories.taginfoGeofabrikCache;
         assertEquals(5, cache.size());
         checkTaginfoInstance(cache.get("AF"), singleton("AF"), "https://taginfo.geofabrik.de/asia/afghanistan/");
         checkTaginfoInstance(cache.get("AL"), singleton("AL"), "https://taginfo.geofabrik.de/europe/albania/");
@@ -69,6 +70,9 @@ public class TerritoriesTest {
         Set<String> israelAndPalestine = new HashSet<>(Arrays.asList("PS", "IL"));
         checkTaginfoInstance(cache.get("PS"), israelAndPalestine, "https://taginfo.geofabrik.de/asia/israel-and-palestine/");
         checkTaginfoInstance(cache.get("IL"), israelAndPalestine, "https://taginfo.geofabrik.de/asia/israel-and-palestine/");
+        List<TaginfoRegionalInstance> regionalTaginfo = Territories.getRegionalTaginfoUrls(new LatLon(41.3268733, 19.8187913));
+        assertEquals(1, regionalTaginfo.size());
+        checkTaginfoInstance(regionalTaginfo.iterator().next(), singleton("AL"), "https://taginfo.geofabrik.de/europe/albania/");
     }
 
     private static void checkTaginfoInstance(TaginfoRegionalInstance instance, Set<String> expectedIsoCodes, String expectedUrl) {
@@ -82,9 +86,9 @@ public class TerritoriesTest {
      */
     @Test
     public void testTaginfoGeofabrik_broken() {
-        Map<String, TaginfoRegionalInstance> cache = new TreeMap<>();
         Logging.clearLastErrorAndWarnings();
-        Territories.initializeExternalData(cache, "foo", TestUtils.getTestDataRoot() + "taginfo/geofabrik-index-v1-nogeom-broken.json");
+        Territories.initializeExternalData("foo", TestUtils.getTestDataRoot() + "taginfo/geofabrik-index-v1-nogeom-broken.json");
+        Map<String, TaginfoRegionalInstance> cache = Territories.taginfoGeofabrikCache;
         assertTrue(cache.isEmpty());
         String error = Logging.getLastErrorAndWarnings().get(0);
         assertTrue(error, error.startsWith("W: Failed to parse external taginfo data at "));

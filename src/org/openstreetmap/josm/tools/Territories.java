@@ -187,12 +187,12 @@ public final class Territories {
     }
 
     private static void initializeExternalData() {
-        taginfoGeofabrikCache = new TreeMap<>();
-        initializeExternalData(taginfoGeofabrikCache, "Geofabrik",
+        initializeExternalData("Geofabrik",
                 Config.getUrls().getJOSMWebsite() + "/remote/geofabrik-index-v1-nogeom.json");
     }
 
-    static void initializeExternalData(Map<String, TaginfoRegionalInstance> cache, String source, String path) {
+    static void initializeExternalData(String source, String path) {
+        taginfoGeofabrikCache = new TreeMap<>();
         try (CachedFile cf = new CachedFile(path); InputStream is = cf.getInputStream(); JsonParser json = Json.createParser(is)) {
             while (json.hasNext()) {
                 Event event = json.next();
@@ -204,9 +204,9 @@ public final class Territories {
                             JsonArray iso1 = props.getJsonArray(ISO3166_1_LC);
                             JsonArray iso2 = props.getJsonArray(ISO3166_2_LC);
                             if (iso1 != null) {
-                                readExternalTaginfo(cache, taginfo, iso1, source);
+                                readExternalTaginfo(taginfoGeofabrikCache, taginfo, iso1, source);
                             } else if (iso2 != null) {
-                                readExternalTaginfo(cache, taginfo, iso2, source);
+                                readExternalTaginfo(taginfoGeofabrikCache, taginfo, iso2, source);
                             }
                         })));
                     }
