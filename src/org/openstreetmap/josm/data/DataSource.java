@@ -40,7 +40,7 @@ public class DataSource {
     }
 
     /**
-     * Cosntructs a new {@link DataSource}
+     * Constructs a new {@link DataSource}
      * @param source The source to copy the data from.
      * @since 10346
      */
