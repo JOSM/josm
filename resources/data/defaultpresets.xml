@@ -3426,7 +3426,7 @@
         <item name="Playground device" icon="presets/leisure/playground_device.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:playground" />
             <space />
-            <combo key="playground" text="Type" values="activitypanel,aerialrotator,balancebeam,basketrotator,basketswing,climbingframe,climbingwall,cushion,exercise,hopscotch,horizontal_bar,map,playhouse,roundabout,sandpit,seesaw,sledding,slide,splash_pad,springy,structure,swing,teenshelter,trampoline,water,youth_bench,zipwire" values_context="playground" match="key!" />
+            <combo key="playground" text="Type" values="activitypanel,aerialrotator,balancebeam,basketrotator,basketswing,climbingframe,climbingwall,cushion,exercise,hopscotch,horizontal_bar,map,playhouse,roundabout,sandpit,seesaw,sledding,slide,splash_pad,springy,structure,swing,teenshelter,trampoline,water,youth_bench,zipwire" values_searchable="true" values_context="playground" match="key!" />
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="max_age" />
             <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
@@ -4202,7 +4202,8 @@
         <item name="Internet Access" icon="presets/service/network-wireless.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Key:internet_access" />
             <space />
-            <reference ref="internet" />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" match="keyvalue!" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,no" />
         </item> <!-- Internet Access -->
         <item name="Clock" icon="presets/service/clock.svg" type="node" preset_name_label="true">
             <link wiki="Tag:amenity=clock" />
