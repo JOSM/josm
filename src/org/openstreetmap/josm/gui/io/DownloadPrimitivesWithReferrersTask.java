@@ -9,7 +9,9 @@ import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,7 +33,9 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.io.MultiFetchOverpassObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.SAXException;
 
@@ -50,12 +54,13 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
 
     /** Temporary layer where downloaded primitives are put */
     private final OsmDataLayer tmpLayer;
-    /** Reference to the task that download requested primitives */
-    private DownloadPrimitivesTask mainTask;
     /** Flag indicated that user ask for cancel this task */
     private boolean canceled;
     /** Reference to the task currently running */
     private PleaseWaitRunnable currentTask;
+
+    /** set of missing ids, with overpass API these are also deleted objects */
+    private Set<PrimitiveId> missingPrimitives;
 
     /**
      * Constructor
@@ -101,9 +106,27 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
 
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
+        if (Boolean.TRUE.equals(OverpassDownloadReader.FOR_MULTI_FETCH.get())) {
+            useOverpassApi();
+        } else {
+            useOSMApi();
+        }
+    }
+
+    private void useOverpassApi() {
+        String request = MultiFetchOverpassObjectReader.genOverpassQuery(ids, true, downloadReferrers, full);
+        currentTask = new DownloadFromOverpassTask(request, tmpLayer.data, getProgressMonitor().createSubTaskMonitor(1, false));
+        currentTask.run();
+        missingPrimitives = ids.stream()
+                .filter(id -> tmpLayer.data.getPrimitiveById(id) == null)
+                .collect(Collectors.toSet());
+    }
+
+    private void useOSMApi() {
         getProgressMonitor().setTicksCount(ids.size()+1);
         // First, download primitives
-        mainTask = new DownloadPrimitivesTask(tmpLayer, ids, full, getProgressMonitor().createSubTaskMonitor(1, false));
+        DownloadPrimitivesTask mainTask = new DownloadPrimitivesTask(tmpLayer, ids, full,
+                getProgressMonitor().createSubTaskMonitor(1, false));
         synchronized (this) {
             currentTask = mainTask;
             if (canceled) {
@@ -112,6 +135,9 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
             }
         }
         currentTask.run();
+
+        missingPrimitives = mainTask.getMissingPrimitives();
+
         // Then, download referrers for each primitive
         if (downloadReferrers && tmpLayer.data != null) {
             // see #18895: don't try to download parents for invisible objects
@@ -143,22 +169,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         else
             layer.mergeFrom(tmpLayer);
 
-        // Warm about missing primitives
-        final Set<PrimitiveId> errs = mainTask.getMissingPrimitives();
-        if (errs != null && !errs.isEmpty())
-            GuiHelper.runInEDTAndWait(() -> reportProblemDialog(errs,
-                    trn("Object could not be downloaded", "Some objects could not be downloaded", errs.size()),
-                    trn("One object could not be downloaded.<br>",
-                            "{0} objects could not be downloaded.<br>",
-                            errs.size(),
-                            errs.size())
-                            + tr("The server replied with response code 404.<br>"
-                                 + "This usually means, the server does not know an object with the requested id."),
-                    tr("missing objects:"),
-                    JOptionPane.ERROR_MESSAGE
-                    ).showDialog());
-
-        // Warm about deleted primitives
+        // Collect known deleted primitives
         final Set<PrimitiveId> del = new HashSet<>();
         DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         for (PrimitiveId id : ids) {
@@ -167,6 +178,38 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
                 del.add(id);
             }
         }
+        final Set<PrimitiveId> errs;
+        if (missingPrimitives != null) {
+            errs = missingPrimitives.stream().filter(id -> !del.contains(id)).collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            errs = Collections.emptySet();
+        }
+
+        // Warm about missing primitives
+        if (!errs.isEmpty()) {
+            final String assumedApiRC;
+            if (Boolean.TRUE.equals(OverpassDownloadReader.FOR_MULTI_FETCH.get())) {
+                assumedApiRC = trn("The server did not return data for the requested object, it was either deleted or does not exist.",
+                        "The server did not return data for the requested objects, they were either deleted or do not exist.",
+                        errs.size());
+
+            } else {
+                assumedApiRC = tr("The server replied with response code 404.<br>"
+                        + "This usually means, the server does not know an object with the requested id.");
+            }
+            GuiHelper.runInEDTAndWait(() -> reportProblemDialog(errs,
+                    trn("Object could not be downloaded", "Some objects could not be downloaded", errs.size()),
+                    trn("One object could not be downloaded.<br>",
+                            "{0} objects could not be downloaded.<br>",
+                            errs.size(),
+                            errs.size())
+                            + assumedApiRC,
+                    tr("missing objects:"),
+                    JOptionPane.ERROR_MESSAGE
+                    ).showDialog());
+        }
+
+        // Warm about deleted primitives
         if (!del.isEmpty())
             GuiHelper.runInEDTAndWait(() -> reportProblemDialog(del,
                     trn("Object deleted", "Objects deleted", del.size()),
@@ -190,7 +233,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
                 return null;
         }
         List<PrimitiveId> downloaded = new ArrayList<>(ids);
-        downloaded.removeAll(mainTask.getMissingPrimitives());
+        downloaded.removeAll(missingPrimitives);
         return downloaded;
     }
 

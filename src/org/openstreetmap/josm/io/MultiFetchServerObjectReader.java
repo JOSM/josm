@@ -382,11 +382,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         try {
             if (this instanceof MultiFetchOverpassObjectReader) {
                 // calculate a single request for all the objects
-                String request = ((MultiFetchOverpassObjectReader) this).buildComplexRequestString();
+                String request = MultiFetchOverpassObjectReader.genOverpassQuery(primitivesMap, true, false, recurseDownRelations);
                 if (isCanceled())
                     return null;
                 OverpassDownloadReader reader = new OverpassDownloadReader(new Bounds(0, 0, 0, 0), getBaseUrl(), request);
-                DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(n, false));
+                DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                 new DataSetMerger(outputDataSet, ds).merge();
                 checkMissing(outputDataSet, progressMonitor);
             } else {

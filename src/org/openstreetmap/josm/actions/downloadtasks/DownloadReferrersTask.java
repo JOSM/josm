@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Node;
@@ -26,10 +27,12 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.MultiFetchOverpassObjectReader;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.xml.sax.SAXException;
@@ -154,37 +157,45 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
-            progressMonitor.setTicksCount(children.size());
-            int i = 1;
-            for (PrimitiveId p : children) {
-                if (canceled)
-                    return;
-                String msg;
-                String id = Long.toString(p.getUniqueId());
-                switch(p.getType()) {
-                case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i, children.size(), id); break;
-                case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i, children.size(), id); break;
-                case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i, children.size(), id); break;
-                default: throw new AssertionError();
-                }
-                progressMonitor.subTask(msg);
-                downloadParents(p.getUniqueId(), p.getType(), progressMonitor);
-                i++;
-            }
-            Collection<Way> ways = parents.getWays();
-
-            if (!ways.isEmpty()) {
-                // Collect incomplete nodes of parent ways
-                Set<Node> nodes = ways.stream().flatMap(w -> w.getNodes().stream().filter(OsmPrimitive::isIncomplete))
-                        .collect(Collectors.toSet());
-                if (!nodes.isEmpty()) {
-                    reader = MultiFetchServerObjectReader.create();
-                    ((MultiFetchServerObjectReader) reader).append(nodes);
-                    DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
-                    synchronized (this) { // avoid race condition in cancel()
-                        reader = null;
+            if (Boolean.TRUE.equals(OverpassDownloadReader.FOR_MULTI_FETCH.get())) {
+                String request = MultiFetchOverpassObjectReader.genOverpassQuery(children, false, true, false);
+                reader = new OverpassDownloadReader(new Bounds(0, 0, 0, 0),
+                        OverpassDownloadReader.OVERPASS_SERVER.get(), request);
+                DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
+                new DataSetMerger(parents, ds).merge();
+            } else {
+                progressMonitor.setTicksCount(children.size());
+                int i = 1;
+                for (PrimitiveId p : children) {
+                    if (canceled)
+                        return;
+                    String msg;
+                    String id = Long.toString(p.getUniqueId());
+                    switch(p.getType()) {
+                    case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i, children.size(), id); break;
+                    case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i, children.size(), id); break;
+                    case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i, children.size(), id); break;
+                    default: throw new AssertionError();
                     }
-                    new DataSetMerger(parents, wayNodes).merge();
+                    progressMonitor.subTask(msg);
+                    downloadParents(p.getUniqueId(), p.getType(), progressMonitor);
+                    i++;
+                }
+                Collection<Way> ways = parents.getWays();
+
+                if (!ways.isEmpty()) {
+                    // Collect incomplete nodes of parent ways
+                    Set<Node> nodes = ways.stream().flatMap(w -> w.getNodes().stream().filter(OsmPrimitive::isIncomplete))
+                            .collect(Collectors.toSet());
+                    if (!nodes.isEmpty()) {
+                        reader = MultiFetchServerObjectReader.create();
+                        ((MultiFetchServerObjectReader) reader).append(nodes);
+                        DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
+                        synchronized (this) { // avoid race condition in cancel()
+                            reader = null;
+                        }
+                        new DataSetMerger(parents, wayNodes).merge();
+                    }
                 }
             }
         } catch (OsmTransferException e) {
@@ -193,4 +204,5 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             lastException = e;
         }
     }
+
 }
