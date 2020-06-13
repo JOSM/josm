@@ -36,7 +36,7 @@ public class MultiFetchOverpassObjectReader extends MultiFetchServerObjectReader
      * @param recurseUp if true, referrers (parents) of the objects are downloaded and all nodes of parent ways
      * @param recurseDownRelations true: yes, recurse down to retrieve complete relations
      * @return the overpass query
-     * @since xxx
+     * @since 16611
      */
     public static String genOverpassQuery(Collection<? extends PrimitiveId> ids, boolean includeObjects, boolean recurseUp,
             boolean recurseDownRelations) {
