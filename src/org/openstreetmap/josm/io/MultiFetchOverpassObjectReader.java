@@ -111,9 +111,8 @@ public class MultiFetchOverpassObjectReader extends MultiFetchServerObjectReader
         if (down != null) {
             sb.append(down);
         }
-        sb.append('(').append(setsToInclude).append(");");
+        sb.append('(').append(setsToInclude).append(");out meta;");
 
-        sb.append("out meta;");
         String query = sb.toString();
         Logging.debug("{0} {1}", "Generated Overpass query:", query);
         return query;

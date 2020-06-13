@@ -115,7 +115,7 @@ public class MultiFetchOverpassObjectReaderTest {
         List<OsmPrimitive> objects = Arrays.asList(new Relation(123), new Relation(126), new Relation(130), new Way(88), new Way(99),
                 new Node(1));
         // all request strings should start with the same list of objects
-        final String ids =  "relation(id:123,126,130)->.r;way(id:88,99)->.w;node(1)->.n;";
+        final String ids = "relation(id:123,126,130)->.r;way(id:88,99)->.w;node(1)->.n;";
         String requestString;
 
         // objects without parents (ways always with nodes)
