@@ -1182,6 +1182,7 @@ public final class Utils {
      * @param threadPriority the priority of the created threads, see {@link Thread#setPriority(int)}
      * @return a new {@link ThreadFactory}
      */
+    @SuppressWarnings("ThreadPriorityCheck")
     public static ThreadFactory newThreadFactory(final String nameFormat, final int threadPriority) {
         return new ThreadFactory() {
             final AtomicLong count = new AtomicLong(0);
@@ -1292,6 +1293,7 @@ public final class Utils {
      * @param threadPriority see {@link #newThreadFactory(String, int)}
      * @return a {@link ForkJoinPool}
      */
+    @SuppressWarnings("ThreadPriorityCheck")
     public static ForkJoinPool newForkJoinPool(String pref, final String nameFormat, final int threadPriority) {
         int noThreads = Config.getPref().getInt(pref, Runtime.getRuntime().availableProcessors());
         return new ForkJoinPool(noThreads, new ForkJoinPool.ForkJoinWorkerThreadFactory() {
