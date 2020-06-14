@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class RelationChecker extends Test implements TaggingPresetListener {
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
-    /** Role ''{0}'' is not in templates ''{1}'' */
+    /** Role ''{0}'' is not among expected values ''{1}'' */
     public static final int ROLE_UNKNOWN     = 1701;
     /** Empty role found when expecting one of ''{0}'' */
     public static final int ROLE_EMPTY       = 1702;
@@ -319,13 +319,17 @@ public class RelationChecker extends Test implements TaggingPresetListener {
         // verify unwanted members
         for (String key : map.keySet()) {
             if (allroles.keySet().stream().noneMatch(role -> role.isRole(key))) {
-                String templates = allroles.keySet().stream().map(r -> r.key).collect(Collectors.joining("/"));
+                String templates = allroles.keySet().stream()
+                        .map(r -> r.key)
+                        .map(r -> r == null || r.isEmpty() ? tr("<empty>") : r)
+                        .distinct()
+                        .collect(Collectors.joining("/"));
                 List<OsmPrimitive> primitives = new ArrayList<>(n.findRelationMembers(key));
                 primitives.add(0, n);
 
                 if (!key.isEmpty()) {
                     errors.add(TestError.builder(this, Severity.WARNING, ROLE_UNKNOWN)
-                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role ''{0}'' is not in templates ''{1}''"), key, templates)
+                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role ''{0}'' is not among expected values ''{1}''"), key, templates)
                             .primitives(primitives)
                             .build());
                 } else {

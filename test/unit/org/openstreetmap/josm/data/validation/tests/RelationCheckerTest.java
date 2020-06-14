@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -77,7 +79,7 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role 'outer2' is not in templates 'outer/inner'", errors.get(0).getDescription());
+        assertEquals("Role 'outer2' is not among expected values 'outer/inner'", errors.get(0).getDescription());
     }
 
     @Test
@@ -153,7 +155,22 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role 'level_x' is not in templates 'outline/part/ridge/edge/entrance/level_-?\\d+'", errors.get(0).getDescription());
+        assertEquals("Role 'level_x' is not among expected values 'outline/part/ridge/edge/entrance/level_-?\\d+'",
+                errors.get(0).getDescription());
+    }
+
+    @Test
+    public void testHikingRouteMembers() {
+        Relation r = createRelation("type=route route=hiking");
+        r.addMember(new RelationMember("", OsmUtils.createPrimitive("way highway=path")));
+        r.addMember(new RelationMember("route", OsmUtils.createPrimitive("way highway=path"))); // fails
+        r.addMember(new RelationMember("guidepost", new Node())); // fails
+
+        List<TestError> errors = testRelation(r);
+        assertEquals(2, errors.size());
+        assertEquals("Role of relation member does not match template expression 'information=guidepost' in preset Hiking Route",
+                errors.get(0).getDescription());
+        assertEquals("Role 'route' is not among expected values '<empty>/guidepost'", errors.get(1).getDescription());
     }
 
     @Test
