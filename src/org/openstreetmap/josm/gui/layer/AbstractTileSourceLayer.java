@@ -127,7 +127,6 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManager;
 import org.openstreetmap.josm.tools.MemoryManager.MemoryHandle;
 import org.openstreetmap.josm.tools.MemoryManager.NotEnoughMemoryException;
-import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -172,8 +171,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * Offset between calculated zoom level and zoom level used to download and show tiles. Negative values will result in
      * lower resolution of imagery useful in "retina" displays, positive values will result in higher resolution
      */
-    public static final IntegerProperty ZOOM_OFFSET = new IntegerProperty(PREFERENCE_PREFIX + ".zoom_offset",
-            PlatformManager.getPlatform().isHighDpiDisplay() ? 2 : 0);
+    public static final IntegerProperty ZOOM_OFFSET = new IntegerProperty(PREFERENCE_PREFIX + ".zoom_offset", 0);
 
     private static final BooleanProperty POPUP_MENU_ENABLED = new BooleanProperty(PREFERENCE_PREFIX + ".popupmenu", true);
 

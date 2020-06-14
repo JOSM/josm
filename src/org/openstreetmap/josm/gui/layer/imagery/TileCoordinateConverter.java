@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer.imagery;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
@@ -182,7 +183,8 @@ public class TileCoordinateConverter {
             t1 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(topLeftEN), zoom);
             t2 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(botRightEN), zoom);
         }
-        int screenPixels = mapView.getWidth()*mapView.getHeight();
+        AffineTransform transform = mapView.getGraphicsConfiguration().getDefaultTransform();
+        int screenPixels = (int) (mapView.getWidth() * mapView.getHeight() * transform.getScaleX() * transform.getScaleY());
         double tilePixels = Math.abs((t2.getY()-t1.getY())*(t2.getX()-t1.getX())*tileSource.getTileSize()*tileSource.getTileSize());
         if (screenPixels == 0 || tilePixels == 0) return 1;
         return screenPixels/tilePixels;
