@@ -20,14 +20,61 @@
     </element>
 
     <complexType name="root">
+        <annotation>
+            <documentation>
+                Has to be the main tag of the file.
+            </documentation>
+        </annotation>
         <complexContent>
             <extension base="tns:group-parent">
-                <attribute name="author" type="string" />
-                <attribute name="version" type="string" />
-                <attribute name="shortdescription" type="string" />
-                <attribute name="description" type="string" />
-                <attribute name="link" type="string" />
-                <attribute name="baselanguage" type="string" />
+                <attribute name="author" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of the author of the preset.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="version" type="string">
+                    <annotation>
+                        <documentation>
+                            The version number of the file. For automatic version adjustment of presets managed in this wiki you have to use two internal variables: [[revision]] (the latest version number of the wiki page) and [[date]] (the date of the last edit), e.g. version="1.[[revision]]_[[date]]".
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="shortdescription" type="string">
+                    <annotation>
+                        <documentation>
+                            Very short overview description i.e. the "name" of the preset.
+                            <br/>
+                            May be localized (i.e. de.shortdescription)
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="description" type="string">
+                    <annotation>
+                        <documentation>
+                            Description what the file contains.
+                            <br/>
+                            May be localized (i.e. de.description)
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="link" type="string">
+                    <annotation>
+                        <documentation>
+                            Web link to further details.
+                            <br/>
+                            May be localized (i.e. de.link)
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="baselanguage" type="string">
+                    <annotation>
+                        <documentation>
+                            When the base language is not English, specify it here (using non English preset texts will prevent automatic translation, once it is implemented (#11392)).
+                        </documentation>
+                    </annotation>
+                </attribute>
 
                 <anyAttribute processContents="skip" />
             </extension>
@@ -43,7 +90,7 @@
                 <element name="separator" type="tns:separator" />
             </choice>
         </sequence>
-        <attribute name="icon" type="string" />
+        <attributeGroup ref="tns:attributes.icon" />
 
         <attribute name="type" use="prohibited" />
         <attribute name="text" use="prohibited" />
@@ -51,16 +98,32 @@
     </complexType>
 
     <complexType name="group">
+        <annotation>
+            <documentation>
+                Used to group items in sub menus. name is required, icon is optional attribute.
+            </documentation>
+        </annotation>
         <complexContent>
             <extension base="tns:group-parent">
-                <attribute name="name" type="string" use="required" />
+                <attributeGroup ref="tns:attributes.name" />
             </extension>
         </complexContent>
     </complexType>
 
-    <complexType name="separator" />
+    <complexType name="separator">
+        <annotation>
+            <documentation>
+                Insert a line separator into the menu.
+            </documentation>
+        </annotation>
+    </complexType>
 
     <complexType name="item">
+        <annotation>
+            <documentation>
+                Every item is one annotation set to select from. name is required, type and preset_name_label are recommended, icon and name_template are optional attributes.
+            </documentation>
+        </annotation>
         <sequence>
             <choice minOccurs="0" maxOccurs="unbounded">
                 <group ref="tns:optional_elements" />
@@ -69,24 +132,57 @@
             </choice>
             <element name="roles" type="tns:roles" minOccurs="0" maxOccurs="1" />
         </sequence>
-        <attribute name="name" type="string" use="required" />
-        <attribute name="icon" type="string" />
-        <attribute name="type" type="string" />
-        <attribute name="name_template" type="string"/>
-        <attribute name="name_template_filter" type="string"/>
-        <attribute name="preset_name_label" type="boolean"/>
+        <attributeGroup ref="tns:attributes.name" />
+        <attributeGroup ref="tns:attributes.icon" />
+        <attribute name="type" type="string">
+            <annotation>
+                <documentation>
+                    When specified, only objects of the given type will work with this tagging preset. Can be "node", "way", "closedway", "multipolygon", "relation" or any comma separated combination of them. Note that "multipolygon" is not included in "relation", so if the preset should apply for multipolygons and other relation types, you need to specify both: "multipolygon,relation". Also used in the &lt;role&gt; tag to specify which object types are allowed for a specific relation member.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="name_template" type="string">
+            <annotation>
+                <documentation>
+                    Custom name formatter for OSM primitives matching this preset. See #name_templatedetails for details.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="name_template_filter" type="string">
+            <annotation>
+                <documentation>
+                    Name templates can be used to define custom formatting for OSM primitives or GPX waypoints (for example in the Relations or the Selection).
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="preset_name_label" type="boolean">
+            <annotation>
+                <documentation>
+                    Whether to insert "[preset name]" label in dialog (defaults to "false" for backward-compatibility on external presets).
+                </documentation>
+            </annotation>
+        </attribute>
 
         <attribute name="text" use="prohibited" />
         <anyAttribute processContents="skip" />
     </complexType>
 
     <complexType name="optional">
+        <annotation>
+            <documentation>
+                Used to group some optional elements of an item. The text attribute is optional. If used without text then this is equivalent to &lt;space &gt;&lt;label text="Optional Attributes:" /&gt;&lt;space /&gt;
+            </documentation>
+        </annotation>
         <group ref="tns:optional_elements" maxOccurs="unbounded" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
+        <attributeGroup ref="tns:attributes.text" />
     </complexType>
 
     <complexType name="chunk">
+        <annotation>
+            <documentation>
+                To define a template of elements for later (repeated) use. The id attribute is mandatory.
+            </documentation>
+        </annotation>
         <choice minOccurs="1" maxOccurs="1">
             <sequence>
                 <choice minOccurs="1" maxOccurs="unbounded">
@@ -106,7 +202,13 @@
                 <element name="role" type="tns:role" minOccurs="1" maxOccurs="unbounded" />
             </sequence>
         </choice>
-        <attribute name="id" type="ID" use="required" />
+        <attribute name="id" type="ID" use="required">
+            <annotation>
+                <documentation>
+                    The unique identifier for this &gt;chunk&lt;.
+                </documentation>
+            </annotation>
+        </attribute>
     </complexType>
 
     <complexType name="reference">
@@ -137,50 +239,100 @@
     </group>
 
     <complexType name="key">
-        <attribute name="key" type="string" use="required" />
-        <attribute name="value" type="string" />
-        <attribute name="match" type="string" />
+        <annotation>
+            <documentation>
+                This tag will always set a key to a specific value. key is required and if value is present, the key will be set. If value attribute is omitted, the key is removed. The match attribute is optional.
+            </documentation>
+        </annotation>
+        <attribute name="key" type="string" use="required">
+            <annotation>
+                <documentation>
+                    This specifies the property key that will be modified by the item.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="value" type="string">
+            <annotation>
+                <documentation>
+                    Specify a value to be entered in the &lt;key&gt; tag.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="match" type="tns:match" />
     </complexType>
 
     <complexType name="link">
+        <annotation>
+            <documentation>
+                Specify a web link for this feature or to anything else of use. Either the wiki (referring to an OSM wiki page, e.g. "Tag:leisure=park") or the href (full URL) attribute is required. When the wiki attribute is used the link points to the wiki page of the language JOSM is set to. If it doesn't exist the English page is shown.
+            </documentation>
+        </annotation>
         <attribute name="wiki" type="string" />
         <attribute name="href" type="string" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
+        <attributeGroup ref="tns:attributes.text" />
 
         <attribute name="name" use="prohibited" />
         <anyAttribute processContents="skip" />
     </complexType>
 
     <complexType name="preset_link">
-        <attribute name="preset_name" type="string" use="required" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
+        <annotation>
+            <documentation>
+                Adds a link to an other preset with a label on top. The preset_name attribute is required, text to override the label (default is "Edit also …") and text_context are optional. A sequence of &lt;preset_link /&gt; without text or a identical text value are grouped below one label. Watch out for presets with identical name as it is not predictable to which preset the link will lead to, see #12716.
+            </documentation>
+        </annotation>
+        <attribute name="preset_name" type="string" use="required">
+            <annotation>
+                <documentation>
+                    The exact name of the preset to link to.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attributeGroup ref="tns:attributes.text" />
         <attribute name="name" use="prohibited" />
     </complexType>
 
     <complexType name="label">
-        <attribute name="text" type="string" use="required" />
-        <attribute name="text_context" type="string" />
-        <attribute name="icon" type="string" />
-        <attribute name="icon_size" type="integer" />
+        <annotation>
+            <documentation>
+                Labels are static texts for display. text is a required attribute, icon and icon_size are optional.
+            </documentation>
+        </annotation>
+        <attributeGroup ref="tns:attributes.text" />
+        <attributeGroup ref="tns:attributes.icon" />
 
         <attribute name="name" use="prohibited" />
         <anyAttribute processContents="skip" />
     </complexType>
 
-    <complexType name="space" />
+    <complexType name="space">
+        <annotation>
+            <documentation>
+                Add some space (i.e. a newline).
+            </documentation>
+        </annotation>
+    </complexType>
 
     <complexType name="text">
-        <attribute name="key" type="string" use="required" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
-        <attribute name="default" type="string" />
+        <attributeGroup ref="tns:attributes.key" />
+        <attributeGroup ref="tns:attributes.text" />
         <attribute name="use_last_as_default" type="tns:last_default" />
-        <attribute name="auto_increment" type="string" />
+        <attribute name="auto_increment" type="string">
+            <annotation>
+                <documentation>
+                    May contain a comma separated list of integer increments or decrements, e.g. "-2,-1,+1,+2". A button will be shown next to the &lt;text /&gt; field for each value, allowing the user to select auto-increment with the given stepping. Auto-increment only happens if the user selects it. There is also a button to deselect auto-increment. Default is no auto-increment. Mutually exclusive with use_last_as_default.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="match" type="tns:match" />
-        <attribute name="length" type="positiveInteger" />
-        <attribute name="alternative_autocomplete_keys" type="string" />
+        <attributeGroup ref="tns:attributes.length" />
+        <attribute name="alternative_autocomplete_keys" type="string">
+            <annotation>
+                <documentation>
+                    A comma separated list of alternative keys to use for auto completion of &gt;text&lt;.
+                </documentation>
+            </annotation>
+        </attribute>
 
         <attribute name="type" use="prohibited" />
         <attribute name="name" use="prohibited" />
@@ -190,36 +342,56 @@
     </complexType>
 
     <complexType name="list_entry">
+        <annotation>
+            <documentation>
+                Used in &lt;combo/&gt; and &lt;multiselect/&gt;. More information see short_descriptions below. The attributes are value, display_value, short_description, icon and icon_size.
+            </documentation>
+        </annotation>
         <attribute name="value" type="string" use="required" />
         <attribute name="value_context" type="string" />
         <attribute name="display_value" type="string" />
-        <attribute name="short_description" type="string" />
-        <attribute name="icon" type="string" />
-        <attribute name="icon_size" type="integer" />
+        <attribute name="short_description" type="string">
+            <annotation>
+                <documentation>
+                    A delimiter-separated list of texts to be displayed below each display_value. (Only if it is not possible to describe the entry in 2-3 words.) Instead of a comma separated list using values, display_values and short_descriptions, the following form is also supported: &lt;list_entry value="" display_value="" short_description="" icon="" icon_size="" /&gt;
+                </documentation>
+            </annotation>
+        </attribute>
+        <attributeGroup ref="tns:attributes.icon" />
         <anyAttribute processContents="skip" />
     </complexType>
 
     <complexType name="combo">
+        <annotation>
+            <documentation>
+                <p>
+                    Displays a multiple choice combo box. key and values are mandatory, text, default, editable, delimiter, values_from, display_values, short_descriptions, use_last_as_default, values_searchable, length, values_no_i18n, values_sort and match is optional.
+                </p>
+                <p>
+                    If editable is "true" (default), combo boxes can be edited as if they were text fields (additional to the drop down menu). Non editable combo boxes can only contain one of the specified values.
+                </p>
+                <p>
+                    If the key is colour or colour:* or *:colour, a color preview and color picker is added on the right (see #8352).
+                </p>
+            </documentation>
+        </annotation>
         <!-- use either list_entry's or a combination of values/display_values -->
         <sequence>
             <group ref="tns:list_elements" minOccurs="0" maxOccurs="unbounded" />
         </sequence>
-        <attribute name="key" type="string" use="required" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
-        <attribute name="values" type="string" />
-        <attribute name="values_from" type="string" />
-        <attribute name="values_context" type="string" />
-        <attribute name="values_no_i18n" type="boolean" />
-        <attribute name="values_sort" type="boolean" />
-        <attribute name="display_values" type="string" />
-        <attribute name="values_searchable" type="boolean" />
-        <attribute name="default" type="string" />
+        <attributeGroup ref="tns:attributes.key" />
+        <attributeGroup ref="tns:attributes.text" />
+        <attributeGroup ref="tns:attributes.values" />
         <attribute name="use_last_as_default" type="tns:last_default" />
-        <attribute name="delimiter" type="string" />
-        <attribute name="editable" type="boolean" />
+        <attribute name="editable" type="boolean">
+            <annotation>
+                <documentation>
+                    The combo box is read only, which means that the user can only select an item in the list. Default is "true", which means, the user can add other values as text. Feature is broken, see #6157.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="match" type="tns:match" />
-        <attribute name="length" type="positiveInteger" />
+        <attributeGroup ref="tns:attributes.length" />
 
         <attribute name="type" use="prohibited" />
         <attribute name="value" use="prohibited" />
@@ -234,17 +406,10 @@
         <sequence>
             <group ref="tns:list_elements" minOccurs="0" maxOccurs="unbounded" />
         </sequence>
-        <attribute name="key" type="string" use="required" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
-        <attribute name="values" type="string" />
-        <attribute name="values_from" type="string" />
-        <attribute name="values_context" type="string" />
-        <attribute name="display_values" type="string" />
-        <attribute name="values_searchable" type="boolean" />
-        <attribute name="default" type="string" />
+        <attributeGroup ref="tns:attributes.key" />
+        <attributeGroup ref="tns:attributes.text" />
+        <attributeGroup ref="tns:attributes.values" />
         <attribute name="use_last_as_default" type="tns:last_default" />
-        <attribute name="delimiter" type="string" />
         <attribute name="match" type="tns:match" />
 
         <attribute name="type" use="prohibited" />
@@ -256,26 +421,52 @@
     </complexType>
 
     <complexType name="checkgroup">
+        <annotation>
+            <documentation>
+                To group checks. The columns attribute is required.
+            </documentation>
+        </annotation>
         <sequence>
             <choice minOccurs="1" maxOccurs="unbounded">
                 <element name="check" type="tns:check" />
             </choice>
         </sequence>
-        <attribute name="columns" type="positiveInteger" />
+        <attribute name="columns" type="positiveInteger">
+            <annotation>
+                <documentation>
+                    the number of columns of grouped &lt;check /&gt;
+                </documentation>
+            </annotation>
+        </attribute>
         <anyAttribute processContents="skip" />
     </complexType>
 
     <complexType name="check">
-        <attribute name="key" type="string" use="required" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
-        <attribute name="default" type="tns:check_default" />
-        <attribute name="value_on" type="string" />
-        <attribute name="value_off" type="string" />
-        <attribute name="disable_off" type="boolean" />
+        <attributeGroup ref="tns:attributes.key" />
+        <attributeGroup ref="tns:attributes.text" />
+        <attribute name="value_on" type="string">
+            <annotation>
+                <documentation>
+                    Specify the true value to be entered in the &lt;key /&gt; tag of a checked &lt;check /&gt; (default is "yes").
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="value_off" type="string">
+            <annotation>
+                <documentation>
+                    Specify the false value to be entered in the &lt;key /&gt; tag of a checked &lt;check /&gt; (default is "no").
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="disable_off" type="boolean">
+            <annotation>
+                <documentation>
+                    Whether the off value of a &lt;check /&gt; is disabled in the dialog, i.e., only unset or "yes" are provided.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="match" type="tns:match" />
-        <attribute name="icon" type="string" />
-        <attribute name="icon_size" type="integer" />
+        <attributeGroup ref="tns:attributes.icon" />
 
         <attribute name="name" use="prohibited" />
         <attribute name="type" use="prohibited" />
@@ -291,6 +482,11 @@
     </simpleType>
 
     <simpleType name="last_default">
+        <annotation>
+            <documentation>
+                For &lt;combo /&gt;, &lt;multiselect /&gt; or &lt;text /&gt; fields the last used value is used as default. Using "force" enforces this behavior also for already tagged objects. Default is "false".
+            </documentation>
+        </annotation>
         <restriction base="string">
             <enumeration value="true" />
             <enumeration value="false" />
@@ -299,6 +495,24 @@
     </simpleType>
 
     <simpleType name="match">
+        <annotation>
+            <documentation>
+                <p>
+                    Allows to change the matching process, i.e., determining whether the tags of an OSM object fit into this preset. If a preset fits then it is linked in the Tags/Membership dialog.
+                </p>
+
+                <ul>
+                    <li>none: neutral, i.e., do not consider this item for matching</li>
+                    <li>key!: positive if key matches, negative otherwise</li>
+                    <li>keyvalue: positive if key and value matches, neutral otherwise</li>
+                    <li>keyvalue!: positive if key and value matches, negative otherwise</li>
+                </ul>
+
+                <p>
+                    Note: For a match, at least one positive and no negative is required. Default is "keyvalue!" for &lt;key&gt; and "none" for &lt;text />, &lt;combo /&gt;, &lt;multiselect /&gt; and &lt;check /&gt;.
+                </p>
+            </documentation>
+        </annotation>
         <restriction base="string">
             <enumeration value="none" />
             <enumeration value="key" />
@@ -320,9 +534,19 @@
     </group>
 
     <complexType name="role">
-        <attribute name="key" type="string" />
-        <attribute name="text" type="string" />
-        <attribute name="text_context" type="string" />
+        <annotation>
+            <documentation>
+                To specify possible roles of members in relations. The key attribute is required, text, requisite, count, type and member_expression are optional.
+            </documentation>
+        </annotation>
+        <attribute name="key" type="string">
+            <annotation>
+                <documentation>
+                    The role name used in a relation.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attributeGroup ref="tns:attributes.text" />
         <attribute name="requisite" type="tns:role_requisite" />
         <attribute name="type" type="string" />
         <attribute name="count" type="integer" />
@@ -332,10 +556,155 @@
     </complexType>
 
     <simpleType name="role_requisite">
+        <annotation>
+            <documentation>
+                If a relation member is optional or required. Default is "optional".
+            </documentation>
+        </annotation>
         <restriction base="string">
             <enumeration value="required" />
             <enumeration value="optional" />
         </restriction>
     </simpleType>
+
+    <!-- Types and documentation for attributes -->
+
+    <attributeGroup name="attributes.name">
+        <attribute name="name" type="string" use="required">
+            <annotation>
+                <documentation>
+                    Specify a name for an item. This name will be used in the GUI to display the tagging preset.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="name_context" type="string">
+            <annotation>
+                <documentation>
+                    Translation context for name attribute to separate equals words with different meaning (not required for in-file translations).
+                </documentation>
+            </annotation>
+        </attribute>
+    </attributeGroup>
+
+    <attributeGroup name="attributes.key">
+        <attribute name="key" type="string" use="required">
+            <annotation>
+                <documentation>
+                    This specifies the property key that will be modified by the item.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="default" type="string">
+            <annotation>
+                <documentation>
+                    An explicitly declared default value for the item. This value is only applied through a preset when the object the preset is applied to has zero keys. If no value for default is specified, no value is set to the key. Used in &gt;check /&lt;, &gt;text /&lt;, &gt;combo /&lt; and &gt;multiselect /&lt;.
+                </documentation>
+            </annotation>
+        </attribute>
+    </attributeGroup>
+
+    <attributeGroup name="attributes.text">
+        <attribute name="text" type="string">
+            <annotation>
+                <documentation>
+                    The description, that will be displayed before (after in case of &gt;check /&lt;) the gui element. Also used for &gt;label&lt; and &gt;optional&lt;.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="text_context" type="string">
+            <annotation>
+                <documentation>
+                    Translation context for text attribute to separate equals words with different meaning (not required for in-file translations).
+                </documentation>
+            </annotation>
+        </attribute>
+    </attributeGroup>
+
+    <attributeGroup name="attributes.values">
+        <attribute name="values" type="string">
+            <annotation>
+                <documentation>
+                    A list of entries. The list has to be separated by commas (for the combo box) or by the specified delimiter (for the multiselect). If a value contains the delimiter, the delimiter may be escaped with a backslash. If a value contains a backslash, it must also be escaped with a backslash.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="values_from" type="string">
+            <annotation>
+                <documentation>
+                    To use instead of values if the list of values has to be obtained with a Java method of this form: public static String[] getValues(); The value must be: "full.package.name.ClassName#methodName".
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="values_context" type="string">
+            <annotation>
+                <documentation>
+                    Translation context for values attribute to separate equals words with different meaning (not required for in-file translations).
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="values_no_i18n" type="boolean">
+            <annotation>
+                <documentation>
+                    Disables internationalisation for value to avoid mistakes, see #11696. Default is "false". (Useful e.g. for opening hours or brand names.)
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="values_sort" type="boolean">
+            <annotation>
+                <documentation>
+                    Values of are sorted alphabetic in every language. With this attribute you can disable the alphabetic sorting if the values should keep the given order, see #5509 and #11926. (In the JOSM internal preset this is used e.g. for the keys tracktype, direction, network, smoothness, visibility or trail_visibility.) Default is "true".<br />
+                    Users can globally disable sorting with the preference key taggingpreset.sortvalues.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="display_values" type="string">
+            <annotation>
+                <documentation>
+                    A list of entries that is displayed to the user. Must be the same number and order of entries as values and editable must be "false" or not specified. For the delimiter character and escaping, see the remarks at values.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="values_searchable" type="boolean">
+            <annotation>
+                <documentation>
+                    Whether to search in (display_)values when searching for presets.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="delimiter" type="string">
+            <annotation>
+                <documentation>
+                    The character that separates values. In case of &lt;combo /&gt; the default is comma. In case of &lt;multiselect /&gt; the default is semicolon and this will also be used to separate selected values in the tag.
+                </documentation>
+            </annotation>
+        </attribute>
+    </attributeGroup>
+
+    <attributeGroup name="attributes.icon">
+        <attribute name="icon" type="string">
+            <annotation>
+                <documentation>
+                    A name or link to an icon. The image will be used as icon to display in the selection list and when adding the preset to the toolbar. Icons can also be used in &gt;item&gt;, &gt;label /&gt; and &gt;list_entry /&gt;. The icon should be quadratic in size. See Icon handling how icons can be specified.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="icon_size" type="integer">
+            <annotation>
+                <documentation>
+                    The maximal size of an icon in px. If no value is given, default is 16 for &gt;label /&gt; and the default icon size for &gt;list_entry /&gt; (in &gt;combo&gt; and &gt;multiselect&gt;).
+                </documentation>
+            </annotation>
+        </attribute>
+    </attributeGroup>
+
+    <attributeGroup name="attributes.length">
+        <attribute name="length" type="positiveInteger">
+            <annotation>
+                <documentation>
+                    The length of a &gt;text /&gt; or &gt;combo /&gt; box (number of characters allowed).
+                </documentation>
+            </annotation>
+        </attribute>
+    </attributeGroup>
 
 </schema>
