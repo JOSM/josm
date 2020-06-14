@@ -189,7 +189,7 @@ public class SearchCompiler {
                     case "timestamp":
                         // add leading/trailing space in order to get expected split (e.g. "a--" => {"a", ""})
                         String rangeS = ' ' + tokenizer.readTextOrNumber() + ' ';
-                        String[] rangeA = rangeS.split("/");
+                        String[] rangeA = rangeS.split("/", -1);
                         if (rangeA.length == 1) {
                             return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
                         } else if (rangeA.length == 2) {

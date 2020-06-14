@@ -399,7 +399,7 @@ public class ImageryInfo extends
             bounds = new ImageryBounds(e.bounds, ",");
             if (e.shapes != null) {
                 try {
-                    for (String s : e.shapes.split(";")) {
+                    for (String s : e.shapes.split(";", -1)) {
                         bounds.addShape(new Shape(s, ","));
                     }
                 } catch (IllegalArgumentException ex) {
@@ -409,7 +409,7 @@ public class ImageryInfo extends
         }
         if (e.projections != null && !e.projections.isEmpty()) {
             // split generates null element on empty string which gives one element Array[null]
-            setServerProjections(Arrays.asList(e.projections.split(",")));
+            setServerProjections(Arrays.asList(e.projections.split(",", -1)));
         }
         attributionText = Utils.intern(e.attribution_text);
         attributionLinkURL = e.attribution_url;
@@ -665,7 +665,7 @@ public class ImageryInfo extends
         if (serverProjections.isEmpty()) {
             Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase(Locale.ENGLISH));
             if (m.matches()) {
-                setServerProjections(Arrays.asList(m.group(1).split(",")));
+                setServerProjections(Arrays.asList(m.group(1).split(",", -1)));
             }
         }
     }

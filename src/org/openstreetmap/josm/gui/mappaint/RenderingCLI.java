@@ -285,7 +285,7 @@ public class RenderingCLI implements CLIModule {
             }
             break;
         case ANCHOR:
-            String[] parts = arg.split(",");
+            String[] parts = arg.split(",", -1);
             if (parts.length != 2)
                 throw new OptionParseException(
                         tr("Expected two coordinates, separated by comma, for option {0}, but got ''{1}''", "--anchor",

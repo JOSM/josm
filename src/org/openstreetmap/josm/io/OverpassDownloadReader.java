@@ -335,9 +335,9 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         } catch (OsmApiException ex) {
             final String errorIndicator = "Error</strong>: ";
             if (ex.getMessage() != null && ex.getMessage().contains(errorIndicator)) {
-                final String errorPlusRest = ex.getMessage().split(errorIndicator)[1];
+                final String errorPlusRest = ex.getMessage().split(errorIndicator, -1)[1];
                 if (errorPlusRest != null) {
-                    ex.setErrorHeader(errorPlusRest.split("</")[0].replaceAll(".*::request_read_and_idx::", ""));
+                    ex.setErrorHeader(errorPlusRest.split("</", -1)[0].replaceAll(".*::request_read_and_idx::", ""));
                 }
             }
             throw ex;

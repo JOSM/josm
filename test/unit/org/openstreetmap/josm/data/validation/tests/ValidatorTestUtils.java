@@ -50,7 +50,7 @@ public final class ValidatorTestUtils {
                 if (codes != null) {
                     Set<Integer> expectedCodes = new TreeSet<>();
                     if (!"none".equals(codes)) {
-                        for (String code : codes.split(",")) {
+                        for (String code : codes.split(",", -1)) {
                             expectedCodes.add(Integer.parseInt(code));
                         }
                     }

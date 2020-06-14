@@ -329,7 +329,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         // Process optional argument 'select'
         if (args != null && args.containsKey("select")) {
             toSelect.clear();
-            for (String item : args.get("select").split(",")) {
+            for (String item : args.get("select").split(",", -1)) {
                 if (!item.isEmpty()) {
                     if (CURRENT_SELECTION.equalsIgnoreCase(item)) {
                         isKeepingCurrentSelection = true;

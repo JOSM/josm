@@ -745,7 +745,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     private static <T> T parseCoor(String coor, boolean switchXY, BiFunction<String, String, T> function) {
-        String[] parts = coor.split(" ");
+        String[] parts = coor.split(" ", -1);
         if (switchXY) {
             return function.apply(parts[1], parts[0]);
         } else {

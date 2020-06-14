@@ -1149,7 +1149,7 @@ public class MainApplication {
 
     private static void processOffline(ProgramArguments args) {
         for (String offlineNames : args.get(Option.OFFLINE)) {
-            for (String s : offlineNames.split(",")) {
+            for (String s : offlineNames.split(",", -1)) {
                 try {
                     NetworkManager.setOffline(OnlineResource.valueOf(s.toUpperCase(Locale.ENGLISH)));
                 } catch (IllegalArgumentException e) {

@@ -153,7 +153,7 @@ public class RenderingCLIAreaTest {
     private final Matcher<Bounds> boundsMatcher;
 
     public RenderingCLIAreaTest(String args, Matcher<Double> scaleMatcher, Matcher<Bounds> boundsMatcher) {
-        this.args = args.split("\\s+");
+        this.args = args.split("\\s+", -1);
         this.scaleMatcher = scaleMatcher;
         this.boundsMatcher = boundsMatcher;
     }

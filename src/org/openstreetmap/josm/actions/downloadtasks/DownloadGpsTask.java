@@ -85,7 +85,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             return MainApplication.worker.submit(downloadTask);
 
         } else if (GpxUrlPattern.TRACKPOINTS_BBOX.matches(url)) {
-            String[] table = url.split("\\?|=|&");
+            String[] table = url.split("\\?|=|&", -1);
             for (int i = 0; i < table.length; i++) {
                 if ("bbox".equals(table[i]) && i < table.length-1)
                     return download(settings, new Bounds(table[i+1], ",", ParseMethod.LEFT_BOTTOM_RIGHT_TOP), progressMonitor);

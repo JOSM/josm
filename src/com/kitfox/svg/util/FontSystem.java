@@ -77,7 +77,7 @@ public class FontSystem extends Font
 
     public static FontSystem createFont(String fontFamily, int fontStyle, int fontWeight, int fontSize)
     {
-        String[] families = fontFamily.split(",");
+        String[] families = fontFamily.split(",", -1);
         for (String fontName: families)
         {
             String javaFontName = mapJavaFontName(fontName);

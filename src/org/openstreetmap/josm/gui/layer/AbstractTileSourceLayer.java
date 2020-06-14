@@ -1127,7 +1127,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             // text longer than tile size, split it
             StringBuilder line = new StringBuilder();
             StringBuilder ret = new StringBuilder();
-            for (String s: text.split(" ")) {
+            for (String s: text.split(" ", -1)) {
                 if (g.getFontMetrics().stringWidth(line.toString() + s) > tileSource.getTileSize()) {
                     ret.append(line).append('\n');
                     line.setLength(0);
@@ -1138,7 +1138,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             textToDraw = ret.toString();
         }
         int offset = 0;
-        for (String s: textToDraw.split("\n")) {
+        for (String s: textToDraw.split("\n", -1)) {
             g.setColor(Color.black);
             g.drawString(s, x + 1, y + offset + 1);
             g.setColor(oldColor);
@@ -1631,7 +1631,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             myDrawString(g, tr("Estimated cache size: {0}", estimateTileCacheSize()), 50, 200);
             if (tileLoader instanceof TMSCachedTileLoader) {
                 int offset = 200;
-                for (String part: ((TMSCachedTileLoader) tileLoader).getStats().split("\n")) {
+                for (String part: ((TMSCachedTileLoader) tileLoader).getStats().split("\n", -1)) {
                     offset += 15;
                     myDrawString(g, tr("Cache stats: {0}", part), 50, offset);
                 }

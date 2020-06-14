@@ -85,7 +85,7 @@ public class RtkLibPosReader implements IGpxReader {
                         // TODO add marker
                     } else if (!line.startsWith("%")) {
                         try {
-                            String[] fields = line.split("[ ]+");
+                            String[] fields = line.split("[ ]+", -1);
                             WayPoint currentwp = new WayPoint(new LatLon(
                                     Double.parseDouble(fields[IDX_LAT]),
                                     Double.parseDouble(fields[IDX_LON])));

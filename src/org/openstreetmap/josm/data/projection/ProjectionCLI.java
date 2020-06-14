@@ -165,7 +165,7 @@ public class ProjectionCLI implements CLIModule {
     }
 
     private EastNorth parseEastNorth(String s, ToDoubleFunction<String> parser) {
-        String[] en = s.split("[;, ]+");
+        String[] en = s.split("[;, ]+", -1);
         if (en.length != 2)
             throw new IllegalArgumentException(tr("Expected two coordinates, separated by white space, found {0} in ''{1}''", en.length, s));
         double east = parser.applyAsDouble(en[0]);

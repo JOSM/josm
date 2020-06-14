@@ -197,13 +197,13 @@ public class OsmOAuthAuthorizationClient {
         }
 
         for (String setCookie: setCookies) {
-            String[] kvPairs = setCookie.split(";");
+            String[] kvPairs = setCookie.split(";", -1);
             if (kvPairs.length == 0) {
                 continue;
             }
             for (String kvPair : kvPairs) {
                 kvPair = kvPair.trim();
-                String[] kv = kvPair.split("=");
+                String[] kv = kvPair.split("=", -1);
                 if (kv.length != 2) {
                     continue;
                 }

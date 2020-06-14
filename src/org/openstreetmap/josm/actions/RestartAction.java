@@ -120,7 +120,7 @@ public class RestartAction extends JosmAction {
     private static List<String> getAppleCommands() {
         final List<String> cmd = new ArrayList<>();
         cmd.add("/usr/bin/osascript");
-        for (String line : RESTART_APPLE_SCRIPT.split("\n")) {
+        for (String line : RESTART_APPLE_SCRIPT.split("\n", -1)) {
             cmd.add("-e");
             cmd.add(line);
         }
@@ -141,7 +141,7 @@ public class RestartAction extends JosmAction {
         if (javaCommand == null) {
             throw new IOException("Unable to retrieve sun.java.command property");
         }
-        String[] mainCommand = javaCommand.split(" ");
+        String[] mainCommand = javaCommand.split(" ", -1);
         if (javaCommand.endsWith(".jnlp") && jnlp == null) {
             // see #11751 - jnlp on Linux
             Logging.debug("Detected jnlp without jnlpx.origFilenameArg property set");

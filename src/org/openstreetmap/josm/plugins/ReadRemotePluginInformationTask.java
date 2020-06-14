@@ -220,7 +220,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             JPanel panel = new JPanel(new GridBagLayout());
             panel.add(new JLabel(firstMessage), GBC.eol().insets(0, 0, 0, 10));
             StringBuilder b = new StringBuilder();
-            for (String part : msg.split("(?<=\\G.{200})")) {
+            for (String part : msg.split("(?<=\\G.{200})", -1)) {
                 b.append(part).append('\n');
             }
             panel.add(new JLabel("<html><body width=\"500\"><b>"+b.toString().trim()+"</b></body></html>"), GBC.eol().insets(0, 0, 0, 10));

@@ -98,7 +98,7 @@ public class ProjectionRefTest {
         if (args.length > 0) {
             debug = "debug".equals(args[0]);
             if (args[args.length - 1].startsWith("EPSG:")) {
-                forcedCodes = Arrays.asList(args[args.length - 1].split(","));
+                forcedCodes = Arrays.asList(args[args.length - 1].split(",", -1));
             }
         }
         Collection<RefEntry> refs = readData();
@@ -136,7 +136,7 @@ public class ProjectionRefTest {
                     curEntry = new RefEntry(code, def);
                     result.add(curEntry);
                 } else if (curEntry != null) {
-                    String[] f = line.trim().split(",");
+                    String[] f = line.trim().split(",", -1);
                     double lon = Double.parseDouble(f[0]);
                     double lat = Double.parseDouble(f[1]);
                     double east = Double.parseDouble(f[2]);
@@ -276,7 +276,7 @@ public class ProjectionRefTest {
     private static EastNorth latlon2eastNorthProj4cs2cs(String def, LatLon ll) {
         List<String> args = new ArrayList<>();
         args.add(CS2CS_EXE);
-        args.addAll(Arrays.asList("-f %.9f +proj=longlat +datum=WGS84 +to".split(" ")));
+        args.addAll(Arrays.asList("-f %.9f +proj=longlat +datum=WGS84 +to".split(" ", -1)));
         // proj.4 cannot read our ntf_r93_b.gsb file
         // possibly because it is big endian. Use equivalent
         // little endian file shipped with proj.4.
@@ -285,7 +285,7 @@ public class ProjectionRefTest {
         if (PlatformManager.isPlatformWindows()) {
             def = def.replace("'", "\\'").replace("\"", "\\\"");
         }
-        args.addAll(Arrays.asList(def.split(" ")));
+        args.addAll(Arrays.asList(def.split(" ", -1)));
         ProcessBuilder pb = new ProcessBuilder(args);
         pb.environment().put("PROJ_LIB", new File(PROJ_LIB_DIR).getAbsolutePath());
 

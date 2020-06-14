@@ -146,7 +146,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 }
                 String schemaLocation = atts.getValue(GpxConstants.XML_URI_XSD, "schemaLocation");
                 if (schemaLocation != null) {
-                    String[] schemaLocations = schemaLocation.split(" ");
+                    String[] schemaLocations = schemaLocation.split(" ", -1);
                     for (int i = 0; i < schemaLocations.length - 1; i += 2) {
                         final String schemaURI = schemaLocations[i];
                         final String schemaXSD = schemaLocations[i + 1];

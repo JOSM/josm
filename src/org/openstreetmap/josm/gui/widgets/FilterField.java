@@ -86,7 +86,7 @@ public class FilterField extends JosmTextField {
                 } else {
                     expr = expr.replace("+", "\\+");
                     // split search string on whitespace, do case-insensitive AND search
-                    List<RowFilter<Object, Object>> andFilters = Arrays.stream(expr.split("\\s+"))
+                    List<RowFilter<Object, Object>> andFilters = Arrays.stream(expr.split("\\s+", -1))
                             .map(word -> RowFilter.regexFilter("(?i)" + word))
                             .collect(Collectors.toList());
                     sorter.setRowFilter(RowFilter.andFilter(andFilters));

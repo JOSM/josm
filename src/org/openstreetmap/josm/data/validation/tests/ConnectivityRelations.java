@@ -92,7 +92,7 @@ public class ConnectivityRelations extends Test {
                 laneNumber = BW;
             }
             Map<Integer, Boolean> connections = new HashMap<>();
-            String[] toLanes = TO_LANE_PATTERN.split(lane[1]);
+            String[] toLanes = TO_LANE_PATTERN.split(lane[1], -1);
             for (int j = 0; j < toLanes.length; j++) {
                 String toLane = toLanes[j].trim();
                 try {

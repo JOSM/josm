@@ -370,7 +370,7 @@ public final class OsmValidator {
             String description = e.getValue();
 
             ArrayList<String> ignoredElementList = new ArrayList<>();
-            String[] osmobjects = elemId1Pattern.split(key);
+            String[] osmobjects = elemId1Pattern.split(key, -1);
             for (int i = 1; i < osmobjects.length; i++) {
                 String osmid = osmobjects[i];
                 if (elemId2Pattern.matcher(osmid).matches()) {

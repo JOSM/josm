@@ -306,7 +306,7 @@ public class PluginInformation {
 
         String classPath = attr.getValue(Attributes.Name.CLASS_PATH);
         if (classPath != null) {
-            for (String entry : classPath.split(" ")) {
+            for (String entry : classPath.split(" ", -1)) {
                 File entryFile;
                 if (new File(entry).isAbsolute() || file == null) {
                     entryFile = new File(entry);
@@ -509,7 +509,7 @@ public class PluginInformation {
      */
     public boolean matches(String filter) {
         if (filter == null) return true;
-        String[] words = filter.split("\\s+");
+        String[] words = filter.split("\\s+", -1);
         for (String word: words) {
             if (matches(word, name)
                     || matches(word, description)
@@ -555,7 +555,7 @@ public class PluginInformation {
     private static List<String> getRequiredPlugins(String pluginList) {
         List<String> requiredPlugins = new ArrayList<>();
         if (pluginList != null) {
-            for (String s : pluginList.split(";")) {
+            for (String s : pluginList.split(";", -1)) {
                 String plugin = s.trim();
                 if (!plugin.isEmpty()) {
                     requiredPlugins.add(plugin);

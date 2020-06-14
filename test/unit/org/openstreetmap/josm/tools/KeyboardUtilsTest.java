@@ -107,7 +107,7 @@ public class KeyboardUtilsTest {
 
     private static void testgetCharactersForKeyE00(String locale, Character... expected) {
         if (locale.contains("_")) {
-            String[] l = locale.split("_");
+            String[] l = locale.split("_", -1);
             testgetCharactersForKeyE00(new Locale(l[0], l[1]), expected);
         } else {
             testgetCharactersForKeyE00(new Locale(locale), expected);

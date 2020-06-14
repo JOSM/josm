@@ -86,7 +86,7 @@ public abstract class TaggingPresetItem {
         if (TYPE_CACHE.containsKey(types))
             return TYPE_CACHE.get(types);
         Set<TaggingPresetType> result = EnumSet.noneOf(TaggingPresetType.class);
-        for (String type : Arrays.asList(types.split(","))) {
+        for (String type : Arrays.asList(types.split(",", -1))) {
             try {
                 TaggingPresetType presetType = TaggingPresetType.fromString(type);
                 if (presetType != null) {

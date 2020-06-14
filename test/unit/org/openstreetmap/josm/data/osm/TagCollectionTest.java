@@ -688,7 +688,7 @@ public class TagCollectionTest {
         assertEquals("a;b;c;d", f.getJoinedValues("k"));
         TagCollection g = new TagCollection(Arrays.asList(new Tag("k", "b"), new Tag("k", "a"), new Tag("k", "b"),
                 new Tag("k", "c"), new Tag("k", "d")));
-        assertEquals("a;b;c;d", Stream.of(g.getJoinedValues("k").split(";")).sorted().collect(Collectors.joining(";")));
+        assertEquals("a;b;c;d", Stream.of(g.getJoinedValues("k").split(";", -1)).sorted().collect(Collectors.joining(";")));
     }
 
     /**

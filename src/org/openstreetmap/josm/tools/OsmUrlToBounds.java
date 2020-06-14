@@ -57,7 +57,7 @@ public final class OsmUrlToBounds {
         if (i == -1) {
             return null;
         }
-        String[] args = url.substring(i+1).split("&");
+        String[] args = url.substring(i+1).split("&", -1);
         Map<String, String> map = new HashMap<>();
         for (String arg : args) {
             int eq = arg.indexOf('=');
@@ -68,7 +68,7 @@ public final class OsmUrlToBounds {
 
         try {
             if (map.containsKey("bbox")) {
-                String[] bbox = map.get("bbox").split(",");
+                String[] bbox = map.get("bbox").split(",", -1);
                 b = new Bounds(
                         Double.parseDouble(bbox[1]), Double.parseDouble(bbox[0]),
                         Double.parseDouble(bbox[3]), Double.parseDouble(bbox[2]));
@@ -102,7 +102,7 @@ public final class OsmUrlToBounds {
         int endIndex = url.indexOf('&', startIndex);
         if (endIndex == -1) endIndex = url.length();
         String coordPart = url.substring(startIndex+(url.contains("#map=") ? "#map=".length() : "#".length()), endIndex);
-        String[] parts = coordPart.split("/");
+        String[] parts = coordPart.split("/", -1);
         if (parts.length < 3) {
             Logging.warn(tr("URL does not contain {0}/{1}/{2}", tr("zoom"), tr("latitude"), tr("longitude")));
             return null;

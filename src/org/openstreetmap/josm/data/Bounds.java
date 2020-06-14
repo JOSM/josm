@@ -250,7 +250,7 @@ public class Bounds {
      */
     public Bounds(String asString, String separator, ParseMethod parseMethod, boolean roundToOsmPrecision) {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
-        String[] components = asString.split(separator);
+        String[] components = asString.split(separator, -1);
         if (components.length != 4)
             throw new IllegalArgumentException(
                     MessageFormat.format("Exactly four doubles expected in string, got {0}: {1}", components.length, asString));

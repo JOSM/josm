@@ -129,7 +129,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         private static void addLocaleNames(Collection<String> collection, TaggingPreset preset) {
             String locName = preset.getLocaleName();
             if (locName != null) {
-                Collections.addAll(collection, locName.toLowerCase(Locale.ENGLISH).split("\\s"));
+                Collections.addAll(collection, locName.toLowerCase(Locale.ENGLISH).split("\\s", -1));
             }
         }
 
@@ -281,11 +281,11 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             final String[] nameWords;
 
             if (searchText.contains("/")) {
-                groupWords = searchText.substring(0, searchText.lastIndexOf('/')).split("[\\s/]");
-                nameWords = searchText.substring(searchText.indexOf('/') + 1).split("\\s");
+                groupWords = searchText.substring(0, searchText.lastIndexOf('/')).split("[\\s/]", -1);
+                nameWords = searchText.substring(searchText.indexOf('/') + 1).split("\\s", -1);
             } else {
                 groupWords = null;
-                nameWords = searchText.split("\\s");
+                nameWords = searchText.split("\\s", -1);
             }
 
             return getMatchingPresets(groupWords, nameWords, onlyApplicable, inTags, presetTypes, selectedPrimitives);

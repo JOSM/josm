@@ -1016,7 +1016,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             while ((line = br.readLine()) != null) {
 
                 // use comma as separator
-                String[] column = line.split(",");
+                String[] column = line.split(",", -1);
 
                 // empty or comment line
                 if (column.length < 3 || column[0].startsWith("#")) {

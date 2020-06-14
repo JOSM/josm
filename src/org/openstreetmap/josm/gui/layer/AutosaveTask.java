@@ -391,7 +391,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                         try (BufferedReader reader = Files.newBufferedReader(pidFile.toPath(), StandardCharsets.UTF_8)) {
                             String jvmId = reader.readLine();
                             if (jvmId != null) {
-                                String pid = jvmId.split("@")[0];
+                                String pid = jvmId.split("@", -1)[0];
                                 skipFile = jvmPerfDataFileExists(pid);
                             }
                         } catch (IOException | SecurityException t) {

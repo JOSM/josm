@@ -169,7 +169,7 @@ public final class CustomConfigurator {
     public static int askForOption(String text, String opts) {
         if (!opts.isEmpty()) {
             return JOptionPane.showOptionDialog(MainApplication.getMainFrame(), text, "Question",
-                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opts.split(";"), 0);
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, opts.split(";", -1), 0);
         } else {
             return JOptionPane.showOptionDialog(MainApplication.getMainFrame(), text, "Question",
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, 2);
@@ -297,9 +297,9 @@ public final class CustomConfigurator {
         final List<String> installList = new ArrayList<>();
         final List<String> removeList = new ArrayList<>();
         final List<String> deleteList = new ArrayList<>();
-        Collections.addAll(installList, install.toLowerCase(Locale.ENGLISH).split(";"));
-        Collections.addAll(removeList, uninstall.toLowerCase(Locale.ENGLISH).split(";"));
-        Collections.addAll(deleteList, delete.toLowerCase(Locale.ENGLISH).split(";"));
+        Collections.addAll(installList, install.toLowerCase(Locale.ENGLISH).split(";", -1));
+        Collections.addAll(removeList, uninstall.toLowerCase(Locale.ENGLISH).split(";", -1));
+        Collections.addAll(deleteList, delete.toLowerCase(Locale.ENGLISH).split(";", -1));
         installList.remove("");
         removeList.remove("");
         deleteList.remove("");

@@ -361,7 +361,7 @@ public class LatLonDialog extends ExtendedDialog {
      * @return The east/north coordinates or <code>null</code> on error.
      */
     public static EastNorth parseEastNorth(String s) {
-        String[] en = s.split("[;, ]+");
+        String[] en = s.split("[;, ]+", -1);
         if (en.length != 2) return null;
         try {
             double east = Double.parseDouble(en[0]);

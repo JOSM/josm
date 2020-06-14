@@ -28,7 +28,7 @@ public class Shape {
 
     public Shape(String asString, String separator) {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
-        String[] components = asString.split(separator);
+        String[] components = asString.split(separator, -1);
         if (components.length % 2 != 0)
             throw new IllegalArgumentException(MessageFormat.format("Even number of doubles expected in string, got {0}: {1}",
                     components.length, asString));

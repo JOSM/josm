@@ -368,7 +368,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             String description, AddArchiveExtension addArchiveExtension, List<String> archiveExtensions) {
         final Collection<String> extensionsPlusArchive = new LinkedHashSet<>();
         final Collection<String> extensionsForDescription = new LinkedHashSet<>();
-        for (String e : extensions.split(",")) {
+        for (String e : extensions.split(",", -1)) {
             extensionsPlusArchive.add(e);
             if (addArchiveExtension != AddArchiveExtension.NONE) {
                 extensionsForDescription.add("*." + e);
@@ -419,7 +419,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 1169
      */
     public boolean acceptName(String filename) {
-        return Utils.hasExtension(filename, extensions.split(","));
+        return Utils.hasExtension(filename, extensions.split(",", -1));
     }
 
     @Override

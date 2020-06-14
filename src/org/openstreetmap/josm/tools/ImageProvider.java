@@ -1975,7 +1975,7 @@ public class ImageProvider {
                                         // Handle different color spaces (tested with RGB and grayscale)
                                         String value = ((Element) item).getAttribute("value");
                                         if (!value.isEmpty()) {
-                                            String[] s = value.split(" ");
+                                            String[] s = value.split(" ", -1);
                                             if (s.length == 3) {
                                                 return parseRGB(s);
                                             } else if (s.length == 1) {

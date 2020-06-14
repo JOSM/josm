@@ -173,7 +173,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
                 clearSelection();
             } else {
                 String s = o.toString();
-                Set<String> parts = new TreeSet<>(Arrays.asList(s.split(String.valueOf(delimiter))));
+                Set<String> parts = new TreeSet<>(Arrays.asList(s.split(String.valueOf(delimiter), -1)));
                 ListModel<PresetListEntry> lm = getModel();
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
@@ -439,7 +439,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         String[] valueArray = null;
 
         if (values_from != null) {
-            String[] classMethod = values_from.split("#");
+            String[] classMethod = values_from.split("#", -1);
             if (classMethod.length == 2) {
                 try {
                     Method method = Class.forName(classMethod[0]).getMethod(classMethod[1]);

@@ -450,7 +450,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         Long expiration = 0L;
         String cacheControl = urlConn.getHeaderField("Cache-Control");
         if (cacheControl != null) {
-            for (String token: cacheControl.split(",")) {
+            for (String token: cacheControl.split(",", -1)) {
                 try {
                     if (token.startsWith("max-age=")) {
                         expiration = Math.max(expiration,

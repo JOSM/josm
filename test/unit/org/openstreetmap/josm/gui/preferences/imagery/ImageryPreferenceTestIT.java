@@ -247,7 +247,7 @@ public class ImageryPreferenceTestIT {
     private String addImageError(ImageryInfo info, String url, byte[] data, int zoom, String defaultMessage) {
         // Check if we have received an error message
         String error = helper.detectErrorMessage(new String(data, StandardCharsets.UTF_8));
-        String errorMsg = url + zoomMarker(zoom) + (error != null ? error.split("\\n")[0] : defaultMessage);
+        String errorMsg = url + zoomMarker(zoom) + (error != null ? error.split("\\n", -1)[0] : defaultMessage);
         addError(info, errorMsg);
         return errorMsg;
     }
@@ -343,7 +343,7 @@ public class ImageryPreferenceTestIT {
     }
 
     private static boolean isZoomError(String error) {
-        String[] parts = error.split(ERROR_SEP);
+        String[] parts = error.split(ERROR_SEP, -1);
         String lastPart = parts.length > 0 ? parts[parts.length - 1].toLowerCase(Locale.ENGLISH) : "";
         return lastPart.contains("bbox")
             || lastPart.contains("bounding box");

@@ -101,7 +101,7 @@ public class NameMismatch extends Test.TagTest {
         composition of some (not necessarily all) name:* labels.
         Check if this is the case. */
 
-        String[] splitNames = NAME_SPLIT_PATTERN.split(name);
+        String[] splitNames = NAME_SPLIT_PATTERN.split(name, -1);
         if (splitNames.length == 1) {
             /* The name is not composed of multiple parts. Complain. */
             missingTranslation(p, splitNames[0]);

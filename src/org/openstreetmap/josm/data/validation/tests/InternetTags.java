@@ -95,7 +95,7 @@ public class InternetTags extends Test.TagTest {
     private List<TestError> doValidateTag(OsmPrimitive p, String k, String v, AbstractValidator validator, int code) {
         List<TestError> errors = new ArrayList<>();
         String values = v != null ? v : p.get(k);
-        for (String value : values.split(";")) {
+        for (String value : values.split(";", -1)) {
             if (!validator.isValid(value)) {
                 Supplier<Command> fix = null;
                 String errMsg = validator.getErrorMessage();

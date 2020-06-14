@@ -89,7 +89,7 @@ public class OsmConnection {
         if (auth != null && auth.startsWith(BASIC_AUTH)) {
             try {
                 String[] token = new String(Base64.getDecoder().decode(auth.substring(BASIC_AUTH.length())),
-                        StandardCharsets.UTF_8).split(":");
+                        StandardCharsets.UTF_8).split(":", -1);
                 if (token.length == 2) {
                     return token[0];
                 }

@@ -124,7 +124,7 @@ public class ProjectionRegressionTest {
     }
 
     private static Pair<Double, Double> readLine(String expectedName, String input) {
-        String[] fields = input.trim().split("[ ]+");
+        String[] fields = input.trim().split("[ ]+", -1);
         if (fields.length != 3) throw new AssertionError();
         if (!fields[0].equals(expectedName)) throw new AssertionError();
         double a = Double.parseDouble(fields[1]);

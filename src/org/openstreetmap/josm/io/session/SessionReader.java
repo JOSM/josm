@@ -486,7 +486,7 @@ public class SessionReader {
                     deps.putVoid(idx);
                     String depStr = e.getAttribute("depends");
                     if (!depStr.isEmpty()) {
-                        for (String sd : depStr.split(",")) {
+                        for (String sd : depStr.split(",", -1)) {
                             Integer d = null;
                             try {
                                 d = Integer.valueOf(sd);

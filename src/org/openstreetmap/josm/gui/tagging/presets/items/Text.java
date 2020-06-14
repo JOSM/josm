@@ -66,7 +66,7 @@ public class Text extends KeyedItem {
         Usage usage = determineTextUsage(sel, key);
         AutoCompletingTextField textField = new AutoCompletingTextField();
         if (alternative_autocomplete_keys != null) {
-            initAutoCompletionField(textField, (key + ',' + alternative_autocomplete_keys).split(","));
+            initAutoCompletionField(textField, (key + ',' + alternative_autocomplete_keys).split(",", -1));
         } else {
             initAutoCompletionField(textField, key);
         }
@@ -125,7 +125,7 @@ public class Text extends KeyedItem {
             pnl.add(value, GBC.std().fill(GBC.HORIZONTAL));
 
             // first, one button for each auto_increment value
-            for (final String ai : auto_increment.split(",")) {
+            for (final String ai : auto_increment.split(",", -1)) {
                 JToggleButton aibutton = new JToggleButton(ai);
                 aibutton.setToolTipText(tr("Select auto-increment of {0} for this field", ai));
                 aibutton.setMargin(new Insets(0, 0, 0, 0));

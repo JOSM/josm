@@ -697,7 +697,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
         Set<String> values = new LinkedHashSet<>();
         Map<String, Collection<String>> originalSplitValues = new LinkedHashMap<>();
         for (String v : originalValues) {
-            List<String> vs = Arrays.asList(SPLIT_VALUES_PATTERN.split(v));
+            List<String> vs = Arrays.asList(SPLIT_VALUES_PATTERN.split(v, -1));
             originalSplitValues.put(v, vs);
             values.addAll(vs);
         }

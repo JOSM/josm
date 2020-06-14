@@ -23,7 +23,7 @@ public class FeaturesHandler extends RequestHandler {
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
         String q = args.get("q");
-        Collection<String> handlers = q == null ? null : Arrays.asList(q.split("[,\\s]+"));
+        Collection<String> handlers = q == null ? null : Arrays.asList(q.split("[,\\s]+", -1));
         content = RequestProcessor.getHandlersInfoAsJSON(handlers).toString();
         contentType = "application/json";
         if (args.containsKey("jsonp")) {

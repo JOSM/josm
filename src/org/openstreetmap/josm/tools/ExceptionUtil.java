@@ -106,7 +106,7 @@ public final class ExceptionUtil {
         m = Pattern.compile(".*Node (\\d+) is still used by relations? " + ids + ".*").matcher(msg);
         if (m.matches()) {
             OsmPrimitive n = new Node(Long.parseLong(m.group(1)));
-            for (String s : m.group(2).split(",")) {
+            for (String s : m.group(2).split(",", -1)) {
                 refs.add(new Relation(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
@@ -114,7 +114,7 @@ public final class ExceptionUtil {
         m = Pattern.compile(".*Node (\\d+) is still used by ways? " + ids + ".*").matcher(msg);
         if (m.matches()) {
             OsmPrimitive n = new Node(Long.parseLong(m.group(1)));
-            for (String s : m.group(2).split(",")) {
+            for (String s : m.group(2).split(",", -1)) {
                 refs.add(new Way(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
@@ -122,7 +122,7 @@ public final class ExceptionUtil {
         m = Pattern.compile(".*The relation (\\d+) is used in relations? " + ids + ".*").matcher(msg);
         if (m.matches()) {
             OsmPrimitive n = new Relation(Long.parseLong(m.group(1)));
-            for (String s : m.group(2).split(",")) {
+            for (String s : m.group(2).split(",", -1)) {
                 refs.add(new Relation(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
@@ -130,7 +130,7 @@ public final class ExceptionUtil {
         m = Pattern.compile(".*Way (\\d+) is still used by relations? " + ids + ".*").matcher(msg);
         if (m.matches()) {
             OsmPrimitive n = new Way(Long.parseLong(m.group(1)));
-            for (String s : m.group(2).split(",")) {
+            for (String s : m.group(2).split(",", -1)) {
                 refs.add(new Relation(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
@@ -139,7 +139,7 @@ public final class ExceptionUtil {
         // ... ", which either do not exist, or are not visible"
         if (m.matches()) {
             OsmPrimitive n = OsmPrimitiveType.WAY.newInstance(Long.parseLong(m.group(1)), true);
-            for (String s : m.group(2).split(",")) {
+            for (String s : m.group(2).split(",", -1)) {
                 refs.add(new Node(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
@@ -148,7 +148,7 @@ public final class ExceptionUtil {
         // ... ", which either do not exist, or are not visible"
         if (m.matches()) {
             OsmPrimitive n = OsmPrimitiveType.RELATION.newInstance(Long.parseLong(m.group(1)), true);
-            for (String s : m.group(2).split(",")) {
+            for (String s : m.group(2).split(",", -1)) {
                 refs.add(new Node(Long.parseLong(s)));
             }
             return Pair.create(n, refs);
@@ -157,7 +157,7 @@ public final class ExceptionUtil {
         // ... ", which either do not exist, or are not visible"
         if (m.matches()) {
             OsmPrimitive n = OsmPrimitiveType.RELATION.newInstance(Long.parseLong(m.group(1)), true);
-            for (String s : m.group(2).split(",")) {
+            for (String s : m.group(2).split(",", -1)) {
                 refs.add(new Way(Long.parseLong(s)));
             }
             return Pair.create(n, refs);

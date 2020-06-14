@@ -196,7 +196,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
             simpleTag("name", data.getString(META_AUTHOR_NAME));
             // write the email address
             if (attr.containsKey(META_AUTHOR_EMAIL)) {
-                String[] tmp = data.getString(META_AUTHOR_EMAIL).split("@");
+                String[] tmp = data.getString(META_AUTHOR_EMAIL).split("@", -1);
                 if (tmp.length == 2) {
                     inline("email", "id=\"" + encode(tmp[0]) + "\" domain=\"" + encode(tmp[1]) +'\"');
                 }

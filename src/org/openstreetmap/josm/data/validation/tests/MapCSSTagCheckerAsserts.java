@@ -138,7 +138,7 @@ final class MapCSSTagCheckerAsserts {
                 .filter(e -> e instanceof LiteralExpression)
                 .map(e -> ((LiteralExpression) e).getLiteral())
                 .filter(l -> l instanceof String)
-                .map(l -> ((String) l).split(",")[0])
+                .map(l -> ((String) l).split(",", -1)[0])
                 .findFirst();
     }
 

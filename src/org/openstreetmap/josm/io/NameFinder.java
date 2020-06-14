@@ -283,7 +283,7 @@ public final class NameFinder {
                     currentResult.nearestPlace = tr(atts.getValue("type"));
                     currentResult.lat = Double.parseDouble(atts.getValue("lat"));
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
-                    String[] bbox = atts.getValue("boundingbox").split(",");
+                    String[] bbox = atts.getValue("boundingbox").split(",", -1);
                     currentResult.bounds = new Bounds(
                             Double.parseDouble(bbox[0]), Double.parseDouble(bbox[2]),
                             Double.parseDouble(bbox[1]), Double.parseDouble(bbox[3]));

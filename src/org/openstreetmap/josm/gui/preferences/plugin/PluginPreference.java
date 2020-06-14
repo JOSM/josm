@@ -510,7 +510,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         }
 
         private void activatePlugins(JTextArea textField, boolean deleteNotInList) {
-            String[] lines = textField.getText().split("\n");
+            String[] lines = textField.getText().split("\n", -1);
             List<String> toActivate = new ArrayList<>();
             List<String> notFound = new ArrayList<>();
             // This pattern matches the default list format JOSM uses for bug reports.

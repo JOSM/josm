@@ -105,7 +105,7 @@ public class ConditionalKeys extends Test.TagTest {
         if (!key.endsWith(":conditional")) {
             return false;
         }
-        final String[] parts = key.replace(":conditional", "").split(":");
+        final String[] parts = key.replace(":conditional", "").split(":", -1);
         return isKeyValid3Parts(parts) || isKeyValid1Part(parts) || isKeyValid2Parts(parts);
     }
 
@@ -177,7 +177,7 @@ public class ConditionalKeys extends Test.TagTest {
                 int i = 2;
                 while (i + 1 <= m.groupCount() && m.group(i + 1) != null) {
                     final String restrictionValue = m.group(i);
-                    final String[] conditions = m.group(i + 1).replace("(", "").replace(")", "").split("\\s+(AND|and)\\s+");
+                    final String[] conditions = m.group(i + 1).replace("(", "").replace(")", "").split("\\s+(AND|and)\\s+", -1);
                     r.add(new ConditionalValue(restrictionValue, Arrays.asList(conditions)));
                     i += 3;
                 }
@@ -196,7 +196,7 @@ public class ConditionalKeys extends Test.TagTest {
         try {
             for (final ConditionalValue conditional : ConditionalValue.parse(value)) {
                 // validate restriction value
-                if (isTransportationMode(key.split(":")[0]) && !isRestrictionValue(conditional.restrictionValue)) {
+                if (isTransportationMode(key.split(":", -1)[0]) && !isRestrictionValue(conditional.restrictionValue)) {
                     return tr("{0} is not a valid restriction value", conditional.restrictionValue);
                 }
                 // validate opening hour if the value contains an hour (heuristic)

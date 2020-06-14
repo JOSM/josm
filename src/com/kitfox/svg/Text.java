@@ -267,7 +267,7 @@ public class Text extends ShapeElement
     protected void buildText() throws SVGException
     {
         //Get font
-        String[] families = fontFamily.split(",");
+        String[] families = fontFamily.split(",", -1);
         Font font = null;
         for (int i = 0; i < families.length; ++i)
         {

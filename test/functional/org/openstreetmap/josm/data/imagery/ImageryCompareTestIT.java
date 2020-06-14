@@ -43,7 +43,7 @@ public class ImageryCompareTestIT {
         boolean redFound = false;
         String comparison = HttpClient.create(new URL("https://josm.openstreetmap.de/wiki/ImageryCompare")).connect().fetchContent();
         String rubricLine = null;
-        for (String line : comparison.split("\n")) {
+        for (String line : comparison.split("\n", -1)) {
             boolean black = line.startsWith(BLACK_PREFIX);
             if (black) {
                 rubricLine = line;

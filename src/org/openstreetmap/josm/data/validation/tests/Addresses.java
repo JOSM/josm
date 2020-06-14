@@ -267,7 +267,7 @@ public class Addresses extends Test {
      * @return A list of addr:housenumber equivalents
      */
     static List<String> expandHouseNumber(String houseNumber) {
-        return Arrays.asList(houseNumber.split(",|;"));
+        return Arrays.asList(houseNumber.split(",|;", -1));
     }
 
     @Override

@@ -49,7 +49,7 @@ public final class TextTagParser {
      * @return map of tags
      */
     public static Map<String, String> readTagsByRegexp(String text, String splitRegex, String tagRegex, boolean unescapeTextInQuotes) {
-         String[] lines = text.split(splitRegex);
+         String[] lines = text.split(splitRegex, -1);
          Pattern p = Pattern.compile(tagRegex);
          Map<String, String> tags = new LinkedHashMap<>();
          String k;

@@ -1050,7 +1050,7 @@ public final class Utils {
         if (s == null) {
             return null;
         } else {
-            return String.join("\n", limit(Arrays.asList(s.split("\\n")), maxLines, "..."));
+            return String.join("\n", limit(Arrays.asList(s.split("\\n", -1)), maxLines, "..."));
         }
     }
 
@@ -1706,7 +1706,7 @@ public final class Utils {
                     new URL(Config.getPref().get(
                             "java.baseline.version.url",
                             Config.getUrls().getJOSMWebsite() + "/remote/oracle-java-update-baseline.version")))
-                    .connect().fetchContent().split("\n");
+                    .connect().fetchContent().split("\n", -1);
             if (getJavaVersion() <= 8) {
                 for (String version : versions) {
                     if (version.startsWith("1.8")) {
@@ -1840,7 +1840,7 @@ public final class Utils {
     public static URL betterJarUrl(URL jarUrl, URL defaultUrl) throws IOException {
         // Workaround to https://bugs.openjdk.java.net/browse/JDK-4523159
         String urlPath = jarUrl.getPath().replace("%20", " ");
-        if (urlPath.startsWith("file:/") && urlPath.split("!").length > 2) {
+        if (urlPath.startsWith("file:/") && urlPath.split("!", -1).length > 2) {
             // Locate jar file
             int index = urlPath.lastIndexOf("!/");
             Path jarFile = Paths.get(urlPath.substring("file:/".length(), index));

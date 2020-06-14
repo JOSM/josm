@@ -314,7 +314,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         String line;
                         while (result == null && (line = reader.readLine()) != null) {
                             if (line.contains("=")) {
-                                String[] tokens = line.split("=");
+                                String[] tokens = line.split("=", -1);
                                 if (tokens.length >= 2) {
                                     // Description, if available, contains exactly what we need
                                     if (descriptionField != null && descriptionField.equalsIgnoreCase(tokens[0])) {

@@ -243,7 +243,7 @@ public abstract class RequestHandler {
     }
 
     protected final String[] splitArg(String arg, Pattern splitter) {
-        return splitter.split(args != null ? args.get(arg) : "");
+        return splitter.split(args != null ? args.get(arg) : "", -1);
     }
 
     /**
@@ -258,7 +258,7 @@ public abstract class RequestHandler {
         if (uri.getRawQuery() == null) {
             return r;
         }
-        for (String kv : uri.getRawQuery().split("&")) {
+        for (String kv : uri.getRawQuery().split("&", -1)) {
             final String[] kvs = Utils.decodeUrl(kv).split("=", 2);
             r.put(kvs[0], kvs.length > 1 ? kvs[1] : null);
         }

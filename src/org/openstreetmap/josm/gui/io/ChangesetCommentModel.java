@@ -45,7 +45,7 @@ public class ChangesetCommentModel extends ChangeNotifier {
      * @since 13109
      */
     public List<String> findHashTags() {
-        return Arrays.stream(comment.split("\\s"))
+        return Arrays.stream(comment.split("\\s", -1))
                 .map(s -> Utils.strip(s, ",;"))
                 .filter(s -> s.matches("#[a-zA-Z][a-zA-Z_\\-0-9]+"))
                 .collect(Collectors.toList());

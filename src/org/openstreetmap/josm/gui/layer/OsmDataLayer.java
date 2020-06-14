@@ -796,7 +796,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
                             .findAny()
                             .orElse(k);
                     if (k.startsWith("extension")) {
-                        String[] chain = k.split(":");
+                        String[] chain = k.split(":", -1);
                         if (chain.length >= 3 && "segment".equals(chain[2])) {
                             segExts.addFlat(chain, v);
                         } else {

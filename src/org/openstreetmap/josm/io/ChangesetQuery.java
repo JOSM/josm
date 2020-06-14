@@ -479,7 +479,7 @@ public class ChangesetQuery {
         }
 
         protected Date[] parseTime(String value) throws ChangesetQueryUrlException {
-            String[] dates = value.split(",");
+            String[] dates = value.split(",", -1);
             if (dates.length == 0 || dates.length > 2)
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "time", value));
@@ -494,7 +494,7 @@ public class ChangesetQuery {
             if (value == null || value.isEmpty()) {
                 return Collections.<Long>emptySet();
             } else {
-                return Stream.of(value.split(",")).map(Long::valueOf).collect(Collectors.toSet());
+                return Stream.of(value.split(",", -1)).map(Long::valueOf).collect(Collectors.toSet());
             }
         }
 
@@ -559,9 +559,9 @@ public class ChangesetQuery {
 
         protected Map<String, String> createMapFromQueryString(String query) {
             Map<String, String> queryParams = new HashMap<>();
-            String[] keyValuePairs = query.split("&");
+            String[] keyValuePairs = query.split("&", -1);
             for (String keyValuePair: keyValuePairs) {
-                String[] kv = keyValuePair.split("=");
+                String[] kv = keyValuePair.split("=", -1);
                 queryParams.put(kv[0], kv.length > 1 ? kv[1] : "");
             }
             return queryParams;

@@ -357,7 +357,7 @@ public class CustomProjection extends AbstractProjection {
         }
 
         Pattern keyPattern = Pattern.compile("\\+(?<key>[a-zA-Z0-9_]+)(=(?<value>.*))?");
-        String[] parts = Utils.WHITE_SPACES_PATTERN.split(trimmedPref);
+        String[] parts = Utils.WHITE_SPACES_PATTERN.split(trimmedPref, -1);
         for (String part : parts) {
             Matcher m = keyPattern.matcher(part);
             if (m.matches()) {
@@ -510,7 +510,7 @@ public class CustomProjection extends AbstractProjection {
      * @throws ProjectionConfigurationException if the arguments cannot be parsed
      */
     public Datum parseToWGS84(String paramList, Ellipsoid ellps) throws ProjectionConfigurationException {
-        String[] numStr = paramList.split(",");
+        String[] numStr = paramList.split(",", -1);
 
         if (numStr.length != 3 && numStr.length != 7)
             throw new ProjectionConfigurationException(tr("Unexpected number of arguments for parameter ''towgs84'' (must be 3 or 7)"));
@@ -620,7 +620,7 @@ public class CustomProjection extends AbstractProjection {
      * @see CustomProjection#parseAngle(String, String)
      */
     public static Bounds parseBounds(String boundsStr) throws ProjectionConfigurationException {
-        String[] numStr = boundsStr.split(",");
+        String[] numStr = boundsStr.split(",", -1);
         if (numStr.length != 4)
             throw new ProjectionConfigurationException(tr("Unexpected number of arguments for parameter ''+bounds'' (must be 4)"));
         return new Bounds(parseAngle(numStr[1], "minlat (+bounds)"),

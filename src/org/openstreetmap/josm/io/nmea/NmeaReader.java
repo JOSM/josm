@@ -312,7 +312,7 @@ public class NmeaReader implements IGpxReader {
             // the bytes between the $ and the * are xored
             // if there is no * or other meanities it will throw
             // and result in a malformed packet.
-            String[] chkstrings = s.split("\\*");
+            String[] chkstrings = s.split("\\*", -1);
             if (chkstrings.length > 1) {
                 byte[] chb = chkstrings[0].getBytes(StandardCharsets.UTF_8);
                 int chk = 0;
@@ -328,7 +328,7 @@ public class NmeaReader implements IGpxReader {
                 ps.noChecksum++;
             }
             // now for the content
-            String[] e = chkstrings[0].split(",");
+            String[] e = chkstrings[0].split(",", -1);
             String accu;
 
             WayPoint currentwp = ps.pWp;

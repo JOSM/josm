@@ -1158,7 +1158,7 @@ public final class Functions {
      * @since 11247
      */
     public static boolean inside(Environment env, String codes) { // NO_UCD (unused code)
-        return Arrays.stream(codes.toUpperCase(Locale.ENGLISH).split(","))
+        return Arrays.stream(codes.toUpperCase(Locale.ENGLISH).split(",", -1))
                 .anyMatch(code -> Territories.isIso3166Code(code.trim(), center(env)));
     }
 

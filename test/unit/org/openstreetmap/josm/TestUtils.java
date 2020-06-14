@@ -597,8 +597,7 @@ public final class TestUtils {
      */
     public static List<String> getIgnoredErrorMessages(Class<?> integrationTest) throws IOException {
         return Arrays.stream(new WikiReader()
-                .read("https://josm.openstreetmap.de/wiki/IntegrationTestIgnores?format=txt")
-                .split("\\n"))
+                .read("https://josm.openstreetmap.de/wiki/IntegrationTestIgnores?format=txt").split("\\n", -1))
                 .filter(s -> s.startsWith("|| " + integrationTest.getSimpleName() + " ||"))
                 .map(s -> s.substring(s.indexOf("{{{") + 3, s.indexOf("}}}")))
                 .collect(Collectors.toList());
