@@ -474,7 +474,7 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
         if (discussion == null) {
             return Collections.emptyList();
         }
-        return new ArrayList<>(discussion);
+        return Collections.unmodifiableList(discussion);
     }
 
     /**

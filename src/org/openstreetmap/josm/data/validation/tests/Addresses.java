@@ -241,7 +241,7 @@ public class Addresses extends Test {
                 }
             }
             errors.addAll(result);
-            return result;
+            return Collections.unmodifiableList(result);
         }
         return Collections.emptyList();
     }

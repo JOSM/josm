@@ -210,7 +210,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 }
             } else if (answer != JOptionPane.NO_OPTION)
                 throw new UserCancelException();
-            return commands;
+            return Collections.unmodifiableCollection(commands);
         }
 
         return Collections.emptyList();

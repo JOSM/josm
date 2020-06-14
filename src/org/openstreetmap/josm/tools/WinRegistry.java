@@ -201,7 +201,7 @@ public final class WinRegistry {
             results.put(new String(name, StandardCharsets.UTF_8).trim(), value);
         }
         regCloseKey.invoke(root, getNumber(handles, 0));
-        return results;
+        return Collections.unmodifiableMap(results);
     }
 
     private static List<String> readStringSubKeys(Preferences root, int hkey, String key)
@@ -225,7 +225,7 @@ public final class WinRegistry {
             results.add(new String(name, StandardCharsets.UTF_8).trim());
         }
         regCloseKey.invoke(root, getNumber(handles, 0));
-        return results;
+        return Collections.unmodifiableList(results);
     }
 
     // utility

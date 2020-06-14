@@ -85,7 +85,7 @@ public final class ValUtil {
             cellNodes.add(cell);
             cells.add(cellWays.computeIfAbsent(cell, k -> new ArrayList<>()));
         }
-        return cells;
+        return Collections.unmodifiableList(cells);
     }
 
     /**

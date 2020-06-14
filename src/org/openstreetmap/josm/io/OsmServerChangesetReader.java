@@ -181,7 +181,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                 }
                 monitor.worked(1);
             }
-            return ret;
+            return Collections.unmodifiableList(ret);
         } catch (OsmTransferException e) {
             throw e;
         } catch (IllegalDataException e) {

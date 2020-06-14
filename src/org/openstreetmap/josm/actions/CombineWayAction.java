@@ -259,7 +259,7 @@ public class CombineWayAction extends JosmAction {
         Collection<JoinedWay> list = Multipolygon.joinWays(toJoin);
         if (list.size() == 1) {
             // ways form a single line string
-            return new ArrayList<>(list.iterator().next().getNodes());
+            return Collections.unmodifiableList(new ArrayList<>(list.iterator().next().getNodes()));
         }
         return Collections.emptyList();
     }

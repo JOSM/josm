@@ -1107,7 +1107,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             TileAnchor anchorScreen = coordinateConverter.getScreenAnchorForTile(tile);
             drawImageInside(g, img, anchorImage, anchorScreen, clip);
         }
-        return missedTiles;
+        return Collections.unmodifiableList(missedTiles);
     }
 
     private static TileAnchor getAnchor(Tile tile, BufferedImage image) {

@@ -3,15 +3,12 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.awt.Color;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,6 +37,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.RotationAngle;
+import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -475,15 +473,12 @@ public final class Functions {
     public static List<String> parent_tags(final Environment env, String key) { // NO_UCD (unused code)
         if (env.parent == null) {
             if (env.osm != null) {
-                final Collection<String> tags = new TreeSet<>(AlphanumComparator.getInstance());
                 // we don't have a matched parent, so just search all referrers
-                for (IPrimitive parent : env.osm.getReferrers()) {
-                    String value = parent.get(key);
-                    if (value != null) {
-                        tags.add(value);
-                    }
-                }
-                return new ArrayList<>(tags);
+                return env.osm.getReferrers().stream().map(parent -> parent.get(key))
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .sorted(AlphanumComparator.getInstance())
+                        .collect(StreamUtils.toUnmodifiableList());
             }
             return Collections.emptyList();
         }

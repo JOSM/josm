@@ -374,7 +374,7 @@ public class NodeGraph {
                 result.addAll(e.getValue());
             }
         }
-        return result;
+        return Collections.unmodifiableSet(result);
     }
 
 }

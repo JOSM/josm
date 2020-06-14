@@ -408,7 +408,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 ways.stream().filter(w -> !dataSet.containsWay(w)).forEachOrdered(col::add);
                 rels.stream().filter(r -> !dataSet.containsRelation(r)).forEachOrdered(col::add);
             }
-            return col;
+            return Collections.unmodifiableCollection(col);
         }
     }
 

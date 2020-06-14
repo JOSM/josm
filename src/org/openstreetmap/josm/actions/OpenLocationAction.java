@@ -282,7 +282,7 @@ public class OpenLocationAction extends JosmAction {
                 Logging.error(e);
             }
         }
-        return result;
+        return Collections.unmodifiableList(result);
     }
 
     /**

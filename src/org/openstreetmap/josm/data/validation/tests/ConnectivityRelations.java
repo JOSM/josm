@@ -119,7 +119,7 @@ public class ConnectivityRelations extends Test {
             }
             result.put(laneNumber, connections);
         }
-        return result;
+        return Collections.unmodifiableMap(result);
     }
 
     @Override

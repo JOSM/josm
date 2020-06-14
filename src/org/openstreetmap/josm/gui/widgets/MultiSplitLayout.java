@@ -818,7 +818,7 @@ public class MultiSplitLayout implements LayoutManager {
                     dividers.addAll(dividersThatOverlap(child, r));
                 }
             }
-            return dividers;
+            return Collections.unmodifiableList(dividers);
         } else
             return Collections.emptyList();
     }
