@@ -64,6 +64,18 @@ public final class TaggingPresetReader {
     public static final String PRESET_MIME_TYPES =
             "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
+    /**
+     * The XML namespace for the tagging presets
+     * @since 16640
+     */
+    public static final String NAMESPACE = Config.getUrls().getXMLBase() + "/tagging-preset-1.0";
+
+    /**
+     * The internal resource URL of the XML schema file to be used with {@link CachedFile}
+     * @since 16640
+     */
+    public static final String SCHEMA_SOURCE = "resource://data/tagging-preset.xsd";
+
     private static volatile File zipIcons;
     private static volatile boolean loadIcons = true;
 
@@ -182,7 +194,7 @@ public final class TaggingPresetReader {
         final Deque<Iterator<Object>> lastIdIterators = new ArrayDeque<>();
 
         if (validate) {
-            parser.startWithValidation(in, Config.getUrls().getXMLBase()+"/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
+            parser.startWithValidation(in, NAMESPACE, SCHEMA_SOURCE);
         } else {
             parser.start(in);
         }
