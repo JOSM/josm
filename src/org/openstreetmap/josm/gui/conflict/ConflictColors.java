@@ -81,6 +81,7 @@ public enum ConflictColors {
     /** Conflict foreground: remove member */
     FGCOLOR_MEMBER_REMOVE(marktr("Conflict foreground: remove member"), Color.black);
 
+    @SuppressWarnings("ImmutableEnumChecker")
     private final NamedColorProperty property;
 
     ConflictColors(String name, Color defaultColor) {

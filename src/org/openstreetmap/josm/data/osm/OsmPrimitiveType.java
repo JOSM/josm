@@ -31,6 +31,7 @@ public enum OsmPrimitiveType {
     private final String apiTypeName;
     private final Class<? extends OsmPrimitive> osmClass;
     private final Class<? extends PrimitiveData> dataClass;
+    @SuppressWarnings("ImmutableEnumChecker")
     private final UniqueIdGenerator idGenerator;
 
     OsmPrimitiveType(String apiTypeName, Class<? extends OsmPrimitive> osmClass, Class<? extends PrimitiveData> dataClass,

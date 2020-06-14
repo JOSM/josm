@@ -38,6 +38,7 @@ class TwoColumnDiff {
             SAME(new Color(234, 234, 234)),
             EMPTY(new Color(234, 234, 234));
 
+            @SuppressWarnings("ImmutableEnumChecker") // see https://github.com/google/error-prone/pull/1682
             private final Color color;
             DiffItemType(Color color) {
                 this.color = color;

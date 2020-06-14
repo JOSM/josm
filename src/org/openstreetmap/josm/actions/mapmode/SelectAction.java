@@ -108,6 +108,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         merge_to_node(/* ICON(cursor/)*/ "crosshair", /* ICON(cursor/modifier/)*/"joinnode"),
         move(Cursor.MOVE_CURSOR);
 
+        @SuppressWarnings("ImmutableEnumChecker")
         private final Cursor c;
         SelectActionCursor(String main, String sub) {
             c = ImageProvider.getCursor(main, sub);

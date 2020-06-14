@@ -78,7 +78,9 @@ public enum PaintColors {
      */
     AREA_TEXT(marktr("areatext"), Color.LIGHT_GRAY);
 
+    @SuppressWarnings("ImmutableEnumChecker")
     private final NamedColorProperty baseProperty;
+    @SuppressWarnings("ImmutableEnumChecker")
     private final CachingProperty<Color> property;
 
     PaintColors(String name, Color defaultColor) {

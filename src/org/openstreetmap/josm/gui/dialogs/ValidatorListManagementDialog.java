@@ -48,9 +48,10 @@ public class ValidatorListManagementDialog extends ExtendedDialog {
         OK(0, tr("OK"), new ImageProvider("ok")),
         CANCEL(1, tr("Cancel"), new ImageProvider("cancel"));
 
-        private int index;
-        private String name;
-        private ImageIcon icon;
+        private final int index;
+        private final String name;
+        @SuppressWarnings("ImmutableEnumChecker")
+        private final ImageIcon icon;
 
         BUTTONS(int index, String name, ImageProvider image) {
             this.index = index;

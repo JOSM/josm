@@ -181,6 +181,7 @@ public final class ConditionFactory {
 
         static final Set<Op> NEGATED_OPS = EnumSet.of(NEQ, NREGEX);
 
+        @SuppressWarnings("ImmutableEnumChecker")
         private final BiPredicate<String, String> function;
 
         private final boolean negated;

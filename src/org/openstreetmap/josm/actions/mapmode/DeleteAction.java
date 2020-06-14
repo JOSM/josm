@@ -74,6 +74,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         way_with_references(/* ICON(cursor/modifier/) */ "delete_way_normal"),
         way_with_nodes(/* ICON(cursor/modifier/) */ "delete_way_node_only");
 
+        @SuppressWarnings("ImmutableEnumChecker")
         private final Cursor c;
 
         DeleteMode(String cursorName) {

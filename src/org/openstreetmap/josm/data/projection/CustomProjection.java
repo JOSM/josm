@@ -184,6 +184,7 @@ public class CustomProjection extends AbstractProjection {
         NORTH(LatLon.NORTH_POLE),
         SOUTH(LatLon.SOUTH_POLE);
 
+        @SuppressWarnings("ImmutableEnumChecker")
         private final LatLon latlon;
 
         Polarity(LatLon latlon) {

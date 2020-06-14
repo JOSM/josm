@@ -250,8 +250,8 @@ public class OptionParser {
          */
         MULTIPLE(0, Integer.MAX_VALUE);
 
-        private int min;
-        private int max;
+        private final int min;
+        private final int max;
 
         OptionCount(int min, int max) {
             this.min = min;

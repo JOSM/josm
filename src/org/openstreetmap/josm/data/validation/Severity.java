@@ -30,6 +30,7 @@ public enum Severity {
     private final String icon;
 
     /** Associated color */
+    @SuppressWarnings("ImmutableEnumChecker") // see https://github.com/google/error-prone/pull/1682
     private final Color color;
 
     /**

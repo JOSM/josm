@@ -5,10 +5,6 @@ import static org.openstreetmap.josm.gui.conflict.pair.ListRole.MY_ENTRIES;
 import static org.openstreetmap.josm.gui.conflict.pair.ListRole.THEIR_ENTRIES;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
-
-import org.openstreetmap.josm.tools.Utils;
-
 /**
  * Enumeration of the possible comparison pairs
  * @since 1650
@@ -32,11 +28,13 @@ public enum ComparePairType {
 
     /** the localized display name */
     private final String displayName;
-    private final ListRole[] participatingRoles;
+    private final ListRole participatingRole1;
+    private final ListRole participatingRole2;
 
-    ComparePairType(String displayName, ListRole... participatingRoles) {
+    ComparePairType(String displayName, ListRole participatingRole1, ListRole participatingRole2) {
         this.displayName = displayName;
-        this.participatingRoles = Utils.copyArray(participatingRoles);
+        this.participatingRole1 = participatingRole1;
+        this.participatingRole2 = participatingRole2;
     }
 
     /**
@@ -55,7 +53,7 @@ public enum ComparePairType {
      * @return true, if <code>role</code> is participating in this comparison pair; false, otherwise
      */
     public boolean isParticipatingIn(ListRole role) {
-        return Arrays.stream(participatingRoles).anyMatch(r -> r == role);
+        return participatingRole1 == role || participatingRole2 == role;
     }
 
     /**
@@ -64,7 +62,7 @@ public enum ComparePairType {
      * @return  the pair of list roles
      */
     public ListRole[] getParticipatingRoles() {
-        return Utils.copyArray(participatingRoles);
+        return new ListRole[]{participatingRole1, participatingRole2};
     }
 
     /**
@@ -77,9 +75,6 @@ public enum ComparePairType {
     public ListRole getOppositeRole(ListRole role) {
         if (!isParticipatingIn(role))
             throw new IllegalStateException(tr("Role {0} is not participating in compare pair {1}.", role.toString(), this.toString()));
-        if (participatingRoles[0] == role)
-            return participatingRoles[1];
-        else
-            return participatingRoles[0];
+        return participatingRole1 == role ? participatingRole2 : participatingRole1;
     }
 }
