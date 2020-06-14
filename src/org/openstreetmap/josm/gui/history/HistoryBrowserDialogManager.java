@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -41,19 +40,14 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  */
 public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
-    static final class UnloadedHistoryPredicate implements Predicate<PrimitiveId> {
-        private final HistoryDataSet hds = HistoryDataSet.getInstance();
-
-        @Override
-        public boolean test(PrimitiveId p) {
-            History h = hds.getHistory(p);
-            if (h == null)
-                // reload if the history is not in the cache yet
-                return true;
-            else
-                // reload if the history object of the selected object is not in the cache yet
-                return !p.isNew() && h.getByVersion(p.getUniqueId()) == null;
-        }
+    private static boolean isUnloaded(PrimitiveId p) {
+        History h = HistoryDataSet.getInstance().getHistory(p);
+        if (h == null)
+            // reload if the history is not in the cache yet
+            return true;
+        else
+            // reload if the history object of the selected object is not in the cache yet
+            return !p.isNew() && h.getByVersion(p.getUniqueId()) == null;
     }
 
     private static final String WINDOW_GEOMETRY_PREF = HistoryBrowserDialogManager.class.getName() + ".geometry";
@@ -61,10 +55,6 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     private static HistoryBrowserDialogManager instance;
 
     private final LinkedHashMap<Long, HistoryBrowserDialog> dialogs = new LinkedHashMap<>();
-
-    private final Predicate<PrimitiveId> unloadedHistoryPredicate = new UnloadedHistoryPredicate();
-
-    private final Predicate<PrimitiveId> notNewPredicate = p -> !p.isNew();
 
     private static final List<HistoryHook> hooks = new ArrayList<>();
 
@@ -216,7 +206,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     public void showHistory(Component parent, final Collection<? extends PrimitiveId> primitives) {
         final List<PrimitiveId> realPrimitives = new ArrayList<>(primitives);
         hooks.forEach(h -> h.modifyRequestedIds(realPrimitives));
-        final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(realPrimitives, notNewPredicate);
+        final Collection<? extends PrimitiveId> notNewPrimitives = SubclassFilteredCollection.filter(realPrimitives, p1 -> !p1.isNew());
         if (notNewPrimitives.isEmpty()) {
             JOptionPane.showMessageDialog(
                     parent,
@@ -236,7 +226,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
             return;
         }
 
-        Collection<? extends PrimitiveId> toLoad = SubclassFilteredCollection.filter(notNewPrimitives, unloadedHistoryPredicate);
+        Collection<? extends PrimitiveId> toLoad = SubclassFilteredCollection.filter(notNewPrimitives, HistoryBrowserDialogManager::isUnloaded);
         if (!toLoad.isEmpty()) {
             MainApplication.worker.submit(new HistoryLoadTask(parent).addPrimitiveIds(toLoad));
         }

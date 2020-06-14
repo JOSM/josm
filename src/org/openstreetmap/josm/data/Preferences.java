@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -182,9 +181,6 @@ public class Preferences extends AbstractPreferences {
      * setting objects can be null.
      */
     protected final SortedMap<String, Setting<?>> defaultsMap = new TreeMap<>();
-
-    private final Predicate<Entry<String, Setting<?>>> NO_DEFAULT_SETTINGS_ENTRY =
-            e -> !e.getValue().equals(defaultsMap.get(e.getKey()));
 
     /**
      * Indicates whether {@link #init(boolean)} completed successfully.
@@ -419,7 +415,7 @@ public class Preferences extends AbstractPreferences {
      * @throws IOException if any I/O error occurs
      */
     public synchronized void save() throws IOException {
-        save(getPreferenceFile(), settingsMap.entrySet().stream().filter(NO_DEFAULT_SETTINGS_ENTRY), false);
+        save(getPreferenceFile(), settingsMap.entrySet().stream().filter(e -> !e.getValue().equals(defaultsMap.get(e.getKey()))), false);
     }
 
     /**
