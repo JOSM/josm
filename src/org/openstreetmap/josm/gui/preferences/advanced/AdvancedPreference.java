@@ -145,9 +145,9 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             return -1;
         if (o2.isChanged() && !o1.isChanged())
             return 1;
-        if (!(o1.isDefault()) && o2.isDefault())
+        if (!o1.isDefault() && o2.isDefault())
             return -1;
-        if (!(o2.isDefault()) && o1.isDefault())
+        if (!o2.isDefault() && o1.isDefault())
             return 1;
         return o1.compareTo(o2);
     };
@@ -279,7 +279,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(!saveFileFlag, !saveFileFlag, title, filter,
                 JFileChooser.FILES_ONLY, "customsettings.lastDirectory");
         if (fc != null) {
-            File[] sel = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : (new File[]{fc.getSelectedFile()});
+            File[] sel = fc.isMultiSelectionEnabled() ? fc.getSelectedFiles() : new File[]{fc.getSelectedFile()};
             if (sel.length == 1 && !sel[0].getName().contains("."))
                 sel[0] = new File(sel[0].getAbsolutePath()+".xml");
             return sel;

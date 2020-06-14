@@ -487,7 +487,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         // iterate over the buttons, add change listener to any change event
         for (Enumeration<AbstractButton> button = colorGroup.getElements(); button.hasMoreElements();) {
-            (button.nextElement()).addChangeListener(e -> {
+            button.nextElement().addChangeListener(e -> {
                 colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
                 colorTypeHeatMapTune.setEnabled(colorTypeHeatMap.isSelected());
                 colorTypeHeatMapPoints.setEnabled(colorTypeHeatMap.isSelected());

@@ -100,8 +100,8 @@ public final class SaveAction extends SaveActionBase {
     protected void updateEnabledState() {
         Layer activeLayer = getLayerManager().getActiveLayer();
         boolean en = activeLayer != null
-                && activeLayer.isSavable() && (!(activeLayer.getAssociatedFile() != null
-                && activeLayer instanceof SaveToFile && !((SaveToFile) activeLayer).requiresSaveToFile()));
+                && activeLayer.isSavable() && !(activeLayer.getAssociatedFile() != null
+                && activeLayer instanceof SaveToFile && !((SaveToFile) activeLayer).requiresSaveToFile());
         GuiHelper.runInEDT(() -> setEnabled(en));
     }
 

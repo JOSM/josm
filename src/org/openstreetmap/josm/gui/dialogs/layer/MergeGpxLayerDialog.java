@@ -132,7 +132,7 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
             int newRow = row + (moveUp ? -1 : 1);
 
             if ((row == 0 || newRow == 0)
-                    && (!ConditionalOptionPaneUtil.showConfirmationDialog(
+                    && !ConditionalOptionPaneUtil.showConfirmationDialog(
                             "gpx_target_change",
                             getParent(),
                             new JLabel("<html>" +
@@ -141,7 +141,7 @@ public class MergeGpxLayerDialog extends ExtendedDialog {
                             tr("Information"),
                             JOptionPane.OK_CANCEL_OPTION,
                             JOptionPane.INFORMATION_MESSAGE,
-                            JOptionPane.OK_OPTION))) {
+                            JOptionPane.OK_OPTION)) {
                 return;
             }
 

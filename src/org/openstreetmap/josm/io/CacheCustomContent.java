@@ -130,7 +130,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     private byte[] updateForce() throws T {
         this.data = updateData();
         saveToDisk();
-        Config.getPref().putInt("cache." + ident, (int) (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
+        Config.getPref().putInt("cache." + ident, (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         return data;
     }
 

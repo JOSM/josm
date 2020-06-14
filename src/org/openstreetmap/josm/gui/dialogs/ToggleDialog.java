@@ -855,7 +855,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * @return {@code true} if this dialog is docked and expanded
      */
     public boolean isDialogInDefaultView() {
-        return isShowing && isDocked && (!isCollapsed);
+        return isShowing && isDocked && !isCollapsed;
     }
 
     /**

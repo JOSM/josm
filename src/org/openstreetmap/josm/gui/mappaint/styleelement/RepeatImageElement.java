@@ -154,6 +154,6 @@ public class RepeatImageElement extends StyleElement {
     public String toString() {
         return "RepeatImageStyle{" + super.toString() + "pattern=[" + pattern +
                 "], offset=" + offset + ", spacing=" + spacing +
-                ", phase=" + (-phase) + ", align=" + align + '}';
+                ", phase=" + -phase + ", align=" + align + '}';
     }
 }

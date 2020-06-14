@@ -173,7 +173,7 @@ public class Storage<T> extends AbstractSet<T> {
      */
     public Storage(Hash<? super T, ? super T> ha, int capacity, boolean safeIterator) {
         this.hash = ha;
-        int cap = 1 << (int) (Math.ceil(Math.log(capacity/LOAD_FACTOR) / Math.log(2)));
+        int cap = 1 << (int) Math.ceil(Math.log(capacity/LOAD_FACTOR) / Math.log(2));
         @SuppressWarnings("unchecked")
         T[] newData = (T[]) new Object[cap];
         data = newData;

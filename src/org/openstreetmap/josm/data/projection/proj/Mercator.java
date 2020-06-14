@@ -83,7 +83,7 @@ public class Mercator extends AbstractProj implements IScaleFactorProvider {
         if (params.lat0 != null) {
             final double lat0 = Utils.toRadians(params.lat0);
             final double sinPhi = Math.sin(lat0);
-            scaleFactor *= (Math.cos(lat0) / (Math.sqrt(1 - e2 * sinPhi * sinPhi)));
+            scaleFactor *= Math.cos(lat0) / Math.sqrt(1 - e2 * sinPhi * sinPhi);
         }
     }
 

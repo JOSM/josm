@@ -43,7 +43,7 @@ public class DownloadSessionTask extends AbstractDownloadTask<Object> {
 
     @Override
     public Future<?> loadUrl(DownloadParams settings, String url, ProgressMonitor progressMonitor) {
-        if (url != null && (url.matches(PATTERN_SESSION))) {
+        if (url != null && url.matches(PATTERN_SESSION)) {
             try {
                 URL u = new URL(url);
                 loader = new Loader(HttpClient.create(u).connect().getContent(), u.toURI(), url.endsWith(".joz"));

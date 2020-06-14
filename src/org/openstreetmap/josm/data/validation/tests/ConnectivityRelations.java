@@ -307,7 +307,7 @@ public class ConnectivityRelations extends Test {
      */
     private static boolean checkMemberTagsForImpliedConnectivity(Relation relation, Map<String, Integer> roleLanes) {
         // The members have different lane counts
-        if (roleLanes.containsKey(TO) && roleLanes.containsKey(FROM) && (!roleLanes.get(TO).equals(roleLanes.get(FROM)))) {
+        if (roleLanes.containsKey(TO) && roleLanes.containsKey(FROM) && !roleLanes.get(TO).equals(roleLanes.get(FROM))) {
             return false;
         }
 

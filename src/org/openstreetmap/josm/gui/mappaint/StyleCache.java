@@ -20,7 +20,7 @@ public final class StyleCache {
     /**
      * An empty style cache entry
      */
-    public static final StyleCache EMPTY_STYLECACHE = (new StyleCache()).intern();
+    public static final StyleCache EMPTY_STYLECACHE = new StyleCache().intern();
 
     private static final int PLAIN = 0;
     private static final int SELECTED = 1;

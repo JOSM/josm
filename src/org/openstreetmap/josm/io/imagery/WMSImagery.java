@@ -484,7 +484,7 @@ public class WMSImagery {
                         // TODO should we handle also POST?
                         if ("GET".equalsIgnoreCase(mode) && getMapUrl != null && !"".equals(getMapUrl)) {
                             try {
-                                String query = (new URL(getMapUrl)).getQuery();
+                                String query = new URL(getMapUrl).getQuery();
                                 if (query == null) {
                                     this.getMapUrl = getMapUrl + "?";
                                 } else {

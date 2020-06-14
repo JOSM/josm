@@ -75,7 +75,7 @@ public class CassiniSoldner extends AbstractProj {
             double sinphi = Math.sin(phi);
             double cosphi = Math.cos(phi);
 
-            double n = 1.0 / (Math.sqrt(1.0 - e2 * sinphi * sinphi));
+            double n = 1.0 / Math.sqrt(1.0 - e2 * sinphi * sinphi);
             double tn = Math.tan(phi);
             double t = tn * tn;
             double a1 = lam * cosphi;

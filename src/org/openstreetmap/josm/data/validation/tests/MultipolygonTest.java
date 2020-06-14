@@ -629,9 +629,9 @@ public class MultipolygonTest extends Test {
         boolean hasUnexpectedWayRole = false;
         for (RelationMember rm : r.getMembers()) {
             if (rm.isWay()) {
-                if (rm.hasRole() && !(rm.hasRole("inner", "outer")))
+                if (rm.hasRole() && !rm.hasRole("inner", "outer"))
                     hasUnexpectedWayRole = true;
-                if (!(rm.hasRole("inner", "outer")) || !rm.hasRole()) {
+                if (!rm.hasRole("inner", "outer") || !rm.hasRole()) {
                     tmpErrors.add(TestError.builder(this, Severity.ERROR, WRONG_MEMBER_ROLE)
                             .message(tr("Role for multipolygon way member should be inner or outer"))
                             .primitives(Arrays.asList(r, rm.getMember()))

@@ -343,13 +343,13 @@ public class MultiSplitLayout implements LayoutManager {
 
     private static Rectangle boundsWithYandHeight(Rectangle bounds, double y, double height) {
         Rectangle r = new Rectangle();
-        r.setBounds((int) (bounds.getX()), (int) y, (int) (bounds.getWidth()), (int) height);
+        r.setBounds((int) bounds.getX(), (int) y, (int) bounds.getWidth(), (int) height);
         return r;
     }
 
     private static Rectangle boundsWithXandWidth(Rectangle bounds, double x, double width) {
         Rectangle r = new Rectangle();
-        r.setBounds((int) x, (int) (bounds.getY()), (int) width, (int) (bounds.getHeight()));
+        r.setBounds((int) x, (int) bounds.getY(), (int) width, (int) bounds.getHeight());
         return r;
     }
 

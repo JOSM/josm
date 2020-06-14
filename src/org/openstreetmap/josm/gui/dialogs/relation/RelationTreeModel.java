@@ -61,7 +61,7 @@ public class RelationTreeModel implements TreeModel {
         if (parent == null) return null;
         int count = 0;
         for (RelationMember member : parent.getMembers()) {
-            if (!(member.isRelation())) {
+            if (!member.isRelation()) {
                 continue;
             }
             if (count == idx)
@@ -86,7 +86,7 @@ public class RelationTreeModel implements TreeModel {
         if (parent == null || child == null) return -1;
         int idx = 0;
         for (RelationMember member : parent.getMembers()) {
-            if (!(member.isRelation())) {
+            if (!member.isRelation()) {
                 continue;
             }
             if (member.getMember() == child) return idx;

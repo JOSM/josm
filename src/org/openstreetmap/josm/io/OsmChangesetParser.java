@@ -204,7 +204,7 @@ public final class OsmChangesetParser {
                 if (v == null) {
                     throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
                 }
-                if (!("0.6".equals(v))) {
+                if (!"0.6".equals(v)) {
                     throwException(tr("Unsupported version: {0}", v));
                 }
                 break;

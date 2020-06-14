@@ -198,7 +198,7 @@ public class RelationNodeMap {
     private Node processBackwardIfEndOfLoopReached(Integer way) { //find if we didn't reach end of the loop (and process backward part)
         if (onewayReverseMap.ways.containsKey(way)) {
             for (Node n : onewayReverseMap.ways.get(way)) {
-                if ((map.nodes.containsKey(n))
+                if (map.nodes.containsKey(n)
                         || (onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1))
                     return n;
                 if (firstCircular != null && firstCircular == n)

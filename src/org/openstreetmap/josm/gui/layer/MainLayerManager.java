@@ -291,7 +291,7 @@ public class MainLayerManager extends LayerManager {
 
     @Override
     protected Collection<Layer> realRemoveSingleLayer(Layer layer) {
-        if ((layer instanceof OsmDataLayer) && (((OsmDataLayer) layer).isUploadInProgress())) {
+        if (layer instanceof OsmDataLayer && ((OsmDataLayer) layer).isUploadInProgress()) {
             GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
                     tr("Trying to delete the layer with background upload. Please wait until the upload is finished.")));
 

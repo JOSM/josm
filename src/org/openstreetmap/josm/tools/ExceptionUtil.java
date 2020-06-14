@@ -648,7 +648,7 @@ public final class ExceptionUtil {
      */
     public static <T> T getNestedException(Exception e, Class<T> nestedClass) {
         Throwable t = e;
-        while (t != null && !(nestedClass.isInstance(t))) {
+        while (t != null && !nestedClass.isInstance(t)) {
             t = t.getCause();
         }
         if (t == null)

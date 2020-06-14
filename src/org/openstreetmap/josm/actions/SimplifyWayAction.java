@@ -172,7 +172,7 @@ public class SimplifyWayAction extends JosmAction {
                 tr("Simplify way"), tr("Simplify"),
                 auto ? tr("Proceed without simplifying") : tr("Cancel"))
                 .setContent(p)
-                .configureContextsensitiveHelp(("Action/SimplifyWay"), true);
+                .configureContextsensitiveHelp("Action/SimplifyWay", true);
         if (auto) {
             ed.setButtonIcons("simplify", "ok");
         } else {

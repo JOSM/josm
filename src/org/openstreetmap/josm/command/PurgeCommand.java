@@ -374,7 +374,7 @@ public class PurgeCommand extends Command {
             for (OsmPrimitive osm : toPurgeChecked) {
                 for (OsmPrimitive parent : osm.getReferrers()) {
                     if (parent instanceof Relation
-                            && !(toPurgeChecked.contains(parent))
+                            && !toPurgeChecked.contains(parent)
                             && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relSet)) {
                         relSet.add((Relation) parent);
                     }
@@ -385,7 +385,7 @@ public class PurgeCommand extends Command {
             List<Relation> relLst = new ArrayList<>(relSet);
             for (int i = 0; i < relLst.size(); ++i) { // foreach loop not applicable since list gets extended while looping over it
                 for (OsmPrimitive parent : relLst.get(i).getReferrers()) {
-                    if (!(toPurgeChecked.contains(parent))
+                    if (!toPurgeChecked.contains(parent)
                             && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relLst)) {
                         relLst.add((Relation) parent);
                     }

@@ -58,9 +58,9 @@ public class SevenParameterDatum extends AbstractDatum {
     @Override
     public LatLon fromWGS84(LatLon ll) {
         double[] xyz = Ellipsoid.WGS84.latLon2Cart(ll);
-        double x = (1-s)*(-dx + xyz[0] + ((-dz+xyz[2])*(-ry) - (-dy+xyz[1])*(-rz)));
-        double y = (1-s)*(-dy + xyz[1] + ((-dx+xyz[0])*(-rz) - (-dz+xyz[2])*(-rx)));
-        double z = (1-s)*(-dz + xyz[2] + ((-dy+xyz[1])*(-rx) - (-dx+xyz[0])*(-ry)));
+        double x = (1-s)*(-dx + xyz[0] + ((-dz+xyz[2])* -ry - (-dy+xyz[1])* -rz));
+        double y = (1-s)*(-dy + xyz[1] + ((-dx+xyz[0])* -rz - (-dz+xyz[2])* -rx));
+        double z = (1-s)*(-dz + xyz[2] + ((-dy+xyz[1])* -rx - (-dx+xyz[0])* -ry));
         return this.ellps.cart2LatLon(x, y, z);
     }
 }

@@ -37,7 +37,7 @@ public final class TextTagParser {
             }
         }
         String text = k.substring(1, k.length()-1);
-        return (new TextAnalyzer(text)).parseString("\r\t\n");
+        return new TextAnalyzer(text).parseString("\r\t\n");
     }
 
     /**

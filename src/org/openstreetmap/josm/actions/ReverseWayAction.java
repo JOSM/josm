@@ -156,7 +156,7 @@ public final class ReverseWayAction extends JosmAction {
 
         Collection<Command> corrCmds = Collections.<Command>emptyList();
         if (Config.getPref().getBoolean("tag-correction.reverse-way", true)) {
-            corrCmds = (new ReverseWayTagCorrector()).execute(w, wnew);
+            corrCmds = new ReverseWayTagCorrector().execute(w, wnew);
         }
         return new ReverseWayResult(wnew, corrCmds, new ChangeCommand(w, wnew));
     }

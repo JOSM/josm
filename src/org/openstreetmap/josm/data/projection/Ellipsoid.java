@@ -303,11 +303,11 @@ public final class Ellipsoid {
         final double n2n3 = n2 - n3;
         final double n3n4 = n3 - n4;
         final double n4n5 = n4 - n5;
-        final double ap = a * (1.0 - n + (5.0 / 4.0) * (n2n3) + (81.0 / 64.0) * (n4n5));
-        final double bp = (3.0 / 2.0) * a * (n1n2 + (7.0 / 8.0) * (n3n4) + (55.0 / 64.0) * n5);
-        final double cp = (15.0 / 16.0) * a * (n2n3 + (3.0 / 4.0) * (n4n5));
+        final double ap = a * (1.0 - n + (5.0 / 4.0) * n2n3 + (81.0 / 64.0) * n4n5);
+        final double bp = (3.0 / 2.0) * a * (n1n2 + (7.0 / 8.0) * n3n4 + (55.0 / 64.0) * n5);
+        final double cp = (15.0 / 16.0) * a * (n2n3 + (3.0 / 4.0) * n4n5);
         final double dp = (35.0 / 48.0) * a * (n3n4 + (11.0 / 16.0) * n5);
-        final double ep = (315.0 / 512.0) * a * (n4n5);
+        final double ep = (315.0 / 512.0) * a * n4n5;
         return ap * phi - bp * sin2Phi + cp * sin4Phi - dp * sin6Phi + ep * sin8Phi;
     }
 

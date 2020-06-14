@@ -1041,7 +1041,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         nearestList.addAll(nlist);
                     }
                 } else {
-                    if (distSq-minDistSq < (4)*(4)) {
+                    if (distSq-minDistSq < 16) {
                         nearestList.addAll(nlist);
                     }
                 }

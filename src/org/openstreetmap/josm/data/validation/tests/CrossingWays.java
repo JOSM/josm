@@ -232,7 +232,7 @@ public abstract class CrossingWays extends Test {
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
             return super.isPrimitiveUsable(p) && p.hasKey("boundary") && !p.hasTag("boundary", "protected_area")
-                    && (!(p instanceof Relation) || (((Relation) p).isMultipolygon()));
+                    && (!(p instanceof Relation) || p.isMultipolygon());
         }
 
         @Override

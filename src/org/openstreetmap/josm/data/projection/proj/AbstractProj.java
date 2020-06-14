@@ -125,7 +125,7 @@ public abstract class AbstractProj implements Proj {
               (en1 + sphi *
               (en2 + sphi *
               (en3 + sphi *
-              (en4))));
+              en4)));
     }
 
     /**

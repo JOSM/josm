@@ -736,7 +736,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     private void checkSingleTagValueSimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key, String value) {
         if (!checkValues || value == null)
             return;
-        if ((containsUnwantedNonPrintingControlCharacter(value)) && !withErrors.contains(p, "ICV")) {
+        if (containsUnwantedNonPrintingControlCharacter(value) && !withErrors.contains(p, "ICV")) {
             errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_VALUE)
                     .message(tr("Tag value contains non-printing (usually invisible) character"), s, key)
                     .primitives(p)
@@ -760,7 +760,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .build());
             withErrors.put(p, "LV");
         }
-        if ((value.trim().isEmpty()) && !withErrors.contains(p, "EV")) {
+        if (value.trim().isEmpty() && !withErrors.contains(p, "EV")) {
             errors.add(TestError.builder(this, Severity.WARNING, EMPTY_VALUES)
                     .message(tr("Tags with empty values"), s, key)
                     .primitives(p)
@@ -794,7 +794,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     private void checkSingleTagKeySimple(MultiMap<OsmPrimitive, String> withErrors, OsmPrimitive p, String s, String key) {
         if (!checkKeys || key == null)
             return;
-        if ((containsUnwantedNonPrintingControlCharacter(key)) && !withErrors.contains(p, "ICK")) {
+        if (containsUnwantedNonPrintingControlCharacter(key) && !withErrors.contains(p, "ICK")) {
             errors.add(TestError.builder(this, Severity.WARNING, LOW_CHAR_KEY)
                     .message(tr("Tag key contains non-printing character"), s, key)
                     .primitives(p)
