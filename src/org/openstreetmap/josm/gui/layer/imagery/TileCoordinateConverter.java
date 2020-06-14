@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.imagery;
 
+import java.awt.GraphicsConfiguration;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -8,6 +9,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
@@ -34,6 +36,7 @@ public class TileCoordinateConverter {
     private final MapView mapView;
     private final TileSourceDisplaySettings settings;
     private final TileSource tileSource;
+    private final AffineTransform transform;
 
     /**
      * Create a new coordinate converter for the map view.
@@ -46,6 +49,9 @@ public class TileCoordinateConverter {
         this.mapView = Objects.requireNonNull(mapView, "mapView");
         this.tileSource = Objects.requireNonNull(tileSource, "tileSource");
         this.settings = Objects.requireNonNull(settings, "settings");
+        this.transform = Optional.ofNullable(mapView.getGraphicsConfiguration())
+                .map(GraphicsConfiguration::getDefaultTransform)
+                .orElseGet(AffineTransform::new);
     }
 
     private MapViewPoint pos(ICoordinate ll) {
@@ -183,7 +189,6 @@ public class TileCoordinateConverter {
             t1 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(topLeftEN), zoom);
             t2 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(botRightEN), zoom);
         }
-        AffineTransform transform = mapView.getGraphicsConfiguration().getDefaultTransform();
         int screenPixels = (int) (mapView.getWidth() * mapView.getHeight() * transform.getScaleX() * transform.getScaleY());
         double tilePixels = Math.abs((t2.getY()-t1.getY())*(t2.getX()-t1.getX())*tileSource.getTileSize()*tileSource.getTileSize());
         if (screenPixels == 0 || tilePixels == 0) return 1;
