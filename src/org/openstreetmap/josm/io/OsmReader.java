@@ -4,7 +4,9 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -39,9 +41,26 @@ import org.openstreetmap.josm.tools.XmlUtils;
  */
 public class OsmReader extends AbstractReader {
 
+    /**
+     * Options are used to change how the xml data is parsed.
+     * For example, {@link Options#CONVERT_UNKNOWN_TO_TAGS} is used to convert unknown XML attributes to a tag for the object.
+     * @since 16641
+     */
+    public enum Options {
+        /**
+         * Convert unknown XML attributes to tags
+         */
+        CONVERT_UNKNOWN_TO_TAGS,
+        /**
+         * Save the original id of an object (currently stored in `current_id`)
+         */
+        SAVE_ORIGINAL_ID
+    }
+
     protected XMLStreamReader parser;
 
-    protected boolean convertUnknownToTags;
+    /** The {@link OsmReader.Options} to use when parsing the xml data */
+    protected final Collection<Options> options;
 
     private static final Set<String> COMMON_XML_ATTRIBUTES = new TreeSet<>();
 
@@ -64,19 +83,19 @@ public class OsmReader extends AbstractReader {
      * @see #parseDataSet(InputStream, ProgressMonitor)
      */
     protected OsmReader() {
-        this(false);
+        this((Options) null);
     }
 
     /**
      * constructor (for private and subclasses use only)
-     * @param convertUnknownToTags if true, keep unknown xml attributes as tags
+     * @param options The options to use when reading data
      *
      * @see #parseDataSet(InputStream, ProgressMonitor)
-     * @since 15470
+     * @since 16641
      */
-    protected OsmReader(boolean convertUnknownToTags) {
+    protected OsmReader(Options... options) {
         // Restricts visibility
-        this.convertUnknownToTags = convertUnknownToTags;
+        this.options = options == null ? Collections.emptyList() : Arrays.asList(options);
     }
 
     protected void setParser(XMLStreamReader parser) {
@@ -425,7 +444,10 @@ public class OsmReader extends AbstractReader {
             parseAction(current, parser.getAttributeValue(null, "action"));
             parseChangeset(current, parser.getAttributeValue(null, "changeset"));
 
-            if (convertUnknownToTags) {
+            if (options.contains(Options.SAVE_ORIGINAL_ID)) {
+                parseTag(current, "current_id", Long.toString(getLong("id")));
+            }
+            if (options.contains(Options.CONVERT_UNKNOWN_TO_TAGS)) {
                 for (int i = 0; i < parser.getAttributeCount(); i++) {
                     if (!COMMON_XML_ATTRIBUTES.contains(parser.getAttributeLocalName(i))) {
                         parseTag(current, parser.getAttributeLocalName(i), parser.getAttributeValue(i));
@@ -496,7 +518,7 @@ public class OsmReader extends AbstractReader {
      * @throws IllegalArgumentException if source is null
      */
     public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
-        return parseDataSet(source, progressMonitor, false);
+        return parseDataSet(source, progressMonitor, (Options) null);
     }
 
     /**
@@ -504,15 +526,15 @@ public class OsmReader extends AbstractReader {
      *
      * @param source the source input stream. Must not be null.
      * @param progressMonitor the progress monitor. If null, {@link NullProgressMonitor#INSTANCE} is assumed
-     * @param convertUnknownToTags true if unknown xml attributes should be kept as tags
+     * @param options The options to use when parsing the dataset
      *
      * @return the dataset with the parsed data
      * @throws IllegalDataException if an error was found while parsing the data from the source
      * @throws IllegalArgumentException if source is null
-     * @since 15470
+     * @since 16641
      */
-    public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor, boolean convertUnknownToTags)
+    public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor, Options... options)
             throws IllegalDataException {
-        return new OsmReader(convertUnknownToTags).doParseDataSet(source, progressMonitor);
+        return new OsmReader(options).doParseDataSet(source, progressMonitor);
     }
 }

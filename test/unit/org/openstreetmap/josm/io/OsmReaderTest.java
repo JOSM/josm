@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.OsmReader.Options;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -82,8 +83,19 @@ public class OsmReaderTest {
     private static void testUnknown(String osm, boolean parseUnknownAttributes) throws Exception {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, parseUnknownAttributes).allPrimitives()
+            assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, Options.CONVERT_UNKNOWN_TO_TAGS).allPrimitives()
                     .isEmpty());
+        }
+        testUnknown(osm, parseUnknownAttributes, true);
+        testUnknown(osm, parseUnknownAttributes, true);
+    }
+
+    private static void testUnknown(String osm, boolean parseUnknownAttributes, boolean keepOriginalId)
+            throws Exception {
+        try (InputStream in = new ByteArrayInputStream(
+                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
+            assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, Options.CONVERT_UNKNOWN_TO_TAGS, Options.SAVE_ORIGINAL_ID)
+                    .allPrimitives().isEmpty());
         }
     }
 
@@ -140,14 +152,14 @@ public class OsmReaderTest {
     /**
      * Test valid data.
      * @param osm OSM data without XML prefix
-     * @param parseUnknownAttributes if true, attempt to parse unknown xml attributes
+     * @param options The options to use to parse the data
      * @return parsed data set
      * @throws Exception if any error occurs
      */
-    private static DataSet testValidData(String osm, boolean parseUnknownAttributes) throws Exception {
+    private static DataSet testValidData(String osm, Options... options) throws Exception {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, parseUnknownAttributes);
+            return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, options);
         }
     }
 
@@ -182,7 +194,7 @@ public class OsmReaderTest {
             throws Exception {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, parseUnknownAttributes);
+            OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, Options.CONVERT_UNKNOWN_TO_TAGS);
             fail("should throw exception");
         } catch (IllegalDataException e) {
             assertEquals(expectedError, e.getMessage());
@@ -324,8 +336,10 @@ public class OsmReaderTest {
     public void testGdprChangeset() throws Exception {
         String gdprChangeset = "<osm version='0.6'><node id='1' version='1' changeset='0'/></osm>";
         testValidData(gdprChangeset);
-        testValidData(gdprChangeset, true);
-        testValidData(gdprChangeset, false);
+        testValidData(gdprChangeset, Options.CONVERT_UNKNOWN_TO_TAGS);
+        testValidData(gdprChangeset, (Options) null);
+        testValidData(gdprChangeset, Options.SAVE_ORIGINAL_ID);
+        testValidData(gdprChangeset, Options.values());
     }
 
     /**
@@ -405,7 +419,8 @@ public class OsmReaderTest {
                 "<meta osm_base=\"2018-08-30T12:46:02Z\" areas=\"2018-08-30T12:40:02Z\"/>\r\n" +
                 "<remark>runtime error: Query ran out of memory in \"query\" at line 5.</remark>\r\n" +
                 "</osm>";
-        for (DataSet ds : Arrays.asList(testValidData(query), testValidData(query, true), testValidData(query, false))) {
+        for (DataSet ds : Arrays.asList(testValidData(query), testValidData(query, Options.CONVERT_UNKNOWN_TO_TAGS), testValidData(query, (Options) null),
+                testValidData(query, Options.SAVE_ORIGINAL_ID), testValidData(query, Options.values()))) {
             assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
         }
     }
@@ -420,13 +435,17 @@ public class OsmReaderTest {
                 + "<node id='1' version='1' visible='true' changeset='82' randomkey='randomvalue'></node>" + "</osm>";
         DataSet ds = testValidData(testData);
         assertEquals(0, ds.getNodes().iterator().next().getKeys().size());
+        assertEquals(1, ds.getNodes().iterator().next().getUniqueId());
 
-        ds = testValidData(testData, true);
+        ds = testValidData(testData, Options.CONVERT_UNKNOWN_TO_TAGS);
         Node firstNode = ds.getNodes().iterator().next();
         assertEquals(1, firstNode.getKeys().size());
         assertEquals("randomvalue", firstNode.get("randomkey"));
+        assertEquals(1, ds.getNodes().iterator().next().getUniqueId());
 
-        ds = testValidData(testData, false);
+
+        ds = testValidData(testData, (Options) null);
         assertEquals(0, ds.getNodes().iterator().next().getKeys().size());
+        assertEquals(1, ds.getNodes().iterator().next().getUniqueId());
     }
 }

@@ -734,6 +734,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
                     Arrays.asList(
                             "created_by",
                             "converted_by",
+                            "current_id",
                             "geobase:datasetName",
                             "geobase:uuid",
                             "KSJ2:ADS",
