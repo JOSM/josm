@@ -329,6 +329,7 @@ public class MainApplication {
      * @param mainFrame The main JFrame of the application
      * @since 10340
      */
+    @SuppressWarnings("StaticAssignmentInConstructor")
     public MainApplication(MainFrame mainFrame) {
         MainApplication.mainFrame = mainFrame;
         getLayerManager().addLayerChangeListener(undoRedoCleaner);

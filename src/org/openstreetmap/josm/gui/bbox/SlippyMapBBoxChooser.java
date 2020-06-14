@@ -81,11 +81,14 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
     private transient ICoordinate iSelectionRectStart;
     private transient ICoordinate iSelectionRectEnd;
 
+    static {
+        debug = Logging.isDebugEnabled();
+    }
+
     /**
      * Constructs a new {@code SlippyMapBBoxChooser}.
      */
     public SlippyMapBBoxChooser() {
-        debug = Logging.isDebugEnabled();
         SpringLayout springLayout = new SpringLayout();
         setLayout(springLayout);
 

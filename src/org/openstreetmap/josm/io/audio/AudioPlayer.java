@@ -267,7 +267,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "StaticAssignmentInConstructor"})
     private AudioPlayer() {
         state = State.INITIALIZING;
         command = new Execute();
