@@ -136,9 +136,9 @@
         <attributeGroup ref="tns:attributes.icon" />
         <attribute name="type" type="string">
             <annotation>
-                <documentation>
-                    When specified, only objects of the given type will work with this tagging preset. Can be "node", "way", "closedway", "multipolygon", "relation" or any comma separated combination of them. Note that "multipolygon" is not included in "relation", so if the preset should apply for multipolygons and other relation types, you need to specify both: "multipolygon,relation". Also used in the &lt;role&gt; tag to specify which object types are allowed for a specific relation member.
-                </documentation>
+                <documentation><![CDATA[
+                    When specified, only objects of the given type will work with this tagging preset. Can be "node", "way", "closedway", "multipolygon", "relation" or any comma separated combination of them. Note that "multipolygon" is not included in "relation", so if the preset should apply for multipolygons and other relation types, you need to specify both: "multipolygon,relation". Also used in the <role> tag to specify which object types are allowed for a specific relation member.
+                ]]></documentation>
             </annotation>
         </attribute>
         <attribute name="name_template" type="string">
@@ -169,9 +169,9 @@
 
     <complexType name="optional">
         <annotation>
-            <documentation>
-                Used to group some optional elements of an item. The text attribute is optional. If used without text then this is equivalent to &lt;space &gt;&lt;label text="Optional Attributes:" /&gt;&lt;space /&gt;
-            </documentation>
+            <documentation><![CDATA[
+                Used to group some optional elements of an item. The text attribute is optional. If used without text then this is equivalent to <space ><label text="Optional Attributes:" /><space />
+            ]]></documentation>
         </annotation>
         <group ref="tns:optional_elements" maxOccurs="unbounded" />
         <attributeGroup ref="tns:attributes.text" />
@@ -204,9 +204,9 @@
         </choice>
         <attribute name="id" type="ID" use="required">
             <annotation>
-                <documentation>
-                    The unique identifier for this &gt;chunk&lt;.
-                </documentation>
+                <documentation><![CDATA[
+                    The unique identifier for this <chunk>.
+                ]]></documentation>
             </annotation>
         </attribute>
     </complexType>
@@ -253,9 +253,9 @@
         </attribute>
         <attribute name="value" type="string">
             <annotation>
-                <documentation>
-                    Specify a value to be entered in the &lt;key&gt; tag.
-                </documentation>
+                <documentation><![CDATA[
+                    Specify a value to be entered in the <key> tag.
+                ]]></documentation>
             </annotation>
         </attribute>
         <attribute name="match" type="tns:match" />
@@ -277,9 +277,9 @@
 
     <complexType name="preset_link">
         <annotation>
-            <documentation>
-                Adds a link to an other preset with a label on top. The preset_name attribute is required, text to override the label (default is "Edit also …") and text_context are optional. A sequence of &lt;preset_link /&gt; without text or a identical text value are grouped below one label. Watch out for presets with identical name as it is not predictable to which preset the link will lead to, see #12716.
-            </documentation>
+            <documentation><![CDATA[
+                Adds a link to an other preset with a label on top. The preset_name attribute is required, text to override the label (default is "Edit also …") and text_context are optional. A sequence of <preset_link /> without text or a identical text value are grouped below one label. Watch out for presets with identical name as it is not predictable to which preset the link will lead to, see #12716.
+            ]]></documentation>
         </annotation>
         <attribute name="preset_name" type="string" use="required">
             <annotation>
@@ -319,18 +319,18 @@
         <attribute name="use_last_as_default" type="tns:last_default" />
         <attribute name="auto_increment" type="string">
             <annotation>
-                <documentation>
-                    May contain a comma separated list of integer increments or decrements, e.g. "-2,-1,+1,+2". A button will be shown next to the &lt;text /&gt; field for each value, allowing the user to select auto-increment with the given stepping. Auto-increment only happens if the user selects it. There is also a button to deselect auto-increment. Default is no auto-increment. Mutually exclusive with use_last_as_default.
-                </documentation>
+                <documentation><![CDATA[
+                    May contain a comma separated list of integer increments or decrements, e.g. "-2,-1,+1,+2". A button will be shown next to the <text /> field for each value, allowing the user to select auto-increment with the given stepping. Auto-increment only happens if the user selects it. There is also a button to deselect auto-increment. Default is no auto-increment. Mutually exclusive with use_last_as_default.
+                ]]></documentation>
             </annotation>
         </attribute>
         <attribute name="match" type="tns:match" />
         <attributeGroup ref="tns:attributes.length" />
         <attribute name="alternative_autocomplete_keys" type="string">
             <annotation>
-                <documentation>
-                    A comma separated list of alternative keys to use for auto completion of &gt;text&lt;.
-                </documentation>
+                <documentation><![CDATA[
+                    A comma separated list of alternative keys to use for auto completion of <text<.
+                ]]></documentation>
             </annotation>
         </attribute>
 
@@ -343,18 +343,18 @@
 
     <complexType name="list_entry">
         <annotation>
-            <documentation>
-                Used in &lt;combo/&gt; and &lt;multiselect/&gt;. More information see short_descriptions below. The attributes are value, display_value, short_description, icon and icon_size.
-            </documentation>
+            <documentation><![CDATA[
+                Used in <combo/> and <multiselect/>. More information see short_descriptions below. The attributes are value, display_value, short_description, icon and icon_size.
+            ]]></documentation>
         </annotation>
         <attribute name="value" type="string" use="required" />
         <attribute name="value_context" type="string" />
         <attribute name="display_value" type="string" />
         <attribute name="short_description" type="string">
             <annotation>
-                <documentation>
-                    A delimiter-separated list of texts to be displayed below each display_value. (Only if it is not possible to describe the entry in 2-3 words.) Instead of a comma separated list using values, display_values and short_descriptions, the following form is also supported: &lt;list_entry value="" display_value="" short_description="" icon="" icon_size="" /&gt;
-                </documentation>
+                <documentation><![CDATA[
+                    A delimiter-separated list of texts to be displayed below each display_value. (Only if it is not possible to describe the entry in 2-3 words.) Instead of a comma separated list using values, display_values and short_descriptions, the following form is also supported: <list_entry value="" display_value="" short_description="" icon="" icon_size="" />
+                ]]></documentation>
             </annotation>
         </attribute>
         <attributeGroup ref="tns:attributes.icon" />
@@ -433,9 +433,9 @@
         </sequence>
         <attribute name="columns" type="positiveInteger">
             <annotation>
-                <documentation>
-                    the number of columns of grouped &lt;check /&gt;
-                </documentation>
+                <documentation><![CDATA[
+                    the number of columns of grouped <check />
+                ]]></documentation>
             </annotation>
         </attribute>
         <anyAttribute processContents="skip" />
@@ -446,23 +446,23 @@
         <attributeGroup ref="tns:attributes.text" />
         <attribute name="value_on" type="string">
             <annotation>
-                <documentation>
-                    Specify the true value to be entered in the &lt;key /&gt; tag of a checked &lt;check /&gt; (default is "yes").
-                </documentation>
+                <documentation><![CDATA[
+                    Specify the true value to be entered in the <key /> tag of a checked <check /> (default is "yes").
+                ]]></documentation>
             </annotation>
         </attribute>
         <attribute name="value_off" type="string">
             <annotation>
-                <documentation>
-                    Specify the false value to be entered in the &lt;key /&gt; tag of a checked &lt;check /&gt; (default is "no").
-                </documentation>
+                <documentation><![CDATA[
+                    Specify the false value to be entered in the <key /> tag of a checked <check /> (default is "no").
+                ]]></documentation>
             </annotation>
         </attribute>
         <attribute name="disable_off" type="boolean">
             <annotation>
-                <documentation>
-                    Whether the off value of a &lt;check /&gt; is disabled in the dialog, i.e., only unset or "yes" are provided.
-                </documentation>
+                <documentation><![CDATA[
+                    Whether the off value of a <check /> is disabled in the dialog, i.e., only unset or "yes" are provided.
+                ]]></documentation>
             </annotation>
         </attribute>
         <attribute name="match" type="tns:match" />
@@ -483,9 +483,9 @@
 
     <simpleType name="last_default">
         <annotation>
-            <documentation>
-                For &lt;combo /&gt;, &lt;multiselect /&gt; or &lt;text /&gt; fields the last used value is used as default. Using "force" enforces this behavior also for already tagged objects. Default is "false".
-            </documentation>
+            <documentation><![CDATA[
+                For <combo />, <multiselect /> or <text /> fields the last used value is used as default. Using "force" enforces this behavior also for already tagged objects. Default is "false".
+            ]]></documentation>
         </annotation>
         <restriction base="string">
             <enumeration value="true" />
@@ -508,9 +508,9 @@
                     <li>keyvalue!: positive if key and value matches, negative otherwise</li>
                 </ul>
 
-                <p>
-                    Note: For a match, at least one positive and no negative is required. Default is "keyvalue!" for &lt;key&gt; and "none" for &lt;text />, &lt;combo /&gt;, &lt;multiselect /&gt; and &lt;check /&gt;.
-                </p>
+                <p><![CDATA[
+                    Note: For a match, at least one positive and no negative is required. Default is "keyvalue!" for <key> and "none" for <text />, <combo />, <multiselect /> and <check />.
+                ]]></p>
             </documentation>
         </annotation>
         <restriction base="string">
@@ -596,9 +596,9 @@
         </attribute>
         <attribute name="default" type="string">
             <annotation>
-                <documentation>
-                    An explicitly declared default value for the item. This value is only applied through a preset when the object the preset is applied to has zero keys. If no value for default is specified, no value is set to the key. Used in &gt;check /&lt;, &gt;text /&lt;, &gt;combo /&lt; and &gt;multiselect /&lt;.
-                </documentation>
+                <documentation><![CDATA[
+                    An explicitly declared default value for the item. This value is only applied through a preset when the object the preset is applied to has zero keys. If no value for default is specified, no value is set to the key. Used in >check /<, >text /<, >combo /< and >multiselect /<.
+                ]]></documentation>
             </annotation>
         </attribute>
     </attributeGroup>
@@ -606,9 +606,9 @@
     <attributeGroup name="attributes.text">
         <attribute name="text" type="string">
             <annotation>
-                <documentation>
-                    The description, that will be displayed before (after in case of &gt;check /&lt;) the gui element. Also used for &gt;label&lt; and &gt;optional&lt;.
-                </documentation>
+                <documentation><![CDATA[
+                    The description, that will be displayed before (after in case of <check />) the gui element. Also used for <label> and <optional>.
+                ]]></documentation>
             </annotation>
         </attribute>
         <attribute name="text_context" type="string">
@@ -673,9 +673,9 @@
         </attribute>
         <attribute name="delimiter" type="string">
             <annotation>
-                <documentation>
-                    The character that separates values. In case of &lt;combo /&gt; the default is comma. In case of &lt;multiselect /&gt; the default is semicolon and this will also be used to separate selected values in the tag.
-                </documentation>
+                <documentation><![CDATA[
+                    The character that separates values. In case of <combo /> the default is comma. In case of <multiselect /> the default is semicolon and this will also be used to separate selected values in the tag.
+                ]]></documentation>
             </annotation>
         </attribute>
     </attributeGroup>
@@ -683,16 +683,16 @@
     <attributeGroup name="attributes.icon">
         <attribute name="icon" type="string">
             <annotation>
-                <documentation>
-                    A name or link to an icon. The image will be used as icon to display in the selection list and when adding the preset to the toolbar. Icons can also be used in &gt;item&gt;, &gt;label /&gt; and &gt;list_entry /&gt;. The icon should be quadratic in size. See Icon handling how icons can be specified.
-                </documentation>
+                <documentation><![CDATA[
+                    A name or link to an icon. The image will be used as icon to display in the selection list and when adding the preset to the toolbar. Icons can also be used in <item>, <label /> and <list_entry />. The icon should be quadratic in size. See Icon handling how icons can be specified.
+                ]]></documentation>
             </annotation>
         </attribute>
         <attribute name="icon_size" type="integer">
             <annotation>
-                <documentation>
-                    The maximal size of an icon in px. If no value is given, default is 16 for &gt;label /&gt; and the default icon size for &gt;list_entry /&gt; (in &gt;combo&gt; and &gt;multiselect&gt;).
-                </documentation>
+                <documentation><![CDATA[
+                    The maximal size of an icon in px. If no value is given, default is 16 for <label /> and the default icon size for <list_entry /> (in <combo> and <multiselect>).
+                ]]></documentation>
             </annotation>
         </attribute>
     </attributeGroup>
@@ -700,9 +700,9 @@
     <attributeGroup name="attributes.length">
         <attribute name="length" type="positiveInteger">
             <annotation>
-                <documentation>
-                    The length of a &gt;text /&gt; or &gt;combo /&gt; box (number of characters allowed).
-                </documentation>
+                <documentation><![CDATA[
+                    The length of a <text /> or <combo /> box (number of characters allowed).
+                ]]></documentation>
             </annotation>
         </attribute>
     </attributeGroup>
