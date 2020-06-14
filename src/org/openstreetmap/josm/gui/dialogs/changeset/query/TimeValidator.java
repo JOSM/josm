@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.changeset.query;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -60,7 +61,7 @@ public class TimeValidator extends AbstractTextComponentValidator {
      * @return the standard tooltip text
      */
     public String getStandardTooltipText() {
-        final ZonedDateTime now = ZonedDateTime.now();
+        final ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
         return tr(
                 "Please enter a valid time in the usual format for your locale.<br>"
                 + "Example: {0}<br>"

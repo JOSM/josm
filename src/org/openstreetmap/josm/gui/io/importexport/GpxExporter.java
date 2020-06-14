@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.time.Year;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import javax.swing.JButton;
@@ -290,7 +291,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         if (enable) {
             if (copyrightYear.getText().isEmpty()) {
                 copyrightYear.setText(Optional.ofNullable(data.getString(META_COPYRIGHT_YEAR)).orElseGet(
-                        () -> Year.now().toString()));
+                        () -> Year.now(ZoneId.systemDefault()).toString()));
             }
             if (copyright.getText().isEmpty()) {
                 copyright.setText(Optional.ofNullable(data.getString(META_COPYRIGHT_LICENSE)).orElseGet(

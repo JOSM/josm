@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -135,7 +136,7 @@ public final class UserQueryList extends SearchTextResultListPanel<UserQueryList
 
         if (!historicExist) {
             SelectorItem item = new SelectorItem(
-                    TRANSLATED_HISTORY + " " + LocalDateTime.now().format(FORMAT), query);
+                    TRANSLATED_HISTORY + " " + LocalDateTime.now(ZoneId.systemDefault()).format(FORMAT), query);
 
             this.items.put(item.getKey(), item);
 
@@ -539,7 +540,7 @@ public final class UserQueryList extends SearchTextResultListPanel<UserQueryList
                             this.name.getText(),
                             this.query.getText(),
                             !newKey.equals(itemKey) || !newQuery.equals(itemQuery)
-                                ? LocalDateTime.now()
+                                ? LocalDateTime.now(ZoneId.systemDefault())
                                 : this.itemToEdit.getLastEdit()));
 
                 } else { // creating new
@@ -570,7 +571,7 @@ public final class UserQueryList extends SearchTextResultListPanel<UserQueryList
          * @exception IllegalArgumentException if any parameter is empty.
          */
         public SelectorItem(String key, String query) {
-            this(key, query, LocalDateTime.now());
+            this(key, query, LocalDateTime.now(ZoneId.systemDefault()));
         }
 
         /**

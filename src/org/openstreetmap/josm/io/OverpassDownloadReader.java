@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -204,7 +205,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
             try {
                 switch (matcher.group(1)) {
                     case "date":
-                        matcher.appendReplacement(sb, date(matcher.group(2), LocalDateTime.now()));
+                        matcher.appendReplacement(sb, date(matcher.group(2), LocalDateTime.now(ZoneId.systemDefault())));
                         break;
                     case "geocodeArea":
                         matcher.appendReplacement(sb, geocodeArea(matcher.group(2)));

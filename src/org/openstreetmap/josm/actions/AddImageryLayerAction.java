@@ -97,7 +97,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     private static ImageryInfo convertImagery(ImageryInfo info) {
         try {
             if (info.getUrl() != null && info.getUrl().contains("{time}")) {
-                final String instant = Year.now().atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant().toString();
+                final String instant = Year.now(ZoneOffset.UTC).atDay(1).atStartOfDay(ZoneOffset.UTC).toInstant().toString();
                 final String example = String.join("/", instant, instant);
                 final String initialSelectionValue = info.getDate() != null ? info.getDate() : example;
                 final String userDate = JOptionPane.showInputDialog(MainApplication.getMainFrame(),
