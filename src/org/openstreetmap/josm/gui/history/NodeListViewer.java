@@ -57,7 +57,7 @@ public class NodeListViewer extends HistoryViewerPanel {
     }
 
     private boolean isSemanticallyEquivalent(TwoColumnDiff.Item o1, TwoColumnDiff.Item o2) {
-        return o1.value != null && Objects.equals(o1.value, o2.value); //compare node IDs
+        return o1.value != null && o1.value.equals(o2.value); //compare node IDs
     }
 
     private static PrimitiveId primitiveIdAtRow(DiffTableModel model, int row) {
