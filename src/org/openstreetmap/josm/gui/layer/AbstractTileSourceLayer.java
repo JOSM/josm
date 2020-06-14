@@ -87,6 +87,7 @@ import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
@@ -174,6 +175,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public static final IntegerProperty ZOOM_OFFSET = new IntegerProperty(PREFERENCE_PREFIX + ".zoom_offset",
             PlatformManager.getPlatform().isHighDpiDisplay() ? 2 : 0);
 
+    private static final BooleanProperty POPUP_MENU_ENABLED = new BooleanProperty(PREFERENCE_PREFIX + ".popupmenu", true);
+
     /*
      *  use MemoryTileCache instead of tileLoader JCS cache, as tileLoader caches only content (byte[] of image)
      *  and MemoryTileCache caches whole Tile. This gives huge performance improvement when a lot of tiles are visible
@@ -194,7 +197,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (!isVisible()) return;
             if (e.getButton() == MouseEvent.BUTTON3) {
                 Component component = e.getComponent();
-                if (component.isShowing()) {
+                if (POPUP_MENU_ENABLED.get() && component.isShowing()) {
                     new TileSourceLayerPopup(e.getX(), e.getY()).show(component, e.getX(), e.getY());
                 }
             } else if (e.getButton() == MouseEvent.BUTTON1) {
