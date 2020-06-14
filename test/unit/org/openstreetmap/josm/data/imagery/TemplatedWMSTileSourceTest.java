@@ -51,11 +51,11 @@ public class TemplatedWMSTileSourceTest {
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
                 verifyMercatorTile(source, x, y, 3);
-                verifyTileSquarness(source, x, y, 3);
+                verifyTileSquareness(source, x, y, 3);
             }
         }
-        verifyTileSquarness(source, 150, 20, 18);
-        verifyTileSquarness(source, 2270, 1323, 12);
+        verifyTileSquareness(source, 150, 20, 18);
+        verifyTileSquareness(source, 2270, 1323, 12);
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
     }
@@ -71,9 +71,9 @@ public class TemplatedWMSTileSourceTest {
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
-        verifyTileSquarness(source, 2, 2, 2);
-        verifyTileSquarness(source, 150, 20, 18);
-        verifyTileSquarness(source, 2270, 1323, 12);
+        verifyTileSquareness(source, 2, 2, 2);
+        verifyTileSquareness(source, 150, 20, 18);
+        verifyTileSquareness(source, 2270, 1323, 12);
     }
 
     /**
@@ -114,9 +114,9 @@ public class TemplatedWMSTileSourceTest {
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
 
-        verifyTileSquarness(source, 2, 2, 2);
-        verifyTileSquarness(source, 150, 20, 18);
-        verifyTileSquarness(source, 2270, 1323, 12);
+        verifyTileSquareness(source, 2, 2, 2);
+        verifyTileSquareness(source, 150, 20, 18);
+        verifyTileSquareness(source, 2270, 1323, 12);
     }
 
     /**
@@ -130,7 +130,7 @@ public class TemplatedWMSTileSourceTest {
         ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = getSource(projection);
 
-        verifyTileSquarness(source, 0, 1, 4);
+        verifyTileSquareness(source, 0, 1, 4);
         verifyLocation(source, new LatLon(60, 18.1), 3);
         verifyLocation(source, new LatLon(60, 18.1));
     }
@@ -146,7 +146,7 @@ public class TemplatedWMSTileSourceTest {
         ProjectionRegistry.setProjection(projection);
         TemplatedWMSTileSource source = getSource(projection);
 
-        verifyTileSquarness(source, 0, 1, 4);
+        verifyTileSquareness(source, 0, 1, 4);
         verifyLocation(source, new LatLon(60, 18.1), 3);
         verifyLocation(source, new LatLon(60, 18.1));
     }
@@ -237,7 +237,7 @@ public class TemplatedWMSTileSourceTest {
         assertTrue(locationEN.toString() + " not within " + bboxStr(x1, x2) +
                 " for tile " + z + "/" + tileIndex.getXIndex() + "/" + tileIndex.getYIndex(),
                 isWithin(locationEN, x1, x2));
-        verifyTileSquarness(source, tileIndex.getXIndex(), tileIndex.getYIndex(), z);
+        verifyTileSquareness(source, tileIndex.getXIndex(), tileIndex.getYIndex(), z);
     }
 
     private static boolean isWithin(EastNorth point, EastNorth topLeft, EastNorth bottomRight) {
@@ -259,7 +259,7 @@ public class TemplatedWMSTileSourceTest {
         return CoordinateConversion.coorToLL(source.tileXYToLatLon(x, y, z));
     }
 
-    private void verifyTileSquarness(TemplatedWMSTileSource source, int x, int y, int z) {
+    private void verifyTileSquareness(TemplatedWMSTileSource source, int x, int y, int z) {
         /**
          * t1 | t2
          * -------
