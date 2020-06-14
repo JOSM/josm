@@ -31,6 +31,7 @@ import org.openstreetmap.josm.tools.StreamUtils;
  * @see BugReport
  * @since 10285
  */
+@SuppressWarnings("OverrideThrowableToString")
 public class ReportedException extends RuntimeException {
     /**
      * How many entries of a collection to include in the bug report.

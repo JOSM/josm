@@ -245,6 +245,7 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     @Override
+    @SuppressWarnings("EqualsUsingHashCode")
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
