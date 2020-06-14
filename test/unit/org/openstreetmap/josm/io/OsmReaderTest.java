@@ -39,6 +39,15 @@ public class OsmReaderTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
+    private static Options[][] options() {
+        return new Options[][]{
+                new Options[]{},
+                new Options[]{Options.CONVERT_UNKNOWN_TO_TAGS},
+                new Options[]{Options.SAVE_ORIGINAL_ID},
+                new Options[]{Options.CONVERT_UNKNOWN_TO_TAGS, Options.SAVE_ORIGINAL_ID},
+        };
+    }
+
     private static final class PostProcessorStub implements OsmServerReadPostprocessor {
         boolean called;
 
@@ -71,31 +80,10 @@ public class OsmReaderTest {
         }
     }
 
-    private static void testUnknown(String osm) throws Exception {
+    private static void testUnknown(String osm, Options[] options) throws Exception {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE).allPrimitives().isEmpty());
-        }
-        testUnknown(osm, true);
-        testUnknown(osm, false);
-    }
-
-    private static void testUnknown(String osm, boolean parseUnknownAttributes) throws Exception {
-        try (InputStream in = new ByteArrayInputStream(
-                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, Options.CONVERT_UNKNOWN_TO_TAGS).allPrimitives()
-                    .isEmpty());
-        }
-        testUnknown(osm, parseUnknownAttributes, true);
-        testUnknown(osm, parseUnknownAttributes, true);
-    }
-
-    private static void testUnknown(String osm, boolean parseUnknownAttributes, boolean keepOriginalId)
-            throws Exception {
-        try (InputStream in = new ByteArrayInputStream(
-                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, Options.CONVERT_UNKNOWN_TO_TAGS, Options.SAVE_ORIGINAL_ID)
-                    .allPrimitives().isEmpty());
+            assertTrue(OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, options).allPrimitives().isEmpty());
         }
     }
 
@@ -105,7 +93,9 @@ public class OsmReaderTest {
      */
     @Test
     public void testUnknownRoot() throws Exception {
-        testUnknown("<nonosm/>");
+        for (Options[] options : options()) {
+            testUnknown("<nonosm/>", options);
+        }
     }
 
     /**
@@ -114,7 +104,9 @@ public class OsmReaderTest {
      */
     @Test
     public void testUnknownMeta() throws Exception {
-        testUnknown("<osm version='0.6'><meta osm_base='2017-03-29T19:04:03Z'/></osm>");
+        for (Options[] options : options()) {
+            testUnknown("<osm version='0.6'><meta osm_base='2017-03-29T19:04:03Z'/></osm>", options);
+        }
     }
 
     /**
@@ -123,7 +115,9 @@ public class OsmReaderTest {
      */
     @Test
     public void testUnknownNote() throws Exception {
-        testUnknown("<osm version='0.6'><note>The data included in this document is from www.openstreetmap.org.</note></osm>");
+        for (Options[] options : options()) {
+            testUnknown("<osm version='0.6'><note>The data included in this document is from www.openstreetmap.org.</note></osm>", options);
+        }
     }
 
     /**
@@ -132,31 +126,19 @@ public class OsmReaderTest {
      */
     @Test
     public void testUnknownTag() throws Exception {
-        testUnknown("<osm version='0.6'><foo>bar</foo></osm>");
-        testUnknown("<osm version='0.6'><foo><bar/></foo></osm>");
-    }
-
-    /**
-     * Test valid data.
-     * @param osm OSM data without XML prefix
-     * @return parsed data set
-     * @throws Exception if any error occurs
-     */
-    private static DataSet testValidData(String osm) throws Exception {
-        try (InputStream in = new ByteArrayInputStream(
-                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+        for (Options[] options : options()) {
+            testUnknown("<osm version='0.6'><foo>bar</foo></osm>", options);
+            testUnknown("<osm version='0.6'><foo><bar/></foo></osm>", options);
         }
     }
 
     /**
      * Test valid data.
      * @param osm OSM data without XML prefix
-     * @param options The options to use to parse the data
      * @return parsed data set
      * @throws Exception if any error occurs
      */
-    private static DataSet testValidData(String osm, Options... options) throws Exception {
+    private static DataSet testValidData(String osm, Options[] options) throws Exception {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
             return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, options);
@@ -173,28 +155,6 @@ public class OsmReaderTest {
         try (InputStream in = new ByteArrayInputStream(
                 ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
             OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
-            fail("should throw exception");
-        } catch (IllegalDataException e) {
-            assertEquals(expectedError, e.getMessage());
-        }
-        testInvalidData(osm, expectedError, true);
-        testInvalidData(osm, expectedError, false);
-    }
-
-    /**
-     * Test invalid data.
-     *
-     * @param osm                    OSM data without XML prefix
-     * @param expectedError          expected error message
-     * @param parseUnknownAttributes if true, attempt to parse unknown xml
-     *                               attributes
-     * @throws Exception if any error occurs
-     */
-    private static void testInvalidData(String osm, String expectedError, boolean parseUnknownAttributes)
-            throws Exception {
-        try (InputStream in = new ByteArrayInputStream(
-                ("<?xml version='1.0' encoding='UTF-8'?>" + osm).getBytes(StandardCharsets.UTF_8))) {
-            OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE, Options.CONVERT_UNKNOWN_TO_TAGS);
             fail("should throw exception");
         } catch (IllegalDataException e) {
             assertEquals(expectedError, e.getMessage());
@@ -335,11 +295,9 @@ public class OsmReaderTest {
     @Test
     public void testGdprChangeset() throws Exception {
         String gdprChangeset = "<osm version='0.6'><node id='1' version='1' changeset='0'/></osm>";
-        testValidData(gdprChangeset);
-        testValidData(gdprChangeset, Options.CONVERT_UNKNOWN_TO_TAGS);
-        testValidData(gdprChangeset, (Options) null);
-        testValidData(gdprChangeset, Options.SAVE_ORIGINAL_ID);
-        testValidData(gdprChangeset, Options.values());
+        for (Options[] options : options()) {
+            testValidData(gdprChangeset, options);
+        }
     }
 
     /**
@@ -419,8 +377,8 @@ public class OsmReaderTest {
                 "<meta osm_base=\"2018-08-30T12:46:02Z\" areas=\"2018-08-30T12:40:02Z\"/>\r\n" +
                 "<remark>runtime error: Query ran out of memory in \"query\" at line 5.</remark>\r\n" +
                 "</osm>";
-        for (DataSet ds : Arrays.asList(testValidData(query), testValidData(query, Options.CONVERT_UNKNOWN_TO_TAGS), testValidData(query, (Options) null),
-                testValidData(query, Options.SAVE_ORIGINAL_ID), testValidData(query, Options.values()))) {
+        for (Options[] options : options()) {
+            DataSet ds = testValidData(query, options);
             assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());
         }
     }
@@ -433,19 +391,19 @@ public class OsmReaderTest {
     public void testUnknownAttributeTags() throws Exception {
         String testData = "<osm version=\"0.6\" generator=\"fake generator\">"
                 + "<node id='1' version='1' visible='true' changeset='82' randomkey='randomvalue'></node>" + "</osm>";
-        DataSet ds = testValidData(testData);
-        assertEquals(0, ds.getNodes().iterator().next().getKeys().size());
-        assertEquals(1, ds.getNodes().iterator().next().getUniqueId());
-
-        ds = testValidData(testData, Options.CONVERT_UNKNOWN_TO_TAGS);
-        Node firstNode = ds.getNodes().iterator().next();
-        assertEquals(1, firstNode.getKeys().size());
-        assertEquals("randomvalue", firstNode.get("randomkey"));
-        assertEquals(1, ds.getNodes().iterator().next().getUniqueId());
-
-
-        ds = testValidData(testData, (Options) null);
-        assertEquals(0, ds.getNodes().iterator().next().getKeys().size());
-        assertEquals(1, ds.getNodes().iterator().next().getUniqueId());
+        for (Options[] options : options()) {
+            DataSet ds = testValidData(testData, options);
+            Node firstNode = ds.getNodes().iterator().next();
+            if (Arrays.asList(options).contains(Options.CONVERT_UNKNOWN_TO_TAGS)) {
+                assertEquals("randomvalue", firstNode.get("randomkey"));
+            } else {
+                assertNull(firstNode.get("randomkey"));
+            }
+            if (Arrays.asList(options).contains(Options.SAVE_ORIGINAL_ID)) {
+                assertEquals("1", firstNode.get("current_id"));
+            } else {
+                assertNull(firstNode.get("current_id"));
+            }
+        }
     }
 }
