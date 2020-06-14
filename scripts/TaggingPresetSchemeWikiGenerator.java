@@ -24,10 +24,14 @@ import org.xml.sax.SAXException;
 /**
  * This script generates the wiki content for https://josm.openstreetmap.de/wiki/TaggingPresets#Attributes
  */
-public class TaggingPresetSchemeWikiGenerator {
+public final class TaggingPresetSchemeWikiGenerator {
 
     private static Document document;
     private static XPath xPath;
+
+    private TaggingPresetSchemeWikiGenerator() {
+        // Hide public constructor for utility class
+    }
 
     public static void main(String[] args) throws Exception {
         document = parseTaggingPresetSchema();

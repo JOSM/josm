@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
-import java.util.Objects;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
