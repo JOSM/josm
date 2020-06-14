@@ -132,7 +132,7 @@ public class ChangesetContentDownloadTask extends AbstractChangesetDownloadTask 
 
     /**
      * Creates a download task for a collection of changesets. null values and id &lt;=0 in
-     * the collection are sillently discarded.
+     * the collection are silently discarded.
      *
      * @param parent the parent component for the {@link org.openstreetmap.josm.gui.PleaseWaitDialog}. Must not be {@code null}.
      * @param changesetIds the changeset ids. Empty collection assumed, if {@code null}.
