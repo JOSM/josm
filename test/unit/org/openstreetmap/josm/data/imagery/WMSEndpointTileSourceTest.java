@@ -82,7 +82,7 @@ public class WMSEndpointTileSourceTest {
         assertEquals("https://tools.geofabrik.de/osmi/views/geometry/wxs?FORMAT=image/png&TRANSPARENT=TRUE&VERSION=1.3.0&SERVICE=WMS&"
                 + "REQUEST=GetMap&LAYERS=single_node_in_way&STYLES=default&"
                 + "CRS=EPSG:3857&WIDTH=512&HEIGHT=512&"
-                + "BBOX=20037506.6204108,-60112521.5836107,60112521.5836107,-20037506.6204108", tileSource.getTileUrl(1, 1, 1));
+                + "BBOX=20037508.3427893,-60112525.0283678,60112525.0283678,-20037508.3427893", tileSource.getTileUrl(1, 1, 1));
     }
 
     @Test
@@ -140,7 +140,7 @@ public class WMSEndpointTileSourceTest {
                 + "SRS=EPSG:3857&"
                 + "WIDTH=512&"
                 + "HEIGHT=512&"
-                + "BBOX=20037506.6204108,-60112521.5836107,60112521.5836107,-20037506.6204108",
+                + "BBOX=20037508.3427893,-60112525.0283678,60112525.0283678,-20037508.3427893",
                 tileSource.getTileUrl(1, 1, 1));
     }
 }

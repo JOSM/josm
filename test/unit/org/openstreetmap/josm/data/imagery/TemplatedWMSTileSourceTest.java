@@ -131,8 +131,8 @@ public class TemplatedWMSTileSourceTest {
         TemplatedWMSTileSource source = getSource(projection);
 
         verifyTileSquareness(source, 0, 1, 4);
-        verifyLocation(source, new LatLon(60, 18.1), 3);
-        verifyLocation(source, new LatLon(60, 18.1));
+        verifyLocation(source, new LatLon(60, 18.05008), 3);
+        verifyLocation(source, new LatLon(60, 18.05008));
     }
 
     /**
@@ -170,11 +170,11 @@ public class TemplatedWMSTileSourceTest {
                 null);
         TemplatedWMSTileSource ts = new TemplatedWMSTileSource(testImageryWMS, projection);
         assertEquals("https://maps.six.nsw.gov.au/arcgis/services/public/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&"
-                + "VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&BBOX=-1349.9999381,539.9999691,-989.9999536,899.9999536&WIDTH=512&"
+                + "VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&BBOX=-1350.0000000,540.0000000,-990.0000000,900.0000000&WIDTH=512&"
                 + "HEIGHT=512&LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE",
                 ts.getTileUrl(1, 2, 3));
         assertEquals("https://maps.six.nsw.gov.au/arcgis/services/public/NSW_Imagery_Dates/MapServer/WMSServer?SERVICE=WMS&"
-                + "VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&BBOX=-89.9999923,-0.0000077,0.0000039,89.9999884&WIDTH=512&HEIGHT=512&"
+                + "VERSION=1.3.0&REQUEST=GetMap&CRS=EPSG:4326&BBOX=-90.0000000,0.0000000,-0.0000000,90.0000000&WIDTH=512&HEIGHT=512&"
                 + "LAYERS=0&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE",
                 ts.getTileUrl(3, 2, 1));
         testImageryWMS = new ImageryInfo("test imagery",
@@ -187,11 +187,11 @@ public class TemplatedWMSTileSourceTest {
         ts = new TemplatedWMSTileSource(testImageryWMS, projection);
         assertEquals("https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Transport/MapServer/WMSServer?LAYERS=8&"
                 + "TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS=EPSG:4326&"
-                + "BBOX=539.9999691,-1349.9999381,899.9999536,-989.9999536&WIDTH=512&HEIGHT=512",
+                + "BBOX=540.0000000,-1350.0000000,900.0000000,-990.0000000&WIDTH=512&HEIGHT=512",
                 ts.getTileUrl(1, 2, 3));
         assertEquals("https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Transport/MapServer/WMSServer?LAYERS=8&"
                 + "TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS=EPSG:4326&"
-                + "BBOX=-0.0000077,-89.9999923,89.9999884,0.0000039&WIDTH=512&HEIGHT=512", ts.getTileUrl(3, 2, 1));
+                + "BBOX=0.0000000,-90.0000000,90.0000000,-0.0000000&WIDTH=512&HEIGHT=512", ts.getTileUrl(3, 2, 1));
     }
 
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
@@ -230,29 +230,17 @@ public class TemplatedWMSTileSourceTest {
         assertTrue("Y index: " + tileIndex.getYIndex() + " greater than tileYmax: " + source.getTileYMax(z) + " at zoom: " + z,
                 tileIndex.getYIndex() <= source.getTileYMax(z));
 
-        EastNorth locationEN = projection.latlon2eastNorth(location);
-        EastNorth x1 = projection.latlon2eastNorth(getTileLatLon(source, tileIndex, z));
-        EastNorth x2 = projection.latlon2eastNorth(getTileLatLon(source, tileIndex.getXIndex() + 1, tileIndex.getYIndex() + 1, z));
+        ICoordinate x1 = source.tileXYToLatLon(tileIndex.getXIndex(), tileIndex.getYIndex(), z);
+        ICoordinate x2 = source.tileXYToLatLon(tileIndex.getXIndex() + 1, tileIndex.getYIndex() + 1, z);
+        if (x1.getLon() > x2.getLon()) {
+            x2.setLon(180);
+        }
+        Bounds bounds = new Bounds(x1.getLat(), x1.getLon(), true);
+        bounds.extend(x2.getLat(), x2.getLon());
         // test that location is within tile bounds
-        assertTrue(locationEN.toString() + " not within " + bboxStr(x1, x2) +
-                " for tile " + z + "/" + tileIndex.getXIndex() + "/" + tileIndex.getYIndex(),
-                isWithin(locationEN, x1, x2));
+        assertTrue(location + " not within " + bounds + " for tile " + z + "/" + tileIndex.getXIndex() + "/" + tileIndex.getYIndex(),
+                bounds.contains(location));
         verifyTileSquareness(source, tileIndex.getXIndex(), tileIndex.getYIndex(), z);
-    }
-
-    private static boolean isWithin(EastNorth point, EastNorth topLeft, EastNorth bottomRight) {
-        return Math.min(topLeft.east(), bottomRight.east()) <= point.east() &&
-                point.east() <= Math.max(topLeft.east(), bottomRight.east()) &&
-                Math.min(topLeft.north(), bottomRight.north()) <= point.north() &&
-                point.north() <= Math.max(topLeft.north(), bottomRight.north());
-    }
-
-    private static String bboxStr(EastNorth x1, EastNorth x2) {
-        return "[" + x1.east() +", " + x1.north() + ", " + x2.east() + ", " + x2.north() +"]";
-    }
-
-    private LatLon getTileLatLon(TemplatedWMSTileSource source, TileXY tileIndex, int z) {
-        return getTileLatLon(source, tileIndex.getXIndex(), tileIndex.getYIndex(), z);
     }
 
     private LatLon getTileLatLon(TemplatedWMSTileSource source, int x, int y, int z) {
