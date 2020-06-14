@@ -284,7 +284,6 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         JScrollPane scrollPane = new JScrollPane(table);
         msg.add(scrollPane, GBC.eol().fill(GBC.BOTH));
 
-        int v = 1;
         // build dialog
         ExtendedDialog ed = new ExtendedDialog(MainApplication.getMainFrame(),
                 tr("Set track visibility for {0}", layer.getName()),
@@ -312,7 +311,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
                 WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(1000, 500)));
         ed.showDialog();
         dateFilter.saveInPrefs();
-        v = ed.getValue();
+        int v = ed.getValue();
         // cancel for unknown buttons and copy back original settings
         if (v != 2 && v != 3) {
             layer.trackVisibility = Arrays.copyOf(trackVisibilityBackup, layer.trackVisibility.length);

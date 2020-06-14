@@ -21,7 +21,7 @@ public class MemberTableColumnModel extends DefaultTableColumnModel {
      * @since 13675
      */
     public MemberTableColumnModel(AutoCompletionManager autoCompletionManager, Relation relation) {
-        TableColumn col = null;
+        TableColumn col;
 
         // column 0 - the member role
         col = new TableColumn(0);

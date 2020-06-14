@@ -316,10 +316,6 @@ public final class MapStatus extends JPanel implements
                     return;
                 }
 
-                // This try/catch is a hack to stop the flooding bug reports about this.
-                // The exception needed to handle with in the first place, means that this
-                // access to the data need to be restarted, if the main thread modifies the data.
-                DataSet ds = null;
                 // The popup != null check is required because a left-click produces several events as well,
                 // which would make this variable true. Of course we only want the popup to show
                 // if the middle mouse button has been pressed in the first place
@@ -327,7 +323,7 @@ public final class MapStatus extends JPanel implements
                 boolean isAtOldPosition = mouseNotMoved && popup != null;
                 boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
 
-                ds = mv.getLayerManager().getActiveDataSet();
+                DataSet ds = mv.getLayerManager().getActiveDataSet();
                 if (ds != null) {
                     // This is not perfect, if current dataset was changed during execution, the lock would be useless
                     if (isAtOldPosition && middleMouseDown) {
@@ -339,6 +335,9 @@ public final class MapStatus extends JPanel implements
                         ds.getReadLock().lock();
                     }
                 }
+                // This try/catch is a hack to stop the flooding bug reports about this.
+                // The exception needed to handle with in the first place, means that this
+                // access to the data need to be restarted, if the main thread modifies the data.
                 try {
                     // Set the text label in the bottom status bar
                     // "if mouse moved only" was added to stop heap growing

@@ -145,9 +145,8 @@ public class GpxImporter extends FileImporter {
      */
     public static GpxImporterData loadLayers(final GpxData data, final boolean parsedProperly,
             final String gpxLayerName, String markerLayerName) {
-        GpxLayer gpxLayer = null;
         MarkerLayer markerLayer = null;
-        gpxLayer = new GpxLayer(data, gpxLayerName, data.storageFile != null);
+        GpxLayer gpxLayer = new GpxLayer(data, gpxLayerName, data.storageFile != null);
         if (Config.getPref().getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
             markerLayer = new MarkerLayer(data, markerLayerName, data.storageFile, gpxLayer);
             if (markerLayer.data.isEmpty()) {

@@ -375,7 +375,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
     }
 
-    @SuppressWarnings("PMD.UnusedFormalParameter")
+    @SuppressWarnings({"PMD.UnusedFormalParameter", "UnusedVariable"})
     private static boolean isRemoveColor(ColorEntry ce) {
         return false;
         //COLOR_CATEGORY_LAYER is no longer supported and was the only one that could be removed.
