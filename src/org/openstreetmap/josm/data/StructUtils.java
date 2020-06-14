@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.ReflectionUtils;
+import org.openstreetmap.josm.tools.StringParser;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -44,6 +45,10 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 12851
  */
 public final class StructUtils {
+
+    private static final StringParser STRING_PARSER = new StringParser(StringParser.DEFAULT)
+            .registerParser(Map.class, StructUtils::mapFromJson)
+            .registerParser(MultiMap.class, StructUtils::multiMapFromJson);
 
     private StructUtils() {
         // hide constructor
@@ -220,36 +225,13 @@ public final class StructUtils {
             throw new IllegalArgumentException(ex);
         }
         for (Map.Entry<String, String> keyValue : hash.entrySet()) {
-            Object value;
             Field f = getDeclaredFieldInClassOrSuperTypes(klass, keyValue.getKey().replace('-', '_'));
 
             if (f == null || f.getAnnotation(StructEntry.class) == null) {
                 continue;
             }
             ReflectionUtils.setObjectsAccessible(f);
-            if (f.getType() == Boolean.class || f.getType() == boolean.class) {
-                value = Boolean.valueOf(keyValue.getValue());
-            } else if (f.getType() == Integer.class || f.getType() == int.class) {
-                try {
-                    value = Integer.valueOf(keyValue.getValue());
-                } catch (NumberFormatException nfe) {
-                    continue;
-                }
-            } else if (f.getType() == Double.class || f.getType() == double.class) {
-                try {
-                    value = Double.valueOf(keyValue.getValue());
-                } catch (NumberFormatException nfe) {
-                    continue;
-                }
-            } else if (f.getType() == String.class) {
-                value = keyValue.getValue();
-            } else if (f.getType().isAssignableFrom(Map.class)) {
-                value = mapFromJson(keyValue.getValue());
-            } else if (f.getType().isAssignableFrom(MultiMap.class)) {
-                value = multiMapFromJson(keyValue.getValue());
-            } else
-                throw new JosmRuntimeException("unsupported preference primitive type");
-
+            Object value = STRING_PARSER.parse(f.getType(), keyValue.getValue());
             try {
                 f.set(struct, value);
             } catch (IllegalArgumentException ex) {
