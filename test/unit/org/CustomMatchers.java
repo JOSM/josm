@@ -155,7 +155,7 @@ public final class CustomMatchers {
            public void describeTo(Description description) {
               description.appendText("is ")
                       .appendValue(expected)
-                      .appendText(" (tolarance: " + tolerance + ")");
+                      .appendText(" (tolerance: " + tolerance + ")");
            }
 
            @Override
@@ -186,7 +186,7 @@ public final class CustomMatchers {
             public void describeTo(Description description) {
                 description.appendText("is ")
                         .appendValue(expected)
-                        .appendText(" (tolarance")
+                        .appendText(" (tolerance")
                         .appendText(errorMode == ErrorMode.RELATIVE ? ", relative:" : ":")
                         .appendText(Double.toString(tolerance))
                         .appendText(")");
