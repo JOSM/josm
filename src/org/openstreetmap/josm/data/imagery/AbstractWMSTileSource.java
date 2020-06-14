@@ -35,7 +35,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     private int[] tileXMax;
     private int[] tileYMax;
     private double[] degreesPerTile;
-    private static final float SCALE_DENOMINATOR_ZOOM_LEVEL_1 = 559082264.0287178f;
+    private static final double SCALE_DENOMINATOR_ZOOM_LEVEL_1 = 5.59082264028718e08;
     private Projection tileProjection;
 
     /**
@@ -91,7 +91,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
         degreesPerTile = new double[getMaxZoom() + 1];
 
         for (int zoom = 1; zoom <= getMaxZoom(); zoom++) {
-            // use well known scale set "GoogleCompatibile" from OGC WMTS spec to calculate number of tiles per zoom level
+            // use well known scale set "GoogleCompatible" from OGC WMTS spec to calculate number of tiles per zoom level
             // this makes the zoom levels "glued" to standard TMS zoom levels
             degreesPerTile[zoom] = (SCALE_DENOMINATOR_ZOOM_LEVEL_1 / Math.pow(2d, zoom - 1d)) * crsScale;
             TileXY minTileIndex = eastNorthToTileXY(topLeft, zoom);

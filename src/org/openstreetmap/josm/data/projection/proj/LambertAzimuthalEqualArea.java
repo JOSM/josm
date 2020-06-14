@@ -40,12 +40,12 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
     private static final double EPSILON_LATITUDE = 1E-10;
 
     /** Constants for authalic latitude. */
-    private static final double P00 = 0.33333333333333333333;
-    private static final double P01 = 0.17222222222222222222;
-    private static final double P02 = 0.10257936507936507936;
-    private static final double P10 = 0.06388888888888888888;
-    private static final double P11 = 0.06640211640211640211;
-    private static final double P20 = 0.01641501294219154443;
+    private static final double P00 = 3.33333333333333E-01;
+    private static final double P01 = 1.72222222222222E-01;
+    private static final double P02 = 1.02579365079365E-01;
+    private static final double P10 = 6.38888888888889E-02;
+    private static final double P11 = 6.64021164021164E-02;
+    private static final double P20 = 1.64150129421915E-02;
 
     /** The projection mode. */
     private enum Mode { OBLIQUE, EQUATORIAL, NORTH_POLE, SOUTH_POLE }

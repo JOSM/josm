@@ -41,16 +41,16 @@ public abstract class AbstractProj implements Proj {
      */
     private static final double C00 = 1.0;
     private static final double C02 = 0.25;
-    private static final double C04 = 0.046875;
-    private static final double C06 = 0.01953125;
-    private static final double C08 = 0.01068115234375;
+    private static final double C04 = 4.6875E-02;
+    private static final double C06 = 1.953125E-02;
+    private static final double C08 = 1.068115234375E-02;
     private static final double C22 = 0.75;
-    private static final double C44 = 0.46875;
-    private static final double C46 = 0.01302083333333333333;
-    private static final double C48 = 0.00712076822916666666;
-    private static final double C66 = 0.36458333333333333333;
-    private static final double C68 = 0.00569661458333333333;
-    private static final double C88 = 0.3076171875;
+    private static final double C44 = 4.6875E-01;
+    private static final double C46 = 1.30208333333333E-02;
+    private static final double C48 = 7.12076822916667E-03;
+    private static final double C66 = 3.64583333333333E-01;
+    private static final double C68 = 5.69661458333333E-03;
+    private static final double C88 = 3.076171875E-01;
 
     /**
      * Constant needed for the <code>mlfn</code> method.

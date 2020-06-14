@@ -40,11 +40,11 @@ public class CassiniSoldner extends AbstractProj {
      * Constants used for the forward and inverse transform for the elliptical
      * case of the Cassini-Soldner.
      */
-    private static final double C1 = 0.16666666666666666666;
-    private static final double C2 = 0.008333333333333333333;
-    private static final double C3 = 0.041666666666666666666;
-    private static final double C4 = 0.33333333333333333333;
-    private static final double C5 = 0.066666666666666666666;
+    private static final double C1 = 1. / 6;
+    private static final double C2 = 1. / 120;
+    private static final double C3 = 1. / 24;
+    private static final double C4 = 1. / 3;
+    private static final double C5 = 1. / 15;
 
     @Override
     public String getName() {
