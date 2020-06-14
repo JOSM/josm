@@ -448,51 +448,52 @@ Build-Date: ${build.tstamp}
         <attribute name="excludes" default="${default-junit@{testITsuffix}-excludes}"/>
         <sequential>
             <echo message="Running @{testfamily}@{testITsuffix} tests with JUnit"/>
-            <jacoco:coverage destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="${jacoco.includes}"
-                inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}">
-                <junit printsummary="${junit.printsummary}" fork="true" forkmode="once" failureproperty="test.@{testfamily}@{testITsuffix}.failed">
-                    <jvmarg value="-Dfile.encoding=UTF-8"/>
-                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
-                    <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
-                    <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
-                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
-                    <jvmarg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
-                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="isJava11" />
-                    <jvmarg value="jdk.deploy/com.sun.deploy.config=ALL-UNNAMED" if:set="isJava9" unless:set="isJava11" />
-                    <jvmarg value="--add-opens" if:set="isJava9" />
-                    <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
-                    <jvmarg value="--add-opens" if:set="isJava9" />
-                    <jvmarg value="java.base/java.lang=ALL-UNNAMED" if:set="isJava9" />
-                    <jvmarg value="--add-opens" if:set="isJava9" />
-                    <jvmarg value="java.base/java.nio=ALL-UNNAMED" if:set="isJava9" />
-                    <jvmarg value="--add-opens" if:set="isJava9" />
-                    <jvmarg value="java.base/java.text=ALL-UNNAMED" if:set="isJava9" />
-                    <jvmarg value="--add-opens" if:set="isJava9" />
-                    <jvmarg value="java.base/java.util=ALL-UNNAMED" if:set="isJava9" />
-                    <jvmarg value="--add-opens" if:set="isJava9" />
-                    <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" if:set="isJava9" />
-                    <jvmarg value="--add-opens" if:set="isJava9" />
-                    <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" if:set="isJava9" />
-                    <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
-                    <sysproperty key="josm.test.data" value="${test.dir}/data"/>
-                    <sysproperty key="java.awt.headless" value="${test.headless}"/>
-                    <sysproperty key="glass.platform" value="Monocle"/>
-                    <sysproperty key="monocle.platform" value="Headless"/>
-                    <sysproperty key="prism.order" value="sw"/>
-                    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
-                    <classpath>
-                        <path refid="test.classpath"/>
-                        <pathelement path="${test.dir}/build/unit"/>
-                        <pathelement path="${test.dir}/build/@{testfamily}"/>
-                        <pathelement path="${test.dir}/config"/>
-                    </classpath>
-                    <formatter type="plain"/>
-                    <formatter type="xml"/>
-                    <batchtest fork="yes" todir="${test.dir}/report">
-                        <fileset dir="${test.dir}/build/@{testfamily}" includes="@{includes}" excludes="@{excludes}"/>
-                    </batchtest>
-                </junit>
-            </jacoco:coverage>
+            <jacoco:agent destfile="${test.dir}/jacoco@{testITsuffix}.exec" enabled="@{coverage}" includes="${jacoco.includes}" dumponexit="true"
+		    inclbootstrapclasses="${jacoco.inclbootstrapclasses}" inclnolocationclasses="${jacoco.inclnolocationclasses}" property="jacocoagent@{testfamily}@{testITsuffix}" if:true="@{coverage}"/>
+            <junitlauncher printsummary="${junit.printsummary}" failureproperty="test.@{testfamily}@{testITsuffix}.failed">
+                <classpath>
+                    <path refid="test.classpath"/>
+                    <pathelement path="${test.dir}/build/unit"/> <!-- required for functional/etc to have JOSMTestRules -->
+                    <pathelement path="${test.dir}/build/@{testfamily}"/>
+                </classpath>
+                <testclasses outputDir="${test.dir}/report">
+                    <fileset dir="${test.dir}/build/@{testfamily}" includes="@{includes}" excludes="@{excludes}"/>
+	                <fork>
+	                    <jvmarg value="${jacocoagent@{testfamily}@{testITsuffix}}" if:set="jacocoagent@{testfamily}@{testITsuffix}" />
+	                    <jvmarg value="-Dfile.encoding=UTF-8"/>
+	                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
+	                    <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
+	                    <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
+	                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
+	                    <jvmarg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
+	                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="isJava11" />
+	                    <jvmarg value="jdk.deploy/com.sun.deploy.config=ALL-UNNAMED" if:set="isJava9" unless:set="isJava11" />
+	                    <jvmarg value="--add-opens" if:set="isJava9" />
+	                    <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
+	                    <jvmarg value="--add-opens" if:set="isJava9" />
+	                    <jvmarg value="java.base/java.lang=ALL-UNNAMED" if:set="isJava9" />
+	                    <jvmarg value="--add-opens" if:set="isJava9" />
+	                    <jvmarg value="java.base/java.nio=ALL-UNNAMED" if:set="isJava9" />
+	                    <jvmarg value="--add-opens" if:set="isJava9" />
+	                    <jvmarg value="java.base/java.text=ALL-UNNAMED" if:set="isJava9" />
+	                    <jvmarg value="--add-opens" if:set="isJava9" />
+	                    <jvmarg value="java.base/java.util=ALL-UNNAMED" if:set="isJava9" />
+	                    <jvmarg value="--add-opens" if:set="isJava9" />
+	                    <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" if:set="isJava9" />
+	                    <jvmarg value="--add-opens" if:set="isJava9" />
+	                    <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" if:set="isJava9" />
+	                    <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
+	                    <sysproperty key="josm.test.data" value="${test.dir}/data"/>
+	                    <sysproperty key="java.awt.headless" value="${test.headless}"/>
+	                    <sysproperty key="glass.platform" value="Monocle"/>
+	                    <sysproperty key="monocle.platform" value="Headless"/>
+	                    <sysproperty key="prism.order" value="sw"/>
+	                    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
+	                </fork>
+                    <listener type="legacy-plain" />
+                    <listener type="legacy-xml" />
+                </testclasses>
+            </junitlauncher>
         </sequential>
     </macrodef>
     <target name="test" depends="test-compile" unless="test.notRequired"
@@ -604,11 +605,11 @@ Build-Date: ${build.tstamp}
 
         # Keep serialization code
         -keepclassmembers class * implements java.io.Serializable {
-            static final long serialVersionUID; 
+            static final long serialVersionUID;
             private static final java.io.ObjectStreamField[] serialPersistentFields;
             private void writeObject(java.io.ObjectOutputStream);
             private void readObject(java.io.ObjectInputStream);
-            java.lang.Object writeReplace(); 
+            java.lang.Object writeReplace();
             java.lang.Object readResolve();
         }
 
