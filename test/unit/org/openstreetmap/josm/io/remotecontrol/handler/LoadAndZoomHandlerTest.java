@@ -1,9 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -13,13 +16,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link LoadAndZoomHandler} class.
  */
 public class LoadAndZoomHandlerTest {
-
-    /**
-     * Rule used for tests throwing exceptions.
-     */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     /**
      * Setup test.
      */
@@ -40,9 +36,8 @@ public class LoadAndZoomHandlerTest {
      */
     @Test
     public void testBadRequestNoParam() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("NumberFormatException (empty String)");
-        newHandler(null).handle();
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler(null).handle());
+        assertEquals("NumberFormatException (empty String)", e.getMessage());
     }
 
     /**
@@ -51,9 +46,8 @@ public class LoadAndZoomHandlerTest {
      */
     @Test
     public void testBadRequestInvalidUrl() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("The following keys are mandatory, but have not been provided: bottom, top, left, right");
-        newHandler("invalid_url").handle();
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("invalid_url").handle());
+        assertEquals("The following keys are mandatory, but have not been provided: bottom, top, left, right", e.getMessage());
     }
 
     /**
@@ -62,9 +56,8 @@ public class LoadAndZoomHandlerTest {
      */
     @Test
     public void testBadRequestIncompleteUrl() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("The following keys are mandatory, but have not been provided: bottom, top, left, right");
-        newHandler("https://localhost").handle();
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost").handle());
+        assertEquals("The following keys are mandatory, but have not been provided: bottom, top, left, right", e.getMessage());
     }
 
     /**
@@ -73,6 +66,6 @@ public class LoadAndZoomHandlerTest {
      */
     @Test
     public void testNominalRequest() throws Exception {
-        newHandler("https://localhost?bottom=0&top=0&left=1&right=1").handle();
+        assertDoesNotThrow(() -> newHandler("https://localhost?bottom=0&top=0&left=1&right=1").handle());
     }
 }

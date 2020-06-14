@@ -16,7 +16,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This class is needed to add {@link #expectRootCause} method, which has been rejected by JUnit developers,
  * and {@code ExpectedException} cannot be extended because it has a private constructor.
  * @see <a href="https://github.com/junit-team/junit4/pull/778">Github pull request</a>
+ * @deprecated Use matchers instead with the return from {@link org.junit.jupiter.api.Assertions#assertThrows}
  */
+@Deprecated
 public final class ExpectedRootException implements TestRule {
 
     private final ExpectedException rule = ExpectedException.none();

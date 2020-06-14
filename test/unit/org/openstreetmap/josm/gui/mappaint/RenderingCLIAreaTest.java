@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import static org.CustomMatchers.isFP;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +12,6 @@ import org.CustomMatchers.ErrorMode;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Rule;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -69,8 +69,8 @@ public class RenderingCLIAreaTest {
         LatLon aFeldberg = bFeldberg.getMin();
         LatLon aFeldberg200mRight = new LatLon(aFeldberg.lat(), 13.433008399004041);
         LatLon aFeldberg150mUp = new LatLon(53.33134745249311, aFeldberg.lon());
-        Assert.assertThat(aFeldberg.greatCircleDistance(aFeldberg200mRight), isFP(200.0, 0.01));
-        Assert.assertThat(aFeldberg.greatCircleDistance(aFeldberg150mUp), isFP(150.0, 0.01));
+        assertThat(aFeldberg.greatCircleDistance(aFeldberg200mRight), isFP(200.0, 0.01));
+        assertThat(aFeldberg.greatCircleDistance(aFeldberg150mUp), isFP(150.0, 0.01));
 
         Bounds bFeldberg200x150m = new Bounds(
                 bFeldberg.getMin(), new LatLon(aFeldberg150mUp.lat(), aFeldberg200mRight.lon()));
@@ -163,7 +163,7 @@ public class RenderingCLIAreaTest {
         RenderingCLI cli = new RenderingCLI();
         cli.parseArguments(args);
         RenderingCLI.RenderingArea ra = cli.determineRenderingArea(null);
-        Assert.assertThat(ra.scale, scaleMatcher);
-        Assert.assertThat(ra.bounds, boundsMatcher);
+        assertThat(ra.scale, scaleMatcher);
+        assertThat(ra.bounds, boundsMatcher);
     }
 }

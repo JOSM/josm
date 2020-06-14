@@ -1,9 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -16,13 +19,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link AddWayHandler} class.
  */
 public class AddWayHandlerTest {
-
-    /**
-     * Rule used for tests throwing exceptions.
-     */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     /**
      * Setup test.
      */
@@ -39,27 +35,23 @@ public class AddWayHandlerTest {
 
     /**
      * Unit test for bad request - no layer.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestNoLayer() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("There is no layer opened to add way");
-        newHandler("https://localhost?way=0,0;1,1").handle();
+    public void testBadRequestNoLayer() {
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost?way=0,0;1,1").handle());
+        assertEquals("There is no layer opened to add way", e.getMessage());
     }
 
     /**
      * Unit test for bad request - no param.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestNoParam() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("Invalid coordinates: []");
+    public void testBadRequestNoParam() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
             MainApplication.getLayerManager().addLayer(layer);
-            newHandler(null).handle();
+            Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler(null).handle());
+            assertEquals("Invalid coordinates: []", e.getMessage());
         } finally {
             MainApplication.getLayerManager().removeLayer(layer);
         }
@@ -67,36 +59,31 @@ public class AddWayHandlerTest {
 
     /**
      * Unit test for bad request - invalid URL.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestInvalidUrl() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("The following keys are mandatory, but have not been provided: way");
-        newHandler("invalid_url").handle();
+    public void testBadRequestInvalidUrl() {
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("invalid_url").handle());
+        assertEquals("The following keys are mandatory, but have not been provided: way", e.getMessage());
     }
 
     /**
      * Unit test for bad request - incomplete URL.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestIncompleteUrl() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("The following keys are mandatory, but have not been provided: way");
-        newHandler("https://localhost").handle();
+    public void testBadRequestIncompleteUrl() {
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost").handle());
+        assertEquals("The following keys are mandatory, but have not been provided: way", e.getMessage());
     }
 
     /**
      * Unit test for nominal request - local data file.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testNominalRequest() throws Exception {
+    public void testNominalRequest() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
             MainApplication.getLayerManager().addLayer(layer);
-            newHandler("https://localhost?way=0,0;1,1").handle();
+            assertDoesNotThrow(() -> newHandler("https://localhost?way=0,0;1,1").handle());
         } finally {
             MainApplication.getLayerManager().removeLayer(layer);
         }

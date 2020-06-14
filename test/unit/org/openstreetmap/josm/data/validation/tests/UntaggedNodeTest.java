@@ -3,7 +3,7 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.CustomMatchers.hasSize;
 import static org.CustomMatchers.isEmpty;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.InputStream;
 

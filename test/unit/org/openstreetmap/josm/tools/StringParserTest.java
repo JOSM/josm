@@ -2,14 +2,15 @@
 package org.openstreetmap.josm.tools;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
-import net.trajano.commons.testing.UtilityClassTestUtil;
 import org.junit.Test;
+
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link StringParser} class.

@@ -1,7 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
-
-import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -9,6 +10,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.openstreetmap.josm.testutils.ThrowableRootCauseMatcher.hasRootCause;
 
 import java.awt.Component;
 import java.awt.Graphics;
@@ -22,7 +25,6 @@ import javax.swing.Action;
 import javax.swing.Icon;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -32,7 +34,6 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.testutils.ExpectedRootException;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
@@ -162,12 +163,6 @@ public class LayerManagerTest {
     protected LayerManager layerManager;
 
     /**
-     * Rule used to expect exceptions.
-     */
-    @Rule
-    public ExpectedRootException thrown = ExpectedRootException.none();
-
-    /**
      * Set up test layer manager.
      */
     @Before
@@ -227,13 +222,13 @@ public class LayerManagerTest {
      */
     @Test
     public void testAddLayerFails() {
-        thrown.expect(ReportedException.class);
-        thrown.expectCause(any(InvocationTargetException.class));
-        thrown.expectRootCause(any(IllegalArgumentException.class));
-
-        TestLayer layer1 = new TestLayer();
-        layerManager.addLayer(layer1);
-        layerManager.addLayer(layer1);
+        Exception e = assertThrows(ReportedException.class, () -> {
+            TestLayer layer1 = new TestLayer();
+            layerManager.addLayer(layer1);
+            layerManager.addLayer(layer1);
+        });
+        assertThat(e.getCause(), is(instanceOf(InvocationTargetException.class)));
+        assertThat(e.getCause(), hasRootCause(is(instanceOf(IllegalArgumentException.class))));
     }
 
     /**
@@ -241,17 +236,17 @@ public class LayerManagerTest {
      */
     @Test
     public void testAddLayerIllegalPosition() {
-        thrown.expect(ReportedException.class);
-        thrown.expectCause(any(InvocationTargetException.class));
-        thrown.expectRootCause(any(IndexOutOfBoundsException.class));
-
-        TestLayer layer1 = new TestLayer() {
-            @Override
-            public LayerPositionStrategy getDefaultLayerPosition() {
-                return manager -> 42;
-            }
-        };
-        layerManager.addLayer(layer1);
+        Exception e = assertThrows(ReportedException.class, () -> {
+            TestLayer layer1 = new TestLayer() {
+                @Override
+                public LayerPositionStrategy getDefaultLayerPosition() {
+                    return manager -> 42;
+                }
+            };
+            layerManager.addLayer(layer1);
+        });
+        assertThat(e.getCause(), is(instanceOf(InvocationTargetException.class)));
+        assertThat(e.getCause(), hasRootCause(is(instanceOf(IndexOutOfBoundsException.class))));
     }
 
     /**
@@ -308,15 +303,15 @@ public class LayerManagerTest {
      */
     @Test
     public void testMoveLayerFailsRange() {
-        thrown.expect(ReportedException.class);
-        thrown.expectCause(any(InvocationTargetException.class));
-        thrown.expectRootCause(any(IndexOutOfBoundsException.class));
-
-        TestLayer layer1 = new TestLayer();
-        TestLayer layer2 = new TestLayer();
-        layerManager.addLayer(layer1);
-        layerManager.addLayer(layer2);
-        layerManager.moveLayer(layer2, 2);
+        Exception e = assertThrows(ReportedException.class, () -> {
+            TestLayer layer1 = new TestLayer();
+            TestLayer layer2 = new TestLayer();
+            layerManager.addLayer(layer1);
+            layerManager.addLayer(layer2);
+            layerManager.moveLayer(layer2, 2);
+        });
+        assertThat(e.getCause(), is(instanceOf(InvocationTargetException.class)));
+        assertThat(e.getCause(), hasRootCause(is(instanceOf(IndexOutOfBoundsException.class))));
     }
 
     /**
@@ -324,14 +319,14 @@ public class LayerManagerTest {
      */
     @Test
     public void testMoveLayerFailsNotInList() {
-        thrown.expect(ReportedException.class);
-        thrown.expectCause(any(InvocationTargetException.class));
-        thrown.expectRootCause(any(IllegalArgumentException.class));
-
-        TestLayer layer1 = new TestLayer();
-        TestLayer layer2 = new TestLayer();
-        layerManager.addLayer(layer1);
-        layerManager.moveLayer(layer2, 0);
+        Exception e = assertThrows(ReportedException.class, () -> {
+            TestLayer layer1 = new TestLayer();
+            TestLayer layer2 = new TestLayer();
+            layerManager.addLayer(layer1);
+            layerManager.moveLayer(layer2, 0);
+        });
+        assertThat(e.getCause(), is(instanceOf(InvocationTargetException.class)));
+        assertThat(e.getCause(), hasRootCause(is(instanceOf(IllegalArgumentException.class))));
     }
 
     /**

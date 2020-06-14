@@ -2,15 +2,16 @@
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -21,13 +22,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link ImageryHandler} class.
  */
 public class ImageryHandlerTest {
-
-    /**
-     * Rule used for tests throwing exceptions.
-     */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     /**
      * Setup test.
      */
@@ -44,44 +38,38 @@ public class ImageryHandlerTest {
 
     /**
      * Unit test for bad request - no param.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestNoParam() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("Parameter must not be null");
-        newHandler(null).handle();
+    public void testBadRequestNoParam() {
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler(null).handle());
+        assertEquals("Parameter must not be null", e.getMessage());
+
     }
 
     /**
      * Unit test for bad request - invalid URL.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestInvalidUrl() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("The following keys are mandatory, but have not been provided: url");
-        newHandler("invalid_url").handle();
+    public void testBadRequestInvalidUrl() {
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("invalid_url").handle());
+        assertEquals("The following keys are mandatory, but have not been provided: url", e.getMessage());
     }
 
     /**
      * Unit test for bad request - incomplete URL.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestIncompleteUrl() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("The following keys are mandatory, but have not been provided: url");
-        newHandler("https://localhost").handle();
+    public void testBadRequestIncompleteUrl() {
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost").handle());
+        assertEquals("The following keys are mandatory, but have not been provided: url", e.getMessage());
     }
 
     /**
      * Unit test for nominal request - local data file.
-     * @throws Exception if any error occurs
      */
     @Test
-    public void testNominalRequest() throws Exception {
-        newHandler("https://localhost?url=foo").handle();
+    public void testNominalRequest() {
+        assertDoesNotThrow(() -> newHandler("https://localhost?url=foo").handle());
     }
 
     /**

@@ -2,12 +2,13 @@
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -21,13 +22,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link ImportHandler} class.
  */
 public class ImportHandlerTest {
-
-    /**
-     * Rule used for tests throwing exceptions.
-     */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     /**
      * Setup test.
      */
@@ -58,9 +52,8 @@ public class ImportHandlerTest {
      */
     @Test
     public void testBadRequestNoParam() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("MalformedURLException: null");
-        newHandler(null).handle();
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler(null).handle());
+        assertEquals("MalformedURLException: null", e.getMessage());
     }
 
     /**
@@ -69,9 +62,8 @@ public class ImportHandlerTest {
      */
     @Test
     public void testBadRequestInvalidUrl() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("MalformedURLException: no protocol: invalid_url");
-        newHandler("https://localhost?url=invalid_url").handle();
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost?url=invalid_url").handle());
+        assertEquals("MalformedURLException: no protocol: invalid_url", e.getMessage());
     }
 
     /**
@@ -80,9 +72,8 @@ public class ImportHandlerTest {
      */
     @Test
     public void testBadRequestIncompleteUrl() throws Exception {
-        thrown.expect(RequestHandlerBadRequestException.class);
-        thrown.expectMessage("The following keys are mandatory, but have not been provided: url");
-        newHandler("https://localhost").handle();
+        Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost").handle());
+        assertEquals("The following keys are mandatory, but have not been provided: url", e.getMessage());
     }
 
     /**
@@ -93,7 +84,7 @@ public class ImportHandlerTest {
     public void testNominalRequest() throws Exception {
         String url = new File(TestUtils.getRegressionDataFile(11957, "data.osm")).toURI().toURL().toExternalForm();
         try {
-            newHandler("https://localhost?url=" + Utils.encodeUrl(url)).handle();
+            assertDoesNotThrow(() -> newHandler("https://localhost?url=" + Utils.encodeUrl(url)).handle());
         } finally {
             for (OsmDataLayer layer : MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class)) {
                 MainApplication.getLayerManager().removeLayer(layer);

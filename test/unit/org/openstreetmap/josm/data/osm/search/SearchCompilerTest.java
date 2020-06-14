@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +20,6 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -59,12 +60,6 @@ public class SearchCompilerTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().timeout(30000);
-
-    /**
-     * Rule to assert exception message.
-     */
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     private static final class SearchContext {
         final DataSet ds = new DataSet();
@@ -426,9 +421,8 @@ public class SearchCompilerTest {
      */
     @Test
     public void testFooTypeBar() throws SearchParseError {
-        expectedEx.expect(SearchParseError.class);
-        expectedEx.expectMessage("<html>Expecting <code>:</code> after <i>type</i></html>");
-        SearchCompiler.compile("foo type bar");
+        Exception e = assertThrows(SearchParseError.class, () -> SearchCompiler.compile("foo type bar"));
+        assertEquals("<html>Expecting <code>:</code> after <i>type</i></html>", e.getMessage());
     }
 
     /**
@@ -552,7 +546,7 @@ public class SearchCompilerTest {
      */
     @Test
     public void testEnumExactKeyValueMode() {
-        TestUtils.superficialEnumCodeCoverage(ExactKeyValue.Mode.class);
+        assertDoesNotThrow(() -> TestUtils.superficialEnumCodeCoverage(ExactKeyValue.Mode.class));
     }
 
     /**
