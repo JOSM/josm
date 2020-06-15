@@ -136,7 +136,7 @@ public class InetAddressValidator extends AbstractValidator {
                 || (inet6Address.endsWith(":") && !inet6Address.endsWith("::"))) {
             return false;
         }
-        String[] octets = inet6Address.split(":", -1);
+        String[] octets = inet6Address.split(":");
         if (containsCompressedZeroes) {
             List<String> octetList = new ArrayList<>(Arrays.asList(octets));
             if (inet6Address.endsWith("::")) {
