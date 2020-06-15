@@ -102,7 +102,7 @@ way[highway=cycleway][cycleway=lane] {
   assertNoMatch: "way highway=footway";
 }
 
-/* footway, see #10851, #10976, #15439 */
+/* footway, see #10851, #10976, #15439, #19389 */
 way[footway=left][/^footway:/],
 way[footway=right][/^footway:/],
 way[footway=both][/^footway:/],
@@ -135,8 +135,8 @@ way[footway=none]!.not_fixable_footway {
   fixAdd: "sidewalk=no";
   set fixable_footway;
 }
-way[footway][footway!=sidewalk][footway!=crossing]!.fixable_footway!.not_fixable_footway { /* do not trigger this rule if already one of the 4 previous rules applied */
-  throwWarning: tr("Value of ''{0}'' should either be ''{1}'' or ''{2}''. For sidewalks use ''{3}'' instead.", "{0.key}", "{1.value}", "{2.value}", "sidewalk=left|right|both|no");
+way[footway][footway!=access_aisle][footway!=crossing][footway!=sidewalk]!.fixable_footway!.not_fixable_footway { /* do not trigger this rule if already one of the 4 previous rules applied */
+  throwWarning: tr("Value of {0} should either be {1}, {2} or {3}. For sidewalks use {4} instead.", "{0.key}", "{1.value}", "{2.value}", "{3.value}", "sidewalk=left|right|both|no");
   assertNoMatch: "way footway=left";
   assertNoMatch: "way footway=none";
   assertNoMatch: "way footway=left footway:left:surface=asphalt";

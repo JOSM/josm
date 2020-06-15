@@ -1054,7 +1054,7 @@
             <link wiki="Tag:highway=footway" />
             <key key="highway" value="footway" />
             <optional>
-                <combo key="footway" text="Type" values="sidewalk,crossing" values_context="footway" />
+                <combo key="footway" text="Type" values="access_aisle,crossing,sidewalk" values_context="footway" />
                 <reference ref="name_layer" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
