@@ -98,14 +98,6 @@
             <isset property="isJava9"/>
         </condition>
     </target>
-
-    <!--
-      ** Used by Eclipse ant builder for updating
-      ** the REVISION file used by JOSM
-    -->
-    <target name="create-revision-eclipse">
-        <antcall target="create-revision"/>
-    </target>
     <!--
       ** Initializes the REVISION.XML file from SVN information
     -->
