@@ -1981,3 +1981,11 @@ way[amenity=bench][capacity][seats] {
   suggestAlternative: "seats";
   group: tr("deprecated tagging");
 }
+
+/* #19396 */
+way[stream=intermittent] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "intermittent=yes";
+  suggestAlternative: "seasonal=yes";
+  group: tr("deprecated tagging");
+}
