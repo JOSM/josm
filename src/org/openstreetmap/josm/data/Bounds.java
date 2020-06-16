@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is a simple data class for "rectangular" areas of the world, given in
- * lat/lon min/max values.  The values are rounded to LatLon.OSM_SERVER_PRECISION
+ * lat/lon min/max values.  The values are {@linkplain LatLon#roundToOsmPrecision(double) rounded to server precision}
  *
  * @author imi
  *
