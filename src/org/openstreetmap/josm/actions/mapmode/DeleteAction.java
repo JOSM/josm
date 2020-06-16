@@ -438,7 +438,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         giveUserFeedback(oldEvent, modifiers);
     }
 
-    private boolean changesHiddenWay(Command c) {
+    private static boolean changesHiddenWay(Command c) {
         return c.getParticipatingPrimitives().stream().anyMatch(OsmPrimitive::isDisabledAndHidden);
     }
 
