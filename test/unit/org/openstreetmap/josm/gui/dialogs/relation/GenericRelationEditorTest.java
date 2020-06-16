@@ -90,9 +90,8 @@ public class GenericRelationEditorTest {
 
         Relation r = TestUtils.addFakeDataSet(new Relation(1));
         assertNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.<OsmPrimitive>emptyList()));
-
         jopsMocker.getMockResultMap().put(
-            "<html>You are trying to add a relation to itself.<br><br>This creates circular references "
+            "<html>You are trying to add a relation to itself.<br><br>This generates a circular dependency of parent/child elements "
             + "and is therefore discouraged.<br>Skipping relation 'incomplete'.</html>",
             JOptionPane.OK_OPTION
         );

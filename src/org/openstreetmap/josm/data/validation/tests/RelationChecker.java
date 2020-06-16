@@ -458,7 +458,7 @@ public class RelationChecker extends Test implements TaggingPresetListener {
      * but if child is already part of a circular dependency the returned list may not end with {@code parent}.
      */
     public static List<Relation> checkAddMember(Relation parent, Relation child) {
-        if (parent == null || child == null || child.isIncomplete())
+        if (parent == null || child == null)
             return Collections.emptyList();
         RelationChecker test = new RelationChecker();
         LinkedList<Relation> path = new LinkedList<>();
