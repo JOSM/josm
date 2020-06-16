@@ -53,6 +53,7 @@ import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.preferences.JosmBaseDirectories;
 import org.openstreetmap.josm.data.preferences.JosmUrls;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.data.sources.SourceInfo;
 import org.openstreetmap.josm.data.validation.routines.DomainValidator;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -523,7 +524,7 @@ public class SyncEditorLayerIndex {
             }
             for (ImageryInfo m : e.getMirrors()) {
                 url = getUrlStripped(m);
-                Field origNameField = ImageryInfo.class.getDeclaredField("origName");
+                Field origNameField = SourceInfo.class.getDeclaredField("origName");
                 ReflectionUtils.setObjectsAccessible(origNameField);
                 origNameField.set(m, m.getOriginalName().replaceAll(" mirror server( \\d+)?", ""));
                 if (josmUrls.containsKey(url)) {
