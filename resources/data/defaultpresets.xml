@@ -1251,7 +1251,7 @@
             <key key="traffic_sign" value="city_limit" />
             <text key="name" text="Name" />
             <optional>
-                <text key="alt_name" text="Second Name" />
+                <text key="alt_name" text="Second Name" alternative_autocomplete_keys="name" />
                 <combo key="direction" text="Direction" values="N,E,S,W,0,90,180,270,forward,backward" values_sort="false" />
             </optional>
         </item> <!-- City Limit -->

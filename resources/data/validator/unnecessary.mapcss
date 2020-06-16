@@ -91,7 +91,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   fixRemove: "{1.key}";
 }
 
-/* #17100, #17471, #17629, #17633, #19274 */
+/* #17100, #17471, #17629, #17633, #19274, #19395 */
 *[name][name=~/^(?i)(library|biblioteca|biblioteka|bibliothek|bibliotheek)$/][amenity=library],
 *[name][name=~/^(?i)(parc|park)$/][leisure=park],
 *[name][name=~/^(?i)(pond)$/][water=pond],
@@ -105,7 +105,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 *[name][name=~/^(?i)(playground|spielplatz)$/][leisure=playground],
 *[name][name=~/^(?i)(shop|boutique)$/][shop][shop!=no],
 *[name][name=~/^(?i)(building|bangunan)$/][building][building!=no],
-*[name][name=~/^(?i)(house|casa|maison|rumah|vivienda)$/][building=house],
+*[name][name=~/^(?i)(house|maison|rumah|vivienda)$/][building=house], /* not casa (spanisch) becasue it is a brand name in France */
 *[name][name=~/^(?i)(kiosk)$/][shop=kiosk],
 *[name][name=~/^(?i)(path)$/][highway=path],
 *[name][name=~/^(?i)(jalan)$/][highway],
@@ -155,7 +155,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertNoMatch: "way name=kiosk amenity=grave_yard";
 }
 *[name][name=~/^(?i)(school|école|Школа)$/][building][building!=school][building!=no],
-*[name][name=~/^(?i)(house|casa|rumah|vivienda)$/][building][building!=house][building!=no] {
+*[name][name=~/^(?i)(house|rumah|vivienda)$/][building][building!=house][building!=no] {
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
   /* without fixRemove to avoid possible information loss */
