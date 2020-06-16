@@ -28,7 +28,6 @@ public class JosmDecimalFormatSymbolsProvider extends DecimalFormatSymbolsProvid
     @Override
     public Locale[] getAvailableLocales() {
         return Stream.of(
-                Stream.of(Locale.ROOT),
                 Stream.of("", "AU", "IE", "US", "UK").map(country -> new Locale("en", country, "")),
                 Stream.of("", "AT", "CH", "DE").map(country -> new Locale("de", country, "")),
                 I18n.getAvailableTranslations()
