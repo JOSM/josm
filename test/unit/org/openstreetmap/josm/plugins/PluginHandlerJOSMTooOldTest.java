@@ -98,8 +98,8 @@ public class PluginHandlerJOSMTooOldTest {
     private File targetQuxJar;
     private File targetQuxJarNew;
 
-    private final String bazPluginVersionReqString = "JOSM version 8,001 required for plugin baz_plugin.";
-    private final String dummyPluginVersionReqString = "JOSM version 7,001 required for plugin dummy_plugin.";
+    private final String bazPluginVersionReqString = "JOSM version 8\u202F001 required for plugin baz_plugin.";
+    private final String dummyPluginVersionReqString = "JOSM version 7\u202F001 required for plugin dummy_plugin.";
     private final String dummyPluginFailedString = "<html>Updating the following plugin has failed:<ul><li>dummy_plugin</li></ul>"
         + "Please open the Preference Dialog after JOSM has started and try to update it manually.</html>";
 
@@ -310,7 +310,7 @@ public class PluginHandlerJOSMTooOldTest {
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", Arrays.asList("qux_plugin", "baz_plugin"));
 
-        new ExtendedDialogMocker(Collections.singletonMap("JOSM version 7,500 required for plugin qux_plugin.", "Download Plugin"));
+        new ExtendedDialogMocker(Collections.singletonMap("JOSM version 7\u202F500 required for plugin qux_plugin.", "Download Plugin"));
 
         Files.copy(this.referenceQuxJarOld.toPath(), this.targetQuxJar.toPath());
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
