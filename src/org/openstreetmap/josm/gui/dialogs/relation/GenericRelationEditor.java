@@ -55,6 +55,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.validation.tests.RelationChecker;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
@@ -884,11 +885,35 @@ public class GenericRelationEditor extends RelationEditor {
      * @param primitive the concerned primitive
      */
     public static void warnOfCircularReferences(OsmPrimitive primitive) {
-        String msg = tr("<html>You are trying to add a relation to itself.<br>"
-                + "<br>"
-                + "This creates circular references and is therefore discouraged.<br>"
-                + "Skipping relation ''{0}''.</html>",
-                Utils.escapeReservedCharactersHTML(primitive.getDisplayName(DefaultNameFormatter.getInstance())));
+        warnOfCircularReferences(primitive, Collections.emptyList());
+    }
+
+    /**
+     * Warn about circular references.
+     * @param primitive the concerned primitive
+     * @param loop list of relation that form the circular dependencies.
+     *   Only used to report the loop if more than one relation is involved.
+     * @since 16651
+     */
+    public static void warnOfCircularReferences(OsmPrimitive primitive, List<Relation> loop) {
+        final String msg;
+        DefaultNameFormatter df = DefaultNameFormatter.getInstance();
+        if (loop.size() <= 2) {
+            msg = tr("<html>You are trying to add a relation to itself.<br>"
+                    + "<br>"
+                    + "This generates a circular dependency of parent/child elements and is therefore discouraged.<br>"
+                    + "Skipping relation ''{0}''.</html>",
+                    Utils.escapeReservedCharactersHTML(primitive.getDisplayName(df)));
+        } else {
+            msg = tr("<html>You are trying to add a child relation which refers to the parent relation.<br>"
+                    + "<br>"
+                    + "This generates a circular dependency of parent/child elements and is therefore discouraged.<br>"
+                    + "Skipping relation ''{0}''." + "<br>"
+                    + "Relations that would generate the circular dependency:<br>{1}</html>",
+                    Utils.escapeReservedCharactersHTML(primitive.getDisplayName(df)),
+                    loop.stream().map(p -> Utils.escapeReservedCharactersHTML(p.getDisplayName(df)))
+                            .collect(Collectors.joining(" -> <br>")));
+        }
         JOptionPane.showMessageDialog(
                 MainApplication.getMainFrame(),
                 msg,
@@ -911,9 +936,12 @@ public class GenericRelationEditor extends RelationEditor {
             Relation relation = new Relation(orig);
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {
-                if (p instanceof Relation && orig.equals(p)) {
-                    warnOfCircularReferences(p);
-                    continue;
+                if (p instanceof Relation) {
+                    List<Relation> loop = RelationChecker.checkAddMember(relation, (Relation) p);
+                    if (!loop.isEmpty() && loop.get(0).equals(loop.get(loop.size() - 1))) {
+                        warnOfCircularReferences(p, loop);
+                        continue;
+                    }
                 } else if (MemberTableModel.hasMembersReferringTo(relation.getMembers(), Collections.singleton(p))
                         && !confirmAddingPrimitive(p)) {
                     continue;

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.validation.tests.RelationChecker;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor.AddAbortException;
@@ -33,10 +34,12 @@ abstract class AddFromSelectionAction extends AbstractRelationEditorAction {
         List<OsmPrimitive> ret = new ArrayList<>();
         ConditionalOptionPaneUtil.startBulkOperation("add_primitive_to_relation");
         for (OsmPrimitive primitive : primitives) {
-            if (primitive instanceof Relation
-                    && editorAccess.getEditor().getRelation() != null && editorAccess.getEditor().getRelation().equals(primitive)) {
-                GenericRelationEditor.warnOfCircularReferences(primitive);
-                continue;
+            if (primitive instanceof Relation) {
+                List<Relation> loop = RelationChecker.checkAddMember(editorAccess.getEditor().getRelation(), (Relation) primitive);
+                if (!loop.isEmpty() && loop.get(0).equals(loop.get(loop.size() - 1))) {
+                    GenericRelationEditor.warnOfCircularReferences(primitive, loop);
+                    continue;
+                }
             }
             if (isPotentialDuplicate(primitive)) {
                 if (GenericRelationEditor.confirmAddingPrimitive(primitive)) {

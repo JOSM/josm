@@ -6,14 +6,18 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -61,6 +65,8 @@ public class RelationChecker extends Test implements TaggingPresetListener {
     public static final int RELATION_EMPTY   = 1708;
     /** Type ''{0}'' of relation member with role ''{1}'' does not match accepted types ''{2}'' in preset {3} */
     public static final int WRONG_TYPE       = 1709;
+    /** Relations build circular dependencies */
+    public static final int RELATION_LOOP    = 1710;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     /**
@@ -70,7 +76,7 @@ public class RelationChecker extends Test implements TaggingPresetListener {
     public static final String ROLE_VERIF_PROBLEM_MSG = tr("Role verification problem");
     private boolean ignoreMultiPolygons;
     private boolean ignoreTurnRestrictions;
-
+    private final List<List<Relation>> loops = new ArrayList<>();
     /**
      * Constructor
      */
@@ -154,6 +160,7 @@ public class RelationChecker extends Test implements TaggingPresetListener {
         if (!map.isEmpty() && !allroles.isEmpty()) {
             checkRoles(n, allroles, map);
         }
+        checkLoop(n);
     }
 
     private static Map<String, RoleInfo> buildRoleInfoMap(Relation n) {
@@ -369,7 +376,15 @@ public class RelationChecker extends Test implements TaggingPresetListener {
     public Command fixError(TestError testError) {
         Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
         if (isFixable(testError) && !primitives.iterator().next().isDeleted()) {
-            return new DeleteCommand(primitives);
+            if (testError.getCode() == RELATION_EMPTY) {
+                return new DeleteCommand(primitives);
+            }
+            if (testError.getCode() == RELATION_LOOP) {
+                Relation old = (Relation) primitives.iterator().next();
+                Relation mod = new Relation(old);
+                mod.removeMembersFor(primitives);
+                return new ChangeCommand(old, mod);
+            }
         }
         return null;
     }
@@ -377,7 +392,8 @@ public class RelationChecker extends Test implements TaggingPresetListener {
     @Override
     public boolean isFixable(TestError testError) {
         Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
-        return testError.getCode() == RELATION_EMPTY && !primitives.isEmpty() && primitives.iterator().next().isNew();
+        return (testError.getCode() == RELATION_EMPTY && !primitives.isEmpty() && primitives.iterator().next().isNew())
+                || (testError.getCode() == RELATION_LOOP && primitives.size() == 1);
     }
 
     @Override
@@ -385,4 +401,73 @@ public class RelationChecker extends Test implements TaggingPresetListener {
         relationpresets.clear();
         initializePresets();
     }
+
+    @Override
+    public void endTest() {
+        loops.forEach(loop -> errors.add(TestError.builder(this, Severity.ERROR, RELATION_LOOP)
+                .message(loop.size() == 2 ? tr("Relation contains itself as a member")
+                        : tr("Relations generate circular dependency of parent/child elements"))
+                .primitives(new LinkedHashSet<>(loop))
+                .build()));
+        loops.clear();
+        super.endTest();
+    }
+
+    /**
+     * Check if a given relation is part of a circular dependency loop.
+     * @param r the relation
+     */
+    private void checkLoop(Relation r) {
+        checkLoop(r, new LinkedList<>());
+    }
+
+    private void checkLoop(Relation parent, List<Relation> path) {
+        if (path.contains(parent)) {
+            Iterator<List<Relation>> iter = loops.iterator();
+            while (iter.hasNext()) {
+                List<Relation> loop = iter.next();
+                if (loop.size() > path.size() && loop.containsAll(path)) {
+                    // remove same loop with irrelevant parent
+                    iter.remove();
+                } else if (path.size() >= loop.size() && path.containsAll(loop)) {
+                    // same or smaller loop is already known
+                    return;
+                }
+            }
+            if (path.get(0).equals(parent)) {
+                path.add(parent);
+                loops.add(path);
+            }
+            return;
+        }
+        path.add(parent);
+        for (Relation sub : parent.getMemberPrimitives(Relation.class)) {
+            if (sub.isUsable() && !sub.isIncomplete()) {
+                checkLoop(sub, new LinkedList<>(path));
+            }
+        }
+    }
+
+    /**
+     * Check if adding one relation to another would produce a circular dependency.
+     * @param parent the relation which would be changed
+     * @param child the child relation which should be added to parent
+     * @return An unmodifiable list of relations which is empty when no circular dependency was found,
+     * else it contains the relations that form circular dependencies.
+     * The list then contains at least two items. Normally first and last item are both {@code parent},
+     * but if child is already part of a circular dependency the returned list may not end with {@code parent}.
+     */
+    public static List<Relation> checkAddMember(Relation parent, Relation child) {
+        if (parent == null || child == null || child.isIncomplete())
+            return Collections.emptyList();
+        RelationChecker test = new RelationChecker();
+        LinkedList<Relation> path = new LinkedList<>();
+        path.add(parent);
+        test.checkLoop(child, path);
+        if (test.loops.isEmpty())
+            return Collections.emptyList();
+        else
+            return Collections.unmodifiableList(test.loops.iterator().next());
+    }
+
 }
