@@ -103,6 +103,12 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     private boolean territories;
     private boolean metric;
     private boolean main;
+    /**
+     * This boolean is only used to indicate if JUnit5 is used in a test. If it is,
+     * we must not call after in {@link JOSMTestRules.CreateJosmEnvironment#evaluate}.
+     * TODO: Remove JUnit4 as a whole sometime after 2021-01-01 (~6 month lead time for plugins)
+     */
+    private boolean junit5;
 
     /**
      * Disable the default timeout for this test. Use with care.
@@ -437,6 +443,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        this.junit5 = true;
         Statement temporaryStatement = new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -454,7 +461,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        // do nothing for now
+        after();
     }
 
     /**
@@ -689,7 +696,9 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
             try {
                 base.evaluate();
             } finally {
-                after();
+                if (!junit5) {
+                    after();
+                }
             }
         }
     }
