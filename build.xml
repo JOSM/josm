@@ -451,6 +451,7 @@ Build-Date: ${build.tstamp}
 	                    <jvmarg value="${jacocoagent@{testfamily}@{testITsuffix}}" if:set="jacocoagent@{testfamily}@{testITsuffix}" />
 	                    <jvmarg value="-Dfile.encoding=UTF-8"/>
 	                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
+	                    <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
 	                    <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
 	                    <jvmarg value="java.activation,java.se.ee" if:set="isJava9" unless:set="isJava11" />
 	                    <jvmarg value="--add-exports" if:set="isJava9" unless:set="noJavaFX" />
