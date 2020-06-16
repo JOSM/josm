@@ -73,7 +73,7 @@ public class DataSetMergerTest {
     }
 
     /**
-     * two identical nodes, even in id and version. No confict expected.
+     * two identical nodes, even in id and version. No conflict expected.
      *
      * Can happen if data is loaded in two layers and then merged from one layer
      * on the other.

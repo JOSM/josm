@@ -488,7 +488,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     /**
      * Builds a default tooltip text for the primitive <code>primitive</code>.
      *
-     * @param primitive the primitmive
+     * @param primitive the primitive
      * @return the tooltip text
      */
     public String buildDefaultToolTip(IPrimitive primitive) {
@@ -646,7 +646,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     /**
      * Builds a default tooltip text for an HistoryOsmPrimitive <code>primitive</code>.
      *
-     * @param primitive the primitmive
+     * @param primitive the primitive
      * @return the tooltip text
      */
     public String buildDefaultToolTip(HistoryOsmPrimitive primitive) {

@@ -489,7 +489,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
 
-        // Force log handers to reacquire reference to (junit's fake) stdout/stderr
+        // Force log handlers to reacquire reference to (junit's fake) stdout/stderr
         for (Handler handler : Logging.getLogger().getHandlers()) {
             if (handler instanceof Logging.ReacquiringConsoleHandler) {
                 handler.flush();
@@ -699,7 +699,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     }
 
     /**
-     * The junit timeout statement has problems when switchting timezones. This one does not.
+     * The junit timeout statement has problems when switching timezones. This one does not.
      * @author Michael Zangl
      */
     private static class FailOnTimeoutStatement extends Statement {

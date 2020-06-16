@@ -672,7 +672,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
 
     /**
      * Selects all members which refer to {@link OsmPrimitive}s in the collections
-     * <code>primitmives</code>. Does nothing is primitives is null.
+     * <code>primitives</code>. Does nothing is primitives is null.
      *
      * @param primitives the collection of primitives
      */
