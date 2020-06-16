@@ -11,15 +11,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -361,20 +358,11 @@ public final class I18n {
      * Get a list of all available JOSM Translations.
      * @return an array of locale objects.
      */
-    public static Locale[] getAvailableTranslations() {
-        Collection<Locale> v = new ArrayList<>(languages.size());
-        if (getTranslationFile("en") != null) {
-            for (String loc : languages.keySet()) {
-                if (getTranslationFile(loc) != null) {
-                    v.add(LanguageInfo.getLocale(loc));
-                }
-            }
-        }
-        v.add(Locale.ENGLISH);
-        Locale[] l = new Locale[v.size()];
-        l = v.toArray(l);
-        Arrays.sort(l, Comparator.comparing(Locale::toString));
-        return l;
+    public static Stream<Locale> getAvailableTranslations() {
+        Stream<String> languages = Stream.concat(
+                getTranslationFile("en") != null ? I18n.languages.keySet().stream() : Stream.empty(),
+                Stream.of("en"));
+        return languages.filter(loc -> getTranslationFile(loc) != null).map(LanguageInfo::getLocale);
     }
 
     /**

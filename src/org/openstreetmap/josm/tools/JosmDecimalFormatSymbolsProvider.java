@@ -4,6 +4,8 @@ package org.openstreetmap.josm.tools;
 import java.text.DecimalFormatSymbols;
 import java.text.spi.DecimalFormatSymbolsProvider;
 import java.util.Locale;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * JOSM implementation of the {@link java.text.DecimalFormatSymbols DecimalFormatSymbols} class,
@@ -25,7 +27,12 @@ public class JosmDecimalFormatSymbolsProvider extends DecimalFormatSymbolsProvid
 
     @Override
     public Locale[] getAvailableLocales() {
-        return I18n.getAvailableTranslations();
+        return Stream.of(
+                Stream.of(Locale.ROOT),
+                Stream.of("", "AU", "IE", "US", "UK").map(country -> new Locale("en", country, "")),
+                Stream.of("", "AT", "CH", "DE").map(country -> new Locale("de", country, "")),
+                I18n.getAvailableTranslations()
+        ).flatMap(Function.identity()).toArray(Locale[]::new);
     }
 
     /**

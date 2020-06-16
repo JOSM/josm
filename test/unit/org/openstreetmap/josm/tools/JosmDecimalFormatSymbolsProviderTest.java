@@ -2,8 +2,11 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.text.DecimalFormat;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +25,19 @@ public class JosmDecimalFormatSymbolsProviderTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
+
+    @Test
+    public void testGroupingSeparator() {
+        checkGroupingSymbol(Locale.ROOT);
+        assertTrue(I18n.getAvailableTranslations().count() > 10);
+        I18n.getAvailableTranslations().forEach(this::checkGroupingSymbol);
+        Stream.of("", "AU", "IE", "US", "UK").map(country -> new Locale("en", country, "")).forEach(this::checkGroupingSymbol);
+        Stream.of("", "AT", "CH", "DE").map(country -> new Locale("de", country, "")).forEach(this::checkGroupingSymbol);
+    }
+
+    private void checkGroupingSymbol(Locale locale) {
+        assertEquals(locale.toString(), "123\u202F456", DecimalFormat.getInstance(locale).format(123_456));
+    }
 
     /**
      * Test {@link JosmDecimalFormatSymbolsProvider#parseDouble}.
