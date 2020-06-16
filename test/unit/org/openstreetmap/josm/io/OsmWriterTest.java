@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +16,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
+import org.openstreetmap.josm.data.osm.User;
 
 /**
  * Unit tests of {@link OsmWriter} class.
@@ -89,5 +93,25 @@ public class OsmWriterTest {
                 new String(baos.toByteArray(), StandardCharsets.UTF_8)
                         .replaceAll("\r", "")
                         .replaceAll("\n", ""));
+    }
+
+    /**
+     * Unit test of {@link OsmWriter#visit(Changeset)}.
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void testChangeset() throws IOException {
+        Changeset cs = new Changeset();
+        cs.setUser(User.getAnonymous());
+        cs.setId(38038262);
+        cs.setMin(new LatLon(12., 34.));
+        cs.setMax(new LatLon(56., 78.));
+        try (StringWriter stringWriter = new StringWriter();
+             OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(stringWriter), true, OsmWriter.DEFAULT_API_VERSION)) {
+            osmWriter.visit(cs);
+            assertEquals("  <changeset id='38038262' user='&lt;anonymous&gt;' uid='-1' open='false' " +
+                            "min_lon='34.0' min_lat='12.0' max_lon='78.0' max_lat='56.0'>\n  </changeset>\n",
+                    stringWriter.toString().replace("\r", ""));
+        }
     }
 }

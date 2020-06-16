@@ -312,8 +312,8 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.print(" min_lat='"+ DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMin()) +'\'');
         }
         if (cs.getMax() != null) {
-            out.print(" max_lon='"+ DecimalDegreesCoordinateFormat.INSTANCE.lonToString(cs.getMin()) +'\'');
-            out.print(" max_lat='"+ DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMin()) +'\'');
+            out.print(" max_lon='"+ DecimalDegreesCoordinateFormat.INSTANCE.lonToString(cs.getMax()) +'\'');
+            out.print(" max_lat='"+ DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMax()) +'\'');
         }
         out.println(">");
         addTags(cs, "changeset", false); // also writes closing </changeset>
