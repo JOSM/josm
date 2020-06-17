@@ -1158,17 +1158,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         int texty = y + 2 + fontHeight;
 
         /*if (PROP_DRAW_DEBUG.get()) {
-            myDrawString(g, "x=" + t.getXtile() + " y=" + t.getYtile() + " z=" + zoom + "", p.x + 2, texty);
+            myDrawString(g, "x=" + tile.getXtile() + " y=" + tile.getYtile() + " z=" + tile.getZoom() + "", x + 2, texty);
             texty += 1 + fontHeight;
-            if ((t.getXtile() % 32 == 0) && (t.getYtile() % 32 == 0)) {
-                myDrawString(g, "x=" + t.getXtile() / 32 + " y=" + t.getYtile() / 32 + " z=7", p.x + 2, texty);
+            if ((tile.getXtile() % 32 == 0) && (tile.getYtile() % 32 == 0)) {
+                myDrawString(g, "x=" + tile.getXtile() / 32 + " y=" + tile.getYtile() / 32 + " z=7", x + 2, texty);
                 texty += 1 + fontHeight;
             }
         }
 
         String tileStatus = tile.getStatus();
         if (!tile.isLoaded() && PROP_DRAW_DEBUG.get()) {
-            myDrawString(g, tr("image " + tileStatus), p.x + 2, texty);
+            myDrawString(g, tr("image " + tileStatus), x, texty);
             texty += 1 + fontHeight;
         }*/
 
@@ -1295,6 +1295,22 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             allTiles.sort(getTileDistanceComparator());
             for (Tile t : allTiles) {
                 loadTile(t, force);
+            }
+        }
+
+        /**
+         * Extend tile loading corridor, so that no flickering happens whan panning
+         */
+        private void overloadTiles() {
+            int overload = 1;
+            int minXo = Utils.clamp(minX-overload, tileSource.getTileXMin(zoom), tileSource.getTileXMax(zoom));
+            int maxXo = Utils.clamp(maxX+overload, tileSource.getTileXMin(zoom), tileSource.getTileXMax(zoom));
+            int minYo = Utils.clamp(minY-overload, tileSource.getTileYMin(zoom), tileSource.getTileYMax(zoom));
+            int maxYo = Utils.clamp(maxY+overload, tileSource.getTileYMin(zoom), tileSource.getTileYMax(zoom));
+            for (int x = minXo; x < maxXo; ++x) {
+                for (int y = minYo; y < maxYo; ++y) {
+                    loadTile(getOrCreateTile(x, y, zoom), false);
+                }
             }
         }
 
@@ -1552,6 +1568,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         g.setColor(Color.DARK_GRAY);
 
         List<Tile> missedTiles = this.paintTileImages(g, ts);
+        if (getDisplaySettings().isAutoLoad()) {
+            ts.overloadTiles();
+        }
         int[] otherZooms = {1, 2, -1, -2, -3, -4, -5};
         for (int zoomOffset : otherZooms) {
             if (!getDisplaySettings().isAutoZoom()) {
