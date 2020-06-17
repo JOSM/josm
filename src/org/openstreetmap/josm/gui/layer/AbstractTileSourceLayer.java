@@ -1299,7 +1299,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         /**
-         * Extend tile loading corridor, so that no flickering happens whan panning
+         * Extend tile loading corridor, so that no flickering happens when panning
          */
         private void overloadTiles() {
             int overload = 1;
