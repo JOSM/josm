@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -24,6 +25,8 @@ import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator.Hemisphere;
@@ -174,9 +177,24 @@ public class InspectPrimitiveDataText {
             addBbox(o);
             add(tr("Centroid: "), toStringCSV(false,
                     ProjectionRegistry.getProjection().eastNorth2latlon(Geometry.getCentroid(((IWay<?>) o).getNodes()))));
+            if (o instanceof Way) {
+                double dist = ((Way) o).getLength();
+                String distText = SystemOfMeasurement.getSystemOfMeasurement().getDistText(dist);
+                add(tr("Length: {0}", distText));
+            }
+            if (o instanceof Way && ((Way) o).concernsArea() && ((Way) o).isClosed()) {
+                double area = Geometry.closedWayArea((Way) o);
+                String areaText = SystemOfMeasurement.getSystemOfMeasurement().getAreaText(area);
+                add(tr("Area: {0}", areaText));
+            }
             addWayNodes((IWay<?>) o);
         } else if (o instanceof IRelation) {
             addBbox(o);
+            if (o instanceof Relation && ((Relation) o).concernsArea()) {
+                double area = Geometry.multipolygonArea(((Relation) o));
+                String areaText = SystemOfMeasurement.getSystemOfMeasurement().getAreaText(area);
+                add(tr("Area: {0}", areaText));
+            }
             addRelationMembers((IRelation<?>) o);
         }
     }
