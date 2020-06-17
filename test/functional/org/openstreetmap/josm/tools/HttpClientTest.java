@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -105,7 +106,7 @@ public class HttpClientTest {
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/get?foo=bar")).connect(progress);
         assertThat(response.getRequestMethod(), is("GET"));
         assertThat(response.getResponseCode(), is(200));
-        assertThat(response.getResponseMessage(), is("OK"));
+        assertThat(response.getResponseMessage(), equalToIgnoringCase("OK"));
         assertThat(response.getContentType(), is("application/json"));
         assertThat(response.getHeaderField("Content-Type"), is("application/json"));
         assertThat(response.getHeaderField("Content-TYPE"), is("application/json"));
@@ -226,7 +227,6 @@ public class HttpClientTest {
         // https://tools.ietf.org/html/rfc2324
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/418")).connect(progress);
         assertThat(response.getResponseCode(), is(418));
-        assertThat(response.getResponseMessage(), is("I'M A TEAPOT"));
         final String content = response.fetchContent();
         assertThat(content, containsString("-=[ teapot ]=-"));
         assertThat(captured.getMessage(), containsString("-=[ teapot ]=-"));
@@ -242,7 +242,7 @@ public class HttpClientTest {
         // https://tools.ietf.org/html/rfc2324
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/401")).connect(progress);
         assertThat(response.getResponseCode(), is(401));
-        assertThat(response.getResponseMessage(), is("UNAUTHORIZED"));
+        assertThat(response.getResponseMessage(), equalToIgnoringCase("UNAUTHORIZED"));
         final String content = response.fetchContent();
         assertThat(content, is(""));
         assertThat(captured.getMessage(), containsString("Server did not return any body"));
@@ -258,7 +258,7 @@ public class HttpClientTest {
         // https://tools.ietf.org/html/rfc2324
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/402")).connect(progress);
         assertThat(response.getResponseCode(), is(402));
-        assertThat(response.getResponseMessage(), is("PAYMENT REQUIRED"));
+        assertThat(response.getResponseMessage(), equalToIgnoringCase("PAYMENT REQUIRED"));
         final String content = response.fetchContent();
         assertThat(content, containsString("Fuck you, pay me!"));
         assertThat(captured.getMessage(), containsString("Fuck you, pay me!"));
@@ -274,7 +274,7 @@ public class HttpClientTest {
         // https://tools.ietf.org/html/rfc2324
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/403")).connect(progress);
         assertThat(response.getResponseCode(), is(403));
-        assertThat(response.getResponseMessage(), is("FORBIDDEN"));
+        assertThat(response.getResponseMessage(), equalToIgnoringCase("FORBIDDEN"));
         final String content = response.fetchContent();
         assertThat(content, is(""));
         assertThat(captured.getMessage(), containsString("Server did not return any body"));
@@ -290,7 +290,7 @@ public class HttpClientTest {
         // https://tools.ietf.org/html/rfc2324
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/404")).connect(progress);
         assertThat(response.getResponseCode(), is(404));
-        assertThat(response.getResponseMessage(), is("NOT FOUND"));
+        assertThat(response.getResponseMessage(), equalToIgnoringCase("NOT FOUND"));
         final String content = response.fetchContent();
         assertThat(content, is(""));
         assertThat(captured.getMessage(), containsString("Server did not return any body"));
@@ -306,7 +306,7 @@ public class HttpClientTest {
         // https://tools.ietf.org/html/rfc2324
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/500")).connect(progress);
         assertThat(response.getResponseCode(), is(500));
-        assertThat(response.getResponseMessage(), is("INTERNAL SERVER ERROR"));
+        assertThat(response.getResponseMessage(), equalToIgnoringCase("INTERNAL SERVER ERROR"));
         final String content = response.fetchContent();
         assertThat(content, containsString(""));
         assertThat(captured.getMessage(), containsString("Server did not return any body"));
