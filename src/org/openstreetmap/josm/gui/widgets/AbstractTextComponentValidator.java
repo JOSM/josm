@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +19,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -32,13 +35,18 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener {
-    protected static final Color ERROR_COLOR = Color.RED;
+
+    protected static final Color ERROR_COLOR = new NamedColorProperty(marktr("Input validation: error"), Color.RED).get();
     protected static final Border ERROR_BORDER = BorderFactory.createLineBorder(ERROR_COLOR, 1);
-    protected static final Color ERROR_BACKGROUND = new Color(0xFFCCCC);
-    protected static final Color WARNING_COLOR = new Color(0xFFA500);
+    protected static final Color ERROR_BACKGROUND = new NamedColorProperty(
+            marktr("Input validation: error background"), new Color(0xFFCCCC)).get();
+
+    protected static final Color WARNING_COLOR = new NamedColorProperty(marktr("Input validation: warning"), new Color(0xFFA500)).get();
     protected static final Border WARNING_BORDER = BorderFactory.createLineBorder(WARNING_COLOR, 1);
-    protected static final Color WARNING_BACKGROUND = new Color(0xFFEDCC);
-    protected static final Color VALID_COLOR = new Color(0x008000);
+    protected static final Color WARNING_BACKGROUND = new NamedColorProperty(
+            marktr("Input validation: warning background"), new Color(0xFFEDCC)).get();
+
+    protected static final Color VALID_COLOR = new NamedColorProperty(marktr("Input validation: valid"), new Color(0x008000)).get();
     protected static final Border VALID_BORDER = BorderFactory.createLineBorder(VALID_COLOR, 1);
 
     private final JTextComponent tc;
