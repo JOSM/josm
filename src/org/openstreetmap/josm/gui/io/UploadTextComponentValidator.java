@@ -3,12 +3,16 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import javax.swing.JLabel;
 import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -107,6 +111,37 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
                 } else {
                     feedbackValid(tr("Thank you for providing the data source!"));
                 }
+            }
+        }
+    }
+
+    /**
+     * Validator for the changeset area
+     */
+    static class UploadAreaValidator extends UploadTextComponentValidator {
+        private double area = Double.NaN;
+
+        UploadAreaValidator(JTextComponent tc, JLabel feedback) {
+            super(tc, feedback);
+        }
+
+        void computeArea(Collection<? extends IPrimitive> primitives) {
+            this.area = primitives.stream()
+                    .map(IPrimitive::getBBox)
+                    .reduce((b1, b2) -> {
+                        b1.add(b2);
+                        return b1;
+                    }).map(BBox::area)
+                    .orElse(Double.NaN);
+            validate();
+        }
+
+        @Override
+        public void validate() {
+            if (Double.isFinite(area) && area <= Config.getPref().getDouble("upload.max-area", 3.)) {
+                feedbackValid(null);
+            } else {
+                feedbackWarning(tr("The bounding box of this changeset is very large – please consider splitting your changes!"));
             }
         }
     }

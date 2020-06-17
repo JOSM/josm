@@ -23,6 +23,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
@@ -30,7 +31,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.io.UploadTextComponentValidator.UploadAreaValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -68,6 +71,8 @@ public class BasicUploadSettingsPanel extends JPanel {
     private final UploadParameterSummaryPanel pnlUploadParameterSummary = new UploadParameterSummaryPanel();
     /** the checkbox to request feedback from other users */
     private final JCheckBox cbRequestReview = new JCheckBox(tr("I would like someone to review my edits."));
+    private final JLabel areaValidatorFeedback = new JLabel();
+    private final UploadAreaValidator areaValidator = new UploadAreaValidator(new JTextField(), areaValidatorFeedback);
     /** the changeset comment model */
     private final transient ChangesetCommentModel changesetCommentModel;
     private final transient ChangesetCommentModel changesetSourceModel;
@@ -199,6 +204,9 @@ public class BasicUploadSettingsPanel extends JPanel {
             add(pnl);
             cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
         }
+        JPanel pnl = new JPanel(new GridBagLayout());
+        pnl.add(areaValidatorFeedback, GBC.eol().fill(GBC.HORIZONTAL));
+        add(pnl);
     }
 
     /**
@@ -271,6 +279,10 @@ public class BasicUploadSettingsPanel extends JPanel {
     public void initEditingOfUploadSource() {
         hcbUploadSource.getEditor().selectAll();
         hcbUploadSource.requestFocusInWindow();
+    }
+
+    void setUploadedPrimitives(List<OsmPrimitive> primitives) {
+        areaValidator.computeArea(primitives);
     }
 
     /**

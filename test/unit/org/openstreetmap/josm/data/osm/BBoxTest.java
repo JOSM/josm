@@ -165,16 +165,18 @@ public class BBoxTest {
     }
 
     /**
-     * Unit test of {@link BBox#height} and {@link BBox#width} methods.
+     * Unit test of {@link BBox#height} and {@link BBox#width} and {@link BBox#area} methods.
      */
     @Test
-    public void testHeightWidth() {
+    public void testHeightWidthArea() {
         BBox b1 = new BBox(1, 2, 3, 5);
         assertEquals(2, b1.width(), 1e-7);
         assertEquals(3, b1.height(), 1e-7);
+        assertEquals(6, b1.area(), 1e-7);
         BBox b2 = new BBox();
         assertEquals(0, b2.width(), 1e-7);
         assertEquals(0, b2.height(), 1e-7);
+        assertEquals(0, b2.area(), 1e-7);
     }
 
     /**

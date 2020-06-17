@@ -215,6 +215,14 @@ public class BBox {
     }
 
     /**
+     * Gets the area of the bbox.
+     * @return the area computed from {@link #width()} and {@link #height()}
+     */
+    public double area() {
+        return width() * height();
+    }
+
+    /**
      * Tests, whether the bbox {@code b} lies completely inside this bbox.
      * @param b bounding box
      * @return {@code true} if {@code b} lies completely inside this bbox

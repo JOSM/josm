@@ -252,6 +252,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             }
             return;
         }
+        pnlBasicUploadSettings.setUploadedPrimitives(toUpload.getPrimitives());
         pnlUploadedObjects.setUploadedPrimitives(
                 toUpload.getPrimitivesToAdd(),
                 toUpload.getPrimitivesToUpdate(),
