@@ -27,6 +27,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
+import org.openstreetmap.josm.tools.Utils;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -98,10 +99,14 @@ public class PluginHandlerJOSMTooOldTest {
     private File targetQuxJar;
     private File targetQuxJarNew;
 
-    private final String bazPluginVersionReqString = "JOSM version 8\u202F001 required for plugin baz_plugin.";
-    private final String dummyPluginVersionReqString = "JOSM version 7\u202F001 required for plugin dummy_plugin.";
+    private final String bazPluginVersionReqString = u202f("JOSM version 8\u202F001 required for plugin baz_plugin.");
+    private final String dummyPluginVersionReqString = u202f("JOSM version 7\u202F001 required for plugin dummy_plugin.");
     private final String dummyPluginFailedString = "<html>Updating the following plugin has failed:<ul><li>dummy_plugin</li></ul>"
         + "Please open the Preference Dialog after JOSM has started and try to update it manually.</html>";
+
+    private static String u202f(String s) {
+        return Utils.getJavaVersion() < 9 ? s.replace('\u202F', ',') : s;
+    }
 
     /**
      * test update of plugins when those plugins turn out to require a higher JOSM version, but the
@@ -310,7 +315,7 @@ public class PluginHandlerJOSMTooOldTest {
         pluginServer.applyToWireMockServer(this.pluginServerRule);
         Config.getPref().putList("plugins", Arrays.asList("qux_plugin", "baz_plugin"));
 
-        new ExtendedDialogMocker(Collections.singletonMap("JOSM version 7\u202F500 required for plugin qux_plugin.", "Download Plugin"));
+        new ExtendedDialogMocker(Collections.singletonMap(u202f("JOSM version 7\u202F500 required for plugin qux_plugin."), "Download Plugin"));
 
         Files.copy(this.referenceQuxJarOld.toPath(), this.targetQuxJar.toPath());
         Files.copy(this.referenceBazJarOld.toPath(), this.targetBazJar.toPath());
