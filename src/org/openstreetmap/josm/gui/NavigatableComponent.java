@@ -757,7 +757,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         public void run() {
             try {
                 for (int i = 0; i < frames && !doStop; i++) {
-                    zoomTo(oldCenter.interpolate(finalNewCenter, (1.0+i) / frames));
+                    final EastNorth z = oldCenter.interpolate(finalNewCenter, (1.0+i) / frames);
+                    GuiHelper.runInEDTAndWait(() -> {
+                        zoomTo(z);
+                    });
                     Thread.sleep(sleepTime);
                 }
             } catch (InterruptedException ex) {
