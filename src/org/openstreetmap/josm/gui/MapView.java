@@ -458,9 +458,10 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
             MapViewRectangle clipBounds = getState().getViewArea(g.getClipBounds());
             MapViewGraphics paintGraphics = new MapViewGraphics(this, g, clipBounds);
+            float opacity = (float) layer.getOpacity();
 
-            if (layer.getOpacity() < 1) {
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) layer.getOpacity()));
+            if (opacity < 1.0f) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
             }
             painter.paint(paintGraphics);
             g.setPaintMode();
