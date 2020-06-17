@@ -73,6 +73,7 @@ public class InspectPrimitiveDialogTest {
                 "  Bounding box (projected): 5985976.274977, 1268085.3706241, 5986079.5621105, 1267987.4428681\n" +
                 "  Center of bounding box: 47.2686046, 11.3909648\n" +
                 "  Centroid: 47.2686049, 11.3909649\n" +
+                "  Length: 193.3 m\n" +
                 "  5 Nodes: \n" +
                 "    2\n" +
                 "    3\n" +
