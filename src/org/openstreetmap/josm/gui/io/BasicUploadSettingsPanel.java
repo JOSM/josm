@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +18,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -75,10 +75,8 @@ public class BasicUploadSettingsPanel extends JPanel {
 
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createTitledBorder(tr("Tags of changeset {0}", "")));
+        pnl.setBorder(BorderFactory.createTitledBorder(tr("Provide a brief comment for the changes you are uploading:")));
 
-        JEditorPane commentLabel = new JMultilineLabel("<html><b>" + tr("Provide a brief comment for the changes you are uploading:"));
-        pnl.add(commentLabel, GBC.eol().insets(0, 5, 10, 3).fill(GBC.HORIZONTAL));
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         hcbUploadComment.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
         populateHistoryComboBox(hcbUploadComment, HISTORY_KEY, new LinkedList<String>());
@@ -86,9 +84,16 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.getEditor().addActionListener(commentModelListener);
         hcbUploadComment.getEditorComponent().addFocusListener(commentModelListener);
         pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
+        JLabel hcbUploadCommentFeedback = new JLabel();
+        pnl.add(hcbUploadCommentFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
+        new UploadTextComponentValidator.UploadCommentValidator(hcbUploadComment.getEditorComponent(), hcbUploadCommentFeedback);
+        return pnl;
+    }
 
-        JEditorPane sourceLabel = new JMultilineLabel("<html><b>" + tr("Specify the data source for the changes") + ":</b>");
-        pnl.add(sourceLabel, GBC.eol().insets(0, 8, 10, 0).fill(GBC.HORIZONTAL));
+    protected JPanel buildUploadSourcePanel() {
+        JPanel pnl = new JPanel(new GridBagLayout());
+        pnl.setBorder(BorderFactory.createTitledBorder(tr("Specify the data source for the changes")));
+
         JEditorPane obtainSourceOnce = new JMultilineLabel(
                 "<html>(<a href=\"urn:changeset-source\">" + tr("just once") + "</a>)</html>");
         obtainSourceOnce.addHyperlinkListener(e -> {
@@ -118,6 +123,9 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadSource.getEditor().addActionListener(sourceModelListener);
         hcbUploadSource.getEditorComponent().addFocusListener(sourceModelListener);
         pnl.add(hcbUploadSource, GBC.eol().fill(GBC.HORIZONTAL));
+        JLabel hcbUploadSourceFeedback = new JLabel();
+        pnl.add(hcbUploadSourceFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
+        new UploadTextComponentValidator.UploadSourceValidator(hcbUploadSource.getEditorComponent(), hcbUploadSourceFeedback);
         if (obtainSourceAutomatically.isSelected()) {
             automaticallyAddSource();
         }
@@ -180,12 +188,15 @@ public class BasicUploadSettingsPanel extends JPanel {
     }
 
     protected void build() {
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        add(buildUploadCommentPanel(), BorderLayout.NORTH);
-        add(pnlUploadParameterSummary, BorderLayout.CENTER);
+        add(buildUploadCommentPanel());
+        add(buildUploadSourcePanel());
+        add(pnlUploadParameterSummary);
         if (Config.getPref().getBoolean("upload.show.review.request", true)) {
-            add(cbRequestReview, BorderLayout.SOUTH);
+            JPanel pnl = new JPanel(new GridBagLayout());
+            pnl.add(cbRequestReview, GBC.eol().fill(GBC.HORIZONTAL));
+            add(pnl);
             cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
         }
     }

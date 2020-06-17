@@ -16,7 +16,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -40,7 +38,6 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -56,9 +53,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -449,117 +444,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             putValue(SHORT_DESCRIPTION, tr("Upload the changed primitives"));
         }
 
-        /**
-         * Displays a warning message indicating that the upload comment is empty/short.
-         * @return true if the user wants to revisit, false if they want to continue
-         */
-        protected boolean warnUploadComment() {
-            return warnUploadTag(
-                    tr("Please revise upload comment"),
-                    tr("Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />" +
-                            "This is technically allowed, but please consider that many users who are<br />" +
-                            "watching changes in their area depend on meaningful changeset comments<br />" +
-                            "to understand what is going on!<br /><br />" +
-                            "If you spend a minute now to explain your change, you will make life<br />" +
-                            "easier for many other mappers."),
-                    "upload_comment_is_empty_or_very_short"
-            );
-        }
-
-        /**
-         * Displays a warning message indicating that no changeset source is given.
-         * @return true if the user wants to revisit, false if they want to continue
-         */
-        protected boolean warnUploadSource() {
-            return warnUploadTag(
-                    tr("Please specify a changeset source"),
-                    tr("You did not specify a source for your changes.<br />" +
-                            "It is technically allowed, but this information helps<br />" +
-                            "other users to understand the origins of the data.<br /><br />" +
-                            "If you spend a minute now to explain your change, you will make life<br />" +
-                            "easier for many other mappers."),
-                    "upload_source_is_empty"
-            );
-        }
-
-        /**
-         * Displays a warning message indicating that the upload comment is rejected.
-         * @param details details explaining why
-         * @return {@code true}
-         */
-        protected boolean warnRejectedUploadComment(String details) {
-            return warnRejectedUploadTag(
-                    tr("Please revise upload comment"),
-                    tr("Your upload comment is <i>rejected</i>.") + "<br />" + details
-            );
-        }
-
-        /**
-         * Displays a warning message indicating that the changeset source is rejected.
-         * @param details details explaining why
-         * @return {@code true}
-         */
-        protected boolean warnRejectedUploadSource(String details) {
-            return warnRejectedUploadTag(
-                    tr("Please revise changeset source"),
-                    tr("Your changeset source is <i>rejected</i>.") + "<br />" + details
-            );
-        }
-
-        /**
-         * Warn about an upload tag with the possibility of resuming the upload.
-         * @param title dialog title
-         * @param message dialog message
-         * @param togglePref preference entry to offer the user a "Do not show again" checkbox for the dialog
-         * @return {@code true} if the user wants to revise the upload tag
-         */
-        protected boolean warnUploadTag(final String title, final String message, final String togglePref) {
-            return warnUploadTag(title, message, togglePref, true);
-        }
-
-        /**
-         * Warn about an upload tag without the possibility of resuming the upload.
-         * @param title dialog title
-         * @param message dialog message
-         * @return {@code true}
-         */
-        protected boolean warnRejectedUploadTag(final String title, final String message) {
-            return warnUploadTag(title, message, null, false);
-        }
-
-        private boolean warnUploadTag(final String title, final String message, final String togglePref, boolean allowContinue) {
-            List<String> buttonTexts = new ArrayList<>(Arrays.asList(tr("Revise"), tr("Cancel")));
-            List<Icon> buttonIcons = new ArrayList<>(Arrays.asList(
-                    new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).get(),
-                    new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get()));
-            List<String> tooltips = new ArrayList<>(Arrays.asList(
-                    tr("Return to the previous dialog to enter a more descriptive comment"),
-                    tr("Cancel and return to the previous dialog")));
-            if (allowContinue) {
-                buttonTexts.add(tr("Continue as is"));
-                buttonIcons.add(new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
-                        new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get());
-                tooltips.add(tr("Ignore this hint and upload anyway"));
-            }
-
-            ExtendedDialog dlg = new ExtendedDialog((Component) dialog, title, buttonTexts.toArray(new String[] {})) {
-                @Override
-                public void setupDialog() {
-                    super.setupDialog();
-                    InputMapUtils.addCtrlEnterAction(getRootPane(), buttons.get(buttons.size() - 1).getAction());
-                }
-            };
-            dlg.setContent("<html>" + message + "</html>");
-            dlg.setButtonIcons(buttonIcons.toArray(new Icon[] {}));
-            dlg.setToolTipTexts(tooltips.toArray(new String[] {}));
-            dlg.setIcon(JOptionPane.WARNING_MESSAGE);
-            if (allowContinue) {
-                dlg.toggleEnable(togglePref);
-            }
-            dlg.setCancelButton(1, 2);
-            return dlg.showDialog().getValue() != 3;
-        }
-
         protected void warnIllegalChunkSize() {
             HelpAwareOptionPane.showOptionDialog(
                     (Component) dialog,
@@ -613,26 +497,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         public void actionPerformed(ActionEvent e) {
             // force update of model in case dialog is closed before focus lost event, see #17452
             dialog.forceUpdateActiveField();
-
-            final List<String> def = Collections.emptyList();
-            final String uploadComment = dialog.getUploadComment();
-            final String uploadCommentRejection = validateUploadTag(
-                    uploadComment, "upload.comment", def, def, def);
-            if ((isUploadCommentTooShort(uploadComment) && warnUploadComment()) ||
-                (uploadCommentRejection != null && warnRejectedUploadComment(uploadCommentRejection))) {
-                // abort for missing or rejected comment
-                dialog.handleMissingComment();
-                return;
-            }
-            final String uploadSource = dialog.getUploadSource();
-            final String uploadSourceRejection = validateUploadTag(
-                    uploadSource, "upload.source", def, def, def);
-            if ((Utils.isStripEmpty(uploadSource) && warnUploadSource()) ||
-                    (uploadSourceRejection != null && warnRejectedUploadSource(uploadSourceRejection))) {
-                // abort for missing or rejected changeset source
-                dialog.handleMissingSource();
-                return;
-            }
 
             /* test for empty tags in the changeset metadata and proceed only after user's confirmation.
              * though, accept if key and value are empty (cf. xor). */

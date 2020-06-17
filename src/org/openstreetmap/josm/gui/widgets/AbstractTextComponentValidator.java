@@ -32,24 +32,43 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener {
-    private static final Border ERROR_BORDER = BorderFactory.createLineBorder(Color.RED, 1);
-    private static final Color ERROR_BACKGROUND = new Color(255, 224, 224);
+    protected static final Color ERROR_COLOR = Color.RED;
+    protected static final Border ERROR_BORDER = BorderFactory.createLineBorder(ERROR_COLOR, 1);
+    protected static final Color ERROR_BACKGROUND = new Color(0xFFCCCC);
+    protected static final Color WARNING_COLOR = new Color(0xFFA500);
+    protected static final Border WARNING_BORDER = BorderFactory.createLineBorder(WARNING_COLOR, 1);
+    protected static final Color WARNING_BACKGROUND = new Color(0xFFEDCC);
+    protected static final Color VALID_COLOR = new Color(0x008000);
+    protected static final Border VALID_BORDER = BorderFactory.createLineBorder(VALID_COLOR, 1);
 
-    private JTextComponent tc;
-    /** remembers whether the content of the text component is currently valid or not; null means,
-     * we don't know yet
-     */
-    private Boolean valid;
+    private final JTextComponent tc;
+    // remembers whether the content of the text component is currently valid or not; null means, we don't know yet
+    private Status status;
     // remember the message
     private String msg;
 
+    enum Status {
+        INVALID, WARNING, VALID
+    }
+
     protected void feedbackInvalid(String msg) {
-        if (valid == null || valid || !Objects.equals(msg, this.msg)) {
+        if (hasChanged(msg, Status.INVALID)) {
             // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
             tc.setBorder(ERROR_BORDER);
             tc.setBackground(ERROR_BACKGROUND);
             tc.setToolTipText(msg);
-            valid = Boolean.FALSE;
+            this.status = Status.INVALID;
+            this.msg = msg;
+        }
+    }
+
+    protected void feedbackWarning(String msg) {
+        if (hasChanged(msg, Status.WARNING)) {
+            // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
+            tc.setBorder(WARNING_BORDER);
+            tc.setBackground(WARNING_BACKGROUND);
+            tc.setToolTipText(msg);
+            this.status = Status.WARNING;
             this.msg = msg;
         }
     }
@@ -59,14 +78,18 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     }
 
     protected void feedbackValid(String msg) {
-        if (valid == null || !valid || !Objects.equals(msg, this.msg)) {
+        if (hasChanged(msg, Status.VALID)) {
             // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
-            tc.setBorder(UIManager.getBorder("TextField.border"));
+            tc.setBorder(VALID_BORDER);
             tc.setBackground(UIManager.getColor("TextField.background"));
             tc.setToolTipText(msg == null ? "" : msg);
-            valid = Boolean.TRUE;
+            this.status = Status.VALID;
             this.msg = msg;
         }
+    }
+
+    private boolean hasChanged(String msg, Status status) {
+        return !(Objects.equals(status, this.status) && Objects.equals(msg, this.msg));
     }
 
     /**
