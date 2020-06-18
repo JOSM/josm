@@ -89,7 +89,7 @@ way[highway=steps][maxspeed],
 way[highway=cycleway][bicycle=no],
 way[highway=footway][foot=no],
 way[highway=cycleway][cycleway=lane] {
-  throwWarning: tr("{0} used with {1}", "{0.value}", "{1.tag}");
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   assertNoMatch: "way highway=cycleway bicycle=yes";
   assertNoMatch: "way highway=cycleway";
   assertNoMatch: "way highway=footway foot=yes";
