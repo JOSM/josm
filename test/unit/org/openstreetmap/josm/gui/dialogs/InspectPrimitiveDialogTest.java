@@ -8,8 +8,11 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -32,6 +35,23 @@ public class InspectPrimitiveDialogTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().mapStyles();
+
+    /**
+     * Setup test
+     */
+    @Before
+    public void setUp() {
+        SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.put("METRIC");
+
+    }
+
+    /**
+     * Cleanup test
+     */
+    @After
+    public void tearDown() {
+        SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.put(null);
+    }
 
     /**
      * Unit test of {@link InspectPrimitiveDialog#genericMonospacePanel}.
