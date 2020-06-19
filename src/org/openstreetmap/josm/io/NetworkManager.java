@@ -2,10 +2,11 @@
 package org.openstreetmap.josm.io;
 
 import java.net.URL;
+import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -15,7 +16,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public final class NetworkManager {
 
-    private static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
+    private static final Map<String, Throwable> NETWORK_ERRORS = new ConcurrentHashMap<>();
 
     private static final Set<OnlineResource> OFFLINE_RESOURCES = EnumSet.noneOf(OnlineResource.class);
 
@@ -62,7 +63,7 @@ public final class NetworkManager {
      * @return the network errors that occurred until now, indexed by URL
      */
     public static Map<String, Throwable> getNetworkErrors() {
-        return new HashMap<>(NETWORK_ERRORS);
+        return Collections.unmodifiableMap(NETWORK_ERRORS);
     }
 
     /**
