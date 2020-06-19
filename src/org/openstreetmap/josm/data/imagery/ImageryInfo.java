@@ -634,6 +634,12 @@ public class ImageryInfo extends
         this.bounds = b;
     }
 
+    @Override
+    public ImageryBounds getBounds() {
+        // for binary compatibility
+        return super.getBounds();
+    }
+
     /**
      * Sets the extended URL of this entry.
      * @param url Entry extended URL containing in addition of service URL, its type and min/max zoom info
