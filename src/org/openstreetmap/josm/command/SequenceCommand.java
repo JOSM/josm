@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.Icon;
 
@@ -14,6 +16,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * A command consisting of a sequence of other commands. Executes the other commands
@@ -104,7 +107,12 @@ public class SequenceCommand extends Command {
 
     @Override public boolean executeCommand() {
         for (int i = 0; i < sequence.length; i++) {
-            boolean result = sequence[i].executeCommand();
+            boolean result;
+            try {
+                result = sequence[i].executeCommand();
+            } catch (AssertionError | Exception e) {
+                throw createReportedException(e, i);
+            }
             if (!result && !continueOnError) {
                 undoCommands(i-1);
                 return false;
@@ -126,8 +134,28 @@ public class SequenceCommand extends Command {
 
     protected final void undoCommands(int start) {
         for (int i = start; i >= 0; --i) {
-            sequence[i].undoCommand();
+            try {
+                sequence[i].undoCommand();
+            } catch (AssertionError | Exception e) {
+                throw createReportedException(e, i);
+            }
         }
+    }
+
+    private ReportedException createReportedException(Throwable e, int i) {
+        ReportedException exception = new ReportedException(e);
+        exception.startSection("sequence_information");
+        exception.put("sequence_name", getDescriptionText());
+        exception.put("sequence_command", sequence[i].getDescriptionText());
+        exception.put("sequence_index", i);
+        exception.put("sequence_commands", Stream.of(sequence)
+                .map(o -> o.getClass().getCanonicalName())
+                .map(String::valueOf)
+                .collect(Collectors.joining(";", "[", "]")));
+        exception.put("sequence_commands_descriptions", Stream.of(sequence)
+                .map(Command::getDescriptionText)
+                .collect(Collectors.joining(";", "[", "]")));
+        return exception;
     }
 
     @Override
