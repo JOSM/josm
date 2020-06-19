@@ -322,6 +322,28 @@ public class DownloadDialog extends JDialog {
     }
 
     /**
+     * Add a listener to get events from the DownloadSelection window
+     *
+     * @param selection The DownloadSelection object to send the Bounds to
+     * @return See {@link List#add}
+     * @since 16684
+     */
+    public boolean addDownloadAreaListener(DownloadSelection selection) {
+        return downloadSelections.add(selection);
+    }
+
+    /**
+     * Remove a listener that was getting events from the DownloadSelection window
+     *
+     * @param selection The DownloadSelection object to not send the Bounds to
+     * @return See {@link List#remove}
+     * @since 16684
+     */
+    public boolean removeDownloadAreaListener(DownloadSelection selection) {
+        return downloadSelections.remove(selection);
+    }
+
+    /**
      * Adds a new download source to the download dialog if it is not added.
      *
      * @param downloadSource The download source to be added.
