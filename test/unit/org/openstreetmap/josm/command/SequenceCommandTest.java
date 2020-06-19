@@ -9,7 +9,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +29,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -311,5 +315,37 @@ public class SequenceCommandTest {
         assertSame(command1, SequenceCommand.wrapIfNeeded("foo", command1));
         assertNotSame(command1, SequenceCommand.wrapIfNeeded("foo", command1, command2));
         assertEquals(new SequenceCommand("foo", command1, command2), SequenceCommand.wrapIfNeeded("foo", command1, command2));
+    }
+
+    /**
+     * Test SequenceCommand#createReportedException
+     */
+    @Test
+    public void testCreateReportedException() {
+        DataSet ds = new DataSet();
+        Command c1 = new TestCommand(ds, Collections.emptyList()) {
+            @Override
+            public boolean executeCommand() {
+                fail("foo");
+                return false;
+            }
+
+            @Override
+            public String getDescriptionText() {
+                return "foo command";
+            }
+        };
+        SequenceCommand command = new SequenceCommand("test", c1);
+        ReportedException reportedException = assertThrows(ReportedException.class, command::executeCommand);
+        StringWriter stringWriter = new StringWriter();
+        reportedException.printReportDataTo(new PrintWriter(stringWriter));
+        assertEquals("=== REPORTED CRASH DATA ===\n" +
+                "sequence_information:\n" +
+                " - sequence_name: Sequence: test\n" +
+                " - sequence_command: foo command\n" +
+                " - sequence_index: 0\n" +
+                " - sequence_commands: [null]\n" +
+                " - sequence_commands_descriptions: [foo command]\n" +
+                "\n", stringWriter.toString());
     }
 }
