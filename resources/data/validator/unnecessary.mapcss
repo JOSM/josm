@@ -91,7 +91,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   fixRemove: "{1.key}";
 }
 
-/* #17100, #17471, #17629, #17633, #19274, #19395 */
+/* #17100, #17471, #17629, #17633, #19274, #19395, #19409 */
 *[name][name=~/^(?i)(library|biblioteca|biblioteka|bibliothek|bibliotheek)$/][amenity=library],
 *[name][name=~/^(?i)(parc|park)$/][leisure=park],
 *[name][name=~/^(?i)(pond)$/][water=pond],
@@ -107,7 +107,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 *[name][name=~/^(?i)(building|bangunan)$/][building][building!=no],
 *[name][name=~/^(?i)(house|maison|rumah|vivienda)$/][building=house],
 *[name][name=~/^(?i)(casa)$/][building=house][outside("FR")], /* spanish for house but it is a brand name in France */
-*[name][name=~/^(?i)(kiosk)$/][shop=kiosk],
+*[name][name=~/^(?i)(kiosk)$/][shop=kiosk][outside("NL")], /* it is a brand name in the Netherlands */
 *[name][name=~/^(?i)(path)$/][highway=path],
 *[name][name=~/^(?i)(jalan)$/][highway],
 *[name][name=~/^(?i)(silo)$/][man_made=silo],
