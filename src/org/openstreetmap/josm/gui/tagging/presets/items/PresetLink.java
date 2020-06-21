@@ -27,14 +27,16 @@ public class PresetLink extends TextItem {
 
     static final class TaggingPresetMouseAdapter extends MouseAdapter {
         private final TaggingPreset t;
+        private final Collection<OsmPrimitive> sel;
 
-        TaggingPresetMouseAdapter(TaggingPreset t) {
+        TaggingPresetMouseAdapter(TaggingPreset t, Collection<OsmPrimitive> sel) {
             this.t = t;
+            this.sel = sel;
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            t.actionPerformed(null);
+            t.showAndApply(sel);
         }
     }
 
@@ -57,7 +59,7 @@ public class PresetLink extends TextItem {
         if (found.isPresent()) {
             TaggingPreset t = found.get();
             JLabel lbl = new TaggingPresetLabel(t);
-            lbl.addMouseListener(new TaggingPresetMouseAdapter(t));
+            lbl.addMouseListener(new TaggingPresetMouseAdapter(t, sel));
             p.add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
         }
         return false;

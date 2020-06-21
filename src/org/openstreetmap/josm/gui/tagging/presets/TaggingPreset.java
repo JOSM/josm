@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -385,18 +384,20 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     @Override
     public void actionPerformed(ActionEvent e) {
         DataSet ds = OsmDataManager.getInstance().getEditDataSet();
-        Collection<OsmPrimitive> participants = Collections.emptyList();
-        if (ds != null) {
-            participants = ds.getSelected();
-        }
-
-        // Display dialog even if no data layer (used by preset-tagging-tester plugin)
-        Collection<OsmPrimitive> sel = createSelection(participants);
-        int answer = showDialog(sel, supportsRelation());
-
         if (ds == null) {
             return;
         }
+        showAndApply(ds.getSelected());
+    }
+
+    /**
+     * {@linkplain #showDialog Show preset dialog}, apply changes
+     * @param primitives the primitives
+     */
+    public void showAndApply(Collection<OsmPrimitive> primitives) {
+        // Display dialog even if no data layer (used by preset-tagging-tester plugin)
+        Collection<OsmPrimitive> sel = createSelection(primitives);
+        int answer = showDialog(sel, supportsRelation());
 
         if (!sel.isEmpty() && answer == DIALOG_ANSWER_APPLY) {
             Command cmd = createCommand(sel, getChangedTags());
@@ -406,18 +407,18 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         } else if (answer == DIALOG_ANSWER_NEW_RELATION) {
             Relation calculated = null;
             if (getChangedTags().stream().anyMatch(t -> "boundary".equals(t.get("type")) || "multipolygon".equals(t.get("type")))) {
-                Pair<Relation, Relation> res = CreateMultipolygonAction.createMultipolygonRelation(ds.getSelectedWays(), true);
+                Collection<Way> ways = Utils.filteredCollection(primitives, Way.class);
+                Pair<Relation, Relation> res = CreateMultipolygonAction.createMultipolygonRelation(ways, true);
                 if (res != null) {
                     calculated = res.b;
                 }
             }
             final Relation r = calculated != null ? calculated : new Relation();
-            final Collection<RelationMember> members = new LinkedHashSet<>();
-            members.addAll(r.getMembers());
+            final Collection<RelationMember> members = new LinkedHashSet<>(r.getMembers());
             for (Tag t : getChangedTags()) {
                 r.put(t.getKey(), t.getValue());
             }
-            for (OsmPrimitive osm : ds.getSelected()) {
+            for (OsmPrimitive osm : primitives) {
                 if (r == calculated && osm instanceof Way)
                     continue;
                 String role = suggestRoleForOsmPrimitive(osm);
@@ -431,7 +432,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             SwingUtilities.invokeLater(() -> RelationEditor.getEditor(
                     MainApplication.getLayerManager().getEditLayer(), r, members).setVisible(true));
         }
-        ds.setSelected(ds.getSelected()); // force update
+        if (!primitives.isEmpty()) {
+            DataSet ds = primitives.iterator().next().getDataSet();
+            ds.setSelected(primitives); // force update
+        }
     }
 
     private static class PresetDialog extends ExtendedDialog {
