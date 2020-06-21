@@ -66,6 +66,10 @@ public class RepeatImageElement extends StyleElement {
      */
     public float phase;
     /**
+     * The opacity
+     */
+    public float opacity;
+    /**
      * The alignment of the image
      */
     public LineImageAlignment align;
@@ -80,9 +84,10 @@ public class RepeatImageElement extends StyleElement {
      * @param offset The offset to the side of the way
      * @param spacing The space between the images
      * @param phase The offset of the first image along the way
+     * @param opacity The opacity
      * @param align The alignment of the image
      */
-    public RepeatImageElement(Cascade c, MapImage pattern, float offset, float spacing, float phase, LineImageAlignment align) {
+    public RepeatImageElement(Cascade c, MapImage pattern, float offset, float spacing, float phase, float opacity, LineImageAlignment align) {
         super(c, 2.9f);
         CheckParameterUtil.ensureParameterNotNull(pattern);
         CheckParameterUtil.ensureParameterNotNull(align);
@@ -90,6 +95,7 @@ public class RepeatImageElement extends StyleElement {
         this.offset = offset;
         this.spacing = spacing;
         this.phase = phase;
+        this.opacity = opacity;
         this.align = align;
     }
 
@@ -106,6 +112,7 @@ public class RepeatImageElement extends StyleElement {
         float offset = c.get(REPEAT_IMAGE_OFFSET, 0f, Float.class);
         float spacing = c.get(REPEAT_IMAGE_SPACING, 0f, Float.class);
         float phase = -c.get(REPEAT_IMAGE_PHASE, 0f, Float.class);
+        float opacity = c.get(REPEAT_IMAGE_OPACITY, 1f, Float.class);
 
         LineImageAlignment align = LineImageAlignment.CENTER;
         Keyword alignKW = c.get(REPEAT_IMAGE_ALIGN, Keyword.CENTER, Keyword.class);
@@ -115,7 +122,7 @@ public class RepeatImageElement extends StyleElement {
             align = LineImageAlignment.BOTTOM;
         }
 
-        return new RepeatImageElement(c, pattern, offset, spacing, phase, align);
+        return new RepeatImageElement(c, pattern, offset, spacing, phase, opacity, align);
     }
 
     @Override
@@ -123,7 +130,7 @@ public class RepeatImageElement extends StyleElement {
             boolean selected, boolean outermember, boolean member) {
         if (primitive instanceof IWay) {
             IWay<?> w = (IWay<?>) primitive;
-            painter.drawRepeatImage(w, pattern, painter.isInactiveMode() || w.isDisabled(), offset, spacing, phase, align);
+            painter.drawRepeatImage(w, pattern, painter.isInactiveMode() || w.isDisabled(), offset, spacing, phase, opacity, align);
         }
     }
 
@@ -147,13 +154,13 @@ public class RepeatImageElement extends StyleElement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), pattern, offset, spacing, phase, align);
+        return Objects.hash(super.hashCode(), pattern, offset, spacing, phase, opacity, align);
     }
 
     @Override
     public String toString() {
         return "RepeatImageStyle{" + super.toString() + "pattern=[" + pattern +
                 "], offset=" + offset + ", spacing=" + spacing +
-                ", phase=" + -phase + ", align=" + align + '}';
+                ", phase=" + -phase + ", opacity=" + opacity + ", align=" + align + '}';
     }
 }

@@ -5,6 +5,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -681,10 +682,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param offset offset from the way
      * @param spacing spacing between two images
      * @param phase initial spacing
+     * @param opacity the opacity
      * @param align alignment of the image. The top, center or bottom edge can be aligned with the way.
      */
     public void drawRepeatImage(IWay<?> way, MapImage pattern, boolean disabled, double offset, double spacing, double phase,
-            LineImageAlignment align) {
+                                float opacity, LineImageAlignment align) {
         final int imgWidth = pattern.getWidth();
         final double repeat = imgWidth + spacing;
         final int imgHeight = pattern.getHeight();
@@ -729,7 +731,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 int x = (int) imageStart;
                 int sx1 = Math.max(0, -x);
                 int sx2 = imgWidth - Math.max(0, x + imgWidth - (int) Math.ceil(segmentLength));
+                Composite saveComposite = g.getComposite();
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
                 g.drawImage(image, x + sx1, dy1, x + sx2, dy2, sx1, 0, sx2, imgHeight, null);
+                g.setComposite(saveComposite);
                 imageStart += repeat;
             }
 
