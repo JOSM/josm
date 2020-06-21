@@ -94,7 +94,7 @@ public class Combo extends ComboMultiSelect {
         } else if (usage.unused()) {
             // all items were unset (and so is default)
             originalValue = getListEntry("");
-            if (!presetInitiallyMatches && isForceUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
+            if (!presetInitiallyMatches && isUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
                 combobox.setSelectedItem(getListEntry(LAST_VALUES.get(key)));
             } else {
                 combobox.setSelectedItem(originalValue);

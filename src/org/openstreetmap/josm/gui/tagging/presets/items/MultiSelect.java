@@ -38,7 +38,11 @@ public class MultiSelect extends ComboMultiSelect {
             list.setSelectedItem(def);
         } else if (usage.unused()) {
             originalValue = null;
-            list.setSelectedItem(originalValue);
+            if (!presetInitiallyMatches && isUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
+                list.setSelectedItem(getListEntry(LAST_VALUES.get(key)));
+            } else {
+                list.setSelectedItem(originalValue);
+            }
         } else {
             originalValue = DIFFERENT;
             list.setSelectedItem(originalValue);
