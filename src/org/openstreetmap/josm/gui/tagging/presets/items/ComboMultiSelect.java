@@ -360,7 +360,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         } else if (usage.unused()) {
             // all items were unset (and so is default)
             originalValue = getListEntry("");
-            if (!presetInitiallyMatches && isUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
+            if (LAST_VALUES.containsKey(key) && isUseLastAsDefault() && (!presetInitiallyMatches || isForceUseLastAsDefault())) {
                 itemToSelect = getListEntry(LAST_VALUES.get(key));
             } else {
                 itemToSelect = originalValue;
