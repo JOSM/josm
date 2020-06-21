@@ -463,7 +463,11 @@
   </chunk>
   <chunk id="walking_routes_roles">
      <roles>
-         <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry"/>
+         <role key="" text="route segment" requisite="required" type="way,closedway,relation" member_expression="highway|route=ferry"/>
+         <role key="alternative" text="alternative segment" requisite="optional" type="way,closedway,relation"/>
+         <role key="approach" text="approach segment" requisite="optional" type="way,closedway,relation"/>
+         <role key="excursion" text="excursion segment" requisite="optional" type="way,closedway,relation"/>
+         <role key="connection" text="connection segment" requisite="optional" type="way,closedway,relation"/>
          <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
          <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
          <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
