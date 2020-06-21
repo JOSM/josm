@@ -125,7 +125,14 @@ public abstract class TaggingPresetItem {
         return null;
     }
 
-    protected static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
+    /**
+     * Loads a tagging preset icon
+     * @param iconName the icon name
+     * @param zipIcons zip file where the image is located
+     * @param maxSize maximum image size (or null)
+     * @return the requested image or null if the request failed
+     */
+    public static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
         final Collection<String> s = Config.getPref().getList("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
         if (maxSize != null && maxSize > 0) {

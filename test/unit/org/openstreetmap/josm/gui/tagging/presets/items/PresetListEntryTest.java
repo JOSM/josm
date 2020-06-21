@@ -6,12 +6,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.gui.tagging.presets.items.ComboMultiSelect.PresetListEntry;
 
 /**
- * Unit tests of {@link ComboMultiSelect} class.
+ * Unit tests of {@link PresetListEntry} class.
  */
-public class ComboMultiSelectTest {
+public class PresetListEntryTest {
 
     /**
      * Setup test.

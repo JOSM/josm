@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Link;
 import org.openstreetmap.josm.gui.tagging.presets.items.MultiSelect;
 import org.openstreetmap.josm.gui.tagging.presets.items.Optional;
 import org.openstreetmap.josm.gui.tagging.presets.items.PresetLink;
+import org.openstreetmap.josm.gui.tagging.presets.items.PresetListEntry;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.gui.tagging.presets.items.Space;
@@ -150,7 +151,7 @@ public final class TaggingPresetReader {
         parser.map("label", Label.class);
         parser.map("space", Space.class);
         parser.map("key", Key.class);
-        parser.map("list_entry", ComboMultiSelect.PresetListEntry.class);
+        parser.map("list_entry", PresetListEntry.class);
         parser.map("item_separator", ItemSeparator.class);
         parser.mapBoth("chunk", Chunk.class);
         parser.map("reference", Reference.class);
@@ -187,7 +188,7 @@ public final class TaggingPresetReader {
         TaggingPresetMenu lastmenuOriginal = null;
         Roles lastrole = null;
         final List<Check> checks = new LinkedList<>();
-        final List<ComboMultiSelect.PresetListEntry> listEntries = new LinkedList<>();
+        final List<PresetListEntry> listEntries = new LinkedList<>();
         final Map<String, List<Object>> byId = new HashMap<>();
         final Deque<String> lastIds = new ArrayDeque<>();
         /** lastIdIterators contains non empty iterators of items to be handled before obtaining the next item from the XML parser */
@@ -298,8 +299,8 @@ public final class TaggingPresetReader {
                         } else {
                             all.getLast().data.add((TaggingPresetItem) o);
                         }
-                    } else if (o instanceof ComboMultiSelect.PresetListEntry) {
-                        listEntries.add((ComboMultiSelect.PresetListEntry) o);
+                    } else if (o instanceof PresetListEntry) {
+                        listEntries.add((PresetListEntry) o);
                     } else if (o instanceof CheckGroup) {
                         CheckGroup cg = (CheckGroup) o;
                         if (cg == lastcheckgroup) {
