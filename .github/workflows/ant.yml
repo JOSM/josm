@@ -1,7 +1,5 @@
 name: Java CI
-env:
-  junit_platform_version: '1.6.2'
-  ant_version: 'apache-ant-1.10.8'
+
 on:
   push:
     branches: [master]
@@ -25,14 +23,12 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         headless: ["true", "false"]
         exclude:
-          - java: 8
+          - headless: "true"
             os: macos-latest
-          - java: 11
-            os: macos-latest
-          - headless: "false"
-            os: macos-latest
-          - headless: "false"
+          - headless: "true"
             os: windows-latest
+          - headless: "false"
+            os: ubuntu-latest
     name: Java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
     steps:
       - uses: actions/checkout@v2
@@ -43,46 +39,22 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - name: Install ant
-        run: |
-          curl -s https://downloads.apache.org/ant/binaries/${{ env.ant_version }}-bin.tar.gz | tar -xz
-          cd ${{ env.ant_version }}/lib
-          curl --remote-name  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar"
+        run: curl -s https://downloads.apache.org/ant/binaries/apache-ant-1.10.8-bin.tar.gz | tar -xz
       - name: Print ant version
-        run: ${{ env.ant_version }}/bin/ant -version
+        run: ./apache-ant-1.10.8/bin/ant -version
       - name: Build with Ant, headless ${{ matrix.headless }}
         run: |
-          ANT_HOME=${{ env.ant_version }}
-          ANT="${{ env.ant_version }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
+          ANT="./apache-ant-1.10.8/bin/ant -DnoJavaFX=true test-unit-hardfail"
           if [ "${{ matrix.headless }}" == "true" ]; then
-            $ANT -Dtest.headless=true
+            xvfb-run $ANT -Dtest.headless=true
           else
-            xvfb-run $ANT -Dtest.headless=false
+            $ANT -Dtest.headless=false
           fi
       - name: Dump errors if failed
         if: ${{ failure() }}
-        run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
-      - name: Set revision env variable
-        if: ${{ always() }}
-        # Careful, you will only have a resources/REVISION if you've already built
-        run: echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
+        run: "grep -L ', Failures: 0, Errors: 0, ' test/report/*.txt | xargs cat"
       - name: Upload Ant reports
-        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: Ant reports for JOSM ${{ env.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
+          name: Ant reports
           path: test/report/*.txt
-      - name: Build and package for macOS
-        if: ${{ runner.os == 'macos' && always() }}
-        run: |
-          ANT_HOME=${{ env.ant_version }}
-          $ANT_HOME/bin/ant dist
-          REVISION=${{ env.josm_revision }}
-          ./native/macosx/macos-jpackage.sh $REVISION
-          cd dist
-          zip -9 -r JOSM.app.zip JOSM.app
-      - name: Upload JOSM.app for macOS
-        if: ${{ runner.os == 'macos' && always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: JOSM.app revision ${{ env.josm_revision }}
-          path: dist/JOSM.app.zip
