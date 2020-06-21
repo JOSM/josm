@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import javax.swing.JLabel;
 import javax.swing.text.JTextComponent;
@@ -32,20 +33,24 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
     protected void feedbackValid(String msg) {
         msg = msg != null ? "<html>\u2714 " + msg : null;
         super.feedbackValid(msg);
-        feedback.setText(msg);
-        feedback.setForeground(VALID_COLOR);
-        feedback.setBackground(null);
-        feedback.setBorder(null);
+        if (!Objects.equals(msg, feedback.getText())) {
+            feedback.setText(msg);
+            feedback.setForeground(VALID_COLOR);
+            feedback.setBackground(null);
+            feedback.setBorder(null);
+        }
     }
 
     @Override
     protected void feedbackWarning(String msg) {
         msg = msg != null ? "<html>" + msg : null;
         super.feedbackWarning(msg);
-        feedback.setText(msg);
-        feedback.setForeground(null);
-        feedback.setBackground(WARNING_BACKGROUND);
-        feedback.setBorder(WARNING_BORDER);
+        if (!Objects.equals(msg, feedback.getText())) {
+            feedback.setText(msg);
+            feedback.setForeground(null);
+            feedback.setBackground(WARNING_BACKGROUND);
+            feedback.setBorder(WARNING_BORDER);
+        }
     }
 
     @Override
