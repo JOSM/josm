@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.JTable;
@@ -127,6 +128,10 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         return history;
     }
 
+    boolean isSamePrimitive(History history) {
+        return getHistory() != null && Objects.equals(getHistory().getPrimitiveId(), history.getPrimitiveId());
+    }
+
     private boolean canShowAsLatest(OsmPrimitive primitive) {
         if (primitive == null)
             return false;
@@ -163,8 +168,12 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      *
      */
     public void setHistory(History history) {
+        boolean samePrimitive = isSamePrimitive(history); // needs to be before `this.history = history`
         this.history = history;
-        if (history.getNumVersions() > 0) {
+        if (samePrimitive && history.getNumVersions() > 0) {
+            reference = history.getByVersion(reference.getVersion());
+            current = history.getByVersion(current.getVersion());
+        } else if (history.getNumVersions() > 0) {
             HistoryOsmPrimitive newLatest = null;
             DataSet ds = MainApplication.getLayerManager().getActiveDataSet();
             if (ds != null) {
