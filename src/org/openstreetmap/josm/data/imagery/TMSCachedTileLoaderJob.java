@@ -260,11 +260,15 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         CacheEntryAttributes ret = super.parseHeaders(urlConn);
         // keep the expiration time between MINIMUM_EXPIRES and MAXIMUM_EXPIRES, so we will cache the tiles
         // at least for some short period of time, but not too long
-        ret.setExpirationTime((long) Utils.clamp(
-                ret.getExpirationTime(),
-                now + Math.max(MINIMUM_EXPIRES.get(), TimeUnit.SECONDS.toMillis(options.getMinimumExpiryTime())),
-                now + Math.max(MAXIMUM_EXPIRES.get(), TimeUnit.SECONDS.toMillis(options.getMinimumExpiryTime()))
-        ));
+        long minimumExpiryTime = TimeUnit.SECONDS.toMillis(options.getMinimumExpiryTime());
+        long nowPlusMin = now + Math.max(MINIMUM_EXPIRES.get(), minimumExpiryTime);
+        if (ret.getExpirationTime() < nowPlusMin) {
+            ret.setExpirationTime(nowPlusMin);
+        }
+        long nowPlusMax = now + Math.max(MAXIMUM_EXPIRES.get(), minimumExpiryTime);
+        if (ret.getExpirationTime() > nowPlusMax) {
+            ret.setExpirationTime(nowPlusMax);
+        }
         return ret;
     }
 
