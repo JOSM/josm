@@ -516,6 +516,37 @@ public abstract class ComboMultiSelect extends KeyedItem {
         return null;
     }
 
+    protected Object getItemToSelect(String def, boolean presetInitiallyMatches) {
+        final Object itemToSelect;
+        if (usage.hasUniqueValue()) {
+            // all items have the same value (and there were no unset items)
+            originalValue = getListEntry(usage.getFirst());
+            itemToSelect = originalValue;
+        } else if (def != null && usage.unused()) {
+            // default is set and all items were unset
+            if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
+                // selected osm primitives are untagged or filling default feature is enabled
+                itemToSelect = getListEntry(def).getDisplayValue();
+            } else {
+                // selected osm primitives are tagged and filling default feature is disabled
+                itemToSelect = "";
+            }
+            originalValue = getListEntry(DIFFERENT);
+        } else if (usage.unused()) {
+            // all items were unset (and so is default)
+            originalValue = getListEntry("");
+            if (!presetInitiallyMatches && isUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
+                itemToSelect = getListEntry(LAST_VALUES.get(key));
+            } else {
+                itemToSelect = originalValue;
+            }
+        } else {
+            originalValue = getListEntry(DIFFERENT);
+            itemToSelect = originalValue;
+        }
+        return itemToSelect;
+    }
+
     protected String getSelectedValue() {
         Object obj = getSelectedItem();
         String display = obj == null ? getDisplayIfNull() : obj.toString();

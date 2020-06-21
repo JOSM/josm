@@ -76,33 +76,8 @@ public class Combo extends ComboMultiSelect {
             acList.add(getDisplayValues(), AutoCompletionPriority.IS_IN_STANDARD);
         }
         combobox.setEditor(tf);
+        combobox.setSelectedItem(getItemToSelect(def, presetInitiallyMatches));
 
-        if (usage.hasUniqueValue()) {
-            // all items have the same value (and there were no unset items)
-            originalValue = getListEntry(usage.getFirst());
-            combobox.setSelectedItem(originalValue);
-        } else if (def != null && usage.unused()) {
-            // default is set and all items were unset
-            if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
-                // selected osm primitives are untagged or filling default feature is enabled
-                combobox.setSelectedItem(getListEntry(def).getDisplayValue());
-            } else {
-                // selected osm primitives are tagged and filling default feature is disabled
-                combobox.setSelectedItem("");
-            }
-            originalValue = getListEntry(DIFFERENT);
-        } else if (usage.unused()) {
-            // all items were unset (and so is default)
-            originalValue = getListEntry("");
-            if (!presetInitiallyMatches && isUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
-                combobox.setSelectedItem(getListEntry(LAST_VALUES.get(key)));
-            } else {
-                combobox.setSelectedItem(originalValue);
-            }
-        } else {
-            originalValue = getListEntry(DIFFERENT);
-            combobox.setSelectedItem(originalValue);
-        }
         if (key != null && ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour"))) {
             p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
             JButton button = new JButton(new ChooseColorAction());

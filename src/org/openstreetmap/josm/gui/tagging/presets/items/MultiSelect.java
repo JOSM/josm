@@ -29,24 +29,7 @@ public class MultiSelect extends ComboMultiSelect {
         component = list;
         ListCellRenderer<PresetListEntry> renderer = getListCellRenderer();
         list.setCellRenderer(renderer);
-
-        if (usage.hasUniqueValue() && !usage.unused()) {
-            originalValue = usage.getFirst();
-            list.setSelectedItem(originalValue);
-        } else if ((def != null && !usage.hadKeys()) || PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
-            originalValue = DIFFERENT;
-            list.setSelectedItem(def);
-        } else if (usage.unused()) {
-            originalValue = null;
-            if (!presetInitiallyMatches && isUseLastAsDefault() && LAST_VALUES.containsKey(key)) {
-                list.setSelectedItem(getListEntry(LAST_VALUES.get(key)));
-            } else {
-                list.setSelectedItem(originalValue);
-            }
-        } else {
-            originalValue = DIFFERENT;
-            list.setSelectedItem(originalValue);
-        }
+        list.setSelectedItem(getItemToSelect(def, presetInitiallyMatches));
 
         JScrollPane sp = new JScrollPane(list);
         // if a number of rows has been specified in the preset,
