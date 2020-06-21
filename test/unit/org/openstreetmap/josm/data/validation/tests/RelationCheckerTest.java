@@ -170,7 +170,8 @@ public class RelationCheckerTest {
         assertEquals(2, errors.size());
         assertEquals("Role of relation member does not match template expression 'information=guidepost' in preset Hiking Route",
                 errors.get(0).getDescription());
-        assertEquals("Role 'route' is not among expected values '<empty>/guidepost'", errors.get(1).getDescription());
+        assertEquals("Role 'route' is not among expected values '<empty>/alternative/approach/excursion/connection/guidepost'",
+                errors.get(1).getDescription());
     }
 
     @Test
