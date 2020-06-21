@@ -23,12 +23,10 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         headless: ["true", "false"]
         exclude:
-          - headless: "true"
-            os: macos-latest
-          - headless: "true"
-            os: windows-latest
           - headless: "false"
-            os: ubuntu-latest
+            os: macos-latest
+          - headless: "false"
+            os: windows-latest
     name: Java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
     steps:
       - uses: actions/checkout@v2
@@ -46,9 +44,9 @@ jobs:
         run: |
           ANT="./apache-ant-1.10.8/bin/ant -DnoJavaFX=true test-unit-hardfail"
           if [ "${{ matrix.headless }}" == "true" ]; then
-            xvfb-run $ANT -Dtest.headless=true
+            $ANT -Dtest.headless=true
           else
-            $ANT -Dtest.headless=false
+            xvfb-run $ANT -Dtest.headless=false
           fi
       - name: Dump errors if failed
         if: ${{ failure() }}
