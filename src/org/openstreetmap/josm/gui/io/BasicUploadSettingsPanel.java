@@ -34,6 +34,8 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.UploadTextComponentValidator.UploadAreaValidator;
+import org.openstreetmap.josm.gui.io.UploadTextComponentValidator.UploadCommentValidator;
+import org.openstreetmap.josm.gui.io.UploadTextComponentValidator.UploadSourceValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -77,6 +79,12 @@ public class BasicUploadSettingsPanel extends JPanel {
     private final transient ChangesetCommentModel changesetCommentModel;
     private final transient ChangesetCommentModel changesetSourceModel;
     private final transient ChangesetReviewModel changesetReviewModel;
+    private final transient JLabel uploadCommentFeedback = new JLabel();
+    private final transient UploadCommentValidator uploadCommentValidator = new UploadCommentValidator(
+            hcbUploadComment.getEditorComponent(), uploadCommentFeedback);
+    private final transient JLabel hcbUploadSourceFeedback = new JLabel();
+    private final transient UploadSourceValidator uploadSourceValidator = new UploadSourceValidator(
+            hcbUploadSource.getEditorComponent(), hcbUploadSourceFeedback);
 
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -89,9 +97,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadComment.getEditor().addActionListener(commentModelListener);
         hcbUploadComment.getEditorComponent().addFocusListener(commentModelListener);
         pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
-        JLabel hcbUploadCommentFeedback = new JLabel();
-        pnl.add(hcbUploadCommentFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
-        new UploadTextComponentValidator.UploadCommentValidator(hcbUploadComment.getEditorComponent(), hcbUploadCommentFeedback);
+        pnl.add(uploadCommentFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
         return pnl;
     }
 
@@ -128,9 +134,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         hcbUploadSource.getEditor().addActionListener(sourceModelListener);
         hcbUploadSource.getEditorComponent().addFocusListener(sourceModelListener);
         pnl.add(hcbUploadSource, GBC.eol().fill(GBC.HORIZONTAL));
-        JLabel hcbUploadSourceFeedback = new JLabel();
         pnl.add(hcbUploadSourceFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
-        new UploadTextComponentValidator.UploadSourceValidator(hcbUploadSource.getEditorComponent(), hcbUploadSourceFeedback);
         if (obtainSourceAutomatically.isSelected()) {
             automaticallyAddSource();
         }
@@ -263,6 +267,8 @@ public class BasicUploadSettingsPanel extends JPanel {
     public void startUserInput() {
         hcbUploadComment.requestFocusInWindow();
         hcbUploadComment.getEditorComponent().requestFocusInWindow();
+        uploadCommentValidator.validate();
+        uploadSourceValidator.validate();
     }
 
     /**
