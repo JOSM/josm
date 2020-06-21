@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -49,7 +50,9 @@ public class TagEditorPanel extends JPanel {
         pnl.add(new JScrollPane(tagTable), BorderLayout.CENTER);
         if (presetHandler != null) {
             presetListPanel = new PresetListPanel();
-            pnl.add(presetListPanel, BorderLayout.NORTH);
+            if (Config.getPref().getBoolean("relation.editor.presets.visible", true)) {
+                pnl.add(presetListPanel, BorderLayout.NORTH);
+            }
         }
         return pnl;
     }
