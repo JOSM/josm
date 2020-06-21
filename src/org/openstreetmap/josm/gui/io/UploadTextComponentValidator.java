@@ -64,6 +64,10 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
 
         @Override
         public void validate() {
+            if (!Config.getPref().getBoolean("message.upload_comment_is_empty_or_very_short", true)) {
+                feedbackDisabled();
+                return;
+            }
             String uploadComment = getComponent().getText();
             if (UploadDialog.UploadAction.isUploadCommentTooShort(uploadComment)) {
                 feedbackWarning(tr("Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />" +
@@ -96,6 +100,10 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
 
         @Override
         public void validate() {
+            if (!Config.getPref().getBoolean("message.upload_source_is_empty", true)) {
+                feedbackDisabled();
+                return;
+            }
             String uploadSource = getComponent().getText();
             if (Utils.isStripEmpty(uploadSource)) {
                 feedbackWarning(tr("You did not specify a source for your changes.<br />" +

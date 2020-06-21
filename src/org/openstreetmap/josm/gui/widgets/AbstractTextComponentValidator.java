@@ -88,7 +88,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     protected void feedbackValid(String msg) {
         if (hasChanged(msg, Status.VALID)) {
             // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
-            tc.setBorder(VALID_BORDER);
+            tc.setBorder(msg == null ? UIManager.getBorder("TextField.border") : VALID_BORDER);
             tc.setBackground(UIManager.getColor("TextField.background"));
             tc.setToolTipText(msg == null ? "" : msg);
             this.status = Status.VALID;
