@@ -63,6 +63,7 @@ import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.HistoryInfoWebAction;
 import org.openstreetmap.josm.actions.InfoAction;
 import org.openstreetmap.josm.actions.InfoWebAction;
+import org.openstreetmap.josm.actions.InvertSelectionAction;
 import org.openstreetmap.josm.actions.JoinAreasAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -305,6 +306,8 @@ public class MainMenu extends JMenuBar {
     public final SelectAllAction selectAll = new SelectAllAction();
     /** Selection / Unselect All */
     public final UnselectAllAction unselectAll = new UnselectAllAction();
+    /** Selection / Invert Selection */
+    public final InvertSelectionAction invertSelection = new InvertSelectionAction();
     /** Selection / Non-branching way sequences */
     public final SelectNonBranchingWaySequencesAction nonBranchingWaySequences = new SelectNonBranchingWaySequencesAction();
 
@@ -844,6 +847,7 @@ public class MainMenu extends JMenuBar {
 
         add(selectionMenu, selectAll);
         add(selectionMenu, unselectAll);
+        add(selectionMenu, invertSelection, true);
         add(selectionMenu, nonBranchingWaySequences);
 
         add(toolsMenu, splitWay);
