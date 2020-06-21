@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -79,7 +78,7 @@ public class ComboTest {
         KeyedItem.LAST_VALUES.clear();
 
         combo.addToPanel(new JPanel(), Arrays.asList(wayAT, waySI), true);
-        assertEquals(tr("<different>"), combo.getSelectedValue());
+        assertEquals(Combo.DIFFERENT, combo.getSelectedValue());
     }
 
     @Test
