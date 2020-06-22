@@ -1329,7 +1329,7 @@
             <key key="mountain_pass" value="yes" />
             <optional>
                 <text key="name" text="Name" />
-                <text key="ele" text="Elevation (meters)" lenght="10" />
+                <text key="ele" text="Elevation (meters)" length="10" />
                 <text key="wikipedia" text="Wikipedia" />
             </optional>
         </item> <!-- Mountain Pass -->
@@ -1774,7 +1774,7 @@
             <check key="salt" text="Salt Water" disable_off="true" />
             <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
             <text key="wikipedia" text="Wikipedia" />
             <reference ref="water_access" />
         </item> <!-- Water -->
@@ -2917,7 +2917,7 @@
             <space />
             <key key="tourism" value="alpine_hut" />
             <reference ref="name_operator" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
             <text key="rooms" text="Rooms" />
             <text key="beds" text="Beds" />
             <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
@@ -2938,7 +2938,7 @@
             <check key="shower" text="Shower" />
             <combo key="drinking_water" text="Drinking Water" values="yes,no,seasonal" />
             <combo key="reservation" text="Reservation" values="yes,no,required,recommended,members_only" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
             <text key="description" text="Closer description" />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
@@ -3205,7 +3205,7 @@
             <key key="tourism" value="information" />
             <key key="information" value="guidepost" />
             <reference ref="name_ref_operator" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
             <optional text="Routes shown for:">
                 <check key="hiking" text="Hiking" />
                 <check key="bicycle" text="Cycling" />
@@ -3222,7 +3222,7 @@
             <key key="tourism" value="information" />
             <key key="information" value="route_marker" />
             <reference ref="name_ref_operator" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
             <optional text="Routes shown for:">
                 <check key="hiking" text="Hiking" />
                 <check key="bicycle" text="Cycling" />
@@ -4591,7 +4591,7 @@
             <combo key="leisure" text="Type" values="sports_centre" />
             <reference ref="climbing_styles" />
             <text key="climbing:routes" text="Number of routes" />
-            <text key="ele" text="Usual elevation at the bottom of the routes" lenght="10" />
+            <text key="ele" text="Usual elevation at the bottom of the routes" length="10" />
             <space />
             <combo key="climbing:length" text="Usual route length (m)" values="8,10,12,15,20,25,30,35,40" values_no_i18n="true" />
             <combo key="climbing:length:min" text="Minimal climbing length (m)" values="8,10,12,15,20,25,30,35,40" values_no_i18n="true" />
@@ -5034,7 +5034,7 @@
                 <combo key="tower:construction" text="Type of construction" values="freestanding,guyed_lattice,guyed_tube,lattice" values_searchable="true" />
                 <reference ref="name_ref_operator" />
                 <text key="height" text="Height (meters)" length="7" />
-                <text key="ele" text="Elevation (meters)" lenght="10" />
+                <text key="ele" text="Elevation (meters)" length="10" />
                 <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
                 <reference ref="POI_access" />
             </optional>
@@ -5060,7 +5060,7 @@
                 <combo key="tower:construction" text="Type of construction" values="dish,dome,freestanding,lattice" values_searchable="true" />
                 <reference ref="name_ref_operator" />
                 <text key="height" text="Height (meters)" length="7" />
-                <text key="ele" text="Elevation (meters)" lenght="10" />
+                <text key="ele" text="Elevation (meters)" length="10" />
                 <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
                 <reference ref="POI_access" />
                 <reference ref="oh" />
@@ -5081,7 +5081,7 @@
                 <combo key="tower:construction" text="Type of construction" values="dish,dome,freestanding,lattice" values_searchable="true" />
                 <reference ref="name_ref_operator" />
                 <text key="height" text="Height (meters)" length="7" />
-                <text key="ele" text="Elevation (meters)" lenght="10" />
+                <text key="ele" text="Elevation (meters)" length="10" />
                 <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
                 <reference ref="POI_access" />
                 <reference ref="oh" />
@@ -5356,7 +5356,7 @@
             <space />
             <key key="man_made" value="survey_point" />
             <reference ref="name_ref" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
             <combo key="material" text="Material" values="andesite,brass,bronze,concrete,granite,metal,steel,stone" />
         </item> <!-- Survey Point -->
         <item name="Surveillance Camera" icon="presets/service/surveillance.svg" type="node" preset_name_label="true">
@@ -7293,7 +7293,7 @@
             <space />
             <key key="natural" value="peak" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
         </item> <!-- Peak -->
         <item name="Saddle" icon="presets/landmark/saddle.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=saddle" />
@@ -7301,7 +7301,7 @@
             <space/>
             <key key="natural" value="saddle" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
         </item> <!-- Saddle -->
         <item name="Glacier" icon="presets/landmark/glacier.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=glacier" />
@@ -7309,7 +7309,7 @@
             <space />
             <key key="natural" value="glacier" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
         </item> <!-- Glacier -->
         <item name="Volcano" icon="presets/landmark/volcano.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=volcano" />
@@ -7317,7 +7317,7 @@
             <space />
             <key key="natural" value="volcano" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
             <optional>
                 <combo key="volcano:status" text="Current Status" values="active,dormant,extinct" />
                 <combo key="volcano:type" text="Type" values="stratovolcano,shield,scoria" />
@@ -7329,7 +7329,7 @@
             <space />
             <key key="natural" value="ridge" />
             <reference ref="name_wikipedia" />
-            <text key="ele" text="Elevation (meters)" lenght="10" />
+            <text key="ele" text="Elevation (meters)" length="10" />
         </item> <!-- Ridge -->
         <item name="Valley" icon="presets/landmark/valley.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=valley" />
