@@ -3,7 +3,7 @@ env:
   junit_platform_version: '1.6.2'
   ant_version: '1.10.8'
   ant_home: "apache-ant-${{ env.ant_version }}"
-  ant_archive: "${{env.ANT_HOME }}-bin.tar.gz"
+  ant_archive: "${{ env.ANT_HOME }}-bin.tar.gz"
   ant: "${{ env.ANT_HOME }}/bin/ant"
 on:
   push:
