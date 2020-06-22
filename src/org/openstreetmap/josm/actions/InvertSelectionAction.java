@@ -17,7 +17,7 @@ public class InvertSelectionAction extends JosmAction {
      * Constructs a new {@code SelectAllAction}.
      */
     public InvertSelectionAction() {
-        super(tr("Invert Selection"), null, tr("Invert Selection"), null, true);
+        super(tr("Invert Selection"), "invert_selection", tr("Invert Selection"), null, true);
         setHelpId(ht("/Action/InvertSelection"));
     }
 
