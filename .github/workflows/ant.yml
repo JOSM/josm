@@ -47,8 +47,8 @@ jobs:
         run: ${{ env.ant_version }}/bin/ant -version
       - name: Build with Ant, headless ${{ matrix.headless }}
         run: |
-          ANT_HOME=./${{ env.ant_version }}
-          ANT=${{ env.ant_version }}/bin/ant -DnoJavaFX=true test-unit-hardfail
+          ANT_HOME=${{ env.ant_version }}
+          ANT="${{ env.ant_version }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
           if [ "${{ matrix.headless }}" == "true" ]; then
             $ANT -Dtest.headless=true
           else
@@ -58,6 +58,7 @@ jobs:
         if: ${{ failure() }}
         run: "grep -L ', Failures: 0, Errors: 0, ' test/report/*.txt | xargs cat"
       - name: Upload Ant reports
+        if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: Ant reports
