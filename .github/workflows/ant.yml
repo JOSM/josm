@@ -42,7 +42,7 @@ jobs:
         run: |
           curl -s https://downloads.apache.org/ant/binaries/apache-ant-${{ env.ant_version }}-bin.tar.gz | tar -xz
           cd apache-ant-${{ env.ant_version }}/lib
-          curl --remote-name  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ junit_platform_version }}.jar"
+          curl --remote-name  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar"
       - name: Print ant version
         run: ./apache-ant-1.10.8/bin/ant -version
       - name: Build with Ant, headless ${{ matrix.headless }}
