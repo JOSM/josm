@@ -5019,17 +5019,78 @@
             </optional>
             <reference ref="link_contact_address" />
         </item> <!-- Non-public police facility -->
-        <item name="Tower" icon="presets/landmark/tower.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Mast" icon="presets/tower/mast.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:man_made=mast" />
+            <space />
+            <key key="man_made" value="mast" />
+            <combo key="tower:type" text="Type" values_context="mast/tower" values_searchable="true">
+                <list_entry value="communication" icon="presets/tower/mast_communication.svg" />
+                <list_entry value="lighting" icon="presets/tower/mast_lighting.svg" />
+                <list_entry value="monitoring" />
+                <list_entry value="radar" />
+                <list_entry value="siren" />
+            </combo>
+            <optional>
+                <combo key="tower:construction" text="Type of construction" values="freestanding,guyed_lattice,guyed_tube,lattice" values_searchable="true" />
+                <reference ref="name_ref_operator" />
+                <text key="height" text="Height (meters)" length="7" />
+                <text key="ele" text="Elevation (meters)" lenght="10" />
+                <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
+                <reference ref="POI_access" />
+            </optional>
+            <preset_link preset_name="Tower" text="Similar but different tags:" />
+            <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
+        </item> <!-- Mast -->
+        <item name="Tower" icon="presets/tower/tower.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:man_made=tower" />
             <space />
             <key key="man_made" value="tower" />
-            <text key="name" text="Name" />
-            <combo key="tower:type" text="Tower type" values="bell_tower,communication,cooling,defensive,observation,radar,watchtower" values_searchable="true" />
+            <combo key="tower:type" text="Type" values_context="mast/tower" values_searchable="true">
+                <list_entry value="bell_tower" icon="presets/tower/bell_tower.svg" />
+                <list_entry value="communication" icon="presets/tower/communication.svg" />
+                <list_entry value="cooling" icon="presets/tower/cooling.svg" />
+                <list_entry value="defensive" icon="presets/tower/defensive.svg" />
+                <list_entry value="lighting" icon="presets/tower/lighting.svg" />
+                <list_entry value="minaret" />
+                <list_entry value="observation" icon="presets/tower/observation.svg" />
+                <list_entry value="radar" />
+                <list_entry value="watchtower" icon="presets/tower/observation.svg" />
+            </combo>
             <optional>
+                <combo key="tower:construction" text="Type of construction" values="dish,dome,freestanding,lattice" values_searchable="true" />
+                <reference ref="name_ref_operator" />
                 <text key="height" text="Height (meters)" length="7" />
-                <text key="operator" text="Operator" />
+                <text key="ele" text="Elevation (meters)" lenght="10" />
+                <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
+                <reference ref="POI_access" />
+                <reference ref="oh" />
+                <reference ref="fee_interval" />
+                <space />
             </optional>
+            <preset_link preset_name="Mast" text="Similar but different tags:" />
+            <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
+            <reference ref="link_contact_address" />
         </item> <!-- Tower -->
+        <item name="Big Communication Tower" icon="presets/tower/communications_tower.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:man_made=communications_tower" />
+            <space />
+            <label text="Big communication tower, usually higher than 100 meters." />
+            <key key="man_made" value="communications_tower" />
+            <optional>
+                <combo key="tower:type" text="Type" values="communication,observation" default="communication" values_context="mast/tower" />
+                <combo key="tower:construction" text="Type of construction" values="dish,dome,freestanding,lattice" values_searchable="true" />
+                <reference ref="name_ref_operator" />
+                <text key="height" text="Height (meters)" length="7" />
+                <text key="ele" text="Elevation (meters)" lenght="10" />
+                <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
+                <reference ref="POI_access" />
+                <reference ref="oh" />
+                <reference ref="fee_interval" />
+            </optional>
+            <preset_link preset_name="Mast" text="Similar but different tags:" />
+            <preset_link preset_name="Tower" text="Similar but different tags:" />
+            <reference ref="link_contact_address" />
+        </item> <!-- Big Communication Tower -->
         <item name="Flagpole" icon="presets/misc/flag.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=flagpole" />
             <key key="man_made" value="flagpole" />
@@ -5182,7 +5243,7 @@
             <reference ref="ref_operator" />
         </item> <!-- Manhole -->
         <separator/>
-        <item name="Water Tower" icon="presets/landmark/water_tower.svg" type="node,closedway" preset_name_label="true">
+        <item name="Water Tower" icon="presets/tower/water_tower.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=water_tower" />
             <space />
             <key key="man_made" value="water_tower" />

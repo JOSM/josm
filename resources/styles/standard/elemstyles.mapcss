@@ -1539,10 +1539,8 @@ node[man_made=petroleum_well][!is_prop_set(icon-image)] {
     set icon_z17;
 }
 area[man_made=reservoir_covered],
-area[man_made=tower],
 area[man_made=wastewater_plant],
 area[man_made=watermill],
-area[man_made=water_tower],
 area[man_made=water_well],
 area[man_made=windmill],
 area[man_made=works],
@@ -1561,20 +1559,12 @@ node[man_made=survey_point] {
     icon-image: "presets/landmark/survey_point.svg";
     set icon_z17;
 }
-node[man_made=tower] {
-    icon-image: "presets/landmark/tower.svg";
-    set icon_z17;
-}
 node[man_made=wastewater_plant] {
     icon-image: "presets/landmark/wastewater_plant.svg";
     set icon_z17;
 }
 node[man_made=watermill] {
     icon-image: "presets/landmark/watermill.svg";
-    set icon_z17;
-}
-node[man_made=water_tower] {
-    icon-image: "presets/landmark/water_tower.svg";
     set icon_z17;
 }
 node[man_made=water_well] {
@@ -1602,6 +1592,65 @@ way[man_made=cutline]::man_made_cutline {
 }
 node[man_made=cutline] {
     icon-image: "presets/misc/deprecated.svg";
+    set icon_z17;
+}
+
+area[man_made=water_tower],
+area[man_made=mast],
+area[man_made=tower],
+area[man_made=communications_tower] {
+    fill-color: manmade#d8d8d8;
+}
+node[man_made=water_tower] {
+    icon-image: "presets/tower/water_tower.svg";
+    set icon_z17;
+}
+node[man_made=mast] {
+    icon-image: "presets/tower/mast.svg";
+    set icon_z17;
+}
+node[man_made=mast][tower:type=communication] {
+    icon-image: "presets/tower/mast_communication.svg";
+    set icon_z17;
+}
+node[man_made=mast][tower:type=lighting] {
+    icon-image: "presets/tower/mast_lighting.svg";
+    set icon_z17;
+}
+node[man_made=tower] {
+    icon-image: "presets/tower/tower.svg";
+    set icon_z17;
+}
+node[man_made=tower][tower:type=bell_tower] {
+    icon-image: "presets/tower/bell_tower.svg";
+    set icon_z17;
+}
+node[man_made=tower][tower:type=communication] {
+    icon-image: "presets/tower/communication.svg";
+    set icon_z17;
+}
+node[man_made=tower][tower:type=cooling] {
+    icon-image: "presets/tower/cooling.svg";
+    set icon_z17;
+}
+node[man_made=tower][tower:type=defensive] {
+    icon-image: "presets/tower/defensive.svg";
+    set icon_z17;
+}
+node[man_made=tower][tower:type=lighting] {
+    icon-image: "presets/tower/lighting.svg";
+    set icon_z17;
+}
+node[man_made=tower][tower:type=observation] {
+    icon-image: "presets/tower/observation.svg";
+    set icon_z17;
+}
+node[man_made=tower][tower:type=watchtower] {
+    icon-image: "presets/tower/observation.svg";
+    set icon_z17;
+}
+node[man_made=communications_tower] {
+    icon-image: "presets/tower/communications_tower.svg";
     set icon_z17;
 }
 
