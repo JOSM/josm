@@ -142,7 +142,8 @@ relation[route=ski  ][!piste:type][type=route],
 *[office=government][!government],
 *[power=generator][!generator:source],
 *[amenity=social_facility][!social_facility],
-*[amenity=place_of_worship][!religion] {
+*[amenity=place_of_worship][!religion],
+*[man_made=tower][!tower:type] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
   group: tr("missing tag");
 }
@@ -728,4 +729,22 @@ way[highway][crossing][highway =~ /^(motorway|motorway_link|trunk|trunk_link|pri
 *[source:maxspeed][!/^maxspeed:?/] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "maxspeed", "maxspeed:*");
   group: tr("missing tag");
+}
+
+/* #16898, tower vs. communications_tower, wiki suggests 100m as rough guideline, so we warn for < 75m */
+*[man_made=communications_tower][height][height =~ /^((7[0-4]|[1-6]?[0-9])(\.[0-9]*)?( m)?|(2(4[0-5]|[0-3][0-9])|1?[0-9]?[0-9])((\.[0-9]*)?( ft|\')|\'(11|10|[0-9])(\.[0-9]*)?\"))$/] { /* 75m ~ 246ft ~ 246' */
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "man_made=tower + tower:type=communication + height";
+  group: tr("suspicious tag combination");
+  assertMatch: "node man_made=communications_tower height=58";
+  assertMatch: "node man_made=communications_tower height=\"74 m\"";
+  assertMatch: "node man_made=communications_tower height=0.8";
+  assertMatch: "node man_made=communications_tower height=245'";
+  assertMatch: "node man_made=communications_tower height=\"224.22 ft\"";
+  assertMatch: "node man_made=communications_tower height=231'10.22\"";
+  assertNoMatch: "node man_made=communications_tower height=\"75 m\"";
+  assertNoMatch: "node man_made=communications_tower height=75.72";
+  assertNoMatch: "node man_made=communications_tower height=\"328.22 ft\"";
+  assertNoMatch: "node man_made=communications_tower height=4358'8\"";
+  assertNoMatch: "node height=4358'";
 }
