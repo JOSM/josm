@@ -9,6 +9,12 @@ way[addr:interpolation] {
     throwOther: tr("Way with {0}. Tag each housenumber separately if possible.", "{0.key}");
 }
 
+/* #19393 */
+way[addr:interpolation] >[index= 1] node[!addr:housenumber],
+way[addr:interpolation] >[index=-1] node[!addr:housenumber] {
+    throwWarning: tr("End node without housenumber in address interpolation.");
+}
+
 /* #13752 */
 *[!addr:housenumber][addr:street][addr:housename=~/^[0-9]+[a-zA-Z]?$/] {
     throwOther: tr("Object has no {0}, however, it has {1} and {2} whose value looks like a housenumber.", "{0.key}", "{1.key}", "{2.key}");
