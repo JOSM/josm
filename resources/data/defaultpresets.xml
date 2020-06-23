@@ -291,33 +291,33 @@
         </combo>
     </chunk>
     <!-- start of religions and denominations -->
-        <chunk id="religious"> <!-- all religions and denominations -->
-            <combo key="religion" text="Religion" values="bahai,buddhist,caodaism,christian,confucian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" values_searchable="true" />
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,conservative,evangelical,greek_catholic,greek_orthodox,ibadi,iglesia_ni_cristo,jehovahs_witness,lutheran,mahayana,methodist,mormon,new_apostolic,nondenominational,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,reform,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,shaivism,shaktism,shia,smartism,spiritist,sunni,tibetan,theravada,united,united_methodist,vaishnavism,vajrayana" values_searchable="true" />
-        </chunk>
-        <chunk id="religious_catholic_christian"> <!-- special case for wayside_shrine and wayside_cross: all religions and catholic denominations with default to catholic christian -->
-            <combo key="religion" text="Religion" values="bahai,buddhist,caodaism,christian,confucian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" default="christian" values_searchable="true" />
-            <combo key="denomination" text="Denomination" values="catholic,greek_catholic,old_catholic,orthodox,roman_catholic" default="catholic" values_searchable="true" />
-        </chunk>
-        <chunk id="other_religions"> <!-- religions which don't have an own preset -->
-            <combo key="religion" text="Religion" values="bahai,caodaism,confucian,jain,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" match="keyvalue!" values_searchable="true" />
-        </chunk> 
-        <chunk id="christian_denominations"> <!-- christian denominations -->
-            <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,evangelical,greek_catholic,greek_orthodox,iglesia_ni_cristo,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,nondenominational,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,spiritist,united,united_methodist" values_searchable="true" />
-        </chunk>
-        <chunk id="muslim_denominations"> <!-- muslim denominations -->
-            <combo key="denomination" text="Denomination" values="ibadi,nondenominational,shia,sunni" values_searchable="true" />
-        </chunk>
-        <chunk id="jewish_denominations"> <!-- jewish denominations -->
-            <combo key="denomination" text="Denomination" values="orthodox,conservative,nondenominational,reform" values_context="jewish" values_searchable="true" /> <!-- values_context because of orthodox, #9629 -->
-        </chunk>
-        <chunk id="buddhist_denominations"> <!-- buddhist denominations -->
-            <combo key="denomination" text="Denomination" values="tibetan,theravada,mahayana,vajrayana" values_searchable="true" />
-        </chunk>
-        <chunk id="hindu_denominations"> <!-- hindu denominations -->
-            <combo key="denomination" text="Denomination" values="vaishnavism,shaivism,shaktism,smartism" values_searchable="true" />
-        </chunk>
-        <!-- shinto and the religions which don't have an own preset don't have denominations (yet) -->
+    <chunk id="religious"> <!-- all religions and denominations -->
+        <combo key="religion" text="Religion" values="bahai,buddhist,caodaism,christian,confucian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" values_searchable="true" />
+        <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,conservative,evangelical,greek_catholic,greek_orthodox,ibadi,iglesia_ni_cristo,jehovahs_witness,lutheran,mahayana,methodist,mormon,new_apostolic,nondenominational,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,reform,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,shaivism,shaktism,shia,smartism,spiritist,sunni,tibetan,theravada,united,united_methodist,vaishnavism,vajrayana" values_searchable="true" />
+    </chunk>
+    <chunk id="religious_catholic_christian"> <!-- special case for wayside_shrine and wayside_cross: all religions and catholic denominations with default to catholic christian -->
+        <combo key="religion" text="Religion" values="bahai,buddhist,caodaism,christian,confucian,hindu,jain,jewish,muslim,shinto,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" default="christian" values_searchable="true" />
+        <combo key="denomination" text="Denomination" values="catholic,greek_catholic,old_catholic,orthodox,roman_catholic" default="catholic" values_searchable="true" />
+    </chunk>
+    <chunk id="other_religions"> <!-- religions which don't have an own preset -->
+        <combo key="religion" text="Religion" values="bahai,caodaism,confucian,jain,sikh,spiritualist,taoist,tenrikyo,unitarian_universalist,zoroastrian" match="keyvalue!" values_searchable="true" />
+    </chunk> 
+    <chunk id="christian_denominations"> <!-- christian denominations -->
+        <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,church_of_scotland,evangelical,greek_catholic,greek_orthodox,iglesia_ni_cristo,jehovahs_witness,lutheran,methodist,mormon,new_apostolic,nondenominational,old_catholic,orthodox,pentecostal,presbyterian,protestant,quaker,reformed,roman_catholic,romanian_orthodox,russian_orthodox,serbian_orthodox,seventh_day_adventist,spiritist,united,united_methodist" values_searchable="true" />
+    </chunk>
+    <chunk id="muslim_denominations"> <!-- muslim denominations -->
+        <combo key="denomination" text="Denomination" values="ibadi,nondenominational,shia,sunni" values_searchable="true" />
+    </chunk>
+    <chunk id="jewish_denominations"> <!-- jewish denominations -->
+        <combo key="denomination" text="Denomination" values="orthodox,conservative,nondenominational,reform" values_context="jewish" values_searchable="true" /> <!-- values_context because of orthodox, #9629 -->
+    </chunk>
+    <chunk id="buddhist_denominations"> <!-- buddhist denominations -->
+        <combo key="denomination" text="Denomination" values="tibetan,theravada,mahayana,vajrayana" values_searchable="true" />
+    </chunk>
+    <chunk id="hindu_denominations"> <!-- hindu denominations -->
+        <combo key="denomination" text="Denomination" values="vaishnavism,shaivism,shaktism,smartism" values_searchable="true" />
+    </chunk>
+    <!-- shinto and the religions which don't have an own preset don't have denominations (yet) -->
     <!-- end of religions and denominations --> 
     <chunk id="voltage">
         <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,22000,20000,15000,110000;20000" />
@@ -457,86 +457,86 @@
         </optional>
     </chunk>
     <chunk id="car_brands">
-    <multiselect key="brand" text="Car brand" values="Alfa Romeo;Aston Martin;Audi;Bentley;BMW;Buick;Cadillac;Chevrolet;Chrysler;Citroën;Dacia;Daewoo;Daihatsu;Dodge;Ferrari;Fiat;Ford;GMC;Great Wall;Holden;Honda;Hyundai;Infiniti;Isuzu;Jaguar;Jeep;Kia;Lada;Lancia;Land Rover;Lexus;Lincoln;Lotus;Maserati;Mazda;Mercedes-Benz;Mini;Mitsubishi;Nissan;Opel;Peugeot;Porsche;Renault;Saab;Seat;Škoda;Smart;SsangYong;Subaru;Suzuki;Tata;Toyota;Vauxhall;Volkswagen;Volvo" values_no_i18n="true" />
-  </chunk>
-  <chunk id="motorcycle_brands">
-    <multiselect key="brand" text="Motorcycle brand" values="Aprillia;BMW;Ducati;Gilera;Harley-Davidson;Honda;Kawasaki;KTM;Kymco;Piaggio;Peugeot;Piaggio;Suzuki;Triumph;Vespa;Yamaha" values_no_i18n="true" />
-  </chunk>
-  <chunk id="walking_routes_roles">
-     <roles>
-         <role key="" text="route segment" requisite="required" type="way,closedway,relation" member_expression="highway|route=ferry"/>
-         <role key="alternative" text="alternative segment" requisite="optional" type="way,closedway,relation"/>
-         <role key="approach" text="approach segment" requisite="optional" type="way,closedway,relation"/>
-         <role key="excursion" text="excursion segment" requisite="optional" type="way,closedway,relation"/>
-         <role key="connection" text="connection segment" requisite="optional" type="way,closedway,relation"/>
-         <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
-         <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
-         <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
-     </roles>
-  </chunk>
-  <chunk id="route_segment_roles">
-     <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry|leisure=track"/>
-     <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
-     <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
-     <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
-  </chunk>
-  <chunk id="route_start_stop_roles">
-     <role key="start" text="start endpoint" requisite="optional" type="node" />
-     <role key="stop" text="stop endpoint" requisite="optional" type="node" />
-     <role key="start_stop" text="start and stop endpoint" requisite="optional" type="node" />
-  </chunk>
-  <!-- Link chunks -->
-  <chunk id="link_contact_address">
-    <preset_link preset_name="Contact (Common Schema)" />
-    <preset_link preset_name="Address" />
-  </chunk>
-  <chunk id="link_contact_address_payment">
-    <preset_link preset_name="Contact (Common Schema)" />
-    <preset_link preset_name="Address" />
-    <preset_link preset_name="Payment Methods" />
-  </chunk>
-  <chunk id="public_transport_route_optionals">
-    <text key="from" text="From (initial stop)" />
-    <text key="to" text="To (terminal stop)" />
-    <text key="via" text="Via (intermediate stops)" />
-    <text key="operator" text="Operator" />
-    <text key="network" text="Network" />
-    <text key="description" text="Description" />
-    <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
-    <reference ref="oh" />
-    <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
-    <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
-    <reference ref="fee" />
-    <text key="website" text="Website" />
-  </chunk>
-  <chunk id="climbing_styles">
-    <label text="Climbing styles:" />
-    <checkgroup columns="2">
-      <check key="climbing:boulder" text="Boulders" />
-      <check key="climbing:sport" text="Sport climbing" />
-         <check key="climbing:toprope" text="Top rope (approach at the route top + letting the rope down)" />
-         <check key="climbing:trad" text="Traditional climbing (no fixed anchors)" />
-      <check key="climbing:multipitch" text="Multi-pitch climbing" />
-      <check key="climbing:ice" text="Ice climbing" />
-      <check key="climbing:mixed" text="Mixed climbing" />
-      <check key="climbing:deepwater" text="Deep Water Soloing" />
-    </checkgroup>
-  </chunk>
-  <chunk id="climbing_optional_attributes">
-    <optional>
-      <combo key="climbing:orientation" text="Orientation" values="N,NE,E,SE,S,SW,W,NW" values_no_i18n="true" values_sort="false"/>
-      <combo key="climbing:quality" text="Rock/ice quality" values="fragile,medium,solid" />
-      <combo key="climbing:rock" text="Rock type" values="limestone,sandstone,granite,basalt,slate" />
-      <check key="climbing:summit_log" text="Summit/route log/register" />
-      <check key="indoor" text="Climbing routes indoor" />
-      <check key="outdoor" text="Climbing routes outdoor" />           
-      <text key="website" text="Official web site (e.g. operator)" />
-      <text key="url" text="Unofficial web site" />
-      <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|sunset-sunrise open; sunrise-sunset closed|Mar-Jun closed; Jul-Feb Mo-Su,PH sunrise-sunset|Mo-Fr 15:00-22:00; Sa-Su 11:00-22:00" values_no_i18n="true" values_sort="false" />
-      <combo key="fee" text="Fee" values="yes,no,Sa-Su 08:00-20:00"/>
-      <reference ref="POI_access" />
-    </optional>
-  </chunk>
+        <multiselect key="brand" text="Car brand" values="Alfa Romeo;Aston Martin;Audi;Bentley;BMW;Buick;Cadillac;Chevrolet;Chrysler;Citroën;Dacia;Daewoo;Daihatsu;Dodge;Ferrari;Fiat;Ford;GMC;Great Wall;Holden;Honda;Hyundai;Infiniti;Isuzu;Jaguar;Jeep;Kia;Lada;Lancia;Land Rover;Lexus;Lincoln;Lotus;Maserati;Mazda;Mercedes-Benz;Mini;Mitsubishi;Nissan;Opel;Peugeot;Porsche;Renault;Saab;Seat;Škoda;Smart;SsangYong;Subaru;Suzuki;Tata;Toyota;Vauxhall;Volkswagen;Volvo" values_no_i18n="true" />
+    </chunk>
+    <chunk id="motorcycle_brands">
+        <multiselect key="brand" text="Motorcycle brand" values="Aprillia;BMW;Ducati;Gilera;Harley-Davidson;Honda;Kawasaki;KTM;Kymco;Piaggio;Peugeot;Piaggio;Suzuki;Triumph;Vespa;Yamaha" values_no_i18n="true" />
+    </chunk>
+    <chunk id="walking_routes_roles">
+        <roles>
+            <role key="" text="route segment" requisite="required" type="way,closedway,relation" member_expression="highway|route=ferry"/>
+            <role key="alternative" text="alternative segment" requisite="optional" type="way,closedway,relation"/>
+            <role key="approach" text="approach segment" requisite="optional" type="way,closedway,relation"/>
+            <role key="excursion" text="excursion segment" requisite="optional" type="way,closedway,relation"/>
+            <role key="connection" text="connection segment" requisite="optional" type="way,closedway,relation"/>
+            <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
+            <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
+            <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
+        </roles>
+    </chunk>
+    <chunk id="route_segment_roles">
+        <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry|leisure=track"/>
+        <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
+        <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
+        <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
+    </chunk>
+    <chunk id="route_start_stop_roles">
+        <role key="start" text="start endpoint" requisite="optional" type="node" />
+        <role key="stop" text="stop endpoint" requisite="optional" type="node" />
+        <role key="start_stop" text="start and stop endpoint" requisite="optional" type="node" />
+    </chunk>
+    <!-- Link chunks -->
+    <chunk id="link_contact_address">
+        <preset_link preset_name="Contact (Common Schema)" />
+        <preset_link preset_name="Address" />
+    </chunk>
+    <chunk id="link_contact_address_payment">
+        <preset_link preset_name="Contact (Common Schema)" />
+        <preset_link preset_name="Address" />
+        <preset_link preset_name="Payment Methods" />
+    </chunk>
+    <chunk id="public_transport_route_optionals">
+        <text key="from" text="From (initial stop)" />
+        <text key="to" text="To (terminal stop)" />
+        <text key="via" text="Via (intermediate stops)" />
+        <text key="operator" text="Operator" />
+        <text key="network" text="Network" />
+        <text key="description" text="Description" />
+        <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
+        <reference ref="oh" />
+        <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
+        <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
+        <reference ref="fee" />
+        <text key="website" text="Website" />
+    </chunk>
+    <chunk id="climbing_styles">
+        <label text="Climbing styles:" />
+        <checkgroup columns="2">
+            <check key="climbing:boulder" text="Boulders" />
+            <check key="climbing:sport" text="Sport climbing" />
+            <check key="climbing:toprope" text="Top rope (approach at the route top + letting the rope down)" />
+            <check key="climbing:trad" text="Traditional climbing (no fixed anchors)" />
+            <check key="climbing:multipitch" text="Multi-pitch climbing" />
+            <check key="climbing:ice" text="Ice climbing" />
+            <check key="climbing:mixed" text="Mixed climbing" />
+            <check key="climbing:deepwater" text="Deep Water Soloing" />
+        </checkgroup>
+    </chunk>
+    <chunk id="climbing_optional_attributes">
+        <optional>
+            <combo key="climbing:orientation" text="Orientation" values="N,NE,E,SE,S,SW,W,NW" values_no_i18n="true" values_sort="false"/>
+            <combo key="climbing:quality" text="Rock/ice quality" values="fragile,medium,solid" />
+            <combo key="climbing:rock" text="Rock type" values="limestone,sandstone,granite,basalt,slate" />
+            <check key="climbing:summit_log" text="Summit/route log/register" />
+            <check key="indoor" text="Climbing routes indoor" />
+            <check key="outdoor" text="Climbing routes outdoor" />
+            <text key="website" text="Official web site (e.g. operator)" />
+            <text key="url" text="Unofficial web site" />
+            <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|sunset-sunrise open; sunrise-sunset closed|Mar-Jun closed; Jul-Feb Mo-Su,PH sunrise-sunset|Mo-Fr 15:00-22:00; Sa-Su 11:00-22:00" values_no_i18n="true" values_sort="false" />
+            <combo key="fee" text="Fee" values="yes,no,Sa-Su 08:00-20:00"/>
+            <reference ref="POI_access" />
+        </optional>
+    </chunk>
   <!--  Groups -->
   <group name="Highways" icon="presets/transport/way/way_secondary.svg">
     <group name="Streets" icon="presets/transport/way/way_secondary.svg">
