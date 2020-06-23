@@ -453,8 +453,8 @@ way[usage][!railway][!waterway][route!=railway][man_made!=pipeline] {
   group: tr("missing tag");
 }
 
-/* any other *_name tag (with some exceptions) but not a name , see #10837 #11297 #11539 #16437 */
-*[/_name$/][!name][!old_name][!loc_name][!uic_name][!artist_name][!lock_name][!"osak:municipality_name"][!"osak:street_name"][noname!=yes] {
+/* any other *_name tag (with some exceptions) but not a name , see #10837 #11297 #11539 #16437 #17026 */
+*[/_name$/][!name][!old_name][!loc_name][!reg_name][!uic_name][!artist_name][!lock_name][!"osak:municipality_name"][!"osak:street_name"][noname!=yes] {
   throwWarning: tr("alternative name without {0}", "{1.key}");
   group: tr("missing tag");
 }
