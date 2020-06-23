@@ -485,16 +485,6 @@
         <role key="stop" text="stop endpoint" requisite="optional" type="node" />
         <role key="start_stop" text="start and stop endpoint" requisite="optional" type="node" />
     </chunk>
-    <!-- Link chunks -->
-    <chunk id="link_contact_address">
-        <preset_link preset_name="Contact (Common Schema)" />
-        <preset_link preset_name="Address" />
-    </chunk>
-    <chunk id="link_contact_address_payment">
-        <preset_link preset_name="Contact (Common Schema)" />
-        <preset_link preset_name="Address" />
-        <preset_link preset_name="Payment Methods" />
-    </chunk>
     <chunk id="public_transport_route_optionals">
         <text key="from" text="From (initial stop)" />
         <text key="to" text="To (terminal stop)" />
@@ -536,6 +526,16 @@
             <combo key="fee" text="Fee" values="yes,no,Sa-Su 08:00-20:00"/>
             <reference ref="POI_access" />
         </optional>
+    </chunk>
+    <!-- Link chunks -->
+    <chunk id="link_contact_address">
+        <preset_link preset_name="Contact (Common Schema)" />
+        <preset_link preset_name="Address" />
+    </chunk>
+    <chunk id="link_contact_address_payment">
+        <preset_link preset_name="Contact (Common Schema)" />
+        <preset_link preset_name="Address" />
+        <preset_link preset_name="Payment Methods" />
     </chunk>
   <!--  Groups -->
   <group name="Highways" icon="presets/transport/way/way_secondary.svg">
