@@ -264,6 +264,7 @@
         <check key="roundtrip" text="Roundtrip"/>
         <text key="symbol" text="Symbol description"/>
         <text key="description" text="Description"/>
+        <text key="website" text="Website" />
     </chunk>
     <chunk id="genus_species_taxon">
         <text key="genus" text="Genus" />
@@ -502,8 +503,11 @@
     <text key="network" text="Network" />
     <text key="description" text="Description" />
     <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
-    <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
-    <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
+    <reference ref="oh" />
+    <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
+    <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
+    <reference ref="fee" />
+    <text key="website" text="Website" />
   </chunk>
   <chunk id="climbing_styles">
     <label text="Climbing styles:" />
@@ -1862,10 +1866,11 @@
             <key key="route" value="ferry" />
             <optional>
                 <reference ref="name_ref_operator" />
-                <reference ref="oh_wheelchair" />
+                <reference ref="wheelchair" />
                 <space />
-                <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
-                <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30" values_no_i18n="true" />
+                <reference ref="oh" />
+                <combo key="duration" text="Duration (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
+                <combo key="interval" text="Interval (M, MM, HH:MM, or HH:MM:SS)" values="5,10,15,20,30,60,120,10:30,00:02:30" values_no_i18n="true" />
                 <reference ref="fee" />
                 <combo key="ferry" text="Highway type the ferry connects" values="trunk,primary,secondary,tertiary,unclassified" values_context="Highway" values_sort="false" />
                 <check key="ferry:cable" text="Reaction ferry" />
@@ -2116,6 +2121,10 @@
                 <text key="aerialway:occupancy" text="Number of people per car" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
                 <check key="aerialway:heating" text="Has heating?" />
+                <space />
+                <text key="operator" text="Operator" />
+                <reference ref="oh" />
+                <reference ref="fee" />
             </optional>
         </item> <!-- Cable Car -->
         <item name="Chair Lift" icon="presets/transport/aerialway/chair_lift.svg" type="way" preset_name_label="true">
@@ -2129,6 +2138,10 @@
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
                 <check key="aerialway:bubble" text="Has bubble?" />
                 <check key="aerialway:heating" text="Has heating?" />
+                <space />
+                <text key="operator" text="Operator" />
+                <reference ref="oh" />
+                <reference ref="fee" />
             </optional>
         </item> <!-- Chair Lift -->
         <item name="Gondola" icon="presets/transport/aerialway/gondola.svg" type="way" preset_name_label="true">
@@ -2141,6 +2154,10 @@
                 <text key="aerialway:occupancy" text="Number of people per gondola" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
                 <check key="aerialway:heating" text="Has heating?" />
+                <space />
+                <text key="operator" text="Operator" />
+                <reference ref="oh" />
+                <reference ref="fee" />
             </optional>
         </item> <!-- Gondola -->
         <item name="Mixed Lift" icon="presets/transport/aerialway/mixed_lift.svg" type="way" preset_name_label="true">
@@ -2154,6 +2171,10 @@
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
                 <check key="aerialway:bubble" text="Has bubble?" />
                 <check key="aerialway:heating" text="Has heating?" />
+                <space />
+                <text key="operator" text="Operator" />
+                <reference ref="oh" />
+                <reference ref="fee" />
             </optional>
         </item> <!-- Mixed Lift -->
         <item name="Drag Lift" icon="presets/transport/aerialway/drag_lift.svg" type="way" preset_name_label="true">
@@ -2164,6 +2185,10 @@
             <optional>
                 <text key="aerialway:capacity" text="Number of people per hour" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
+                <space />
+                <text key="operator" text="Operator" />
+                <reference ref="oh" />
+                <reference ref="fee" />
             </optional>
         </item> <!-- Drag Lift -->
         <item name="Magic Carpet" icon="presets/transport/aerialway/magic_carpet.svg" type="way" preset_name_label="true">
@@ -2174,14 +2199,18 @@
             <optional>
                 <text key="aerialway:capacity" text="Number of people per hour" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
+                <space />
+                <text key="operator" text="Operator" />
+                <reference ref="oh" />
+                <reference ref="fee" />
             </optional>
         </item> <!-- Magic Carpet -->
         <item name="Goods" icon="presets/transport/aerialway/goods.svg" type="way" preset_name_label="true">
             <link wiki="Tag:aerialway=goods" />
             <space />
             <key key="aerialway" value="goods" />
-            <reference ref="name_ref" />
             <optional>
+                <reference ref="name_ref_operator" />
                 <text key="aerialway:duration" text="Typical journey time in minutes" />
             </optional>
         </item> <!-- Goods -->
@@ -2202,13 +2231,13 @@
             <link wiki="Tag:aerialway=station" />
             <space />
             <key key="aerialway" value="station" />
-            <text key="name" text="Name" />
+            <reference ref="name_ref_operator" />
         </item> <!-- Station -->
         <item name="Pylon" icon="presets/transport/aerialway/pylon.svg" type="node" preset_name_label="true">
             <link wiki="Tag:aerialway=pylon" />
             <space />
             <key key="aerialway" value="pylon" />
-            <text key="name" text="Name" />
+            <reference ref="name_ref" />
         </item> <!-- Pylon -->
     </group> <!-- Aerialway -->
     <separator/>
@@ -2529,6 +2558,7 @@
             <reference ref="name_ref" />
             <optional>
                 <reference ref="public_transport_route_optionals" />
+                <combo key="reservation" text="Reservation" values="yes,no,required,recommended" />
             </optional>
             <roles>
                 <role key="stop" text="stop position" requisite="optional" type="node" member_expression="public_transport=stop_position (bus=yes OR share_taxi=yes OR trolleybus=yes)" />
@@ -2551,6 +2581,7 @@
                 <text key="operator" text="Operator" />
                 <text key="network" text="Network" />
                 <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
+                <text key="website" text="Website" />
             </optional>
             <roles>
                 <role key="" text="route variant/direction (at least 2)" requisite="required" type="relation" member_expression="type=route" /> <!-- fixme: at least 2 members are required -->
@@ -2591,17 +2622,19 @@
                 <combo key="tactile_paving" text="Tactile Paving" values="yes,no,incorrect" />
             </optional>
             <space />
-            <check key="bus" text="Bus" icon="presets/transport/bus.svg" />
-            <check key="tram" text="Tram" icon="presets/transport/railway/tram.svg" />
-            <check key="train" text="Train" icon="presets/transport/train.svg" />
-            <check key="trolleybus" text="Trolleybus" icon="presets/transport/trolleybus.svg" />
-            <check key="share_taxi" text="Share taxi" icon="presets/transport/share_taxi.svg" />
-            <check key="subway" text="Subway" icon="presets/transport/railway/subway.svg" />
-            <check key="light_rail" text="Light Rail" icon="presets/transport/railway/light_rail.svg" />
-            <check key="monorail" text="Monorail" icon="presets/transport/railway/monorail.svg" />
-            <check key="funicular" text="Funicular" icon="presets/transport/railway/funicular.svg" />
-            <check key="aerialway" text="Aerialway" icon="presets/transport/aerialway/station.svg" />
-            <check key="ferry" text="Ferry" icon="presets/nautical/ferry.svg" />
+            <checkgroup columns="3">
+                <check key="bus"        text="Bus" icon="presets/transport/bus.svg" />
+                <check key="trolleybus" text="Trolleybus" icon="presets/transport/trolleybus.svg" />
+                <check key="share_taxi" text="Share taxi" icon="presets/transport/share_taxi.svg" />
+                <check key="train"      text="Train" icon="presets/transport/train.svg" />
+                <check key="light_rail" text="Light Rail" icon="presets/transport/railway/light_rail.svg" />
+                <check key="subway"     text="Subway" icon="presets/transport/railway/subway.svg" />
+                <check key="tram"       text="Tram" icon="presets/transport/railway/tram.svg" />
+                <check key="monorail"   text="Monorail" icon="presets/transport/railway/monorail.svg" />
+                <check key="funicular"  text="Funicular" icon="presets/transport/railway/funicular.svg" />
+                <check key="aerialway"  text="Aerialway" icon="presets/transport/aerialway/station.svg" />
+                <check key="ferry"      text="Ferry" icon="presets/nautical/ferry.svg" />
+            </checkgroup>
         </item> <!-- Stop Position -->
         <item name="Platform" type="node,way,closedway,multipolygon" icon="presets/transport/platform.svg" preset_name_label="true">
             <link wiki="Tag:public_transport=platform" />
@@ -2661,6 +2694,10 @@
                 <text key="network" text="Network" />
                 <text key="description" text="Description" />
                 <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
+                <reference ref="oh" />
+                <reference ref="fee" />
+                <combo key="reservation" text="Reservation" values="yes,no,required,recommended" />
+                <text key="website" text="Website" />
             </optional>
             <roles>
                 <role key="" text="route segment" requisite="optional" type="way,closedway" />
