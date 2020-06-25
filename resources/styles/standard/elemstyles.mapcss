@@ -1515,6 +1515,13 @@ way[man_made=pipeline][!waterway] {
     width: 2;
     color: pipeline#660000;
 }
+area[pipeline=substation] {
+    fill-color: pipeline_substation#eeeeee;
+}
+node[pipeline=substation] {
+    icon-image: "presets/misc/pipeline_substation.svg";
+    set icon_z17;
+}
 node[marker] {
     icon-image: "presets/misc/pipeline_marker.svg";
     set icon_z17;

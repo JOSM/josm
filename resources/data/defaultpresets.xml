@@ -5249,6 +5249,15 @@
             <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
             <text key="pressure" text="Pressure (bar)" />
         </item> <!-- Pipeline -->
+        <item name="Pipeline Substation" icon="presets/misc/pipeline_substation.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:pipeline=substation" />
+            <space />
+            <key key="pipeline" value="substation" />
+            <text key="name" text="Name" />
+            <combo key="substation" text="Type" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" />
+            <text key="ref" text="Reference" />
+            <reference ref="operator_substance" />
+        </item> <!-- Pipeline Substation -->
         <item name="Pipeline Valve" icon="presets/misc/valve.svg" type="node" preset_name_label="true">
             <link wiki="Tag:pipeline=valve" />
             <space />
