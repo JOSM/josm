@@ -1989,3 +1989,10 @@ way[stream=intermittent] {
   suggestAlternative: "seasonal=yes";
   group: tr("deprecated tagging");
 }
+
+*[shop=lamps] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "shop=lighting";
+  group: tr("deprecated tagging");
+  fixAdd: "shop=lighting";
+}

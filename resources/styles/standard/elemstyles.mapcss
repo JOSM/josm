@@ -2142,6 +2142,10 @@ area[shop=wine],
 area[shop=farm],
 area[shop=tattoo],
 area[shop=art],
+area[shop=lighting],
+area[shop=security],
+area[shop=wholesale],
+area[shop=trade],
 area[shop=bag] {
     fill-color: shop#00005f;
 }
@@ -2532,6 +2536,22 @@ node[shop=tattoo] {
 }
 node[shop=art] {
     icon-image: "presets/shop/art.svg";
+    set icon_z17;
+}
+node[shop=lighting] {
+    icon-image: "presets/shop/lighting.svg";
+    set icon_z17;
+}
+node[shop=security] {
+    icon-image: "presets/shop/security.svg";
+    set icon_z17;
+}
+node[shop=wholesale] {
+    icon-image: "presets/shop/wholesale.svg";
+    set icon_z17;
+}
+node[shop=trade] {
+    icon-image: "presets/shop/trade.svg";
     set icon_z17;
 }
 node[shop=bag] {

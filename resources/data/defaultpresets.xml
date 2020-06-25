@@ -6258,7 +6258,7 @@
             <key key="shop" value="electronics" />
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
-        </item> <!-- Computer -->
+        </item> <!-- Electronics -->
         <item name="Mobile Phone" icon="presets/shop/mobile_phone.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=mobile_phone" />
             <space />
@@ -6421,6 +6421,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Interior Decoration -->
+        <item name="Lighting" icon="presets/shop/lighting.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=lighting" />
+            <space />
+            <key key="shop" value="lighting" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Lighting -->
         <item name="Antiques" icon="presets/shop/antique.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=antiques" />
             <space />
@@ -6641,6 +6648,26 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Gas -->
+        <item name="Wholesale" icon="presets/shop/wholesale.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=wholesale" />
+            <space />
+            <key key="shop" value="wholesale" />
+            <text key="name" text="Name" />
+            <combo key="wholesale" text="Type" values="clothes,electro,florist,food,general,paper,pharmacy,sanitary,seafood,supermarket" values_context="wholesale" />
+            <text key="operator" text="Operator" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Wholesale -->
+        <item name="Trade" icon="presets/shop/trade.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=trade" />
+            <space />
+            <key key="shop" value="trade" />
+            <text key="name" text="Name" />
+            <combo key="trade" text="Type" values="agricultural_supplies,building_supplies,catering_supplies,plumbing,tiles,timber,windows,wood" values_context="trade" />
+            <text key="operator" text="Operator" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Trade -->
         <separator/>
         <item name="Travel Agency" icon="presets/shop/travel_agency.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=travel_agency" />
@@ -6753,6 +6780,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Photo -->
+        <item name="Security" icon="presets/shop/security.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=security" />
+            <space />
+            <key key="shop" value="security" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Security -->
         <item name="Weapons" icon="presets/shop/weapons.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=weapons" />
             <space />
