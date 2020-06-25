@@ -2089,6 +2089,7 @@ area[shop=hardware],
 area[shop=hearing_aids],
 area[shop=hifi],
 area[shop=houseware],
+area[shop=pottery],
 area[shop=jewelry],
 area[shop=kitchen],
 area[shop=mall],
@@ -2324,6 +2325,10 @@ node[shop=hifi] {
 }
 node[shop=houseware] {
     icon-image: "presets/shop/houseware.svg";
+    set icon_z17;
+}
+node[shop=pottery] {
+    icon-image: "presets/shop/pottery.svg";
     set icon_z17;
 }
 node[shop=jewelry] {
