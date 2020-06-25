@@ -56,10 +56,10 @@ jobs:
           fi
       - name: Dump errors if failed
         if: ${{ failure() }}
-        run: "grep -L ', Failures: 0, Errors: 0, ' test/report/*.txt | xargs cat"
+        run: "grep -L ', Failures: 0, Skipped: 0, ' test/report/*.txt | xargs cat"
       - name: Upload Ant reports
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: Ant reports
+          name: Ant reports for java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
           path: test/report/*.txt
