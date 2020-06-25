@@ -54,7 +54,7 @@ jobs:
           fi
       - name: Dump errors if failed
         if: ${{ failure() }}
-        run: "grep -L ', Failures: 0, Skipped: 0, ' test/report/*.txt | xargs cat"
+        run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
       - name: Upload Ant reports
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
