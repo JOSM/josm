@@ -1477,6 +1477,10 @@ node[man_made=crane] {
     icon-image: "presets/landmark/crane.svg";
     set icon_z17;
 }
+way[man_made=goods_conveyor] {
+    width: 2;
+    color: manmade#d8d8d8;
+}
 node[man_made=adit] {
     icon-image: "presets/landmark/adit.svg";
     set icon_z17;

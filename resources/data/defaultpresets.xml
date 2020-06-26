@@ -5210,6 +5210,20 @@
                 <reference ref="name_operator" />
             </optional>
         </item> <!-- Crane -->
+        <item name="Goods conveyor" icon="presets/landmark/goods_conveyor.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:man_made=goods_conveyor" />
+            <space />
+            <key key="man_made" value="goods_conveyor" />
+            <optional>
+                <reference ref="name_operator" />
+                <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
+                <checkgroup columns="3">
+                    <check key="covered" text="Covered" />
+                    <check key="bridge" text="Bridge" disable_off="true" />
+                    <check key="tunnel" text="Tunnel" disable_off="true" />
+                </checkgroup>
+            </optional>
+        </item> <!-- Goods conveyor -->
         <item name="Mineshaft" icon="presets/landmark/mine.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=mineshaft" />
             <space />
