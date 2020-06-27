@@ -6693,7 +6693,7 @@
             <space />
             <key key="shop" value="trade" />
             <text key="name" text="Name" />
-            <combo key="trade" text="Type" values="agricultural_supplies,building_supplies,catering_supplies,plumbing,tiles,timber,windows,wood" values_context="trade" />
+            <combo key="trade" text="Type" values="agricultural_supplies,building_supplies,catering_supplies,plumbing,tiles,timber,windows" values_context="trade" />
             <text key="operator" text="Operator" />
             <reference ref="oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
