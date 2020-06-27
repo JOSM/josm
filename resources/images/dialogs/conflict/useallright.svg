@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="24"
+   height="24"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   version="1.0"
+   sodipodi:docname="useallright.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="C:\data\projekte\eclipse-3.4.1-ws\JOSM\images\dialogs\conflict\copystartleft.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="31.8125"
+     inkscape:cx="12.171876"
+     inkscape:cy="13.219415"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showborder="true"
+     inkscape:window-width="1348"
+     inkscape:window-height="669"
+     inkscape:window-x="169"
+     inkscape:window-y="85"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#646464;stroke-width:1.01156402;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2383"
+       width="11.335931"
+       height="19.273432"
+       x="2.1445332"
+       y="2.3945346" />
+    <path
+       style="fill:none;fill-rule:evenodd"
+       d="M 1.9375,4.3125 L 8.6875,4.25"
+       id="path3157" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#646464;stroke-width:0.62002021;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 2.38501,6.4162601 L 12.98999,6.45874"
+       id="path3165" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#646464;stroke-width:0.62002015;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 2.57251,11.16626 L 13.17749,11.20874"
+       id="path3167" />
+    <rect
+       style="fill:#8faaff;fill-opacity:1;fill-rule:nonzero;stroke:#8faaff;stroke-width:0.382;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3173"
+       width="7.375"
+       height="3.4375"
+       x="29.4375"
+       y="-1.1875" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#646464;stroke-width:0.62002015;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 2.63501,16.60376 L 13.23999,16.64624"
+       id="path3219" />
+    <path
+       style="fill:#c8c8c8;fill-opacity:1;fill-rule:evenodd;stroke:#c8c8c8;stroke-width:1.98654306;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 22.037974,19.787973 L 22.037974,5.712027 L 16.087026,12.734943 L 22.037974,19.787973 z"
+       id="path3221"
+       sodipodi:nodetypes="cccc" />
+    <path
+       style="fill:#000080;fill-rule:evenodd;stroke:#000080;stroke-width:1.98654306;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 21.694224,18.694223 L 21.694224,4.618277 L 15.743276,11.641193 L 21.694224,18.694223 z"
+       id="path3171"
+       sodipodi:nodetypes="cccc" />
+  </g>
+</svg>
