@@ -23,7 +23,9 @@ import java.util.TimeZone;
 import java.util.logging.Handler;
 
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.rules.TemporaryFolder;
@@ -81,7 +83,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Michael Zangl
  */
-public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCallback {
+public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCallback, AfterAllCallback, BeforeAllCallback {
     private int timeout = isDebugMode() ? -1 : 10 * 1000;
     private TemporaryFolder josmHome;
     private boolean usePreferences = false;
@@ -462,6 +464,16 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
         after();
+    }
+
+    @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+        beforeEach(context);
+    }
+
+    @Override
+    public void afterAll(ExtensionContext context) throws Exception {
+        afterEach(context);
     }
 
     /**

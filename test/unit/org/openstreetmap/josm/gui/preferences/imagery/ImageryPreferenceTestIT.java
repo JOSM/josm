@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.imagery;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -24,12 +23,12 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.jcs3.access.CacheAccess;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.gui.jmapviewer.TileXY;
@@ -61,7 +60,6 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.imagery.ApiKeyProvider;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.ParallelParameterized;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
@@ -72,7 +70,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link ImageryPreference} class.
  */
-@RunWith(ParallelParameterized.class)
 public class ImageryPreferenceTestIT {
 
     private static final String ERROR_SEP = " -> ";
@@ -82,13 +79,12 @@ public class ImageryPreferenceTestIT {
     /**
      * Setup rule
      */
-    @ClassRule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https().i18n().preferences().projection().projectionNadGrids()
-                                                   .timeout((int) TimeUnit.MINUTES.toMillis(40)).parameters();
+    static JOSMTestRules test = new JOSMTestRules().https().i18n().preferences().projection().projectionNadGrids()
+                                                   .timeout((int) TimeUnit.MINUTES.toMillis(40));
 
     /** Entry to test */
-    private final ImageryInfo info;
     private final Map<String, Map<ImageryInfo, List<String>>> errors = Collections.synchronizedMap(new TreeMap<>());
     private final Map<String, Map<ImageryInfo, List<String>>> ignoredErrors = Collections.synchronizedMap(new TreeMap<>());
     private static final Map<String, byte[]> workingURLs = Collections.synchronizedMap(new TreeMap<>());
@@ -101,7 +97,7 @@ public class ImageryPreferenceTestIT {
      * Setup test
      * @throws IOException in case of I/O error
      */
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException {
         FeatureAdapter.registerApiKeyAdapter(ApiKeyProvider::retrieveApiKey);
         helper = new TMSCachedTileLoaderJob(null, null, new CacheAccess<>(null), new TileJobOptions(0, 0, null, 0), null);
@@ -112,7 +108,7 @@ public class ImageryPreferenceTestIT {
     /**
      * Cleanup test
      */
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         for (String e : notIgnoredErrors) {
             Logging.warn("Ignore line unused: " + e);
@@ -123,22 +119,12 @@ public class ImageryPreferenceTestIT {
      * Returns list of imagery entries to test.
      * @return list of imagery entries to test
      */
-    @Parameters(name = "{0}")
-    public static List<Object[]> data() {
+    public static List<Arguments> data() {
         ImageryLayerInfo.instance.load(false);
         return ImageryLayerInfo.instance.getDefaultLayers()
                 .stream()
-                .map(x -> new Object[] {x.getId(), x})
+                .map(i -> Arguments.of(i.getId(), i))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Constructs a new {@code ImageryPreferenceTestIT} instance.
-     * @param id entry ID, used only to name tests
-     * @param info entry to test
-     */
-    public ImageryPreferenceTestIT(String id, ImageryInfo info) {
-        this.info = Objects.requireNonNull(info);
     }
 
     private boolean addError(ImageryInfo info, String error) {
@@ -404,12 +390,16 @@ public class ImageryPreferenceTestIT {
 
     /**
      * Test that available imagery entry is valid.
+     *
+     * @param id The id of the imagery info to show as the test name
+     * @param info The imagery info to test
      */
-    @Test
-    public void testImageryEntryValidity() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    public void testImageryEntryValidity(String id, ImageryInfo info) {
         checkEntry(info);
-        assertTrue(format(errors), errors.isEmpty());
+        assertTrue(errors.isEmpty(), format(errors));
         assertFalse(workingURLs.isEmpty());
-        assumeTrue(format(ignoredErrors), ignoredErrors.isEmpty());
+        assumeTrue(ignoredErrors.isEmpty(), format(ignoredErrors));
     }
 }

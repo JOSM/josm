@@ -60,6 +60,7 @@
         <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.67"/>
         <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.6.2"/>
         <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.6.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.6.2"/>
         <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.6.2"/>
         <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.6.2"/>
         <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.6.2"/>
