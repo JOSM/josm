@@ -174,6 +174,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                 + "<br>"
                 + server
                 + "</html>");
+        validate();
     }
 
     /* --------------------------------------------------------------------- */
