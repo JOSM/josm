@@ -130,7 +130,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         // try to build a new way which includes all the combined ways
-        List<Node> path = tryJoin(ways);
+        List<Node> path = new LinkedList<>(tryJoin(ways));
         if (path.isEmpty()) {
             warnCombiningImpossible();
             return null;
