@@ -52,11 +52,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     }
 
     protected ImageryInfo buildImageryInfo() {
-        ImageryInfo fromExtendedUrl = new ImageryInfo("", args.get("url"));
-        args.put("url", fromExtendedUrl.getUrl());
-        args.computeIfAbsent("min_zoom", ignore -> String.valueOf(fromExtendedUrl.getMinZoom()));
-        args.computeIfAbsent("max_zoom", ignore -> String.valueOf(fromExtendedUrl.getMaxZoom()));
-        args.computeIfAbsent("type", ignore -> fromExtendedUrl.getSourceType().getTypeString());
+        args.computeIfAbsent("type", ignore -> ImageryType.WMS.getDefault().getTypeString());
         args.computeIfAbsent("name", ignore -> args.getOrDefault("title", tr("Remote imagery")));
         ImageryPreferenceEntry imageryPreferenceEntry = StructUtils.deserializeStruct(args, ImageryPreferenceEntry.class);
         return new ImageryInfo(imageryPreferenceEntry);
@@ -104,7 +100,6 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
                 ImageryType::getTypeString));
         return new String[] {
             "/imagery?title=osm&type=tms&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
-            "/imagery?url=[0-19]https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
             "/imagery?title=landsat&type=wms&url=http://irs.gis-lab.info/?" +
                     "layers=landsat&SRS=%7Bproj%7D&WIDTH=%7Bwidth%7D&HEIGHT=%7Bheight%7D&BBOX=%7Bbbox%7D",
             "/imagery?title=...&type={"+types+"}&url=....[&cookies=...][&min_zoom=...][&max_zoom=...]"
