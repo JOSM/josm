@@ -115,12 +115,9 @@ public class ImageryHandlerTest {
                 "tms%2F1.0.0%2FDigitalGlobe%3AImageryTileService%40EPSG%3A3857%40jpg%2F%7Bz%7D%2F%7Bx%7D%2F%7B-y%7D.jpg%3F" +
                 "connectId%3D0123456789";
         ImageryInfo imageryInfo = newHandler(url).buildImageryInfo();
-        assertEquals(ImageryInfo.ImageryType.TMS, imageryInfo.getImageryType());
-        assertEquals("https://services.digitalglobe.com/earthservice/tmsaccess/tms/1.0.0/DigitalGlobe:ImageryTileService" +
-                "@EPSG:3857@jpg/{z}/{x}/{-y}.jpg?connectId=0123456789", imageryInfo.getUrl());
+        assertEquals(ImageryInfo.ImageryType.WMS, imageryInfo.getImageryType());
+        /* do not interpret the URL, take it as is and error later */
         assertEquals("tms[3,7]:https://services.digitalglobe.com/earthservice/tmsaccess/tms/1.0.0/DigitalGlobe:ImageryTileService" +
-                "@EPSG:3857@jpg/{z}/{x}/{-y}.jpg?connectId=0123456789", imageryInfo.getExtendedUrl());
-        assertEquals(3, imageryInfo.getMinZoom());
-        assertEquals(7, imageryInfo.getMaxZoom());
+                "@EPSG:3857@jpg/{z}/{x}/{-y}.jpg?connectId=0123456789", imageryInfo.getUrl());
     }
 }
