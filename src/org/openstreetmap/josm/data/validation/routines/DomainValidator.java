@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2020060300, Last Updated Wed Jun  3 07:07:01 2020 UTC
+        // Taken from Version 2020070600, Last Updated Mon Jul  6 07:07:02 2020 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -325,7 +325,6 @@ public final class DomainValidator extends AbstractValidator {
         "agakhan", // agakhan Fondation Aga Khan (Aga Khan Foundation)
         "agency", // agency Steel Falls, LLC
         "aig", // aig American International Group, Inc.
-        "aigo", // aigo aigo Digital Technology Co,Ltd.
         "airbus", // airbus Airbus S.A.S.
         "airforce", // airforce United TLD Holdco Ltd.
         "airtel", // airtel Bharti Airtel Limited
@@ -1454,7 +1453,6 @@ public final class DomainValidator extends AbstractValidator {
         "xn--jlq61u9w7b", // 诺基亚 Nokia Corporation
         "xn--jvr189m", // 食品 Amazon Registry Services, Inc.
         "xn--kcrx77d1x4a", // 飞利浦 Koninklijke Philips N.V.
-        "xn--kpu716f", // 手表 Richemont DNS Inc.
         "xn--kput3i", // 手机 Beijing RITT-Net Technology Development Co., Ltd
         "xn--mgba3a3ejt", // ارامكو Aramco Services Company
         "xn--mgba7c0bbn0a", // العليان Crescent Holding GmbH
@@ -1478,7 +1476,6 @@ public final class DomainValidator extends AbstractValidator {
         "xn--nyqy26a", // 健康 Stable Tone Limited
         "xn--otu796d", // 招聘 Dot Trademark TLD Holding Company Limited
         "xn--p1acf", // рус Rusnames Limited
-        "xn--pbt977c", // 珠宝 Richemont DNS Inc.
         "xn--pssy2u", // 大拿 VeriSign Sarl
         "xn--q7ce6a", // ລາວ Lao National Internet Center (LANIC)
         "xn--q9jyb4c", // みんな Charleston Road Registry Inc.
