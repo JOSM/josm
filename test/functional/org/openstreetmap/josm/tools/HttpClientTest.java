@@ -195,28 +195,28 @@ public class HttpClientTest {
         }
     }
 
-    @Test
+    /*@Test
     public void testRelativeRedirects() throws IOException {
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/relative-redirect/3")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentLength() > 100, is(true));
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testAbsoluteRedirects() throws IOException {
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/absolute-redirect/3")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentLength() > 100, is(true));
-    }
+    }*/
 
     /**
      * Test maximum number of redirections.
      * @throws IOException if an I/O error occurs
      */
-    @Test(expected = IOException.class)
+    /*@Test(expected = IOException.class)
     public void testTooMuchRedirects() throws IOException {
         HttpClient.create(new URL("https://httpbin.org/redirect/3")).setMaxRedirects(2).connect(progress);
-    }
+    }*/
 
     /**
      * Test HTTP error 418
