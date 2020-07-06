@@ -351,7 +351,8 @@ public abstract class ComboMultiSelect extends KeyedItem {
             // default is set and all items were unset
             if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || isForceUseLastAsDefault()) {
                 // selected osm primitives are untagged or filling default feature is enabled
-                itemToSelect = getListEntry(def).getDisplayValue();
+                PresetListEntry entry = getListEntry(def);
+                itemToSelect = entry == null ? "" : entry.getDisplayValue();
             } else {
                 // selected osm primitives are tagged and filling default feature is disabled
                 itemToSelect = "";
