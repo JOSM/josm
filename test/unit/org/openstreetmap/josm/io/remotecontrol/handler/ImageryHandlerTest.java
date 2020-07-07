@@ -117,7 +117,7 @@ public class ImageryHandlerTest {
         ImageryInfo imageryInfo = newHandler(url).buildImageryInfo();
         assertEquals(ImageryInfo.ImageryType.WMS, imageryInfo.getImageryType());
         /* do not interpret the URL, take it as is and error later */
-        assertEquals("tms[3,7]:https://services.digitalglobe.com/earthservice/tmsaccess/tms/1.0.0/DigitalGlobe:ImageryTileService" +
+        assertEquals("tms[3-7]:https://services.digitalglobe.com/earthservice/tmsaccess/tms/1.0.0/DigitalGlobe:ImageryTileService" +
                 "@EPSG:3857@jpg/{z}/{x}/{-y}.jpg?connectId=0123456789", imageryInfo.getUrl());
     }
 }
