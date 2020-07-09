@@ -51,11 +51,11 @@ jobs:
         run: |
           ANT_HOME=${{ env.ant_version }}
           ANT="${{ env.ant_version }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
-          if [ "${{ matrix.headless }}" == "true" ]; then
-            $ANT -Dtest.headless=true
-          else
-            xvfb-run $ANT -Dtest.headless=false
-          fi
+         # #if [ "${{ matrix.headless }}" == "true" ]; then
+         #   $ANT -Dtest.headless=true
+         # else
+         #   xvfb-run $ANT -Dtest.headless=false
+         # fi
       - name: Dump errors if failed
         if: ${{ failure() }}
         run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
