@@ -69,7 +69,7 @@ jobs:
           name: Ant reports for JOSM ${{ env.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
           path: test/report/*.txt
       - name: Build and package for macOS
-        if: ${{ matrix.os == "macos-latest" }}
+        if: ${{ runner.os == 'macos' }}
         run: |
           ANT_HOME=${{ env.ant_version }}
           $ANT_HOME/bin/ant dist
