@@ -6,7 +6,7 @@ set -Eeuxo pipefail
 if [ -z "$1" ]
 then
     echo "Usage: $0 josm_revision"
-    return 1
+    exit 1
 fi
 
 echo "Building JOSM.app"
@@ -32,14 +32,14 @@ echo "Building done."
 if [ -z "$CERT_MACOS_P12" ]
 then
     echo "CERT_MACOS_P12 must be set in the environment. Won't sign app."
-    return 1
+    exit 1
 fi
 
 
 if [ -z "$CERT_MACOS_PW" ]
 then
     echo "CERT_MACOS_P12 must be set in the environment. Won't sign app."
-    return 1
+    exit 1
 fi
 
 echo "Preparing certificates/keychain for signing…"
