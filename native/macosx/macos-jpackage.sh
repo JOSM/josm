@@ -61,8 +61,8 @@ echo "Signing preparation done."
 
 echo "Signing App Bundle…"
 
-codesign -vvv --options runtime --deep --force --sign $SIGNING_KEY_NAME dist/JOSM.app/Contents/MacOS/JOSM dist/JOSM.app/Contents/MacOS/libapplauncher.dylib dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib dist/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
+codesign -vvv --options runtime --deep --force --sign "$SIGNING_KEY_NAME" dist/JOSM.app/Contents/MacOS/JOSM dist/JOSM.app/Contents/MacOS/libapplauncher.dylib dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib dist/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
 
-codesign -vvv --entitlements native/macosx/josm.entitlements --options runtime --force --sign $SIGNING_KEY_NAME dist/JOSM.app
+codesign -vvv --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" dist/JOSM.app
 
 codesign -vvv dist/JOSM.app 
