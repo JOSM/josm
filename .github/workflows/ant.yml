@@ -61,23 +61,25 @@ jobs:
       - name: Dump errors if failed
         if: ${{ failure() }}
         run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
+      - name: Set revision env variable
+          # Careful, you will only have a resources/REVISION if you've already built
+          run: echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
       - name: Upload Ant reports
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: Ant reports for java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
+          name: Ant reports for JOSM ${{ env.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
           path: test/report/*.txt
       - name: Build and package for macOS
         if: ${{ matrix.os == "macos-latest" }}
-        steps:
-          - id: set-revision
-            run: echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
-          - id: package-app
-            run: |
-            ant dist
-            ./native/macosx/macos-jpackage.sh $josm_revision
-            cd dist
-            zip -9 -r JOSM.app.zip JOSM.app
+        run: |
+          ANT_HOME=${{ env.ant_version }}
+          ANT="${{ env.ant_version }}/bin/ant
+          $ANT dist
+          REVISION=${{ env.josm_revision }}
+          bash native/macosx/macos-jpackage.sh $REVISION
+          cd dist
+          zip -9 -r JOSM.app.zip JOSM.app
       - name: Upload JOSM.app for macOS
         if: ${{ matrix.os == "macos-latest" }}
         uses: actions/upload-artifact@v2
