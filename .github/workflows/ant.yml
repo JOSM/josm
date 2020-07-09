@@ -73,7 +73,6 @@ jobs:
           - id: package-app
             run: |
             ant dist
-            REVISION=${awk '/Revision/{print $2}' resources/REVISION}
             jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
               --main-class org.openstreetmap.josm.gui.MainApplication \
               --icon ./native/macosx/JOSM.icns --type app-image --dest dist \
