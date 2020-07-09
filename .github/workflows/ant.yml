@@ -79,11 +79,9 @@ jobs:
           $ANT_HOME/bin/ant dist
           REVISION=${{ env.josm_revision }}
           ./native/macosx/macos-jpackage.sh $REVISION
-          cd dist
-          zip -9 -r JOSM.app.zip JOSM.app
       - name: Upload JOSM.app for macOS
         if: ${{ runner.os == 'macos' && always() }}
         uses: actions/upload-artifact@v2
         with:
           name: JOSM.app revision ${{ env.josm_revision }}
-          path: dist/JOSM.app.zip
+          path: dist/JOSM.app
