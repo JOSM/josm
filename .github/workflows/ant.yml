@@ -67,3 +67,35 @@ jobs:
         with:
           name: Ant reports for java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
           path: test/report/*.txt
+      - name: Build and package for macOS
+        if: ${{ matrix.os == "macos-latest" }}
+        steps:
+          - id: set-revision
+            run: echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
+          - id: package-app
+            run: |
+            ant dist
+            REVISION=${awk '/Revision/{print $2}' resources/REVISION}
+            jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
+              --main-class org.openstreetmap.josm.gui.MainApplication \
+              --icon ./native/macosx/JOSM.icns --type app-image --dest dist \
+             --java-options "-Xmx8192m" --app-version ${{ env.josm_revision }} \
+              --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
+              --vendor "https://josm.openstreetmap.de" \
+              --file-associations native/macosx/bz2.properties \
+              --file-associations native/macosx/geojson.properties \
+              --file-associations native/macosx/gpx.properties \
+              --file-associations native/macosx/gz.properties \
+              --file-associations native/macosx/jos.properties \
+              --file-associations native/macosx/joz.properties \
+              --file-associations native/macosx/osm.properties \
+              --file-associations native/macosx/zip.properties \
+              --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
+            cd dist
+            zip -9 -r JOSM.app.zip JOSM.app
+      - name: Upload JOSM.app for macOS
+        if: ${{ matrix.os == "macos-latest" }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: JOSM.app revision ${{ env.josm_revision }}
+          path: dist/JOSM.app.zip
