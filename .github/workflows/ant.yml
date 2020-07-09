@@ -25,6 +25,10 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         headless: ["true", "false"]
         exclude:
+          - java: 8
+            os: macos-latest
+          - java: 11
+            os: macos-latest
           - headless: "false"
             os: macos-latest
           - headless: "false"
