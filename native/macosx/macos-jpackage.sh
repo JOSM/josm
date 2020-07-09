@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -Eexo pipefail
+set -Eeo pipefail
 
 
 if [ -z "$1" ]
@@ -65,4 +65,7 @@ codesign -vvv --options runtime --deep --force --sign "$SIGNING_KEY_NAME" dist/J
 
 codesign -vvv --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" dist/JOSM.app
 
-codesign -vvv dist/JOSM.app 
+codesign -vvv dist/JOSM.app
+ditto -c -k --keepParent dist/JOSM.app dist/JOSM.zip
+
+xcrun altool --notarize-app -f dist/JOSM.zip -p "$APPLE_ID_PW" -u "thomas.skowron@fossgis.de" --primary-bundle-id de.openstreetmap.josm
