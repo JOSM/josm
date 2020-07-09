@@ -33,9 +33,15 @@ jobs:
             os: windows-latest
     name: Java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           fetch-depth: 64
+      - name: Cache
+        uses: actions/cache@v2.0.0
+        with:
+          path:  ~/.ivy2/cache/
+          key: ${{ runner.os }}-ivy2-${{ hashFiles('~/ivy*.xml') }}
       - name: Setup java
         uses: actions/setup-java@v1.3.0
         with:
