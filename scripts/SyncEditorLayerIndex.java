@@ -1345,6 +1345,22 @@ public class SyncEditorLayerIndex {
         return r != null ? r : Collections.emptyList();
     }
 
+    static void addJsonShapes(List<Shape> l, JsonArray a) {
+        if (a.get(0).asJsonArray().get(0) instanceof JsonArray) {
+            for (JsonValue sub: a.asJsonArray()) {
+                addJsonShapes(l, sub.asJsonArray());
+            }
+        } else {
+            Shape s = new Shape();
+            for (JsonValue point: a.asJsonArray()) {
+                JsonArray ar = point.asJsonArray();
+                String lon = ar.getJsonNumber(0).toString();
+                String lat = ar.getJsonNumber(1).toString();
+                s.addPoint(lat, lon);
+            }
+            l.add(s);
+        }
+    }
     static List<Shape> getShapes(Object e) {
         if (e instanceof ImageryInfo) {
             ImageryBounds bounds = ((ImageryInfo) e).getBounds();
@@ -1358,13 +1374,7 @@ public class SyncEditorLayerIndex {
             JsonArray poly = ex.asJsonObject().getJsonArray("coordinates");
             List<Shape> l = new ArrayList<>();
             for (JsonValue shapes: poly) {
-                Shape s = new Shape();
-                for (JsonValue point: shapes.asJsonArray()) {
-                    String lon = point.asJsonArray().getJsonNumber(0).toString();
-                    String lat = point.asJsonArray().getJsonNumber(1).toString();
-                    s.addPoint(lat, lon);
-                }
-                l.add(s);
+                addJsonShapes(l, shapes.asJsonArray());
             }
             return l;
         }
