@@ -78,7 +78,7 @@ jobs:
           cd dist
           zip -9 -r JOSM.app.zip JOSM.app
       - name: Upload JOSM.app for macOS
-        if: ${{ matrix.os == "macos-latest" }}
+        if: ${{ runner.os == 'macos' }}
         uses: actions/upload-artifact@v2
         with:
           name: JOSM.app revision ${{ env.josm_revision }}
