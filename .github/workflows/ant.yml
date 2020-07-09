@@ -62,6 +62,7 @@ jobs:
         if: ${{ failure() }}
         run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
       - name: Set revision env variable
+        if: ${{ always() }}
         # Careful, you will only have a resources/REVISION if you've already built
         run: echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
       - name: Upload Ant reports
