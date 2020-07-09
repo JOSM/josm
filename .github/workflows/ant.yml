@@ -75,7 +75,7 @@ jobs:
           - id: package-app
             run: |
             ant dist
-            bash /native/macosx/macos-jpackage.sh ${{ env.josm_revision }}
+            ./native/macosx/macos-jpackage.sh $josm_revision
             cd dist
             zip -9 -r JOSM.app.zip JOSM.app
       - name: Upload JOSM.app for macOS
