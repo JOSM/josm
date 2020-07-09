@@ -9,22 +9,7 @@ then
     return 1
 fi
 
-echo "Preparing certificates/keychain for signing…"
-
-KEYCHAIN=build.keychain
-KEYCHAIN_PW=`head /dev/urandom | base64 | head -c 20`
-CERTIFICATE_P12=certificate.p12
-SIGNING_KEY_NAME="Apple Distribution: FOSSGIS e.V. (P8AAAGN2AM)"
-
-echo $CERT_MACOS_P12 | base64 --decode > $CERTIFICATE_P12
-security create-keychain -p $KEYCHAIN_PW $KEYCHAIN
-security default-keychain -s $KEYCHAIN
-security unlock-keychain -p $KEYCHAIN_PW $KEYCHAIN
-security import $CERTIFICATE_P12 -k $KEYCHAIN -P $CERT_MACOS_PW -T /usr/bin/codesign
-security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PW $KEYCHAIN
-rm $CERTIFICATE_P12
-
-echo "Signing preparation done."
+echo "Building JOSM.app"
 
 jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
@@ -41,6 +26,38 @@ jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
     --file-associations native/macosx/osm.properties \
     --file-associations native/macosx/zip.properties \
     --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
+
+echo "Building done."
+
+if [ -z "$CERT_MACOS_P12" ]
+then
+    echo "CERT_MACOS_P12 must be set in the environment. Won't sign app."
+    return 1
+fi
+
+
+if [ -z "$CERT_MACOS_PW" ]
+then
+    echo "CERT_MACOS_P12 must be set in the environment. Won't sign app."
+    return 1
+fi
+
+echo "Preparing certificates/keychain for signing…"
+
+KEYCHAIN=build.keychain
+KEYCHAIN_PW=`head /dev/urandom | base64 | head -c 20`
+CERTIFICATE_P12=certificate.p12
+SIGNING_KEY_NAME="Apple Distribution: FOSSGIS e.V. (P8AAAGN2AM)"
+
+echo $CERT_MACOS_P12 | base64 --decode > $CERTIFICATE_P12
+security create-keychain -p $KEYCHAIN_PW $KEYCHAIN
+security default-keychain -s $KEYCHAIN
+security unlock-keychain -p $KEYCHAIN_PW $KEYCHAIN
+security import $CERTIFICATE_P12 -k $KEYCHAIN -P $CERT_MACOS_PW -T /usr/bin/codesign
+security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PW $KEYCHAIN
+rm $CERTIFICATE_P12
+
+echo "Signing preparation done."
 
 echo "Signing App Bundle…"
 
