@@ -83,6 +83,7 @@ jobs:
         env:
           CERT_MACOS_P12: ${{ secrets.CERT_MACOS_P12 }}
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
+          APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
         run: |
           ANT_HOME=${{ env.ant_version }}
           $ANT_HOME/bin/ant dist
