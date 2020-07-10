@@ -92,4 +92,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: JOSM.app revision ${{ env.josm_revision }}
-          path: dist-macOS
+          path: dist/JOSM.zip
