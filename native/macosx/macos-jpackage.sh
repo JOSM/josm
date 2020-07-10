@@ -1,9 +1,11 @@
 #!/bin/bash
 
-set -Eeo pipefail
+set -Eeou pipefail
 
+# Don't show one time passwords
+set +x
 
-if [ -z "$1" ]
+if [ -z "${1-}" ]
 then
     echo "Usage: $0 josm_revision"
     exit 1
@@ -69,3 +71,7 @@ codesign -vvv dist/JOSM.app
 ditto -c -k --keepParent dist/JOSM.app dist/JOSM.zip
 
 xcrun altool --notarize-app -f dist/JOSM.zip -p "$APPLE_ID_PW" -u "thomas.skowron@fossgis.de" --primary-bundle-id de.openstreetmap.josm
+
+# Prepare for upload-artifact
+mkdir dist-macOS
+unzip dist/JOSM.zip -d dist-macOS
