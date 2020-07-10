@@ -5,6 +5,9 @@ set -Eeou pipefail
 # Don't show one time passwords
 set +x
 
+SIGNING_KEY_NAME="Developer ID Application: FOSSGIS e.V. (P8AAAGN2AM)"
+IMPORT_AND_UNLOCK_KEYCHAIN=${IMPORT_AND_UNLOCK_KEYCHAIN:-1}
+
 if [ -z "${1-}" ]
 then
     echo "Usage: $0 josm_revision"
@@ -31,45 +34,54 @@ jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
 
 echo "Building done."
 
-if [ -z "$CERT_MACOS_P12" ]
-then
-    echo "CERT_MACOS_P12 must be set in the environment. Won't sign app."
-    exit 1
+if [[ $IMPORT_AND_UNLOCK_KEYCHAIN == 1 ]]; then
+    if [ -z "$CERT_MACOS_P12" ]
+    then
+        echo "CERT_MACOS_P12 must be set in the environment. Won't sign app."
+        exit 1
+    fi
+
+
+    if [ -z "$CERT_MACOS_PW" ]
+    then
+        echo "CERT_MACOS_P12 must be set in the environment. Won't sign app."
+        exit 1
+    fi
+
+    echo "Preparing certificates/keychain for signing…"
+
+    KEYCHAIN=build.keychain
+    KEYCHAIN_PW=`head /dev/urandom | base64 | head -c 20`
+    CERTIFICATE_P12=certificate.p12
+
+    echo $CERT_MACOS_P12 | base64 --decode > $CERTIFICATE_P12
+    security create-keychain -p $KEYCHAIN_PW $KEYCHAIN
+    security default-keychain -s $KEYCHAIN
+    security unlock-keychain -p $KEYCHAIN_PW $KEYCHAIN
+    security import $CERTIFICATE_P12 -k $KEYCHAIN -P $CERT_MACOS_PW -T /usr/bin/codesign
+    security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PW $KEYCHAIN
+    rm $CERTIFICATE_P12
+
+    echo "Signing preparation done."
 fi
-
-
-if [ -z "$CERT_MACOS_PW" ]
-then
-    echo "CERT_MACOS_P12 must be set in the environment. Won't sign app."
-    exit 1
-fi
-
-echo "Preparing certificates/keychain for signing…"
-
-KEYCHAIN=build.keychain
-KEYCHAIN_PW=`head /dev/urandom | base64 | head -c 20`
-CERTIFICATE_P12=certificate.p12
-SIGNING_KEY_NAME="Apple Distribution: FOSSGIS e.V. (P8AAAGN2AM)"
-
-echo $CERT_MACOS_P12 | base64 --decode > $CERTIFICATE_P12
-security create-keychain -p $KEYCHAIN_PW $KEYCHAIN
-security default-keychain -s $KEYCHAIN
-security unlock-keychain -p $KEYCHAIN_PW $KEYCHAIN
-security import $CERTIFICATE_P12 -k $KEYCHAIN -P $CERT_MACOS_PW -T /usr/bin/codesign
-security set-key-partition-list -S apple-tool:,apple: -s -k $KEYCHAIN_PW $KEYCHAIN
-rm $CERTIFICATE_P12
-
-echo "Signing preparation done."
 
 echo "Signing App Bundle…"
 
-codesign -vvv --options runtime --deep --force --sign "$SIGNING_KEY_NAME" dist/JOSM.app/Contents/MacOS/JOSM dist/JOSM.app/Contents/MacOS/libapplauncher.dylib dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib dist/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
+codesign -vvv --timestamp --options runtime --deep --force --sign "$SIGNING_KEY_NAME" \
+    dist/JOSM.app/Contents/MacOS/JOSM \
+    dist/JOSM.app/Contents/MacOS/libapplauncher.dylib \
+    dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar \
+    dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib \
+    dist/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
 
-codesign -vvv --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" dist/JOSM.app
+codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" dist/JOSM.app
 
 codesign -vvv dist/JOSM.app
+
+echo "Preparing for notarization"
 ditto -c -k --keepParent dist/JOSM.app dist/JOSM.zip
 
+echo "Uploading to Apple"
 xcrun altool --notarize-app -f dist/JOSM.zip -p "$APPLE_ID_PW" -u "thomas.skowron@fossgis.de" --primary-bundle-id de.openstreetmap.josm
 
 # Prepare for upload-artifact
