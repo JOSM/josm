@@ -1,7 +1,8 @@
 name: Java CI
 env:
   junit_platform_version: '1.6.2'
-  ant_version: 'apache-ant-1.10.8'
+  # ANT_HOME is also our ant version
+  ANT_HOME: 'apache-ant-1.10.8'
 on:
   push:
     branches: [master]
@@ -50,18 +51,17 @@ jobs:
         uses: actions/setup-java@v1.3.0
         with:
           java-version: ${{ matrix.java }}
-      - name: Install ant
+      - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
+        # Todo: cache ant and junit, saves 12 seconds.
         run: |
-          curl -s https://downloads.apache.org/ant/binaries/${{ env.ant_version }}-bin.tar.gz | tar -xz
-          cd ${{ env.ant_version }}/lib
-          curl --remote-name  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar"
+          curl -s https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz | tar -xz
+          curl -o ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar"
       - name: Print ant version
-        run: ${{ env.ant_version }}/bin/ant -version
+        run: ${{ env.ANT_HOME }}/bin/ant -version
       - name: Build with Ant, headless ${{ matrix.headless }}
         run: |
-          ANT_HOME=${{ env.ant_version }}
-          #ANT="${{ env.ant_version }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
-          ANT="${{ env.ant_version }}/bin/ant dist"
+          #ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
+          ANT="${{ env.ANT_HOME }}/bin/ant dist"
           if [ "${{ matrix.headless }}" == "true" ]; then
             $ANT -Dtest.headless=true
           else
@@ -87,7 +87,6 @@ jobs:
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
         run: |
-          ANT_HOME=${{ env.ant_version }}
           $ANT_HOME/bin/ant dist
           ./native/macosx/macos-jpackage.sh ${{ env.josm_revision }}
       - name: Upload JOSM.app for macOS
