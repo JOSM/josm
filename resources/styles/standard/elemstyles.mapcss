@@ -4319,6 +4319,7 @@ area[sport=golf],
 area[sport=gymnastics],
 area[sport=field_hockey],
 area[sport=ice_hockey],
+area[sport=curling],
 area[sport=horse_racing],
 area[sport=karting][highway!=raceway],
 area[sport=karting][highway=raceway][area=yes],
@@ -4354,6 +4355,10 @@ node[sport=field_hockey] {
 }
 node[sport=ice_hockey] {
     icon-image: "presets/sport/ice_hockey.svg";
+    set icon_z17;
+}
+node[sport=curling] {
+    icon-image: "presets/sport/curling.svg";
     set icon_z17;
 }
 node[sport=horse_racing] {

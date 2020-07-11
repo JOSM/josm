@@ -5034,6 +5034,13 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="ice_rink,pitch,sports_centre,stadium" />
         </item> <!-- Ice Hockey -->
+        <item name="Curling" icon="presets/sport/curling.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:sport=curling" />
+            <space />
+            <key key="sport" value="curling" />
+            <text key="name" text="Name" />
+            <combo key="leisure" text="Type" values="ice_rink,pitch,sports_centre,stadium" />
+        </item> <!-- Curling -->
         <item name="Pelota" icon="presets/sport/pelota.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:sport=pelota" />
             <space />
