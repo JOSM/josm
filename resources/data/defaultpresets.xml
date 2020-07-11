@@ -6317,6 +6317,7 @@
             <reference ref="name_oh_wheelchair" />
             <combo key="second_hand" text="Second hand" values="yes,no,only" />
             <combo key="organic" text="Organic" values="yes,no,only" />
+            <multiselect key="clothes" text="Clothes" values="babies;children;costumes;denim;fashion;fur;hats;leather;maternity;men;motorcycle;oversize;schoolwear;sports;suits;swimwear;traditional;underwear;wedding;women;workwear" values_context="clothes" values_searchable="true" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Clothes -->
         <item name="Boutique" icon="presets/shop/boutique.svg" type="node,closedway,multipolygon" preset_name_label="true">
