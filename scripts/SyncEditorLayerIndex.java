@@ -1361,6 +1361,7 @@ public class SyncEditorLayerIndex {
             l.add(s);
         }
     }
+
     static List<Shape> getShapes(Object e) {
         if (e instanceof ImageryInfo) {
             ImageryBounds bounds = ((ImageryInfo) e).getBounds();
