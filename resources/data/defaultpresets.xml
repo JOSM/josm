@@ -153,7 +153,7 @@
         <combo key="opening_hours" text="Opening Hours" delimiter="|" values="24/7|08:30-12:30,15:30-20:00|Sa-Su 00:00-24:00|Mo-Su 09:00-21:00|Mo-Sa 08:00-18:00|Mo-Fr 09:00-17:00|Mo-Fr 08:30-20:00; Sa,Su 08:00-15:00; PH off|Mo-Fr 08:30-20:00; Tu-Su 08:00-15:00; Sa 08:00-12:00|Mo-Su 08:00-18:00; Apr 10-15 off; Jun 08:00-14:00; Aug off; Dec 25 off|sunrise-sunset|Su 10:00+|week 01-53/2 Fr 09:00-12:00; week 02-52/2 We 09:00-12:00" values_no_i18n="true" values_sort="false" />
     </chunk>
     <chunk id="wheelchair">
-        <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
+        <combo key="wheelchair" text="Wheelchairs" values="yes,designated,limited,no" values_sort="false" />
     </chunk>
     <chunk id="oh_wheelchair">
         <reference ref="oh" />
@@ -223,6 +223,22 @@
     <chunk id="sport">
         <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,beachvolleyball,billiards,boules,bowls,canadian_football,canoe,climbing,cricket,croquet,cycling,dog_racing,equestrian,field_hockey,fitness,gaelic_games,golf,gymnastics,handball,horse_racing,ice_hockey,karting,model_aerodrome,motocross,motor,pelota,racquet,rc_car,rowing,rugby_league,rugby_union,running,safety_training,shooting,skateboard,ice_skating,roller_skating,soccer,swimming,table_tennis,tennis,volleyball,9pin,10pin" values_context="sport" />
     </chunk>
+    <chunk id="highway_access">
+        <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_sort="false" />
+    </chunk>
+    <chunk id="POI_access">
+        <combo key="access" text="General Access" values="yes,private,customers,permissive,no" values_sort="false" />
+    </chunk>
+    <chunk id="path_access_modes">
+        <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" values_sort="false" />
+        <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+        <combo key="dog" text="Dog" values="yes,leashed,unleashed,official,designated,permissive,private,no" values_sort="false" match="key" />
+        <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+        <space />
+        <label text="Tags which are implied and do not need to be set are `motor_vehicle=no` and `emergency=destination`." />
+        <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+        <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+    </chunk>
     <chunk id="fee">
         <combo key="fee" text="Fee" values="yes,no" />
     </chunk>
@@ -251,12 +267,6 @@
         <reference ref="supervised" />
         <combo key="lit" text="Lit" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
         <reference ref="oh" />
-    </chunk>
-    <chunk id="highway_access">
-        <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" />
-    </chunk>
-    <chunk id="POI_access">
-        <combo key="access" text="General Access" values="yes,private,customers,permissive,no" />
     </chunk>
     <chunk id="name_wikipedia">
         <text key="name" text="Name" />
@@ -446,10 +456,10 @@
     </chunk>
     <chunk id="water_access">
         <optional text="Water access rules:">
-            <combo key="ship" text="Ship" values="yes,designated,destination,delivery,permissive,private,no" />
-            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" />
-            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" />
-            <combo key="canoe" text="Canoe" values="yes,designated,destination,delivery,permissive,private,no" />
+            <combo key="ship" text="Ship" values="yes,designated,destination,delivery,permissive,private,no" values_sort="false" />
+            <combo key="boat" text="Boat" values="yes,designated,destination,delivery,permissive,private,no" values_sort="false" />
+            <combo key="motorboat" text="Motorboat" values="yes,designated,destination,delivery,permissive,private,no" values_sort="false" />
+            <combo key="canoe" text="Canoe" values="yes,designated,destination,delivery,permissive,private,no" values_sort="false" />
         </optional>
     </chunk>
     <chunk id="operator_substance">
@@ -798,7 +808,7 @@
             <combo key="highway" text="Highway type" values="residential,service,unclassified,path,cycleway" values_context="Highway" default="residential" />
             <text key="name" text="Name" />
             <check key="noname" text="Street has no name" disable_off="true" />
-            <combo key="vehicle" text="Vehicle access" values="yes,no,destination" default="no" />
+            <combo key="vehicle" text="Vehicle access" values="yes,destination,no" values_sort="false" default="no" />
             <text key="maxspeed" text="Max. speed (km/h)" default="30" />
             <optional>
                 <combo key="lanes" text="Lanes" values="1,2,3" length="3" />
@@ -932,26 +942,39 @@
             </checkgroup>
             <space />
             <label text="Transport mode restrictions" />
-            <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" match="key" values_searchable="true" />
-            <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" match="key" />
-            <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" match="key" />
+            <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_searchable="true" values_sort="false" match="key" />
+            <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" values_sort="false" match="key" />
+            <reference ref="wheelchair" />
+            <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" values_sort="false" />
+            <combo key="dog" text="Dog" values="yes,leashed,unleashed,official,designated,permissive,private,no" values_sort="false" match="key" />
+            <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" match="key" />
             <space />
             <label text="Vehicles per type" />
-            <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" match="key" />
-            <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <combo key="goods" text="Light Commercial Vehicles (goods)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <combo key="hgv" text="Heavy Goods Vehicles (hgv)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" match="key" />
-            <combo key="agricultural" text="Agricultural Vehicles (with restrictions e.g. max. 25 km/h)" values="yes,official,designated,destination,permissive,private,no" match="key" />
-            <combo key="4wd_only" text="4WD only" values="yes,recommended,no" match="key" />
+            <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,use_sidepath,no" values_sort="false" match="key" />
+            <combo key="carriage" text="Carriage" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="moped" text="Moped" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="mofa" text="Mofa" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="goods" text="Light Commercial Vehicles (goods)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="hgv" text="Heavy Goods Vehicles (hgv)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="bdouble" text="B-double road train" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="agricultural" text="Agricultural Vehicles (with restrictions e.g. max. 25 km/h)" values="yes,official,designated,destination,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
+            <combo key="4wd_only" text="4WD only" values="yes,recommended,no" values_sort="false" match="key" />
+            <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+            <combo key="golf_cart" text="Golf cart" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" match="key" />
             <space />
             <label text="Vehicles per use" />
-            <combo key="emergency" text="Emergency vehicles" values="yes,official,designated,destination,no" match="keyvalue" />
-            <combo key="hov" text="High-occupancy vehicles (hov)" values="yes,official,designated,destination,permissive,private,no" match="key" />
-            <combo key="psv" text="Public Service Vehicles (psv)" values="yes,official,designated,destination,permissive,private,no" match="key" />
-            <combo key="tourist_bus" text="Tourist buses" values="yes,no" match="key" />
+            <combo key="emergency" text="Emergency vehicles" values="yes,official,designated,destination,no" values_sort="false" match="keyvalue" />
+            <combo key="disabled" text="Disabled" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
+            <combo key="hov" text="High-occupancy vehicles (hov)" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
+            <combo key="psv" text="Public Service Vehicles (psv)" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
+            <combo key="bus" text="Public Transportation Bus" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
+            <combo key="taxi" text="Taxi" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
+            <combo key="tourist_bus" text="Tourist buses" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
+            <combo key="hazmat" text="Hazmat" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
             <space />
             <text key="maxspeed" text="Max. speed (km/h)" />
             <text key="maxspeed:forward" text="Max. speed in way direction" />
@@ -964,7 +987,7 @@
             <text key="maxheight" text="Max. height (meters)" match="key" />
             <text key="maxwidth" text="Max. width (meters)" match="key" />
             <text key="maxlength" text="Max. length (meters)" match="key" />
-            <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" values_context="overtaking" match="key" />
+            <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" values_context="overtaking" values_sort="false" match="key" />
         </item> <!-- Road Restrictions -->
         <separator/>
         <item name="Roundabout" icon="presets/vehicle/restriction/roundabout_right.svg" type="node,way,closedway" preset_name_label="true">
@@ -1006,11 +1029,11 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <reference ref="highway_access" />
-                <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" />
-                <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
-                <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
-                <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
-                <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
+                <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+                <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+                <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+                <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+                <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Track -->
@@ -1031,14 +1054,13 @@
                 </combo>
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" values_context="trail_visibility" values_sort="false" />
-                <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" />
-                <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" />
-                <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
-                <combo key="wheelchair" text="Wheelchairs" values="yes,designated,limited,no" />
-                <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" />
-                <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <check key="segregated" text="Segregated" />
+                <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+                <reference ref="wheelchair" />
+                <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+                <reference ref="path_access_modes" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Path -->
         <separator/>
         <item name="Dedicated Bridleway" icon="presets/transport/way/dedicated_bridleway.svg" type="way,closedway" preset_name_label="true">
@@ -1049,7 +1071,22 @@
                 <text key="maxspeed" text="Max. speed (km/h)" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <check key="segregated" text="Segregated" />
+                <space />
+                <label text="Depending on the country, several access tags are implied and do not need to be set." />
+                <label text="Globally, `horse=designated` and `motor_vehicle=no` are implied." />
+                <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="dog" text="Dog" values="yes,leashed,unleashed,official,designated,permissive,private,no" values_sort="false" match="key" />
+                <combo key="horse" text="Horse" values="yes,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="foot" text="Foot" values="yes,permissive,destination,delivery,private,no" values_sort="false" />
+                <reference ref="wheelchair" />
+                <combo key="bicycle" text="Bicycle" values="yes,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="ski" text="Ski" values="yes,permissive,private,no" values_sort="false" />
+                <combo key="snowmobile" text="Snowmobile" values="yes,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+                <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Dedicated Bridleway -->
         <item name="Cycle Lane/Track" icon="presets/transport/way/cycle_lane_track.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Bicycle" />
@@ -1071,9 +1108,20 @@
                 <reference ref="name_layer" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
-                <combo key="foot" text="Pedestrians" values="yes,no,designated" />
                 <check key="segregated" text="Segregated" />
+                <space />
+                <label text="Depending on the country, several access tags are implied and do not need to be set." />
+                <label text="Globally, `bicycle=designated` is implied." />
+                <combo key="foot" text="Pedestrians" values="yes,designated,permissive,destination,delivery,private,no" values_sort="false" />
+                <reference ref="wheelchair" />
+                <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" values_sort="false" />
+                <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="dog" text="Dog" values="yes,leashed,unleashed,official,designated,permissive,private,no" values_sort="false" match="key" />
+                <combo key="horse" text="Horse" values="yes,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+                <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Dedicated Cycleway -->
         <item name="Segregated Foot- and Cycleway" icon="presets/transport/way/segregated_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=path" />
@@ -1085,7 +1133,11 @@
                 <reference ref="name_layer" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <space />
+                <reference ref="wheelchair" />
+                <reference ref="path_access_modes" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Segregated Foot- and Cycleway -->
         <item name="Combined Foot- and Cycleway" icon="presets/transport/way/combined_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=path" />
@@ -1098,7 +1150,11 @@
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
                 <check key="passing_places" text="Passing Places" />
+                <space />
+                <reference ref="wheelchair" />
+                <reference ref="path_access_modes" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Combined Foot- and Cycleway -->
         <item name="Dedicated Footway" icon="presets/transport/way/dedicated_footway.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=footway" />
@@ -1108,9 +1164,20 @@
                 <reference ref="name_layer" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
-                <combo key="bicycle" text="Bicycle" values="yes,no,designated" />
                 <check key="segregated" text="Segregated" />
+                <reference ref="wheelchair" />
+                <space />
+                <label text="Depending on the country, several access tags are implied and do not need to be set." />
+                <label text="Globally, `foot=designated` is implied." />
+                <combo key="bicycle" text="Bicycle" values="yes,designated,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" values_sort="false" />
+                <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="dog" text="Dog" values="yes,leashed,unleashed,official,designated,permissive,private,no" values_sort="false" match="key" />
+                <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
+                <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+                <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Dedicated Footway -->
         <item name="Steps" icon="presets/transport/way/steps.svg" type="way" preset_name_label="true">
             <link wiki="Tag:highway=steps" />
@@ -4318,7 +4385,7 @@
             <key key="recycling_type" value="container" />
             <text key="operator" text="Operator" />
             <combo key="opening_hours" text="Throw in times" delimiter="|" values="24/7|Mo-Fr 06:30-12:30,15:30-20:00; Sa 08:00-12:00; PH off" values_no_i18n="true" />
-            <combo key="wheelchair" text="Wheelchairs" values="yes,limited,no" />
+            <reference ref="wheelchair" />
             <space />
             <checkgroup columns="4">
                 <check key="recycling:paper" text="Paper" />
