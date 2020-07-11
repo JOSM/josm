@@ -3583,9 +3583,17 @@ area[historic=archaeological_site],
 area[historic=ruins],
 area[historic=battlefield],
 area[geological=palaeontological_site],
+area[historic=city_gate],
+area[historic=manor],
+area[historic=church],
+area[historic=charcoal_pile],
+area[historic=mine],
+area[historic=mine_shaft],
+area[historic=shieling],
 area[historic=wayside_cross],
 area[historic=wayside_shrine],
-area[historic=boundary_stone] {
+area[historic=boundary_stone],
+area[historic=milestone] {
     fill-color: historic#663300;
 }
 node[historic=fort] {
@@ -3620,6 +3628,38 @@ node[geological=palaeontological_site] {
     icon-image: "presets/sightseeing/palaeontological_site.svg";
     set icon_z17;
 }
+area[historic=citywalls]:closed {
+    fill-color: historic#663300;
+}
+way[historic=citywalls] {
+    width: 2;
+    color: historic#663300;
+}
+node[historic=city_gate] {
+    icon-image: "presets/sightseeing/city_gate.svg";
+    set icon_z17;
+}
+node[historic=manor] {
+    icon-image: "presets/sightseeing/manor.svg";
+    set icon_z17;
+}
+node[historic=church] {
+    icon-image: "presets/religion/historic_church.svg";
+    set icon_z17;
+}
+node[historic=charcoal_pile] {
+    icon-image: "presets/misc/charcoal_pile.svg";
+    set icon_z17;
+}
+node[historic=mine],
+node[historic=mine_shaft] {
+    icon-image: "presets/landmark/historic_mine.svg";
+    set icon_z17;
+}
+node[historic=shieling] {
+    icon-image: "presets/landmark/shieling.svg";
+    set icon_z17;
+}
 node[historic=wayside_cross] {
     icon-image: "presets/religion/wayside_cross.svg";
     set icon_z17;
@@ -3630,6 +3670,10 @@ node[historic=wayside_shrine] {
 }
 node[historic=boundary_stone] {
     icon-image: "presets/landmark/boundary_stone.svg";
+    set icon_z17;
+}
+node[historic=milestone] {
+    icon-image: "presets/landmark/milestone.svg";
     set icon_z17;
 }
 area[cemetery=grave] {

@@ -6124,6 +6124,73 @@
             <key key="geological" value="palaeontological_site" />
             <text key="name" text="Name" />
         </item> <!-- Palaeontological Site -->
+        <item name="Citywalls" type="way,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=citywalls" />
+            <space />
+            <key key="historic" value="citywalls" />
+            <optional>
+                <text key="name" text="Name" />
+            </optional>
+        </item> <!-- Citywalls -->
+        <item name="City gate" icon="presets/sightseeing/city_gate.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=city_gate" />
+            <space />
+            <key key="historic" value="city_gate" />
+            <optional>
+                <text key="name" text="Name" />
+            </optional>
+        </item> <!-- City gate -->
+        <item name="Manor" icon="presets/sightseeing/manor.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=manor" />
+            <space />
+            <key key="historic" value="manor" />
+            <optional>
+                <text key="name" text="Name" />
+            </optional>
+        </item> <!-- Manor -->
+        <item name="Church" icon="presets/religion/historic_church.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=church" />
+            <space />
+            <key key="historic" value="church" />
+            <optional>
+                <text key="name" text="Name" />
+            </optional>
+            <reference ref="religious"/>
+        </item> <!-- Church -->
+        <separator/>
+        <item name="Charcoal pile" image="presets/misc/charcoal_pile.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=charcoal_pile" />
+            <space />
+            <key key="historic" value="charcoal_pile" />
+            <optional>
+                <text key="name" text="Name" />
+            </optional>
+        </item> <!-- Charcoal pile -->
+        <item name="Mine" image="presets/landmark/historic_mine.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
+            <link wiki="Tag:historic=mine" />
+            <space />
+            <key key="historic" value="mine" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
+            </optional>
+        </item> <!-- Mine -->
+        <item name="Mine shaft" image="presets/landmark/historic_mine.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=mine_shaft" />
+            <space />
+            <key key="historic" value="mine_shaft" />
+            <optional>
+                <text key="name" text="Name" />
+            </optional>
+        </item> <!-- Mine shaft -->
+        <item name="Shieling" image="presets/landmark/shieling.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=shieling" />
+            <space />
+            <key key="historic" value="shieling" />
+            <optional>
+                <text key="name" text="Name" />
+            </optional>
+        </item> <!-- Shieling -->
         <separator/>
         <item name="Grave" icon="presets/misc/grave.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:cemetery=grave" />
@@ -6185,6 +6252,14 @@
             <key key="historic" value="boundary_stone" />
             <text key="name" text="Name" />
         </item> <!-- Boundary Stone -->
+        <item name="Milestone" icon="presets/landmark/milestone.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:historic=milestone" />
+            <space />
+            <key key="historic" value="milestone" />
+            <optional>
+                <text key="name" text="Name" />
+            </optional>
+        </item> <!-- Milestone -->
     </group> <!-- Historic Places -->
   </group> <!-- Man Made -->
   <group name="Shops" icon="presets/shop/mall.svg">
