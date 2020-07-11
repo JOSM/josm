@@ -1996,3 +1996,24 @@ way[stream=intermittent] {
   group: tr("deprecated tagging");
   fixAdd: "shop=lighting";
 }
+
+*[access=customer] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "access=customers";
+  group: tr("deprecated tagging");
+  fixAdd: "access=customers";
+}
+
+*[addr:inclusion=estimated] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "addr:inclusion=estimate";
+  group: tr("deprecated tagging");
+  fixAdd: "addr:inclusion=estimate";
+}
+
+*[building=apartment] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "building=apartments";
+  group: tr("deprecated tagging");
+  fixAdd: "building=apartments";
+}

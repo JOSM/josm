@@ -5253,10 +5253,10 @@
             <preset_link preset_name="Telescope" text="Similar but different tags:" />
             <reference ref="link_contact_address" />
         </item> <!-- Big Communication Tower -->
-        <item name="Telescope" icon="presets/tower/telescope.svg" type="node,closedway" preset_name_label="true">
+        <item name="Telescope" icon="presets/tower/telescope_dish.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=telescope" />
             <space />
-            <key key="man_made" value="telescope_dish" />
+            <key key="man_made" value="telescope" />
             <combo key="telescope:type" text="Type" values_context="telescope" values_searchable="true">
                 <list_entry value="optical" icon="presets/tower/telescope_dome.svg" />
                 <list_entry value="radio" icon="presets/tower/telescope_dish.svg" />
