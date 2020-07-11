@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <presets xmlns="http://josm.openstreetmap.de/tagging-preset-1.0">
 <!--
-    Pics have been derived from
-    https://de.wikipedia.org/wiki/Bildtafel_der_Verkehrszeichen_in_Deutschland (german street sign SVGs)
-    https://commons.wikimedia.org/wiki/Image:National_Park_Service_sample_pictographs.svg (various monochrome pictograms)
-    https://www.kde.org
-    https://openclipart.org/media/view/media/clip_art
-    http://www.sjjb.co.uk/mapicons/ (meanwhile in osm svn)
-
     Format description: https://josm.openstreetmap.de/wiki/TaggingPresets
 -->
 
@@ -563,7 +556,7 @@
         <preset_link preset_name="Road Restrictions" />
         <preset_link preset_name="Access Restrictions" />
     </chunk>
-  <!--  Groups -->
+  <!-- Groups -->
   <group name="Highways" icon="presets/transport/way/way_secondary.svg">
     <group name="Streets" icon="presets/transport/way/way_secondary.svg">
         <item name="Motorway" icon="presets/transport/way/way_motorway.svg" type="way" preset_name_label="true">
@@ -3314,7 +3307,6 @@
             <combo key="direction" text="Direction" delimiter="|" values="N|E|S|W|NE|NNE-S|180|90-270|270-90|0-360|70-110;250-290" values_no_i18n="true" values_sort="false" />
             <space />
             <label text="" icon="presets/misc/angles.svg" icon_size="300" />
-            <!--<check key="man_made" value="tower" text="Look-Out Tower" />-->
         </item> <!-- Viewpoint -->
         <separator/>
         <item name="Information Office" icon="presets/misc/information/informationoffice.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -4613,6 +4605,7 @@
             <text key="name" text="Name" />
             <combo key="sport" text="Sport" values="athletics,cycling,dog_racing,equestrian,horse_racing,running,roller_skating,ice_skating" values_context="sport" />
             <reference ref="sport_surface" />
+            <check key="area" text="Area" />
         </item> <!-- Racetrack -->
         <group name="Golf" icon="presets/sport/golf/golf.svg">
                 <item name="Golf Course" icon="presets/sport/golf/golf.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -7997,7 +7990,7 @@
                 <text key="addr:subdistrict" text="Subdistrict" use_last_as_default="force" match="key" />
                 <text key="addr:district" text="District" use_last_as_default="force" match="key" />
                 <text key="addr:province" text="Province" use_last_as_default="force" match="key" />
-                <!--  US States as defined in ISO 3166-2 -->
+                <!-- US States as defined in ISO 3166-2 -->
                 <combo key="addr:state" text="State" text_context="addr:" values="AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,DC,AS,GU,MP,PR,UM,VI" use_last_as_default="force" match="key" />
             </optional>
         </item> <!-- Address -->
