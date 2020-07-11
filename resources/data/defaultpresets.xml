@@ -559,6 +559,10 @@
         <preset_link preset_name="Address" />
         <preset_link preset_name="Payment Methods" />
     </chunk>
+    <chunk id="link_road_access_restrictions">
+        <preset_link preset_name="Road Restrictions" />
+        <preset_link preset_name="Access Restrictions" />
+    </chunk>
   <!--  Groups -->
   <group name="Highways" icon="presets/transport/way/way_secondary.svg">
     <group name="Streets" icon="presets/transport/way/way_secondary.svg">
@@ -584,7 +588,7 @@
                 </checkgroup>
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Motorway -->
         <item name="Motorway Link" icon="presets/transport/way/way_motorway_link.svg" type="way" preset_name_label="true">
             <link wiki="Tag:highway=motorway_link" />
@@ -606,7 +610,7 @@
                 </checkgroup>
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Motorway Link -->
         <item name="Trunk" icon="presets/transport/way/way_trunk.svg" type="way" preset_name_label="true">
             <link wiki="Tag:highway=trunk" />
@@ -631,7 +635,7 @@
                 </checkgroup>
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Trunk -->
         <item name="Trunk Link" icon="presets/transport/way/way_trunk_link.svg" type="way" preset_name_label="true">
             <link wiki="Highway_link" />
@@ -655,7 +659,7 @@
                 </checkgroup>
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Trunk Link -->
         <separator/>
         <item name="Primary" icon="presets/transport/way/way_primary.svg" type="way,closedway" preset_name_label="true">
@@ -676,7 +680,7 @@
                 </checkgroup>
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Primary -->
         <item name="Primary Link" icon="presets/transport/way/way_primary_link.svg" type="way" preset_name_label="true">
             <link wiki="Highway_link" />
@@ -691,7 +695,7 @@
                 <space />
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Primary Link -->
         <item name="Secondary" icon="presets/transport/way/way_secondary.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=secondary" />
@@ -710,7 +714,7 @@
                 </checkgroup>
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Secondary -->
         <item name="Secondary Link" icon="presets/transport/way/way_secondary_link.svg" type="way" preset_name_label="true">
             <link wiki="Highway_link" />
@@ -723,7 +727,7 @@
                 <space />
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Secondary Link -->
         <item name="Tertiary" icon="presets/transport/way/way_tertiary.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=tertiary" />
@@ -742,7 +746,7 @@
                 </checkgroup>
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Tertiary -->
         <item name="Tertiary Link" icon="presets/transport/way/way_tertiary_link.svg" type="way" preset_name_label="true">
             <link wiki="Highway_link" />
@@ -755,7 +759,7 @@
                 <space />
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Tertiary Link -->
         <item name="Unclassified" icon="presets/transport/way/way_unclassified.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=unclassified" />
@@ -774,7 +778,7 @@
                 </checkgroup> 
                 <reference ref="placement" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Unclassified -->
         <item name="Residential" icon="presets/transport/way/way_residential.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=residential" />
@@ -798,7 +802,7 @@
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Residential -->
         <item name="Bicycle Road" icon="presets/transport/way/way_bicycle_road.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Key:bicycle_road" />
@@ -823,7 +827,7 @@
                 <text key="width" text="Width (meters)" />
                 <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Bicycle Road -->
         <item name="Living Street" icon="presets/transport/way/way_living_street.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=living_street" />
@@ -841,7 +845,7 @@
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Living Street -->
         <item name="Pedestrian" icon="presets/transport/way/way_pedestrian.svg" type="way,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:highway=pedestrian" />
@@ -857,7 +861,7 @@
                 <check key="lit" text="Lit" />
                 <text key="width" text="Width (meters)" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Pedestrian -->
         <item name="Service" icon="presets/transport/way/way_service.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=service" />
@@ -871,7 +875,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <check key="passing_places" text="Passing Places" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Service -->
         <item name="Parking Aisle" icon="presets/transport/way/way_service_parking_aisle.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:service=parking_aisle" />
@@ -882,7 +886,7 @@
                 <check key="oneway" text="Oneway" />
                 <check key="lit" text="Lit" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Parking Aisle -->
         <item name="Escape" icon="presets/transport/way/way_escape.svg" type="way" preset_name_label="true">
             <link wiki="Tag:highway=escape" />
@@ -911,7 +915,7 @@
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Road (Unknown Type) -->
         <item name="Construction" icon="presets/transport/way/way_construction.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Key:construction" />
@@ -925,13 +929,11 @@
                 <check key="trolley_wire" text="Overhead trolley wires" />
                 <combo key="junction" text="Junction" values="roundabout,jughandle" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Construction -->
         <separator/>
-        <item name="Road Restrictions" icon="presets/vehicle/restriction/restrictions.svg" type="node,way,closedway" preset_name_label="true">
+        <item name="Road Restrictions" icon="presets/vehicle/restriction/maxspeed.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Key:access" />
-            <space />
-            <label text="Some road types already imply some access restrictions which should not be set again." />
             <space />
             <checkgroup columns="3" >
                 <check key="oneway" text="Oneway" />
@@ -940,6 +942,27 @@
                 <check key="winter_road" text="Winter road" disable_off="true" />
                 <check key="ice_road" text="Ice road" disable_off="true" />
             </checkgroup>
+            <text key="maxspeed" text="Max. speed (km/h)" />
+            <text key="maxspeed:forward" text="Max. speed in way direction" />
+            <text key="maxspeed:backward" text="Max. speed opposed to way direction" />
+            <text key="maxspeed:hgv" text="Max. speed Heavy Goods Vehicles (km/h)" match="key" />
+            <text key="maxspeed:advisory" text="Signposted advisory max. speed (km/h)" />
+            <text key="minspeed" text="Min. speed (km/h)" match="key" />
+            <space />
+            <text key="maxweight" text="Max. weight (tonnes)" match="key" />
+            <text key="maxaxleload" text="Max. axleload (tonnes)" match="key" />
+            <space />
+            <text key="maxheight" text="Max. height (meters)" match="key" />
+            <text key="maxwidth" text="Max. width (meters)" match="key" />
+            <text key="maxlength" text="Max. length (meters)" match="key" />
+            <space />
+            <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" values_context="overtaking" values_sort="false" match="key" />
+            <preset_link preset_name="Access Restrictions" />
+        </item> <!-- Road Restrictions -->
+        <item name="Access Restrictions" icon="presets/vehicle/restriction/restrictions.svg" type="node,way,closedway" preset_name_label="true">
+            <link wiki="Key:access" />
+            <space />
+            <label text="Some road types already imply some access restrictions which should not be set again." />
             <space />
             <label text="Transport mode restrictions" />
             <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_searchable="true" values_sort="false" match="key" />
@@ -975,20 +998,8 @@
             <combo key="taxi" text="Taxi" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
             <combo key="tourist_bus" text="Tourist buses" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
             <combo key="hazmat" text="Hazmat" values="yes,official,designated,destination,permissive,private,no" values_sort="false" match="key" />
-            <space />
-            <text key="maxspeed" text="Max. speed (km/h)" />
-            <text key="maxspeed:forward" text="Max. speed in way direction" />
-            <text key="maxspeed:backward" text="Max. speed opposed to way direction" />
-            <text key="maxspeed:hgv" text="Max. speed Heavy Goods Vehicles (km/h)" match="key" />
-            <text key="maxspeed:advisory" text="Signposted advisory max. speed (km/h)" />
-            <text key="minspeed" text="Min. speed (km/h)" match="key" />
-            <text key="maxweight" text="Max. weight (tonnes)" match="key" />
-            <text key="maxaxleload" text="Max. axleload (tonnes)" match="key" />
-            <text key="maxheight" text="Max. height (meters)" match="key" />
-            <text key="maxwidth" text="Max. width (meters)" match="key" />
-            <text key="maxlength" text="Max. length (meters)" match="key" />
-            <combo key="overtaking" text="Overtaking" values="yes,both,forward,backward,no" values_context="overtaking" values_sort="false" match="key" />
-        </item> <!-- Road Restrictions -->
+            <preset_link preset_name="Road Restrictions" />
+        </item> <!-- Access Restrictions -->
         <separator/>
         <item name="Roundabout" icon="presets/vehicle/restriction/roundabout_right.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:junction=roundabout" />
@@ -1001,7 +1012,7 @@
                 <reference ref="highway_yesno" />
                 <text key="width" text="Width (meters)" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Roundabout -->
         <item name="Ford" icon="presets/vehicle/ford.svg" type="node,way" preset_name_label="true">
             <link wiki="Tag:ford=yes" />
@@ -1035,7 +1046,7 @@
                 <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
                 <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Track -->
         <item name="Path" icon="presets/transport/way/path.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=path" />
@@ -1060,7 +1071,7 @@
                 <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
                 <reference ref="path_access_modes" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Path -->
         <separator/>
         <item name="Dedicated Bridleway" icon="presets/transport/way/dedicated_bridleway.svg" type="way,closedway" preset_name_label="true">
@@ -1086,7 +1097,7 @@
                 <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Dedicated Bridleway -->
         <item name="Cycle Lane/Track" icon="presets/transport/way/cycle_lane_track.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Bicycle" />
@@ -1121,7 +1132,7 @@
                 <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Dedicated Cycleway -->
         <item name="Segregated Foot- and Cycleway" icon="presets/transport/way/segregated_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=path" />
@@ -1137,7 +1148,7 @@
                 <reference ref="wheelchair" />
                 <reference ref="path_access_modes" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Segregated Foot- and Cycleway -->
         <item name="Combined Foot- and Cycleway" icon="presets/transport/way/combined_foot_cycleway.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=path" />
@@ -1154,7 +1165,7 @@
                 <reference ref="wheelchair" />
                 <reference ref="path_access_modes" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Combined Foot- and Cycleway -->
         <item name="Dedicated Footway" icon="presets/transport/way/dedicated_footway.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:highway=footway" />
@@ -1177,7 +1188,7 @@
                 <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" match="key" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Dedicated Footway -->
         <item name="Steps" icon="presets/transport/way/steps.svg" type="way" preset_name_label="true">
             <link wiki="Tag:highway=steps" />
@@ -1986,7 +1997,7 @@
                 <combo key="ferry" text="Highway type the ferry connects" values="trunk,primary,secondary,tertiary,unclassified" values_context="Highway" values_sort="false" />
                 <check key="ferry:cable" text="Reaction ferry" />
             </optional>
-            <preset_link preset_name="Road Restrictions" />
+            <reference ref="link_road_access_restrictions" />
         </item> <!-- Ferry Route -->
         <separator/>
         <item name="Marina" icon="presets/nautical/marina.svg" type="node,closedway,multipolygon" preset_name_label="true">
