@@ -5199,6 +5199,7 @@
             </optional>
             <preset_link preset_name="Tower" text="Similar but different tags:" />
             <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
+            <preset_link preset_name="Telescope" text="Similar but different tags:" />
         </item> <!-- Mast -->
         <item name="Tower" icon="presets/tower/tower.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:man_made=tower" />
@@ -5228,6 +5229,7 @@
             </optional>
             <preset_link preset_name="Mast" text="Similar but different tags:" />
             <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
+            <preset_link preset_name="Telescope" text="Similar but different tags:" />
             <reference ref="link_contact_address" />
         </item> <!-- Tower -->
         <item name="Big Communication Tower" icon="presets/tower/communications_tower.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -5248,8 +5250,31 @@
             </optional>
             <preset_link preset_name="Mast" text="Similar but different tags:" />
             <preset_link preset_name="Tower" text="Similar but different tags:" />
+            <preset_link preset_name="Telescope" text="Similar but different tags:" />
             <reference ref="link_contact_address" />
         </item> <!-- Big Communication Tower -->
+        <item name="Telescope" icon="presets/tower/telescope.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:man_made=telescope" />
+            <space />
+            <key key="man_made" value="telescope" />
+            <combo key="telescope:type" text="Type" values_context="telescope" values_searchable="true">
+                <list_entry value="optical" icon="presets/tower/telescope_dome.svg" />
+                <list_entry value="radio" icon="presets/tower/telescope_dish.svg" />
+                <list_entry value="gamma" icon="presets/tower/telescope_dish.svg" />
+            </combo>
+            <optional>
+                <combo key="tower:construction" text="Type of construction" values="dish,dome" values_searchable="true" />
+                <text key="telescope:diameter" text="Telescope Diameter (meters)" />
+                <reference ref="name_ref_operator" />
+                <text key="height" text="Height (meters)" length="7" />
+                <text key="ele" text="Elevation (meters)" length="10" />
+                <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
+                <reference ref="POI_access" />
+            </optional>
+            <preset_link preset_name="Mast" text="Similar but different tags:" />
+            <preset_link preset_name="Tower" text="Similar but different tags:" />
+            <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
+        </item> <!-- Telescope -->
         <item name="Flagpole" icon="presets/misc/flag.svg" type="node" preset_name_label="true">
             <link wiki="Tag:man_made=flagpole" />
             <key key="man_made" value="flagpole" />

@@ -1607,6 +1607,7 @@ node[man_made=cutline] {
 }
 
 area[man_made=water_tower],
+area[man_made=telescope],
 area[man_made=mast],
 area[man_made=tower],
 area[man_made=communications_tower] {
@@ -1614,6 +1615,14 @@ area[man_made=communications_tower] {
 }
 node[man_made=water_tower] {
     icon-image: "presets/tower/water_tower.svg";
+    set icon_z17;
+}
+node[man_made=telescope] {
+    icon-image: "presets/tower/telescope_dish.svg";
+    set icon_z17;
+}
+node[man_made=telescope][telescope:type=optical] {
+    icon-image: "presets/tower/telescope_dome.svg";
     set icon_z17;
 }
 node[man_made=mast] {
