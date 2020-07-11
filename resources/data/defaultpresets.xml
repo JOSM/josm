@@ -36,7 +36,6 @@
         <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
     </chunk>
     <chunk id="highway_base">
-        <space />
         <combo key="lanes" text="Lanes" values="1,2,3,4,5,6" length="3" />
         <combo key="lanes:forward" text="Lanes in way direction" values="1,2,3,4,5" length="3" />
         <combo key="lanes:backward" text="Lanes opposed to way direction" values="1,2,3,4,5" length="3" />
@@ -49,10 +48,10 @@
         <reference ref="surface_smoothness" />
     </chunk>
     <chunk id="highway_yesno">
-        <checkgroup columns="2">
+        <checkgroup columns="4">
             <check key="bridge" text="Bridge" disable_off="true" />
-            <check key="embankment" text="Embankment" disable_off="true" />
             <check key="tunnel" text="Tunnel" disable_off="true" />
+            <check key="embankment" text="Embankment" disable_off="true" />
             <check key="cutting" text="Cutting" disable_off="true" />
         </checkgroup>
     </chunk>
@@ -61,14 +60,27 @@
         <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
     </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width">
-        <check key="oneway" text="Oneway" />
-        <reference ref="highway_yesno_incline" />
-        <check key="lit" text="Lit" />
+        <checkgroup columns="4">
+            <check key="bridge" text="Bridge" disable_off="true" />
+            <check key="tunnel" text="Tunnel" disable_off="true" />
+            <check key="embankment" text="Embankment" disable_off="true" />
+            <check key="cutting" text="Cutting" disable_off="true" />
+        </checkgroup>
+        <checkgroup columns="4">
+            <check key="oneway" text="Oneway" />
+            <check key="lit" text="Lit" />
+        </checkgroup>
+        <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
         <text key="width" text="Width (meters)" />
     </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width_sidewalk">
         <reference ref="highway_yesno_incline_oneway_lit_width" />
         <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
+    </chunk>
+    <chunk id="placement">
+        <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,left_of:4,left_of:5,middle_of:1,middle_of:2,middle_of:3,middle_of:4,middle_of:5,right_of:1,right_of:2,right_of:3,right_of:4,right_of:5,transition" />
+        <combo key="placement:forward" text="Placement in way direction" values="left_of:1,left_of:2,left_of:3,left_of:4,left_of:5,middle_of:1,middle_of:2,middle_of:3,middle_of:4,middle_of:5,right_of:1,right_of:2,right_of:3,right_of:4,right_of:5" />
+        <combo key="placement:backward" text="Placement opposed to way direction" values="left_of:1,left_of:2,left_of:3,left_of:4,left_of:5,middle_of:1,middle_of:2,middle_of:3,middle_of:4,middle_of:5,right_of:1,right_of:2,right_of:3,right_of:4,right_of:5" />
     </chunk>
     <chunk id="railway_service">
         <combo key="service" text="Service type" values="yard,siding,spur,crossover" />
@@ -545,22 +557,22 @@
             <space />
             <key key="highway" value="motorway" />
             <text key="ref" text="Reference" />
+            <check key="noref" text="Street has no reference" disable_off="true" />
             <optional>
                 <text key="name" text="Name" />
+                <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
                 <text key="width" text="Width (meters)" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <space />
+                <reference ref="highway_yesno" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="bridge" text="Bridge" disable_off="true" />
-                    <check key="tunnel" text="Tunnel" disable_off="true" />
-                    <check key="cutting" text="Cutting" disable_off="true" />
-                    <check key="embankment" text="Embankment" disable_off="true" />
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Motorway -->
@@ -568,21 +580,21 @@
             <link wiki="Tag:highway=motorway_link" />
             <key key="highway" value="motorway_link" />
             <optional>
+                <text key="ref" text="Reference" />
+                <check key="noref" text="Street has no reference" disable_off="true" />
                 <reference ref="highway_base" />
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
                 <text key="junction:ref" text="Junction reference" />
                 <text key="width" text="Width (meters)" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <space />
+                <reference ref="highway_yesno" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="bridge" text="Bridge" disable_off="true" />
-                    <check key="tunnel" text="Tunnel" disable_off="true" />
-                    <check key="cutting" text="Cutting" disable_off="true" />
-                    <check key="embankment" text="Embankment" disable_off="true" />
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Motorway Link -->
@@ -591,23 +603,23 @@
             <space />
             <key key="highway" value="trunk" />
             <text key="ref" text="Reference" />
+            <check key="noref" text="Street has no reference" disable_off="true" />
             <optional>
                 <text key="name" text="Name" />
+                <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
                 <text key="width" text="Width (meters)" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <space />
+                <reference ref="highway_yesno" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="motorroad" text="Motorroad" default="on" />
-                    <check key="bridge" text="Bridge" disable_off="true" />
-                    <check key="tunnel" text="Tunnel" disable_off="true" />
-                    <check key="cutting" text="Cutting" disable_off="true" />
-                    <check key="embankment" text="Embankment" disable_off="true" />
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
+                    <check key="motorroad" text="Motorroad" default="on" />
                 </checkgroup>
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Trunk -->
@@ -615,24 +627,23 @@
             <link wiki="Highway_link" />
             <space />
             <key key="highway" value="trunk_link" />
-            <text key="ref" text="Reference" />
             <optional>
+                <text key="ref" text="Reference" />
+                <check key="noref" text="Street has no reference" disable_off="true" />
                 <reference ref="highway_base" />
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
                 <text key="junction:ref" text="Junction reference" />
                 <text key="width" text="Width (meters)" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <space />
+                <reference ref="highway_yesno" />
                 <checkgroup columns="4">
                     <check key="oneway" text="Oneway" default="on" />
-                    <check key="motorroad" text="Motorroad" default="on" />
-                    <check key="bridge" text="Bridge" disable_off="true" />
-                    <check key="tunnel" text="Tunnel" disable_off="true" />
-                    <check key="cutting" text="Cutting" disable_off="true" />
-                    <check key="embankment" text="Embankment" disable_off="true" />
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
+                    <check key="motorroad" text="Motorroad" default="on" />
                 </checkgroup>
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Trunk Link -->
@@ -642,14 +653,18 @@
             <space />
             <key key="highway" value="primary" />
             <text key="ref" text="Reference" />
+            <check key="noref" text="Street has no reference" disable_off="true" />
             <optional>
                 <text key="name" text="Name" />
+                <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
-                <check key="motorroad" text="Motorroad" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
-                <check key="narrow" text="Narrow" disable_off="true" />
-                <check key="trolley_wire" text="Overhead trolley wires" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <checkgroup columns="4">
+                    <check key="motorroad" text="Motorroad" />
+                    <check key="narrow" text="Narrow" disable_off="true" />
+                    <check key="trolley_wire" text="Overhead trolley wires" />
+                </checkgroup>
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Primary -->
@@ -663,7 +678,8 @@
                 <text key="junction:ref" text="Junction reference" />
                 <check key="motorroad" text="Motorroad" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <space />
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Primary Link -->
@@ -672,13 +688,17 @@
             <space />
             <key key="highway" value="secondary" />
             <text key="ref" text="Reference" />
+            <check key="noref" text="Street has no reference" disable_off="true" />
             <optional>
                 <text key="name" text="Name" />
+                <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
-                <check key="narrow" text="Narrow" disable_off="true" />
-                <check key="trolley_wire" text="Overhead trolley wires" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <checkgroup columns="2">
+                    <check key="narrow" text="Narrow" disable_off="true" />
+                    <check key="trolley_wire" text="Overhead trolley wires" />
+                </checkgroup>
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Secondary -->
@@ -690,7 +710,8 @@
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <space />
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Secondary Link -->
@@ -699,13 +720,17 @@
             <space />
             <key key="highway" value="tertiary" />
             <text key="ref" text="Reference" />
+            <check key="noref" text="Street has no reference" disable_off="true" />
             <optional>
                 <text key="name" text="Name" />
+                <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
-                <check key="narrow" text="Narrow" disable_off="true" />
-                <check key="trolley_wire" text="Overhead trolley wires" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
+                <checkgroup columns="2">
+                    <check key="narrow" text="Narrow" disable_off="true" />
+                    <check key="trolley_wire" text="Overhead trolley wires" />
+                </checkgroup>
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Tertiary -->
@@ -717,6 +742,8 @@
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <space />
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Tertiary Link -->
@@ -727,12 +754,15 @@
                 <text key="name" text="Name" />
                 <check key="noname" text="Street has no name" disable_off="true" />
                 <text key="ref" text="Reference" />
+                <check key="noref" text="Street has no reference" disable_off="true" />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
-                <check key="narrow" text="Narrow" disable_off="true" />
-                <check key="trolley_wire" text="Overhead trolley wires" />
-                <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,middle_of:1,middle_of:2,middle_of:3,right_of:1,right_of:2,right_of:3,transition" />
-                <check key="passing_places" text="Passing Places" />
+                <checkgroup columns="3">
+                    <check key="narrow" text="Narrow" disable_off="true" />
+                    <check key="trolley_wire" text="Overhead trolley wires" />
+                    <check key="passing_places" text="Passing Places" />
+                </checkgroup> 
+                <reference ref="placement" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Unclassified -->
@@ -741,20 +771,22 @@
             <space />
             <key key="highway" value="residential" />
             <text key="name" text="Name" />
+            <check key="noname" text="Street has no name" disable_off="true" />
             <optional>
-                <check key="noname" text="Street has no name" disable_off="true" />
                 <text key="ref" text="Reference" />
                 <reference ref="highway_base" />
-                <checkgroup columns="2">
+                <reference ref="highway_yesno" />
+                <checkgroup columns="4">
                     <check key="oneway" text="Oneway" />
                     <check key="oneway:bicycle" text="Oneway for bicycle" />
+                    <check key="lit" text="Lit" />
                 </checkgroup>
-                <reference ref="highway_yesno_incline" />
-                <check key="lit" text="Lit" />
                 <text key="width" text="Width (meters)" />
                 <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
-                <check key="narrow" text="Narrow" disable_off="true" />
-                <check key="trolley_wire" text="Overhead trolley wires" />
+                <checkgroup columns="2">
+                    <check key="narrow" text="Narrow" disable_off="true" />
+                    <check key="trolley_wire" text="Overhead trolley wires" />
+                </checkgroup>
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Residential -->
@@ -765,16 +797,19 @@
             <key key="bicycle" value="designated" />
             <combo key="highway" text="Highway type" values="residential,service,unclassified,path,cycleway" values_context="Highway" default="residential" />
             <text key="name" text="Name" />
+            <check key="noname" text="Street has no name" disable_off="true" />
             <combo key="vehicle" text="Vehicle access" values="yes,no,destination" default="no" />
             <text key="maxspeed" text="Max. speed (km/h)" default="30" />
             <optional>
                 <combo key="lanes" text="Lanes" values="1,2,3" length="3" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" />
                 <reference ref="surface_smoothness" />
-                <check key="oneway" text="Oneway" />
-                <check key="oneway:bicycle" text="Oneway for bicycle" />
                 <reference ref="highway_yesno_incline" />
-                <check key="lit" text="Lit" />
+                <checkgroup columns="4">
+                    <check key="oneway" text="Oneway" />
+                    <check key="oneway:bicycle" text="Oneway for bicycle" />
+                    <check key="lit" text="Lit" />
+                </checkgroup>
                 <text key="width" text="Width (meters)" />
                 <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
             </optional>
@@ -785,13 +820,16 @@
             <space />
             <key key="highway" value="living_street" />
             <text key="name" text="Name" />
+            <check key="noname" text="Street has no name" disable_off="true" />
             <optional>
                 <combo key="lanes" text="Lanes" values="1,2,3" length="3" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <reference ref="surface_smoothness" />
                 <reference ref="highway_yesno_incline_oneway_lit_width" />
-                <check key="narrow" text="Narrow" disable_off="true" />
-                <check key="trolley_wire" text="Overhead trolley wires" />
+                <checkgroup columns="2">
+                    <check key="narrow" text="Narrow" disable_off="true" />
+                    <check key="trolley_wire" text="Overhead trolley wires" />
+                </checkgroup>
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Living Street -->
@@ -800,6 +838,7 @@
             <space />
             <key key="highway" value="pedestrian" />
             <text key="name" text="Name" />
+            <check key="noname" text="Street has no name" disable_off="true" />
             <optional>
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <reference ref="surface_smoothness" />
@@ -817,6 +856,7 @@
             <combo key="service" text="Service way type" values="alley,driveway,parking_aisle,drive-through,emergency_access" />
             <optional>
                 <text key="name" text="Name" />
+                <space />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <check key="passing_places" text="Passing Places" />
@@ -856,6 +896,7 @@
             <key key="highway" value="road" />
             <optional>
                 <text key="name" text="Name" />
+                <space />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
@@ -868,6 +909,7 @@
             <combo key="construction" text="Highway type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,secondary_link,tertiary,tertiary_link,unclassified,residential,service,bus_guideway,bridleway,living_street,pedestrian,track,path,footway,cycleway,steps" values_context="Highway" />
             <optional>
                 <text key="name" text="Name" />
+                <space />
                 <reference ref="highway_base" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
@@ -1107,7 +1149,9 @@
             <space />
             <key key="highway" value="motorway_junction" />
             <text key="name" text="Name" />
+            <check key="noname" text="Junction has no name" disable_off="true" />
             <text key="ref" text="Number" />
+            <check key="noref" text="Junction has no reference" disable_off="true" />
         </item> <!-- Motorway Junction -->
         <item name="Services" icon="presets/vehicle/services.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:highway=services" />
