@@ -10,22 +10,14 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="14"
-   height="16"
-   viewBox="0 0 14 16"
+   height="13"
+   viewBox="0 0 14 13"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="charcoal_pile.svg">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="charcoal_pile10.svg">
   <defs
-     id="defs4">
-    <pattern
-       y="0"
-       x="0"
-       height="6"
-       width="6"
-       patternUnits="userSpaceOnUse"
-       id="EMFhbasepattern" />
-  </defs>
+     id="defs4" />
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -33,17 +25,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="1.041095"
-     inkscape:cy="7.3571635"
+     inkscape:zoom="27.75051"
+     inkscape:cx="2.5340557"
+     inkscape:cy="9.3523753"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      units="px"
-     inkscape:window-width="1868"
-     inkscape:window-height="1016"
-     inkscape:window-x="52"
-     inkscape:window-y="27"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      viewbox-height="16">
     <inkscape:grid
@@ -62,7 +54,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
       </cc:Work>
@@ -81,11 +73,11 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1037.3622)">
+     transform="translate(0,-1040.3622)">
     <path
-       style="fill:#704820;fill-opacity:1;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 1,1051.3767 c 0,0 -0.41859959,-3.978 2.2509723,-7.2755 2.6695792,-3.2975 4.6585985,-3.5068 6.9615677,-0.7326 2.302969,2.7743 2.407619,3.7688 2.721568,6.7523 C 13.248058,1053.1045 1,1051.3767 1,1051.3767 Z"
-       id="path818"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       style="fill:#704820;stroke:#ffffff"
+       d="m 1,1051.3763 c 0,0 -0.41859959,-3.978 2.2509723,-7.2755 2.6695792,-3.2975 4.6585985,-3.5068 6.9615677,-0.7326 2.302969,2.7743 2.407619,3.7688 2.721568,6.7523 C 13.248058,1053.1041 1,1051.3763 1,1051.3763 Z"
+       id="path2" />
   </g>
 </svg>
