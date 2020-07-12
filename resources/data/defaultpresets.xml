@@ -6158,7 +6158,7 @@
             <reference ref="religious"/>
         </item> <!-- Church -->
         <separator/>
-        <item name="Charcoal pile" image="presets/misc/charcoal_pile.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Charcoal pile" icon="presets/misc/charcoal_pile.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:historic=charcoal_pile" />
             <space />
             <key key="historic" value="charcoal_pile" />
@@ -6166,7 +6166,7 @@
                 <text key="name" text="Name" />
             </optional>
         </item> <!-- Charcoal pile -->
-        <item name="Mine" image="presets/landmark/historic_mine.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
+        <item name="Mine" icon="presets/landmark/historic_mine.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:historic=mine" />
             <space />
             <key key="historic" value="mine" />
@@ -6175,7 +6175,7 @@
                 <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             </optional>
         </item> <!-- Mine -->
-        <item name="Mine shaft" image="presets/landmark/historic_mine.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Mine shaft" icon="presets/landmark/historic_mine.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:historic=mine_shaft" />
             <space />
             <key key="historic" value="mine_shaft" />
@@ -6183,7 +6183,7 @@
                 <text key="name" text="Name" />
             </optional>
         </item> <!-- Mine shaft -->
-        <item name="Shieling" image="presets/landmark/shieling.svg" type="node,closedway,multipolygon" preset_name_label="true">
+        <item name="Shieling" icon="presets/landmark/shieling.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:historic=shieling" />
             <space />
             <key key="historic" value="shieling" />
