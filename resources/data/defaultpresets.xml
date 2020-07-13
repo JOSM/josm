@@ -542,6 +542,17 @@
             <reference ref="POI_access" />
         </optional>
     </chunk>
+    <chunk id="communication">
+        <space />
+        <label text="Communication type:" />
+        <checkgroup columns="3">
+            <check key="communication:mobile_phone" text="Mobile phone" />
+            <check key="communication:television" text="Television" />
+            <check key="communication:radio" text="Radio" />
+            <check key="communication:microwave" text="Microwave" />
+            <check key="communication:gsm-r" text="GSM-R" />
+        </checkgroup>
+    </chunk>
     <!-- Link chunks -->
     <chunk id="link_contact_address">
         <preset_link preset_name="Contact (Common Schema)" />
@@ -3567,8 +3578,10 @@
             <link wiki="Key:club" />
             <space />
             <combo key="club" text="Type" values="amateur_radio,art,astronomy,automobile,board_games,card_games,charity,cinema,computer,cooking,culture,dog,doityourself,environment_protection,ethnic,fan,filmmaking,fishing,freemasonry,game,gardening,history,hunting,linux,motorcycle,music,nature,nudism,photography,politics,scout,smoke,social,sport,student,surf_life_saving,theatre,tourism,veterans,yachting,youth_movement" values_searchable="true" values_context="club" match="key!" />
-            <reference ref="name_operator_oh_wheelchair" />
-            <optional text="For sport:">
+            <optional>
+                <reference ref="name_operator_oh_wheelchair" />
+                <space />
+                <label text="In case of sport:" />
                 <reference ref="sport" />
             </optional>
             <reference ref="link_contact_address" />
@@ -5195,6 +5208,22 @@
             </optional>
             <reference ref="link_contact_address" />
         </item> <!-- Non-public police facility -->
+        <item name="Antenna" icon="presets/tower/antenna.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:man_made=antenna" />
+            <space />
+            <key key="man_made" value="antenna" />
+            <optional>
+                <reference ref="name_ref_operator" />
+                <text key="height" text="Height (meters)" length="7" />
+                <text key="ele" text="Elevation (meters)" length="10" />
+                <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
+                <reference ref="communication" />
+            </optional>
+            <preset_link preset_name="Mast" text="Similar but different tags:" />
+            <preset_link preset_name="Tower" text="Similar but different tags:" />
+            <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
+            <preset_link preset_name="Telescope" text="Similar but different tags:" />
+        </item> <!-- Antenna -->
         <item name="Mast" icon="presets/tower/mast.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=mast" />
             <space />
@@ -5212,8 +5241,9 @@
                 <text key="height" text="Height (meters)" length="7" />
                 <text key="ele" text="Elevation (meters)" length="10" />
                 <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
-                <reference ref="POI_access" />
+                <reference ref="communication" />
             </optional>
+            <preset_link preset_name="Antenna" text="Similar but different tags:" />
             <preset_link preset_name="Tower" text="Similar but different tags:" />
             <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
             <preset_link preset_name="Telescope" text="Similar but different tags:" />
@@ -5239,11 +5269,14 @@
                 <text key="height" text="Height (meters)" length="7" />
                 <text key="ele" text="Elevation (meters)" length="10" />
                 <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
+                <reference ref="communication" />
+                <space />
                 <reference ref="POI_access" />
                 <reference ref="oh" />
                 <reference ref="fee_interval" />
                 <space />
             </optional>
+            <preset_link preset_name="Antenna" text="Similar but different tags:" />
             <preset_link preset_name="Mast" text="Similar but different tags:" />
             <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
             <preset_link preset_name="Telescope" text="Similar but different tags:" />
@@ -5261,10 +5294,13 @@
                 <text key="height" text="Height (meters)" length="7" />
                 <text key="ele" text="Elevation (meters)" length="10" />
                 <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
+                <reference ref="communication" />
+                <space />
                 <reference ref="POI_access" />
                 <reference ref="oh" />
                 <reference ref="fee_interval" />
             </optional>
+            <preset_link preset_name="Antenna" text="Similar but different tags:" />
             <preset_link preset_name="Mast" text="Similar but different tags:" />
             <preset_link preset_name="Tower" text="Similar but different tags:" />
             <preset_link preset_name="Telescope" text="Similar but different tags:" />
@@ -5288,6 +5324,7 @@
                 <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
                 <reference ref="POI_access" />
             </optional>
+            <preset_link preset_name="Antenna" text="Similar but different tags:" />
             <preset_link preset_name="Mast" text="Similar but different tags:" />
             <preset_link preset_name="Tower" text="Similar but different tags:" />
             <preset_link preset_name="Big Communication Tower" text="Similar but different tags:" />
