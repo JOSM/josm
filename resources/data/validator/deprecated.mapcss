@@ -2017,3 +2017,24 @@ way[stream=intermittent] {
   group: tr("deprecated tagging");
   fixAdd: "building=apartments";
 }
+
+node[lamp_mount="bent mast"] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "lamp_mount=bent_mast";
+  group: tr("deprecated tagging");
+  fixAdd: "lamp_mount=bent_mast";
+}
+
+node[lamp_mount="straight mast"] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "lamp_mount=straight_mast";
+  group: tr("deprecated tagging");
+  fixAdd: "lamp_mount=straight_mast";
+}
+
+node[lamp_type=electrical] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "lamp_type=electric";
+  group: tr("deprecated tagging");
+  fixAdd: "lamp_type=electric";
+}
