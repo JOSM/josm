@@ -214,7 +214,7 @@
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
     </chunk>
     <chunk id="sport">
-        <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,beachvolleyball,billiards,boules,bowls,canadian_football,canoe,climbing,cricket,croquet,cycling,dog_racing,equestrian,field_hockey,fitness,gaelic_games,golf,gymnastics,handball,horse_racing,ice_hockey,karting,model_aerodrome,motocross,motor,pelota,racquet,rc_car,rowing,rugby_league,rugby_union,running,safety_training,shooting,skateboard,ice_skating,roller_skating,soccer,swimming,table_tennis,tennis,volleyball,9pin,10pin" values_context="sport" />
+        <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,beachvolleyball,billiards,boules,bowls,canadian_football,canoe,chess,climbing,cricket,croquet,cycling,dog_racing,equestrian,field_hockey,fitness,gaelic_games,golf,gymnastics,handball,horse_racing,ice_hockey,karting,model_aerodrome,motocross,motor,pelota,racquet,rc_car,rowing,rugby_league,rugby_union,running,safety_training,shooting,skateboard,ice_skating,roller_skating,soccer,swimming,table_tennis,tennis,volleyball,9pin,10pin" values_context="sport" />
     </chunk>
     <chunk id="highway_access">
         <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_sort="false" />
@@ -3557,6 +3557,16 @@
             <reference ref="fee" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Horse Riding -->
+        <item name="Club" icon="presets/leisure/club.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Key:club" />
+            <space />
+            <combo key="club" text="Type" values="amateur_radio,art,astronomy,automobile,board_games,card_games,charity,cinema,computer,cooking,culture,dog,doityourself,environment_protection,ethnic,fan,filmmaking,fishing,freemasonry,game,gardening,history,hunting,linux,motorcycle,music,nature,nudism,photography,politics,scout,smoke,social,sport,student,surf_life_saving,theatre,tourism,veterans,yachting,youth_movement" values_searchable="true" values_context="club" match="key!" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <optional text="For sport:">
+                <reference ref="sport" />
+            </optional>
+            <reference ref="link_contact_address" />
+        </item> <!-- Club -->
         <item name="Hackerspace" icon="presets/leisure/hackerspace.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:leisure=hackerspace" />
             <space />
@@ -4881,6 +4891,13 @@
             <text key="name" text="Name" />
             <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" />
         </item> <!-- Shooting -->
+        <item name="Chess" icon="presets/sport/chess.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:sport=chess" />
+            <space />
+            <key key="sport" value="chess" />
+            <text key="name" text="Name" />
+            <combo key="leisure" text="Type" values="pitch,picnic_table" />
+        </item> <!-- Chess -->
     </group> <!-- Sport -->
     <group name="Sport (Ball)" icon="presets/sport/soccer.svg">
         <item name="Soccer" icon="presets/sport/soccer.svg" type="node,closedway,multipolygon" preset_name_label="true">
