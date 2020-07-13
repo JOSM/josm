@@ -214,7 +214,7 @@
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
     </chunk>
     <chunk id="sport">
-        <combo key="sport" text="Sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,beachvolleyball,billiards,boules,bowls,canadian_football,canoe,chess,climbing,cricket,croquet,cycling,dog_racing,equestrian,field_hockey,fitness,gaelic_games,golf,gymnastics,handball,horse_racing,ice_hockey,karting,model_aerodrome,motocross,motor,pelota,racquet,rc_car,rowing,rugby_league,rugby_union,running,safety_training,shooting,skateboard,ice_skating,roller_skating,soccer,swimming,table_tennis,tennis,volleyball,9pin,10pin" values_context="sport" />
+        <combo key="sport" text="Sport" values="10pin,9pin,american_football,archery,athletics,australian_football,baseball,basketball,beachvolleyball,billiards,boules,bowls,canadian_football,canoe,chess,climbing,cricket,croquet,curling,cycling,dog_racing,equestrian,field_hockey,fitness,gaelic_games,golf,gymnastics,handball,horse_racing,ice_hockey,ice_skating,karting,model_aerodrome,motocross,motor,multi,pelota,racquet,rc_car,roller_skating,rowing,rugby_league,rugby_union,running,safety_training,scuba_diving,shooting,skateboard,soccer,surfing,swimming,table_tennis,tennis,volleyball" values_context="sport" />
     </chunk>
     <chunk id="highway_access">
         <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_sort="false" />
@@ -5416,103 +5416,6 @@
             <key key="man_made" value="embankment" />
         </item> <!-- Embankment -->
         <separator/>
-        <item name="Pipeline" icon="presets/landmark/pipeline.svg" type="way" preset_name_label="true">
-            <link wiki="Tag:man_made=pipeline" />
-            <space />
-            <key key="man_made" value="pipeline" />
-            <text key="name" text="Name" />
-            <text key="ref" text="Reference" />
-            <reference ref="operator_substance" />
-            <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
-            <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
-            <text key="pressure" text="Pressure (bar)" />
-        </item> <!-- Pipeline -->
-        <item name="Pipeline Substation" icon="presets/misc/pipeline_substation.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:pipeline=substation" />
-            <space />
-            <key key="pipeline" value="substation" />
-            <text key="name" text="Name" />
-            <combo key="substation" text="Type" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" />
-            <text key="ref" text="Reference" />
-            <reference ref="operator_substance" />
-        </item> <!-- Pipeline Substation -->
-        <item name="Pipeline Valve" icon="presets/misc/valve.svg" type="node" preset_name_label="true">
-            <link wiki="Tag:pipeline=valve" />
-            <space />
-            <key key="pipeline" value="valve" />
-            <combo key="valve" text="Valve type" values="butterfly,globe,ball,plug,gate,needle,spool" values_context="valve" />
-            <combo key="actuator" text="Actuator" values="electric_motor,hydraulic_cylinder,manual,pneumatic_cylinder,solenoid,thermostatic" values_context="actuator" />
-            <combo key="handle" text="Handle" values="lever,wheel,cross,button" values_context="handle" />
-            <combo key="turn_to_close" text="Direction to close" values="clockwise,anti_clockwise" />
-            <combo key="sensor:position" text="Position sensor" values="optical,mechanical,inductive,yes" />
-            <reference ref="ref_operator" />
-        </item> <!-- Pipeline Valve -->
-        <item name="Marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
-            <link wiki="Key:marker" />
-            <space />
-            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key" />
-            <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" />
-            <optional>
-                <reference ref="ref_operator" />
-                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
-                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
-                <combo key="location" text="Location" values="underground,overground" values_context="pipeline" />
-            </optional>
-        </item> <!-- Marker -->
-        <item name="Manhole" icon="presets/misc/manhole.svg" type="node" preset_name_label="true">
-            <link wiki="Key:manhole" />
-            <space />
-            <key key="man_made" value="manhole" />
-            <combo key="manhole" text="Type" values="drain,gas,heat,power,rainwater,sewer,telecom,water" values_context="manhole" values_searchable="true" />
-            <reference ref="ref_operator" />
-        </item> <!-- Manhole -->
-        <separator/>
-        <item name="Water Tower" icon="presets/tower/water_tower.svg" type="node,closedway" preset_name_label="true">
-            <link wiki="Tag:man_made=water_tower" />
-            <space />
-            <key key="man_made" value="water_tower" />
-             <optional>
-                <reference ref="name_operator" />
-                <text key="height" text="Height (meters)" length="7" />
-            </optional>
-        </item> <!-- Water Tower -->
-        <item name="Water Works" icon="presets/landmark/water_works.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:man_made=water_works" />
-            <space />
-            <key key="man_made" value="water_works" />
-            <reference ref="name_operator" />
-        </item> <!-- Water Works -->
-        <item name="Wastewater Treatment Plant" icon="presets/landmark/wastewater_plant.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:man_made=wastewater_plant" />
-            <space />
-            <key key="man_made" value="wastewater_plant" />
-            <text key="name" text="Name" />
-        </item> <!-- Wastewater Treatment Plant -->
-        <item name="Watermill" icon="presets/landmark/watermill.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:man_made=watermill" />
-            <space />
-            <key key="man_made" value="watermill" />
-            <text key="name" text="Name" />
-        </item> <!-- Watermill -->
-        <item name="Fountain" icon="presets/misc/fountain.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=fountain" />
-            <space />
-            <key key="amenity" value="fountain" />
-            <optional>
-                <text key="name" text="Name" />
-                <check key="drinking_water" text="Drinking Water" />
-            </optional>
-        </item> <!-- Fountain -->
-        <item name="Water Well" icon="presets/landmark/water_well.svg" type="node,closedway" preset_name_label="true">
-            <link wiki="Tag:man_made=water_well" />
-            <space />
-            <key key="man_made" value="water_well" />
-            <optional>
-                <text key="name" text="Name" />
-                <combo key="pump" text="Pump" values="yes,no,manual,powered"  values_sort="false"/>
-            </optional>
-        </item> <!-- Water Well -->
-        <separator/>
         <item name="Lighthouse" icon="presets/landmark/lighthouse.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=lighthouse" />
             <space />
@@ -5607,6 +5510,105 @@
             </optional>
         </item> <!-- Surveillance Camera -->
     </group> <!-- Man Made -->
+    <group name="Pipeline" icon="presets/landmark/pipeline.svg">
+        <item name="Pipeline" icon="presets/landmark/pipeline.svg" type="way" preset_name_label="true">
+            <link wiki="Tag:man_made=pipeline" />
+            <space />
+            <key key="man_made" value="pipeline" />
+            <text key="name" text="Name" />
+            <text key="ref" text="Reference" />
+            <reference ref="operator_substance" />
+            <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
+            <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
+            <text key="pressure" text="Pressure (bar)" />
+        </item> <!-- Pipeline -->
+        <item name="Pipeline Substation" icon="presets/misc/pipeline_substation.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:pipeline=substation" />
+            <space />
+            <key key="pipeline" value="substation" />
+            <text key="name" text="Name" />
+            <combo key="substation" text="Type" values="compression,distribution,field_gathering,inspection_gauge,measurement,valve,valve_group" values_context="pipeline" />
+            <text key="ref" text="Reference" />
+            <reference ref="operator_substance" />
+        </item> <!-- Pipeline Substation -->
+        <item name="Pipeline Valve" icon="presets/misc/valve.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:pipeline=valve" />
+            <space />
+            <key key="pipeline" value="valve" />
+            <combo key="valve" text="Valve type" values="butterfly,globe,ball,plug,gate,needle,spool" values_context="valve" />
+            <combo key="actuator" text="Actuator" values="electric_motor,hydraulic_cylinder,manual,pneumatic_cylinder,solenoid,thermostatic" values_context="actuator" />
+            <combo key="handle" text="Handle" values="lever,wheel,cross,button" values_context="handle" />
+            <combo key="turn_to_close" text="Direction to close" values="clockwise,anti_clockwise" />
+            <combo key="sensor:position" text="Position sensor" values="optical,mechanical,inductive,yes" />
+            <reference ref="ref_operator" />
+        </item> <!-- Pipeline Valve -->
+        <item name="Marker" icon="presets/misc/pipeline_marker.svg" type="node" preset_name_label="true">
+            <link wiki="Key:marker" />
+            <space />
+            <combo key="marker" text="Type" values="aerial,ground,pedestal,plate,post,stone" values_context="marker" match="key" />
+            <combo key="utility" text="Utility" values="chemical,gas,heating,hydrant,oil,power,sewerage,street_lighting,telecom,television,waste,water" />
+            <optional>
+                <reference ref="ref_operator" />
+                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+                <combo key="colour" text="Color (HTML name or hexadecimal code)" values_context="color" values="black,blue,brown,gray,green,orange,purple,red,silver,white,yellow,#CD853F" />
+                <combo key="location" text="Location" values="underground,overground" values_context="pipeline" />
+            </optional>
+        </item> <!-- Marker -->
+        <item name="Manhole" icon="presets/misc/manhole.svg" type="node" preset_name_label="true">
+            <link wiki="Key:manhole" />
+            <space />
+            <key key="man_made" value="manhole" />
+            <combo key="manhole" text="Type" values="drain,gas,heat,power,rainwater,sewer,telecom,water" values_context="manhole" values_searchable="true" />
+            <reference ref="ref_operator" />
+        </item> <!-- Manhole -->
+    </group> <!-- Pipeline -->
+    <group name="Water" icon="presets/landmark/water_works.svg">
+            <item name="Water Tower" icon="presets/tower/water_tower.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:man_made=water_tower" />
+            <space />
+            <key key="man_made" value="water_tower" />
+             <optional>
+                <reference ref="name_operator" />
+                <text key="height" text="Height (meters)" length="7" />
+            </optional>
+        </item> <!-- Water Tower -->
+        <item name="Water Works" icon="presets/landmark/water_works.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:man_made=water_works" />
+            <space />
+            <key key="man_made" value="water_works" />
+            <reference ref="name_operator" />
+        </item> <!-- Water Works -->
+        <item name="Wastewater Treatment Plant" icon="presets/landmark/wastewater_plant.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:man_made=wastewater_plant" />
+            <space />
+            <key key="man_made" value="wastewater_plant" />
+            <text key="name" text="Name" />
+        </item> <!-- Wastewater Treatment Plant -->
+        <item name="Watermill" icon="presets/landmark/watermill.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:man_made=watermill" />
+            <space />
+            <key key="man_made" value="watermill" />
+            <text key="name" text="Name" />
+        </item> <!-- Watermill -->
+        <item name="Fountain" icon="presets/misc/fountain.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=fountain" />
+            <space />
+            <key key="amenity" value="fountain" />
+            <optional>
+                <text key="name" text="Name" />
+                <check key="drinking_water" text="Drinking Water" />
+            </optional>
+        </item> <!-- Fountain -->
+        <item name="Water Well" icon="presets/landmark/water_well.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:man_made=water_well" />
+            <space />
+            <key key="man_made" value="water_well" />
+            <optional>
+                <text key="name" text="Name" />
+                <combo key="pump" text="Pump" values="yes,no,manual,powered"  values_sort="false"/>
+            </optional>
+        </item> <!-- Water Well -->
+    </group> <!-- Water -->
     <group name="Bridges" icon="presets/transport/bridge/bridge.svg">
         <item name="Bridge" icon="presets/transport/bridge/bridge.svg" type="way,multipolygon,relation" preset_name_label="true">
             <link wiki="Key:bridge" />
