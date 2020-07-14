@@ -1002,7 +1002,6 @@ node[type][pipeline=marker] {
   group: tr("deprecated tagging");
 }
 *[amenity=proposed],
-*[amenity=proposed],
 *[amenity=disused],
 *[shop=disused],
 *[highway=abandoned],
@@ -1997,41 +1996,37 @@ way[stream=intermittent] {
   fixAdd: "shop=lighting";
 }
 
+/* #19180 */
 *[access=customer] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "access=customers";
   group: tr("deprecated tagging");
   fixAdd: "access=customers";
 }
-
 *[addr:inclusion=estimated] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "addr:inclusion=estimate";
   group: tr("deprecated tagging");
   fixAdd: "addr:inclusion=estimate";
 }
-
 *[building=apartment] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "building=apartments";
   group: tr("deprecated tagging");
   fixAdd: "building=apartments";
 }
-
 node[lamp_mount="bent mast"] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "lamp_mount=bent_mast";
   group: tr("deprecated tagging");
   fixAdd: "lamp_mount=bent_mast";
 }
-
 node[lamp_mount="straight mast"] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "lamp_mount=straight_mast";
   group: tr("deprecated tagging");
   fixAdd: "lamp_mount=straight_mast";
 }
-
 node[lamp_type=electrical] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "lamp_type=electric";
