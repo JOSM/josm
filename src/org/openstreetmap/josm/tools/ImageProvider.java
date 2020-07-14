@@ -1329,6 +1329,13 @@ public class ImageProvider {
     }
 
     /**
+     * The cursor hotspot constants {@link #DEFAULT_HOTSPOT} and {@link #CROSSHAIR_HOTSPOT} are relative to this cursor size
+     */
+    protected static final int CURSOR_SIZE_HOTSPOT_IS_RELATIVE_TO = 32;
+    private static final Point DEFAULT_HOTSPOT = new Point(3, 2);  // FIXME: define better hotspot for rotate.png
+    private static final Point CROSSHAIR_HOTSPOT = new Point(10, 10);
+
+    /**
      * Load a cursor image with a given file name, optionally decorated with an overlay image
      *
      * @param name the cursor image filename in "cursor" directory
@@ -1344,7 +1351,6 @@ public class ImageProvider {
                 .addOverlay(new ImageOverlay(new ImageProvider("cursor/modifier/" + overlay)
                                                 .setMaxSize(ImageSizes.CURSOROVERLAY)));
         }
-        hotSpot.setLocation("crosshair".equals(name) ? new Point(10, 10) : new Point(3, 2));
         ImageIcon imageIcon = imageProvider.get();
         Image image = imageIcon.getImage();
         int width = image.getWidth(null);
@@ -1360,10 +1366,11 @@ public class ImageProvider {
             if (bestCursorSize.width != image.getWidth(null) || bestCursorSize.height != image.getHeight(null)) {
                 image = image.getScaledInstance(bestCursorSize.width, bestCursorSize.height, Image.SCALE_DEFAULT);
             }
-
-            hotSpot.x = hotSpot.x * bestCursorSize.width / width;
-            hotSpot.y = hotSpot.y * bestCursorSize.height / height;
         }
+
+        hotSpot.setLocation("crosshair".equals(name) ? CROSSHAIR_HOTSPOT : DEFAULT_HOTSPOT);
+        hotSpot.x = hotSpot.x * image.getWidth(null) / CURSOR_SIZE_HOTSPOT_IS_RELATIVE_TO;
+        hotSpot.y = hotSpot.y * image.getHeight(null) / CURSOR_SIZE_HOTSPOT_IS_RELATIVE_TO;
 
         return image;
     }

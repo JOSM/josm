@@ -193,8 +193,6 @@ public class ImageProviderTest {
         }
     }
 
-    public static final int ORIGINAL_CURSOR_SIZE = 32;
-
     /**
      * Test getting an image for a crosshair cursor.
      */
@@ -214,10 +212,16 @@ public class ImageProviderTest {
      */
     @Test
     public void testGetCursorImageWithOverlay() {
+        testCursorImageWithOverlay(1.0f);  // normal case
+        testCursorImageWithOverlay(1.5f);  // user has configured a GUI scale of 1.5 in the JOSM advanced preferences
+    }
+
+    private void testCursorImageWithOverlay(float guiScale) {
         if (GraphicsEnvironment.isHeadless()) {
             // TODO mock Toolkit.getDefaultToolkit().getBestCursorSize()
             return;
         }
+        GuiSizesHelper.setPixelDensity(guiScale);
         Point hotSpot = new Point();
         Image image = ImageProvider.getCursorImage("normal", "selection", hotSpot);
         assertCursorDimensionsCorrect(new Point.Double(3.0, 2.0), image, hotSpot);
@@ -236,14 +240,15 @@ public class ImageProviderTest {
     }
 
     private void assertCursorDimensionsCorrect(Point.Double originalHotspot, Image image, Point hotSpot) {
-        Dimension bestCursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(ORIGINAL_CURSOR_SIZE, ORIGINAL_CURSOR_SIZE);
+        int originalCursorSize = ImageProvider.CURSOR_SIZE_HOTSPOT_IS_RELATIVE_TO;
+        Dimension bestCursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(originalCursorSize, originalCursorSize);
         Image bestCursorImage = HiDPISupport.getResolutionVariant(image, bestCursorSize.width, bestCursorSize.height);
         int bestCursorImageWidth = bestCursorImage.getWidth(null);
         assertEquals((int) Math.round(bestCursorSize.getWidth()), bestCursorImageWidth);
         int bestCursorImageHeight = bestCursorImage.getHeight(null);
         assertEquals((int) Math.round(bestCursorSize.getHeight()), bestCursorImageHeight);
-        assertEquals(originalHotspot.x / ORIGINAL_CURSOR_SIZE * bestCursorImageWidth, hotSpot.x, 1 /* at worst one pixel off */);
-        assertEquals(originalHotspot.y / ORIGINAL_CURSOR_SIZE * bestCursorImageHeight, hotSpot.y, 1 /* at worst one pixel off */);
+        assertEquals(originalHotspot.x / originalCursorSize * bestCursorImageWidth, hotSpot.x, 1 /* at worst one pixel off */);
+        assertEquals(originalHotspot.y / originalCursorSize * bestCursorImageHeight, hotSpot.y, 1 /* at worst one pixel off */);
     }
 
 
