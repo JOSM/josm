@@ -16,8 +16,8 @@
  */
 package org.openstreetmap.josm.data.validation.routines;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -142,7 +142,7 @@ public class DomainValidatorTestIT {
                                 }
                             }
                         } else {
-                            System.err.println("Expected to find HTML info for "+ asciiTld);
+                            Logging.error("Expected to find HTML info for "+ asciiTld);
                         }
                     }
                     ianaTlds.add(asciiTld);
@@ -158,9 +158,9 @@ public class DomainValidatorTestIT {
             for (String key : (new TreeMap<>(htmlInfo)).keySet()) {
                 if (!ianaTlds.contains(key)) {
                     if (isNotInRootZone(key)) {
-                        System.out.println("INFO: HTML entry not yet in root zone: "+key);
+                        Logging.info("HTML entry not yet in root zone: "+key);
                     } else {
-                        System.err.println("WARN: Expected to find text entry for html: "+key);
+                        Logging.warn("Expected to find text entry for html: "+key);
                     }
                 }
             }
@@ -174,23 +174,23 @@ public class DomainValidatorTestIT {
             }
         }
         // Check if internal tables contain any additional entries
-        assertTrue(isInIanaList("INFRASTRUCTURE_TLDS", ianaTlds));
-        assertTrue(isInIanaList("COUNTRY_CODE_TLDS", ianaTlds));
-        assertTrue(isInIanaList("GENERIC_TLDS", ianaTlds));
+        assertTrue(isInIanaList("INFRASTRUCTURE_TLDS", ianaTlds), String.join(System.lineSeparator(), Logging.getLastErrorAndWarnings()));
+        assertTrue(isInIanaList("COUNTRY_CODE_TLDS", ianaTlds), String.join(System.lineSeparator(), Logging.getLastErrorAndWarnings()));
+        assertTrue(isInIanaList("GENERIC_TLDS", ianaTlds), String.join(System.lineSeparator(), Logging.getLastErrorAndWarnings()));
         // Don't check local TLDS assertTrue(isInIanaList("LOCAL_TLDS", ianaTlds));
     }
 
     private static void printMap(final String header, Map<String, String> map, String string) {
-        System.out.println("Entries missing from "+ string +" List\n");
+        Logging.warn("Entries missing from "+ string +" List\n");
         if (header != null) {
-            System.out.println("        // Taken from " + header);
+            Logging.warn("        // Taken from " + header);
         }
         Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, String> me = it.next();
-            System.out.println("        \"" + me.getKey() + "\", // " + me.getValue());
+            Logging.warn("        \"" + me.getKey() + "\", // " + me.getValue());
         }
-        System.out.println("\nDone");
+        Logging.warn(System.lineSeparator() + "Done");
     }
 
     @SuppressFBWarnings(value = "PERFORMANCE")
@@ -236,7 +236,7 @@ public class DomainValidatorTestIT {
                             info.put(dom.toLowerCase(Locale.ENGLISH), new String[]{typ, com});
                         }
                     } else {
-                        System.err.println("Unexpected type: " + line);
+                        Logging.error("Unexpected type: " + line);
                     }
                 }
             }
@@ -256,7 +256,7 @@ public class DomainValidatorTestIT {
         if (f.canRead()) {
             modTime = f.lastModified();
             if (modTime > System.currentTimeMillis()-HOUR) {
-                System.out.println("Skipping download - found recent " + f);
+                Logging.debug("Skipping download - found recent " + f);
                 return modTime;
             }
         } else {
@@ -267,12 +267,12 @@ public class DomainValidatorTestIT {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z"); //Sun, 06 Nov 1994 08:49:37 GMT
             String since = sdf.format(new Date(modTime));
             hc.addRequestProperty("If-Modified-Since", since);
-            System.out.println("Found " + f + " with date " + since);
+            Logging.debug("Found " + f + " with date " + since);
         }
         if (hc.getResponseCode() == 304) {
-            System.out.println("Already have most recent " + tldurl);
+            Logging.debug("Already have most recent " + tldurl);
         } else {
-            System.out.println("Downloading " + tldurl);
+            Logging.debug("Downloading " + tldurl);
             byte[] buff = new byte[1024];
             try (InputStream is = hc.getInputStream();
                  FileOutputStream fos = new FileOutputStream(f)) {
@@ -281,7 +281,7 @@ public class DomainValidatorTestIT {
                     fos.write(buff, 0, len);
                 }
             }
-            System.out.println("Done");
+            Logging.debug("Done");
         }
         return f.lastModified();
     }
@@ -349,7 +349,7 @@ public class DomainValidatorTestIT {
         boolean ok = true;
         for (int i = 0; i < array.length; i++) {
             if (!ianaTlds.contains(array[i])) {
-                System.out.println(name + " contains unexpected value: " + array[i]);
+                Logging.error(name + " contains unexpected value: " + array[i]);
                 ok = false;
             }
         }
@@ -387,14 +387,14 @@ public class DomainValidatorTestIT {
             final String nextEntry = array[i+1];
             final int cmp = entry.compareTo(nextEntry);
             if (cmp > 0) { // out of order
-                System.out.println("Out of order entry: " + entry + " < " + nextEntry + " in " + name);
+                Logging.error("Out of order entry: " + entry + " < " + nextEntry + " in " + name);
                 sorted = false;
             } else if (cmp == 0) {
                 strictlySorted = false;
-                System.out.println("Duplicated entry: " + entry + " in " + name);
+                Logging.error("Duplicated entry: " + entry + " in " + name);
             }
             if (!isLowerCase(entry)) {
-                System.out.println("Non lowerCase entry: " + entry + " in " + name);
+                Logging.error("Non lowerCase entry: " + entry + " in " + name);
                 lowerCase = false;
             }
         }
