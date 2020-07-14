@@ -407,7 +407,10 @@ public class RequestProcessor extends Thread {
     public static JsonArray getHandlersInfoAsJSON(Collection<String> handlers) {
         JsonArrayBuilder json = Json.createArrayBuilder();
         for (String s : Utils.firstNonNull(handlers, RequestProcessor.handlers.keySet())) {
-            json.add(getHandlerInfoAsJSON(s));
+            JsonObject infoAsJson = getHandlerInfoAsJSON(s);
+            if (infoAsJson != null) {
+                json.add(infoAsJson);
+            }
         }
         return json.build();
     }
@@ -419,6 +422,12 @@ public class RequestProcessor extends Thread {
      */
     public static JsonObject getHandlerInfoAsJSON(String cmd) {
         RequestHandler handler;
+        if (cmd == null) {
+            return null;
+        }
+        if (!cmd.startsWith("/")) {
+            cmd = "/" + cmd;
+        }
         try {
             Class<?> c = handlers.get(cmd);
             if (c == null) return null;
