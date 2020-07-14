@@ -72,6 +72,7 @@ way[have_riverbank             ][!waterway],
 *[source:addr:postcode         ][!addr:postcode],
 *[source:addr:housenumber      ][!addr:housenumber] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
+  set MissingKeyWarning;
   group: tr("missing tag");
   assertMatch: "way lanes=42";
   assertNoMatch: "way lanes=42 highway=unclassified";
@@ -578,18 +579,6 @@ area:closed[water][natural!~/water|bay|strait/][water!=intermittent][amenity!=la
   group: tr("missing tag");
 }
 
-/* see #8519, #11529, limited to motorways and trunks to avoid false positives for streets with lanes for non motorized traffic */
-way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][turn:lanes              ][tag(lanes)!=eval(count(split("|", tag("turn:lanes"))))],
-way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][change:lanes            ][tag(lanes)!=eval(count(split("|", tag("change:lanes"))))],
-way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][maxspeed:lanes          ][tag(lanes)!=eval(count(split("|", tag("maxspeed:lanes"))))],
-way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][minspeed:lanes          ][tag(lanes)!=eval(count(split("|", tag("minspeed:lanes"))))],
-way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:lanes       ][tag(lanes)!=eval(count(split("|", tag("destination:lanes"))))],
-way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:ref:lanes   ][tag(lanes)!=eval(count(split("|", tag("destination:ref:lanes"))))],
-way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:symbol:lanes][tag(lanes)!=eval(count(split("|", tag("destination:symbol:lanes"))))] {
-    throwWarning: tr("Different number of lanes in the keys {0} and {1}", "{1.key}", "{2.key}");
-    group: tr("suspicious tag combination");
-}
-
 /* #13680 */
 area[golf=bunker][natural=beach] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
@@ -608,6 +597,18 @@ way["addr:housenumber"][!building][!"building:part"][!"demolished:building"][!no
   group: tr("missing tag");
 }
 
+/* see #8519, #11529, limited to motorways and trunks to avoid false positives for streets with lanes for non motorized traffic */
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][turn:lanes              ][tag(lanes)!=eval(count(split("|", tag("turn:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][change:lanes            ][tag(lanes)!=eval(count(split("|", tag("change:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][maxspeed:lanes          ][tag(lanes)!=eval(count(split("|", tag("maxspeed:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][minspeed:lanes          ][tag(lanes)!=eval(count(split("|", tag("minspeed:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:lanes       ][tag(lanes)!=eval(count(split("|", tag("destination:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:ref:lanes   ][tag(lanes)!=eval(count(split("|", tag("destination:ref:lanes"))))],
+way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:symbol:lanes][tag(lanes)!=eval(count(split("|", tag("destination:symbol:lanes"))))] {
+    throwWarning: tr("Different number of lanes in the keys {0} and {1}", "{1.key}", "{2.key}");
+    group: tr("suspicious tag combination");
+}
+
 /* #14125, #14323, #18185 */
 way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][oneway!=reversible][junction!=roundabout][lanes>2][get(split(".", tag(lanes)/2), 1)=5] {
   throwWarning: tr("street with odd number of {0}, but without {1} and {2} or {3}", "{1.key}", "{2.key}", "{3.key}", "{4.key}");
@@ -617,6 +618,19 @@ way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][on
   assertNoMatch: "way highway=primary lanes=3 oneway=-1";
   assertNoMatch: "way highway=primary lanes=4";
   assertMatch: "way highway=primary lanes=3";
+}
+
+/* #10932 */
+way[highway][!lanes][/^.*:lanes$/]!.MissingKeyWarning, 
+way[highway][!lanes:forward][/^.*:lanes:forward$/], 
+way[highway][!lanes:backward][/^.*:lanes:backward$/],
+way[highway][!lanes:both_ways][/^.*:lanes:both_ways$/] {
+  throwWarning: tr("{0} without {1}", "{2.key}", "{1.key}");
+  group: tr("missing tag");
+  assertMatch: "way highway=primary turn:lanes=left|right";
+  assertNoMatch: "way highway=primary turn:lanes=left|right lanes=2";
+  assertMatch: "way highway=primary turn:lanes:forward=left|right";
+  assertNoMatch: "way highway=primary turn:lanes:forward=left|right lanes:forward=2";
 }
 
 /* #15774 */
