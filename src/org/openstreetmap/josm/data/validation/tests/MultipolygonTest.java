@@ -561,22 +561,35 @@ public class MultipolygonTest extends Test {
     }
 
     /**
-    * Determine multipolygon ways which are intersecting (crossing without a common node).
+    * Determine multipolygon ways which are intersecting (crossing without a common node) or sharing one or more way segments.
     * This should only be used for relations with incomplete members.
     * See also {@link CrossingWays}
     * @param r the relation (for error reporting)
      */
     private void findIntersectingWaysIncomplete(Relation r) {
-        for (Entry<List<Way>, List<WaySegment>> entry : findIntersectingWays(r, false).entrySet()) {
-            List<Way> ways = entry.getKey();
-            if (ways.size() != 2)
-                continue;
+        Set<OsmPrimitive> outerWays = r.getMembers().stream()
+                .filter(m -> m.getRole().isEmpty() || "outer".equals(m.getRole()))
+                .map(RelationMember::getMember)
+                .collect(Collectors.toSet());
+        for (int loop = 0; loop < 2; loop++) {
+            for (Entry<List<Way>, List<WaySegment>> entry : findIntersectingWays(r, loop == 1).entrySet()) {
+                List<Way> ways = entry.getKey();
+                if (ways.size() != 2)
+                    continue;
+                if (loop == 0) {
+                errors.add(TestError.builder(this, Severity.ERROR, CROSSING_WAYS)
+                        .message(tr("Intersection between multipolygon ways"))
+                        .primitives(Arrays.asList(r, ways.get(0), ways.get(1)))
+                        .highlightWaySegments(entry.getValue())
+                        .build());
+                } else if (outerWays.contains(ways.get(0)) || outerWays.contains(ways.get(1))) {
+                    errors.add(TestError.builder(this, Severity.ERROR, CROSSING_WAYS)
+                            .message(tr("Multipolygon outer way shares segment with other ring"))
+                            .primitives(Arrays.asList(r, ways.get(0), ways.get(1)))
+                            .highlightWaySegments(entry.getValue()).build());
+                }
 
-            errors.add(TestError.builder(this, Severity.ERROR, CROSSING_WAYS)
-                    .message(tr("Intersection between multipolygon ways"))
-                    .primitives(Arrays.asList(r, ways.get(0), ways.get(1)))
-                    .highlightWaySegments(entry.getValue())
-                    .build());
+            }
         }
     }
 
