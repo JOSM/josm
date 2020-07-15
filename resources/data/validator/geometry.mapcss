@@ -167,6 +167,7 @@ area[building][building!~/no|entrance/] {
 }
 
 /* Building overlapping building (spatial test) */
+area[building:part][building:part!~/no|entrance/] ⧉ area[building:part][building:part!~/no|entrance/],
 area[building][building!~/no|entrance/] ⧉ area[building][building!~/no|entrance/] {
   throwWarning: tr("Overlapping buildings");
 }
