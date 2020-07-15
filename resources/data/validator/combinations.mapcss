@@ -762,3 +762,13 @@ way[highway][crossing][highway =~ /^(motorway|motorway_link|trunk|trunk_link|pri
   assertNoMatch: "node man_made=communications_tower height=4358'8\"";
   assertNoMatch: "node height=4358'";
 }
+
+/* #17296, If the value of fixme is only an osm key, it is often a leftover from a time when the object didn't have this key. The fixme was forgotten to remove when the key was added. Or the value of fixme should be described better what exactly needs to be fixed. */
+*[fixme][count(split(" ", tag("fixme"))) == 1][tag(tag("fixme")) != "none"] {
+  throwWarning: tr("{0} together with {1}. Is the fixme fixed?", "{0.tag}", "{0.value}");
+  group: tr("suspicious tag combination");
+  assertMatch: "way name=\"Florist Gump\" fixme=name";
+  assertNoMatch: "way fixme=name";
+  assertNoMatch: "way name=\"Florist Gump\"";
+  assertNoMatch: "way name=\"Florist Gump\" fixme=\"the name might have changed\"";
+}
