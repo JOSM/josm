@@ -89,7 +89,7 @@ public final class Tag2Link {
      * @throws IOException in case of I/O error
      */
     private static void initializeFromResources() throws IOException {
-        final String resource = "META-INF/resources/webjars/tag2link/2020.5.16/index.json";
+        final String resource = "META-INF/resources/webjars/tag2link/2020.7.15/index.json";
         final JsonArray rules;
         try (InputStream inputStream = Tag2Link.class.getClassLoader().getResourceAsStream(resource);
              JsonReader jsonReader = Json.createReader(inputStream)) {
