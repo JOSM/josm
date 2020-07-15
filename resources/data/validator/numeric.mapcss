@@ -601,3 +601,11 @@ node[fire_hydrant:pressure="#"] {
   assertNoMatch: "node maxstay=\"66 minutes\"";
   assertNoMatch: "node maxstay=\"2.5 hours\"";
 }
+
+/* #19536 */
+*[name][name =~ /^([0-9.,]+)$/] {
+  throwOther: tr("Numeric name: {0}. Maybe {1} or {2} is meant.", "{0.value}", "ref", "addr:housenumber");
+  assertMatch: "node name=12";
+  assertMatch: "node name=3.5";
+  assertNoMatch: "node name=\"1. Chemnitzer Billardclub 1952 e.V.\"";
+}
