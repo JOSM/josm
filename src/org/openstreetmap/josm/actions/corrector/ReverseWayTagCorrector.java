@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
 
 /**
@@ -201,18 +202,36 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     }
 
     /**
-     * Inverts sign of a numeric value.
+     * Inverts sign of a numeric value and converts decimal number to use decimal point.
+     * Also removes sign from null value.
      * @param value numeric value
      * @return opposite numeric value
      */
     public static String invertNumber(String value) {
-        Pattern pattern = Pattern.compile("^([+-]?)(\\d.*)$", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile("^([+-]?)(\\d*[,.]?\\d*)(.*)$", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(value);
         if (!matcher.matches()) return value;
         String sign = matcher.group(1);
-        String rest = matcher.group(2);
+        String number = matcher.group(2);
+        String symbol = matcher.group(3);
         sign = "-".equals(sign) ? "" : "-";
-        return sign + rest;
+
+        if (!number.isEmpty()) {
+            String fixedNum = number.replace(",", ".");
+            try {
+                double parsed = Double.parseDouble(fixedNum);
+                if (parsed != 0) {
+                    return sign + fixedNum + symbol;
+                } else {
+                    return fixedNum + symbol;
+                }
+            } catch (NumberFormatException e) {
+                Logging.trace(e);
+                return value;
+            }
+        }
+
+        return value;
     }
 
     static List<TagCorrection> getTagCorrections(Tagged way) {

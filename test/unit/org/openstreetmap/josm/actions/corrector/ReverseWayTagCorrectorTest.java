@@ -58,6 +58,11 @@ public class ReverseWayTagCorrectorTest {
             assertSwitch(new Tag(k, "down"), new Tag(k, "up"));
             assertSwitch(new Tag(k, "something"), new Tag(k, "something"));
         }
+        // numbered incline (see #19508)
+        assertSwitch(new Tag("incline", "+0%"), new Tag("incline", "0%"));
+        assertSwitch(new Tag("incline", ".1%"), new Tag("incline", "-.1%"));
+        assertSwitch(new Tag("incline", "-10.0%"), new Tag("incline", "10.0%"));
+        assertSwitch(new Tag("incline", "0,6°"), new Tag("incline", "-0.6°"));
         // direction=forward/backward/...
         assertSwitch(new Tag("direction", "forward"), new Tag("direction", "backward"));
         assertSwitch(new Tag("direction", "backward"), new Tag("direction", "forward"));
@@ -99,7 +104,7 @@ public class ReverseWayTagCorrectorTest {
     }
 
     private void assertSwitch(Tag oldTag, Tag newTag) {
-        Assert.assertEquals(ReverseWayTagCorrector.TagSwitcher.apply(oldTag), newTag);
+        Assert.assertEquals(newTag, ReverseWayTagCorrector.TagSwitcher.apply(oldTag));
     }
 
     private Map<OsmPrimitive, List<TagCorrection>> getTagCorrectionsForWay(String middleNodeTags) {
