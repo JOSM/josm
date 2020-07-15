@@ -85,8 +85,9 @@ public class UpdateDataAction extends JosmAction {
                 .collect(Collectors.toList());
 
         if (areasToDownload.isEmpty()) {
-            // no bounds defined in the dataset? we update all primitives in the data set using a series of multi fetch requests
-            UpdateSelectionAction.updatePrimitives(editLayer.data.allPrimitives());
+            // no bounds defined in the dataset? We update all but the incomplete primitives in the data set
+            UpdateSelectionAction.updatePrimitives(editLayer.data.allPrimitives().stream()
+                    .filter(p -> !p.isNew() && !p.isIncomplete()).collect(Collectors.toList()));
         } else {
             // bounds defined? => use the bbox downloader
             final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));

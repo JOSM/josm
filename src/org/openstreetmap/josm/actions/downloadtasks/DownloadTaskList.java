@@ -265,10 +265,9 @@ public class DownloadTaskList {
                                 + tr("The following errors occurred during mass download: {0}",
                                         Utils.joinAsHtmlUnorderedList(items)) + "</html>",
                                 tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
+                        return;
                     }
                 });
-
-                return;
             }
 
             // FIXME: this is a hack. We assume that the user canceled the whole download if at
