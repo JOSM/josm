@@ -774,3 +774,28 @@ way[highway][crossing][highway =~ /^(motorway|motorway_link|trunk|trunk_link|pri
   assertNoMatch: "way name=\"Florist Gump\"";
   assertNoMatch: "way name=\"Florist Gump\" fixme=\"the name might have changed\"";
 }
+
+/* #19094 */
+way[highway][placement=transition][join_list("", uniq_list(tag_regex("^placement:.*$")))==transition],
+way[highway][!placement][/^placement:.*$/][join_list("", uniq_list(tag_regex("^placement:.*$")))==transition] {
+  throwWarning: tr("Use {0} only as value of {1}", "transition", "placement");
+  set PlacementTransitionWarning;
+  fixAdd: "placement=transition";
+  fixRemove: "placement:forward";
+  fixRemove: "placement:backward";
+  fixRemove: "placement:both_ways";
+  assertMatch: "way highway=primary placement=transition placement:both_ways=transition";
+  assertMatch: "way highway=primary placement:backward=transition placement:forward=transition";
+  assertNoMatch: "way highway=primary placement:backward=middle_of:1 placement:forward=transition";
+  assertNoMatch: "way highway=primary placement=middle_of:1 placement:backward=transition placement:forward=transition";
+}
+way[highway][placement][/^placement:.*$/]!.PlacementTransitionWarning,
+way[highway]["placement:forward"]["placement:backward"]!.PlacementTransitionWarning,
+way[highway]["placement:forward"]["placement:both_ways"]!.PlacementTransitionWarning,
+way[highway]["placement:backward"]["placement:both_ways"]!.PlacementTransitionWarning {
+  throwError: tr("{0} together with {1}", "{1.key}", "{2.key}");
+  group: tr("suspicious tag combination");
+  assertMatch: "way highway=primary placement=left_of:2 placement:forward=right_of:1";
+  assertNoMatch: "way highway=primary placement:forward=right_of:1";
+  assertNoMatch: "way highway=primary placement:forward=transition placement:both_ways=transition";
+}
