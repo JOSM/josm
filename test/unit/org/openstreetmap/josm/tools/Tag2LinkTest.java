@@ -51,6 +51,18 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
+    public void testWikipedia() {
+        Tag2Link.getLinksForTag("wikipedia", "de:Wohnhausgruppe Herderstraße", this::addLink);
+        checkLinks("View Wikipedia article // https://de.wikipedia.org/wiki/Wohnhausgruppe_Herderstraße");
+        links.clear();
+        Tag2Link.getLinksForTag("wikipedia", "de:Stadtbahn Köln#Innenstadttunnel", this::addLink);
+        checkLinks("View Wikipedia article // https://de.wikipedia.org/wiki/Stadtbahn_Köln#Innenstadttunnel");
+    }
+
+    /**
+     * Unit test of function {@link Tag2Link#getLinksForTag}.
+     */
+    @Test
     public void testImageCommonsImage() {
         Tag2Link.getLinksForTag("image", "File:Witten Brücke Gasstraße.jpg", this::addLink);
         checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Witten Brücke Gasstraße.jpg");

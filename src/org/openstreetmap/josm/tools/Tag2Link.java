@@ -155,7 +155,8 @@ public final class Tag2Link {
         final Matcher valueMatcher = Pattern.compile("((?<lang>\\p{Lower}{2,}):)?(?<article>.*)").matcher(value);
         if (keyMatcher.matches() && valueMatcher.matches()) {
             final String lang = Utils.firstNotEmptyString("en", keyMatcher.group("lang"), valueMatcher.group("lang"));
-            linkConsumer.acceptLink(tr("View Wikipedia article"), "https://" + lang + ".wikipedia.org/wiki/" + valueMatcher.group("article"));
+            final String url = "https://" + lang + ".wikipedia.org/wiki/" + valueMatcher.group("article").replace(' ', '_');
+            linkConsumer.acceptLink(tr("View Wikipedia article"), url);
         }
         if (key.matches("(.*:)?wikidata")) {
             OsmUtils.splitMultipleValues(value)
