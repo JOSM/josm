@@ -70,7 +70,12 @@ implements IEnabledStateUpdating, ActiveLayerChangeListener, MultikeyShortcutAct
         if (layer != null) {
             toActivate = layer;
         } else {
-            toActivate = model.getSelectedLayers().get(0);
+            List<Layer> layers = model.getSelectedLayers();
+            if (layers.isEmpty()) {
+                // see #19476 for a possible cause
+                return;
+            }
+            toActivate = layers.get(0);
         }
         execute(toActivate);
     }
