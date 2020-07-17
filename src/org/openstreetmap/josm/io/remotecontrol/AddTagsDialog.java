@@ -292,6 +292,14 @@ public class AddTagsDialog extends ExtendedDialog {
      * @since 7521
      */
     public static void addTags(String[][] keyValue, String sender, Collection<? extends OsmPrimitive> primitives) {
-        new AddTagsDialog(keyValue, sender, primitives).showDialog();
+        if (trustedSenders.contains(sender)) {
+            if (MainApplication.getLayerManager().getEditDataSet() != null) {
+                for (String[] row : keyValue) {
+                    UndoRedoHandler.getInstance().add(new ChangePropertyCommand(primitives, row[0], row[1]));
+                }
+            }
+        } else {
+            new AddTagsDialog(keyValue, sender, primitives).showDialog();
+        }
     }
 }
