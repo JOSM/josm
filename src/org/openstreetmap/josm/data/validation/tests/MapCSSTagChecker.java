@@ -938,32 +938,62 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         if (partialSelection && !tested.isEmpty()) {
-            // #14287: see https://josm.openstreetmap.de/ticket/14287#comment:15
-            // execute tests for objects which might contain or cross previously tested elements
+            testPartial(currentCheck, tested, surrounding);
+        }
+    }
 
-            // rebuild index with a reduced set of rules (those that use ChildOrParentSelector) and thus may have left selectors
-            // matching the previously tested elements
-            indexData = createMapCSSTagCheckerIndex(currentCheck, includeOtherSeverityChecks(), ONLY_SELECTED_TESTS);
+    private void testPartial(MultiMap<String, TagCheck> currentCheck, Set<OsmPrimitive> tested,
+            Set<OsmPrimitive> surrounding) {
 
-            if (surrounding.isEmpty()) {
-                for (OsmPrimitive p : tested) {
-                    if (p.getDataSet() != null) {
-                        surrounding.addAll(p.getDataSet().searchWays(p.getBBox()));
-                        surrounding.addAll(p.getDataSet().searchRelations(p.getBBox()));
-                    }
-                }
-            }
+        // #14287: see https://josm.openstreetmap.de/ticket/14287#comment:15
+        // execute tests for objects which might contain or cross previously tested elements
 
-            final boolean includeOtherSeverity = includeOtherSeverityChecks();
-            for (OsmPrimitive p : surrounding) {
-                if (tested.contains(p))
-                    continue;
-                Collection<TestError> additionalErrors = getErrorsForPrimitive(p, includeOtherSeverity);
-                for (TestError e : additionalErrors) {
-                    if (e.getPrimitives().stream().anyMatch(tested::contains))
-                        addIfNotSimilar(e, errors);
+        final boolean includeOtherSeverity = includeOtherSeverityChecks();
+        // rebuild index with a reduced set of rules (those that use ChildOrParentSelector) and thus may have left selectors
+        // matching the previously tested elements
+        indexData = createMapCSSTagCheckerIndex(currentCheck, includeOtherSeverity, ONLY_SELECTED_TESTS);
+        if (indexData.isEmpty())
+            return; // performance: some *.mapcss rule files don't use ChildOrParentSelector
+
+        if (surrounding.isEmpty()) {
+            for (OsmPrimitive p : tested) {
+                if (p.getDataSet() != null) {
+                    surrounding.addAll(p.getDataSet().searchWays(p.getBBox()));
+                    surrounding.addAll(p.getDataSet().searchRelations(p.getBBox()));
                 }
             }
         }
+
+        for (OsmPrimitive p : surrounding) {
+            if (tested.contains(p))
+                continue;
+            Collection<TestError> additionalErrors = getErrorsForPrimitive(p, includeOtherSeverity);
+            for (TestError e : additionalErrors) {
+                if (e.getPrimitives().stream().anyMatch(tested::contains))
+                    addIfNotSimilar(e, errors);
+            }
+        }
+
+    }
+
+    /**
+     * Execute only the rules for the rules matching the given file name. See #19180
+     * @param ruleFile the name of the mapcss file, e.g. deprecated.mapcss
+     * @param selection collection of primitives
+     * @since 16784
+     */
+    public void runOnly(String ruleFile, Collection<OsmPrimitive> selection) {
+        mpAreaCache.clear();
+
+        Set<OsmPrimitive> surrounding = new HashSet<>();
+        for (Entry<String, Set<TagCheck>> entry : checks.entrySet()) {
+            if (isCanceled()) {
+                break;
+            }
+            if (entry.getKey().endsWith(ruleFile)) {
+                visit(entry.getKey(), entry.getValue(), selection, surrounding);
+            }
+        }
+
     }
 }

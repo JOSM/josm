@@ -246,4 +246,13 @@ public class MapCSSRuleIndex {
         index.clear();
         remaining.clear();
     }
+
+    /**
+     * Check if this index is empty.
+     * @return true if this index is empty.
+     * @since 16784
+     */
+    public boolean isEmpty() {
+        return rules.isEmpty();
+    }
 }

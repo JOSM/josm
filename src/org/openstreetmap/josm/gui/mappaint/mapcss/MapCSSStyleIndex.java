@@ -172,4 +172,14 @@ public final class MapCSSStyleIndex {
     public Iterator<MapCSSRule> getRuleCandidates(IPrimitive osm) {
         return get(osm).getRuleCandidates(osm);
     }
+
+    /**
+     * Check if this index is empty.
+     * @return true if this index is empty.
+     * @since 16784
+     */
+    public boolean isEmpty() {
+        return nodeRules.isEmpty() && wayRules.isEmpty() && wayNoAreaRules.isEmpty() && relationRules.isEmpty()
+                && multipolygonRules.isEmpty() && canvasRules.isEmpty();
+    }
 }

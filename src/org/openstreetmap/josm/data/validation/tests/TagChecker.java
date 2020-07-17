@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
+import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test.TagTest;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -99,6 +101,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
 
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPrefHelper.PREFIX + "." + TagChecker.class.getSimpleName();
+
+    MapCSSTagChecker deprecatedChecker;
 
     /**
      * The preference key to check values
@@ -893,7 +897,6 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             List<String> fixVals = new ArrayList<>();
             // use Levenshtein distance to find typical typos
             int minDist = MAX_LEVENSHTEIN_DISTANCE + 1;
-            String closest = null;
             for (Set<String> possibleValues: sets) {
                 for (String possibleVal : possibleValues) {
                     if (possibleVal.isEmpty())
@@ -910,7 +913,6 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                         continue;
                     }
                     if (dist < minDist) {
-                        closest = possibleVal;
                         minDist = dist;
                         fixVals.clear();
                         fixVals.add(possibleVal);
@@ -919,11 +921,12 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     }
                 }
             }
-
+            filterDeprecatedTags(p, key, fixVals);
             if (minDist <= MAX_LEVENSHTEIN_DISTANCE && maxPresetValueLen > MAX_LEVENSHTEIN_DISTANCE
+                    && !fixVals.isEmpty()
                     && (harmonizedValue.length() > 3 || minDist < MAX_LEVENSHTEIN_DISTANCE)) {
                 if (fixVals.size() < 2) {
-                    fixedValue = closest;
+                    fixedValue = fixVals.get(0);
                 } else {
                     Collections.sort(fixVals);
                     // misspelled preset value with multiple good alternatives
@@ -955,6 +958,34 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .build());
             withErrors.put(p, "UPV");
         }
+    }
+
+    // see #19180
+    private void filterDeprecatedTags(OsmPrimitive p, String key, List<String> fixVals) {
+        if (fixVals.isEmpty() || deprecatedChecker == null)
+            return;
+
+        String origVal = p.get(key);
+        try {
+            int unchangedDeprecated = countDeprecated(p);
+            Iterator<String> iter = fixVals.iterator();
+            while (iter.hasNext()) {
+                p.put(key, iter.next());
+                if (countDeprecated(p) > unchangedDeprecated)
+                    iter.remove();
+            }
+        } finally {
+            // restore original value
+            p.put(key, origVal);
+        }
+    }
+
+    private int countDeprecated(OsmPrimitive p) {
+        if (deprecatedChecker == null)
+            return 0;
+        deprecatedChecker.getErrors().clear();
+        deprecatedChecker.runOnly("deprecated.mapcss", Collections.singleton(p));
+        return deprecatedChecker.getErrors().size();
     }
 
     private static boolean isNum(String harmonizedValue) {
@@ -1007,6 +1038,13 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (isBeforeUpload) {
             checkPresetsTypes = checkPresetsTypes && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true);
         }
+        deprecatedChecker = OsmValidator.getTest(MapCSSTagChecker.class);
+    }
+
+    @Override
+    public void endTest() {
+        deprecatedChecker = null;
+        super.endTest();
     }
 
     @Override
