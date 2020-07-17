@@ -1,0 +1,265 @@
+<key>NSSupportsAutomaticGraphicsSwitching</key>
+<true/>
+<key>CFBundleAllowMixedLocalizations</key>
+<string>true</string>
+<key>UTExportedTypeDeclarations</key>
+<array>
+    <!-- Export JOSM file format UTI (*.osm) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>org.openstreetmap.josm.osm</string>
+        <key>UTTypeDescription</key>
+        <string>JOSM File</string>
+        <key>UTTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>UTTypeReferenceURL</key>
+        <string>http://wiki.openstreetmap.org/wiki/JOSM_file_format</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.xml</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>com.apple.ostype</key>
+            <string>JOSM</string>
+            <key>public.filename-extension</key>
+            <array>
+                <string>osm</string>
+            </array>
+            <key>public.mime-type</key>
+            <string>application/x-osm+xml</string>
+        </dict>
+    </dict>
+    <!-- Export JOSM session file format UTI (*.jos) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>org.openstreetmap.josm.jos</string>
+        <key>UTTypeDescription</key>
+        <string>JOS File</string>
+        <key>UTTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.xml</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>com.apple.ostype</key>
+            <string>JOSM</string>
+            <key>public.filename-extension</key>
+            <array>
+                <string>jos</string>
+            </array>
+            <key>public.mime-type</key>
+            <string>application/x-josm-session+xml</string>
+        </dict>
+    </dict>
+    <!-- Export JOSM session file format UTI (*.joz) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>org.openstreetmap.josm.joz</string>
+        <key>UTTypeDescription</key>
+        <string>JOZ File</string>
+        <key>UTTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>com.pkware.zip-archive</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>com.apple.ostype</key>
+            <string>JOSM</string>
+            <key>public.filename-extension</key>
+            <array>
+                <string>joz</string>
+            </array>
+            <key>public.mime-type</key>
+            <string>application/x-josm-session+zip</string>
+        </dict>
+    </dict>
+    <!-- Export GeoJSON file format UTI (*.geojson) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>public.geojson</string>
+        <key>UTTypeDescription</key>
+        <string>GeoJSON File</string>
+        <key>UTTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.json</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>com.apple.ostype</key>
+            <string>GeoJSON</string>
+            <key>public.filename-extension</key>
+            <array>
+                <string>geojson</string>
+            </array>
+        </dict>
+    </dict>
+</array>
+<key>UTImportedTypeDeclarations</key>
+<array>
+    <!-- Import GPX file format "standard" UTI (*.gpx) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.topografix.gpx</string>
+        <key>UTTypeReferenceURL</key>
+        <string>http://www.topografix.com/GPX/1/1/</string>
+        <key>UTTypeDescription</key>
+        <string>GPS Exchange Format (GPX)</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.xml</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>public.filename-extension</key>
+            <array>
+                <string>gpx</string>
+            </array>
+            <key>public.mime-type</key>
+            <string>application/gpx+xml</string>
+        </dict>
+    </dict>
+    <!-- Import GPX file format Apple UTI (*.gpx) -->
+    <dict>
+        <key>UTTypeIdentifier</key>
+        <string>com.apple.dt.document.gpx</string>
+        <key>UTTypeReferenceURL</key>
+        <string>http://www.topografix.com/GPX/1/1/</string>
+        <key>UTTypeDescription</key>
+        <string>GPX File</string>
+        <key>UTTypeConformsTo</key>
+        <array>
+            <string>public.xml</string>
+        </array>
+        <key>UTTypeTagSpecification</key>
+        <dict>
+            <key>public.filename-extension</key>
+            <array>
+                <string>gpx</string>
+            </array>
+            <key>public.mime-type</key>
+            <string>application/gpx+xml</string>
+        </dict>
+    </dict>
+</array>
+<key>CFBundleDocumentTypes</key>
+<array>
+    <!-- Registers opening *.osm files -->
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>OSM Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>org.openstreetmap.josm.osm</string>
+        </array>
+        <key>NSExportableTypes</key>
+        <array>
+            <string>org.openstreetmap.josm.osm</string>
+            <string>com.topografix.gpx</string>
+            <string>com.pkware.zip-archive</string>
+            <string>org.gnu.gnu-zip-archive</string>
+            <string>public.archive.bzip2</string>
+        </array>
+    </dict>
+    <!-- Registers opening *.jos files -->
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>JOS Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>org.openstreetmap.josm.jos</string>
+        </array>
+    </dict>
+    <!-- Registers opening *.joz files -->
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>JOZ Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>org.openstreetmap.josm.joz</string>
+        </array>
+    </dict>
+    <!-- Registers opening *.geojson files -->
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>GeoJSON Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Owner</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>public.geojson</string>
+        </array>
+    </dict>
+    <!-- Registers opening *.gpx files -->
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>GPX Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Alternate</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>com.topografix.gpx</string>
+            <string>com.apple.dt.document.gpx</string>
+        </array>
+        <key>NSExportableTypes</key>
+        <array>
+            <string>org.openstreetmap.josm.osm</string>
+        </array>
+    </dict>
+    <!-- Registers opening *.osm.zip, *.osm.gz, *.osm.bz2 files -->
+    <dict>
+        <key>CFBundleTypeIconFile</key>
+        <string>JOSM.icns</string>
+        <key>CFBundleTypeName</key>
+        <string>OSM Compressed Files</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>LSHandlerRank</key>
+        <string>Alternate</string>
+        <key>LSItemContentTypes</key>
+        <array>
+            <string>com.pkware.zip-archive</string>
+            <string>org.gnu.gnu-zip-archive</string>
+            <string>public.archive.bzip2</string>
+        </array>
+        <key>NSExportableTypes</key>
+        <array>
+            <string>org.openstreetmap.josm.osm</string>
+            <string>com.pkware.zip-archive</string>
+            <string>org.gnu.gnu-zip-archive</string>
+            <string>public.archive.bzip2</string>
+        </array>
+    </dict>
+</array>
