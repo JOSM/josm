@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
@@ -360,5 +361,15 @@ public class TagCheckerTest {
         assertEquals(TagChecker.INVALID_PRESETS_TYPE, errors.get(0).getCode());
         errors = test(OsmUtils.createPrimitive("relation type=waterway waterway=river"));
         assertTrue(errors.toString(), errors.isEmpty());
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19519">Bug #19519</a>.
+     */
+    @Test
+    @Ignore("broken, see #19519")
+    public void testTicket19519() throws IOException {
+        List<TestError> errors = test(OsmUtils.createPrimitive("node amenity=restaurant cuisine=bavarian;beef_bowl"));
+        assertEquals(0, errors.size());
     }
 }
