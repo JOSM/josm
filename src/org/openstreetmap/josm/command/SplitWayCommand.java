@@ -354,29 +354,12 @@ public class SplitWayCommand extends SequenceCommand {
 
         // If there are relations that cannot be split properly without downloading more members,
         // present the user with an option to do so, or to abort the split.
-        List<Relation> relationsNeedingMoreMembers = new ArrayList<>();
+        Set<Relation> relationsNeedingMoreMembers = new HashSet<>();
         Set<OsmPrimitive> incompleteMembers = new HashSet<>();
         for (RelationAnalysis relationAnalysis : analysis.getRelationAnalyses()) {
-            if (!relationAnalysis.needsMoreMembers()) continue;
-
-            Relation relation = relationAnalysis.getRelation();
-            int position = relationAnalysis.getPosition();
-            int membersCount = relation.getMembersCount();
-
-            // Mark the neighbouring members for downloading if these are ways too.
-            relationsNeedingMoreMembers.add(relation);
-            RelationMember rmPrev = position == 0
-                    ? relation.getMember(membersCount - 1)
-                    : relation.getMember(position - 1);
-            RelationMember rmNext = position == membersCount - 1
-                    ? relation.getMember(0)
-                    : relation.getMember(position + 1);
-
-            if (rmPrev != null && rmPrev.isWay()) {
-                incompleteMembers.add(rmPrev.getWay());
-            }
-            if (rmNext != null && rmNext.isWay()) {
-                incompleteMembers.add(rmNext.getWay());
+            if (!relationAnalysis.getNeededIncompleteMembers().isEmpty()) {
+                incompleteMembers.addAll(relationAnalysis.getNeededIncompleteMembers());
+                relationsNeedingMoreMembers.add(relationAnalysis.getRelation());
             }
         }
 
@@ -396,7 +379,7 @@ public class SplitWayCommand extends SequenceCommand {
                         missingMemberStrategy = GO_AHEAD_WITH_DOWNLOADS;
                     } else {
                         // Ask the user.
-                        missingMemberStrategy = offerToDownloadMissingMembersIfNeeded(analysis, relationsNeedingMoreMembers);
+                        missingMemberStrategy = offerToDownloadMissingMembersIfNeeded(analysis, relationsNeedingMoreMembers.size());
                     }
                     break;
                 case SPLIT_ANYWAY:
@@ -468,10 +451,8 @@ public class SplitWayCommand extends SequenceCommand {
             // Known types of ordered relations.
             boolean isOrderedRelation = "route".equals(type) || "multipolygon".equals(type) || "boundary".equals(type);
 
-            int ic = 0;
-            int ir = 0;
-            List<RelationMember> relationMembers = r.getMembers();
-            for (RelationMember rm : relationMembers) {
+            for (int ir = 0; ir < r.getMembersCount(); ir++) {
+                RelationMember rm = r.getMember(ir);
                 if (rm.getMember() == way) {
                     boolean insert = true;
                     if (relationSpecialTypes.containsKey(type) && "restriction".equals(relationSpecialTypes.get(type))) {
@@ -495,64 +476,50 @@ public class SplitWayCommand extends SequenceCommand {
 
                         // Attempt to determine the direction the ways in the relation are ordered.
                         Direction direction = Direction.UNKNOWN;
+                        Set<Way> missingWays = new HashSet<>();
                         if (isOrderedRelation) {
                             if (way.lastNode() == way.firstNode()) {
                                 // Self-closing way.
                                 direction = Direction.IRRELEVANT;
                             } else {
-                                boolean previousWayMemberMissing = true;
-                                boolean nextWayMemberMissing = true;
-
                                 // For ordered relations, looking beyond the nearest neighbour members is not required,
                                 // and can even cause the wrong direction to be guessed (with closed loops).
-                                if (ir - 1 >= 0 && relationMembers.get(ir - 1).isWay()) {
-                                    Way w = relationMembers.get(ir - 1).getWay();
-                                    if (!w.isIncomplete()) {
-                                        previousWayMemberMissing = false;
+                                if (ir - 1 >= 0 && r.getMember(ir - 1).isWay()) {
+                                    Way w = r.getMember(ir - 1).getWay();
+                                    if (w.isIncomplete())
+                                        missingWays.add(w);
+                                    else {
                                         if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
                                             direction = Direction.FORWARDS;
                                         } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
                                             direction = Direction.BACKWARDS;
                                         }
                                     }
-                                } else {
-                                    previousWayMemberMissing = false;
                                 }
-                                if (ir + 1 < relationMembers.size() && relationMembers.get(ir + 1).isWay()) {
-                                    Way w = relationMembers.get(ir + 1).getWay();
-                                    if (!w.isIncomplete()) {
-                                        nextWayMemberMissing = false;
+                                if (ir + 1 < r.getMembersCount() && r.getMember(ir + 1).isWay()) {
+                                    Way w = r.getMember(ir + 1).getWay();
+                                    if (w.isIncomplete())
+                                        missingWays.add(w);
+                                    else {
                                         if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
                                             direction = Direction.BACKWARDS;
                                         } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
                                             direction = Direction.FORWARDS;
                                         }
                                     }
-                                } else {
-                                    nextWayMemberMissing = false;
                                 }
 
-                                if (direction == Direction.UNKNOWN
-                                        && !previousWayMemberMissing
-                                        && !nextWayMemberMissing) {
-                                    // If both the next and previous way member in the relation are already known at
-                                    // this point, and they are not connected to this one, then we can safely
-                                    // assume that the direction doesn't matter. Downloading any more members
-                                    // won't help in any case.
-                                    direction = Direction.IRRELEVANT;
-                                }
-                                if (direction == Direction.UNKNOWN && !way.getDataSet().getDataSourceBounds().isEmpty()
-                                        && !(way.firstNode().isOutsideDownloadArea()
-                                                || way.lastNode().isOutsideDownloadArea())) {
-                                    // we know the connected ways, downloading more members will not help
+                                if (direction == Direction.UNKNOWN && missingWays.isEmpty()) {
+                                    // we cannot detect the direction and no way is missing.
+                                    // We can safely assume that the direction doesn't matter.
                                     direction = Direction.IRRELEVANT;
                                 }
                             }
                         } else {
                             int k = 1;
-                            while (ir - k >= 0 || ir + k < relationMembers.size()) {
-                                if (ir - k >= 0 && relationMembers.get(ir - k).isWay()) {
-                                    Way w = relationMembers.get(ir - k).getWay();
+                            while (ir - k >= 0 || ir + k < r.getMembersCount()) {
+                                if (ir - k >= 0 && r.getMember(ir - k).isWay()) {
+                                    Way w = r.getMember(ir - k).getWay();
                                     if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
                                         direction = Direction.FORWARDS;
                                     } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
@@ -560,8 +527,8 @@ public class SplitWayCommand extends SequenceCommand {
                                     }
                                     break;
                                 }
-                                if (ir + k < relationMembers.size() && relationMembers.get(ir + k).isWay()) {
-                                    Way w = relationMembers.get(ir + k).getWay();
+                                if (ir + k < r.getMembersCount() && r.getMember(ir + k).isWay()) {
+                                    Way w = r.getMember(ir + k).getWay();
                                     if (w.lastNode() == way.firstNode() || w.firstNode() == way.firstNode()) {
                                         direction = Direction.BACKWARDS;
                                     } else if (w.firstNode() == way.lastNode() || w.lastNode() == way.lastNode()) {
@@ -573,23 +540,18 @@ public class SplitWayCommand extends SequenceCommand {
                             }
                         }
 
-                        // We don't have enough information to determine the order of the new ways in this relation.
-                        // This may cause relations to be saved with the two new way sections in reverse order.
-                        //
-                        // This often breaks routes.
-                        //
-                        // The user should be asked to download more members, or to abort the split operation.
-                        boolean needsMoreMembers = isOrderedRelation
-                                && direction == Direction.UNKNOWN
-                                && relationMembers.size() > 1
-                                && r.hasIncompleteMembers();
-
-                        relationAnalyses.add(new RelationAnalysis(c, rm, direction, needsMoreMembers, ic));
-                        ic += indexOfWayToKeep;
+                        if (direction == Direction.UNKNOWN) {
+                            // We don't have enough information to determine the order of the new ways in this relation.
+                            // This may cause relations to be saved with the two new way sections in reverse order.
+                            //
+                            // This often breaks routes.
+                            //
+                        } else {
+                            missingWays = Collections.emptySet();
+                        }
+                        relationAnalyses.add(new RelationAnalysis(c, rm, direction, missingWays));
                     }
                 }
-                ic++;
-                ir++;
             }
 
             if (c != null) {
@@ -634,7 +596,7 @@ public class SplitWayCommand extends SequenceCommand {
     }
 
     static MissingMemberStrategy offerToDownloadMissingMembersIfNeeded(Analysis analysis,
-                                                                       List<Relation> relationsNeedingMoreMembers) {
+                                                                       int numRelationsNeedingMoreMembers) {
         String[] options = {
                 tr("Yes, download the missing members"),
                 tr("No, abort the split operation"),
@@ -651,14 +613,14 @@ public class SplitWayCommand extends SequenceCommand {
         String msgReferToRelations;
         if (analysis.getNumberOfRelations() == 1) {
             msgReferToRelations = tr("this relation");
-        } else if (analysis.getNumberOfRelations() == relationsNeedingMoreMembers.size()) {
+        } else if (analysis.getNumberOfRelations() == numRelationsNeedingMoreMembers) {
             msgReferToRelations = tr("these relations");
         } else {
             msgReferToRelations = trn(
                     "one relation",
                     "{0} relations",
-                    relationsNeedingMoreMembers.size(),
-                    relationsNeedingMoreMembers.size()
+                    numRelationsNeedingMoreMembers,
+                    numRelationsNeedingMoreMembers
             );
         }
 
@@ -732,7 +694,20 @@ public class SplitWayCommand extends SequenceCommand {
             RelationMember rm = relationAnalysis.getRelationMember();
             Relation relation = relationAnalysis.getRelation();
             Direction direction = relationAnalysis.getDirection();
-            int position = relationAnalysis.getPosition();
+
+            int position = -1;
+            for (int i = 0; i < relation.getMembersCount(); i++) {
+                // search for identical member (can't use indexOf() as it uses equals()
+                if (rm == relation.getMember(i)) {
+                    position = i;
+                    break;
+                }
+            }
+
+            // sanity check
+            if (position < 0) {
+                throw new AssertionError("Relation member not found");
+            }
 
             int j = position;
             final List<Way> waysToAddBefore = newWays.subList(0, indexOfWayToKeep);
@@ -917,19 +892,16 @@ public class SplitWayCommand extends SequenceCommand {
         private final Relation relation;
         private final RelationMember relationMember;
         private final Direction direction;
-        private final boolean needsMoreMembers;
-        private final int position;
+        private final Set<Way> neededIncompleteMembers;
 
         RelationAnalysis(Relation relation,
                                 RelationMember relationMember,
                                 Direction direction,
-                                boolean needsMoreMembers,
-                                int position) {
+                                Set<Way> neededIncompleteMembers) {
             this.relation = relation;
             this.relationMember = relationMember;
             this.direction = direction;
-            this.needsMoreMembers = needsMoreMembers;
-            this.position = position;
+            this.neededIncompleteMembers = neededIncompleteMembers;
         }
 
         RelationMember getRelationMember() {
@@ -940,16 +912,12 @@ public class SplitWayCommand extends SequenceCommand {
             return direction;
         }
 
-        boolean needsMoreMembers() {
-            return needsMoreMembers;
+        public Set<Way> getNeededIncompleteMembers() {
+            return neededIncompleteMembers;
         }
 
         Relation getRelation() {
             return relation;
-        }
-
-        int getPosition() {
-            return position;
         }
     }
 

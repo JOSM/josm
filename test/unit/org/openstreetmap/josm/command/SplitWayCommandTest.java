@@ -366,4 +366,32 @@ public final class SplitWayCommandTest {
             assertTrue(result.isPresent());
         }
     }
+
+    /**
+     * Non-regression test for issue #19432 (AIOOB: Problem with member check with duplicate members)
+     *
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if OSM parsing fails
+     */
+    @Test
+    public void testTicket19432() throws IOException, IllegalDataException {
+        try (InputStream is = TestUtils.getRegressionDataStream(19432, "josm_split_way_exception_example.osm.bz2")) {
+            DataSet ds = OsmReader.parseDataSet(is, null);
+
+            Way splitWay = (Way) ds.getPrimitiveById(632576744L, OsmPrimitiveType.WAY);
+            Node splitNode = (Node) ds.getPrimitiveById(1523436358L, OsmPrimitiveType.NODE);
+
+            final Optional<SplitWayCommand> result = SplitWayCommand.splitWay(
+                    splitWay,
+                    SplitWayCommand.buildSplitChunks(splitWay, Collections.singletonList(splitNode)),
+                    new ArrayList<>(),
+                    Strategy.keepLongestChunk(),
+                    // This split requires no additional downloads. If any are needed, this command will fail.
+                    SplitWayCommand.WhenRelationOrderUncertain.SPLIT_ANYWAY
+            );
+
+            // Should not result in aborting the split.
+            assertTrue(result.isPresent());
+        }
+    }
 }
