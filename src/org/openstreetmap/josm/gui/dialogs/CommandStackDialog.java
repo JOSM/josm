@@ -429,8 +429,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
                 path = undoTree.getSelectionPath();
             } else if (!redoTree.isSelectionEmpty()) {
                 path = redoTree.getSelectionPath();
-            } else
-                throw new IllegalStateException();
+            } else {
+                // see #19514 for a possible cause
+                return;
+            }
 
             DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
             if (dataSet == null) return;
