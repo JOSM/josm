@@ -386,7 +386,7 @@ public final class SplitWayCommandTest {
                     SplitWayCommand.buildSplitChunks(splitWay, Collections.singletonList(splitNode)),
                     new ArrayList<>(),
                     Strategy.keepLongestChunk(),
-                    // This split requires no additional downloads. If any are needed, this command will fail.
+                    // This split requires additional downloads but problem occured before the download
                     SplitWayCommand.WhenRelationOrderUncertain.SPLIT_ANYWAY
             );
 
