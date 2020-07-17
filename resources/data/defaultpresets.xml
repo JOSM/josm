@@ -5296,7 +5296,7 @@
             <key key="man_made" value="goods_conveyor" />
             <optional>
                 <reference ref="name_operator" />
-                <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
+                <combo key="resource" text="Resource" values="aggregate,bauxite,clay,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
                 <checkgroup columns="3">
                     <check key="covered" text="Covered" />
                     <check key="bridge" text="Bridge" disable_off="true" />
@@ -5312,7 +5312,7 @@
             <combo key="mineshaft_type" text="Function" values="winding,air" />
             <text key="depth" text="Depth in meters" />
             <text key="operator" text="Operator" />
-            <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
+            <combo key="resource" text="Resource" values="aggregate,bauxite,clay,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             <check key="headframe" text="Visible Headframe" />
             <check key="disused" text="Disused" />
         </item> <!-- Mineshaft -->
@@ -5323,7 +5323,7 @@
             <text key="name" text="Name" />
             <text key="length" text="Length in meters" />
             <text key="operator" text="Operator" />
-            <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
+            <combo key="resource" text="Resource" values="aggregate,bauxite,clay,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             <check key="disused" text="Disused" />
         </item> <!-- Adit -->
         <item name="Embankment" icon="presets/misc/embankment.svg" type="way" preset_name_label="true">
@@ -6231,7 +6231,7 @@
             <key key="historic" value="mine" />
             <optional>
                 <text key="name" text="Name" />
-                <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
+                <combo key="resource" text="Resource" values="aggregate,bauxite,clay,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             </optional>
         </item> <!-- Mine -->
         <item name="Mine shaft" icon="presets/landmark/historic_mine.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -8118,7 +8118,7 @@
             <space />
             <key key="landuse" value="quarry" />
             <reference ref="name_operator" />
-            <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
+            <combo key="resource" text="Resource" values="aggregate,bauxite,clay,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
         </item> <!-- Quarry -->
     </group> <!-- Landuse -->
   </group> <!-- Geography -->

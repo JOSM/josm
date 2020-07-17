@@ -2033,3 +2033,17 @@ node[lamp_type=electrical] {
   group: tr("deprecated tagging");
   fixAdd: "lamp_type=electric";
 }
+*[generator:type=solar_photovoltaic_panels] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "generator:type=solar_photovoltaic_panel";
+  group: tr("deprecated tagging");
+  fixAdd: "generator:type=solar_photovoltaic_panel";
+}
+*[building=part] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "building:part=yes";
+  group: tr("deprecated tagging");
+  /* without autofix, it is not clear if a building or a building part is mapped */
+}
+
+/* When tags are deprecated they should be added to ignoretags.cfg too. */
