@@ -1599,7 +1599,8 @@ public class ImageProvider {
         // Check if the presets have icons for nodes/relations.
         if (primitive.isTagged() && (!options.contains(GetPaddedOptions.NO_WAY_PRESETS) || OsmPrimitiveType.WAY != primitive.getType())) {
             final Optional<ImageIcon> icon = TaggingPresets.getMatchingPresets(primitive).stream()
-                    .sorted(Comparator.comparing(p -> p.types == null || p.types.isEmpty() ? Integer.MAX_VALUE : p.types.size()))
+                    .sorted(Comparator.comparing(p ->
+                            p.iconName.contains("multipolygon") || p.types == null || p.types.isEmpty() ? Integer.MAX_VALUE : p.types.size()))
                     .map(TaggingPreset::getImageResource)
                     .filter(Objects::nonNull)
                     .map(resource -> resource.getPaddedIcon(iconSize))
