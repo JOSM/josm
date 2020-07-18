@@ -65,6 +65,12 @@ setting::partial_fill {
   default: true;
 }
 
+setting::note_annotation {
+  type: boolean;
+  label: tr("Display note=* annotation on nodes");
+  default: false;
+}
+
 /*********************/
 /* turn restrictions */
 /*********************/
@@ -5208,22 +5214,22 @@ node[place=square] {
 /* "work in progress" tags */
 /***************************/
 
-node|z16-[fixme]::core_note_fixme,
-node|z-15[fixme][!setting("hide_icons")]::core_note_fixme,
-node|z16-[FIXME]::core_note_fixme,
-node|z-15[FIXME][!setting("hide_icons")]::core_note_fixme {
+node|z17-[fixme]::core_note_fixme,
+node|z-16[fixme][!setting("hide_icons")]::core_note_fixme,
+node|z17-[FIXME]::core_note_fixme,
+node|z-16[FIXME][!setting("hide_icons")]::core_note_fixme {
     object-z-index: 10;
     icon-image: "presets/misc/fixme_annotation.svg";
 }
-node|z16-[note]::core_note_fixme,
-node|z-15[note][!setting("hide_icons")]::core_note_fixme {
+node|z17-[note][setting("note_annotation")]::core_note_fixme,
+node|z-16[note][setting("note_annotation")][!setting("hide_icons")]::core_note_fixme {
     object-z-index: 10;
     icon-image: "presets/misc/note_annotation.svg";
 }
-node|z16-[note][fixme]::core_note_fixme,
-node|z-15[note][fixme][!setting("hide_icons")]::core_note_fixme,
-node|z16-[note][FIXME]::core_note_fixme,
-node|z-15[note][FIXME][!setting("hide_icons")]::core_note_fixme {
+node|z16-[note][fixme][setting("note_annotation")]::core_note_fixme,
+node|z-16[note][fixme][setting("note_annotation")][!setting("hide_icons")]::core_note_fixme,
+node|z17-[note][FIXME][setting("note_annotation")]::core_note_fixme,
+node|z-16[note][FIXME][setting("note_annotation")][!setting("hide_icons")]::core_note_fixme {
     icon-image: "presets/misc/note_fixme_annotation.svg";
 }
 
@@ -5237,7 +5243,7 @@ Summary of different zoom levels:
   |z-14         tagged way nodes are hidden completely
   |z-15         untagged way nodes are hidden completely
   |z15          place=locality icon
-  |z16-         fixme=* and note=* symbols; place=locality text
+  |z16-         place=locality text
   |z17-         normal POI icons (without text),
                 street name along highway=* ways
   |z18-         text for normal POI icons is shown
