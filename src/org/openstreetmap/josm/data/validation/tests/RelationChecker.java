@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -68,6 +69,9 @@ public class RelationChecker extends Test implements TaggingPresetListener {
     /** Relations build circular dependencies */
     public static final int RELATION_LOOP    = 1710;
     // CHECKSTYLE.ON: SingleSpaceSeparator
+
+    // see 19312 comment:17
+    private static final BooleanProperty ALLOW_COMPLEX_LOOP = new BooleanProperty("validator.relation.allow.complex.dependency", false);
 
     /**
      * Error message used to group errors related to role problems.
@@ -404,6 +408,9 @@ public class RelationChecker extends Test implements TaggingPresetListener {
 
     @Override
     public void endTest() {
+        if (Boolean.TRUE.equals(ALLOW_COMPLEX_LOOP.get())) {
+            loops.removeIf(loop -> loop.size() > 2);
+        }
         loops.forEach(loop -> errors.add(TestError.builder(this, Severity.ERROR, RELATION_LOOP)
                 .message(loop.size() == 2 ? tr("Relation contains itself as a member")
                         : tr("Relations generate circular dependency of parent/child elements"))
@@ -464,6 +471,9 @@ public class RelationChecker extends Test implements TaggingPresetListener {
         LinkedList<Relation> path = new LinkedList<>();
         path.add(parent);
         test.checkLoop(child, path);
+        if (Boolean.TRUE.equals(ALLOW_COMPLEX_LOOP.get())) {
+            test.loops.removeIf(loop -> loop.size() > 2);
+        }
         if (test.loops.isEmpty())
             return Collections.emptyList();
         else
