@@ -1255,7 +1255,6 @@ public final class DomainValidator extends AbstractValidator {
         "swiftcover", // swiftcover Swiftcover Insurance Services Limited
         "swiss", // swiss Swiss Confederation
         "sydney", // sydney State of New South Wales, Department of Premier and Cabinet
-        "symantec", // symantec Symantec Corporation
         "systems", // systems Dash Cypress, LLC
         "tab", // tab Tabcorp Holdings Limited
         "taipei", // taipei Taipei City Government
