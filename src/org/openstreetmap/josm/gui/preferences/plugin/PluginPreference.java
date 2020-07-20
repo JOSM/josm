@@ -473,7 +473,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         ConfigureSitesAction() {
             putValue(NAME, tr("Configure sites..."));
             putValue(SHORT_DESCRIPTION, tr("Configure the list of sites where plugins are downloaded from"));
-            new ImageProvider("dialogs", "settings").getResource().attachImageIcon(this);
+            new ImageProvider("preference").getResource().attachImageIcon(this);
         }
 
         @Override
