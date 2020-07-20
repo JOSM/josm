@@ -127,7 +127,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
      * @since 2448
      */
     public void hideAll() {
-        dialogs.values().forEach(this::hide);
+        new ArrayList<>(dialogs.values()).forEach(this::hide);
     }
 
     /**
