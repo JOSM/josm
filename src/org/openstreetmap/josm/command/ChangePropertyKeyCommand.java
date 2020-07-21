@@ -140,7 +140,7 @@ public class ChangePropertyKeyCommand extends Command {
 
     @Override
     public Icon getDescriptionIcon() {
-        return ImageProvider.get("data", "key");
+        return ImageProvider.get("dialogs", "propertiesdialog", ImageProvider.ImageSizes.SMALLICON);
     }
 
     @Override

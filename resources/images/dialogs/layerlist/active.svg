@@ -9,15 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="24"
-   height="24"
+   width="16"
+   height="16"
    id="svg2"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
    inkscape:export-filename="C:\data\eclipse-ws\eclipse-3.5\JOSM\images\dialogs\activate.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   sodipodi:docname="activate2.svg">
+   sodipodi:docname="active2.svg">
   <defs
      id="defs4">
     <inkscape:perspective
@@ -70,17 +70,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.456572"
-     inkscape:cx="13.959684"
-     inkscape:cy="14.050933"
+     inkscape:zoom="27.805961"
+     inkscape:cx="6.3760796"
+     inkscape:cy="7.5110871"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:window-width="1680"
      inkscape:window-height="987"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4537" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -97,32 +101,23 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-1028.3622)">
-    <path
-       style="fill:#ae8f8f;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 1.1887976,1048.7981 5.7614909,-5.8419 14.9487355,0 -4.415101,5.8527 -16.2951254,-0.011 z"
-       id="path2816-6-3"
-       sodipodi:nodetypes="ccccc" />
-    <path
-       style="fill:#ae8f8f;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 1.07869,1043.8267 5.7614916,-5.8418 14.9487324,0 -4.415101,5.8527 -16.295123,-0.011 z"
-       id="path2816-6"
-       sodipodi:nodetypes="ccccc" />
-    <path
-       style="fill:#ae8f8f;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 1.21211,1038.9234 5.7614908,-5.8418 14.9487352,0 -4.415106,5.8527 -16.29512,-0.011 z"
-       id="path2816"
-       sodipodi:nodetypes="ccccc" />
+     transform="translate(0,-1036.3622)">
+    <circle
+       style="fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.06563012"
+       id="path3761-7"
+       cx="8.7761688"
+       cy="1044.8796"
+       r="5" />
     <circle
        style="fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.06563012"
-       id="path3761-4"
-       cx="18.063999"
-       cy="1034.1927"
+       id="path3761"
+       cx="8"
+       cy="1044.3622"
        r="5" />
     <path
        style="fill:none;stroke:#ffffff;stroke-width:1.70000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 15.56266,1035.0485 2.183922,1.5692 2.58213,-4.934"
-       id="path3771-9"
+       d="m 5.4986524,1045.2178 2.183922,1.5692 2.5821296,-4.934"
+       id="path3771"
        sodipodi:nodetypes="ccc"
        inkscape:connector-curvature="0" />
   </g>

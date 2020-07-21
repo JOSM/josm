@@ -320,7 +320,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         MainApplication.getMainFrame(),
                         tr("Delete image file from disk"),
                         tr("Cancel"), tr("Delete"))
-                        .setButtonIcons("cancel", "dialogs/delete")
+                        .setButtonIcons("cancel", "dialogs/geoimage/deletefromdisk")
                         .setContent(new JLabel("<html><h3>"
                                 + trn("Delete the file from disk?",
                                       "Delete the {0} files from disk?", size, size)

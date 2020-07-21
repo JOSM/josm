@@ -1335,7 +1335,7 @@ public class MainApplication {
                 ExtendedDialog ed = new ExtendedDialog(
                         mainFrame, title,
                         tr("Change proxy settings"), tr("Cancel"));
-                ed.setButtonIcons("dialogs/settings", "cancel").setCancelButton(2);
+                ed.setButtonIcons("preference", "cancel").setCancelButton(2);
                 ed.setMinimumSize(new Dimension(460, 260));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
                 ed.setContent(message);

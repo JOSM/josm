@@ -258,7 +258,7 @@ public class PurgeCommand extends Command {
 
     @Override
     public Icon getDescriptionIcon() {
-        return ImageProvider.get("data", "purge");
+        return ImageProvider.get("purge");
     }
 
     @Override

@@ -17,7 +17,7 @@
    inkscape:export-filename="C:\data\eclipse-ws\eclipse-3.5\JOSM\images\dialogs\activate.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   sodipodi:docname="activate2.svg">
+   sodipodi:docname="duplicatelayer.svg">
   <defs
      id="defs4">
     <inkscape:perspective
@@ -70,9 +70,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.456572"
-     inkscape:cx="13.959684"
-     inkscape:cy="14.050933"
+     inkscape:zoom="18.136314"
+     inkscape:cx="11.567698"
+     inkscape:cy="12.591925"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -109,21 +109,9 @@
        id="path2816-6"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="fill:#ae8f8f;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       style="fill:#fcee15;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        d="m 1.21211,1038.9234 5.7614908,-5.8418 14.9487352,0 -4.415106,5.8527 -16.29512,-0.011 z"
        id="path2816"
        sodipodi:nodetypes="ccccc" />
-    <circle
-       style="fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.06563012"
-       id="path3761-4"
-       cx="18.063999"
-       cy="1034.1927"
-       r="5" />
-    <path
-       style="fill:none;stroke:#ffffff;stroke-width:1.70000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 15.56266,1035.0485 2.183922,1.5692 2.58213,-4.934"
-       id="path3771-9"
-       sodipodi:nodetypes="ccc"
-       inkscape:connector-curvature="0" />
   </g>
 </svg>
