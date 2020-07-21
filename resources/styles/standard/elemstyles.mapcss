@@ -499,8 +499,11 @@ node[barrier=kissing_gate] {
     icon-image: "presets/barrier/kissing_gate.svg";
     set icon_z17;
 }
+node[barrier=bus_trap] {
+    icon-image: "presets/barrier/bus_trap.svg";
+    set icon_z17;
+}
 node[barrier=bump_gate][!is_prop_set(icon-image)],
-node[barrier=bus_trap][!is_prop_set(icon-image)],
 node[barrier=hampshire_gate][!is_prop_set(icon-image)] {
     icon-image: "presets/misc/no_icon.svg";
     set icon_z17;

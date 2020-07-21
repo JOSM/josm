@@ -14,8 +14,8 @@
    viewBox="0 0 16 16"
    id="svg4264"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="highway__stop2.svg">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="stop.svg">
   <defs
      id="defs4266">
     <marker
@@ -148,9 +148,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="64"
-     inkscape:cx="8.3175116"
-     inkscape:cy="8.1344046"
+     inkscape:zoom="25.84375"
+     inkscape:cx="1.9172884"
+     inkscape:cy="3.6377853"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -170,7 +170,12 @@
      inkscape:snap-center="false"
      inkscape:snap-nodes="true"
      inkscape:snap-others="true"
-     inkscape:snap-page="true">
+     inkscape:snap-page="true"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
        id="grid4137" />
@@ -210,7 +215,7 @@
        inkscape:connector-curvature="0" />
     <path
        id="path10312"
-       style="fill:#ee1c23;fill-rule:nonzero;stroke:none"
+       style="fill:#cc0000;fill-rule:nonzero;stroke:none;fill-opacity:1"
        d="m 0.97021708,1047.2613 0,-5.8244 4.11760982,-4.1183 5.8234081,0 4.117849,4.1183 0,5.8242 -4.117849,4.1184 -5.8234081,0 -4.11760982,-4.1182"
        inkscape:connector-curvature="0" />
     <path

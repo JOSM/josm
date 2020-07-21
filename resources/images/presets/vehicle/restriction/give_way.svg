@@ -14,8 +14,8 @@
    viewBox="0 0 16 15"
    id="svg4264"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="highway__give_way2.svg">
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="give_way.svg">
   <defs
      id="defs4266">
     <marker
@@ -148,8 +148,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="45.254834"
-     inkscape:cx="10.7423"
+     inkscape:zoom="146.19433"
+     inkscape:cx="8.5944738"
      inkscape:cy="6.8371201"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -171,7 +171,12 @@
      inkscape:snap-nodes="true"
      inkscape:snap-others="true"
      inkscape:snap-page="true"
-     inkscape:snap-grids="false">
+     inkscape:snap-grids="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
        id="grid4137" />
@@ -211,7 +216,7 @@
        d="m 0.99993,1038.9 14,0 -7,12.2976 z"
        style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#ee1c23;stroke-width:1.7;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#cc0000;stroke-width:1.7;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 1.7127388,1039.3097 12.5745242,0 -6.287262,11.1049 z"
        id="path4208"
        inkscape:connector-curvature="0"

@@ -90,27 +90,27 @@
         <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" length="4" />
         <reference ref="railway_electrified_yesno" />
     </chunk>
-    <chunk id="barrier_5">
-        <optional text="Allowed traffic:">
-            <check key="foot" text="Foot"/>
-            <check key="bicycle" text="Bicycle"/>
-            <check key="horse" text="Horse" />
-            <check key="motorcycle" text="Motorcycle" />
-            <check key="motorcar" text="Motorcar" />
+    <chunk id="check_access_nomotor">
+        <optional text="Non-motorized traffic:">
+            <checkgroup columns="3">
+                <check key="foot" text="Foot" icon="presets/vehicle/restriction/plain/foot.svg" />
+                <check key="bicycle" text="Bicycle" icon="presets/vehicle/restriction/plain/bicycle.svg" />
+                <check key="horse" text="Horse" icon="presets/vehicle/restriction/plain/horse.svg" />
+            </checkgroup>
+        <space />
+        <reference ref="wheelchair" />
         </optional>
     </chunk>
-    <chunk id="barrier_4">
-        <optional text="Allowed traffic:">
-            <check key="foot" text="Foot"/>
-            <check key="bicycle" text="Bicycle"/>
-            <check key="horse" text="Horse" />
-            <check key="motorcycle" text="Motorcycle" />
-        </optional>
-    </chunk>
-    <chunk id="barrier_2">
-        <optional text="Allowed traffic:">
-            <check key="foot" text="Foot"/>
-            <check key="bicycle" text="Bicycle"/>
+    <chunk id="check_access_motor">
+        <optional text="Motor vehicle traffic:">
+            <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
+            <space />
+            <checkgroup columns="2">
+                <check key="motorcar" text="Motorcar" icon="presets/vehicle/restriction/plain/motorcar.svg" />
+                <check key="motorcycle" text="Motorcycle" icon="presets/vehicle/restriction/plain/motorcycle.svg" />
+                <check key="moped" text="Moped" icon="presets/vehicle/restriction/plain/moped.svg" />
+                <check key="mofa" text="Mofa" icon="presets/vehicle/restriction/plain/mofa.svg" />
+            </checkgroup>
         </optional>
     </chunk>
     <chunk id="min_age">
@@ -218,6 +218,10 @@
     </chunk>
     <chunk id="highway_access">
         <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_sort="false" />
+    </chunk>
+    <chunk id="highway_access_vehicle">
+        <reference ref="highway_access" />
+        <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" values_sort="false" />
     </chunk>
     <chunk id="POI_access">
         <combo key="access" text="General Access" values="yes,private,customers,permissive,no" values_sort="false" />
@@ -1468,56 +1472,117 @@
         <item name="Block" icon="presets/barrier/block.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=block" />
             <key key="barrier" value="block" />
-            <reference ref="barrier_4" />
-            <optional>
-                <text key="maxwidth" text="Max. width (meters)" length="7" />
-                <combo key="material" text="Material" values="concrete,reinforced_concrete,stone" />
-            </optional>
+            <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Block -->
         <item name="Bollard" icon="presets/barrier/bollard.svg" type="node,way" preset_name_label="true">
             <link wiki="Tag:barrier=bollard" />
-            <space />
             <key key="barrier" value="bollard" />
-            <combo key="bollard" text="Bollard type" values="rising,removable" />
-            <reference ref="barrier_4" />
-            <optional>
-                <text key="maxwidth" text="Max. width (meters)" length="7" />
-                <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
-            </optional>
+            <space />
+            <combo key="bollard" text="Bollard type" values="rising,removable,foldable,fixed" values_searchable="true" />
+            <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <label text="Tags which are implied and do not need to be set are:" />
+            <label text="`access=no`, `foot=yes` and `bicycle=yes`" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Bollard -->
         <item name="Cycle Barrier" icon="presets/barrier/cycle_barrier.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=cycle_barrier" />
             <key key="barrier" value="cycle_barrier" />
-            <reference ref="barrier_4" />
             <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <optional text="Non-motorized traffic:">
+                <checkgroup columns="2">
+                    <check key="foot" text="Foot" icon="presets/vehicle/restriction/plain/foot.svg" />
+                    <check key="horse" text="Horse" icon="presets/vehicle/restriction/plain/horse.svg" />
+                </checkgroup>
+                <space />
+                <reference ref="wheelchair" />
+                <combo key="bicycle" text="Bicycle" values="yes,designated,dismount,no" values_sort="false" />
+            </optional>
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Cycle Barrier -->
         <item name="Cattle Grid" icon="presets/barrier/cattle_grid.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=cattle_grid" />
             <key key="barrier" value="cattle_grid" />
-            <reference ref="barrier_4" />
+            <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Cattle Grid -->
-        <item name="Bus Trap" type="node" preset_name_label="true">
+        <item name="Bus Trap" icon="presets/barrier/bus_trap.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=bus_trap" />
             <key key="barrier" value="bus_trap" />
             <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <label text="Tags which are implied and do not need to be set are:" />
+            <label text="`motor_vehicle=no`, `psv=yes`, `foot=yes` and `bicycle=yes`" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
         </item> <!-- Bus Trap -->
         <item name="Spikes" icon="presets/barrier/spikes.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=spikes" />
             <key key="barrier" value="spikes" />
-            <reference ref="barrier_5" />
+            <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Spikes -->
-        <item name="Toll Booth" icon="presets/barrier/toll_station.svg" type="node,closedway" preset_name_label="true">
+        <item name="Toll Booth" icon="presets/barrier/toll_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:barrier=toll_booth" />
             <key key="barrier" value="toll_booth" />
             <optional>
-                <text key="name" text="Name" />
-                <text key="operator" text="Operator" />
+                <reference ref="name_ref_operator" />
+                <reference ref="oh" />
+                <reference ref="fee_interval" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5,6" length="3" />
+                <text key="maxheight" text="Max. height (meters)" length="7" />
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
             </optional>
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Payment Methods" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Toll Booth -->
-        <item name="Border Control" icon="presets/barrier/douane.svg" type="node" preset_name_label="true">
+        <item name="Border Control" icon="presets/barrier/douane.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:barrier=border_control" />
             <key key="barrier" value="border_control" />
-            <reference ref="barrier_5" />
+            <optional>
+                <reference ref="name_ref_operator" />
+                <reference ref="oh" />
+                <combo key="lanes" text="Lanes" values="1,2,3,4,5,6" length="3" />
+                <text key="maxheight" text="Max. height (meters)" length="7" />
+                <text key="maxwidth" text="Max. width (meters)" length="7" />
+            </optional>
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Border Control -->
         <separator/> <!-- *** Linear Barriers *** -->
         <item name="Hedge" icon="presets/barrier/hedge.svg" type="way,closedway,multipolygon" preset_name_label="true">
@@ -1598,75 +1663,132 @@
         <item name="Entrance (Barrier Opening)" icon="presets/barrier/entrance.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=entrance" />
             <key key="barrier" value="entrance" />
-            <reference ref="barrier_5" />
-            <reference ref="optional_maxwidth" />
+            <reference ref="optional_maxheight_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Entrance (Barrier Opening) -->
         <item name="Gate" icon="presets/barrier/gate.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=gate" />
             <key key="barrier" value="gate" />
-            <reference ref="barrier_5" />
             <reference ref="optional_maxheight_maxwidth" />
-            <reference ref="highway_access" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Gate -->
         <item name="Lift Gate" icon="presets/barrier/lift_gate.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=lift_gate" />
             <key key="barrier" value="lift_gate" />
-            <reference ref="barrier_5" />
+            <space />
+            <combo key="lift_gate:type" text="Type" value="single,double" values_context="lift_gate" values_searchable="true" />
             <reference ref="optional_maxwidth" />
-            <reference ref="highway_access" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Lift Gate -->
         <item name="Swing Gate" icon="presets/barrier/swing_gate.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=swing_gate" />
             <key key="barrier" value="swing_gate" />
-            <combo key="swing_gate:type" text="Type" values="single,double" values_context="swing_gate" />
-            <reference ref="barrier_5" />
+            <space />
+            <combo key="swing_gate:type" text="Type" values="single,double" values_context="swing_gate" values_searchable="true" />
             <reference ref="optional_maxwidth" />
-            <reference ref="highway_access" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Swing Gate -->
         <item name="Hampshire Gate" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=hampshire_gate" />
             <key key="barrier" value="hampshire_gate" />
-            <reference ref="barrier_5" />
             <reference ref="optional_maxwidth" />
+            <text key="maxlength" text="Max. length (meters)" match="key" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Hampshire Gate -->
         <item name="Bump Gate" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=bump_gate" />
             <key key="barrier" value="bump_gate" />
-            <reference ref="barrier_5" />
-            <reference ref="optional_maxwidth" />
+            <reference ref="optional_maxheight_maxwidth" />
+            <text key="maxlength" text="Max. length (meters)" match="key" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Bump Gate -->
         <item name="Kissing Gate" icon="presets/barrier/kissing_gate.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=kissing_gate" />
             <key key="barrier" value="kissing_gate" />
-            <reference ref="barrier_2" />
             <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <label text="The tag `foot=yes` is implied and does not need to be set." />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Kissing Gate -->
         <item name="Chain" icon="presets/barrier/chain.svg" type="node,way,closedway" preset_name_label="true">
             <link wiki="Tag:barrier=chain" />
             <key key="barrier" value="chain" />
-            <reference ref="barrier_5" />
             <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Chain -->
         <item name="Stile" icon="presets/barrier/stile.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=stile" />
             <space />
             <key key="barrier" value="stile" />
-            <combo key="stile" text="Type" values="ladder,squeezer,stepover" />
-            <optional>
-                <combo key="material" text="Material" values="metal,stone,wood" />
-            </optional>
-            <reference ref="barrier_2" />
+            <combo key="stile" text="Type" values="ladder,squeezer,stepover" values_searchable="true" />
+            <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Stile -->
         <item name="Turnstile" icon="presets/barrier/turnstile.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=turnstile" />
             <key key="barrier" value="turnstile" />
-            <reference ref="barrier_2" />
+            <reference ref="optional_maxwidth" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Turnstile -->
         <item name="Sally Port" icon="presets/barrier/sally_port.svg" type="node" preset_name_label="true">
             <link wiki="Tag:barrier=sally_port" />
+            <space />
             <key key="barrier" value="sally_port" />
-            <reference ref="barrier_5" />
-            <reference ref="optional_maxheight_maxwidth" />
+            <text key="maxheight" text="Max. height (meters)" match="key" />
+            <text key="maxwidth" text="Max. width (meters)" match="key" />
+            <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
+            <space />
+            <reference ref="highway_access_vehicle" />
+            <reference ref="check_access_nomotor" />
+            <reference ref="check_access_motor" />
+            <preset_link preset_name="Access Restrictions" />
         </item> <!-- Sally Port -->
     </group> <!-- Barriers -->
     <group name="Passageways" icon="presets/transport/passage/tunnel.svg">
