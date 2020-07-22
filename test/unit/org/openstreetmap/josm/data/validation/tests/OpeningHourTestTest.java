@@ -190,9 +190,9 @@ public class OpeningHourTestTest {
         assertThat(checkOpeningHourSyntax(key, "Su 09:30; We 19:30"), isEmpty());
         // assertThat(checkOpeningHourSyntax(key, "Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00"), isEmpty());
         assertThat(checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00"), hasSize(1));
-        assertFixEquals("Mo-Fr 00:00-00:30,04:00-00:30; PH,Sa,Su 00:00-24:00",
+        assertFixEquals("Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00",
                 checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00").get(0));
-        assertFixEquals("Mo-Fr 00:00-00:30,04:00-00:30; PH,Sa,Su 00:00-24:00",
+        assertFixEquals("Mo-Fr 00:00-00:30,04:00-00:30; Sa,Su,PH 00:00-24:00",
                 checkOpeningHourSyntax(key, "Mo-Fr 0:00-0:30,4:00-00:30; Sa,Su,PH 0:00-24:00").get(0));
     }
 

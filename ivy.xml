@@ -28,7 +28,7 @@
         <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.8"/>
         <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.10"/>
         <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.13.0" transitive="false"/>
-        <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.21.4"/>
+        <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.22.0"/>
         <dependency conf="api->default" org="oauth.signpost" name="signpost-core" rev="2.0.0"/>
         <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2020.7.15"/>
         <!-- sources->sources -->
@@ -40,7 +40,7 @@
         <dependency conf="sources->sources" org="org.tukaani" name="xz" rev="1.8"/>
         <dependency conf="sources->sources" org="com.adobe.xmp" name="xmpcore" rev="6.1.10"/>
         <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.13.0" transitive="false"/>
-        <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.21.4"/>
+        <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.22.0"/>
         <dependency conf="sources->sources" org="oauth.signpost" name="signpost-core" rev="2.0.0"/>
         <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2020.7.15"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->
         <!-- commonslang->default -->
