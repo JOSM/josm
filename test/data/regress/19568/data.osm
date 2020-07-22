@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='43988922' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='8' changeset='80103394' lat='51.826958' lon='5.8681335' />
+  <node id='237761632' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='5' changeset='80103394' lat='51.8265654' lon='5.8674942' />
+  <node id='267557273' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='4' changeset='80103394' lat='51.8267141' lon='5.8677269' />
+  <node id='1023684562' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='3' changeset='80103394' lat='51.8275523' lon='5.8666194' />
+  <node id='1023684864' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='2' changeset='80103394' lat='51.8264354' lon='5.8684038' />
+  <node id='1291453414' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='3' changeset='80103394' lat='51.8266826' lon='5.8676744' />
+  <node id='1291453416' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='3' changeset='80103394' lat='51.8268469' lon='5.8679484' />
+  <node id='2826615592' timestamp='2014-04-30T14:39:23Z' uid='1995659' user='nearo_BAG' visible='true' version='1' changeset='22044614' lat='51.8265801' lon='5.8680703' />
+  <node id='2826615823' timestamp='2014-04-30T14:39:25Z' uid='1995659' user='nearo_BAG' visible='true' version='1' changeset='22044614' lat='51.8265971' lon='5.8680959' />
+  <node id='2826615831' timestamp='2014-04-30T14:39:25Z' uid='1995659' user='nearo_BAG' visible='true' version='1' changeset='22044614' lat='51.8266015' lon='5.8680332' />
+  <node id='2826615864' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='2' changeset='80103394' lat='51.8266185' lon='5.8680587' />
+  <node id='7160721459' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8268635' lon='5.8676004' />
+  <node id='7160721460' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8269253' lon='5.8675027' />
+  <node id='7160721461' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8268747' lon='5.8676189' />
+  <node id='7160721462' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8269361' lon='5.8675206' />
+  <node id='7160721463' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8268969' lon='5.8676004' />
+  <node id='7160721464' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8268806' lon='5.8675734' />
+  <node id='7160721465' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8269416' lon='5.8675297' />
+  <node id='7160721466' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8266086' lon='5.8680439' />
+  <node id='7160721467' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8265863' lon='5.8680796' />
+  <node id='7160721476' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8264097' lon='5.8683617' />
+  <node id='7160721477' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8275266' lon='5.8665773' />
+  <node id='7160721480' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8267017' lon='5.8676447' />
+  <node id='7160721481' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8266428' lon='5.8677364' />
+  <node id='7160721482' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8267337' lon='5.867844' />
+  <node id='7160721483' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8267431' lon='5.8677753' />
+  <node id='7160721484' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8266574' lon='5.8677137' />
+  <node id='7160763485' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8267175' lon='5.8678162'>
+    <tag k='highway' v='elevator' />
+  </node>
+  <node id='7160763486' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.82674' lon='5.8677091' />
+  <node id='7160763487' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8267787' lon='5.8677722' />
+  <node id='7160763488' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8267203' lon='5.8678654' />
+  <node id='7160763489' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8266792' lon='5.867797' />
+  <node id='7160763490' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8268689' lon='5.8679849' />
+  <node id='7160763498' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394' lat='51.8265821' lon='5.8675199'>
+    <tag k='barrier' v='block' />
+    <tag k='bicycle' v='yes' />
+    <tag k='foot' v='yes' />
+  </node>
+  <way id='22093402' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='6' changeset='80103394'>
+    <nd ref='237761632' />
+    <nd ref='7160763498' />
+    <nd ref='1291453414' />
+    <tag k='highway' v='pedestrian' />
+    <tag k='name' v='Verlengde Groenestraat' />
+  </way>
+  <way id='24613045' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='6' changeset='80103394'>
+    <nd ref='267557273' />
+    <nd ref='7160721483' />
+    <nd ref='1291453416' />
+    <nd ref='7160763490' />
+    <nd ref='43988922' />
+    <tag k='bridge' v='yes' />
+    <tag k='highway' v='footway' />
+    <tag k='layer' v='1' />
+  </way>
+  <way id='88089881' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='5' changeset='80103394'>
+    <nd ref='1023684864' />
+    <nd ref='7160721476' />
+    <nd ref='7160721467' />
+    <nd ref='2826615823' />
+    <nd ref='2826615864' />
+    <nd ref='7160721466' />
+    <nd ref='7160763488' />
+    <nd ref='7160721482' />
+    <nd ref='7160763487' />
+    <nd ref='7160721461' />
+    <nd ref='7160721459' />
+    <nd ref='7160721460' />
+    <nd ref='7160721462' />
+    <nd ref='7160721477' />
+    <nd ref='1023684562' />
+    <nd ref='1023684864' />
+    <tag k='area' v='yes' />
+    <tag k='public_transport' v='platform' />
+    <tag k='railway' v='platform' />
+    <tag k='ref' v='1' />
+    <tag k='tactile_paving' v='yes' />
+  </way>
+  <way id='113949667' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='3' changeset='80103394'>
+    <nd ref='7160763487' />
+    <nd ref='7160763486' />
+    <tag k='handrail' v='yes' />
+    <tag k='highway' v='steps' />
+    <tag k='incline' v='up' />
+  </way>
+  <way id='278264659' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='2' changeset='80103394'>
+    <nd ref='2826615864' />
+    <nd ref='2826615823' />
+    <nd ref='7160721467' />
+    <nd ref='2826615592' />
+    <nd ref='2826615831' />
+    <nd ref='7160721466' />
+    <nd ref='2826615864' />
+    <tag k='building' v='yes' />
+    <tag k='ref:bag' v='268100000083384' />
+    <tag k='source' v='BAG' />
+    <tag k='source:date' v='2014-03-24' />
+    <tag k='start_date' v='2001' />
+  </way>
+  <way id='514574061' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='2' changeset='80103394'>
+    <nd ref='7160763488' />
+    <nd ref='7160763489' />
+    <tag k='handrail' v='yes' />
+    <tag k='highway' v='steps' />
+    <tag k='incline' v='up' />
+  </way>
+  <way id='766722075' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394'>
+    <nd ref='7160721465' />
+    <nd ref='7160721462' />
+    <nd ref='7160721460' />
+    <nd ref='7160721464' />
+    <nd ref='7160721463' />
+    <nd ref='7160721465' />
+    <tag k='amenity' v='shelter' />
+    <tag k='shelter_type' v='public_transport' />
+  </way>
+  <way id='766722079' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394'>
+    <nd ref='7160763486' />
+    <nd ref='7160721480' />
+    <nd ref='1291453414' />
+    <nd ref='7160721484' />
+    <nd ref='7160721481' />
+    <nd ref='7160763489' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='766722080' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394'>
+    <nd ref='7160763485' />
+    <nd ref='7160721484' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='766722081' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394'>
+    <nd ref='7160763485' />
+    <nd ref='7160721482' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='766722082' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394'>
+    <nd ref='7160721483' />
+    <nd ref='7160763485' />
+    <tag k='bridge' v='yes' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='766722086' timestamp='2020-01-26T17:04:22Z' uid='9449340' user='Famlam' visible='true' version='1' changeset='80103394'>
+    <nd ref='1291453414' />
+    <nd ref='267557273' />
+    <tag k='handrail' v='yes' />
+    <tag k='highway' v='steps' />
+    <tag k='incline' v='up' />
+    <tag k='step_count' v='12' />
+  </way>
+</osm>

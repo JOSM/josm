@@ -118,4 +118,24 @@ public class UnconnectedWaysTest {
             assertThat(bib.getErrors(), hasSize(2));
         }
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19568">Bug #19568</a>.
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if the OSM data cannot be parsed
+     * @throws FileNotFoundException if the data file cannot be found
+     */
+    @Test
+    public void testTicket19568() throws IOException, IllegalDataException, FileNotFoundException {
+        try (InputStream fis = TestUtils.getRegressionDataStream(19568, "data.osm")) {
+            final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
+            MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));
+
+            bib.startTest(null);
+            bib.setBeforeUpload(false);
+            bib.visit(ds.allPrimitives());
+            bib.endTest();
+            assertThat(bib.getErrors(), isEmpty());
+        }
+    }
 }

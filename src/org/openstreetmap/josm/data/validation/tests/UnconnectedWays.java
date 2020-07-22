@@ -101,7 +101,7 @@ public abstract class UnconnectedWays extends Test {
                     || n.hasTag("amenity", "parking_entrance")
                     || n.isKeyTrue("noexit")
                     || n.hasKey("entrance", "barrier")
-                    || n.getParentWays().stream().anyMatch(Test::isBuilding);
+                    || n.getParentWays().stream().anyMatch(p -> isBuilding(p) || p.hasTag(RAILWAY, "platform"));
         }
     }
 
