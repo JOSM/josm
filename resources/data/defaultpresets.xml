@@ -1510,7 +1510,7 @@
                 </checkgroup>
                 <space />
                 <reference ref="wheelchair" />
-                <combo key="bicycle" text="Bicycle" values="yes,designated,dismount,no" values_sort="false" />
+                <combo key="bicycle" text="Bicycle" values="yes,designated,no" values_sort="false" />
             </optional>
             <reference ref="check_access_motor" />
             <preset_link preset_name="Access Restrictions" />
