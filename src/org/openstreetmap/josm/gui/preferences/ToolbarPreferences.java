@@ -794,10 +794,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private JButton createButton(String name) {
             JButton b = new JButton();
             if ("up".equals(name)) {
-                b.setIcon(ImageProvider.get("dialogs", "moveup", ImageSizes.LARGEICON));
+                b.setIcon(ImageProvider.get("dialogs", "up", ImageSizes.LARGEICON));
                 b.setToolTipText(tr("Move the currently selected members up"));
             } else if ("down".equals(name)) {
-                b.setIcon(ImageProvider.get("dialogs", "movedown", ImageSizes.LARGEICON));
+                b.setIcon(ImageProvider.get("dialogs", "down", ImageSizes.LARGEICON));
                 b.setToolTipText(tr("Move the currently selected members down"));
             } else if ("<".equals(name)) {
                 b.setIcon(ImageProvider.get("dialogs/conflict", "copybeforecurrentright", ImageSizes.LARGEICON));

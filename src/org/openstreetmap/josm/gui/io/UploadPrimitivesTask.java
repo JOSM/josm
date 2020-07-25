@@ -92,7 +92,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                 ),
                 new ButtonSpec(
                         tr("Go back to Upload Dialog"),
-                        new ImageProvider("dialogs", "uploadproperties"),
+                        new ImageProvider("preference"),
                         tr("Click to return to the Upload Dialog"),
                         null /* no specific help text */
                 ),

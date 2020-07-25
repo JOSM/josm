@@ -23,7 +23,7 @@ public class MoveUpAction extends AbstractRelationEditorAction {
      */
     public MoveUpAction(IRelationEditorActionAccess editorAccess, String actionMapKey) {
         super(editorAccess, actionMapKey, IRelationEditorUpdateOn.MEMBER_TABLE_SELECTION);
-        new ImageProvider("dialogs", "moveup").getResource().attachImageIcon(this, true);
+        new ImageProvider("dialogs", "up").getResource().attachImageIcon(this, true);
         Shortcut sc = Shortcut.registerShortcut("relationeditor:moveup", tr("Relation Editor: Move Up"), KeyEvent.VK_UP, Shortcut.ALT);
         sc.setAccelerator(this);
         sc.setTooltip(this, tr("Move the currently selected members up"));
