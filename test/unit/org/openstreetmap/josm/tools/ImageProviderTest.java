@@ -6,12 +6,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -21,6 +22,8 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -37,7 +40,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.xml.sax.SAXException;
 
 import com.kitfox.svg.SVGConst;
 
@@ -47,7 +56,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link ImageProvider} class.
  */
 public class ImageProviderTest {
-    
+
     /**
      * Setup test.
      */
@@ -125,6 +134,28 @@ public class ImageProviderTest {
                 new File(TestUtils.getRegressionDataDir(14319)).getAbsolutePath(), "attack.svg").get();
         assertNotNull(img);
         assertFalse(handler.failed);
+    }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/19551">#19551</a>
+     * @throws SAXException If the type cannot be set (shouldn't throw)
+     */
+    @Test
+    public void testTicket19551() throws SAXException {
+        TaggingPreset badPreset = new TaggingPreset();
+        badPreset.setType("node,way,relation,closedway");
+        Key key = new Key();
+        key.key = "amenity";
+        key.value = "fuel";
+        badPreset.data.add(key);
+        TaggingPreset goodPreset = new TaggingPreset();
+        goodPreset.setType("node,way,relation,closedway");
+        goodPreset.data.add(key);
+        goodPreset.iconName = "stop";
+        TaggingPresets.addTaggingPresets(Arrays.asList(goodPreset, badPreset));
+        Node node = new Node(LatLon.ZERO);
+        node.put("amenity", "fuel");
+        assertDoesNotThrow(() -> ImageProvider.getPadded(node, ImageProvider.ImageSizes.MAP.getImageDimension(), Collections.emptyList()));
     }
 
     /**
