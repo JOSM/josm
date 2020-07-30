@@ -38,12 +38,14 @@ import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -921,22 +923,24 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     }
                 }
             }
-            filterDeprecatedTags(p, key, fixVals);
             if (minDist <= MAX_LEVENSHTEIN_DISTANCE && maxPresetValueLen > MAX_LEVENSHTEIN_DISTANCE
                     && !fixVals.isEmpty()
                     && (harmonizedValue.length() > 3 || minDist < MAX_LEVENSHTEIN_DISTANCE)) {
-                if (fixVals.size() < 2) {
-                    fixedValue = fixVals.get(0);
-                } else {
-                    Collections.sort(fixVals);
-                    // misspelled preset value with multiple good alternatives
-                    errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE_NO_FIX)
-                            .message(tr("Unknown property value"),
-                                    marktr("Value ''{0}'' for key ''{1}'' is unknown, maybe one of {2} is meant?"),
-                                    value, key, fixVals)
-                            .primitives(p).build());
-                    withErrors.put(p, "WPV");
-                    return;
+                filterDeprecatedTags(p, key, fixVals);
+                if (!fixVals.isEmpty()) {
+                    if (fixVals.size() < 2) {
+                        fixedValue = fixVals.get(0);
+                    } else {
+                        Collections.sort(fixVals);
+                        // misspelled preset value with multiple good alternatives
+                        errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE_NO_FIX)
+                                .message(tr("Unknown property value"),
+                                        marktr("Value ''{0}'' for key ''{1}'' is unknown, maybe one of {2} is meant?"),
+                                        value, key, fixVals)
+                                .primitives(p).build());
+                        withErrors.put(p, "WPV");
+                        return;
+                    }
                 }
             }
         }
@@ -965,18 +969,22 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (fixVals.isEmpty() || deprecatedChecker == null)
             return;
 
-        String origVal = p.get(key);
-        try {
-            int unchangedDeprecated = countDeprecated(p);
-            Iterator<String> iter = fixVals.iterator();
-            while (iter.hasNext()) {
-                p.put(key, iter.next());
-                if (countDeprecated(p) > unchangedDeprecated)
-                    iter.remove();
-            }
-        } finally {
-            // restore original value
-            p.put(key, origVal);
+        int unchangedDeprecated = countDeprecated(p);
+        Iterator<String> iter = fixVals.iterator();
+        OsmPrimitive clone;
+        if (p instanceof Node) {
+            clone = new Node((Node) p);
+        } else if (p instanceof Way) {
+            clone = new Way((Way) p);
+        } else if (p instanceof Relation) {
+            clone = new Relation((Relation) p);
+        } else {
+            return; // should not happen
+        }
+        while (iter.hasNext()) {
+            clone.put(key, iter.next());
+            if (countDeprecated(clone) > unchangedDeprecated)
+                iter.remove();
         }
     }
 
