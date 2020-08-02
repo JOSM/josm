@@ -94,7 +94,7 @@ public class MapCSSRuleIndex {
         BitSet generalRules = new BitSet();
 
         /**
-         * A map that sores the indexes of rules that might be applied if the key=value pair is present on this
+         * A map that stores the indexes of rules that might be applied if the key=value pair is present on this
          * primitive. This includes all key=* rules.
          */
         Map<String, BitSet> specialRules = new HashMap<>();
