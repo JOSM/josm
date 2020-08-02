@@ -233,6 +233,7 @@ public class MapRendererPerformanceTest {
                 g.fillRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
                 if (clearStyleCache) {
                     MapPaintStyles.getStyles().clearCached();
+                    dsCity.clearMappaintCache();
                 }
                 BenchmarkData data = new BenchmarkData();
                 renderer.setBenchmarkFactory(() -> data);
