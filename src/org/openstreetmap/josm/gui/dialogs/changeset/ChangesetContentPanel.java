@@ -120,7 +120,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 new ChangesetContentTableColumnModel(),
                 model.getSelectionModel()
         );
-        tblContent.setAutoCreateRowSorter(true);
+        tblContent.setRowSorter(new ChangesetContentTableRowSorter(model));
         tblContent.addMouseListener(new PopupMenuLauncher(new ChangesetContentTablePopupMenu()));
         HistoryInfoAction historyAction = MainApplication.getMenu().historyinfo;
         tblContent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(historyAction.getShortcut().getKeyStroke(), "historyAction");
