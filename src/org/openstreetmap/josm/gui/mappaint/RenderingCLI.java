@@ -212,6 +212,9 @@ public class RenderingCLI implements CLIModule {
 
         if (argCurrentStyle.styleUrl != null) {
             argStyles.add(argCurrentStyle);
+        } else if (argStyles.isEmpty()) {
+            argCurrentStyle.styleUrl = "resource://styles/standard/elemstyles.mapcss";
+            argStyles.add(argCurrentStyle);
         }
     }
 
@@ -580,9 +583,6 @@ public class RenderingCLI implements CLIModule {
     }
 
     private void checkPreconditions(RenderingHelper rh) {
-        if (argStyles.isEmpty())
-            throw new IllegalArgumentException(tr("Missing argument - at least one style expected ({0})", "--style"));
-
         Dimension imgSize = rh.getImageSize();
         Logging.debug("image size (px): {0}x{1}", imgSize.width, imgSize.height);
         int maxSize = Optional.ofNullable(argMaxImageSize).orElse(DEFAULT_MAX_IMAGE_SIZE);
