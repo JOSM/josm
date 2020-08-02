@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 @FunctionalInterface
 public interface Subpart {
     /**
-     * Gets the ID of the suppart
+     * Gets the ID of the subpart
      * @param env The environment to get it from
      * @return The id
      */
