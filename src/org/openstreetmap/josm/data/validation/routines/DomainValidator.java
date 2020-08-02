@@ -1130,7 +1130,6 @@ public final class DomainValidator extends AbstractValidator {
         "rich", // rich I-REGISTRY Ltd., Niederlassung Deutschland
         "richardli", // richardli Pacific Century Asset Management (HK) Limited
         "ricoh", // ricoh Ricoh Company, Ltd.
-        "rightathome", // rightathome Johnson Shareholdings, Inc.
         "ril", // ril Reliance Industries Limited
         "rio", // rio Empresa Municipal de Informática SA - IPLANRIO
         "rip", // rip United TLD Holdco Ltd.
