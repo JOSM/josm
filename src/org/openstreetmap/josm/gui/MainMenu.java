@@ -124,6 +124,7 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.gui.dialogs.MenuItemSearchDialog;
+import org.openstreetmap.josm.gui.io.OnlineResourceMenu;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
@@ -754,6 +755,7 @@ public class MainMenu extends JMenuBar {
         ExpertToggleAction.addVisibilitySwitcher(sep);
         add(fileMenu, closeChangesetAction, true);
         fileMenu.addSeparator();
+        fileMenu.add(new OnlineResourceMenu());
         add(fileMenu, restart);
         add(fileMenu, exit);
 
