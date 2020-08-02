@@ -47,6 +47,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OptionParser;
 import org.openstreetmap.josm.tools.OptionParser.OptionCount;
 import org.openstreetmap.josm.tools.OptionParser.OptionParseException;
+import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Territories;
 
 /**
@@ -160,12 +161,16 @@ public class RenderingCLI implements CLIModule {
         try {
             parseArguments(argArray);
             initialize();
+            Stopwatch stopwatch = Stopwatch.createStarted();
+            String task = tr("Rendering {0} to {1}", argInput, argOutput);
+            System.err.println(task);
             DataSet ds = loadDataset();
             RenderingArea area = determineRenderingArea(ds);
             RenderingHelper rh = new RenderingHelper(ds, area.bounds, area.scale, argStyles);
             checkPreconditions(rh);
             BufferedImage image = rh.render();
             writeImageToFile(image);
+            System.err.println(stopwatch.toString(task));
         } catch (FileNotFoundException | NoSuchFileException e) {
             if (Logging.isDebugEnabled()) {
                 e.printStackTrace();
