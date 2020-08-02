@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.mappaint.RenderingHelper.StyleData;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -571,8 +572,8 @@ public class RenderingCLI implements CLIModule {
         if (argInput == null) {
             throw new IllegalArgumentException(tr("Missing argument - input data file ({0})", "--input|-i"));
         }
-        try {
-            return OsmReader.parseDataSet(Files.newInputStream(Paths.get(argInput)), null);
+        try (InputStream inputStream = Compression.getUncompressedFileInputStream(Paths.get(argInput))) {
+            return OsmReader.parseDataSet(inputStream, null);
         } catch (IllegalDataException e) {
             throw new IllegalDataException(tr("In .osm data file ''{0}'' - ", argInput) + e.getMessage(), e);
         }

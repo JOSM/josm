@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -176,15 +177,26 @@ public enum Compression {
      */
     public static InputStream getUncompressedFileInputStream(File file) throws IOException {
         try {
-            InputStream in = Files.newInputStream(file.toPath()); // NOPMD
-            try {
-                return byExtension(file.getName()).getUncompressedInputStream(in);
-            } catch (IOException e) {
-                Utils.close(in);
-                throw e;
-            }
+            return getUncompressedFileInputStream(file.toPath());  // NOPMD
         } catch (InvalidPathException e) {
             throw new IOException(e);
+        }
+    }
+
+    /**
+     * Returns an un-compressing {@link InputStream} for the {@link Path} {@code path}.
+     * @param path path
+     * @return un-compressing input stream
+     * @throws IOException if any I/O error occurs
+     * @since 16816
+     */
+    public static InputStream getUncompressedFileInputStream(Path path) throws IOException {
+        InputStream in = Files.newInputStream(path); // NOPMD
+        try {
+            return byExtension(path.getFileName().toString()).getUncompressedInputStream(in);
+        } catch (IOException e) {
+            Utils.close(in);
+            throw e;
         }
     }
 
@@ -220,9 +232,22 @@ public enum Compression {
      * @throws InvalidPathException if a Path object cannot be constructed from the abstract path
      */
     public static OutputStream getCompressedFileOutputStream(File file) throws IOException {
-        OutputStream out = Files.newOutputStream(file.toPath()); // NOPMD
+        return getCompressedFileOutputStream(file.toPath()); // NOPMD
+    }
+
+    /**
+     * Returns a compressing {@link OutputStream} for the {@link Path} {@code path}.
+     * @param path path
+     * @return compressing output stream
+     *
+     * @throws IOException if any I/O error occurs
+     * @throws InvalidPathException if a Path object cannot be constructed from the abstract path
+     * @since 16816
+     */
+    public static OutputStream getCompressedFileOutputStream(Path path) throws IOException {
+        OutputStream out = Files.newOutputStream(path); // NOPMD
         try {
-            return byExtension(file.getName()).getCompressedOutputStream(out);
+            return byExtension(path.getFileName().toString()).getCompressedOutputStream(out);
         } catch (IOException e) {
             Utils.close(out);
             throw e;
