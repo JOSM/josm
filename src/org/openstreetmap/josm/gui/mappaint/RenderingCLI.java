@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -164,7 +165,7 @@ public class RenderingCLI implements CLIModule {
             checkPreconditions(rh);
             BufferedImage image = rh.render();
             writeImageToFile(image);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             if (Logging.isDebugEnabled()) {
                 e.printStackTrace();
             }
