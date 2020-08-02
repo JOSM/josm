@@ -38,6 +38,8 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.MemoryPreferences;
+import org.openstreetmap.josm.tools.Http1Client;
+import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OptionParser;
@@ -430,6 +432,7 @@ public class RenderingCLI implements CLIModule {
      */
     void initialize() {
         Logging.setLogLevel(getLogLevel());
+        HttpClient.setFactory(Http1Client::new);
 
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance()); // for right-left-hand traffic cache file
         Config.setPreferencesInstance(new MemoryPreferences());
@@ -438,7 +441,7 @@ public class RenderingCLI implements CLIModule {
         String projCode = Optional.ofNullable(argProjection).orElse("epsg:3857");
         ProjectionRegistry.setProjection(Projections.getProjectionByCode(projCode.toUpperCase(Locale.US)));
 
-        Territories.initialize();
+        Territories.initializeInternalData();
     }
 
     private Level getLogLevel() {
