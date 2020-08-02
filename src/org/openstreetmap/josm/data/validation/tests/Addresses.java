@@ -160,7 +160,7 @@ public class Addresses extends Test {
                         for (String simplifiedAddress : getSimplifiedAddresses(r)) {
                             if (!ignoredAddresses.contains(simplifiedAddress)) {
                                 ignoredAddresses.add(simplifiedAddress);
-                            } else if (knownAddresses.containsKey(simplifiedAddress)) {
+                            } else {
                                 knownAddresses.remove(simplifiedAddress);
                             }
                         }

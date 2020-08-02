@@ -129,8 +129,7 @@ public class ImageryPreferenceTestIT {
 
     private boolean addError(ImageryInfo info, String error) {
         String errorMsg = error.replace('\n', ' ');
-        if (notIgnoredErrors.contains(errorMsg))
-            notIgnoredErrors.remove(errorMsg);
+        notIgnoredErrors.remove(errorMsg);
         return addError(isIgnoredError(errorMsg) ? ignoredErrors : errors, info, errorMsg);
     }
 

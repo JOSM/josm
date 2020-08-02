@@ -100,7 +100,7 @@ public abstract class ToggleAction extends JosmAction {
      * @param model The button model to remove
      */
     public final void removeButtonModel(ButtonModel model) {
-        if (model != null && buttonModels.contains(model)) {
+        if (model != null) {
             buttonModels.remove(model);
         }
     }

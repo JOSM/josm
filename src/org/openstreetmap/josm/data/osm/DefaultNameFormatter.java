@@ -80,9 +80,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      */
     public static void unregisterFormatHook(NameFormatterHook hook) {
         if (hook == null) return;
-        if (formatHooks.contains(hook)) {
-            formatHooks.remove(hook);
-        }
+        formatHooks.remove(hook);
     }
 
     /** The default list of tags which are used as naming tags in relations.

@@ -40,7 +40,7 @@ public class CellEditorSupport {
      */
     public final void addCellEditorListener(CellEditorListener l) {
         synchronized (this) {
-            if (l != null && !listeners.contains(l)) {
+            if (l != null) {
                 listeners.add(l);
             }
         }
@@ -52,7 +52,7 @@ public class CellEditorSupport {
      */
     public final void removeCellEditorListener(CellEditorListener l) {
         synchronized (this) {
-            if (l != null && listeners.contains(l)) {
+            if (l != null) {
                 listeners.remove(l);
             }
         }

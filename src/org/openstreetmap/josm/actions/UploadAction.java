@@ -128,12 +128,8 @@ public class UploadAction extends AbstractUploadAction {
      */
     public static void unregisterUploadHook(UploadHook hook) {
         if (hook == null) return;
-        if (UPLOAD_HOOKS.contains(hook)) {
-            UPLOAD_HOOKS.remove(hook);
-        }
-        if (LATE_UPLOAD_HOOKS.contains(hook)) {
-            LATE_UPLOAD_HOOKS.remove(hook);
-        }
+        UPLOAD_HOOKS.remove(hook);
+        LATE_UPLOAD_HOOKS.remove(hook);
     }
 
     /**

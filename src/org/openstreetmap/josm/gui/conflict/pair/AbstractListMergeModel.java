@@ -222,7 +222,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         synchronized (listeners) {
-            if (listener != null && !listeners.contains(listener)) {
+            if (listener != null) {
                 listeners.add(listener);
             }
         }
@@ -230,7 +230,7 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         synchronized (listeners) {
-            if (listener != null && listeners.contains(listener)) {
+            if (listener != null) {
                 listeners.remove(listener);
             }
         }

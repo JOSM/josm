@@ -183,9 +183,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     protected void filterOldPlugins() {
         for (PluginHandler.DeprecatedPlugin p : PluginHandler.DEPRECATED_PLUGINS) {
             if (canceled) return;
-            if (availablePlugins.containsKey(p.name)) {
-                availablePlugins.remove(p.name);
-            }
+            availablePlugins.remove(p.name);
         }
     }
 
