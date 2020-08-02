@@ -117,8 +117,7 @@ public class MapCSSRuleIndex {
         }
 
         public BitSet get(String value) {
-            BitSet forValue = specialRules.get(value);
-            if (forValue != null) return forValue; else return generalRules;
+            return specialRules.getOrDefault(value, generalRules);
         }
     }
 
