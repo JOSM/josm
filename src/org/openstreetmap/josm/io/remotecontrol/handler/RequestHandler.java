@@ -312,6 +312,14 @@ public abstract class RequestHandler {
     }
 
     /**
+     * Returns the command associated with this handler.
+     * @return the command associated with this handler.
+     */
+    public String getCommand() {
+        return myCommand;
+    }
+
+    /**
      * Returns the response content.
      * @return the response content
      */

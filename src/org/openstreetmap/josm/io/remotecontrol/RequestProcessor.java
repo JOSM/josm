@@ -10,7 +10,6 @@ import java.io.Writer;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,13 +22,9 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -41,6 +36,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadDataHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadObjectHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.OpenApiHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.OpenFileHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
@@ -61,6 +57,11 @@ public class RequestProcessor extends Thread {
             + "\">%s</head><body>%s</body></html>";
 
     /**
+     * The string "JOSM RemoteControl"
+     */
+    public static final String JOSM_REMOTE_CONTROL = "JOSM RemoteControl";
+
+    /**
      * RemoteControl protocol version. Change minor number for compatible
      * interface extensions. Change major number in case of incompatible
      * changes.
@@ -69,7 +70,7 @@ public class RequestProcessor extends Thread {
             .add("protocolversion", Json.createObjectBuilder()
                     .add("major", RemoteControl.protocolMajorVersion)
                     .add("minor", RemoteControl.protocolMinorVersion))
-            .add("application", "JOSM RemoteControl")
+            .add("application", JOSM_REMOTE_CONTROL)
             .add("version", Version.getInstance().getVersion())
             .build().toString();
 
@@ -167,6 +168,7 @@ public class RequestProcessor extends Thread {
             addRequestHandlerClass(AddWayHandler.command, AddWayHandler.class, true);
             addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);
             addRequestHandlerClass(FeaturesHandler.command, FeaturesHandler.class, true);
+            addRequestHandlerClass(OpenApiHandler.command, OpenApiHandler.class, true);
         }
     }
 
@@ -392,7 +394,7 @@ public class RequestProcessor extends Thread {
             boolean endHeaders) throws IOException {
         out.write("HTTP/1.1 " + status + "\r\n");
         out.write("Date: " + new Date() + "\r\n");
-        out.write("Server: JOSM RemoteControl\r\n");
+        out.write("Server: " + JOSM_REMOTE_CONTROL + "\r\n");
         out.write("Content-type: " + contentType + "; charset=" + RESPONSE_CHARSET.name().toLowerCase(Locale.ENGLISH) + "\r\n");
         out.write("Access-Control-Allow-Origin: *\r\n");
         if (endHeaders)
@@ -400,28 +402,22 @@ public class RequestProcessor extends Thread {
     }
 
     /**
-     * Returns the JSON information for the given (if null: all) handlers.
+     * Returns the information for the given (if null: all) handlers.
      * @param handlers the handlers
-     * @return the JSON information for the given (if null: all) handlers
+     * @return the information for the given (if null: all) handlers
      */
-    public static JsonArray getHandlersInfoAsJSON(Collection<String> handlers) {
-        JsonArrayBuilder json = Json.createArrayBuilder();
-        for (String s : Utils.firstNonNull(handlers, RequestProcessor.handlers.keySet())) {
-            JsonObject infoAsJson = getHandlerInfoAsJSON(s);
-            if (infoAsJson != null) {
-                json.add(infoAsJson);
-            }
-        }
-        return json.build();
+    public static Stream<RequestHandler> getHandlersInfo(Collection<String> handlers) {
+        return Utils.firstNonNull(handlers, RequestProcessor.handlers.keySet()).stream()
+                .map(RequestProcessor::getHandlerInfo)
+                .filter(Objects::nonNull);
     }
 
     /**
-     * Returns the JSON information for a given handler.
+     * Returns the information for a given handler.
      * @param cmd handler key
-     * @return JSON information for the given handler
+     * @return the information for the given handler
      */
-    public static JsonObject getHandlerInfoAsJSON(String cmd) {
-        RequestHandler handler;
+    public static RequestHandler getHandlerInfo(String cmd) {
         if (cmd == null) {
             return null;
         }
@@ -431,31 +427,14 @@ public class RequestProcessor extends Thread {
         try {
             Class<?> c = handlers.get(cmd);
             if (c == null) return null;
-            handler = handlers.get(cmd).getConstructor().newInstance();
+            RequestHandler handler = handlers.get(cmd).getConstructor().newInstance();
+            handler.setCommand(cmd);
+            return handler;
         } catch (ReflectiveOperationException ex) {
             Logging.warn("Unknown handler " + cmd);
             Logging.error(ex);
             return null;
         }
-        return getHandlerInfoAsJSON(cmd, handler);
-    }
-
-    private static JsonObject getHandlerInfoAsJSON(String cmd, RequestHandler handler) {
-        JsonObjectBuilder json = Json.createObjectBuilder();
-        json.add("request", cmd);
-        if (handler.getUsage() != null) {
-            json.add("usage", handler.getUsage());
-        }
-        json.add("parameters", toJsonArray(handler.getMandatoryParams()));
-        json.add("optional", toJsonArray(handler.getOptionalParams()));
-        json.add("examples", toJsonArray(handler.getUsageExamples(cmd.substring(1))));
-        return json.build();
-    }
-
-    private static JsonArray toJsonArray(String[] strings) {
-        return Arrays.stream(strings)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), Json::createArrayBuilder))
-                .build();
     }
 
     /**

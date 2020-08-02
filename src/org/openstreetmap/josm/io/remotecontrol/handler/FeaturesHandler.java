@@ -5,6 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.RequestProcessor;
@@ -24,11 +31,37 @@ public class FeaturesHandler extends RequestHandler {
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
         String q = args.get("q");
         Collection<String> handlers = q == null ? null : Arrays.asList(q.split("[,\\s]+", -1));
-        content = RequestProcessor.getHandlersInfoAsJSON(handlers).toString();
+        content = getHandlersInfoAsJSON(handlers).toString();
         contentType = "application/json";
         if (args.containsKey("jsonp")) {
             content = args.get("jsonp") + " && " + args.get("jsonp") + '(' + content + ')';
         }
+    }
+
+    private static JsonArray getHandlersInfoAsJSON(Collection<String> handlers) {
+        JsonArrayBuilder json = Json.createArrayBuilder();
+        RequestProcessor.getHandlersInfo(handlers)
+                .map(FeaturesHandler::getHandlerInfoAsJSON)
+                .forEach(json::add);
+        return json.build();
+    }
+
+    private static JsonObject getHandlerInfoAsJSON(RequestHandler handler) {
+        JsonObjectBuilder json = Json.createObjectBuilder();
+        json.add("request", handler.getCommand());
+        if (handler.getUsage() != null) {
+            json.add("usage", handler.getUsage());
+        }
+        json.add("parameters", toJsonArray(handler.getMandatoryParams()));
+        json.add("optional", toJsonArray(handler.getOptionalParams()));
+        json.add("examples", toJsonArray(handler.getUsageExamples(handler.getCommand())));
+        return json.build();
+    }
+
+    private static JsonArray toJsonArray(String[] strings) {
+        return Arrays.stream(strings)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Json::createArrayBuilder))
+                .build();
     }
 
     @Override

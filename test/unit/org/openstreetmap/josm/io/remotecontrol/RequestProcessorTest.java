@@ -1,9 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,7 @@ public class RequestProcessorTest {
      */
     @Test
     public void testFeaturesDoesNotThrowNPE() {
-        assertDoesNotThrow(() -> RequestProcessor.getHandlersInfoAsJSON(Arrays.asList("add_node", "/add_node", "", null)));
+        assertTrue(RequestProcessor.getHandlersInfo(Arrays.asList("add_node", "/add_node", "", null))
+                .noneMatch(Objects::isNull));
     }
 }

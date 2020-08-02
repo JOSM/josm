@@ -31,7 +31,7 @@ public class RemoteControl {
      * changes.
      */
     static final int protocolMajorVersion = 1;
-    static final int protocolMinorVersion = 10;
+    static final int protocolMinorVersion = 12;
 
     /**
      * Starts the remote control server
@@ -97,5 +97,13 @@ public class RemoteControl {
             }
         }
         throw new UnknownHostException();
+    }
+
+    /**
+     * Returns the RemoteControl HTTP protocol version
+     * @return the RemoteControl HTTP protocol version
+     */
+    public static String getVersion() {
+        return protocolMajorVersion + "." + protocolMinorVersion;
     }
 }
