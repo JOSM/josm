@@ -47,15 +47,25 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
+    public void testName() {
+        Tag2Link.getLinksForTag("name", "foobar", this::addLink);
+        checkLinks("Search on duckduckgo.com // https://duckduckgo.com/?q=foobar",
+                "Search on google.com // https://www.google.com/search?q=foobar");
+    }
+
+    /**
+     * Unit test of function {@link Tag2Link#getLinksForTag}.
+     */
+    @Test
     public void testWebsite() {
         Tag2Link.getLinksForTag("website", "http://www.openstreetmap.org/", this::addLink);
-        checkLinks("Open www.openstreetmap.org // http://www.openstreetmap.org/");
+        checkLinks("Open openstreetmap.org // http://www.openstreetmap.org/");
         links.clear();
         Tag2Link.getLinksForTag("website", "https://www.openstreetmap.org/", this::addLink);
-        checkLinks("Open www.openstreetmap.org // https://www.openstreetmap.org/");
+        checkLinks("Open openstreetmap.org // https://www.openstreetmap.org/");
         links.clear();
         Tag2Link.getLinksForTag("website", "www.openstreetmap.org", this::addLink);
-        checkLinks("Open www.openstreetmap.org // http://www.openstreetmap.org");
+        checkLinks("Open openstreetmap.org // http://www.openstreetmap.org");
     }
 
     /**

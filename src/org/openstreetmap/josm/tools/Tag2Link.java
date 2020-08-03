@@ -8,13 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -22,6 +23,7 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.io.CachedFile;
 
@@ -57,6 +59,9 @@ public final class Tag2Link {
 
     static final ListProperty PREF_SOURCE = new ListProperty("tag2link.source",
             Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2020.8.3/index.json"));
+
+    static final CachingProperty<List<String>> PREF_SEARCH_ENGINES = new ListProperty("tag2link.search",
+            Arrays.asList("https://duckduckgo.com/?q=$1", "https://www.google.com/search?q=$1")).cached();
 
     private Tag2Link() {
         // private constructor for utility class
@@ -138,7 +143,8 @@ public final class Tag2Link {
 
         // Search
         if (key.matches("^(.+[:_])?name([:_]" + languagePattern + ")?$")) {
-            linkConsumer.acceptLink(tr("Search on DuckDuckGo"), "https://duckduckgo.com/?q=" + value);
+            PREF_SEARCH_ENGINES.get().forEach(url ->
+                    linkConsumer.acceptLink(tr("Search on {0}", getHost(url, url)), url.replace("$1", Utils.encodeUrl(value))));
         }
 
         // Common
@@ -191,10 +197,14 @@ public final class Tag2Link {
     }
 
     private static String getLinkName(String url, String fallback) {
+        return tr("Open {0}", getHost(url, fallback));
+    }
+
+    private static String getHost(String url, String fallback) {
         try {
-            return tr("Open {0}", new URL(url).getHost());
+            return new URL(url).getHost().replaceFirst("^www\\.", "");
         } catch (MalformedURLException e) {
-            return tr("Open {0}", fallback);
+            return fallback;
         }
     }
 
