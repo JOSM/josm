@@ -218,10 +218,12 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             if (table.editPreference(gui))
                 applyFilter();
         });
+        table.getSelectionModel().addListSelectionListener(event -> edit.setEnabled(table.getSelectedRowCount() == 1));
 
         JButton reset = new JButton(tr("Reset"));
         p.add(reset, GBC.std().insets(0, 5, 0, 0));
         reset.addActionListener(e -> table.resetPreferences(gui));
+        table.getSelectionModel().addListSelectionListener(event -> reset.setEnabled(table.getSelectedRowCount() > 0));
 
         JButton read = new JButton(tr("Read from file"));
         p.add(read, GBC.std().insets(5, 5, 0, 0));

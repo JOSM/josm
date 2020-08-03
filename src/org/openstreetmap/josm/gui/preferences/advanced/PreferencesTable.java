@@ -20,7 +20,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
@@ -92,12 +91,6 @@ public class PreferencesTable extends JTable {
      */
     public boolean editPreference(final JComponent gui) {
         if (getSelectedRowCount() != 1) {
-            JOptionPane.showMessageDialog(
-                    gui,
-                    tr("Please select the row to edit."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-                    );
             return false;
         }
         final PrefEntry e = (PrefEntry) model.getValueAt(getSelectedRow(), 1);
@@ -276,12 +269,6 @@ public class PreferencesTable extends JTable {
      */
     public void resetPreferences(final JComponent gui) {
         if (getSelectedRowCount() == 0) {
-            JOptionPane.showMessageDialog(
-                    gui,
-                    tr("Please select the row to delete."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-                    );
             return;
         }
         for (int row : getSelectedRows()) {
