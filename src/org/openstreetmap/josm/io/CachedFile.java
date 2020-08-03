@@ -586,4 +586,9 @@ public class CachedFile implements Closeable {
             Utils.deleteFile(f);
         }
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
