@@ -50,7 +50,7 @@ public class ConvertFromMarkerLayerAction extends ConvertToDataLayerAction<Marke
                             .ifPresent(s -> node.put(osmKey, s));
                 }
             } else {
-                Logging.warn("Invalid gpx.to-osm-mapping Einstein setting: expecting even number of entries");
+                Logging.warn("Invalid gpx.to-osm-mapping advanced setting: expecting even number of entries");
             }
             ds.addPrimitive(node);
         }

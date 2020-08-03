@@ -8,13 +8,13 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
-   width="16"
-   height="16"
-   id="svg6"
-   sodipodi:docname="close.svg"
+   width="24"
+   height="24"
+   id="svg4"
+   sodipodi:docname="zoomin.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
-     id="metadata12">
+     id="metadata10">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
@@ -26,7 +26,7 @@
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs10" />
+     id="defs8" />
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -38,27 +38,41 @@
      inkscape:pageshadow="2"
      inkscape:window-width="1680"
      inkscape:window-height="987"
-     id="namedview8"
+     id="namedview6"
      showgrid="true"
-     inkscape:zoom="109.88127"
-     inkscape:cx="4.7485318"
-     inkscape:cy="7.6149249"
+     inkscape:zoom="27.470316"
+     inkscape:cx="12.631707"
+     inkscape:cy="13.315657"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg6">
+     inkscape:current-layer="svg4">
     <inkscape:grid
        type="xygrid"
-       id="grid822" />
+       id="grid817" />
   </sodipodi:namedview>
   <path
-     d="M 4.65,3 A 1.65,1.65 0 0 0 3,4.65 v 7.7 A 1.65,1.65 0 0 0 4.65,14 h 7.7 A 1.65,1.65 0 0 0 14,12.35 V 4.65 A 1.65,1.65 0 0 0 12.35,3 Z"
-     id="path2"
+     style="fill:#ff0000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 11,0 V 4 H 9 L 12.5,8 16,4 H 14 V 0 Z"
+     id="path857"
      inkscape:connector-curvature="0"
-     style="fill:#666666;stroke-width:1.0999999" />
+     sodipodi:nodetypes="cccccccc" />
   <path
-     d="m 5.2,5.2 6.6,6.6 m 0,-6.6 -6.6,6.6"
-     id="path4"
+     style="fill:#ff0000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 11,24 V 20 H 9 l 3.5,-4 3.5,4 h -2 v 4 z"
+     id="path857-6"
      inkscape:connector-curvature="0"
-     style="stroke:#ffffff;stroke-width:2.75" />
+     sodipodi:nodetypes="cccccccc" />
+  <path
+     style="fill:#ff0000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 24,10 H 20 V 8 l -4,3.5 4,3.5 v -2 h 4 z"
+     id="path857-0"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccccccc" />
+  <path
+     style="fill:#ff0000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 0,10 H 4 V 8 L 8,11.5 4,15 V 13 H 0 Z"
+     id="path857-6-7"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccccccc" />
 </svg>

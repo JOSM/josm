@@ -110,10 +110,10 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         m.put("colormode.dynamic-range", false);
         m.put("colormode.heatmap.colormap", 0);
         m.put("colormode.heatmap.gain", 0);
-        m.put("colormode.heatmap.line-extra", false); //Einstein only
+        m.put("colormode.heatmap.line-extra", false); //Expert mode only
         m.put("colormode.heatmap.lower-limit", 0);
         m.put("colormode.heatmap.use-points", false);
-        m.put("colormode.time.min-distance", 60); //Einstein only
+        m.put("colormode.time.min-distance", 60); //Expert mode only
         m.put("colormode.velocity.tune", 45);
         m.put("lines", -1);
         m.put("lines.alpha-blend", false);
@@ -130,8 +130,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         m.put("markers.audio.pattern", "?{ '{name}' | '{desc}' | '{" + Marker.MARKER_FORMATTED_OFFSET + "}' }");
         m.put("points.hdopcircle", false);
         m.put("points.large", false);
-        m.put("points.large.alpha", -1); //Einstein only
-        m.put("points.large.size", 3); //Einstein only
+        m.put("points.large.alpha", -1); //Expert mode only
+        m.put("points.large.size", 3); //Expert mode only
         return Collections.unmodifiableMap(m);
     }
 

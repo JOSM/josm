@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<!-- ClipArt by Arvin61r58 (http://openclipart.org/user-detail/Arvin61r58) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   id="svg3445"
+   version="1.1"
+   sodipodi:docname="pin21.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     id="namedview25"
+     showgrid="true"
+     inkscape:zoom="50.4375"
+     inkscape:cx="8"
+     inkscape:cy="8"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3445">
+    <inkscape:grid
+       type="xygrid"
+       id="grid835" />
+  </sodipodi:namedview>
+  <title
+     id="title4354">Push Pin 02b</title>
+  <defs
+     id="defs3447">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient836">
+      <stop
+         style="stop-color:#ff6363;stop-opacity:1"
+         offset="0"
+         id="stop832" />
+      <stop
+         style="stop-color:#cf0000;stop-opacity:1"
+         offset="1"
+         id="stop834" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4289">
+      <stop
+         style="stop-color:#c90000;stop-opacity:1"
+         offset="0"
+         id="stop4295" />
+      <stop
+         style="stop-color:#ff0d0d;stop-opacity:1"
+         offset="1"
+         id="stop4291" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4271">
+      <stop
+         style="stop-color:#ff6767;stop-opacity:1"
+         offset="0"
+         id="stop4273" />
+      <stop
+         style="stop-color:#d10000;stop-opacity:1"
+         offset="1"
+         id="stop4275" />
+    </linearGradient>
+    <radialGradient
+       xlink:href="#linearGradient4271"
+       id="radialGradient4277"
+       cx="49.022663"
+       cy="617.35596"
+       fx="49.022663"
+       fy="617.35596"
+       r="90.419113"
+       gradientTransform="matrix(0.03819605,-3.6980631e-5,9.1952535e-5,0.02700031,-12.267034,-11.882471)"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad" />
+    <linearGradient
+       xlink:href="#linearGradient4289"
+       id="linearGradient4287"
+       x1="283.95834"
+       y1="445.63168"
+       x2="350.92413"
+       y2="516.63171"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.04964523,0,0,0.05016717,24.023982,-16.25555)" />
+    <linearGradient
+       gradientTransform="matrix(-0.07739786,0.00903498,0.00879586,0.06673064,30.184026,-25.84271)"
+       gradientUnits="userSpaceOnUse"
+       y2="557.18549"
+       x2="430.08148"
+       y1="514.18549"
+       x1="282.17548"
+       id="linearGradient4487"
+       xlink:href="#linearGradient4481" />
+    <linearGradient
+       id="linearGradient4481">
+      <stop
+         id="stop4483"
+         offset="0"
+         style="stop-color:#909090;stop-opacity:0" />
+      <stop
+         id="stop4485"
+         offset="1"
+         style="stop-color:#dddddd;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient836"
+       id="radialGradient838"
+       cx="55.045319"
+       cy="81.1791"
+       fx="55.045319"
+       fy="81.1791"
+       r="72.111221"
+       gradientTransform="matrix(0.05,0,0,0.03984384,-13.532794,-6.59811)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <metadata
+     id="metadata3450">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Push Pin 02b</dc:title>
+        <dc:description>Red push-pin (thumbtack)</dc:description>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Arvin61r58</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>Openclipart.org</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:identifier>https://openclipart.org/</dc:identifier>
+        <dc:source>https://openclipart.org/user-detail/Arvin61r58</dc:source>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>push pin</rdf:li>
+            <rdf:li>thumbtack</rdf:li>
+            <rdf:li>office</rdf:li>
+            <rdf:li>stationery</rdf:li>
+            <rdf:li>office supply</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="opacity:1;fill:url(#linearGradient4487);fill-opacity:1;stroke:none;stroke-width:0.02447031;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 11.852662,9.71817 a 2.2992099,1.8818859 36.10408 0 1 1.077505,0.82771 2.2992099,1.8818859 36.10408 0 1 -0.254205,2.77355 2.2992099,1.8818859 36.10408 0 1 -2.644744,-0.36519 c -0.2958839,0.10599 -0.6188524,0.24528 -0.9637084,0.41139 a 2.8740123,2.3523573 36.104086 0 1 -0.909489,2.19925 2.8740123,2.3523573 36.104086 0 1 -3.811229,-0.97021 2.8740123,2.3523573 36.104086 0 1 -0.011297,-0.0152 c -0.5044431,0.12373 -0.9797171,0.23831 -1.0285075,0.25045 -0.1088595,0.0271 -2.33805959,0.60118 -2.34985209,0.57674 -0.0118095,-0.0244 1.99174259,-1.06627 2.08881009,-1.11781 0.041589,-0.0221 0.4325985,-0.23336 0.857297,-0.46092 a 2.8740123,2.3523573 36.104086 0 1 0.7613002,-2.70013 2.8740123,2.3523573 36.104086 0 1 3.5159465,0.64586 c 0.3560794,-0.0663 0.684605,-0.13831 0.9782005,-0.21756 A 2.2992099,1.8818859 36.10408 0 1 9.8811614,9.76975 2.2992099,1.8818859 36.10408 0 1 11.852665,9.71815 Z"
+     id="path3728-9"
+     inkscape:connector-curvature="0" />
+  <path
+     style="opacity:1;fill:#4d4d4d;fill-opacity:1;stroke:none;stroke-width:0.02447031;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path3728"
+     d="M 0.8,15.49972 6.067281,11.507537 4.1447826,9.7517878 Z"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccc" />
+  <ellipse
+     transform="matrix(-0.8653927,-0.50109428,-0.49666975,0.86793961,0,0)"
+     ry="3.5602345"
+     rx="4.4757013"
+     cy="4.7845259"
+     cx="-10.337795"
+     id="ellipse3726"
+     style="opacity:1;fill:url(#radialGradient4277);fill-opacity:1;stroke:#c30000;stroke-width:0.05000005;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     style="opacity:1;fill:url(#linearGradient4287);fill-opacity:1;stroke:#c30000;stroke-width:0.04999973;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 12.682119,5.4719095 c -1.015469,0.0441 -2.284454,1.60635 -3.6586495,3.79774 -0.938471,1.4965605 -2.2656786,0.57909 -2.7098756,0.13964 -0.4157505,-0.4113 -1.2710864,-1.60895 0.1864575,-2.59951 2.1342696,-1.45046 3.6466766,-2.77538 3.6586496,-3.79774 l 1.261708,1.22993 z"
+     id="rect3717"
+     inkscape:connector-curvature="0" />
+  <ellipse
+     style="opacity:1;fill:url(#radialGradient838);fill-opacity:1;stroke:#c30000;stroke-width:0.05000032;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path3715"
+     cx="-11.897885"
+     cy="-2.5592556"
+     rx="3.5805612"
+     ry="2.8481879"
+     transform="matrix(-0.8653927,-0.50109428,-0.49666975,0.86793961,0,0)" />
+</svg>

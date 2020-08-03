@@ -11,7 +11,7 @@
    width="16px"
    height="16px"
    id="svg4"
-   sodipodi:docname="rectanglex2.svg"
+   sodipodi:docname="rectangle_plus.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata10">
@@ -40,9 +40,9 @@
      inkscape:window-height="987"
      id="namedview6"
      showgrid="true"
-     inkscape:zoom="59.561768"
-     inkscape:cx="4.0862583"
-     inkscape:cy="10.518394"
+     inkscape:zoom="27.470318"
+     inkscape:cx="3.5541923"
+     inkscape:cy="11.80378"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -57,4 +57,32 @@
      inkscape:connector-curvature="0"
      style="fill:#ffffff;stroke:#000000"
      sodipodi:nodetypes="cccccccccc" />
+  <rect
+     style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.83990926;stroke-opacity:1;paint-order:normal"
+     id="rect827"
+     width="3"
+     height="7"
+     x="11"
+     y="9" />
+  <rect
+     style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.83990926;stroke-opacity:1;paint-order:normal"
+     id="rect829"
+     width="7"
+     height="3"
+     x="9"
+     y="11" />
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.83990926;stroke-opacity:1;paint-order:normal"
+     id="rect831"
+     width="5"
+     height="1"
+     x="10"
+     y="12" />
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.83990926;stroke-opacity:1;paint-order:normal"
+     id="rect833"
+     width="1"
+     height="5"
+     x="12"
+     y="10" />
 </svg>

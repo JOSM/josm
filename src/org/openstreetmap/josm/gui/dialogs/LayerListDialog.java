@@ -539,7 +539,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                     } else {
                         g.setColor(c);
                     }
-                    g.fillOval(x, y + 1, getIconWidth(), getIconHeight() - 2);
+                    g.fillOval(x, y + 2, getIconWidth(), getIconHeight() - 3);
                 }
                 super.paintIcon(comp, g, x, y);
             }

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg3650"
+   sodipodi:docname="funnel5.svg"
+   viewBox="0 0 24 23.999999"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   width="24"
+   height="24">
+  <defs
+     id="defs3652">
+    <linearGradient
+       id="linearGradient3608"
+       y2="299.51001"
+       gradientUnits="userSpaceOnUse"
+       x2="436"
+       y1="299.51001"
+       x1="166.86"
+       inkscape:collect="always"
+       gradientTransform="matrix(0.0658316,0,0,0.05302175,-7.3435315,1016.7455)">
+      <stop
+         id="stop3604"
+         style="stop-color:#959595;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3606"
+         style="stop-color:#ffffff"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3648"
+       y2="340.57001"
+       gradientUnits="userSpaceOnUse"
+       y1="340.57001"
+       gradientTransform="matrix(0.29320007,0,0,0.31944637,-44.676182,932.91753)"
+       x2="225.5"
+       x1="164.5"
+       inkscape:collect="always">
+      <stop
+         id="stop3620"
+         style="stop-color:#ffffff"
+         offset="0" />
+      <stop
+         id="stop3622"
+         style="stop-color:#b9b9b9;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     inkscape:window-y="-8"
+     pagecolor="#ffffff"
+     inkscape:window-height="987"
+     inkscape:window-maximized="1"
+     inkscape:zoom="16"
+     inkscape:window-x="-8"
+     showgrid="true"
+     borderopacity="1.0"
+     inkscape:current-layer="layer1"
+     inkscape:cx="3.379242"
+     inkscape:cy="15.837127"
+     inkscape:window-width="1680"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="px">
+    <inkscape:grid
+       type="xygrid"
+       id="grid838" />
+  </sodipodi:namedview>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,-1028.37)">
+    <path
+       inkscape:connector-curvature="0"
+       d="m 3.7033383,1032.6982 v 3.1945 l 7.3303247,7.986 v 6.3889 c 1.108105,0.5572 1.75927,0.639 2.932007,0 v -6.3889 l 7.330325,-7.986 v -3.1945 z"
+       style="fill:url(#linearGradient3648);stroke:#525452;stroke-width:1.30663478;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       sodipodi:nodetypes="ccccccccc"
+       id="path2818" />
+    <path
+       sodipodi:start="0.040363112"
+       sodipodi:end="0.0036591928"
+       sodipodi:cx="12.499988"
+       sodipodi:cy="1032.6259"
+       sodipodi:open="true"
+       d="m 21.339474,1032.7389 a 8.8466921,2.8025787 0 0 1 -9.115345,2.6882 8.8466921,2.8025787 0 0 1 -8.5686905,-2.8629 8.8466921,2.8025787 0 0 1 8.9580945,-2.7407 8.8466921,2.8025787 0 0 1 8.733087,2.8126"
+       sodipodi:type="arc"
+       style="fill:url(#linearGradient3608);stroke:#525452;stroke-width:1.30663478;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       sodipodi:ry="2.8025787"
+       sodipodi:rx="8.8466921"
+       id="path2816" />
+  </g>
+  <metadata
+     id="metadata14">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2011-05-22T21:37:46</dc:date>
+        <dc:description>simple funnel</dc:description>
+        <dc:source>https://openclipart.org/detail/140041/green-funnel-by-fabuio</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Fabuio</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>entonnoir</rdf:li>
+            <rdf:li>funnel</rdf:li>
+            <rdf:li>imbuto</rdf:li>
+            <rdf:li>tool</rdf:li>
+            <rdf:li>water</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

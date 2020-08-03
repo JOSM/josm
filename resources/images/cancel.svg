@@ -15,7 +15,7 @@
    id="svg6361"
    sodipodi:version="0.32"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="cancel4.svg"
+   sodipodi:docname="cancel7.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.1">
   <defs
@@ -205,7 +205,7 @@
        fy="33.30225"
        r="12.30225"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.64250439,0,0,0.64492114,-3.4379088,18.15786)" />
+       gradientTransform="matrix(0.68885167,0,0,0.69144276,-4.7349132,16.643362)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4981"
@@ -236,7 +236,7 @@
        x2="24.30225"
        y2="35.05225"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.37928667,0,0,0.38071334,2.9588707,26.956565)" />
+       gradientTransform="matrix(0.40664664,0,0,0.40817623,2.1233002,26.076765)" />
   </defs>
   <sodipodi:namedview
      inkscape:guide-bbox="true"
@@ -247,11 +247,11 @@
      borderopacity="0.15294118"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="7.2578367"
-     inkscape:cy="9.2078776"
+     inkscape:zoom="6.4609375"
+     inkscape:cx="-1.817426"
+     inkscape:cy="1.218867"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
      inkscape:window-width="1680"
@@ -336,8 +336,8 @@
        sodipodi:nodetypes="cccccccc"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:url(#radialGradient2239);fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient2262);stroke-width:0.37999916;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 9.3184361,31.715486 -1.6184822,1.624569 2.8579531,2.868703 -2.8579531,2.868703 1.6184822,1.62457 2.8579549,-2.868704 2.857953,2.868704 1.618482,-1.62457 -2.857953,-2.868703 2.857953,-2.868703 -1.618482,-1.624569 -2.857953,2.868702 z"
+       style="fill:url(#radialGradient2239);fill-opacity:1;fill-rule:evenodd;stroke:url(#linearGradient2262);stroke-width:0.5128929;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 8.9416151,31.178972 -1.7352321,1.741758 3.06411,3.075638 -3.06411,3.075638 1.7352321,1.741759 3.0641119,-3.07564 3.064113,3.07564 1.735231,-1.741759 -3.064112,-3.075638 3.064112,-3.075638 -1.735231,-1.741758 -3.064113,3.075638 z"
        id="path2787"
        inkscape:connector-curvature="0" />
   </g>

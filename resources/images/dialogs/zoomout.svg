@@ -8,10 +8,10 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
-   width="16px"
-   height="16px"
+   width="24"
+   height="24"
    id="svg4"
-   sodipodi:docname="rectanglex2.svg"
+   sodipodi:docname="zoomout.svg"
    inkscape:version="0.92.3 (2405546, 2018-03-11)">
   <metadata
      id="metadata10">
@@ -40,9 +40,9 @@
      inkscape:window-height="987"
      id="namedview6"
      showgrid="true"
-     inkscape:zoom="59.561768"
-     inkscape:cx="4.0862583"
-     inkscape:cy="10.518394"
+     inkscape:zoom="27.470316"
+     inkscape:cx="12.631707"
+     inkscape:cy="13.315657"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -51,10 +51,32 @@
        type="xygrid"
        id="grid817" />
   </sodipodi:namedview>
-  <path
-     d="m 0.5,9.1 v 0.4 h 9 v -9 H 9.1 Z m 7,-4.35 V 7.5 H 4.75 Z"
-     id="path2"
-     inkscape:connector-curvature="0"
-     style="fill:#ffffff;stroke:#000000"
-     sodipodi:nodetypes="cccccccccc" />
+  <g
+     transform="translate(0,-24)"
+     id="g907">
+    <path
+       sodipodi:nodetypes="cccccccc"
+       inkscape:connector-curvature="0"
+       id="path857"
+       d="M 11,32 V 28 H 9 l 3.5,-4 3.5,4 h -2 v 4 z"
+       style="fill:#ff0000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="cccccccc"
+       inkscape:connector-curvature="0"
+       id="path857-6"
+       d="m 11,40 v 4 H 9 l 3.5,4 3.5,-4 h -2 v -4 z"
+       style="fill:#ff0000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="cccccccc"
+       inkscape:connector-curvature="0"
+       id="path857-0"
+       d="m 16,34 h 4 v -2 l 4,3.5 -4,3.5 v -2 h -4 z"
+       style="fill:#ff0000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="cccccccc"
+       inkscape:connector-curvature="0"
+       id="path857-6-7"
+       d="M 8,34 H 4 V 32 L 0,35.5 4,39 v -2 h 4 z"
+       style="fill:#ff0000;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
 </svg>

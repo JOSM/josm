@@ -260,7 +260,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
                     tr("Overwrite"),
                     tr("Overwrite"), tr("Cancel"))
                 .setContent(tr("File exists. Overwrite?"))
-                .setButtonIcons("save_as", "cancel")
+                .setButtonIcons("save", "cancel")
                 .showDialog()
                 .getValue() == 1;
         }

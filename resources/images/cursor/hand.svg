@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:docname="hand9.svg"
+   height="32"
+   width="32"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <defs
+     id="defs13" />
+  <sodipodi:namedview
+     id="base"
+     bordercolor="#666666"
+     inkscape:pageshadow="2"
+     inkscape:window-y="-8"
+     pagecolor="#ffffff"
+     inkscape:window-height="987"
+     inkscape:window-maximized="1"
+     inkscape:zoom="22.627417"
+     inkscape:window-x="-8"
+     showgrid="true"
+     borderopacity="1.0"
+     inkscape:current-layer="layer1"
+     inkscape:cx="12.585631"
+     inkscape:cy="18.788064"
+     inkscape:window-width="1680"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="px"
+     units="px">
+    <inkscape:grid
+       type="xygrid"
+       id="grid820" />
+  </sodipodi:namedview>
+  <g
+     id="layer1"
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,-1090.5196)">
+    <path
+       id="rect3906"
+       sodipodi:nodetypes="sccccsccccccccccccccccccsccccs"
+       style="color:#000000;fill:#ffffff;stroke:#000000;stroke-width:0.40000001;stroke-miterlimit:4;stroke-dasharray:none"
+       d="m 5.9999171,1092.4592 c -0.6678197,0 -1.5325166,0.6368 -1.5325166,1.0581 l 0.065199,10.1959 c -0.017123,0.3595 0.056421,0.4232 -0.070046,0.1602 l -1.7438434,-3.2775 c -0.5740696,-0.6076 -0.9391759,-0.7269 -1.6243537,-0.474 -0.49608752,0.1831 -0.68929032,1.8094 -0.42578064,2.3296 l 1.63901794,4.5328 3.6405776,4.8146 0.8245866,2.2078 7.5962361,-0.05 2.131006,-7.9223 c 0.0053,-0.5486 -0.008,-2.5324 0,-3.3016 -0.16608,-0.539 -1.556961,-2.1784 -2.085573,-2.1202 -0.606963,0 -0.914427,1.4728 -0.914427,1.8941 v 0.445 c 0.105946,0.3562 -0.0391,0.4493 0,4e-4 v -2.4903 c 0,-0.4212 -0.890425,-0.9823 -1.4974,-0.9823 h -0.0052 c -0.606963,0 -1.4974,0.5607 -1.4974,0.9819 v 1.1693 c 0.11064,0.3851 -0.02641,0.4978 0,-10e-5 v -3.1345 c 0,-0.4213 -0.8930256,-0.981 -1.5,-0.981 -0.6069738,0 -1.5000002,0.5598 -1.5000002,0.9811 v 2.9221 c 0.047951,0.3532 0.024272,0.4427 0,6e-4 v -7.8973 c -0.013864,-0.4347 -0.839582,-1.0583 -1.5000827,-1.0624 z"
+       inkscape:connector-curvature="0" />
+  </g>
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2010-05-04T21:38:36</dc:date>
+        <dc:description>hand cursor</dc:description>
+        <dc:source>https://openclipart.org/detail/58705/hand-by-voyeg3r</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>voyeg3r</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>computer</rdf:li>
+            <rdf:li>cursor</rdf:li>
+            <rdf:li>hand</rdf:li>
+            <rdf:li>mouse</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
