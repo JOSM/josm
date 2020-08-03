@@ -22,6 +22,8 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.preferences.ListProperty;
+import org.openstreetmap.josm.io.CachedFile;
 
 /**
  * Extracts web links from OSM tags.
@@ -53,6 +55,9 @@ public final class Tag2Link {
             .map(Pattern::quote)
             .collect(Collectors.joining("|"));
 
+    static final ListProperty PREF_SOURCE = new ListProperty("tag2link.source",
+            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2020.7.15/index.json"));
+
     private Tag2Link() {
         // private constructor for utility class
     }
@@ -76,7 +81,9 @@ public final class Tag2Link {
     public static void initialize() {
         try {
             wikidataRules.clear();
-            initializeFromResources();
+            for (String source : PREF_SOURCE.get()) {
+                initializeFromResources(new CachedFile(source));
+            }
         } catch (Exception e) {
             Logging.error("Failed to initialize tag2link rules");
             Logging.error(e);
@@ -86,12 +93,12 @@ public final class Tag2Link {
     /**
      * Initializes the tag2link rules from the resources.
      *
+     * @param resource the source
      * @throws IOException in case of I/O error
      */
-    private static void initializeFromResources() throws IOException {
-        final String resource = "META-INF/resources/webjars/tag2link/2020.7.15/index.json";
+    private static void initializeFromResources(CachedFile resource) throws IOException {
         final JsonArray rules;
-        try (InputStream inputStream = Tag2Link.class.getClassLoader().getResourceAsStream(resource);
+        try (InputStream inputStream = resource.getInputStream();
              JsonReader jsonReader = Json.createReader(inputStream)) {
             rules = jsonReader.readArray();
         }
