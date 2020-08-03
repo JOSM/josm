@@ -114,6 +114,9 @@ public final class DeleteAction extends JosmAction {
      * @since 12760
      */
     public static boolean confirmRelationDeletion(Collection<Relation> relations) {
+        if (relations.stream().allMatch(Relation::isNew)) {
+            return true;
+        }
         JPanel msg = new JPanel(new GridBagLayout());
         msg.add(new JMultilineLabel("<html>" + trn(
                 "You are about to delete {0} relation: {1}"
