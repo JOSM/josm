@@ -1824,8 +1824,8 @@
             <link wiki="Key:covered" />
             <space />
             <key key="covered" value="arcade" />
-            <check key="arcade:left" value_on="open" text="Open on left side" />
-            <check key="arcade:right" value_on="open" text="Open on right side" />
+            <check key="arcade:left" value_on="open" text="Open on left side" disable_off="true" />
+            <check key="arcade:right" value_on="open" text="Open on right side" disable_off="true" />
             <optional>
                 <reference ref="name_layer" />
                 <text key="width" text="Width (meters)" />
@@ -1835,8 +1835,8 @@
             <link wiki="Key:covered" />
             <space />
             <key key="covered" value="colonnade" />
-            <check key="colonnade:left" value_on="open" text="Open on left side" />
-            <check key="colonnade:right" value_on="open" text="Open on right side" />
+            <check key="colonnade:left" value_on="open" text="Open on left side" disable_off="true" />
+            <check key="colonnade:right" value_on="open" text="Open on right side" disable_off="true" />
             <optional>
                 <reference ref="name_layer" />
                 <text key="width" text="Width (meters)" />
@@ -1846,8 +1846,8 @@
             <link wiki="Key:tunnel" />
             <space />
             <key key="tunnel" value="avalanche_protector" />
-            <check key="avalanche_protector:left" value_on="open" text="Open on left side" />
-            <check key="avalanche_protector:right" value_on="open" text="Open on right side" />
+            <check key="avalanche_protector:left" value_on="open" text="Open on left side" disable_off="true" />
+            <check key="avalanche_protector:right" value_on="open" text="Open on right side" disable_off="true" />
             <optional>
                 <reference ref="name_layer" />
                 <text key="width" text="Width (meters)" />
@@ -6212,7 +6212,7 @@
                 <reference ref="cables_circuits" />
                 <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" values_sort="false" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-                <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
+                <check key="communication" text="Used for data communications" value_on="line" disable_off="true" />
             </optional>
         </item> <!-- Power Line -->
         <item name="Power Cable" icon="presets/power/cable.svg" type="way" preset_name_label="true">
@@ -6225,7 +6225,7 @@
                 <reference ref="cables_circuits" />
                 <combo key="location" text="Location" values="underground,underwater,overground" values_context="power cable" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
-                <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
+                <check key="communication" text="Used for data communications" value_on="line" disable_off="true" />
             </optional>
         </item> <!-- Power Cable -->
     </group> <!-- Power -->
@@ -8039,8 +8039,11 @@
             <link wiki="Tag:landuse=farmland" />
             <space />
             <key key="landuse" value="farmland" />
-            <combo key="crop" text="Crop" values="barley,cereal,corn,grass,hop,rape,rice,soy,sugarcane,tea,wheat" values_context="crop" />
-            <reference ref="optional_name" />
+            <optional>
+                <combo key="crop" text="Crop" values="barley,cereal,corn,grass,hop,rape,rice,soy,sugarcane,tea,wheat" values_context="crop" />
+                <text key="name" text="Name" />
+                <check key="irrigation" text="Center pivot irrigation" value_on="pivot" disable_off="true" />
+            </optional>
         </item> <!-- Farmland -->
         <item name="Meadow" icon="presets/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:landuse=meadow" />
