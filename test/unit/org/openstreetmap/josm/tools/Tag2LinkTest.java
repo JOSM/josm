@@ -19,7 +19,7 @@ public class Tag2LinkTest {
 
     List<String> links = new ArrayList<>();
 
-    void addLink(String name, String url) {
+    void addLink(String name, String url, ImageResource icon) {
         links.add(name + " // " + url);
     }
 

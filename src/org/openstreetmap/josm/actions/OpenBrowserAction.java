@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -36,7 +37,22 @@ public class OpenBrowserAction extends AbstractAction {
      * @param url the URL to launch
      */
     public OpenBrowserAction(String name, String url) {
-        new ImageProvider("help/internet").getResource().attachImageIcon(this, true);
+        this(name, url, null);
+    }
+
+    /**
+     * Constructs a new {@link OpenBrowserAction}.
+     * @param name the name of this action
+     * @param url the URL to launch
+     * @param icon the action icon
+     * @since 16839
+     */
+    public OpenBrowserAction(String name, String url, ImageResource icon) {
+        if (icon == null) {
+            new ImageProvider("help/internet").getResource().attachImageIcon(this, true);
+        } else {
+            icon.attachImageIcon(this, true);
+        }
         this.urls.add(url);
         this.originalName = name;
         updateNameAndDescription();

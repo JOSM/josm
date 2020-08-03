@@ -10,8 +10,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +25,7 @@ import javax.json.JsonArray;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
@@ -76,8 +80,9 @@ public final class Tag2Link {
          * Performs the operation on the given arguments.
          * @param name the name/label of the link
          * @param url the URL of the link
+         * @param icon the icon to use
          */
-        void acceptLink(String name, String url);
+        void acceptLink(String name, String url, ImageResource icon);
     }
 
     /**
@@ -141,10 +146,16 @@ public final class Tag2Link {
             return;
         }
 
+        final HashMap<OsmPrimitiveType, Optional<ImageResource>> memoize = new HashMap<>();
+        final Supplier<ImageResource> imageResource = () -> memoize
+                .computeIfAbsent(OsmPrimitiveType.NODE, type -> OsmPrimitiveImageProvider.getResource(key, value, type))
+                .orElse(null);
+
         // Search
         if (key.matches("^(.+[:_])?name([:_]" + languagePattern + ")?$")) {
+            final ImageResource search = new ImageProvider("dialogs/search").getResource();
             PREF_SEARCH_ENGINES.get().forEach(url ->
-                    linkConsumer.acceptLink(tr("Search on {0}", getHost(url, url)), url.replace("$1", Utils.encodeUrl(value))));
+                    linkConsumer.acceptLink(tr("Search on {0}", getHost(url, url)), url.replace("$1", Utils.encodeUrl(value)), search));
         }
 
         // Common
@@ -154,16 +165,16 @@ public final class Tag2Link {
                 ? "http://" + value
                 : null;
         if (key.matches("^(.+[:_])?website([:_].+)?$") && validURL != null) {
-            linkConsumer.acceptLink(getLinkName(validURL, key), validURL);
+            linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get());
         }
         if (key.matches("^(.+[:_])?source([:_].+)?$") && validURL != null) {
-            linkConsumer.acceptLink(getLinkName(validURL, key), validURL);
+            linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get());
         }
         if (key.matches("^(.+[:_])?url([:_].+)?$") && validURL != null) {
-            linkConsumer.acceptLink(getLinkName(validURL, key), validURL);
+            linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get());
         }
         if (key.matches("image") && validURL != null) {
-            linkConsumer.acceptLink(tr("View image"), validURL);
+            linkConsumer.acceptLink(tr("View image"), validURL, imageResource.get());
         }
 
         // Wikimedia
@@ -172,27 +183,29 @@ public final class Tag2Link {
         if (keyMatcher.matches() && valueMatcher.matches()) {
             final String lang = Utils.firstNotEmptyString("en", keyMatcher.group("lang"), valueMatcher.group("lang"));
             final String url = "https://" + lang + ".wikipedia.org/wiki/" + valueMatcher.group("article").replace(' ', '_');
-            linkConsumer.acceptLink(tr("View Wikipedia article"), url);
+            linkConsumer.acceptLink(tr("View Wikipedia article"), url, imageResource.get());
         }
         if (key.matches("(.*:)?wikidata")) {
             OsmUtils.splitMultipleValues(value)
-                    .forEach(q -> linkConsumer.acceptLink(tr("View Wikidata item"), "https://www.wikidata.org/wiki/" + q));
+                    .forEach(q -> linkConsumer.acceptLink(tr("View Wikidata item"), "https://www.wikidata.org/wiki/" + q, imageResource.get()));
         }
         if (key.matches("(.*:)?species")) {
             final String url = "https://species.wikimedia.org/wiki/" + value;
-            linkConsumer.acceptLink(getLinkName(url, key), url);
+            linkConsumer.acceptLink(getLinkName(url, key), url, imageResource.get());
         }
         if (key.matches("wikimedia_commons|image") && value.matches("(?i:File):.*")) {
-            linkConsumer.acceptLink(tr("View image on Wikimedia Commons"), "https://commons.wikimedia.org/wiki/" + value);
+            String url = "https://commons.wikimedia.org/wiki/" + value;
+            linkConsumer.acceptLink(tr("View image on Wikimedia Commons"), url, imageResource.get());
         }
         if (key.matches("wikimedia_commons|image") && value.matches("(?i:Category):.*")) {
-            linkConsumer.acceptLink(tr("View category on Wikimedia Commons"), "https://commons.wikimedia.org/wiki/" + value);
+            String url = "https://commons.wikimedia.org/wiki/" + value;
+            linkConsumer.acceptLink(tr("View category on Wikimedia Commons"), url, imageResource.get());
         }
 
         wikidataRules.getValues(key).forEach(urlFormatter -> {
             final String formattedValue = valueFormatter.getOrDefault(key, x -> x).apply(value);
             final String url = urlFormatter.replace("$1", formattedValue);
-            linkConsumer.acceptLink(getLinkName(url, key), url);
+            linkConsumer.acceptLink(getLinkName(url, key), url, imageResource.get());
         });
     }
 

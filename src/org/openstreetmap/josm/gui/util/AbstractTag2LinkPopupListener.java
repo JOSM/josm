@@ -40,7 +40,7 @@ public abstract class AbstractTag2LinkPopupListener implements PopupMenuListener
     }
 
     protected void addLinks(JPopupMenu popup, String key, String value) {
-        Tag2Link.getLinksForTag(key, value, (name, url) -> {
+        Tag2Link.getLinksForTag(key, value, (name, url, icon) -> {
             if (itemList.isEmpty()) {
                 itemList.add(popup.add(new JPopupMenu.Separator()));
             }
@@ -48,7 +48,7 @@ public abstract class AbstractTag2LinkPopupListener implements PopupMenuListener
             if (browserActions.containsKey(name)) {
                 browserActions.get(name).addUrl(url);
             } else {
-                final OpenBrowserAction action = new OpenBrowserAction(name, url);
+                final OpenBrowserAction action = new OpenBrowserAction(name, url, icon);
                 browserActions.put(name, action);
                 itemList.add(popup.add(action));
             }
