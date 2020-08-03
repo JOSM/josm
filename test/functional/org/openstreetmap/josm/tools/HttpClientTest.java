@@ -35,7 +35,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Tests the {@link HttpClient} using the webservice <a href="https://httpbin.org/">https://httpbin.org/</a>.
+ * Tests the {@link HttpClient} using the webservice <a href="https://httpbingo.org/">https://httpbingo.org/</a>.
  */
 public class HttpClientTest {
 
@@ -82,8 +82,8 @@ public class HttpClientTest {
      */
     @Test
     public void testConstructorGetterSetter() throws IOException {
-        final HttpClient client = HttpClient.create(new URL("https://httpbin.org/"));
-        assertThat(client.getURL(), is(new URL("https://httpbin.org/")));
+        final HttpClient client = HttpClient.create(new URL("https://httpbingo.org/"));
+        assertThat(client.getURL(), is(new URL("https://httpbingo.org/")));
         assertThat(client.getRequestMethod(), is("GET"));
         assertThat(client.getRequestHeader("Accept"), is("*/*"));
         client.setAccept("text/html");
@@ -103,20 +103,20 @@ public class HttpClientTest {
      */
     @Test
     public void testGet() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/get?foo=bar")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/get?foo=bar")).connect(progress);
         assertThat(response.getRequestMethod(), is("GET"));
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getResponseMessage(), equalToIgnoringCase("OK"));
-        assertThat(response.getContentType(), is("application/json"));
-        assertThat(response.getHeaderField("Content-Type"), is("application/json"));
-        assertThat(response.getHeaderField("Content-TYPE"), is("application/json"));
-        assertThat(response.getHeaderFields().get("Content-Type"), is(Collections.singletonList("application/json")));
-        assertThat(response.getHeaderFields().get("Content-TYPE"), is(Collections.singletonList("application/json")));
+        assertThat(response.getContentType(), is("application/json; encoding=utf-8"));
+        assertThat(response.getHeaderField("Content-Type"), is("application/json; encoding=utf-8"));
+        assertThat(response.getHeaderField("Content-TYPE"), is("application/json; encoding=utf-8"));
+        assertThat(response.getHeaderFields().get("Content-Type"), is(Collections.singletonList("application/json; encoding=utf-8")));
+        assertThat(response.getHeaderFields().get("Content-TYPE"), is(Collections.singletonList("application/json; encoding=utf-8")));
         try (InputStream in = response.getContent();
              JsonReader json = JsonProvider.provider().createReader(in)) {
             final JsonObject root = json.readObject();
-            assertThat(root.getJsonObject("args").getString("foo"), is("bar"));
-            assertThat(root.getString("url"), is("https://httpbin.org/get?foo=bar"));
+            assertThat(root.getJsonObject("args").getJsonArray("foo").getString(0), is("bar"));
+            assertThat(root.getString("url"), is("https://httpbingo.org/get?foo=bar"));
             assertThat(root.getJsonObject("headers").get("Cache-Control"), nullValue());
             assertThat(root.getJsonObject("headers").get("Pragma"), nullValue());
         }
@@ -128,12 +128,12 @@ public class HttpClientTest {
      */
     @Test
     public void testHeaders() throws IOException {
-        try (InputStream in = HttpClient.create(new URL("https://httpbin.org/headers")).connect(progress).getContent();
+        try (InputStream in = HttpClient.create(new URL("https://httpbingo.org/headers")).connect(progress).getContent();
              JsonReader json = JsonProvider.provider().createReader(in)) {
             final JsonObject headers = json.readObject().getJsonObject("headers");
-            assertThat(headers.getString("Accept"), is("*/*"));
-            assertThat(headers.getString("Accept-Encoding"), is("gzip, deflate"));
-            assertThat(headers.getString("User-Agent"), is(Version.getInstance().getFullAgentString()));
+            assertThat(headers.getJsonArray("Accept").getString(0), is("*/*"));
+            assertThat(headers.getJsonArray("Accept-Encoding").getString(0), is("gzip, deflate"));
+            assertThat(headers.getJsonArray("User-Agent").getString(0), is(Version.getInstance().getFullAgentString()));
         }
     }
 
@@ -143,7 +143,7 @@ public class HttpClientTest {
      */
     @Test
     public void testUserAgent() throws IOException {
-        try (InputStream in = HttpClient.create(new URL("https://httpbin.org/user-agent")).connect(progress).getContent();
+        try (InputStream in = HttpClient.create(new URL("https://httpbingo.org/user-agent")).connect(progress).getContent();
              JsonReader json = JsonProvider.provider().createReader(in)) {
             assertThat(json.readObject().getString("user-agent"), is(Version.getInstance().getFullAgentString()));
         }
@@ -155,7 +155,7 @@ public class HttpClientTest {
      */
     @Test
     public void testFetchUtf8Content() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/encoding/utf8")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/encoding/utf8")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         final String content = response.fetchContent();
         assertThat(content, containsString("UTF-8 encoded sample plain-text file"));
@@ -169,7 +169,7 @@ public class HttpClientTest {
     @Test
     public void testPost() throws IOException {
         final String text = "Hello World!\nGeetings from JOSM, the Java OpenStreetMap Editor";
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/post"), "POST")
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
                 .setRequestBody(text.getBytes(StandardCharsets.UTF_8))
                 .setFinishOnCloseOutput(false) // to fix #12583, not sure if it's the best way to do it
@@ -183,7 +183,7 @@ public class HttpClientTest {
 
     @Test
     public void testPostZero() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/post"), "POST")
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
                 .setRequestBody("".getBytes(StandardCharsets.UTF_8))
                 .setFinishOnCloseOutput(false) // to fix #12583, not sure if it's the best way to do it
@@ -195,28 +195,28 @@ public class HttpClientTest {
         }
     }
 
-    /*@Test
+    @Test
     public void testRelativeRedirects() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/relative-redirect/3")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/relative-redirect/3")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentLength() > 100, is(true));
-    }*/
+    }
 
-    /*@Test
+    @Test
     public void testAbsoluteRedirects() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/absolute-redirect/3")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/absolute-redirect/3")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentLength() > 100, is(true));
-    }*/
+    }
 
     /**
      * Test maximum number of redirections.
      * @throws IOException if an I/O error occurs
      */
-    /*@Test(expected = IOException.class)
+    @Test(expected = IOException.class)
     public void testTooMuchRedirects() throws IOException {
-        HttpClient.create(new URL("https://httpbin.org/redirect/3")).setMaxRedirects(2).connect(progress);
-    }*/
+        HttpClient.create(new URL("https://httpbingo.org/redirect/3")).setMaxRedirects(2).connect(progress);
+    }
 
     /**
      * Test HTTP error 418
@@ -225,11 +225,12 @@ public class HttpClientTest {
     @Test
     public void testHttp418() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/418")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/status/418")).connect(progress);
         assertThat(response.getResponseCode(), is(418));
+        assertThat(response.getHeaderField("X-More-Info"), is("http://tools.ietf.org/html/rfc2324"));
         final String content = response.fetchContent();
-        assertThat(content, containsString("-=[ teapot ]=-"));
-        assertThat(captured.getMessage(), containsString("-=[ teapot ]=-"));
+        assertThat(content, containsString("I'm a teapot!"));
+        assertThat(captured.getMessage(), containsString("I'm a teapot!"));
         assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
 
@@ -240,7 +241,7 @@ public class HttpClientTest {
     @Test
     public void testHttp401() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/401")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/status/401")).connect(progress);
         assertThat(response.getResponseCode(), is(401));
         assertThat(response.getResponseMessage(), equalToIgnoringCase("UNAUTHORIZED"));
         final String content = response.fetchContent();
@@ -256,7 +257,7 @@ public class HttpClientTest {
     @Test
     public void testHttp402() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/402")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/status/402")).connect(progress);
         assertThat(response.getResponseCode(), is(402));
         assertThat(response.getResponseMessage(), equalToIgnoringCase("PAYMENT REQUIRED"));
         final String content = response.fetchContent();
@@ -272,7 +273,7 @@ public class HttpClientTest {
     @Test
     public void testHttp403() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/403")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/status/403")).connect(progress);
         assertThat(response.getResponseCode(), is(403));
         assertThat(response.getResponseMessage(), equalToIgnoringCase("FORBIDDEN"));
         final String content = response.fetchContent();
@@ -288,7 +289,7 @@ public class HttpClientTest {
     @Test
     public void testHttp404() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/404")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/status/404")).connect(progress);
         assertThat(response.getResponseCode(), is(404));
         assertThat(response.getResponseMessage(), equalToIgnoringCase("NOT FOUND"));
         final String content = response.fetchContent();
@@ -304,7 +305,7 @@ public class HttpClientTest {
     @Test
     public void testHttp500() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/500")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/status/500")).connect(progress);
         assertThat(response.getResponseCode(), is(500));
         assertThat(response.getResponseMessage(), equalToIgnoringCase("INTERNAL SERVER ERROR"));
         final String content = response.fetchContent();
@@ -319,7 +320,7 @@ public class HttpClientTest {
      */
     @Test
     public void testRequestInTime() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/delay/1")).setReadTimeout(2000).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/delay/1")).setReadTimeout(2000).connect(progress);
         assertThat(response.getResponseCode(), is(200));
     }
 
@@ -329,7 +330,7 @@ public class HttpClientTest {
      */
     @Test(expected = IOException.class)
     public void testTakesTooLong() throws IOException {
-        HttpClient.create(new URL("https://httpbin.org/delay/1")).setReadTimeout(500).connect(progress);
+        HttpClient.create(new URL("https://httpbingo.org/delay/1")).setReadTimeout(500).connect(progress);
     }
 
     /**
@@ -338,7 +339,7 @@ public class HttpClientTest {
      */
     @Test
     public void testDeflate() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/deflate")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/deflate")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         try (InputStream in = response.getContent();
              JsonReader json = JsonProvider.provider().createReader(in)) {
@@ -352,7 +353,7 @@ public class HttpClientTest {
      */
     @Test
     public void testGzip() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/gzip")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbingo.org/gzip")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         try (InputStream in = response.getContent();
              JsonReader json = JsonProvider.provider().createReader(in)) {
