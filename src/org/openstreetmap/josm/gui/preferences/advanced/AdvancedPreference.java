@@ -411,30 +411,21 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             @Override
             public void menuSelected(MenuEvent me) {
                 p.removeAll();
-                File[] files = new File(".").listFiles();
+                load(p, new File(".").listFiles());
+                load(p, Config.getDirs().getPreferencesDirectory(false).listFiles());
+            }
+
+            private void load(JMenu p, File[] files) {
                 if (files != null) {
-                    for (File f: files) {
-                       String s = f.getName();
-                       int idx = s.indexOf('_');
-                       if (idx >= 0) {
+                    for (File f : files) {
+                        String s = f.getName();
+                        int idx = s.indexOf('_');
+                        if (idx >= 0) {
                             String t = s.substring(0, idx);
                             if (profileTypes.containsKey(t)) {
                                 p.add(new ImportProfileAction(s, f, t));
                             }
-                       }
-                    }
-                }
-                files = Config.getDirs().getPreferencesDirectory(false).listFiles();
-                if (files != null) {
-                    for (File f: files) {
-                       String s = f.getName();
-                       int idx = s.indexOf('_');
-                       if (idx >= 0) {
-                            String t = s.substring(0, idx);
-                            if (profileTypes.containsKey(t)) {
-                                p.add(new ImportProfileAction(s, f, t));
-                            }
-                       }
+                        }
                     }
                 }
             }
