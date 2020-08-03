@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.awt.Color;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -173,6 +174,21 @@ public interface StyleSetting {
         @Override
         public StyleSettingGui getStyleSettingGui() {
             return new BooleanStyleSettingGui(this);
+        }
+    }
+
+    /**
+     * A style setting for color values.
+     * @since 16842
+     */
+    class ColorStyleSetting extends PropertyStyleSetting<Color> {
+        ColorStyleSetting(StyleSource parentStyle, String label, AbstractToStringProperty<Color> property) {
+            super(parentStyle, label, Color.class, property);
+        }
+
+        @Override
+        public StyleSettingGui getStyleSettingGui() {
+            return new ColorStyleSettingGui(this);
         }
     }
 }

@@ -1,10 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import java.awt.Color;
 import java.util.function.BiFunction;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -44,6 +46,12 @@ public final class StyleSettingFactory {
                 return forLabelAndDefault(c, String.class, (label, defaultValue) -> {
                     final StringProperty property = new StringProperty(qualifiedKey, defaultValue);
                     return new StyleSetting.PropertyStyleSetting<>(parentStyle, label, String.class, property);
+                });
+            case "color":
+                return forLabelAndDefault(c, Color.class, (label, defaultValue) -> {
+                    final NamedColorProperty property = new NamedColorProperty(NamedColorProperty.COLOR_CATEGORY_MAPPAINT,
+                            parentStyle.getFileNamePart(), label, defaultValue);
+                    return new StyleSetting.ColorStyleSetting(parentStyle, label, property);
                 });
             default:
                 Logging.warn("Unknown setting type {0} for style {1}", type, parentStyle.url);

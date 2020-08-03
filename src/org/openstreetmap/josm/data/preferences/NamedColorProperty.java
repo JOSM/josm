@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.ColorHelper;
  * and customized by the user.
  * @since 12987
  */
-public class NamedColorProperty extends AbstractProperty<Color> {
+public class NamedColorProperty extends AbstractToStringProperty<Color> {
 
     public static final String NAMED_COLOR_PREFIX = "clr.";
 
@@ -61,6 +61,14 @@ public class NamedColorProperty extends AbstractProperty<Color> {
 
     private List<String> getDefaultValuePref() {
         return defaultValue == null ? null : getValuePref(defaultValue, category, source, name);
+    }
+
+    @Override
+    protected void storeDefaultValue() {
+        // This is required due to the super() initializer calling this method.
+        if (category != null) {
+            super.storeDefaultValue();
+        }
     }
 
     @Override
@@ -135,5 +143,15 @@ public class NamedColorProperty extends AbstractProperty<Color> {
      */
     public FallbackProperty<Color> getChildColor(String name) {
         return getChildColor(category, source, name);
+    }
+
+    @Override
+    protected Color fromString(String string) {
+        return ColorHelper.html2color(string);
+    }
+
+    @Override
+    protected String toString(Color color) {
+        return ColorHelper.color2html(color);
     }
 }
