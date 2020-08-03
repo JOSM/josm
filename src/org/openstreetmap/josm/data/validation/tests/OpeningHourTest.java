@@ -11,15 +11,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+
 import ch.poole.openinghoursparser.OpeningHoursParser;
 import ch.poole.openinghoursparser.ParseException;
 import ch.poole.openinghoursparser.Rule;
 import ch.poole.openinghoursparser.Util;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test.TagTest;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -31,6 +37,9 @@ import org.openstreetmap.josm.data.validation.TestError;
 public class OpeningHourTest extends TagTest {
 
     private static final Collection<String> KEYS_TO_CHECK = Arrays.asList("opening_hours", "collection_times", "service_times");
+    private static final BooleanProperty PREF_STRICT_MODE =
+            new BooleanProperty(ValidatorPrefHelper.PREFIX + "." + OpeningHourTest.class.getSimpleName() + "." + "strict", false);
+    private final JCheckBox checkboxStrictMode = new JCheckBox(tr("Enable strict mode."));
 
     /**
      * Constructs a new {@code OpeningHourTest}.
@@ -89,9 +98,10 @@ public class OpeningHourTest extends TagTest {
         ch.poole.openinghoursparser.I18n.setLocale(locale);
         String prettifiedValue = null;
         try {
-            final List<Rule> rules = new OpeningHoursParser(new StringReader(value)).rules(false);
+            final boolean strict = PREF_STRICT_MODE.get();
+            final List<Rule> rules = new OpeningHoursParser(new StringReader(value)).rules(strict);
             prettifiedValue = Util.rulesToOpeningHoursString(rules);
-            if (!Objects.equals(value, prettifiedValue)) {
+            if (!Objects.equals(value, prettifiedValue) && !strict) {
                 // parse again in strict mode for detailed message
                 new OpeningHoursParser(new StringReader(value)).rules(true);
             }
@@ -119,5 +129,19 @@ public class OpeningHourTest extends TagTest {
                 errors.addAll(checkOpeningHourSyntax(keyCovid19, p.get(keyCovid19), p, Locale.getDefault()));
             }
         }
+    }
+
+    @Override
+    public void addGui(JPanel testPanel) {
+        super.addGui(testPanel);
+        checkboxStrictMode.setSelected(PREF_STRICT_MODE.get());
+        testPanel.add(checkboxStrictMode, GBC.eol().insets(20, 0, 0, 0));
+    }
+
+    @Override
+    public boolean ok() {
+        super.ok();
+        PREF_STRICT_MODE.put(checkboxStrictMode.isSelected());
+        return false;
     }
 }
