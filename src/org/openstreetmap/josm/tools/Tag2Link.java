@@ -56,7 +56,7 @@ public final class Tag2Link {
             .collect(Collectors.joining("|"));
 
     static final ListProperty PREF_SOURCE = new ListProperty("tag2link.source",
-            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2020.7.15/index.json"));
+            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2020.8.3/index.json"));
 
     private Tag2Link() {
         // private constructor for utility class
@@ -111,8 +111,11 @@ public final class Tag2Link {
             }
         }
         // We handle those keys ourselves
-        Stream.of("image", "url", "website", "wikidata", "wikimedia_commons")
-                .forEach(wikidataRules::remove);
+        wikidataRules.keySet().removeIf(key -> key.matches("^(.+[:_])?website([:_].+)?$")
+                || key.matches("^(.+[:_])?url([:_].+)?$")
+                || key.matches("wikimedia_commons|image")
+                || key.matches("wikipedia(:(?<lang>\\p{Lower}{2,}))?")
+                || key.matches("(.*:)?wikidata"));
 
         final int size = wikidataRules.size();
         Logging.info(trn(
