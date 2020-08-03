@@ -127,7 +127,8 @@ public class Addresses extends Test {
     }
 
     static boolean isPOI(OsmPrimitive p) {
-        return p.hasKey("shop", "amenity", "tourism", "leisure", "emergency", "craft", "office", "name");
+        return p.hasKey("shop", "amenity", "tourism", "leisure", "emergency", "craft", "office", "name") ||
+               p.hasTag("barrier", "entrance", "gate");
     }
 
     static boolean hasAddress(OsmPrimitive p) {

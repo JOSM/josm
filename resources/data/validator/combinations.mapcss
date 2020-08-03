@@ -460,6 +460,13 @@ way[usage][!railway][!waterway][route!=railway][man_made!=pipeline] {
   group: tr("missing tag");
 }
 
+/* #19604 */
+way[name][alt_name][name=*alt_name] {
+  throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
+  group: tr("suspicious tag combination");
+  fixRemove: "alt_name";
+}
+
 /* #10837 */
 way[destination][!oneway?][junction!=roundabout][highway] {
   throwWarning: tr("incomplete usage of {0} on a way without {1}", "{0.key}", "{1.key}");
