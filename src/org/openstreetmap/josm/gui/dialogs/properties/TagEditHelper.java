@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -70,9 +69,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -99,6 +96,7 @@ import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.OsmPrimitiveImageProvider;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -694,21 +692,9 @@ public class TagEditHelper {
 
         protected Optional<ImageIcon> findIcon(String key, String value) {
             final Iterator<OsmPrimitive> osmPrimitiveIterator = sel.iterator();
-            final OsmPrimitive virtual = (osmPrimitiveIterator.hasNext() ? osmPrimitiveIterator.next().getType() : OsmPrimitiveType.NODE)
-                    .newInstance(0, false);
-            if (virtual instanceof INode) {
-                ((INode) virtual).setCoor(LatLon.ZERO);
-            }
-            virtual.put(key, value);
-            try {
-                final ImageIcon padded = ImageProvider.getPadded(virtual, ImageProvider.ImageSizes.LARGEICON.getImageDimension(),
-                        EnumSet.of(ImageProvider.GetPaddedOptions.NO_DEFAULT, ImageProvider.GetPaddedOptions.NO_DEPRECATED));
-                return Optional.ofNullable(padded);
-            } catch (Exception e) {
-                Logging.warn("Failed to find icon for {0} {1}={2}", virtual.getType(), key, value);
-                Logging.warn(e);
-                return Optional.empty();
-            }
+            final OsmPrimitiveType type = osmPrimitiveIterator.hasNext() ? osmPrimitiveIterator.next().getType() : OsmPrimitiveType.NODE;
+            return OsmPrimitiveImageProvider.getResource(key, value, type)
+                    .map(resource -> resource.getPaddedIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension()));
         }
 
         protected JPopupMenu popupMenu = new JPopupMenu() {

@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetsTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.ImageProvider.GetPaddedOptions;
+import org.openstreetmap.josm.tools.OsmPrimitiveImageProvider.Options;
 
 import java.awt.Dimension;
 import java.util.EnumSet;
@@ -20,10 +20,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 /**
- * Unit tests of getPadded method of the {@link ImageProvider} class.
- * This unit test is separated because it is the only one that needs a slow initialization.
+ * Unit tests of {@link OsmPrimitiveImageProvider}
  */
-public class ImageProviderGetPaddedTest {
+public class OsmPrimitiveImageProviderTest {
 
     /**
      * Setup test.
@@ -41,22 +40,22 @@ public class ImageProviderGetPaddedTest {
     }
 
     /**
-     * Unit test of {@link ImageProvider#getPadded}.
+     * Unit test of {@link OsmPrimitiveImageProvider#getResource}.
      */
     @Test
-    public void testGetPadded() {
+    public void testGetResource() {
         TaggingPresetsTest.waitForIconLoading(TaggingPresets.getTaggingPresets());
 
-        final EnumSet<GetPaddedOptions> noDefault = EnumSet.of(GetPaddedOptions.NO_DEFAULT);
+        final EnumSet<Options> noDefault = EnumSet.of(Options.NO_DEFAULT);
         final Dimension iconSize = new Dimension(16, 16);
 
         assertNull(ImageProvider.getPadded(new Node(), new Dimension(0, 0)));
         assertNotNull(ImageProvider.getPadded(new Node(), iconSize));
-        assertNull(ImageProvider.getPadded(new Node(), iconSize, noDefault));
-        assertNotNull(ImageProvider.getPadded(OsmUtils.createPrimitive("node amenity=restaurant"), iconSize, noDefault));
-        assertNull(ImageProvider.getPadded(OsmUtils.createPrimitive("node barrier=hedge"), iconSize,
-                EnumSet.of(GetPaddedOptions.NO_DEFAULT, GetPaddedOptions.NO_DEPRECATED)));
-        assertNotNull(ImageProvider.getPadded(OsmUtils.createPrimitive("way waterway=stream"), iconSize, noDefault));
-        assertNotNull(ImageProvider.getPadded(OsmUtils.createPrimitive("relation type=route route=railway"), iconSize, noDefault));
+        assertNull(OsmPrimitiveImageProvider.getResource(new Node(), noDefault));
+        assertNotNull(OsmPrimitiveImageProvider.getResource(OsmUtils.createPrimitive("node amenity=restaurant"), noDefault));
+        assertNull(OsmPrimitiveImageProvider.getResource(OsmUtils.createPrimitive("node barrier=hedge"),
+                EnumSet.of(Options.NO_DEFAULT, Options.NO_DEPRECATED)));
+        assertNotNull(OsmPrimitiveImageProvider.getResource(OsmUtils.createPrimitive("way waterway=stream"), noDefault));
+        assertNotNull(OsmPrimitiveImageProvider.getResource(OsmUtils.createPrimitive("relation type=route route=railway"), noDefault));
     }
 }

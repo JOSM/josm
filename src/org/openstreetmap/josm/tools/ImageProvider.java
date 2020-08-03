@@ -34,8 +34,6 @@ import java.nio.file.InvalidPathException;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -44,7 +42,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -66,17 +63,8 @@ import javax.swing.ImageIcon;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.Range;
-import org.openstreetmap.josm.gui.mappaint.StyleElementList;
-import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
-import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
-import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.w3c.dom.Element;
@@ -1538,31 +1526,6 @@ public class ImageProvider {
     }
 
     /**
-     * Options used in {@link #getPadded(OsmPrimitive, Dimension, Collection)}.
-     * @since 15889
-     */
-    public enum GetPaddedOptions {
-        /**
-         * Exclude icon indicating deprecated tag usage.
-         */
-        NO_DEPRECATED,
-        /**
-         * Exclude default icon for {@link OsmPrimitiveType} from {@link #get(OsmPrimitiveType)}
-         */
-        NO_DEFAULT,
-        /**
-         * Exclude tagging preset icons.
-         */
-        NO_PRESETS,
-        /**
-         * Exclude tagging preset icons for {@linkplain OsmPrimitiveType#WAY ways}.
-         */
-        NO_WAY_PRESETS;
-
-        private static final Collection<GetPaddedOptions> DEFAULT = Collections.singleton(GetPaddedOptions.NO_WAY_PRESETS);
-    }
-
-    /**
      * Returns an {@link ImageIcon} for the given OSM object, at the specified size.
      * This is a slow operation.
      * @param primitive Object for which an icon shall be fetched. The icon is chosen based on tags.
@@ -1571,83 +1534,11 @@ public class ImageProvider {
      * @since 8903
      */
     public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize) {
-        return getPadded(primitive, iconSize, GetPaddedOptions.DEFAULT);
-    }
-
-    /**
-     * Returns an {@link ImageIcon} for the given OSM object, at the specified size.
-     * This is a slow operation.
-     * @param primitive Object for which an icon shall be fetched. The icon is chosen based on tags.
-     * @param iconSize Target size of icon. Icon is padded if required.
-     * @param options zero or more {@linkplain GetPaddedOptions options}.
-     * @return Icon for {@code primitive} that fits in cell or {@code null}.
-     * @since 15889
-     */
-    public static ImageIcon getPadded(OsmPrimitive primitive, Dimension iconSize, Collection<GetPaddedOptions> options) {
         if (iconSize.width <= 0 || iconSize.height <= 0) {
             return null;
         }
-
-        // Check if the current styles have special icon for tagged objects.
-        if (primitive.isTagged()) {
-            ImageIcon icon = getTaggedPadded(primitive, iconSize, options);
-            if (icon != null) {
-                return icon;
-            }
-        }
-
-        // Check if the presets have icons for nodes/relations.
-        if (primitive.isTagged() && (!options.contains(GetPaddedOptions.NO_WAY_PRESETS) || OsmPrimitiveType.WAY != primitive.getType())) {
-            final Optional<ImageIcon> icon = TaggingPresets.getMatchingPresets(primitive).stream()
-                    .sorted(Comparator.comparing(p -> (p.iconName != null && p.iconName.contains("multipolygon"))
-                            || p.types == null || p.types.isEmpty() ? Integer.MAX_VALUE : p.types.size()))
-                    .map(TaggingPreset::getImageResource)
-                    .filter(Objects::nonNull)
-                    .map(resource -> resource.getPaddedIcon(iconSize))
-                    .findFirst();
-            if (icon.isPresent()) {
-                return icon.get();
-            }
-        }
-
-        // Use generic default icon.
-        return options.contains(GetPaddedOptions.NO_DEFAULT)
-                ? null
-                : new ImageProvider("data", primitive.getDisplayType().getAPIName()).getResource().getPaddedIcon(iconSize);
-    }
-
-    /**
-     * Computes a new padded icon for the given tagged primitive, using map paint styles.
-     * This is a slow operation.
-     * @param primitive tagged OSM primitive
-     * @param iconSize icon size in pixels
-     * @param options zero or more {@linkplain GetPaddedOptions options}.
-     * @return a new padded icon for the given tagged primitive, or null
-     */
-    private static ImageIcon getTaggedPadded(OsmPrimitive primitive, Dimension iconSize, Collection<GetPaddedOptions> options) {
-        Pair<StyleElementList, Range> nodeStyles;
-        DataSet ds = primitive.getDataSet();
-        if (ds != null) {
-            ds.getReadLock().lock();
-        }
-        try {
-            nodeStyles = MapPaintStyles.getStyles().generateStyles(primitive, 100, false);
-        } finally {
-            if (ds != null) {
-                ds.getReadLock().unlock();
-            }
-        }
-        for (StyleElement style : nodeStyles.a) {
-            if (style instanceof NodeElement) {
-                NodeElement nodeStyle = (NodeElement) style;
-                MapImage icon = nodeStyle.mapImage;
-                if (icon != null && icon.getImageResource() != null &&
-                        (icon.name == null || !options.contains(GetPaddedOptions.NO_DEPRECATED) || !icon.name.contains("deprecated"))) {
-                    return icon.getImageResource().getPaddedIcon(iconSize);
-                }
-            }
-        }
-        return null;
+        ImageResource resource = OsmPrimitiveImageProvider.getResource(primitive, OsmPrimitiveImageProvider.Options.DEFAULT);
+        return resource != null ? resource.getPaddedIcon(iconSize) : null;
     }
 
     static BufferedImage createPaddedIcon(Image icon, Dimension iconSize) {

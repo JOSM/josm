@@ -155,7 +155,7 @@ public class ImageProviderTest {
         TaggingPresets.addTaggingPresets(Arrays.asList(goodPreset, badPreset));
         Node node = new Node(LatLon.ZERO);
         node.put("amenity", "fuel");
-        assertDoesNotThrow(() -> ImageProvider.getPadded(node, ImageProvider.ImageSizes.MAP.getImageDimension(), Collections.emptyList()));
+        assertDoesNotThrow(() -> OsmPrimitiveImageProvider.getResource(node, Collections.emptyList()));
     }
 
     /**

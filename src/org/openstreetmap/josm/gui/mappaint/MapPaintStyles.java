@@ -6,16 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.sources.MapPaintPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
@@ -29,6 +26,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.OsmPrimitiveImageProvider;
 import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -237,24 +235,14 @@ public final class MapPaintStyles {
      * Returns the node icon that would be displayed for the given tag.
      * @param tag The tag to look an icon for
      * @return {@code null} if no icon found
-     * @deprecated use {@link ImageProvider#getPadded}
+     * @deprecated use {@link OsmPrimitiveImageProvider#getResource}
      */
     @Deprecated
     public static ImageIcon getNodeIcon(Tag tag) {
         if (tag != null) {
-            DataSet ds = new DataSet();
-            Node virtualNode = new Node(LatLon.ZERO);
-            virtualNode.put(tag.getKey(), tag.getValue());
-            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
-            try {
-                // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
-                ds.addPrimitive(virtualNode);
-                return ImageProvider.getPadded(virtualNode, ImageProvider.ImageSizes.SMALLICON.getImageDimension(),
-                        EnumSet.of(ImageProvider.GetPaddedOptions.NO_PRESETS, ImageProvider.GetPaddedOptions.NO_DEFAULT));
-            } finally {
-                ds.removePrimitive(virtualNode);
-                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
-            }
+            return OsmPrimitiveImageProvider.getResource(tag.getKey(), tag.getValue(), OsmPrimitiveType.NODE)
+                    .map(resource -> resource.getPaddedIcon(ImageProvider.ImageSizes.SMALLICON.getImageDimension()))
+                    .orElse(null);
         }
         return null;
     }
