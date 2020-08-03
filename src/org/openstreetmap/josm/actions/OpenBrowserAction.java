@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Utils;
@@ -60,7 +61,7 @@ public class OpenBrowserAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         final int size = urls.size();
-        if (size > 10 && !confirmLaunchMultiple(size)) {
+        if (size > Config.getPref().getInt("warn.open.maxbrowser", 10) && !confirmLaunchMultiple(size)) {
             return;
         }
         for (String url : urls) {
