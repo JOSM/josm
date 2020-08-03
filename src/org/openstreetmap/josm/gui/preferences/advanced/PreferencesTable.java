@@ -103,52 +103,13 @@ public class PreferencesTable extends JTable {
                 editor.requestFocus();
             }
         } else if (stg instanceof ListSetting) {
-            ok = doEditList(gui, e, (ListSetting) stg);
+            ok = doAddEditList(gui, e, (ListSetting) stg);
         } else if (stg instanceof ListListSetting) {
-            ok = doEditListList(gui, e, (ListListSetting) stg);
+            ok = doAddEditListList(gui, e, (ListListSetting) stg);
         } else if (stg instanceof MapListSetting) {
-            ok = doEditMapList(gui, e, (MapListSetting) stg);
+            ok = doAddEditMapList(gui, e, (MapListSetting) stg);
         }
         return ok;
-    }
-
-    private static boolean doEditList(final JComponent gui, final PrefEntry e, ListSetting lSetting) {
-        ListEditor lEditor = new ListEditor(gui, e, lSetting);
-        lEditor.showDialog();
-        if (lEditor.getValue() == 1) {
-            List<String> data = lEditor.getData();
-            if (!lSetting.equalVal(data)) {
-                e.setValue(new ListSetting(data));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean doEditListList(final JComponent gui, final PrefEntry e, ListListSetting llSetting) {
-        ListListEditor llEditor = new ListListEditor(gui, e, llSetting);
-        llEditor.showDialog();
-        if (llEditor.getValue() == 1) {
-            List<List<String>> data = llEditor.getData();
-            if (!llSetting.equalVal(data)) {
-                e.setValue(new ListListSetting(data));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean doEditMapList(final JComponent gui, final PrefEntry e, MapListSetting mlSetting) {
-        MapListEditor mlEditor = new MapListEditor(gui, e, mlSetting);
-        mlEditor.showDialog();
-        if (mlEditor.getValue() == 1) {
-            List<Map<String, String>> data = mlEditor.getData();
-            if (!mlSetting.equalVal(data)) {
-                e.setValue(new MapListSetting(data));
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -192,15 +153,15 @@ public class PreferencesTable extends JTable {
             } else if (rbList.isSelected()) {
                 ListSetting lSetting = new ListSetting(null);
                 pe = new PrefEntry(tkey.getText(), lSetting, lSetting, false);
-                ok = doAddList(gui, pe, lSetting);
+                ok = doAddEditList(gui, pe, lSetting);
             } else if (rbListList.isSelected()) {
                 ListListSetting llSetting = new ListListSetting(null);
                 pe = new PrefEntry(tkey.getText(), llSetting, llSetting, false);
-                ok = doAddListList(gui, pe, llSetting);
+                ok = doAddEditListList(gui, pe, llSetting);
             } else if (rbMapList.isSelected()) {
                 MapListSetting mlSetting = new MapListSetting(null);
                 pe = new PrefEntry(tkey.getText(), mlSetting, mlSetting, false);
-                ok = doAddMapList(gui, pe, mlSetting);
+                ok = doAddEditMapList(gui, pe, mlSetting);
             }
         }
         return ok ? pe : null;
@@ -224,7 +185,7 @@ public class PreferencesTable extends JTable {
         return false;
     }
 
-    private static boolean doAddList(final JComponent gui, PrefEntry pe, ListSetting lSetting) {
+    private static boolean doAddEditList(final JComponent gui, PrefEntry pe, ListSetting lSetting) {
         ListEditor lEditor = new ListEditor(gui, pe, lSetting);
         lEditor.showDialog();
         if (lEditor.getValue() == 1) {
@@ -237,7 +198,7 @@ public class PreferencesTable extends JTable {
         return false;
     }
 
-    private static boolean doAddListList(final JComponent gui, PrefEntry pe, ListListSetting llSetting) {
+    private static boolean doAddEditListList(final JComponent gui, PrefEntry pe, ListListSetting llSetting) {
         ListListEditor llEditor = new ListListEditor(gui, pe, llSetting);
         llEditor.showDialog();
         if (llEditor.getValue() == 1) {
@@ -250,7 +211,7 @@ public class PreferencesTable extends JTable {
         return false;
     }
 
-    private static boolean doAddMapList(final JComponent gui, PrefEntry pe, MapListSetting mlSetting) {
+    private static boolean doAddEditMapList(final JComponent gui, PrefEntry pe, MapListSetting mlSetting) {
         MapListEditor mlEditor = new MapListEditor(gui, pe, mlSetting);
         mlEditor.showDialog();
         if (mlEditor.getValue() == 1) {
