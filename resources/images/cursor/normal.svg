@@ -5,7 +5,6 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
@@ -41,9 +40,9 @@
      inkscape:window-height="987"
      id="namedview6"
      showgrid="true"
-     inkscape:zoom="22.627417"
-     inkscape:cx="13.341382"
-     inkscape:cy="19.376614"
+     inkscape:zoom="6.4609375"
+     inkscape:cx="12.490884"
+     inkscape:cy="27.372408"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -52,28 +51,6 @@
        type="xygrid"
        id="grid817" />
   </sodipodi:namedview>
-  <image
-     y="0"
-     x="-25"
-     id="image838"
-     xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAaCAIAAADT1lApAAAAA3NCSVQICAjb4U/gAAACnElEQVQ4
-ja2Vy08TURTG72MenXaYkoZmSmNQIo+UYsIrBkPEBSwwmmBi2JmUaGCp8S9wpXEpiRtgiKY+Fiok
-LLprTYRgkFDAqCEuWUOZuUDbmZK518XoaNpS2uC3mszc/OZ83z3nXsgYA2cWOjuiDKUx3PZlbaNW
-Cixy1Bhui3ZEHj951BhqoJR6vV5ZliVJghBWoHClr5LJxeHh0YnJWGvLhVwuRynFGIuiWBvFAfX3
-D929d6cz2g4A4DgOQigIwkmUE9NdXU3NTL/c+vqDELK3t3dwcFAoFGqmAADW1z/Naa82Nr8ZhrG/
-v18BVN6Rq3R6qbd3EONYT/clZx8URSm1dnq/pNNL2my8ckVVdd3K55Q2G9/c+m4YRiaTKQVVRREF
-LpVKuBVlMhlCiGVZbq9VOwF+v5xIfHAq0nV9d3f3X1ANc6SqwYWFN9psPJ/PE0IcXw6l0h5ls6bP
-5wEA9PVdcycAQgghZIzZtk0pPYWSzZrB4Pl379/evDEEIRwbGx0YuIwQwhhjjD0ej9frxRg7i8s7
-chDPpp4+uP8QADA//3p6+oXzW1EU6+vrg8Gg3+8XRdGpsQwlmzVVtVmbex7taFNVdXl5ranpXDgc
-XllZs20bACBJkqIosizzPI8QKkOJdkRUtTn1MdHd1cnz/MRkLDY+AQCYmZnStLhlWaZpHh8fM8YQ
-Qm5Yxbkkk4vOw87ODkJo8OqV1paL29s/I5F2nhcopZZl5XI50zQFQXBzKT6lXBFCbNvGGOsGGRm5
-3dvTNXrrekhtQAgFAoFQKKQoCsdxp1Aopb/zR4hSenR0pOv64eEhAKCuri4QCPh8PieUSpQiFQoF
-0zQtywIACIIgSRLP83+bqEoKY8xZyRiDf+R+rZZSWf/nPvoFVF1DW9JsStYAAAAASUVORK5CYII=
-"
-     style="image-rendering:optimizeSpeed"
-     preserveAspectRatio="none"
-     height="26"
-     width="23" />
   <path
      d="M 3.5,1.8 14.192,12.5 H 9.5787589 L 12.368932,18.459959 9.631024,19.859522 7.1212009,14.328363 3.5,18.007321 Z"
      id="path2"

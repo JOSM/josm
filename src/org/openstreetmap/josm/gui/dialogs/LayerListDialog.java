@@ -465,7 +465,6 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             setSelectedIcon(active);
             setRolloverIcon(blank);
             setRolloverSelectedIcon(active);
-            setPressedIcon(ImageProvider.get("dialogs/layerlist", "active-pressed"));
         }
     }
 
@@ -482,7 +481,6 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             iconEye = new EyeIcon(/* ICON(dialogs/layerlist/) */ "eye");
             iconEyeTranslucent = new EyeIcon(/* ICON(dialogs/layerlist/) */ "eye-translucent", true);
             setIcon(ImageProvider.get("dialogs/layerlist", "eye-off"));
-            setPressedIcon(new EyeIcon(/* ICON(dialogs/layerlist/) */ "eye-pressed"));
             setSelectedIcon(iconEye);
             isTranslucent = false;
         }
