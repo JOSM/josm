@@ -291,14 +291,9 @@ public class WayConnectionTypeCalculator {
             // Not connected to previous
             if (dirFW == NONE && dirBW == NONE) {
                 wct.linkPrev = false;
-                if (RelationSortUtils.isOneway(m)) {
-                    wct.isOnewayHead = true;
-                    lastForwardWay = i-1;
-                    lastBackwardWay = i-1;
-                } else {
-                    lastForwardWay = UNCONNECTED;
-                    lastBackwardWay = UNCONNECTED;
-                }
+                wct.isOnewayHead = true;
+                lastForwardWay = i-1;
+                lastBackwardWay = i-1;
                 onewayBeginning = true;
             }
 
