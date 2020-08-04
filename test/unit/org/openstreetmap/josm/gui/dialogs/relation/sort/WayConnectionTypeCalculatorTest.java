@@ -133,7 +133,7 @@ public class WayConnectionTypeCalculatorTest {
         Assert.assertEquals("[FPH FORWARD, FP FORWARD, NONE, FPH FORWARD, NONE, FPH FORWARD, NONE]", actual);
         //TODO Sorting doesn't work well in this case
         actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
-        Assert.assertEquals("[BACKWARD, BACKWARD, BACKWARD, FPH FORWARD, FPH FORWARD, FPH FORWARD, FPH FORWARD]", actual);
+        Assert.assertEquals("[BACKWARD, BACKWARD, BACKWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD]", actual);
     }
 
     // The following cluster of tests checks various configurations
@@ -194,8 +194,7 @@ public class WayConnectionTypeCalculatorTest {
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, " +
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, " +
             "BACKWARD, FPH FORWARD, FP FORWARD, FP FORWARD, " +
-            "FPH FORWARD, " +
-            "FPH FORWARD" +
+            "FP FORWARD, BP BACKWARD" +
         "]";
         Assert.assertEquals(expected, actual);
     }

@@ -247,6 +247,29 @@ public class WayConnectionTypeCalculator {
                 dirBW = determineDirection(lastBackwardWay, con.get(lastBackwardWay).direction, i, true);
             }
 
+            // Support split-start routes. When the current way does
+            // not fit as forward or backward and we have no backward
+            // ways yet (onewayBeginning) and the most recent oneway
+            // head starts a new segment (!linkPrev), instead of
+            // disconnecting the current way, make it the start of the
+            // backward route. To render properly, unset isOnewayHead on
+            // the most recent head (since the current backward way does
+            // no longer start there).
+            if (dirFW == NONE && dirBW == NONE && RelationSortUtils.isOneway(m) && !wct.isOnewayHead) {
+                WayConnectionType prevHead = null;
+                for (int j = i - 1; j >= 0; --j) {
+                    if (con.get(j).isOnewayHead) {
+                        prevHead = con.get(j);
+                        break;
+                    }
+                }
+
+                if (prevHead != null && !prevHead.linkPrev) {
+                    dirBW = determineDirectionOfFirst(i, m, true);
+                    prevHead.isOnewayHead = false;
+                }
+            }
+
             if (dirBW != NONE) {
                 onewayBeginning = false;
             }
