@@ -145,7 +145,7 @@ public class WayConnectionTypeCalculator {
         }
 
         if (!wct.linkPrev) {
-            wct.direction = determineDirectionOfFirst(i, m);
+            wct.direction = determineDirectionOfFirst(i, m, false);
             if (RelationSortUtils.isOneway(m)) {
                 wct.isOnewayLoopForwardPart = true;
                 lastForwardWay = i;
@@ -217,13 +217,13 @@ public class WayConnectionTypeCalculator {
         }
     }
 
-    private Direction determineDirectionOfFirst(final int i, final RelationMember m) {
+    private Direction determineDirectionOfFirst(final int i, final RelationMember m, boolean reversed) {
         Direction result = RelationSortUtils.roundaboutType(m);
         if (result != NONE)
             return result;
 
         if (RelationSortUtils.isOneway(m)) {
-            if (RelationSortUtils.isBackward(m)) return BACKWARD;
+            if (RelationSortUtils.isBackward(m) != reversed) return BACKWARD;
             else return FORWARD;
         } else { /** guess the direction and see if it fits with the next member */
             if (determineDirection(i, FORWARD, i+1) != NONE) return FORWARD;
