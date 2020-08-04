@@ -12,8 +12,10 @@ import java.io.File;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -33,12 +35,17 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.gpx.IGpxTrack;
+import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
+import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.gpx.ChooseTrackVisibilityAction;
 import org.openstreetmap.josm.gui.layer.gpx.ConvertFromGpxLayerAction;
 import org.openstreetmap.josm.gui.layer.gpx.CustomizeDrawingAction;
@@ -59,7 +66,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 /**
  * A layer that displays data from a Gpx file / the OSM gpx downloads.
  */
-public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChangeListener {
+public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChangeListener, JumpToMarkerLayer {
 
     /** GPX data */
     public GpxData data;
@@ -82,6 +89,11 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      * The MarkerLayer imported from the same file.
      */
     private MarkerLayer linkedMarkerLayer;
+
+    /**
+     * Current segment for {@link JumpToMarkerLayer}.
+     */
+    private IGpxTrackSegment currentSegment = null;
 
     /**
      * Constructs a new {@code GpxLayer} without name.
@@ -238,6 +250,10 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
 
     @Override
     public Action[] getMenuEntries() {
+        JumpToNextMarker jumpToNext = new JumpToNextMarker(this);
+        jumpToNext.putValue(Action.NAME, tr("Jump to next segment"));
+        JumpToPreviousMarker jumpToPrevious = new JumpToPreviousMarker(this);
+        jumpToPrevious.putValue(Action.NAME, tr("Jump to previous segment"));
         List<Action> entries = new ArrayList<>(Arrays.asList(
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
@@ -250,6 +266,8 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
                 new ImportImagesAction(this),
                 new ImportAudioAction(this),
                 new MarkersFromNamedPointsAction(this),
+                jumpToNext,
+                jumpToPrevious,
                 new ConvertFromGpxLayerAction(this),
                 new DownloadAlongTrackAction(data),
                 new DownloadWmsAlongTrackAction(data),
@@ -553,5 +571,41 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
     @Override
     public Data getData() {
         return data;
+    }
+
+    /**
+     * Jump (move the viewport) to the next track segment.
+     */
+    @Override
+    public void jumpToNextMarker() {
+        List<IGpxTrackSegment> segments = data.getTrackSegmentsStream().collect(Collectors.toList());
+        jumpToNext(segments);
+    }
+
+    /**
+     * Jump (move the viewport) to the previous track segment.
+     */
+    @Override
+    public void jumpToPreviousMarker() {
+        List<IGpxTrackSegment> segments = data.getTrackSegmentsStream().collect(Collectors.toList());
+        Collections.reverse(segments);
+        jumpToNext(segments);
+    }
+
+    private void jumpToNext(List<IGpxTrackSegment> segments) {
+        if (segments.isEmpty()) {
+            return;
+        } else if (currentSegment == null) {
+            currentSegment = segments.get(0);
+            MainApplication.getMap().mapView.zoomTo(currentSegment.getBounds());
+        } else {
+            try {
+                int index = segments.indexOf(currentSegment);
+                currentSegment = segments.listIterator(index + 1).next();
+                MainApplication.getMap().mapView.zoomTo(currentSegment.getBounds());
+            } catch (IndexOutOfBoundsException | NoSuchElementException ignore) {
+                Logging.trace(ignore);
+            }
+        }
     }
 }
