@@ -139,7 +139,7 @@ public final class OsmPrimitiveImageProvider {
          */
         NO_DEPRECATED,
         /**
-         * Exclude default icon for {@link OsmPrimitiveType} from {@link #get(OsmPrimitiveType)}
+         * Exclude default icon for {@link OsmPrimitiveType} from {@link ImageProvider#get(OsmPrimitiveType)}
          */
         NO_DEFAULT,
         /**
