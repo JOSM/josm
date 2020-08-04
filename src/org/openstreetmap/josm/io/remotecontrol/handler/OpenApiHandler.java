@@ -20,8 +20,6 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Reports available commands as <a href="http://spec.openapis.org/oas/v3.0.3">OpenAPI</a>.
- *
- * @apiNote https://www.openapis.org/
  */
 public class OpenApiHandler extends RequestHandler {
 
