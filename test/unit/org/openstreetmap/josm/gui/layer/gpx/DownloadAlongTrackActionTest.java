@@ -51,7 +51,7 @@ public class DownloadAlongTrackActionTest {
             MainApplication.getLayerManager().addLayer(layer);
             // Perform action
             final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + file);
-            final PleaseWaitRunnable retval = new DownloadAlongTrackAction(gpx).createTask();
+            final PleaseWaitRunnable retval = new DownloadAlongTrackAction(Collections.singleton(gpx)).createTask();
 
             // assert that we were indeed presented with the expected HelpAwareOptionPane
             assertEquals(1, haMocker.getInvocationLog().size());

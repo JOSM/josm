@@ -269,7 +269,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
                 jumpToNext,
                 jumpToPrevious,
                 new ConvertFromGpxLayerAction(this),
-                new DownloadAlongTrackAction(data),
+                new DownloadAlongTrackAction(Collections.singleton(data)),
                 new DownloadWmsAlongTrackAction(data),
                 SeparatorLayerAction.INSTANCE,
                 new ChooseTrackVisibilityAction(this),
