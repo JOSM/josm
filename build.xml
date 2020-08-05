@@ -486,6 +486,12 @@ Build-Date: ${build.tstamp}
             </junitlauncher>
         </sequential>
     </macrodef>
+    <target name="test-subset" depends="test-compile" unless="test.notRequired"
+        description="Run single test class, as specified on commandline">
+        <fail message="No test family selected. Run with e.g. -Dtestfamily=unit" unless="testfamily"/>
+        <fail message="No test classes selected. Run with e.g. -Dtestclasses='**/MyTest.class'" unless="testclasses"/>
+        <call-junit testfamily="${testfamily}" includes="${testclasses}"/>
+    </target>
     <target name="test" depends="test-compile" unless="test.notRequired"
         description="Run unit and functional tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <call-junit testfamily="unit"/>
