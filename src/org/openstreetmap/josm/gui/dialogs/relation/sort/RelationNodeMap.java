@@ -179,9 +179,10 @@ public class RelationNodeMap {
             Node exitNode = onewayMap.ways.get(way).iterator().next();
             Integer i = findAdjacentWay(onewayMap, exitNode);
             if (i != null) {
-                lastOnewayNode = processBackwardIfEndOfLoopReached(i);
-                if (lastOnewayNode != null)
+                if (checkIfEndOfLoopReached(exitNode)) {
+                    lastOnewayNode = exitNode;
                     return popBackwardOnewayPart(firstOneway);
+                }
 
                 deleteWayNode(onewayMap, i, exitNode);
                 return i;
@@ -199,17 +200,16 @@ public class RelationNodeMap {
         return null;
     }
 
-    private Node processBackwardIfEndOfLoopReached(Integer way) { //find if we didn't reach end of the loop (and process backward part)
-        if (onewayReverseMap.ways.containsKey(way)) {
-            for (Node n : onewayReverseMap.ways.get(way)) {
-                if (map.nodes.containsKey(n)
-                        || (onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1))
-                    return n;
-                if (firstCircular != null && firstCircular == n)
-                    return firstCircular;
-            }
-        }
-        return null;
+    // Check if the given node can be the end of the loop (i.e. it has
+    // an outgoing bidirectional or multiple outgoing oneways, or we
+    // looped back to our first circular node)
+    private boolean checkIfEndOfLoopReached(Node n) {
+        if (map.nodes.containsKey(n)
+                || (onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1))
+            return true;
+        if (firstCircular != null && firstCircular == n)
+            return true;
+        return false;
     }
 
     private Integer popBackwardOnewayPart(int way) {
