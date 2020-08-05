@@ -176,17 +176,14 @@ public class RelationNodeMap {
 
     private Integer popForwardOnewayPart(Integer way) {
         if (onewayMap.ways.containsKey(way)) {
-            for (Node n : onewayMap.ways.get(way)) {
-                Integer i = findAdjacentWay(onewayMap, n);
-                if (i == null) {
-                    continue;
-                }
-
+            Node exitNode = onewayMap.ways.get(way).iterator().next();
+            Integer i = findAdjacentWay(onewayMap, exitNode);
+            if (i != null) {
                 lastOnewayNode = processBackwardIfEndOfLoopReached(i);
                 if (lastOnewayNode != null)
                     return popBackwardOnewayPart(firstOneway);
 
-                deleteWayNode(onewayMap, i, n);
+                deleteWayNode(onewayMap, i, exitNode);
                 return i;
             }
         }
