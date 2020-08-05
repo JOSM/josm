@@ -197,6 +197,7 @@
     <member type='way' ref='-102469' role='street' />
     <member type='node' ref='-102394' role='tree' />
     <member type='node' ref='-102454' role='house' />
+    <tag k='name' v='street' />
     <tag k='test' v='street' />
     <tag k='type' v='street' />
   </relation>
@@ -208,6 +209,7 @@
     <member type='way' ref='-102459' role='' />
     <member type='way' ref='-102458' role='forward' />
     <member type='way' ref='-102460' role='' />
+    <tag k='name' v='loop' />
     <tag k='test' v='loop' />
   </relation>
   <relation id='-102473' action='modify'>
@@ -220,6 +222,7 @@
     <member type='way' ref='-102463' role='' />
     <member type='node' ref='-102434' role='' />
     <member type='node' ref='-102438' role='' />
+    <tag k='name' v='generic' />
     <tag k='test' v='generic' />
   </relation>
   <relation id='-102474' action='modify'>
@@ -229,6 +232,7 @@
     <member type='node' ref='-102452' role='house' />
     <member type='way' ref='-102469' role='street' />
     <member type='node' ref='-102454' role='house' />
+    <tag k='name' v='associatedStreet' />
     <tag k='test' v='associatedStreet' />
     <tag k='type' v='associatedStreet' />
   </relation>
@@ -240,6 +244,7 @@
     <member type='way' ref='-102502' role='' />
     <member type='way' ref='-102503' role='' />
     <member type='way' ref='-102504' role='' />
+    <tag k='name' v='direction' />
     <tag k='test' v='direction' />
   </relation>
 </osm>
