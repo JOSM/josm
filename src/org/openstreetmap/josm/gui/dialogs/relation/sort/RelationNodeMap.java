@@ -177,16 +177,14 @@ public class RelationNodeMap {
     private Integer popForwardOnewayPart(Integer way) {
         if (onewayMap.ways.containsKey(way)) {
             Node exitNode = onewayMap.ways.get(way).iterator().next();
-            Integer i = findAdjacentWay(onewayMap, exitNode);
-            if (i != null) {
-                if (checkIfEndOfLoopReached(exitNode)) {
-                    lastOnewayNode = exitNode;
-                    return popBackwardOnewayPart(firstOneway);
-                }
 
-                deleteWayNode(onewayMap, i, exitNode);
-                return i;
+            if (checkIfEndOfLoopReached(exitNode)) {
+                lastOnewayNode = exitNode;
+                return popBackwardOnewayPart(firstOneway);
             }
+
+            Integer i = deleteAndGetAdjacentNode(onewayMap, exitNode);
+            if (i != null) return i;
 
             // When our forward route ends in a dead end try to start
             // the backward route anyway from the split point
