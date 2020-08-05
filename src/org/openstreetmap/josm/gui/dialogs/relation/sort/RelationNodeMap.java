@@ -266,8 +266,11 @@ public class RelationNodeMap {
             doneOneway(way);
         } else {
             done(way);
+            // For bidirectional ways, remove the entry node, so
+            // subsequent lookups will only return the other node(s) as
+            // valid exit nodes.
+            nw.ways.get(way).remove(n);
         }
-        nw.ways.get(way).remove(n);
     }
 
     /**
