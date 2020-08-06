@@ -191,10 +191,9 @@ public class WayConnectionTypeCalculatorTest {
         // TODO: This is not yet sorted perfectly (might not be possible)
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
         String expected = "[" +
-            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, " +
+            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, " +
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, " +
-            "BACKWARD, FPH FORWARD, FP FORWARD, FP FORWARD, " +
-            "FP FORWARD, BP BACKWARD" +
+            "BACKWARD, FPH FORWARD, FP FORWARD, FP FORWARD" +
         "]";
         Assert.assertEquals(expected, actual);
     }

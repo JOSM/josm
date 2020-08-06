@@ -137,11 +137,9 @@ public class RelationSorterTest {
         // TODO: This is not yet sorted perfectly (might not be possible)
         String[] actual = getNames(sorter.sortMembers(relation.getMembers()));
         Assert.assertArrayEquals(new String[]{
-            "t5w1", "t5w2a", "t5w3a", "t5w4a",
+            "t5w1", "t5w2a", "t5w3a", "t5w4a", "t5w2b", "t5w3b",
             "t5w5", "t5w6a", "t5w7a", "t5w8a", "t5w9a", "t5w10a", "t5w11a", "t5w6b", "t5w7b",
             "t5w12", "t5w11b", "t5w10b", "t5w9b",
-            "t5w2b",
-            "t5w3b",
         }, actual);
     }
 }

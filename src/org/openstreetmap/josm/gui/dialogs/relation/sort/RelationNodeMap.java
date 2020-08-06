@@ -186,6 +186,13 @@ public class RelationNodeMap {
                 deleteWayNode(onewayMap, i, exitNode);
                 return i;
             }
+
+            // When our forward route ends in a dead end try to start
+            // the backward route anyway from the split point
+            // (firstOneWay), to support routes with split a split start
+            // or end.
+            lastOnewayNode = exitNode;
+            return popBackwardOnewayPart(firstOneway);
         }
 
         firstOneway = null;
