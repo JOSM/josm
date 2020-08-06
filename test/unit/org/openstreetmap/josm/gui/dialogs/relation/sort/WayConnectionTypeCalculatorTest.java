@@ -186,6 +186,31 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
+    public void testOneLoopEndsSplit() {
+        Relation relation = getRelation("one-loop-ends-split");
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
+        String expected = "[" +
+            "FP FORWARD, FP FORWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FPH FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testNoLoopEndsSplit() {
+        Relation relation = getRelation("no-loop-ends-split");
+        // TODO: This is not yet sorted properly, so this route is
+        // presorted in the data file
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
+        String expected = "[" +
+            "FP FORWARD, FP FORWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FPH FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
     public void testIncompleteLoops() {
         Relation relation = getRelation("incomplete-loops");
         // TODO: This is not yet sorted perfectly (might not be possible)
@@ -194,6 +219,19 @@ public class WayConnectionTypeCalculatorTest {
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, " +
             "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, " +
             "BACKWARD, FPH FORWARD, FP FORWARD, FP FORWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testParallelOneWay() {
+        Relation relation = getRelation("parallel-oneway");
+        // TODO: This is not always sorted properly, only when the right
+        // way is already at the top, so check that
+        Assert.assertEquals("t6w1a", relation.getMembers().get(0).getMember().get("name"));
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
+        String expected = "[" +
+            "FP FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BP BACKWARD" +
         "]";
         Assert.assertEquals(expected, actual);
     }

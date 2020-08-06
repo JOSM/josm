@@ -466,6 +466,37 @@
     <tag k='name' v='three-loops-ends-node' />
     <tag k='test' v='three-loops-ends-node' />
   </relation>
+  <relation id='-102593' action='modify'>
+    <member type='way' ref='-103865' role='' />
+    <member type='way' ref='-103874' role='forward' />
+    <member type='way' ref='-103872' role='forward' />
+    <member type='way' ref='-103878' role='forward' />
+    <member type='way' ref='-103880' role='forward' />
+    <member type='way' ref='-103869' role='forward' />
+    <member type='way' ref='-103863' role='forward' />
+    <member type='way' ref='-103862' role='forward' />
+    <member type='way' ref='-103876' role='forward' />
+    <member type='way' ref='-103866' role='forward' />
+    <member type='way' ref='-103873' role='forward' />
+    <member type='way' ref='-103877' role='forward' />
+    <member type='way' ref='-103875' role='forward' />
+    <member type='way' ref='-103867' role='forward' />
+    <member type='way' ref='-103870' role='forward' />
+    <tag k='name' v='one-loop-ends-split' />
+    <tag k='test' v='one-loop-ends-split' />
+  </relation>
+  <relation id='-102594' action='modify'>
+    <member type='way' ref='-103866' role='forward' />
+    <member type='way' ref='-103875' role='forward' />
+    <member type='way' ref='-103876' role='forward' />
+    <member type='way' ref='-103863' role='forward' />
+    <member type='way' ref='-103878' role='forward' />
+    <member type='way' ref='-103867' role='forward' />
+    <member type='way' ref='-103877' role='forward' />
+    <member type='way' ref='-103880' role='forward' />
+    <tag k='name' v='no-loop-ends-split' />
+    <tag k='test' v='no-loop-ends-split' />
+  </relation>
   <relation id='-102595' action='modify'>
     <member type='way' ref='-103864' role='' />
     <member type='way' ref='-103876' role='forward' />
@@ -491,6 +522,16 @@
     <member type='way' ref='-103878' role='forward' />
     <tag k='name' v='three-loops-ends-loop' />
     <tag k='test' v='three-loops-ends-loop' />
+  </relation>
+  <relation id='-102596' action='modify'>
+    <member type='way' ref='-103882' role='forward' />
+    <member type='way' ref='-103887' role='forward' />
+    <member type='way' ref='-103886' role='forward' />
+    <member type='way' ref='-103883' role='forward' />
+    <member type='way' ref='-103885' role='forward' />
+    <member type='way' ref='-103884' role='forward' />
+    <tag k='name' v='parallel-oneway' />
+    <tag k='test' v='parallel-oneway' />
   </relation>
   <relation id='-102605' action='modify'>
     <member type='way' ref='-103864' role='' />

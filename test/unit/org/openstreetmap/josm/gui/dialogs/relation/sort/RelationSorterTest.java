@@ -132,6 +132,30 @@ public class RelationSorterTest {
     }
 
     @Test
+    public void testOneLoopEndsSplit() {
+        Relation relation = getRelation("one-loop-ends-split");
+        String[] actual = getNames(sorter.sortMembers(relation.getMembers()));
+        Assert.assertArrayEquals(new String[]{
+            "t5w3a", "t5w4a", "t5w3b", "t5w4b",
+            "t5w5", "t5w6a", "t5w7a", "t5w8a", "t5w6b", "t5w7b", "t5w8b",
+            "t5w9a", "t5w10a", "t5w9b", "t5w10b",
+        }, actual);
+    }
+
+    @Test
+    public void testNoLoopEndsSplit() {
+        Relation relation = getRelation("no-loop-ends-split");
+        // TODO: This is not yet sorted properly, so this route is
+        // presorted in the data file, making this a bit of a dummy test
+        // for now.
+        String[] actual = getNames(relation.getMembers());
+        Assert.assertArrayEquals(new String[]{
+            "t5w7a", "t5w8a", "t5w7b", "t5w8b",
+            "t5w9a", "t5w10a", "t5w9b", "t5w10b",
+        }, actual);
+    }
+
+    @Test
     public void testIncompleteLoops() {
         Relation relation = getRelation("incomplete-loops");
         // TODO: This is not yet sorted perfectly (might not be possible)
@@ -140,6 +164,20 @@ public class RelationSorterTest {
             "t5w1", "t5w2a", "t5w3a", "t5w4a", "t5w2b", "t5w3b",
             "t5w5", "t5w6a", "t5w7a", "t5w8a", "t5w9a", "t5w10a", "t5w11a", "t5w6b", "t5w7b",
             "t5w12", "t5w11b", "t5w10b", "t5w9b",
+        }, actual);
+    }
+
+    @Test
+    public void testParallelOneWay() {
+        Relation relation = getRelation("parallel-oneway");
+        // TODO: This is not always sorted properly, only when the right
+        // way is already at the top, so check that
+        Assert.assertEquals("t6w1a", relation.getMembers().get(0).getMember().get("name"));
+
+        String[] actual = getNames(sorter.sortMembers(relation.getMembers()));
+        Assert.assertArrayEquals(new String[]{
+            "t6w1a", "t6w2a", "t6w3a",
+            "t6w1b", "t6w2b", "t6w3b",
         }, actual);
     }
 }
