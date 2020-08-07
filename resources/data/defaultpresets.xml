@@ -5814,15 +5814,16 @@
         </item> <!-- Barracks -->
         <item name="Bunker" icon="presets/landmark/bunker.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:military=bunker" />
-            <space />
             <key key="military" value="bunker" />
-            <combo key="bunker_type" text="Type" values="command,foxhole,gun_emplacement,hardened_aircraft_shelter,mg_nest,munitions,observation,personnel_shelter,pillbox,technical,tobruk" values_context="bunker" />
-            <combo key="location" text="Location" values="overground,underground" values_context="bunker" />
-            <combo key="building" text="Building" values="bunker,yes" values_context="building" />
-            <text key="name" text="Name" />
-            <reference ref="POI_access" />
-            <check key="historic" text="Historic" />
-            <check key="ruins" text="Ruins" />
+            <optional>
+               <combo key="bunker_type" text="Type" values="command,foxhole,gun_emplacement,hardened_aircraft_shelter,mg_nest,munitions,observation,personnel_shelter,pillbox,technical,tobruk" values_context="bunker" values_searchable="true" />
+               <combo key="location" text="Location" values="overground,underground" values_context="bunker" />
+               <combo key="building" text="Building" values="bunker,yes" values_context="building" />
+               <text key="name" text="Name" />
+               <reference ref="POI_access" />
+               <check key="historic" text="Historic" />
+               <check key="ruins" text="Ruins" />
+            </optional>
         </item> <!-- Bunker -->
         <item name="Range" icon="presets/sport/range.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:military=range" />
