@@ -119,19 +119,14 @@ https://commons.wikimedia.org/wiki/Image:National_Park_Service_sample_pictograph
 http://www.sjjb.co.uk/mapicons/, The Tango Desktop Project, other sources
 or self created, all PD and CC0 licensed.
 
-Simple OpenStreetMap logo has been created by ScubbX (CC-SA 2.0) based on official
-logo used by the OpenStreetMap Foundation:
+Official OpenStreetMap logo has been created by Ken Vermette (CC BY-SA 3.0):
+https://commons.wikimedia.org/wiki/File:Openstreetmap_logo.svg
+
+Simple OpenStreetMap logo has been created by ScubbX (CC BY-SA 2.0) based on official
+OpenStreetMap logo:
 https://wiki.openstreetmap.org/wiki/File:Logo_simple.svg
 
 Social logos come from https://github.com/Automattic/social-logos (GPLv2 or later)
-
-The keyboard icon comes from:
-- source: http://www.iconfinder.net/index.php?q=key&page=icondetails&iconid=8553&size=128&q=key&s12=on&s16=on&s22=on&s32=on&s48=on&s64=on&s128=on
-- licence: GPL
-- designer: Paolino, http://www.paolinoland.it/
-- original filename: keyboard.png
-- original size: 128x128
-- modifications: icon was cropped, then resized
 
 See also the commit message of each icon for its source
 (https://josm.openstreetmap.de/browser/josm/trunk/resources/images).
