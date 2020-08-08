@@ -16,7 +16,7 @@
    y="0px"
    viewBox="0 0 48 48"
    xml:space="preserve"
-   sodipodi:docname="remotecontrol3.svg"
+   sodipodi:docname="remotecontrol.svg"
    width="48"
    height="48"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"><metadata
@@ -102,9 +102,9 @@
    inkscape:window-height="987"
    id="namedview64"
    showgrid="true"
-   inkscape:zoom="11.313709"
-   inkscape:cx="29.313983"
-   inkscape:cy="23.350298"
+   inkscape:zoom="4.5685729"
+   inkscape:cx="32.431715"
+   inkscape:cy="34.988863"
    inkscape:window-x="-8"
    inkscape:window-y="-8"
    inkscape:window-maximized="1"
@@ -131,22 +131,7 @@
    height="29"
    x="18.00906"
    y="16.00923"
-   ry="0.99077034" /><image
-   y="0"
-   x="-53"
-   id="image854"
-   xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAANlBMVEX///+AgoXf4OHAwcKgoaSY
-mZzHyMq4ubqIio2wsbPP0NHn6Oj////X2NmoqauQkpTv7/D39/c3y/uRAAAAAXRSTlMAQObYZgAA
-AOdJREFUeAHt1MuKwzAMhWEdyXJ8T/L+LzsyQ6ddJfIqFOZbmEDy40MXpa9Q4wgJCEE6OcQdgAYD
-IGW60RP2jf+uUkDoSkaKZDiK9DofFHr5/XwrO8xrUL4qxN6VOaqwEQU2K/Rm1F7aCwcoXSvzC85z
-VBpWZmS61okGoFkkAHttkW4pBv0SpEqOwEZ0GVshqq7AKKbUyWlAjnaWBPLqbaq+G2r4tNEthrzl
-4Akam7PacbAvgOFghziDYOpmR3EGYo5iB69PWr/h+V/JP8kfPDepTSuTVgI250LAb9EVfPqa4D9Y
-/qt83g+4vwopXmfy5gAAAABJRU5ErkJggg==
-"
-   style="image-rendering:optimizeSpeed"
-   preserveAspectRatio="none"
-   height="48"
-   width="48" /><path
+   ry="0.99077034" /><path
    style="fill:#bc1e1e"
    inkscape:connector-curvature="0"
    id="path20"
@@ -332,10 +317,4 @@ VBpWZmS61okGoFkkAHttkW4pBv0SpEqOwEZ0GVshqq7AKKbUyWlAjnaWBPLqbaq+G2r4tNEthrzl
    sodipodi:end="0.8148993"
    d="m -6.8595507,14.918745 a 9.9980001,12.6 0 0 1 2.9990317,9.121088 9.9980001,12.6 0 0 1 -3.1394807,9.045716"
    sodipodi:open="true"
-   transform="rotate(-90)" /><rect
-   style="opacity:1;fill:#727272;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.26751292;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.83990926;stroke-opacity:1;paint-order:normal"
-   id="rect1005"
-   width="24"
-   height="3"
-   x="0"
-   y="53" /></svg>
+   transform="rotate(-90)" /></svg>

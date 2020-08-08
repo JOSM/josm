@@ -16,7 +16,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="sticky3.svg">
+   sodipodi:docname="sticky.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -53,9 +53,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="36.548582"
-     inkscape:cx="5.8561626"
-     inkscape:cy="10.411521"
+     inkscape:zoom="14.758632"
+     inkscape:cx="0.72698182"
+     inkscape:cy="10.200993"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -102,15 +102,6 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1037.3622)">
-    <image
-       y="1020.3622"
-       x="0"
-       id="image824"
-       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAABnRSTlMA/wD/AP83WBt9AAAAw0lE QVR4AWP4TyIYKA0BYHDu7Bm4yJ3bt4Ai+DRcvXoVSALVwVUT0HDt2rXS0tLExEQgG0g+fPgQoeH5 syfHjh/p6GqFI6Dco0ePgBqOHDly+fLlHTt2dHd3QzUAVQNVzJ0/6+7du+fOndu3b9/KlSuBcmvX rgVqqKurAyrdsGEDQgMQ37176+DBfWg2zJ07Ny0tLScnp6SkZNWqVUCSgB927tw5c+bM2NhYIDs5 ORnIJaDh7NmzpIUSTDVmPJACBqcGAFJXjZGRKbEhAAAAAElFTkSuQmCC "
-       style="image-rendering:optimizeSpeed"
-       preserveAspectRatio="none"
-       height="16"
-       width="16" />
     <path
        style="fill:#d3d3d3;fill-opacity:1;stroke:#4d4d4d;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 8.507,1044.8623 H 4.5071068 l -1,1 1,1 H 8.507 Z"
