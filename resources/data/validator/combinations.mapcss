@@ -232,8 +232,7 @@ way[oneway   ][!highway][!railway][!aerialway][attraction!=summer_toboggan][aero
   group: tr("missing tag");
 }
 
-/* {0.key} without {1.key}, {2.key} or {3.tag}, #17255 */
-way[incline                    ][!highway][!railway][aeroway!~/^(runway|taxiway)$/][attraction!=summer_toboggan],
+/* {0.key} without {1.key}, {2.key} or {3.tag} */
 *[toll                         ][!highway][!barrier][route!~/^(ferry|road)$/] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.tag}");
   group: tr("missing tag");
@@ -400,12 +399,13 @@ way[highway=footway][cycleway=lane] {
   group: tr("suspicious tag combination");
 }
 
-/* {0} on suspicious object */
-*[tunnel  ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=tunnel],
-*[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=bridge][building!=bridge],
-*[psv     ][!highway][!railway][!waterway][barrier!=bollard][amenity !~ /^parking.*/],
-*[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance][natural!=stone][leisure!=track],
-*[maxspeed][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][traffic_sign:forward !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][traffic_sign:backward !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(river|canal|lock)$/][!traffic_calming][aerialway!=zip_line] {
+/* {0} on suspicious object, #17255, #19650 */
+*[tunnel   ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=tunnel],
+*[bridge   ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=bridge][building!=bridge],
+*[psv      ][!highway][!railway][!waterway][barrier!=bollard][amenity !~ /^parking.*/],
+*[width    ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance][natural!=stone][leisure!=track],
+*[maxspeed ][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][traffic_sign:forward !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][traffic_sign:backward !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(river|canal|lock)$/][!traffic_calming][aerialway!=zip_line],
+way[incline][!highway][!railway][aeroway!~/^(runway|taxiway)$/][attraction!=summer_toboggan][leisure!=slipway] {
   throwWarning: tr("{0} on suspicious object", "{0.key}");
   group: tr("suspicious tag combination");
 }
