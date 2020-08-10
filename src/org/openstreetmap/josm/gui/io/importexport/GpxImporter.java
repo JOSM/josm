@@ -123,7 +123,7 @@ public class GpxImporter extends FileImporter {
             GpxReader r = new GpxReader(is);
             boolean parsedProperly = r.parse(true);
             r.getGpxData().storageFile = file;
-            addLayers(loadLayers(r.getGpxData(), parsedProperly, fileName, tr("Markers from {0}", fileName)));
+            addLayers(loadLayers(r.getGpxData(), parsedProperly, fileName));
         } catch (SAXException e) {
             Logging.error(e);
             throw new IOException(e.getLocalizedMessage(), e);
@@ -156,17 +156,15 @@ public class GpxImporter extends FileImporter {
      * @param data The GPX data
      * @param parsedProperly True if GPX data has been properly parsed by {@link GpxReader#parse}
      * @param gpxLayerName The GPX layer name
-     * @param markerLayerName The marker layer name
      * @return the new GPX and marker layers corresponding to the specified GPX data, to be used with {@link #addLayers}
      * @see #addLayers
      */
-    public static GpxImporterData loadLayers(final GpxData data, final boolean parsedProperly,
-            final String gpxLayerName, String markerLayerName) {
+    public static GpxImporterData loadLayers(final GpxData data, final boolean parsedProperly, final String gpxLayerName) {
         MarkerLayer markerLayer = null;
         GpxRouteLayer gpxRouteLayer = null;
         GpxLayer gpxLayer = new GpxLayer(data, gpxLayerName, data.storageFile != null);
         if (Config.getPref().getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
-            markerLayer = new MarkerLayer(data, markerLayerName, data.storageFile, gpxLayer);
+            markerLayer = new MarkerLayer(data, tr("Markers from {0}", gpxLayerName), data.storageFile, gpxLayer);
             if (markerLayer.data.isEmpty()) {
                 markerLayer = null;
             } else {
@@ -210,18 +208,17 @@ public class GpxImporter extends FileImporter {
      * @param is input stream to GPX data
      * @param associatedFile GPX file
      * @param gpxLayerName The GPX layer name
-     * @param markerLayerName The marker layer name
      * @param progressMonitor The progress monitor
      * @return the new GPX and marker layers corresponding to the specified GPX file
      * @throws IOException if an I/O error occurs
      */
     public static GpxImporterData loadLayers(InputStream is, final File associatedFile,
-            final String gpxLayerName, String markerLayerName, ProgressMonitor progressMonitor) throws IOException {
+                                             final String gpxLayerName, ProgressMonitor progressMonitor) throws IOException {
         try {
             final GpxReader r = new GpxReader(is);
             final boolean parsedProperly = r.parse(true);
             r.getGpxData().storageFile = associatedFile;
-            return loadLayers(r.getGpxData(), parsedProperly, gpxLayerName, markerLayerName);
+            return loadLayers(r.getGpxData(), parsedProperly, gpxLayerName);
         } catch (SAXException e) {
             Logging.error(e);
             throw new IOException(tr("Parsing data for layer ''{0}'' failed", gpxLayerName), e);

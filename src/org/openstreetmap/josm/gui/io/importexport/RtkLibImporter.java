@@ -90,16 +90,15 @@ public class RtkLibImporter extends FileImporter {
      * @param is input stream to RTKLib data
      * @param associatedFile RTKLib file
      * @param gpxLayerName The GPX layer name
-     * @param markerLayerName The marker layer name
      * @return the new GPX and marker layers corresponding to the specified RTKLib file
      * @throws IOException if an I/O error occurs
      */
     public static GpxImporterData loadLayers(InputStream is, final File associatedFile,
-            final String gpxLayerName, String markerLayerName) throws IOException {
+                                             final String gpxLayerName) throws IOException {
         final RtkLibPosReader r = buildAndParse(is);
         final boolean parsedProperly = r.getNumberOfCoordinates() > 0;
         r.getGpxData().storageFile = associatedFile;
-        return GpxImporter.loadLayers(r.getGpxData(), parsedProperly, gpxLayerName, markerLayerName);
+        return GpxImporter.loadLayers(r.getGpxData(), parsedProperly, gpxLayerName);
     }
 
     static RtkLibPosReader buildAndParse(InputStream fis) throws IOException {

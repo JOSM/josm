@@ -47,11 +47,11 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
                 GpxImporter.GpxImporterData importData;
 
                 if (NMEAImporter.FILE_FILTER.acceptName(fileStr)) {
-                    importData = NMEAImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null);
+                    importData = NMEAImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName());
                 } else if (RtkLibImporter.FILE_FILTER.acceptName(fileStr)) {
-                    importData = RtkLibImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null);
+                    importData = RtkLibImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName());
                 } else {
-                    importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), null, progressMonitor);
+                    importData = GpxImporter.loadLayers(in, support.getFile(fileStr), support.getLayerName(), progressMonitor);
                 }
 
                 support.addPostLayersTask(importData.getPostLayerTask());
