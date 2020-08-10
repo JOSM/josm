@@ -93,7 +93,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
     /**
      * Current segment for {@link JumpToMarkerLayer}.
      */
-    private IGpxTrackSegment currentSegment = null;
+    private IGpxTrackSegment currentSegment;
 
     /**
      * Constructs a new {@code GpxLayer} without name.
