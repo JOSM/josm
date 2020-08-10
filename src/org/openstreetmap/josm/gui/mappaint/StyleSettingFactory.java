@@ -50,7 +50,7 @@ public final class StyleSettingFactory {
             case "color":
                 return forLabelAndDefault(c, Color.class, (label, defaultValue) -> {
                     final NamedColorProperty property = new NamedColorProperty(NamedColorProperty.COLOR_CATEGORY_MAPPAINT,
-                            parentStyle.getFileNamePart(), label, defaultValue);
+                            parentStyle.title == null ? "MapCSS" : parentStyle.title, label, defaultValue);
                     return new StyleSetting.ColorStyleSetting(parentStyle, label, property);
                 });
             default:
