@@ -95,7 +95,6 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 *[name][name=~/^(?i)(library|biblioteca|biblioteka|bibliothek|bibliotheek)$/][amenity=library],
 *[name][name=~/^(?i)(parc|park)$/][leisure=park],
 *[name][name=~/^(?i)(pond)$/][water=pond],
-*[name][name=~/^(?i)(chapel|chapelle|kapelle)$/][building=chapel],
 *[name][name=~/^(?i)(church|église|biserica)$/][amenity=place_of_worship][religion=christian],
 *[name][name=~/^(?i)(mosque|cami|masjid|مسجد)$/][amenity=place_of_worship][religion=muslim],
 *[name][name=~/^(?i)(parking|parkplatz)$/][amenity=parking],
@@ -111,11 +110,9 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 *[name][name=~/^(?i)(path)$/][highway=path],
 *[name][name=~/^(?i)(jalan)$/][highway],
 *[name][name=~/^(?i)(silo)$/][man_made=silo],
-*[name][name=~/^(?i)(silo)$/][building=silo],
 *[name][name=~/^(?i)(cemetery|cementerio|cimetière|cmentarz|friedhof)$/][amenity=grave_yard],
 *[name][name=~/^(?i)(cemetery|cementerio|cimetière|cmentarz|friedhof)$/][landuse=cemetery],
 *[name][name=~/^(?i)(monument aux morts|war memorial)$/][historic=memorial][memorial=war_memorial],
-*[name][name=~/^(?i)(school|école|Школа)$/][building=school],
 *[name][name=~/^(?i)(school|école|Школа)$/][amenity=school],
 *[name][name=~/^(?i)(école élémentaire)$/][amenity=school]["school:FR"="élémentaire"],
 *[name][name=~/^(?i)(école maternelle)$/][amenity=school]["school:FR"="maternelle"],
@@ -150,17 +147,20 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertNoMatch: "way name=kiosk building=yes";
   assertMatch: "way name=silo man_made=silo";
   assertMatch: "way name=Silo man_made=silo building=silo";
-  assertMatch: "way name=Silo building=silo";
+  assertNoMatch: "way name=Silo building=silo";
   assertMatch: "way name=cemetery amenity=grave_yard";
   assertMatch: "way name=Cmentarz amenity=grave_yard";
   assertNoMatch: "way name=kiosk amenity=grave_yard";
 }
-*[name][name=~/^(?i)(school|école|Школа)$/][building][building!=school][building!=no],
-*[name][name=~/^(?i)(house|rumah|vivienda)$/][building][building!=house][building!=no],
-*[name][name=~/^(?i)(casa)$/][building][building!=house][building!=no][outside("FR")] {
+  /* the following without fixRemove to avoid informatin loss, should be checked manually */
+*[name][name=~/^(?i)(chapel|chapelle|kapelle)$/], /* check if amenity=place_of_worship and/or building=chapel applies */
+*[name][name=~/^(?i)(silo)$/][man_made!=silo], /* check if man_made=silo and/or building=silo applies */
+*[name][name=~/^(?i)(school|école|Школа)$/][amenity!=school], /* check if amenity=school and/or building=school applies applies */
+*[name][name=~/^(?i)(house|rumah|vivienda)$/][building][building!=house][building!=no], /* check if building=house applies */
+*[name][name=~/^(?i)(casa)$/][building][building!=house][building!=no][outside("FR")] { /* check if building=house applies */
   throwWarning: tr("{0}", "{0.tag}");
   group: tr("descriptive name");
-  /* without fixRemove to avoid possible information loss */
+  assertMatch: "way name=Silo building=silo";
   assertNoMatch: "way name=building building=yes";
   assertNoMatch: "way name=building building=house";
   assertNoMatch: "way name=Rumah building=house";
