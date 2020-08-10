@@ -144,6 +144,21 @@
   assertNoMatch: "node foo=bar";
 }
 
+/* Detect wikidata value wrongly in wikipedia key, not 100% safe as there might be wikipedia articles matching the regexp, therefore no fixChangeKey */
+*[wikipedia][wikipedia =~ /^[-a-zA-Z]{2,12}:Q[1-9][0-9]{0,8}$/] {
+  throwWarning: tr("{0} value looks like a {1} value", "{0.key}", "wikidata");
+  assertNoMatch: "node wikipedia=a";
+  assertNoMatch: "node wikipedia=de:a";
+  assertNoMatch: "node wikipedia=de:Q";
+  assertNoMatch: "node wikipedia=de:Q0";
+  assertNoMatch: "node wikipedia=de:Q0123";
+  assertNoMatch: "node wikipedia=en-GB:Q0123";
+  assertMatch: "node wikipedia=de:Q123";
+  assertMatch: "node wikipedia=de:Q1";
+  assertMatch: "node wikipedia=en-GB:Q123";
+  assertMatch: "node wikipedia=en-GB:Q1";
+}
+
 /* Wikipedia:lang without wikipedia */
 *[!wikipedia][/^wikipedia:/] {
   throwWarning: tr("''{0}'' tag is set, but no ''{1}'' tag. Make sure to set ''wikipedia=language:value'' for the main article and optional ''wikipedia:language=value'' only for additional articles that are not just other language variants of the main article.", "{1.key}", "{0.key}");

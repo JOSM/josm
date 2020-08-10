@@ -265,9 +265,13 @@
         <combo key="lit" text="Lit" delimiter="|" values="yes|no|06:00-20:00|Mo-Fr 09:00-18:00,Sa 08:00-14:00|May-Sep 09:30-12:30,14:15-19:30" values_i18n="false" values_sort="false" />
         <reference ref="oh" />
     </chunk>
-    <chunk id="name_wikipedia">
-        <text key="name" text="Name" />
+    <chunk id="wikipedia_wikidata">
         <text key="wikipedia" text="Wikipedia" />
+        <text key="wikidata" text="Wikidata" />
+    </chunk>
+    <chunk id="name_wikipedia_wikidata">
+        <text key="name" text="Name" />
+        <reference ref="wikipedia_wikidata" />
     </chunk>
     <chunk id="population_postcode_website">
         <text key="population" text="Population" />
@@ -447,10 +451,6 @@
         <combo key="tunnel" text="Tunnel" values="culvert,yes" />
         <text key="width" text="Width (meters)" />
     </chunk>
-    <chunk id="waterway_wikipedia">
-        <reference ref="waterway" />
-        <text key="wikipedia" text="Wikipedia" />
-    </chunk>
     <chunk id="water_access">
         <optional text="Water access rules:">
             <combo key="ship" text="Ship" values="yes,designated,destination,delivery,permissive,private,no" values_sort="false" />
@@ -472,7 +472,7 @@
         <optional>
             <text key="iata" text="IATA" />
             <text key="icao" text="ICAO" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="wikipedia_wikidata" />
         </optional>
     </chunk>
     <chunk id="car_brands">
@@ -1464,7 +1464,7 @@
             <optional>
                 <text key="name" text="Name" />
                 <text key="ele" text="Elevation (meters)" length="10" />
-                <text key="wikipedia" text="Wikipedia" />
+                <reference ref="wikipedia_wikidata" />
             </optional>
         </item> <!-- Mountain Pass -->
     </group> <!-- Waypoints -->
@@ -1864,7 +1864,8 @@
             <key key="waterway" value="river" />
             <text key="name" text="Name" />
             <optional>
-                <reference ref="waterway_wikipedia" />
+                <reference ref="waterway" />
+                <reference ref="wikipedia_wikidata" />
                 <check key="lock" text="Lock" disable_off="true" />
             </optional>
             <reference ref="water_access" />
@@ -1875,7 +1876,8 @@
             <key key="waterway" value="stream" />
             <text key="name" text="Name" />
             <optional>
-                <reference ref="waterway_wikipedia" />
+                <reference ref="waterway" />
+                <reference ref="wikipedia_wikidata" />
             </optional>
             <reference ref="water_access" />
         </item> <!-- Stream -->
@@ -1889,7 +1891,7 @@
                 <check key="intermittent" text="Intermittent" disable_off="true" />
                 <check key="seasonal" text="Seasonal" disable_off="true" />
                 <text key="width" text="Width (meters)" />
-                <text key="wikipedia" text="Wikipedia" />
+                <reference ref="wikipedia_wikidata" />
             </optional>
         </item> <!-- Tidal channel -->
         <item name="Canal" icon="presets/nautical/waterway_canal.svg" type="way" preset_name_label="true">
@@ -1902,7 +1904,7 @@
                 <combo key="tunnel" text="Tunnel" values="culvert,flooded,yes" />
                 <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" values_context="usage" />
                 <text key="width" text="Width (meters)" />
-                <text key="wikipedia" text="Wikipedia" />
+                <reference ref="wikipedia_wikidata" />
                 <check key="lock" text="Lock" disable_off="true" />
             </optional>
             <reference ref="water_access" />
@@ -1938,7 +1940,7 @@
             <link wiki="Tag:waterway=waterfall" />
             <space />
             <key key="waterway" value="waterfall" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <text key="height" text="Height (meters)" length="7" />
         </item> <!-- Waterfall -->
         <item name="Weir" icon="presets/nautical/weir.svg" type="node,way" preset_name_label="true">
@@ -1951,7 +1953,7 @@
             <link wiki="Tag:waterway=dam" />
             <space />
             <key key="waterway" value="dam" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Dam -->
         <item name="Levee" icon="presets/misc/dyke.svg" type="way" preset_name_label="true">
             <link wiki="Tag:man_made=dyke" />
@@ -2027,7 +2029,7 @@
             <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
             <text key="ele" text="Elevation (meters)" length="10" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="wikipedia_wikidata" />
             <reference ref="water_access" />
         </item> <!-- Water -->
         <item name="Coastline" icon="presets/nautical/coast_line.svg" type="way,closedway" preset_name_label="true">
@@ -2067,7 +2069,7 @@
             <label text="A flat area of sand, gravel or pebble next to water." />
             <space />
             <key key="natural" value="beach" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <optional>
                 <reference ref="supervised" />
                 <reference ref="oh_wheelchair" />
@@ -3061,7 +3063,7 @@
                 <text key="ref" text="Reference" />
                 <text key="iata" text="IATA" />
                 <text key="icao" text="ICAO" />
-                <text key="wikipedia" text="Wikipedia" />
+                <reference ref="wikipedia_wikidata" />
             </optional>
         </item> <!-- Helipad -->
         <item name="Apron" icon="presets/transport/airport/apron.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -3586,7 +3588,7 @@
             <key key="tourism" value="zoo" />
             <reference ref="name_oh_wheelchair" />
             <combo key="zoo" text="Type" values="aviary,birds,butterfly,enclosure,falconry,petting_zoo,reptile,safari_park,wildlife_park" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="wikipedia_wikidata" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Zoo -->
         <item name="Animal enclosure" icon="presets/attraction/animal.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3870,7 +3872,7 @@
             <space />
             <key key="tourism" value="museum" />
             <reference ref="name_operator_oh_wheelchair" />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="wikipedia_wikidata" />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Museum -->
@@ -6271,7 +6273,7 @@
             <space />
             <key key="historic" value="castle" />
             <combo key="castle_type" text="Type" values="stately,defensive,fortress,manor,palace" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <check key="ruins" text="Ruins" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Castle -->
@@ -6279,7 +6281,7 @@
             <link wiki="Tag:historic=fort" />
             <space />
             <key key="historic" value="fort" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <check key="ruins" text="Ruins" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Fort -->
@@ -6407,7 +6409,7 @@
                 <text key="artist_name" text="Artist Name" />
                 <combo key="material" text="Material" values="concrete,granite,metal,plastic,steel,stone,wood" />
                 <text key="start_date" text="Start date" />
-                <text key="wikipedia" text="Wikipedia" />
+                <reference ref="wikipedia_wikidata" />
             </optional>
         </item> <!-- Memorial -->
         <item name="Wayside Cross" icon="presets/religion/wayside_cross.svg" type="node,closedway" preset_name_label="true">
@@ -7667,7 +7669,7 @@
             <optional>
                 <reference ref="name_operator" />
                 <reference ref="oh" />
-                <text key="wikipedia" text="Wikipedia" />
+                <reference ref="wikipedia_wikidata" />
                 <text key="start_date" text="Start date" />
             </optional>
         </item> <!-- Protected Area -->
@@ -7684,31 +7686,31 @@
             <link wiki="Tag:place=continent" />
             <space />
             <key key="place" value="continent" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Continent -->
         <item name="Country" icon="presets/place/capital.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=country" />
             <space />
             <key key="place" value="country" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Country -->
         <item name="State" icon="presets/place/capital.svg" name_context="place" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=state" />
             <space />
             <key key="place" value="state" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- State -->
         <item name="Region" icon="presets/place/capital.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=region" />
             <space />
             <key key="place" value="region" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Region -->
         <item name="County" icon="presets/place/capital.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=county" />
             <space />
             <key key="place" value="county" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
         </item> <!-- County -->
         <separator/>
@@ -7716,35 +7718,35 @@
             <link wiki="Tag:place=city" />
             <space />
             <key key="place" value="city" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
         </item> <!-- City -->
         <item name="Town" icon="presets/place/town.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=town" />
             <space />
             <key key="place" value="town" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
         </item> <!-- Town -->
         <item name="Village" icon="presets/place/village.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=village" />
             <space />
             <key key="place" value="village" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
         </item> <!-- Village -->
         <item name="Hamlet" icon="presets/place/hamlet.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=hamlet" />
             <space />
             <key key="place" value="hamlet" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
         </item> <!-- Hamlet -->
         <item name="Isolated Dwelling" icon="presets/place/isolated_dwelling.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=isolated_dwelling" />
             <space />
             <key key="place" value="isolated_dwelling" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
         </item> <!-- Isolated Dwelling -->
         <separator/>
@@ -7752,14 +7754,14 @@
             <link wiki="Tag:place=suburb" />
             <space />
             <key key="place" value="suburb" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
         </item> <!-- Suburb -->
         <item name="Quarter" icon="presets/place/quarter.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Tag:place=quarter" />
             <space />
             <key key="place" value="quarter" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <text key="population" text="Population" />
             <text key="website" text="Website" />
         </item> <!-- Quarter -->
@@ -7767,7 +7769,7 @@
             <link wiki="Tag:place=neighbourhood" />
             <space />
             <key key="place" value="neighbourhood" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <text key="population" text="Population" />
             <text key="website" text="Website" />
         </item> <!-- Neighbourhood -->
@@ -7777,7 +7779,7 @@
             <label text="A farm within a bigger settlement" />
             <label text="(please use isolated_dwelling for an isolated farm)" />
             <key key="place" value="farm" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
         </item> <!-- Farm -->
         <separator/>
@@ -7785,13 +7787,13 @@
             <link wiki="Tag:place=locality" />
             <space />
             <key key="place" value="locality" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Locality -->
         <item name="Square" icon="presets/place/square.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:place=square" />
             <space />
             <key key="place" value="square" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Square -->
     </group> <!-- Places -->
     <group name="Geography" icon="presets/landmark/peak.svg">
@@ -7800,7 +7802,7 @@
             <label text="The top (summit) of a mountain or hill." />
             <space />
             <key key="natural" value="peak" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <text key="ele" text="Elevation (meters)" length="10" />
         </item> <!-- Peak -->
         <item name="Saddle" icon="presets/landmark/saddle.svg" type="node" preset_name_label="true">
@@ -7808,7 +7810,7 @@
             <label text="A saddle point between mountains or hills." />
             <space/>
             <key key="natural" value="saddle" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <text key="ele" text="Elevation (meters)" length="10" />
         </item> <!-- Saddle -->
         <item name="Glacier" icon="presets/landmark/glacier.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -7816,7 +7818,7 @@
             <label text="A persistent body of dense ice that is constantly moving under its own weight." />
             <space />
             <key key="natural" value="glacier" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <text key="ele" text="Elevation (meters)" length="10" />
         </item> <!-- Glacier -->
         <item name="Volcano" icon="presets/landmark/volcano.svg" type="node" preset_name_label="true">
@@ -7824,7 +7826,7 @@
             <label text="A volcano, either dormant, extinct or active." />
             <space />
             <key key="natural" value="volcano" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <text key="ele" text="Elevation (meters)" length="10" />
             <optional>
                 <combo key="volcano:status" text="Current Status" values="active,dormant,extinct" />
@@ -7836,7 +7838,7 @@
             <label text="A mountain or hill ridge." />
             <space />
             <key key="natural" value="ridge" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <text key="ele" text="Elevation (meters)" length="10" />
         </item> <!-- Ridge -->
         <item name="Valley" icon="presets/landmark/valley.svg" type="way" preset_name_label="true">
@@ -7844,7 +7846,7 @@
             <label text="A low area between hills." />
             <space />
             <key key="natural" value="valley" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Valley -->
         <item name="Cliff" icon="presets/misc/cliff.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=cliff" />
@@ -7859,7 +7861,7 @@
             <label text="The entrance to a cave." />
             <space />
             <key key="natural" value="cave_entrance" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <reference ref="oh_wheelchair" />
             <reference ref="POI_access" />
             <reference ref="fee" />
@@ -7869,13 +7871,13 @@
             <link wiki="Tag:place=island" />
             <space />
             <key key="place" value="island" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Island -->
         <item name="Islet" icon="presets/place/islet.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:place=islet" />
             <space />
             <key key="place" value="islet" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
         </item> <!-- Islet -->
         <item name="Reef" icon="presets/landmark/reef.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=reef" />
@@ -8014,7 +8016,7 @@
             <label text="A notable rock or group of rocks, with at least one of them firmly attached to the underlying bedrock." />
             <space />
             <key key="natural" value="rock" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <optional>
                 <check key="tourism" text="Tourism attraction" value_on="attraction" disable_off="true" />
             </optional>
@@ -8024,7 +8026,7 @@
             <label text="A single notable free-standing rock, which may differ from the composition of the terrain it lies in." />
             <space />
             <key key="natural" value="stone" />
-            <reference ref="name_wikipedia" />
+            <reference ref="name_wikipedia_wikidata" />
             <optional>
                 <text key="height" text="Height (meters)" length="7" />
                 <text key="width" text="Width (meters)" />
@@ -8307,7 +8309,7 @@
             <text key="fax" text="Fax Number" match="key" />
             <label text="Use E.123 format, e.g. +49 11223 456 7890" />
             <space />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="wikipedia_wikidata" />
             <text key="image" text="Image" />
             <preset_link preset_name="Contact (Schema with 'contact:*' Prefix)" text="Similar tags but different tagging schema:" text_context="Contact" />
         </item> <!-- Contact (Common Schema) -->
@@ -8321,7 +8323,7 @@
             <text key="contact:fax" text="Fax Number" match="key" />
             <label text="Use E.123 format, e.g. +49 11223 456 7890" />
             <space />
-            <text key="wikipedia" text="Wikipedia" />
+            <reference ref="wikipedia_wikidata" />
             <text key="image" text="Image" />
             <preset_link preset_name="Contact (Common Schema)" text="Similar tags but different tagging schema:" text_context="Contact" />
         </item> <!-- Contact (Schema with 'contact:*' Prefix) -->
@@ -8726,7 +8728,7 @@
                 <text key="ref:regine" text="Reference REGINE (NO)" />
                 <text key="ref:gnis" text="Reference GNIS (USA)" />
                 <text key="ref:gnbc" text="Reference GNBC (CA)" />
-                <text key="wikipedia" text="Wikipedia" />
+                <reference ref="wikipedia_wikidata" />
             </optional>
             <roles>
                 <role key="" text="waterways (no riverbank)" requisite="optional" type="way" member_expression="waterway -waterway:riverbank" />
