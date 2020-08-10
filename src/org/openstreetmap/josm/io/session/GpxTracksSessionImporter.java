@@ -55,11 +55,15 @@ public class GpxTracksSessionImporter implements SessionLayerImporter {
                 }
 
                 support.addPostLayersTask(importData.getPostLayerTask());
-                return importData.getGpxLayer();
+                return getLayer(importData);
             }
 
         } catch (XPathExpressionException e) {
             throw new IllegalDataException(e);
         }
+    }
+
+    protected Layer getLayer(GpxImporter.GpxImporterData importData) {
+        return importData.getGpxLayer();
     }
 }

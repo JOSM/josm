@@ -165,6 +165,7 @@ public class SessionReader {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
         registerSessionLayerImporter("imagery", ImagerySessionImporter.class);
         registerSessionLayerImporter("tracks", GpxTracksSessionImporter.class);
+        registerSessionLayerImporter("routes", GpxRoutesSessionImporter.class);
         registerSessionLayerImporter("geoimage", GeoImageSessionImporter.class);
         registerSessionLayerImporter("markers", MarkerSessionImporter.class);
         registerSessionLayerImporter("osm-notes", NoteSessionImporter.class);
