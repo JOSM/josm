@@ -277,7 +277,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
 
         List<Action> expert = Arrays.asList(
                 new CombineTracksToSegmentedTrackAction(this),
-                new SplitTrackSegementsToTracksAction(this),
+                new SplitTrackSegmentsToTracksAction(this),
                 new SplitTracksToLayersAction(this));
 
         if (isExpertMode && expert.stream().anyMatch(Action::isEnabled)) {
@@ -480,14 +480,14 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      *
      * @since 13210
      */
-    public static class SplitTrackSegementsToTracksAction extends AbstractAction {
+    public static class SplitTrackSegmentsToTracksAction extends AbstractAction {
         private final transient GpxLayer layer;
 
         /**
-         * Create a new SplitTrackSegementsToTracksAction
+         * Create a new SplitTrackSegmentsToTracksAction
          * @param layer The layer with the data to work on.
          */
-        public SplitTrackSegementsToTracksAction(GpxLayer layer) {
+        public SplitTrackSegmentsToTracksAction(GpxLayer layer) {
             // FIXME: icon missing, create a new icon for this action
             //new ImageProvider(..."gpx_segmented_track_to_tracks").getResource().attachImageIcon(this, true);
             putValue(SHORT_DESCRIPTION, tr("Split multiple track segments of one track into multiple tracks."));
@@ -517,7 +517,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
         private final transient GpxLayer layer;
 
         /**
-         * Create a new SplitTrackSegementsToTracksAction
+         * Create a new SplitTrackSegmentsToTracksAction
          * @param layer The layer with the data to work on.
          */
         public SplitTracksToLayersAction(GpxLayer layer) {
