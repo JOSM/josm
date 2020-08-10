@@ -369,7 +369,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         LinkedList<WayPoint> visibleSegments = new LinkedList<>();
 
         ensureTrackVisibilityLength();
-        for (Line segment : data.getLinesIterable(layer.trackVisibility)) {
+        for (Line segment : getLinesIterable(layer.trackVisibility)) {
 
             for (WayPoint pt : segment) {
                 Bounds b = new Bounds(pt.getCoor());
@@ -393,6 +393,10 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             }
         }
         return visibleSegments;
+    }
+
+    protected Iterable<Line> getLinesIterable(final boolean[] trackVisibility) {
+        return data.getLinesIterable(trackVisibility);
     }
 
     /** ensures the trackVisibility array has the correct length without losing data.
@@ -507,7 +511,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         if (colorModeDynamic) {
             if (colored == ColorMode.VELOCITY) {
                 final List<Double> velocities = new ArrayList<>();
-                for (Line segment : data.getLinesIterable(null)) {
+                for (Line segment : getLinesIterable(null)) {
                     if (!forceLines) {
                         oldWp = null;
                     }
@@ -532,7 +536,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     velocityScale.setRange(minval, maxval);
                 }
             } else if (colored == ColorMode.HDOP) {
-                for (Line segment : data.getLinesIterable(null)) {
+                for (Line segment : getLinesIterable(null)) {
                     for (WayPoint trkPnt : segment) {
                         Object val = trkPnt.get(GpxConstants.PT_HDOP);
                         if (val != null) {
@@ -572,7 +576,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         }
 
         // Now the colors for all the points will be assigned
-        for (Line segment : data.getLinesIterable(null)) {
+        for (Line segment : getLinesIterable(null)) {
             if (!forceLines) { // don't draw lines between segments, unless forced to
                 oldWp = null;
             }

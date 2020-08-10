@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter.GpxImporterData;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.GpxRouteLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -143,6 +144,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             gpxLayer = layers.getGpxLayer();
             addOrMergeLayer(gpxLayer, findGpxMergeLayer());
             addOrMergeLayer(layers.getMarkerLayer(), findMarkerMergeLayer(gpxLayer));
+            addOrMergeLayer(layers.getGpxRouteLayer(), findGpxRouteMergeLayer(gpxLayer));
 
             layers.getPostLayerTask().run();
         }
@@ -185,6 +187,12 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
         private MarkerLayer findMarkerMergeLayer(GpxLayer fromLayer) {
             return MainApplication.getLayerManager().getLayersOfType(MarkerLayer.class).stream()
+                    .filter(l -> fromLayer != null && l.fromLayer == fromLayer)
+                    .findFirst().orElse(null);
+        }
+
+        private GpxRouteLayer findGpxRouteMergeLayer(GpxLayer fromLayer) {
+            return MainApplication.getLayerManager().getLayersOfType(GpxRouteLayer.class).stream()
                     .filter(l -> fromLayer != null && l.fromLayer == fromLayer)
                     .findFirst().orElse(null);
         }

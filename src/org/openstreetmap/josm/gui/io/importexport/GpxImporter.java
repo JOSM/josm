@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.GpxRouteLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -40,6 +41,10 @@ public class GpxImporter extends FileImporter {
          */
         private final GpxLayer gpxLayer;
         /**
+         * The imported GPX route layer. May be null if no marker.
+         */
+        private final GpxRouteLayer gpxRouteLayer;
+        /**
          * The imported marker layer. May be null if no marker.
          */
         private final MarkerLayer markerLayer;
@@ -54,8 +59,9 @@ public class GpxImporter extends FileImporter {
          * @param markerLayer The imported marker layer. May be null if no marker.
          * @param postLayerTask The task to run after GPX and/or marker layer has been added to MapView.
          */
-        public GpxImporterData(GpxLayer gpxLayer, MarkerLayer markerLayer, Runnable postLayerTask) {
+        public GpxImporterData(GpxLayer gpxLayer, GpxRouteLayer gpxRouteLayer, MarkerLayer markerLayer, Runnable postLayerTask) {
             this.gpxLayer = gpxLayer;
+            this.gpxRouteLayer = gpxRouteLayer;
             this.markerLayer = markerLayer;
             this.postLayerTask = postLayerTask;
         }
@@ -66,6 +72,14 @@ public class GpxImporter extends FileImporter {
          */
         public GpxLayer getGpxLayer() {
             return gpxLayer;
+        }
+
+        /**
+         * Returns the imported GPX route layer. May be null if no GPX data.
+         * @return the imported GPX route layer. May be null if no GPX data.
+         */
+        public GpxRouteLayer getGpxRouteLayer() {
+            return gpxRouteLayer;
         }
 
         /**
@@ -127,6 +141,9 @@ public class GpxImporter extends FileImporter {
             if (data.markerLayer != null) {
                 MainApplication.getLayerManager().addLayer(data.markerLayer);
             }
+            if (data.gpxRouteLayer != null) {
+                MainApplication.getLayerManager().addLayer(data.gpxRouteLayer);
+            }
             if (data.gpxLayer != null) {
                 MainApplication.getLayerManager().addLayer(data.gpxLayer);
             }
@@ -146,6 +163,7 @@ public class GpxImporter extends FileImporter {
     public static GpxImporterData loadLayers(final GpxData data, final boolean parsedProperly,
             final String gpxLayerName, String markerLayerName) {
         MarkerLayer markerLayer = null;
+        GpxRouteLayer gpxRouteLayer = null;
         GpxLayer gpxLayer = new GpxLayer(data, gpxLayerName, data.storageFile != null);
         if (Config.getPref().getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
             markerLayer = new MarkerLayer(data, markerLayerName, data.storageFile, gpxLayer);
@@ -154,6 +172,9 @@ public class GpxImporter extends FileImporter {
             } else {
                 gpxLayer.setLinkedMarkerLayer(markerLayer);
             }
+        }
+        if (Config.getPref().getBoolean("gpx.makeautoroutes", true)) {
+            gpxRouteLayer = new GpxRouteLayer(tr("Routes from {0}", gpxLayerName), gpxLayer);
         }
 
         final boolean isSameColor = MainApplication.getLayerManager()
@@ -181,7 +202,7 @@ public class GpxImporter extends FileImporter {
                 .show();
             }
         };
-        return new GpxImporterData(gpxLayer, markerLayer, postLayerTask);
+        return new GpxImporterData(gpxLayer, gpxRouteLayer, markerLayer, postLayerTask);
     }
 
     /**

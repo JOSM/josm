@@ -904,7 +904,6 @@ public class GpxData extends WithAttributes implements Data {
         private Iterator<IGpxTrack> itTracks;
         private int idxTracks;
         private Iterator<IGpxTrackSegment> itTrackSegments;
-        private final Iterator<GpxRoute> itRoutes;
 
         private Line next;
         private final boolean[] trackVisibility;
@@ -920,7 +919,6 @@ public class GpxData extends WithAttributes implements Data {
         public LinesIterator(GpxData data, boolean... trackVisibility) {
             itTracks = data.tracks.iterator();
             idxTracks = -1;
-            itRoutes = data.routes.iterator();
             this.trackVisibility = trackVisibility;
             next = getNext();
         }
@@ -960,9 +958,6 @@ public class GpxData extends WithAttributes implements Data {
                     trackAttributes = null;
                     itTracks = null;
                 }
-            }
-            if (itRoutes.hasNext()) {
-                return new Line(itRoutes.next());
             }
             return null;
         }
