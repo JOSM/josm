@@ -152,7 +152,7 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
   assertMatch: "way name=Cmentarz amenity=grave_yard";
   assertNoMatch: "way name=kiosk amenity=grave_yard";
 }
-  /* the following without fixRemove to avoid informatin loss, should be checked manually */
+  /* the following without fixRemove to avoid information loss, should be checked manually */
 *[name][name=~/^(?i)(chapel|chapelle|kapelle)$/], /* check if amenity=place_of_worship and/or building=chapel applies */
 *[name][name=~/^(?i)(silo)$/][man_made!=silo], /* check if man_made=silo and/or building=silo applies */
 *[name][name=~/^(?i)(school|école|Школа)$/][amenity!=school], /* check if amenity=school and/or building=school applies applies */
