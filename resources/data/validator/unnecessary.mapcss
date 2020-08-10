@@ -21,7 +21,7 @@ area:closed[landuse ][area?][!highway],
 area:closed[leisure ][area?][!highway][leisure!=track][leisure!=slipway],
 area:closed[natural ][area?],
 area:closed[shop    ][area?] {
-  throwWarning: tr("{0} is unnecessary for {1}", "{2.key}", "{1.key}");
+  throwWarning: tr("{0} is unnecessary for {1}", "{2.tag}", "{1.key}");
   group: tr("unnecessary tag");
   fixRemove: "{2.key}";
 }
@@ -31,7 +31,7 @@ area:closed[highway=rest_area][area?],
 area:closed[highway=services][area?],
 area:closed[aeroway=aerodrome][area?],
 area:closed[aeroway=helipad][area?] {
-  throwWarning: tr("{0} is unnecessary for {1}", "{2.key}", "{1.tag}");
+  throwWarning: tr("{0} is unnecessary for {1}", "{2.tag}", "{1.tag}");
   group: tr("unnecessary tag");
   fixRemove: "{2.key}";
 }
