@@ -590,7 +590,7 @@ public class GpxData extends WithAttributes implements Data {
      */
     public synchronized void addWaypoint(WayPoint waypoint) {
         if (privateWaypoints.stream().anyMatch(w -> w == waypoint)) {
-            throw new IllegalArgumentException(MessageFormat.format("The route was already added to this data: {0}", waypoint));
+            throw new IllegalArgumentException(MessageFormat.format("The waypoint was already added to this data: {0}", waypoint));
         }
         privateWaypoints.add(waypoint);
         invalidate();
@@ -603,7 +603,7 @@ public class GpxData extends WithAttributes implements Data {
      */
     public synchronized void removeWaypoint(WayPoint waypoint) {
         if (!privateWaypoints.removeIf(w -> w == waypoint)) {
-            throw new IllegalArgumentException(MessageFormat.format("The route was not in this data: {0}", waypoint));
+            throw new IllegalArgumentException(MessageFormat.format("The waypoint was not in this data: {0}", waypoint));
         }
         invalidate();
     }
