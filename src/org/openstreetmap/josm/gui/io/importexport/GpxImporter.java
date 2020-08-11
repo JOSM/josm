@@ -171,7 +171,7 @@ public class GpxImporter extends FileImporter {
                 gpxLayer.setLinkedMarkerLayer(markerLayer);
             }
         }
-        if (Config.getPref().getBoolean("gpx.makeautoroutes", true)) {
+        if (Config.getPref().getBoolean("gpx.makeautoroutes", true) && !data.getRoutes().isEmpty()) {
             gpxRouteLayer = new GpxRouteLayer(tr("Routes from {0}", gpxLayerName), gpxLayer);
         }
 
