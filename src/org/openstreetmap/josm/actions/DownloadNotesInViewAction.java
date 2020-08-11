@@ -39,7 +39,7 @@ public final class DownloadNotesInViewAction extends JosmAction {
      * @return a new {@code DownloadNotesInViewAction} with download icon
      */
     public static DownloadNotesInViewAction newActionWithDownloadIcon() {
-        return new DownloadNotesInViewAction("download");
+        return new DownloadNotesInViewAction("download_in_view");
     }
 
     @Override
