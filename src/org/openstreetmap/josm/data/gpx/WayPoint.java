@@ -254,7 +254,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
             if (obj instanceof Date) {
                 return (Date) obj;
             } else if (obj == null) {
-                Logging.info("Waypoint {0} value unset", PT_TIME);
+                Logging.trace("Waypoint {0} value unset", PT_TIME);
             } else {
                 Logging.warn("Unsupported waypoint {0} value: {1}", PT_TIME, obj);
             }
