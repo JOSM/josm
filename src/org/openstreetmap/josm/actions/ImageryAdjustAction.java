@@ -254,6 +254,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                     new String[] {tr("OK"), tr("Cancel")},
                     false, false); // Do not dispose on close, so HIDE_ON_CLOSE remains the default behaviour and setVisible is called
             setButtonIcons("ok", "cancel");
+            configureContextsensitiveHelp("Action/ImageryAdjust", true);
             contentInsets = new Insets(10, 15, 5, 15);
             JPanel pnl = new JPanel(new GridBagLayout());
             pnl.add(new JMultilineLabel(tr("Use arrow keys or drag the imagery layer with mouse to adjust the imagery offset.\n" +
