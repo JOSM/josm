@@ -674,6 +674,7 @@ public class ImageProvider {
     /**
      * Execute the image request and scale result.
      * @return the requested image as data: URL or null if the request failed
+     * @since 16872
      */
     public String getDataURL() {
         ImageIcon ii = get();
