@@ -161,6 +161,10 @@ for($i = 1; my @ifiles = (glob("resources/images".("/*" x $i).".png"), glob("res
             }
           }
         }
+        if($f =~ /<style[^>]+type=['"]text\/css['"][^>]*>/m)
+        {
+          print STDERR "$ifile: CSS-Style in SVG icon not supported\n";
+        }
         if($f =~ /viewBox\s*=\s*["']([^"']+)["']/)
         {
           my $x = $1;
