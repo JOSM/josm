@@ -203,7 +203,7 @@ public class MainApplicationTest {
     }
 
     private static PluginInformation newPluginInformation(String plugin) throws PluginListParseException {
-        return PluginListParser.createInfo(plugin+".jar", "https://svn.openstreetmap.org/applications/editors/josm/dist/"+plugin+".jar",
+        return PluginListParser.createInfo(plugin+".jar", "https://josm.openstreetmap.de/osmsvn/applications/editors/josm/dist/"+plugin+".jar",
                 "");
     }
 
