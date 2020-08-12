@@ -333,6 +333,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 tr("Status Report"),
                 tr("Copy to clipboard and close"), tr("Report bug"), tr("Close"));
         ed.setButtonIcons("copy", "bug", "cancel");
+        ed.configureContextsensitiveHelp("/Action/ShowStatusReport", true);
         ed.setContent(ta, false);
         ed.setMinimumSize(new Dimension(380, 200));
         ed.setPreferredSize(new Dimension(700, MainApplication.getMainFrame().getHeight()-50));
