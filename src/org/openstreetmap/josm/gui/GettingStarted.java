@@ -33,6 +33,8 @@ import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -198,17 +200,13 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
     }
 
     static String fixImageLinks(String s) {
-        Matcher m = Pattern.compile("src=\"/browser/trunk/resources(/images/.*?\\.svg)\\?format=raw\"").matcher(s);
+        Matcher m = Pattern.compile("src=\"/browser/trunk/resources/images/(.*?)\\.(png|svg)\\?format=raw\"").matcher(s);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String im = m.group(1);
-            URL u = GettingStarted.class.getResource(im);
+            String u = new ImageProvider(im).setMaxSize(ImageSizes.HTMLINLINE).getDataURL();
             if (u != null) {
-                try {
-                    m.appendReplacement(sb, Matcher.quoteReplacement("src=\"" + Utils.betterJarUrl(u, u) + '\"'));
-                } catch (IOException e) {
-                    Logging.error(e);
-                }
+                m.appendReplacement(sb, Matcher.quoteReplacement("src=\"" + u + '\"'));
             }
         }
         m.appendTail(sb);

@@ -20,9 +20,11 @@ import java.awt.image.ColorModel;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
+import java.awt.image.RenderedImage;
 import java.awt.image.RGBImageFilter;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -173,7 +175,12 @@ public class ImageProvider {
          * Status line logo size
          * @since 13369
          */
-        STATUSLINE(18, 18);
+        STATUSLINE(18, 18),
+        /**
+         * HTML inline image
+         * @since 16872
+         */
+        HTMLINLINE(24, 24);
 
         private final int virtualWidth;
         private final int virtualHeight;
@@ -662,6 +669,27 @@ public class ImageProvider {
             return ir.getImageIconBounded(new Dimension(virtualMaxWidth, virtualMaxHeight), multiResolution);
         else
             return ir.getImageIcon(new Dimension(virtualWidth, virtualHeight), multiResolution);
+    }
+
+    /**
+     * Execute the image request and scale result.
+     * @return the requested image as data: URL or null if the request failed
+     */
+    public String getDataURL() {
+        ImageIcon ii = get();
+        if (ii != null) {
+            final ByteArrayOutputStream os = new ByteArrayOutputStream();
+            try {
+                Image i = ii.getImage();
+                if(i instanceof RenderedImage) {
+                    ImageIO.write((RenderedImage)i, "png", os);
+                    return "data:image/png;base64,"+Base64.getEncoder().encodeToString(os.toByteArray());
+                }
+            } catch (final IOException ioe) {
+                return null;
+            }
+        }
+        return null;
     }
 
     /**
