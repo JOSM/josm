@@ -154,7 +154,7 @@ public final class OsmUrlToBounds {
      *
      * @param url string for parsing
      * @return Bounds if shortlink, null otherwise
-     * @see <a href="http://trac.openstreetmap.org/browser/sites/rails_port/lib/short_link.rb">short_link.rb</a>
+     * @see <a href="https://github.com/openstreetmap/openstreetmap-website/blob/master/lib/short_link.rb">short_link.rb</a>
      */
     private static Bounds parseShortLink(final String url) {
         if (!url.startsWith(SHORTLINK_PREFIX))

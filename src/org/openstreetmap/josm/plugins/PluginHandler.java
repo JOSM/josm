@@ -260,8 +260,8 @@ public final class PluginHandler {
      * List of unmaintained plugins. Not really up-to-date as the vast majority of plugins are not maintained after a few months, sadly...
      */
     static final List<String> UNMAINTAINED_PLUGINS = Collections.unmodifiableList(Arrays.asList(
-        "irsrectify", // See https://trac.openstreetmap.org/changeset/29404/subversion
-        "surveyor2", // See https://trac.openstreetmap.org/changeset/29404/subversion
+        "irsrectify", // See https://josm.openstreetmap.de/changeset/29404/osm/
+        "surveyor2", // See https://josm.openstreetmap.de/changeset/29404/osm/
         "gpsbabelgui",
         "Intersect_way",
         "ContourOverlappingMerge", // See #11202, #11518, https://github.com/bularcasergiu/ContourOverlappingMerge/issues/1
