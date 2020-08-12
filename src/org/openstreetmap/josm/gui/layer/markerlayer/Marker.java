@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -267,18 +268,23 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
      * @param mousePressed true if the left mouse button is pressed
      * @param showTextOrIcon true if text and icon shall be drawn
      */
-    public void paint(Graphics g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
+    public void paint(Graphics2D g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
         Point screen = mv.getPoint(this);
+        int size2 = parentLayer.markerSize / 2;
+
         if (symbol != null && showTextOrIcon) {
             paintIcon(mv, g, screen.x-symbol.getIconWidth()/2, screen.y-symbol.getIconHeight()/2);
         } else {
-            g.drawLine(screen.x-2, screen.y-2, screen.x+2, screen.y+2);
-            g.drawLine(screen.x+2, screen.y-2, screen.x-2, screen.y+2);
+            Stroke stroke = g.getStroke();
+            g.setStroke(parentLayer.markerStroke);
+            g.drawLine(screen.x - size2, screen.y - size2, screen.x + size2, screen.y + size2);
+            g.drawLine(screen.x + size2, screen.y - size2, screen.x - size2, screen.y + size2);
+            g.setStroke(stroke);
         }
 
         String labelText = getText();
         if (!labelText.isEmpty() && showTextOrIcon) {
-            g.drawString(labelText, screen.x+4, screen.y+2);
+            g.drawString(labelText, screen.x + size2 + 2, screen.y + size2);
         }
     }
 

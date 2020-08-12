@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
@@ -37,7 +38,9 @@ import org.openstreetmap.josm.data.gpx.GpxExtension;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -78,6 +81,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     private Marker currentMarker;
     public AudioMarker syncAudioMarker;
     private Color color, realcolor;
+    final int markerSize = new IntegerProperty("draw.rawgps.markers.size", 4).get();
+    final BasicStroke markerStroke = new StrokeProperty("draw.rawgps.markers.stroke", "1").get();
 
     /**
      * The default color that is used for drawing markers.

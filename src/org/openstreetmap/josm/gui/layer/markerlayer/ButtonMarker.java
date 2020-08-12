@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -43,7 +43,7 @@ public class ButtonMarker extends Marker {
         return buttonRectangle.contains(p);
     }
 
-    @Override public void paint(Graphics g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
+    @Override public void paint(Graphics2D g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
         if (!showTextOrIcon) {
             super.paint(g, mv, mousePressed, showTextOrIcon);
             return;
