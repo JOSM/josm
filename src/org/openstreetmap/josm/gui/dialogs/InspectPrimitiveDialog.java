@@ -95,6 +95,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         });
 
         setContent(tabs, false);
+        configureContextsensitiveHelp("/Action/InfoAboutElements", true /* show help button */);
     }
 
     protected static JPanel genericMonospacePanel(JPanel p, String s) {
