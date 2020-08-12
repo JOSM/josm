@@ -105,8 +105,9 @@ public class TaginfoAction extends AbstractAction {
     }
 
     /**
-     * Opens Taginfo for the given tag or key (if the tag value is null)
+     * Returns the Taginfo URL for the given tag or key (if the tag value is null)
      * @param tag the tag
+     * @return the Taginfo URL for the given tag or key
      * @since 16596
      */
     public String getTaginfoUrlForTag(Tag tag) {
@@ -122,8 +123,9 @@ public class TaginfoAction extends AbstractAction {
     }
 
     /**
-     * Opens Taginfo for the given relation type
+     * Returns the Taginfo URL for the given relation type
      * @param type the relation type
+     * @return the Taginfo URL for the given relation type
      * @since 16596
      */
     public String getTaginfoUrlForRelationType(String type) {
@@ -134,6 +136,7 @@ public class TaginfoAction extends AbstractAction {
      * Returns a new action which launches the Taginfo instance from the given URL
      * @param name the action's text as displayed on the menu (if it is added to a menu)
      * @param taginfoUrl Taginfo URL
+     * @return a new action which launches the Taginfo instance from the given URL
      * @since 16597
      */
     public TaginfoAction withTaginfoUrl(String name, String taginfoUrl) {

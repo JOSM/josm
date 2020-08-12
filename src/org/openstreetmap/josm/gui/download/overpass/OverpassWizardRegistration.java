@@ -43,6 +43,7 @@ public final class OverpassWizardRegistration {
 
     /**
      * Gets all wizards that are currently registered.
+     * @param callbacks wizard callbacks
      * @return The list of wizards.
      */
     public static List<Action> getWizards(OverpassWizardCallbacks callbacks) {

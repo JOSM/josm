@@ -41,6 +41,7 @@ public enum OnlineResource {
 
     /**
      * Replies whether the given URL matches this online resource
+     * @param url the URL to check
      * @return whether the given URL matches this online resource
      */
     public final boolean matches(String url) {

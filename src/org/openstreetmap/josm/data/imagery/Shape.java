@@ -58,6 +58,7 @@ public class Shape {
 
     /**
      * Encodes the shapes as a string using {@code ,} and {@code ;} as separators
+     * @param shapes The shapes to encode
      * @return The string encoded shapes
      */
     public static String encodeAsString(List<Shape> shapes) {

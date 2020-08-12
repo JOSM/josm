@@ -56,6 +56,7 @@ public class GpxImporter extends FileImporter {
         /**
          * Constructs a new {@code GpxImporterData}.
          * @param gpxLayer The imported GPX layer. May be null if no GPX data.
+         * @param gpxRouteLayer The imported GPX route layer. May be null if no GPX route.
          * @param markerLayer The imported marker layer. May be null if no marker.
          * @param postLayerTask The task to run after GPX and/or marker layer has been added to MapView.
          */

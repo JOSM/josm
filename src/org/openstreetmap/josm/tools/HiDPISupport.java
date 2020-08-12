@@ -144,6 +144,8 @@ public final class HiDPISupport {
      * <p>
      * Will return the argument, in case it is not a multi-resolution image.
      * @param img the image
+     * @param destImageWidth the width of the destination image
+     * @param destImageHeight the height of the destination image
      * @return if <code>img</code> is a <code>java.awt.image.BaseMultiResolutionImage</code>,
      * then the result of the method <code>#getResolutionVariant(destImageWidth, destImageHeight)</code>,
      * otherwise the image itself
