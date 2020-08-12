@@ -30,13 +30,14 @@
         />
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar.file}"/>
     </target>
-    <target name="init-properties" depends="resolve">
+    <target name="init-properties">
         <property environment="env"/>
         <!-- Load properties in a target and not at top level, so this build file can be
         imported from an IDE ant file (Netbeans) without messing up IDE properties.
         When imported from another file, ${basedir} will point to the parent directory
         of the importing ant file. Use ${base.dir} instead, which is always the parent
         directory of this file. -->
+        <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="test.dir" location="${base.dir}/test"/>
         <property name="src.dir" location="${base.dir}/src"/>
         <condition property="noJavaFX">
@@ -182,7 +183,7 @@ Build-Date: ${build.tstamp}
         </jar>
     </target>
     <!-- Mac OS X target -->
-    <target name="mac" depends="init-properties">
+    <target name="mac" depends="init">
         <!-- Using https://bitbucket.org/infinitekind/appbundler to create mac application bundle -->
         <taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpath="${tools.dir}/appbundler.jar"/>
         <!-- create MacOS X application bundle -->
@@ -309,7 +310,7 @@ Build-Date: ${build.tstamp}
             <fileset dir="${resources.dir}"/>
         </copy>
     </target>
-    <target name="init" depends="init-properties">
+    <target name="init" depends="init-properties,resolve">
         <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
             <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
         </uptodate>
@@ -320,7 +321,7 @@ Build-Date: ${build.tstamp}
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${dist.dir}"/>
     </target>
-    <target name="javadoc" depends="init-properties">
+    <target name="javadoc" depends="init">
         <javadoc destdir="javadoc"
                 sourcepath="${src.dir}"
                 classpathref="compile.path"
@@ -827,7 +828,7 @@ Build-Date: ${build.tstamp}
         <_taginfo type="external_presets" output="taginfo_external_presets.json"/>
     </target>
 
-    <target name="imageryindex" depends="init-properties,script-compile">
+    <target name="imageryindex" depends="script-compile">
         <echo message="Checking editor imagery difference"/>
         <java classname="SyncEditorLayerIndex" failonerror="true" fork="false">
             <classpath>
@@ -865,7 +866,7 @@ Build-Date: ${build.tstamp}
         <antcall target="imageryindex"/>
     </target>
 
-    <target name="checkstyle-compile" depends="init-properties">
+    <target name="checkstyle-compile" depends="init">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="checkstyle.classpath" conf="checkstyle"/>
         <mkdir dir="${checkstyle-build.dir}"/>
         <javac sourcepath="" srcdir="${checkstyle.dir}/src" failonerror="true"
@@ -915,7 +916,7 @@ Build-Date: ${build.tstamp}
         </spotbugs>
     </target>
 
-    <target name="pmd" depends="init-properties">
+    <target name="pmd" depends="init">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="pmd.classpath" conf="pmd"/>
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
         <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
@@ -943,7 +944,7 @@ Build-Date: ${build.tstamp}
     <!--
       ** Compile build script for generating projection list.
     -->
-    <target name="epsg-compile" depends="init-properties">
+    <target name="epsg-compile" depends="init">
         <property name="proj-classpath" location="${build.dir}"/>
         <mkdir dir="${proj-build.dir}"/>
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="BuildProjectionDefinitions.java"
