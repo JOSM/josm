@@ -682,9 +682,9 @@ public class ImageProvider {
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
             try {
                 Image i = ii.getImage();
-                if(i instanceof RenderedImage) {
-                    ImageIO.write((RenderedImage)i, "png", os);
-                    return "data:image/png;base64,"+Base64.getEncoder().encodeToString(os.toByteArray());
+                if (i instanceof RenderedImage) {
+                    ImageIO.write((RenderedImage) i, "png", os);
+                    return "data:image/png;base64," + Base64.getEncoder().encodeToString(os.toByteArray());
                 }
             } catch (final IOException ioe) {
                 return null;
