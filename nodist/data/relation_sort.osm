@@ -62,6 +62,35 @@
   <node id='-102488' action='modify' lat='0.01002137016' lon='-0.02383301294' />
   <node id='-102490' action='modify' lat='0.01036552913' lon='-0.02307676889' />
   <node id='-102492' action='modify' lat='0.01029760301' lon='-0.02173183188' />
+  <node id='-103305' action='modify' lat='0.00917928039' lon='-0.02535833538' />
+  <node id='-103306' action='modify' lat='0.00919265151' lon='-0.02491040287' />
+  <node id='-103307' action='modify' lat='0.00941996054' lon='-0.02466303715' />
+  <node id='-103308' action='modify' lat='0.00943333166' lon='-0.0242886458' />
+  <node id='-103309' action='modify' lat='0.00918596595' lon='-0.02404796564' />
+  <node id='-103310' action='modify' lat='0.00920602263' lon='-0.02374042989' />
+  <node id='-103311' action='modify' lat='0.0094266461' lon='-0.02356660533' />
+  <node id='-103312' action='modify' lat='0.00944001722' lon='-0.02323232734' />
+  <node id='-103313' action='modify' lat='0.00923945043' lon='-0.02305181722' />
+  <node id='-103314' action='modify' lat='0.00943333166' lon='-0.02283119374' />
+  <node id='-103315' action='modify' lat='0.0094266461' lon='-0.02251697243' />
+  <node id='-103316' action='modify' lat='0.00924613599' lon='-0.02232309119' />
+  <node id='-103317' action='modify' lat='0.00925950711' lon='-0.02201555543' />
+  <node id='-103318' action='modify' lat='0.00909236811' lon='-0.02257045691' />
+  <node id='-103319' action='modify' lat='0.00911242479' lon='-0.02281782262' />
+  <node id='-103320' action='modify' lat='0.00903219807' lon='-0.0232724407' />
+  <node id='-103321' action='modify' lat='0.00903888363' lon='-0.02356660533' />
+  <node id='-103322' action='modify' lat='0.00898539915' lon='-0.02424853244' />
+  <node id='-103323' action='modify' lat='0.00899877027' lon='-0.02461623823' />
+  <node id='-103324' action='modify' lat='0.00851740997' lon='-0.02201555543' />
+  <node id='-103325' action='modify' lat='0.00847729661' lon='-0.0254051343' />
+  <node id='-103326' action='modify' lat='0.00796919406' lon='-0.02515776859' />
+  <node id='-103327' action='modify' lat='0.0079959363' lon='-0.02430870248' />
+  <node id='-103328' action='modify' lat='0.00801599298' lon='-0.02347300749' />
+  <node id='-103329' action='modify' lat='0.0080293641' lon='-0.02221612223' />
+  <node id='-103330' action='modify' lat='0.00765497275' lon='-0.02223617891' />
+  <node id='-103331' action='modify' lat='0.00766165831' lon='-0.02343289413' />
+  <node id='-103332' action='modify' lat='0.00765497275' lon='-0.02426190356' />
+  <node id='-103333' action='modify' lat='0.00766165831' lon='-0.02509091299' />
   <way id='-102455' action='modify'>
     <nd ref='-102406' />
     <nd ref='-102402' />
@@ -188,6 +217,148 @@
     <tag k='name' v='t4w7' />
     <tag k='oneway' v='yes' />
   </way>
+  <way id='-103860' action='modify'>
+    <nd ref='-103306' />
+    <nd ref='-103307' />
+    <tag k='name' v='t5w2a' />
+  </way>
+  <way id='-103861' action='modify'>
+    <nd ref='-103316' />
+    <nd ref='-103318' />
+    <tag k='name' v='t5w11b' />
+  </way>
+  <way id='-103862' action='modify'>
+    <nd ref='-103309' />
+    <nd ref='-103322' />
+    <tag k='name' v='t5w4b' />
+  </way>
+  <way id='-103863' action='modify'>
+    <nd ref='-103313' />
+    <nd ref='-103320' />
+    <tag k='name' v='t5w8b' />
+  </way>
+  <way id='-103864' action='modify'>
+    <nd ref='-103305' />
+    <nd ref='-103306' />
+    <tag k='name' v='t5w1' />
+  </way>
+  <way id='-103865' action='modify'>
+    <nd ref='-103309' />
+    <nd ref='-103310' />
+    <tag k='name' v='t5w5' />
+  </way>
+  <way id='-103866' action='modify'>
+    <nd ref='-103311' />
+    <nd ref='-103312' />
+    <tag k='name' v='t5w7a' />
+  </way>
+  <way id='-103867' action='modify'>
+    <nd ref='-103314' />
+    <nd ref='-103315' />
+    <tag k='name' v='t5w10a' />
+  </way>
+  <way id='-103868' action='modify'>
+    <nd ref='-103317' />
+    <nd ref='-103324' />
+    <nd ref='-103325' />
+    <nd ref='-103305' />
+    <tag k='name' v='t5w13' />
+  </way>
+  <way id='-103869' action='modify'>
+    <nd ref='-103308' />
+    <nd ref='-103309' />
+    <tag k='name' v='t5w4a' />
+  </way>
+  <way id='-103870' action='modify'>
+    <nd ref='-103307' />
+    <nd ref='-103308' />
+    <tag k='name' v='t5w3a' />
+  </way>
+  <way id='-103871' action='modify'>
+    <nd ref='-103323' />
+    <nd ref='-103306' />
+    <tag k='name' v='t5w2b' />
+  </way>
+  <way id='-103872' action='modify'>
+    <nd ref='-103322' />
+    <nd ref='-103323' />
+    <tag k='name' v='t5w3b' />
+  </way>
+  <way id='-103873' action='modify'>
+    <nd ref='-103321' />
+    <nd ref='-103310' />
+    <tag k='name' v='t5w6b' />
+  </way>
+  <way id='-103874' action='modify'>
+    <nd ref='-103310' />
+    <nd ref='-103311' />
+    <tag k='name' v='t5w6a' />
+  </way>
+  <way id='-103875' action='modify'>
+    <nd ref='-103312' />
+    <nd ref='-103313' />
+    <tag k='name' v='t5w8a' />
+  </way>
+  <way id='-103876' action='modify'>
+    <nd ref='-103320' />
+    <nd ref='-103321' />
+    <tag k='name' v='t5w7b' />
+  </way>
+  <way id='-103877' action='modify'>
+    <nd ref='-103319' />
+    <nd ref='-103313' />
+    <tag k='name' v='t5w9b' />
+  </way>
+  <way id='-103878' action='modify'>
+    <nd ref='-103313' />
+    <nd ref='-103314' />
+    <tag k='name' v='t5w9a' />
+  </way>
+  <way id='-103879' action='modify'>
+    <nd ref='-103315' />
+    <nd ref='-103316' />
+    <tag k='name' v='t5w11a' />
+  </way>
+  <way id='-103880' action='modify'>
+    <nd ref='-103318' />
+    <nd ref='-103319' />
+    <tag k='name' v='t5w10b' />
+  </way>
+  <way id='-103881' action='modify'>
+    <nd ref='-103316' />
+    <nd ref='-103317' />
+    <tag k='name' v='t5w12' />
+  </way>
+  <way id='-103882' action='modify'>
+    <nd ref='-103326' />
+    <nd ref='-103327' />
+    <tag k='name' v='t6w1a' />
+  </way>
+  <way id='-103883' action='modify'>
+    <nd ref='-103330' />
+    <nd ref='-103331' />
+    <tag k='name' v='t6w3b' />
+  </way>
+  <way id='-103884' action='modify'>
+    <nd ref='-103327' />
+    <nd ref='-103328' />
+    <tag k='name' v='t6w2a' />
+  </way>
+  <way id='-103885' action='modify'>
+    <nd ref='-103328' />
+    <nd ref='-103329' />
+    <tag k='name' v='t6w3a' />
+  </way>
+  <way id='-103886' action='modify'>
+    <nd ref='-103331' />
+    <nd ref='-103332' />
+    <tag k='name' v='t6w2b' />
+  </way>
+  <way id='-103887' action='modify'>
+    <nd ref='-103332' />
+    <nd ref='-103333' />
+    <tag k='name' v='t6w1b' />
+  </way>
   <relation id='-102471' action='modify'>
     <member type='node' ref='-102392' role='' />
     <member type='way' ref='-102468' role='street' />
@@ -197,6 +368,7 @@
     <member type='way' ref='-102469' role='street' />
     <member type='node' ref='-102394' role='tree' />
     <member type='node' ref='-102454' role='house' />
+    <tag k='name' v='street' />
     <tag k='test' v='street' />
     <tag k='type' v='street' />
   </relation>
@@ -208,6 +380,7 @@
     <member type='way' ref='-102459' role='' />
     <member type='way' ref='-102458' role='forward' />
     <member type='way' ref='-102460' role='' />
+    <tag k='name' v='loop' />
     <tag k='test' v='loop' />
   </relation>
   <relation id='-102473' action='modify'>
@@ -220,6 +393,7 @@
     <member type='way' ref='-102463' role='' />
     <member type='node' ref='-102434' role='' />
     <member type='node' ref='-102438' role='' />
+    <tag k='name' v='generic' />
     <tag k='test' v='generic' />
   </relation>
   <relation id='-102474' action='modify'>
@@ -229,6 +403,7 @@
     <member type='node' ref='-102452' role='house' />
     <member type='way' ref='-102469' role='street' />
     <member type='node' ref='-102454' role='house' />
+    <tag k='name' v='associatedStreet' />
     <tag k='test' v='associatedStreet' />
     <tag k='type' v='associatedStreet' />
   </relation>
@@ -240,6 +415,145 @@
     <member type='way' ref='-102502' role='' />
     <member type='way' ref='-102503' role='' />
     <member type='way' ref='-102504' role='' />
+    <tag k='name' v='direction' />
     <tag k='test' v='direction' />
+  </relation>
+  <relation id='-102591' action='modify'>
+    <member type='way' ref='-103864' role='' />
+    <member type='way' ref='-103881' role='' />
+    <member type='way' ref='-103874' role='forward' />
+    <member type='way' ref='-103870' role='forward' />
+    <member type='way' ref='-103875' role='forward' />
+    <member type='way' ref='-103867' role='forward' />
+    <member type='way' ref='-103873' role='forward' />
+    <member type='way' ref='-103878' role='forward' />
+    <member type='way' ref='-103871' role='forward' />
+    <member type='way' ref='-103879' role='forward' />
+    <member type='way' ref='-103860' role='forward' />
+    <member type='way' ref='-103880' role='forward' />
+    <member type='way' ref='-103865' role='' />
+    <member type='way' ref='-103866' role='forward' />
+    <member type='way' ref='-103876' role='forward' />
+    <member type='way' ref='-103862' role='forward' />
+    <member type='way' ref='-103861' role='forward' />
+    <member type='way' ref='-103872' role='forward' />
+    <member type='way' ref='-103869' role='forward' />
+    <member type='way' ref='-103877' role='forward' />
+    <member type='way' ref='-103863' role='forward' />
+    <tag k='name' v='three-loops-ends-way' />
+    <tag k='test' v='three-loops-ends-way' />
+  </relation>
+  <relation id='-102592' action='modify'>
+    <member type='way' ref='-103874' role='forward' />
+    <member type='way' ref='-103861' role='forward' />
+    <member type='way' ref='-103866' role='forward' />
+    <member type='way' ref='-103873' role='forward' />
+    <member type='way' ref='-103880' role='forward' />
+    <member type='way' ref='-103867' role='forward' />
+    <member type='way' ref='-103872' role='forward' />
+    <member type='way' ref='-103862' role='forward' />
+    <member type='way' ref='-103865' role='' />
+    <member type='way' ref='-103870' role='forward' />
+    <member type='way' ref='-103876' role='forward' />
+    <member type='way' ref='-103875' role='forward' />
+    <member type='way' ref='-103877' role='forward' />
+    <member type='way' ref='-103869' role='forward' />
+    <member type='way' ref='-103860' role='forward' />
+    <member type='way' ref='-103871' role='forward' />
+    <member type='way' ref='-103863' role='forward' />
+    <member type='way' ref='-103879' role='forward' />
+    <member type='way' ref='-103878' role='forward' />
+    <tag k='name' v='three-loops-ends-node' />
+    <tag k='test' v='three-loops-ends-node' />
+  </relation>
+  <relation id='-102593' action='modify'>
+    <member type='way' ref='-103865' role='' />
+    <member type='way' ref='-103874' role='forward' />
+    <member type='way' ref='-103872' role='forward' />
+    <member type='way' ref='-103878' role='forward' />
+    <member type='way' ref='-103880' role='forward' />
+    <member type='way' ref='-103869' role='forward' />
+    <member type='way' ref='-103863' role='forward' />
+    <member type='way' ref='-103862' role='forward' />
+    <member type='way' ref='-103876' role='forward' />
+    <member type='way' ref='-103866' role='forward' />
+    <member type='way' ref='-103873' role='forward' />
+    <member type='way' ref='-103877' role='forward' />
+    <member type='way' ref='-103875' role='forward' />
+    <member type='way' ref='-103867' role='forward' />
+    <member type='way' ref='-103870' role='forward' />
+    <tag k='name' v='one-loop-ends-split' />
+    <tag k='test' v='one-loop-ends-split' />
+  </relation>
+  <relation id='-102594' action='modify'>
+    <member type='way' ref='-103866' role='forward' />
+    <member type='way' ref='-103875' role='forward' />
+    <member type='way' ref='-103876' role='forward' />
+    <member type='way' ref='-103863' role='forward' />
+    <member type='way' ref='-103878' role='forward' />
+    <member type='way' ref='-103867' role='forward' />
+    <member type='way' ref='-103877' role='forward' />
+    <member type='way' ref='-103880' role='forward' />
+    <tag k='name' v='no-loop-ends-split' />
+    <tag k='test' v='no-loop-ends-split' />
+  </relation>
+  <relation id='-102595' action='modify'>
+    <member type='way' ref='-103864' role='' />
+    <member type='way' ref='-103876' role='forward' />
+    <member type='way' ref='-103870' role='forward' />
+    <member type='way' ref='-103873' role='forward' />
+    <member type='way' ref='-103867' role='forward' />
+    <member type='way' ref='-103869' role='forward' />
+    <member type='way' ref='-103872' role='forward' />
+    <member type='way' ref='-103874' role='forward' />
+    <member type='way' ref='-103879' role='forward' />
+    <member type='way' ref='-103877' role='forward' />
+    <member type='way' ref='-103861' role='forward' />
+    <member type='way' ref='-103865' role='' />
+    <member type='way' ref='-103863' role='forward' />
+    <member type='way' ref='-103868' role='' />
+    <member type='way' ref='-103860' role='forward' />
+    <member type='way' ref='-103871' role='forward' />
+    <member type='way' ref='-103866' role='forward' />
+    <member type='way' ref='-103875' role='forward' />
+    <member type='way' ref='-103862' role='forward' />
+    <member type='way' ref='-103881' role='' />
+    <member type='way' ref='-103880' role='forward' />
+    <member type='way' ref='-103878' role='forward' />
+    <tag k='name' v='three-loops-ends-loop' />
+    <tag k='test' v='three-loops-ends-loop' />
+  </relation>
+  <relation id='-102596' action='modify'>
+    <member type='way' ref='-103882' role='forward' />
+    <member type='way' ref='-103887' role='forward' />
+    <member type='way' ref='-103886' role='forward' />
+    <member type='way' ref='-103883' role='forward' />
+    <member type='way' ref='-103885' role='forward' />
+    <member type='way' ref='-103884' role='forward' />
+    <tag k='name' v='parallel-oneway' />
+    <tag k='test' v='parallel-oneway' />
+  </relation>
+  <relation id='-102605' action='modify'>
+    <member type='way' ref='-103864' role='' />
+    <member type='way' ref='-103874' role='forward' />
+    <member type='way' ref='-103870' role='forward' />
+    <member type='way' ref='-103875' role='forward' />
+    <member type='way' ref='-103867' role='forward' />
+    <member type='way' ref='-103873' role='forward' />
+    <member type='way' ref='-103878' role='forward' />
+    <member type='way' ref='-103871' role='forward' />
+    <member type='way' ref='-103879' role='forward' />
+    <member type='way' ref='-103860' role='forward' />
+    <member type='way' ref='-103880' role='forward' />
+    <member type='way' ref='-103865' role='' />
+    <member type='way' ref='-103866' role='forward' />
+    <member type='way' ref='-103876' role='forward' />
+    <member type='way' ref='-103881' role='' />
+    <member type='way' ref='-103861' role='forward' />
+    <member type='way' ref='-103872' role='forward' />
+    <member type='way' ref='-103869' role='forward' />
+    <member type='way' ref='-103877' role='forward' />
+    <tag k='name' v='incomplete-loops' />
+    <tag k='test' v='incomplete-loops' />
   </relation>
 </osm>

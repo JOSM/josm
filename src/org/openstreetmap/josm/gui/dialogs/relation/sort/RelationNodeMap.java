@@ -176,36 +176,38 @@ public class RelationNodeMap {
 
     private Integer popForwardOnewayPart(Integer way) {
         if (onewayMap.ways.containsKey(way)) {
-            for (Node n : onewayMap.ways.get(way)) {
-                Integer i = findAdjacentWay(onewayMap, n);
-                if (i == null) {
-                    continue;
-                }
+            Node exitNode = onewayMap.ways.get(way).iterator().next();
 
-                lastOnewayNode = processBackwardIfEndOfLoopReached(i);
-                if (lastOnewayNode != null)
-                    return popBackwardOnewayPart(firstOneway);
-
-                deleteWayNode(onewayMap, i, n);
-                return i;
+            if (checkIfEndOfLoopReached(exitNode)) {
+                lastOnewayNode = exitNode;
+                return popBackwardOnewayPart(firstOneway);
             }
+
+            Integer i = deleteAndGetAdjacentNode(onewayMap, exitNode);
+            if (i != null) return i;
+
+            // When our forward route ends in a dead end try to start
+            // the backward route anyway from the split point
+            // (firstOneWay), to support routes with split a split start
+            // or end.
+            lastOnewayNode = exitNode;
+            return popBackwardOnewayPart(firstOneway);
         }
 
         firstOneway = null;
         return null;
     }
 
-    private Node processBackwardIfEndOfLoopReached(Integer way) { //find if we didn't reach end of the loop (and process backward part)
-        if (onewayReverseMap.ways.containsKey(way)) {
-            for (Node n : onewayReverseMap.ways.get(way)) {
-                if (map.nodes.containsKey(n)
-                        || (onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1))
-                    return n;
-                if (firstCircular != null && firstCircular == n)
-                    return firstCircular;
-            }
-        }
-        return null;
+    // Check if the given node can be the end of the loop (i.e. it has
+    // an outgoing bidirectional or multiple outgoing oneways, or we
+    // looped back to our first circular node)
+    private boolean checkIfEndOfLoopReached(Node n) {
+        if (map.nodes.containsKey(n)
+                || (onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1))
+            return true;
+        if (firstCircular != null && firstCircular == n)
+            return true;
+        return false;
     }
 
     private Integer popBackwardOnewayPart(int way) {
@@ -266,8 +268,11 @@ public class RelationNodeMap {
             doneOneway(way);
         } else {
             done(way);
+            // For bidirectional ways, remove the entry node, so
+            // subsequent lookups will only return the other node(s) as
+            // valid exit nodes.
+            nw.ways.get(way).remove(n);
         }
-        nw.ways.get(way).remove(n);
     }
 
     /**

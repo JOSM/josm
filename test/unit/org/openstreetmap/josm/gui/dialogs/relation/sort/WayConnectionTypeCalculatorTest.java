@@ -104,6 +104,10 @@ public class WayConnectionTypeCalculatorTest {
         Assert.assertEquals("[]", actual);
     }
 
+    // This cluster of tests checks the rendering before and after
+    // sorting of a few relations. Initially, these relations are
+    // intentionally not sorted to ensure the sorting has some work.
+
     @Test
     public void testGeneric() {
         Relation relation = getRelation("generic");
@@ -129,7 +133,107 @@ public class WayConnectionTypeCalculatorTest {
         Assert.assertEquals("[FPH FORWARD, FP FORWARD, NONE, FPH FORWARD, NONE, FPH FORWARD, NONE]", actual);
         //TODO Sorting doesn't work well in this case
         actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
-        Assert.assertEquals("[BACKWARD, BACKWARD, BACKWARD, FPH FORWARD, FPH FORWARD, FPH FORWARD, FPH FORWARD]", actual);
+        Assert.assertEquals("[BACKWARD, BACKWARD, BACKWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD]", actual);
+    }
+
+    // The following cluster of tests checks various configurations
+    // involving split / dual carriageway routes (i.e. containing
+    // members with role=forward or role=backward). Again, these are
+    // intentionally not sorted.
+
+    @Test
+    public void testThreeLoopsEndsLoop() {
+        Relation relation = getRelation("three-loops-ends-loop");
+        // Check the first way before sorting, otherwise the sorter
+        // might pick a different loop starting point than expected below
+        Assert.assertEquals("t5w1", relation.getMembers().get(0).getMember().get("name"));
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
+        String expected = "[" +
+            "L FORWARD, LFPH FORWARD, LFP FORWARD, LFP FORWARD, LBP BACKWARD, LBP BACKWARD, LBPT BACKWARD, " +
+            "L FORWARD, LFPH FORWARD, LFP FORWARD, LFP FORWARD, LBP BACKWARD, LBP BACKWARD, LBPT BACKWARD, " +
+            "LFPH FORWARD, LFP FORWARD, LFP FORWARD, LBP BACKWARD, LBP BACKWARD, LBPT BACKWARD, " +
+            "L FORWARD, L FORWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testThreeLoopsEndsWay() {
+        Relation relation = getRelation("three-loops-ends-way");
+        // Check the first way before sorting, otherwise the sorter
+        // might sort in reverse compared to what is expected below
+        Assert.assertEquals("t5w1", relation.getMembers().get(0).getMember().get("name"));
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
+        String expected = "[" +
+            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FORWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testThreeLoopsEndsNode() {
+        Relation relation = getRelation("three-loops-ends-node");
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
+        String expected = "[" +
+            "FPH FORWARD, BP BACKWARD, BP BACKWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FPH FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, BPT BACKWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testOneLoopEndsSplit() {
+        Relation relation = getRelation("one-loop-ends-split");
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
+        String expected = "[" +
+            "FP FORWARD, FP FORWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FPH FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testNoLoopEndsSplit() {
+        Relation relation = getRelation("no-loop-ends-split");
+        // TODO: This is not yet sorted properly, so this route is
+        // presorted in the data file
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
+        String expected = "[" +
+            "FP FORWARD, FP FORWARD, BP BACKWARD, BPT BACKWARD, " +
+            "FPH FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testIncompleteLoops() {
+        Relation relation = getRelation("incomplete-loops");
+        // TODO: This is not yet sorted perfectly (might not be possible)
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
+        String expected = "[" +
+            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, " +
+            "FORWARD, FPH FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, " +
+            "BACKWARD, FPH FORWARD, FP FORWARD, FP FORWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testParallelOneWay() {
+        Relation relation = getRelation("parallel-oneway");
+        // TODO: This is not always sorted properly, only when the right
+        // way is already at the top, so check that
+        Assert.assertEquals("t6w1a", relation.getMembers().get(0).getMember().get("name"));
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
+        String expected = "[" +
+            "FP FORWARD, FP FORWARD, FP FORWARD, BP BACKWARD, BP BACKWARD, BP BACKWARD" +
+        "]";
+        Assert.assertEquals(expected, actual);
     }
 
     private void reverseWay(Way way) {

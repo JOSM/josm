@@ -145,7 +145,7 @@ public class WayConnectionTypeCalculator {
         }
 
         if (!wct.linkPrev) {
-            wct.direction = determineDirectionOfFirst(i, m);
+            wct.direction = determineDirectionOfFirst(i, m, false);
             if (RelationSortUtils.isOneway(m)) {
                 wct.isOnewayLoopForwardPart = true;
                 lastForwardWay = i;
@@ -217,13 +217,13 @@ public class WayConnectionTypeCalculator {
         }
     }
 
-    private Direction determineDirectionOfFirst(final int i, final RelationMember m) {
+    private Direction determineDirectionOfFirst(final int i, final RelationMember m, boolean reversed) {
         Direction result = RelationSortUtils.roundaboutType(m);
         if (result != NONE)
             return result;
 
         if (RelationSortUtils.isOneway(m)) {
-            if (RelationSortUtils.isBackward(m)) return BACKWARD;
+            if (RelationSortUtils.isBackward(m) != reversed) return BACKWARD;
             else return FORWARD;
         } else { /** guess the direction and see if it fits with the next member */
             if (determineDirection(i, FORWARD, i+1) != NONE) return FORWARD;
@@ -247,6 +247,29 @@ public class WayConnectionTypeCalculator {
                 dirBW = determineDirection(lastBackwardWay, con.get(lastBackwardWay).direction, i, true);
             }
 
+            // Support split-start routes. When the current way does
+            // not fit as forward or backward and we have no backward
+            // ways yet (onewayBeginning) and the most recent oneway
+            // head starts a new segment (!linkPrev), instead of
+            // disconnecting the current way, make it the start of the
+            // backward route. To render properly, unset isOnewayHead on
+            // the most recent head (since the current backward way does
+            // no longer start there).
+            if (dirFW == NONE && dirBW == NONE && RelationSortUtils.isOneway(m) && !wct.isOnewayHead) {
+                WayConnectionType prevHead = null;
+                for (int j = i - 1; j >= 0; --j) {
+                    if (con.get(j).isOnewayHead) {
+                        prevHead = con.get(j);
+                        break;
+                    }
+                }
+
+                if (prevHead != null && !prevHead.linkPrev) {
+                    dirBW = determineDirectionOfFirst(i, m, true);
+                    prevHead.isOnewayHead = false;
+                }
+            }
+
             if (dirBW != NONE) {
                 onewayBeginning = false;
             }
@@ -268,14 +291,9 @@ public class WayConnectionTypeCalculator {
             // Not connected to previous
             if (dirFW == NONE && dirBW == NONE) {
                 wct.linkPrev = false;
-                if (RelationSortUtils.isOneway(m)) {
-                    wct.isOnewayHead = true;
-                    lastForwardWay = i-1;
-                    lastBackwardWay = i-1;
-                } else {
-                    lastForwardWay = UNCONNECTED;
-                    lastBackwardWay = UNCONNECTED;
-                }
+                wct.isOnewayHead = true;
+                lastForwardWay = i-1;
+                lastBackwardWay = i-1;
                 onewayBeginning = true;
             }
 
