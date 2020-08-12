@@ -466,6 +466,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             } else {
                 setButtonIcons("ok", "cancel");
             }
+            configureContextsensitiveHelp("/Menu/Presets", true);
             setContent(content);
             setDefaultButton(1);
             setupDialog();
