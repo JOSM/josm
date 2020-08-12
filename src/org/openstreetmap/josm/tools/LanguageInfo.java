@@ -67,6 +67,8 @@ public final class LanguageInfo {
             }
             if ("nb".equals(code)) { /* OSM-Wiki has "no", but no "nb" */
                 return "No:";
+            } else if ("sr@latin".equals(code)) { /* OSM-Wiki has "Sr-latn" and not Sr-latin */
+                return "Sr-latn:";
             } else if ("de".equals(code) || "es".equals(code) || "fr".equals(code)
                     || "it".equals(code) || "nl".equals(code) || "ru".equals(code)
                     || "ja".equals(code)) {
@@ -159,6 +161,8 @@ public final class LanguageInfo {
         if (localeName == null) return "en";
         if ("ca@valencia".equals(localeName)) {
             localeName = "ca__valencia";
+        } else if ("sr@latin".equals(localeName)) {
+            localeName = "sr__latin";
         } else if ("he".equals(localeName)) {
             localeName = "iw_IL";
         } else if ("id".equals(localeName)) {

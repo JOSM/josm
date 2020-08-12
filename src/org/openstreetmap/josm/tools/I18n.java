@@ -136,6 +136,7 @@ public final class I18n {
         languages.put("ru", PluralMode.MODE_RU);
         languages.put("sk", PluralMode.MODE_SK);
         //languages.put("sl", PluralMode.MODE_SL);
+        languages.put("sr@latin", PluralMode.MODE_RU);
         languages.put("sv", PluralMode.MODE_NOTONE);
         //languages.put("tr", PluralMode.MODE_NONE);
         languages.put("uk", PluralMode.MODE_RU);
