@@ -34,6 +34,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapScaler;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -118,6 +120,10 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
         iSizeButton = new SizeButton(this);
         add(iSizeButton);
 
+        MapScaler scaler = new MapScaler(this::getDist100Pixel, () -> Color.BLACK);
+        add(scaler);
+        springLayout.putConstraint(SpringLayout.SOUTH, scaler, 5, SpringLayout.SOUTH, this);
+
         String mapStyle = PROP_MAPSTYLE.get();
         boolean foundSource = false;
         for (TileSource source: tileSources) {
@@ -148,6 +154,22 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
             (oldTs, newTs) -> oldTs,
             LinkedHashMap::new
         ));
+    }
+
+    /**
+     * Get the distance in meter that correspond to 100 px on screen.
+     * @return the distance in meter that correspond to 100 px on screen
+     * @see NavigatableComponent#getDist100Pixel
+     */
+    private double getDist100Pixel() {
+        int w = getWidth() / 2;
+        int h = getHeight() / 2;
+        ICoordinate c1 = getPosition(w - 50, h);
+        ICoordinate c2 = getPosition(w + 50, h);
+        final LatLon ll1 = new LatLon(c1.getLat(), c1.getLon());
+        final LatLon ll2 = new LatLon(c2.getLat(), c2.getLon());
+        double gcd = ll1.greatCircleDistance(ll2);
+        return gcd <= 0 ? 0.1 : gcd;
     }
 
     /**

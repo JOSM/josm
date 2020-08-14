@@ -8,6 +8,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import javax.accessibility.Accessible;
 import javax.accessibility.AccessibleContext;
@@ -23,7 +25,8 @@ import org.openstreetmap.josm.gui.help.Helpful;
  */
 public class MapScaler extends JComponent implements Helpful, Accessible {
 
-    private final NavigatableComponent mv;
+    private final DoubleSupplier getDist100Pixel;
+    private final Supplier<Color> colorSupplier;
 
     private static final int PADDING_LEFT = 5;
     private static final int PADDING_RIGHT = 50;
@@ -35,7 +38,17 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
      * @param mv map view
      */
     public MapScaler(NavigatableComponent mv) {
-        this.mv = mv;
+        this(() -> mv.getDist100Pixel(true), MapScaler::getColor);
+    }
+
+    /**
+     * Constructs a new {@code MapScaler}.
+     * @param getDist100Pixel supplier for distance in meter that correspond to 100 px on screen
+     * @param colorSupplier supplier for color
+     */
+    public MapScaler(DoubleSupplier getDist100Pixel, Supplier<Color> colorSupplier) {
+        this.getDist100Pixel = getDist100Pixel;
+        this.colorSupplier = colorSupplier;
         setPreferredLineLength(100);
         setOpaque(false);
     }
@@ -50,9 +63,8 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
 
     @Override
     public void paint(Graphics g) {
-        g.setColor(getColor());
-
-        double dist100Pixel = mv.getDist100Pixel(true);
+        g.setColor(colorSupplier.get());
+        double dist100Pixel = getDist100Pixel.getAsDouble();
         TickMarks tickMarks = new TickMarks(dist100Pixel, getWidth() - PADDING_LEFT - PADDING_RIGHT);
         tickMarks.paintTicks(g);
     }
@@ -82,7 +94,7 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
 
         @Override
         public Number getCurrentAccessibleValue() {
-            return mv.getDist100Pixel();
+            return getDist100Pixel.getAsDouble();
         }
 
         @Override
