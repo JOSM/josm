@@ -8,7 +8,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.ActionMap;
-import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.bbox.BBoxChooser;
@@ -21,7 +20,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  * @author Tim Haussmann
  * @since 1390
  */
-public class SlippyMapChooser extends JPanel implements DownloadSelection, PropertyChangeListener {
+public class SlippyMapChooser implements DownloadSelection, PropertyChangeListener {
 
     private DownloadDialog iGui;
     private final SlippyMapBBoxChooser pnlSlippyMapBBoxChooser;
@@ -45,7 +44,6 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
     @Override
     public void setDownloadArea(Bounds area) {
         pnlSlippyMapBBoxChooser.setBoundingBox(area);
-        repaint();
     }
 
     @Override
@@ -74,7 +72,6 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
 
             // resize and center the DownloadDialog
             iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
-            repaint();
         }
     }
 
