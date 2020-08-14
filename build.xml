@@ -367,7 +367,7 @@ Build-Date: ${build.tstamp}
             <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_PASSWORD@" value="${osm.password}"/>
         </sequential>
     </macrodef>
-    <target name="test-init" depends="init-properties">
+    <target name="test-init" depends="init">
         <mkdir dir="${test.dir}/build"/>
         <mkdir dir="${test.dir}/build/unit"/>
         <mkdir dir="${test.dir}/build/functional"/>
