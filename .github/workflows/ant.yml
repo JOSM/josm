@@ -58,27 +58,29 @@ jobs:
           curl -o ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar"
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
         run: ${{ env.ANT_HOME }}/bin/ant -version
-      - name: Build with Ant, headless ${{ matrix.headless }}
-        run: |
-          ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
-          if [ "${{ matrix.headless }}" == "true" ]; then
-            $ANT -Dtest.headless=true
-          else
-            xvfb-run $ANT -Dtest.headless=false
-          fi
-      - name: Dump errors if failed
-        if: ${{ failure() }}
-        run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
+      # - name: Build with Ant, headless ${{ matrix.headless }}
+      #   run: |
+      #     ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
+      #     if [ "${{ matrix.headless }}" == "true" ]; then
+      #       $ANT -Dtest.headless=true
+      #     else
+      #       xvfb-run $ANT -Dtest.headless=false
+      #     fi
+      # - name: Dump errors if failed
+      #   if: ${{ failure() }}
+      #   run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
       - name: Set revision env variable
         if: ${{ always() }}
         # Careful, you will only have a resources/REVISION if you've already built
-        run: echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
-      - name: Upload Ant reports
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: Ant reports for JOSM ${{ env.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
-          path: test/report/*.txt
+        run: |
+          ant create-revision
+          echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
+      # - name: Upload Ant reports
+      #   if: ${{ always() }}
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: Ant reports for JOSM ${{ env.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
+      #     path: test/report/*.txt
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
         env:
