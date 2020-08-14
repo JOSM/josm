@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -13,8 +11,8 @@
    height="24"
    width="24"
    version="1.0"
-   sodipodi:docname="ok8.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   sodipodi:docname="ok.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -28,13 +26,14 @@
      inkscape:window-height="987"
      id="namedview16"
      showgrid="true"
-     inkscape:zoom="8"
-     inkscape:cx="17.666519"
-     inkscape:cy="-0.80385172"
+     inkscape:zoom="11.906726"
+     inkscape:cx="2.4560607"
+     inkscape:cy="28.335842"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2">
+     inkscape:current-layer="svg2"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid834" />
@@ -235,10 +234,10 @@
      sodipodi:nodetypes="cccccscccc" />
   <path
      inkscape:connector-curvature="0"
-     d="M 17.005692,9.0043809 C 18.826496,9 19.991397,8.3680209 21,7.239453 L 20.996,12.622177 2.5051377,12.518582 10.02824,5.3252068 10.00615,8.9946648 Z"
-     style="color:#000000;opacity:0.35393001;fill:#98b9dc;fill-opacity:1;stroke-width:0.44183943"
+     d="M 17.005692,9.0043809 C 18.826496,9 19.991397,8.3680209 21,7.239453 L 20.996,10.322 C 21,11.272507 19.768855,12.629809 18.018,12.605494 L 2.5051377,12.518582 10.02824,5.3252068 10.00615,8.9946648 Z"
+     style="color:#000000;opacity:0.35393;fill:#98b9dc;fill-opacity:1;stroke-width:0.441839"
      id="path4352"
-     sodipodi:nodetypes="ccccccc" />
+     sodipodi:nodetypes="cccccccc" />
   <path
      inkscape:connector-curvature="0"
      d="M 9.5071477,6.5154704 3.227177,12.522308 9.502813,18.517309 9.497293,15.523836 17.5,15.517 c 1.58161,-0.04506 2.727459,-0.684961 3,-2.517 V 8.3984375 C 19.377018,9.4323944 17.666859,9.5036592 17.5,9.507 L 9.4937759,9.49827 Z"

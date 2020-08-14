@@ -576,7 +576,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
             // show the pref button if applicable
             if (preferenceClass != null) {
-                JButton pref = new JButton(ImageProvider.get("preference", ImageProvider.ImageSizes.SMALLICON));
+                JButton pref = new JButton(ImageProvider.get("preference_small", ImageProvider.ImageSizes.SMALLICON));
                 pref.setToolTipText(tr("Open preferences for this panel"));
                 pref.setBorder(BorderFactory.createEmptyBorder());
                 pref.addActionListener(e -> {

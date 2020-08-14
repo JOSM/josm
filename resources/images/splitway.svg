@@ -8,7 +8,7 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   sodipodi:docname="unglueways1.svg"
+   sodipodi:docname="splitway4.svg"
    id="svg6"
    height="24px"
    width="24px"
@@ -33,9 +33,9 @@
      inkscape:window-maximized="1"
      inkscape:window-y="-8"
      inkscape:window-x="-8"
-     inkscape:cy="5.8745629"
-     inkscape:cx="10.297241"
-     inkscape:zoom="17.295264"
+     inkscape:cy="8.1550867"
+     inkscape:cx="13.644388"
+     inkscape:zoom="24.459196"
      showgrid="true"
      id="namedview8"
      inkscape:window-height="987"
@@ -53,6 +53,18 @@
        type="xygrid" />
   </sodipodi:namedview>
   <path
+     style="fill:none"
+     sodipodi:nodetypes="ccc"
+     id="path2"
+     stroke="#000000"
+     d="m 4,14 8,1 8,-1" />
+  <path
+     sodipodi:nodetypes="ccccc"
+     id="path4"
+     fill="#ffffff"
+     stroke="#df421e"
+     d="m 2.5,12.5 h 3 v 3 h -3 z" />
+  <path
      sodipodi:nodetypes="ccccc"
      style="fill:none;stroke:#000000"
      inkscape:connector-curvature="0"
@@ -65,15 +77,16 @@
      id="path2-6-2"
      d="M 12.217597,5.4895111 H 6.5607416 m 2.474874,2.4748737 -2.474874,-2.4748737 2.474874,-2.4748737" />
   <path
-     id="path2"
-     stroke="#000000"
-     d="m -0.9999999,15.000093 9.000024,-1.999999 m 8.0000209,0 9.000024,-2"
-     sodipodi:nodetypes="cccc"
-     style="stroke-width:1" />
-  <path
-     id="path4"
-     fill="#ffffff"
+     d="m 18.5,12.5 h 3 v 3 h -3 z"
      stroke="#df421e"
-     d="m 6.5,11.5 h 3.0000002 v 3 H 6.5 Z m 8,0 h 3 v 3 h -3 z"
-     sodipodi:nodetypes="cccccccccc" />
+     fill="#ffffff"
+     id="path4-3"
+     sodipodi:nodetypes="ccccc" />
+  <path
+     style="stroke-width:1"
+     d="M 9.4999998,12.5 H 14.5 v 5 H 9.4999998 Z"
+     stroke="#df421e"
+     fill="#ffffff"
+     id="path4-33"
+     sodipodi:nodetypes="ccccc" />
 </svg>
