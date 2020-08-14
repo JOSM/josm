@@ -202,12 +202,9 @@ public class RelationNodeMap {
     // an outgoing bidirectional or multiple outgoing oneways, or we
     // looped back to our first circular node)
     private boolean checkIfEndOfLoopReached(Node n) {
-        if (map.nodes.containsKey(n)
-                || (onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1))
-            return true;
-        if (firstCircular != null && firstCircular == n)
-            return true;
-        return false;
+        return map.nodes.containsKey(n)
+                || onewayMap.nodes.containsKey(n) && onewayMap.nodes.get(n).size() > 1
+                || firstCircular != null && firstCircular == n;
     }
 
     private Integer popBackwardOnewayPart(int way) {
