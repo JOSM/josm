@@ -272,6 +272,22 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
                 return false;
             }
 
+            final Boolean slippyMapShowsDownloadBounds = settings.getSlippyMapBounds()
+                    .map(b -> b.intersects(settings.getDownloadBounds().get()))
+                    .orElse(true);
+            if (!slippyMapShowsDownloadBounds) {
+                final int confirmation = JOptionPane.showConfirmDialog(
+                        this.getParent(),
+                        tr("The slippy map no longer shows the selected download bounds. Continue?"),
+                        tr("Confirmation"),
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
+                if (confirmation != JOptionPane.OK_OPTION) {
+                    return false;
+                }
+            }
+
             /*
              * Checks if the user selected the type of data to download. At least one the following
              * must be chosen : raw osm data, gpx data, notes.

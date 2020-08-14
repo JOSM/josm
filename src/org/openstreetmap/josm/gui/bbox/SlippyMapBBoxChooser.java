@@ -358,4 +358,16 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
     public void layerOrderChanged(LayerOrderChangeEvent e) {
         // Do nothing
     }
+
+    /**
+     * Returns the currently visible map area
+     * @return the currently visible map area
+     */
+    public Bounds getVisibleMapArea() {
+        final ICoordinate topLeft = getPosition(0, 0);
+        final ICoordinate bottomRight = getPosition(getWidth(), getHeight());
+        final Bounds bounds = new Bounds(topLeft.getLat(), topLeft.getLon(), false);
+        bounds.extend(bottomRight.getLat(), bottomRight.getLon());
+        return bounds;
+    }
 }

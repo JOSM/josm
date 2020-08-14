@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -501,7 +502,11 @@ public class DownloadDialog extends JDialog {
      * the download dialog.
      */
     public DownloadSettings getDownloadSettings(boolean newLayer) {
-        return new DownloadSettings(currentBounds, newLayer, isZoomToDownloadedDataRequired());
+        final Component areaSelector = tpDownloadAreaSelectors.getSelectedComponent();
+        final Bounds slippyMapBounds = areaSelector instanceof SlippyMapBBoxChooser
+                ? ((SlippyMapBBoxChooser) areaSelector).getVisibleMapArea()
+                : null;
+        return new DownloadSettings(currentBounds, slippyMapBounds, newLayer, isZoomToDownloadedDataRequired());
     }
 
     protected void setCanceled(boolean canceled) {
