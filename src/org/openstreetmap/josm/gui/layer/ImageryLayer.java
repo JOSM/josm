@@ -76,7 +76,7 @@ public abstract class ImageryLayer extends Layer {
                     setMaxSize(ImageSizes.LAYER).get();
         }
         if (icon == null) {
-            icon = ImageProvider.get("imagery_small");
+            icon = ImageProvider.get("imagery_menu", ImageSizes.LAYER);
         }
         for (ImageProcessor processor : filterSettings.getProcessors()) {
             addImageProcessor(processor);

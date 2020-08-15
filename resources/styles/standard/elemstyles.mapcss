@@ -1507,22 +1507,24 @@ node[man_made=pier] {
 }
 way[embankment?][!highway][!railway][!waterway],
 way[man_made=embankment][!highway][!railway][!waterway] {
-    repeat-image: "presets/misc/embankment-pattern.png";
+    repeat-image: "presets/misc/embankment-pattern.svg";
     repeat-image-align: top;
+    repeat-image-offset: 0.5;
     width: 1;
     color: embankment#c14d00;
 }
 way[embankment?][highway],
 way[embankment?][railway],
 way[embankment?][waterway] {
-    repeat-image: "presets/misc/embankment-pattern-centered.png";
+    repeat-image: "presets/misc/embankment-pattern-centered.svg";
+    repeat-image-offset: 0.5;
 }
 way[man_made=embankment][highway],
 way[man_made=embankment][railway],
 way[man_made=embankment][waterway] {
-    repeat-image: "presets/misc/embankment-pattern.png";
+    repeat-image: "presets/misc/embankment-pattern.svg";
     repeat-image-align: top;
-    repeat-image-offset: -1;
+    repeat-image-offset: -0.5;
 }
 way[man_made=pipeline][!waterway] {
     width: 2;
