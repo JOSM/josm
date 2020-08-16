@@ -2,10 +2,12 @@
 package org.openstreetmap.josm.gui;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
@@ -28,10 +30,11 @@ public class GettingStartedTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
+    @Ignore("see #15240, inactive for /browser/trunk/nodist/images/download.png")
     public void testImageReplacement() throws IOException {
         final String motd = new GettingStarted.MotdContent().updateIfRequiredString();
         // assuming that the MOTD contains one image included, fixImageLinks changes the HTML string
-        assertFalse(GettingStarted.fixImageLinks(motd).equals(motd));
+        assertNotEquals(GettingStarted.fixImageLinks(motd), motd);
     }
 
     /**
@@ -41,7 +44,6 @@ public class GettingStartedTest {
     public void testImageReplacementStatic() {
         final String html = "the download button <img src=\"/browser/trunk/resources/images/download.svg?format=raw\" " +
                 "alt=\"source:trunk/resources/images/download.svg\" title=\"source:trunk/resources/images/download.svg\" />.";
-        assertFalse(GettingStarted.fixImageLinks(html).equals(html));
-
+        assertNotEquals(GettingStarted.fixImageLinks(html), html);
     }
 }
