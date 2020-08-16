@@ -1131,6 +1131,9 @@ Build-Date: ${build.tstamp}
     <target name="ivy-report" description="Generates Ivy reports of dependency resolving" depends="resolve">
         <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
     </target>
+    <target name="ivy-checkdepsupdate" description="Display dependency updates on the console" depends="resolve">
+        <ivy:checkdepsupdate/>
+    </target>
     <target name="api-dependency-tree" description="Displays Ivy dependency tree for JOSM API" depends="resolve">
         <ivy:dependencytree conf="api"/>
     </target>
