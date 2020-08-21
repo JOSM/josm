@@ -54,7 +54,13 @@ public class ZoomAction extends MapMode implements SelectionEnded {
     public void selectionEnded(Rectangle r, MouseEvent e) {
         if (r.width >= 3 && r.height >= 3 && MainApplication.isDisplayingMapView()) {
             MapView mv = MainApplication.getMap().mapView;
-            mv.zoomToFactor(mv.getEastNorth(r.x+r.width/2, r.y+r.height/2), r.getWidth()/mv.getWidth());
+            final double factor;
+            if (r.x == e.getPoint().x || r.y == e.getPoint().y) {
+                factor = mv.getWidth() / r.getWidth(); // zoom out
+            } else {
+                factor = r.getWidth() / mv.getWidth(); // zoom in
+            }
+            mv.zoomToFactor(mv.getEastNorth(r.x + r.width / 2, r.y + r.height / 2), factor);
         }
     }
 
