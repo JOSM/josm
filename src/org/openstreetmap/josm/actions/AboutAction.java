@@ -113,9 +113,9 @@ public final class AboutAction extends JosmAction {
         JPanel logos = new JPanel(new FlowLayout());
         logos.add(createImageLink("OpenStreetMap", /* ICON(dialogs/about/) */ "openstreetmap",
                 "https://www.openstreetmap.org/user/josmeditor/diary"));
-        logos.add(createImageLink("Twitter", /* ICON(dialogs/about/) */ "twitter", "https://twitter.com/josmeditor"));
-        logos.add(createImageLink("Facebook", /* ICON(dialogs/about/) */ "facebook", "https://www.facebook.com/josmeditor"));
-        logos.add(createImageLink("GitHub", /* ICON(dialogs/about/) */ "github", "https://github.com/JOSM"));
+        logos.add(createImageLink("Twitter", /* ICON(dialogs/about/) */ "twitter-square", "https://twitter.com/josmeditor"));
+        logos.add(createImageLink("Facebook", /* ICON(dialogs/about/) */ "facebook-square", "https://www.facebook.com/josmeditor"));
+        logos.add(createImageLink("GitHub", /* ICON(dialogs/about/) */ "github-square", "https://github.com/JOSM"));
         info.add(logos, GBC.eol().insets(0, 10, 0, 0));
         info.add(GBC.glue(0, 5), GBC.eol());
 
