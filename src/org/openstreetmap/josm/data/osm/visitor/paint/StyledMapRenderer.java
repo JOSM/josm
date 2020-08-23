@@ -6,7 +6,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -85,7 +84,6 @@ import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.HiDPISupport;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.RotationAngle;
@@ -796,7 +794,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             drawPointHighlight(p.getInView(), Math.max(w, h));
         }
 
-        drawIcon(p, img, disabled, selected, member, theta, (g, r) -> {
+        drawIcon(p.getInViewX(), p.getInViewY(), img, disabled, selected, member, theta, (g, r) -> {
             Color color = getSelectionHintColor(disabled, selected);
             g.setColor(color);
             g.draw(r);
@@ -824,7 +822,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return;
             }
             MapViewPoint p = placement.getPoint();
-            drawIcon(p, img, disabled, selected, member, theta + placement.getRotation(), (g, r) -> {
+            drawIcon(p.getInViewX(), p.getInViewY(), img, disabled, selected, member, theta + placement.getRotation(), (g, r) -> {
                 if (useStrokes) {
                     g.setStroke(new BasicStroke(2));
                 }
@@ -837,7 +835,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         });
     }
 
-    private void drawIcon(MapViewPoint p, MapImage img, boolean disabled, boolean selected, boolean member, double theta,
+    private void drawIcon(final double x, final double y, MapImage img, boolean disabled, boolean selected, boolean member, double theta,
             BiConsumer<Graphics2D, Rectangle2D> selectionDrawer) {
         float alpha = img.getAlphaFloat();
 
@@ -846,9 +844,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             temporaryGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         }
 
-        double x = Math.round(p.getInViewX());
-        double y = Math.round(p.getInViewY());
-        temporaryGraphics.translate(x, y);
+        temporaryGraphics.translate(Math.round(x), Math.round(y));
         temporaryGraphics.rotate(theta);
         int drawX = -img.getWidth() / 2 + img.offsetX;
         int drawY = -img.getHeight() / 2 + img.offsetY;
@@ -954,28 +950,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             int r = (int) Math.floor(s/2d);
             g.fill(new RoundRectangle2D.Double(p.getX()-r, p.getY()-r, s, s, r, r));
             s -= step;
-        }
-    }
-
-    /**
-     * Draws a restriction.
-     * @param img symbol image
-     * @param pVia "via" node
-     * @param vx X offset
-     * @param vy Y offset
-     * @param angle the rotated angle, in degree, clockwise
-     * @param selected if true, draws a selection rectangle
-     * @since 13676
-     */
-    public void drawRestriction(Image img, Point pVia, double vx, double vy, double angle, boolean selected) {
-        // rotate image with direction last node in from to, and scale down image to 16*16 pixels
-        Image smallImg = ImageProvider.createRotatedImage(img, angle, new Dimension(16, 16));
-        int w = smallImg.getWidth(null), h = smallImg.getHeight(null);
-        g.drawImage(smallImg, (int) (pVia.x+vx)-w/2, (int) (pVia.y+vy)-h/2, nc);
-
-        if (selected) {
-            g.setColor(isInactiveMode ? inactiveColor : relationSelectedColor);
-            g.drawRect((int) (pVia.x+vx)-w/2-2, (int) (pVia.y+vy)-h/2-2, w+4, h+4);
         }
     }
 
@@ -1149,8 +1123,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             iconAngle = 270-fromAngleDeg;
         }
 
-        drawRestriction(icon.getImage(disabled),
-                pVia, vx+vx2, vy+vy2, iconAngle, r.isSelected());
+        drawIcon(
+                pVia.x + vx + vx2,
+                pVia.y + vy + vy2,
+                icon, disabled, false, false, Math.toRadians(iconAngle), (graphics2D, rectangle2D) -> {
+                });
     }
 
     /**
