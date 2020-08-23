@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -99,6 +100,14 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public String getDefaultStyle() {
         return "javax.swing.plaf.metal.MetalLookAndFeel";
+    }
+
+    /**
+     * Returns desktop environment based on the environment variable {@code XDG_CURRENT_DESKTOP}.
+     * @return desktop environment.
+     */
+    public Optional<String> getDesktopEnvironment() {
+        return Optional.ofNullable(Utils.getSystemEnv("XDG_CURRENT_DESKTOP")).filter(s -> !s.isEmpty());
     }
 
     /**

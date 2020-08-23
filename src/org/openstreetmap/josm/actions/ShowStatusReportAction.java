@@ -128,6 +128,11 @@ public final class ShowStatusReportAction extends JosmAction {
 
         if (PlatformManager.isPlatformUnixoid()) {
             PlatformHookUnixoid platform = (PlatformHookUnixoid) PlatformManager.getPlatform();
+            // Add desktop environment
+            platform.getDesktopEnvironment().ifPresent(desktop -> text
+                    .append("Desktop environment: ")
+                    .append(desktop)
+                    .append('\n'));
             // Add Java package details
             String packageDetails = platform.getJavaPackageDetails();
             if (packageDetails != null) {
