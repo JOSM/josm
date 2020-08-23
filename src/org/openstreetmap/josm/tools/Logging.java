@@ -50,6 +50,7 @@ public final class Logging {
     public static final Level LEVEL_TRACE = Level.FINEST;
     private static final Logger LOGGER = Logger.getAnonymousLogger();
     private static final RememberWarningHandler WARNINGS = new RememberWarningHandler();
+    private static final Stopwatch startup = Stopwatch.createStarted();
 
     /**
      * A {@link ConsoleHandler} with a couple of extra features, allowing it to be targeted at an
@@ -490,7 +491,7 @@ public final class Logging {
                 return;
             }
 
-            String msg = getPrefix(record) + record.getMessage();
+            String msg = String.format("%09.3f %s%s", startup.elapsed() / 1000., getPrefix(record), record.getMessage());
 
             // Only remember first line of message
             int idx = msg.indexOf('\n');
