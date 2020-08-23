@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.download;
 
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.event.ChangeListener;
 
@@ -31,6 +32,14 @@ public interface IDownloadSourceType {
      * @return The checkbox to be added to the UI
      */
     JCheckBox getCheckBox(ChangeListener checkboxChangeListener);
+
+    /**
+     * Returns the icon to be added to the UI.
+     * @return The icon to be added to the UI
+     */
+    default Icon getIcon() {
+        return null;
+    }
 
     /**
      * Returns the download task class which will be getting the data.

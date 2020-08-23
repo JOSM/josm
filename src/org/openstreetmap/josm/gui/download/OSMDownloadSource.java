@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -231,8 +232,14 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         protected void updateSources() {
             downloadSourcesPanel.removeAll();
             downloadSourcesPanel.add(new JLabel(tr(DATA_SOURCES_AND_TYPES)));
-            DOWNLOAD_SOURCES
-                .forEach(obj -> downloadSourcesPanel.add(obj.getCheckBox(checkboxChangeListener)));
+            DOWNLOAD_SOURCES.forEach(obj -> {
+                final Icon icon = obj.getIcon();
+                if (icon != null) {
+                    downloadSourcesPanel.add(Box.createHorizontalStrut(6));
+                    downloadSourcesPanel.add(new JLabel(icon));
+                }
+                downloadSourcesPanel.add(obj.getCheckBox(checkboxChangeListener));
+            });
         }
 
         @Override
@@ -423,6 +430,11 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         }
 
         @Override
+        public Icon getIcon() {
+            return ImageProvider.get("layer/osmdata_small", ImageProvider.ImageSizes.SMALLICON);
+        }
+
+        @Override
         public Class<? extends AbstractDownloadTask<DataSet>> getDownloadClass() {
             return DownloadOsmTask.class;
         }
@@ -458,6 +470,11 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
         }
 
         @Override
+        public Icon getIcon() {
+            return ImageProvider.get("layer/gpx_small", ImageProvider.ImageSizes.SMALLICON);
+        }
+
+        @Override
         public Class<? extends AbstractDownloadTask<GpxData>> getDownloadClass() {
             return DownloadGpsTask.class;
         }
@@ -488,6 +505,11 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
             }
 
             return cbDownloadNotes;
+        }
+
+        @Override
+        public Icon getIcon() {
+            return ImageProvider.get("layer/marker_small", ImageProvider.ImageSizes.SMALLICON);
         }
 
         @Override
