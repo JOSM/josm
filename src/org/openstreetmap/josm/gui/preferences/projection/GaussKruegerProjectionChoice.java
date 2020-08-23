@@ -15,13 +15,13 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class GaussKruegerProjectionChoice extends ListProjectionChoice {
 
-    private static final String[] zones = {"2", "3", "4", "5"};
+    private static final String[] ZONES = {"2", "3", "4", "5"};
 
     /**
      * Constructs a new {@code GaussKruegerProjectionChoice}.
      */
     public GaussKruegerProjectionChoice() {
-        super(tr("Gau\u00DF-Kr\u00FCger"), /* NO-ICON */ "core:gauss-krueger", zones, tr("GK Zone"));
+        super(tr("Gau\u00DF-Kr\u00FCger"), /* NO-ICON */ "core:gauss-krueger", ZONES, tr("GK Zone"));
     }
 
     @Override

@@ -90,7 +90,7 @@ public class BugReportQueue {
 
     private class BugReportDisplayRunnable implements Runnable {
 
-        private final boolean running = true;
+        private volatile boolean running = true;
 
         @Override
         public void run() {

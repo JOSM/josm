@@ -63,7 +63,8 @@ public class WMTSTileSourceTest {
     private final ImageryInfo testImagery12168 = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12168-WMTSCapabilities.xml");
     private final ImageryInfo testLotsOfLayers = getImagery(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml");
     private final ImageryInfo testDuplicateTags = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-identifier.xml");
-    private final ImageryInfo testMissingStyleIdentifer = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-missing-style-identifier.xml");
+    private final ImageryInfo testMissingStyleIdentifier = getImagery(TestUtils.getTestDataRoot() +
+            "wmts/bug12573-wmts-missing-style-identifier.xml");
     private final ImageryInfo testMultipleTileMatrixForLayer = getImagery(TestUtils.getTestDataRoot() +
             "wmts/bug13975-multiple-tile-matrices-for-one-layer-projection.xml");
     private final ImageryInfo testImageryGisKtnGvAt = getImagery(TestUtils.getTestDataRoot() + "wmts/gis.ktn.gv.at.xml");
@@ -305,7 +306,7 @@ public class WMTSTileSourceTest {
     @Test
     public void testParserForMissingStyleIdentifier() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
-        WMTSTileSource testSource = new WMTSTileSource(testMissingStyleIdentifer);
+        WMTSTileSource testSource = new WMTSTileSource(testMissingStyleIdentifier);
         testSource.initProjection(ProjectionRegistry.getProjection());
     }
 
