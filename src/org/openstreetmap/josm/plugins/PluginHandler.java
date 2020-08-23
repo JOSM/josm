@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -277,7 +278,7 @@ public final class PluginHandler {
     /**
      * All installed and loaded plugins (resp. their main classes)
      */
-    static final Collection<PluginProxy> pluginList = new LinkedList<>();
+    static final Collection<PluginProxy> pluginList = new CopyOnWriteArrayList<>();
 
     /**
      * All installed but not loaded plugins
