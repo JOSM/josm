@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 /**
- * MapCSS parsing error, with line/columnn information in error message.
+ * MapCSS parsing error, with line/column information in error message.
  */
 public class MapCSSException extends RuntimeException {
 
