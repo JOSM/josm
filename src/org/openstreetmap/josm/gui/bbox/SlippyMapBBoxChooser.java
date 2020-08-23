@@ -125,19 +125,12 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
         springLayout.putConstraint(SpringLayout.SOUTH, scaler, 5, SpringLayout.SOUTH, this);
 
         String mapStyle = PROP_MAPSTYLE.get();
-        boolean foundSource = false;
-        for (TileSource source: tileSources) {
-            if (source.getName().equals(mapStyle)) {
-                this.setTileSource(source);
-                iSourceButton.setCurrentMap(source);
-                foundSource = true;
-                break;
-            }
-        }
-        if (!foundSource) {
-            setTileSource(tileSources.get(0));
-            iSourceButton.setCurrentMap(tileSources.get(0));
-        }
+        final TileSource tileSource = tileSources.stream()
+                .filter(source -> source.getName().equals(mapStyle))
+                .findFirst()
+                .orElse(tileSources.get(0));
+        setTileSource(tileSource);
+        iSourceButton.setCurrentMap(tileSource);
 
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
 
