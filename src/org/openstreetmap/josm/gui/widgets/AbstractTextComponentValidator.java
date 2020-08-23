@@ -110,7 +110,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     }
 
     /**
-     * Creates the validator and weires it to the text component <code>tc</code>.
+     * Creates the validator and wires it to the text component <code>tc</code>.
      *
      * @param tc the text component. Must not be null.
      * @throws IllegalArgumentException if tc is null

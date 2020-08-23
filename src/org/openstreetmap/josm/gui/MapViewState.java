@@ -498,7 +498,7 @@ public final class MapViewState implements Serializable {
 
         /**
          * Gets the current position in LatLon coordinates according to the current projection.
-         * @return The positon as LatLon.
+         * @return The position as LatLon.
          * @see #getLatLonClamped()
          */
         public LatLon getLatLon() {
