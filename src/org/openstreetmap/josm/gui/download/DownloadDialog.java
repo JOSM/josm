@@ -164,7 +164,7 @@ public class DownloadDialog extends JDialog {
                         "You can open it manually from File menu or toolbar.</html>"));
         cbStartup.addActionListener(e -> DOWNLOAD_AUTORUN.put(cbStartup.isSelected()));
 
-        JLabel iconZoomToDownloadedData = new JLabel(ImageProvider.get("dialogs/autoscale/data", ImageProvider.ImageSizes.SMALLICON));
+        JLabel iconZoomToDownloadedData = new JLabel(ImageProvider.get("dialogs/autoscale/download", ImageProvider.ImageSizes.SMALLICON));
         cbZoomToDownloadedData = new JCheckBox(tr("Zoom to downloaded data"));
         cbZoomToDownloadedData.setToolTipText(tr("Select to zoom to entire newly downloaded data."));
 

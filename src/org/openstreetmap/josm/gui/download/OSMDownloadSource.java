@@ -509,7 +509,7 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
 
         @Override
         public Icon getIcon() {
-            return ImageProvider.get("layer/marker_small", ImageProvider.ImageSizes.SMALLICON);
+            return ImageProvider.get("dialogs/notes/note_open", ImageProvider.ImageSizes.SMALLICON);
         }
 
         @Override
