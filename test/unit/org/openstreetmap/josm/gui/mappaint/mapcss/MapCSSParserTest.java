@@ -660,4 +660,15 @@ public class MapCSSParserTest {
         assertTrue(rule.contains("closed"));
         assertFalse(rule.contains("areaStyle"));
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19685">Bug #19685</a>.
+     */
+    @Test
+    public void testTicket19685() {
+        MapCSSStyleSource sheet = new MapCSSStyleSource("node:connection:foobar {}");
+        sheet.loadStyleSource();
+        assertEquals(1, sheet.getErrors().size());
+        assertEquals("Error at line 1, column 17: Invalid pseudo class specified: foobar", sheet.getErrors().iterator().next().getMessage());
+    }
 }
