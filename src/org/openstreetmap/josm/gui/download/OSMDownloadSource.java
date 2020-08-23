@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.lang.reflect.InvocationTargetException;
@@ -212,15 +213,14 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
             checkboxChangeListener = e ->
                     dialog.getSelectedDownloadArea().ifPresent(this::updateSizeCheck);
 
-            // adding the download tasks
-            add(new JLabel(tr(DATA_SOURCES_AND_TYPES)), GBC.std().insets(5, 5, 1, 5).anchor(GBC.CENTER));
-            Font labelFont = sizeCheck.getFont();
-            sizeCheck.setFont(labelFont.deriveFont(Font.PLAIN, labelFont.getSize()));
-
-            downloadSourcesPanel = new JPanel();
-            add(downloadSourcesPanel, GBC.eol().anchor(GBC.EAST));
+            downloadSourcesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            add(downloadSourcesPanel, GBC.eol().fill(GBC.HORIZONTAL));
             updateSources();
-            add(sizeCheck, GBC.eol().anchor(GBC.EAST).insets(5, 5, 5, 2));
+
+            sizeCheck.setFont(sizeCheck.getFont().deriveFont(Font.PLAIN));
+            JPanel sizeCheckPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            sizeCheckPanel.add(sizeCheck);
+            add(sizeCheckPanel, GBC.eol().fill(GBC.HORIZONTAL));
 
             setMinimumSize(new Dimension(450, 115));
         }
@@ -230,8 +230,9 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
          */
         protected void updateSources() {
             downloadSourcesPanel.removeAll();
+            downloadSourcesPanel.add(new JLabel(tr(DATA_SOURCES_AND_TYPES)));
             DOWNLOAD_SOURCES
-                .forEach(obj -> downloadSourcesPanel.add(obj.getCheckBox(checkboxChangeListener), GBC.std().insets(1, 5, 1, 5)));
+                .forEach(obj -> downloadSourcesPanel.add(obj.getCheckBox(checkboxChangeListener)));
         }
 
         @Override
