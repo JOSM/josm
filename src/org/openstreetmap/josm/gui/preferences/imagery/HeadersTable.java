@@ -80,7 +80,7 @@ public class HeadersTable extends JPanel {
         }
     }
 
-    private List<String[]> headers;
+    private final List<String[]> headers;
 
     /**
      * Creates empty table

@@ -79,7 +79,7 @@ public final class OsmDataGenerator {
      * @author Michael Zangl
      */
     public abstract static class DataGenerator {
-        private String datasetName;
+        private final String datasetName;
         protected final Random random;
         private DataSet ds;
 

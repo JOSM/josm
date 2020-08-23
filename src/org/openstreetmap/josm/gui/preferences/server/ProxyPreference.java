@@ -28,7 +28,7 @@ public final class ProxyPreference implements SubPreferenceSetting {
         }
     }
 
-    private static Set<ProxyPreferenceListener> listeners = new HashSet<>();
+    private static final Set<ProxyPreferenceListener> listeners = new HashSet<>();
 
     private ProxyPreferencesPanel pnlProxyPreferences;
 

@@ -69,7 +69,7 @@ public class PrefJPanel extends JPanel {
 
     // A list of keys to present the user. Sadly this really is a list of keys Java knows about,
     // not a list of real physical keys. If someone knows how to get that list?
-    private static Map<Integer, String> keyList = setKeyList();
+    private static final Map<Integer, String> keyList = setKeyList();
 
     private final JCheckBox cbAlt = new JCheckBox();
     private final JCheckBox cbCtrl = new JCheckBox();

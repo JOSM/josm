@@ -154,7 +154,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private static final Font InfoFont = new Font("sansserif", Font.BOLD, 13);
 
     /** additional layer menu actions */
-    private static List<MenuAddition> menuAdditions = new LinkedList<>();
+    private static final List<MenuAddition> menuAdditions = new LinkedList<>();
 
     /** minimum zoom level to show to user */
     public static final IntegerProperty PROP_MIN_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".min_zoom_lvl", 2);

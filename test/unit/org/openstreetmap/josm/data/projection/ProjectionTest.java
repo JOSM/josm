@@ -20,7 +20,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public class ProjectionTest {
 
-    private static Random rand = new SecureRandom();
+    private static final Random rand = new SecureRandom();
 
     boolean error;
     String text;

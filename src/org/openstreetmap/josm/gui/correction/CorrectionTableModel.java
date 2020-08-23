@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.correction.Correction;
 public abstract class CorrectionTableModel<C extends Correction> extends AbstractTableModel {
 
     private final transient List<C> corrections;
-    private boolean[] apply;
+    private final boolean[] apply;
     private final int applyColumn;
 
     /**

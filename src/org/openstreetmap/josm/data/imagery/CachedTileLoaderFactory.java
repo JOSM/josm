@@ -29,7 +29,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
      */
     public static final StringProperty PROP_TILECACHE_DIR = getTileCacheDir();
     private final ICacheAccess<String, BufferedImageCacheEntry> cache;
-    private Constructor<? extends TileLoader> tileLoaderConstructor;
+    private final Constructor<? extends TileLoader> tileLoaderConstructor;
 
     /**
      * @param cache cache instance which will be used by tile loaders created by this tile loader

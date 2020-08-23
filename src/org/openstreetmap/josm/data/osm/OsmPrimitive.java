@@ -58,7 +58,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * This pattern should be a subset of {@link #directionKeys}
      * @see #FLAG_DIRECTION_REVERSED
      */
-    private static volatile Match reversedDirectionKeys;
+    private static final Match reversedDirectionKeys;
 
     static {
         String reversedDirectionDefault = "oneway=\"-1\"";

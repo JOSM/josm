@@ -30,7 +30,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class OsmReaderPerformanceTest {
     private static final int TIMES = 4;
-    private static String DATA_FILE = "nodist/data/neubrandenburg.osm.bz2";
+    private static final String DATA_FILE = "nodist/data/neubrandenburg.osm.bz2";
 
     /**
      * Global timeout applied to all test methods.

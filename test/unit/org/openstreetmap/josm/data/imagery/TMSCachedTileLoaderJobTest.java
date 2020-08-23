@@ -65,8 +65,8 @@ public class TMSCachedTileLoaderJobTest {
     }
 
     private static class TestCachedTileLoaderJob extends TMSCachedTileLoaderJob {
-        private String url;
-        private String key;
+        private final String url;
+        private final String key;
 
         TestCachedTileLoaderJob(TileLoaderListener listener, Tile tile, String key) throws IOException {
             this(listener, tile, key, (int) TimeUnit.DAYS.toSeconds(1));

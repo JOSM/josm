@@ -72,7 +72,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class GeoImageLayer extends AbstractModifiableLayer implements
         JumpToMarkerLayer, NavigatableComponent.ZoomChangeListener, ImageDataUpdateListener {
 
-    private static List<Action> menuAdditions = new LinkedList<>();
+    private static final List<Action> menuAdditions = new LinkedList<>();
 
     private static volatile List<MapMode> supportedMapModes;
 

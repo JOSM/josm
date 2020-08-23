@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
  * @author Imi
  */
 public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
-    private boolean ignoreException;
+    private final boolean ignoreException;
     private final String title;
 
     /** progress monitor */

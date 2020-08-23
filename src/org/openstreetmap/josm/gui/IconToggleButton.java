@@ -25,7 +25,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     private transient ShowHideButtonListener listener;
     private boolean hideIfDisabled;
-    private boolean isExpert;
+    private final boolean isExpert;
 
     /**
      * Construct the toggle button with the given action.

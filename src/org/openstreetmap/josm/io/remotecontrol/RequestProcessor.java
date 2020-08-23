@@ -82,7 +82,7 @@ public class RequestProcessor extends Thread {
      * Will be initialized with default handlers here. Other plug-ins
      * can extend this list by using @see addRequestHandler
      */
-    private static Map<String, Class<? extends RequestHandler>> handlers = new TreeMap<>();
+    private static final Map<String, Class<? extends RequestHandler>> handlers = new TreeMap<>();
 
     static {
         initialize();

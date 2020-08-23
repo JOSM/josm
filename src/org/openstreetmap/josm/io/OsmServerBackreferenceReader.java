@@ -36,9 +36,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class OsmServerBackreferenceReader extends OsmServerReader {
 
     /** the id of the primitive whose referrers are to be read */
-    private long id;
+    private final long id;
     /** the type of the primitive */
-    private OsmPrimitiveType primitiveType;
+    private final OsmPrimitiveType primitiveType;
     /** true if this reader should complete incomplete primitives */
     private boolean readFull;
     /** true if this reader should allow incomplete parent ways */

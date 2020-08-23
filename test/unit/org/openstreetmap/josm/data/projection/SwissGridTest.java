@@ -18,7 +18,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class SwissGridTest {
     private static final String SWISS_EPSG_CODE = "EPSG:21781";
-    private boolean debug = false;
+    private final boolean debug = false;
 
     /**
      * Setup test.

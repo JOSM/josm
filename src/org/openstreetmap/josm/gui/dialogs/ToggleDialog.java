@@ -149,7 +149,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     protected ButtonHidingType buttonHiding;
 
     /** the preferred height if the toggle dialog is expanded */
-    private int preferredHeight;
+    private final int preferredHeight;
 
     /** the JDialog displaying the toggle dialog as undocked dialog */
     protected JDialog detachedDialog;

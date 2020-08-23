@@ -132,7 +132,7 @@ public class ImageryReader implements Closeable {
         /** In case of mirror parsing this contains the mirror entry */
         private ImageryInfo mirrorEntry;
         private ImageryBounds bounds;
-        private Map<ImageryBounds, ImageryBounds> boundsInterner = new HashMap<>();
+        private final Map<ImageryBounds, ImageryBounds> boundsInterner = new HashMap<>();
         private Shape shape;
         // language of last element, does only work for simple ENTRY_ATTRIBUTE's
         private String lang;

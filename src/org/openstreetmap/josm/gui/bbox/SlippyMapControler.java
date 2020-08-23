@@ -36,7 +36,7 @@ public class SlippyMapControler extends MouseAdapter {
     private MoveTask moveTask = new MoveTask();
 
     /** How often to do the moving (milliseconds) */
-    private static long timerInterval = 20;
+    private static final long timerInterval = 20;
 
     /** The maximum speed (pixels per timer interval) */
     private static final double MAX_SPEED = 20;

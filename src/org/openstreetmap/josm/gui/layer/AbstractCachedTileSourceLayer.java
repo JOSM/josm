@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
  */
 public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSource> extends AbstractTileSourceLayer<T> {
     /** loader factory responsible for loading tiles for all layers */
-    private static Map<String, TileLoaderFactory> loaderFactories = new ConcurrentHashMap<>();
+    private static final Map<String, TileLoaderFactory> loaderFactories = new ConcurrentHashMap<>();
 
     private static final String PREFERENCE_PREFIX = "imagery.cache.";
 

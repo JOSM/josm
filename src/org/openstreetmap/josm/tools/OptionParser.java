@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class OptionParser {
 
-    private HashMap<String, AvailableOption> availableOptions = new HashMap<>();
+    private final HashMap<String, AvailableOption> availableOptions = new HashMap<>();
     private final String program;
 
     /**

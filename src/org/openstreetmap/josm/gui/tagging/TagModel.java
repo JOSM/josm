@@ -14,7 +14,7 @@ public class TagModel {
     private String name;
 
     /** the list of values */
-    private List<String> values;
+    private final List<String> values;
 
     /**
      * constructor

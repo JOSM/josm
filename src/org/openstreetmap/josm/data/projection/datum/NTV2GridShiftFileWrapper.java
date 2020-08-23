@@ -24,7 +24,7 @@ public class NTV2GridShiftFileWrapper {
     /** Priority for downloaded NTV2 grid files */
     public static final float NTV2_SOURCE_PRIORITY_DOWNLOAD = 5f;
 
-    private static Map<Float, NTV2GridShiftFileSource> sources = new TreeMap<>(Collections.reverseOrder());
+    private static final Map<Float, NTV2GridShiftFileSource> sources = new TreeMap<>(Collections.reverseOrder());
 
     /**
      * Register a source for NTV2 grid files.

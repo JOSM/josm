@@ -379,7 +379,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      * The data behind this layer.
      */
     public final DataSet data;
-    private DataSetListenerAdapter dataSetListenerAdapter;
+    private final DataSetListenerAdapter dataSetListenerAdapter;
 
     /**
      * a texture for non-downloaded area

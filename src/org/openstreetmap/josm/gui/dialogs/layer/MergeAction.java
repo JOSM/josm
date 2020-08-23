@@ -24,8 +24,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * The action to merge the currently selected layer into another layer.
  */
 public final class MergeAction extends AbstractAction implements IEnabledStateUpdating, LayerAction, Layer.MultiLayerAction {
-    private transient Layer layer;
-    private transient List<Layer> layers;
+    private final transient Layer layer;
+    private final transient List<Layer> layers;
     private final LayerListModel model;
 
     /**

@@ -27,11 +27,11 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class OsmServerObjectReader extends OsmServerReader {
     /** the id of the object to download */
-    private PrimitiveId id;
+    private final PrimitiveId id;
     /** true if a full download is required, i.e. a download including the immediate children */
-    private boolean full;
+    private final boolean full;
     /** the specific version number, if required (incompatible with full), or -1 else */
-    private int version;
+    private final int version;
 
     /**
      * Creates a new server object reader for a given id and a primitive type.

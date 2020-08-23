@@ -59,7 +59,7 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
         providers.addIfAbsent(tileSourceProvider);
     }
 
-    private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<>();
     static {
         addTileSourceProvider(new DefaultOsmTileSourceProvider());
         addTileSourceProvider(new TMSTileSourceProvider());

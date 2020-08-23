@@ -79,12 +79,12 @@ public class SearchCompiler {
 
     private final boolean caseSensitive;
     private final boolean regexSearch;
-    private static String rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
-    private static String rxErrorMsgNoPos = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
+    private static final String rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
+    private static final String rxErrorMsgNoPos = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
     private final PushbackTokenizer tokenizer;
-    private static Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<>();
-    private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
-    private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
+    private static final Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<>();
+    private static final Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
+    private static final Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
 
     static {
         addMatchFactory(new CoreSimpleMatchFactory());
@@ -229,7 +229,7 @@ public class SearchCompiler {
     }
 
     public static class CoreUnaryMatchFactory implements UnaryMatchFactory {
-        private static Collection<String> keywords = Arrays.asList("parent", "child");
+        private static final Collection<String> keywords = Arrays.asList("parent", "child");
 
         @Override
         public UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) {
@@ -1166,7 +1166,7 @@ public class SearchCompiler {
      * Matches objects last changed by the given username.
      */
     public static class UserMatch extends Match {
-        private String user;
+        private final String user;
 
         UserMatch(String user) {
             if ("anonymous".equals(user)) {
@@ -1218,7 +1218,7 @@ public class SearchCompiler {
      * Matches objects with the given relation role (i.e. "outer").
      */
     private static class RoleMatch extends Match {
-        private String role;
+        private final String role;
 
         RoleMatch(String role) {
             if (role == null) {

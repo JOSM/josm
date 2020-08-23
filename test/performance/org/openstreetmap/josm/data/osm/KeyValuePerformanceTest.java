@@ -33,7 +33,7 @@ public class KeyValuePerformanceTest {
     private static final int TEST_STRING_COUNT = 10000;
     private static final int STRING_INTERN_TESTS = 5000000;
     private static final double[] TAG_NODE_RATIOS = new double[] {.05, .3, 3, 20, 200};
-    private ArrayList<String> testStrings = new ArrayList<>();
+    private final ArrayList<String> testStrings = new ArrayList<>();
     private Random random;
 
     /**

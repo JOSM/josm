@@ -32,13 +32,13 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryOsmPrimitive>, PrimitiveId {
 
-    private long id;
-    private boolean visible;
-    private User user;
-    private long changesetId;
+    private final long id;
+    private final boolean visible;
+    private final User user;
+    private final long changesetId;
     private Changeset changeset;
-    private Date timestamp;
-    private long version;
+    private final Date timestamp;
+    private final long version;
     private Map<String, String> tags;
 
     /**

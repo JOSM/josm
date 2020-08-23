@@ -725,8 +725,8 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
      */
     private static class FailOnTimeoutStatement extends Statement {
 
-        private int timeout;
-        private Statement original;
+        private final int timeout;
+        private final Statement original;
 
         FailOnTimeoutStatement(Statement original, int timeout) {
             this.original = original;
@@ -759,7 +759,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
 
     private static final class TimeoutThread extends Thread {
         public boolean isDone;
-        private Statement original;
+        private final Statement original;
         private Throwable exceptionCaught;
 
         private TimeoutThread(Statement original) {

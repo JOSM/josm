@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class APIDataSet {
     private List<OsmPrimitive> toAdd;
-    private List<OsmPrimitive> toUpdate;
+    private final List<OsmPrimitive> toUpdate;
     private List<OsmPrimitive> toDelete;
 
     /**

@@ -24,7 +24,7 @@ public class MapCSSStyleSourceFilterTest {
 
     private static class CssGenerator {
         StringBuilder sb = new StringBuilder();
-        private KeyValueDataGenerator generator;
+        private final KeyValueDataGenerator generator;
 
         /**
          * Create a new CSS generator.

@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 class JavaSoundPlayer implements SoundPlayer {
 
-    private static int chunk = 4000; /* bytes */
+    private static final int chunk = 4000; /* bytes */
 
     private AudioInputStream audioInputStream;
     private SourceDataLine audioOutputLine;

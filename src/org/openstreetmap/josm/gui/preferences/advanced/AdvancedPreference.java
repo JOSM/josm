@@ -236,7 +236,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         final JButton more = new JButton(tr("More..."));
         p.add(more, GBC.std().insets(5, 5, 0, 0));
         more.addActionListener(new ActionListener() {
-            private JPopupMenu menu = buildPopupMenu();
+            private final JPopupMenu menu = buildPopupMenu();
             @Override
             public void actionPerformed(ActionEvent ev) {
                 if (more.isShowing()) {

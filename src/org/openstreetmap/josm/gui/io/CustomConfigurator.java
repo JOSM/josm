@@ -378,7 +378,7 @@ public final class CustomConfigurator {
 
     public static class XMLCommandProcessor {
 
-        private Preferences mainPrefs;
+        private final Preferences mainPrefs;
         private final Map<String, Element> tasksMap = new HashMap<>();
         private final Map<String, String> environment = new HashMap<>();
 

@@ -92,7 +92,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private final ThreadPoolExecutor downloadJobExecutor;
     private Runnable finishTask;
     private boolean force;
-    private long minimumExpiryTime;
+    private final long minimumExpiryTime;
 
     /**
      * @param cache cache instance that we will work on

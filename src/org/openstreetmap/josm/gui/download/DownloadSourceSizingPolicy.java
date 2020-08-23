@@ -67,7 +67,7 @@ public interface DownloadSourceSizingPolicy {
     class AdjustableDownloadSizePolicy implements DownloadSourceSizingPolicy {
 
         private final AbstractProperty<Integer> preference;
-        private IntSupplier minHeight;
+        private final IntSupplier minHeight;
 
         /**
          * Create a new {@link AdjustableDownloadSizePolicy}

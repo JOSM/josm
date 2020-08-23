@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class SaveAsAction extends SaveActionBase {
-    private static SaveAsAction instance = new SaveAsAction();
+    private static final SaveAsAction instance = new SaveAsAction();
 
     /**
      * Construct the action with "Save" as label.

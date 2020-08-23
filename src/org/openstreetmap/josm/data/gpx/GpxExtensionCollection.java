@@ -22,7 +22,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
 
     private static final long serialVersionUID = 1L;
 
-    private Stack<GpxExtension> childStack = new Stack<>();
+    private final Stack<GpxExtension> childStack = new Stack<>();
     private IWithAttributes parent;
 
     /**

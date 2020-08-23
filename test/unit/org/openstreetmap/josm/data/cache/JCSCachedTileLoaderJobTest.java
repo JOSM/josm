@@ -43,8 +43,8 @@ public class JCSCachedTileLoaderJobTest {
             .dynamicPort());
 
     private static class TestCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, CacheEntry> {
-        private String url;
-        private String key;
+        private final String url;
+        private final String key;
 
         TestCachedTileLoaderJob(String url, String key) {
             this(url, key, (int) TimeUnit.DAYS.toSeconds(1));

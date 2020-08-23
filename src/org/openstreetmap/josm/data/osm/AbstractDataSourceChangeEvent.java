@@ -14,8 +14,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public abstract class AbstractDataSourceChangeEvent implements DataSourceChangeEvent {
 
-    private DataSet source;
-    private Set<DataSource> old;
+    private final DataSet source;
+    private final Set<DataSource> old;
 
     /**
      * Create a Data Source change event

@@ -51,7 +51,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 public class MultiFetchServerObjectReaderTest {
-    private static Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
+    private static final Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
 
     /**
      * Setup test.

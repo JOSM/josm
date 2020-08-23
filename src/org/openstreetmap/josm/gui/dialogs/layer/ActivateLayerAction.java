@@ -28,7 +28,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class ActivateLayerAction extends AbstractAction
 implements IEnabledStateUpdating, ActiveLayerChangeListener, MultikeyShortcutAction {
     private transient Layer layer;
-    private transient Shortcut multikeyShortcut;
+    private final transient Shortcut multikeyShortcut;
     private final LayerListModel model;
 
     /**

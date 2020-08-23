@@ -33,7 +33,7 @@ public class SharpAngles extends Test {
     /** The length that at least one way segment must be shorter than */
     private double maxLength = 10.0; // meters
     /** Specific highway types to ignore */
-    private Collection<String> ignoreHighways = new TreeSet<>(
+    private final Collection<String> ignoreHighways = new TreeSet<>(
             Arrays.asList("platform", "rest_area", "services", "via_ferrata"));
 
     /**

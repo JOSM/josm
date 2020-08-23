@@ -84,7 +84,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
     private String togglePref = "";
     private int toggleValue = -1;
     private ConditionalOptionPaneUtil.MessagePanel togglePanel;
-    private Component parent;
+    private final Component parent;
     private Component content;
     private final String[] bTexts;
     private String[] bToolTipTexts;
@@ -93,7 +93,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
     private int defaultButtonIdx = 1;
     protected JButton defaultButton;
     private transient Icon icon;
-    private boolean modal;
+    private final boolean modal;
     private boolean focusOnDefaultButton;
 
     /** true, if the dialog should include a help button */

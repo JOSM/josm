@@ -19,8 +19,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class ImageryCompareTestIT {
 
-    private static String BLACK_PREFIX = "<pre style=\"margin:3px;color:black\">";
-    private static String RED_PREFIX = "<pre style=\"margin:3px;color:red\">";
+    private static final String BLACK_PREFIX = "<pre style=\"margin:3px;color:black\">";
+    private static final String RED_PREFIX = "<pre style=\"margin:3px;color:red\">";
 
     /**
      * Setup test.

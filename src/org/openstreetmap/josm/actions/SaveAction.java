@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public final class SaveAction extends SaveActionBase {
-    private static SaveAction instance = new SaveAction();
+    private static final SaveAction instance = new SaveAction();
 
     private final PropertyChangeListener updateOnRequireSaveChange = evt -> {
         if (OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP.equals(evt.getPropertyName())) {

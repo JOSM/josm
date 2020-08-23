@@ -36,7 +36,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
         }
     }
 
-    private transient PluginPreferencesModel model;
+    private final transient PluginPreferencesModel model;
 
     /**
      * Constructs a new {@code PluginListPanel} with a default model.

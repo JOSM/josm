@@ -21,11 +21,11 @@ public class SelectNonBranchingWaySequences {
     /**
      * outer endpoints of selected ways
      */
-    private Set<Node> outerNodes;
+    private final Set<Node> outerNodes;
     /**
      * endpoints of selected ways
      */
-    private Set<Node> nodes;
+    private final Set<Node> nodes;
 
     /**
      * Creates a way selection

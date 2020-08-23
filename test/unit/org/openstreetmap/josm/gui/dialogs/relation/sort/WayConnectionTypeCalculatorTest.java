@@ -32,8 +32,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class WayConnectionTypeCalculatorTest {
 
-    private RelationSorter sorter = new RelationSorter();
-    private WayConnectionTypeCalculator wayConnectionTypeCalculator = new WayConnectionTypeCalculator();
+    private final RelationSorter sorter = new RelationSorter();
+    private final WayConnectionTypeCalculator wayConnectionTypeCalculator = new WayConnectionTypeCalculator();
     private DataSet testDataset;
 
     /**

@@ -66,7 +66,7 @@ class NotificationManager {
     private NotificationPanel currentNotificationPanel;
     private final Deque<Notification> queue;
 
-    private static IntegerProperty pauseTime = new IntegerProperty("notification-default-pause-time-ms", 300); // milliseconds
+    private static final IntegerProperty pauseTime = new IntegerProperty("notification-default-pause-time-ms", 300); // milliseconds
 
     private long displayTimeStart;
     private long elapsedTime;

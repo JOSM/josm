@@ -35,8 +35,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class NodeListMergeModelTest {
 
-    private DatasetFactory my = new DatasetFactory();
-    private DatasetFactory their = new DatasetFactory();
+    private final DatasetFactory my = new DatasetFactory();
+    private final DatasetFactory their = new DatasetFactory();
 
     /**
      * Setup test.

@@ -32,7 +32,7 @@ public class OsmPrimitiveTest {
                 new HashSet<>(actual.getReferrers()));
     }
 
-    private DataSet dataSet = new DataSet();
+    private final DataSet dataSet = new DataSet();
 
     /**
      * Setup test.

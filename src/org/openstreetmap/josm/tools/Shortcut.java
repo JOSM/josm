@@ -305,7 +305,7 @@ public final class Shortcut {
     ///////////////////////////////
 
     // here we store our shortcuts
-    private static ShortcutCollection shortcuts = new ShortcutCollection();
+    private static final ShortcutCollection shortcuts = new ShortcutCollection();
 
     private static class ShortcutCollection extends CopyOnWriteArrayList<Shortcut> {
         private static final long serialVersionUID = 1L;
@@ -330,7 +330,7 @@ public final class Shortcut {
     }
 
     // and here our modifier groups
-    private static Map<Integer, Integer> groups = new HashMap<>();
+    private static final Map<Integer, Integer> groups = new HashMap<>();
 
     // check if something collides with an existing shortcut
 
@@ -386,8 +386,8 @@ public final class Shortcut {
     public static final int ALT_CTRL_SHIFT = 5010;
 
     /* for reassignment */
-    private static int[] mods = {ALT_CTRL, ALT_SHIFT, CTRL_SHIFT, ALT_CTRL_SHIFT};
-    private static int[] keys = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4,
+    private static final int[] mods = {ALT_CTRL, ALT_SHIFT, CTRL_SHIFT, ALT_CTRL_SHIFT};
+    private static final int[] keys = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4,
                                  KeyEvent.VK_F5, KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8,
                                  KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12};
 

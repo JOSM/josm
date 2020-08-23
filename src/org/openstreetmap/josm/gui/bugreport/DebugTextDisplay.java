@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 public class DebugTextDisplay extends JScrollPane {
     private static final String CODE_PATTERN = "{{{%n%s%n}}}";
     private String text;
-    private JosmTextArea textArea;
+    private final JosmTextArea textArea;
 
     /**
      * Creates a new text area.

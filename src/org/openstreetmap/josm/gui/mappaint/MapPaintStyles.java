@@ -81,7 +81,7 @@ public final class MapPaintStyles {
         Config.getPref().addPreferenceChangeListener(new MapPaintStylesPreferenceListener(Config.getPref()));
     }
 
-    private static ElemStyles styles = new ElemStyles();
+    private static final ElemStyles styles = new ElemStyles();
 
     /**
      * Returns the {@link ElemStyles} singleton instance.

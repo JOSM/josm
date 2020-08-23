@@ -175,12 +175,12 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private final List<Integer> heatMapPolyY = new ArrayList<>();
 
     // setup color maps used by heat map
-    private static Color[] heatMapLutColorJosmInferno = createColorFromResource("inferno");
-    private static Color[] heatMapLutColorJosmViridis = createColorFromResource("viridis");
-    private static Color[] heatMapLutColorJosmBrown2Green = createColorFromResource("brown2green");
-    private static Color[] heatMapLutColorJosmRed2Blue = createColorFromResource("red2blue");
+    private static final Color[] heatMapLutColorJosmInferno = createColorFromResource("inferno");
+    private static final Color[] heatMapLutColorJosmViridis = createColorFromResource("viridis");
+    private static final Color[] heatMapLutColorJosmBrown2Green = createColorFromResource("brown2green");
+    private static final Color[] heatMapLutColorJosmRed2Blue = createColorFromResource("red2blue");
 
-    private static Color[] rtkLibQualityColors = {
+    private static final Color[] rtkLibQualityColors = {
         Color.GREEN, // Fixed, solution by carrier‐based relative positioning and the integer ambiguity is properly resolved.
         Color.ORANGE, // Float, solution by carrier‐based relative positioning but the integer ambiguity is not resolved.
         Color.PINK, // Reserved

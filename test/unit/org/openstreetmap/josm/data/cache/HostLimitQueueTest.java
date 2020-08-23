@@ -36,8 +36,8 @@ public class HostLimitQueueTest {
      * Mock class for tests
      */
     static class Task extends JCSCachedTileLoaderJob<String, CacheEntry> {
-        private URL url;
-        private AtomicInteger counter;
+        private final URL url;
+        private final AtomicInteger counter;
 
         Task(ICacheAccess<String, CacheEntry> cache, URL url, AtomicInteger counter) {
             super(cache, new TileJobOptions(1, 1, null, 10));

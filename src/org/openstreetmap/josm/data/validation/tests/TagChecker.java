@@ -87,7 +87,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     /** The spell check preset values which are not stored in TaggingPresets */
     private static volatile HashSet<String> additionalPresetsValueData;
     /** often used tags which are not in presets */
-    private static volatile MultiMap<String, String> oftenUsedTags = new MultiMap<>();
+    private static final MultiMap<String, String> oftenUsedTags = new MultiMap<>();
     private static final Map<TaggingPreset, List<TaggingPresetItem>> presetIndex = new LinkedHashMap<>();
 
     private static final Pattern UNWANTED_NON_PRINTING_CONTROL_CHARACTERS = Pattern.compile(

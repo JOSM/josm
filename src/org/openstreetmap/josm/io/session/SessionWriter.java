@@ -57,7 +57,7 @@ import org.w3c.dom.Text;
  */
 public class SessionWriter {
 
-    private static Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters = new HashMap<>();
+    private static final Map<Class<? extends Layer>, Class<? extends SessionLayerExporter>> sessionLayerExporters = new HashMap<>();
 
     private final List<Layer> layers;
     private final int active;

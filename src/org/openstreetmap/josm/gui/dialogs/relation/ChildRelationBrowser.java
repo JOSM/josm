@@ -64,10 +64,10 @@ public class ChildRelationBrowser extends JPanel {
     /** the tree with relation children */
     private RelationTree childTree;
     /**  the tree model */
-    private transient RelationTreeModel model;
+    private final transient RelationTreeModel model;
 
     /** the osm data layer this browser is related to */
-    private transient OsmDataLayer layer;
+    private final transient OsmDataLayer layer;
 
     /** the editAction used in the bottom panel and for doubleClick */
     private EditAction editAction;

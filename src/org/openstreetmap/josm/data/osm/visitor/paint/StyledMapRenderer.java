@@ -354,7 +354,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private Collection<WaySegment> highlightWaySegments;
 
     //flag that activate wider highlight mode
-    private boolean useWiderHighlight;
+    private final boolean useWiderHighlight;
 
     private boolean useStrokes;
     private boolean showNames;

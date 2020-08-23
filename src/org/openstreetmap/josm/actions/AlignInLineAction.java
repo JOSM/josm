@@ -362,11 +362,14 @@ public final class AlignInLineAction extends JosmAction {
          * Line equation ax + by + c = 0
          * Such as a^2 + b^2 = 1, ie (-b, a) is a unit vector of line
          */
-        private double a, b, c;
+        private double a;
+        private double b;
+        private final double c;
         /**
          * (xM, yM) are coordinates of a point of the line
          */
-        private double xM, yM;
+        private final double xM;
+        private final double yM;
 
         /**
          * Init a line by 2 nodes.

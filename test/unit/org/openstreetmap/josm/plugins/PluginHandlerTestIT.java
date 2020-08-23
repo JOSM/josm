@@ -45,7 +45,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class PluginHandlerTestIT {
 
-    private static List<String> errorsToIgnore = new ArrayList<>();
+    private static final List<String> errorsToIgnore = new ArrayList<>();
     /**
      * Setup test.
      */

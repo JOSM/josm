@@ -27,7 +27,7 @@ public final class User {
     /**
      * the map of known users
      */
-    private static Map<Long, User> userMap = new HashMap<>();
+    private static final Map<Long, User> userMap = new HashMap<>();
 
     /**
      * The anonymous user is a local user used in places where no user is known.

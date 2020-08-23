@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
 
-    private static String[] lambert9zones = {
+    private static final String[] lambert9zones = {
         tr("{0} ({1} to {2} degrees)", 1, 41, 43),
         tr("{0} ({1} to {2} degrees)", 2, 42, 44),
         tr("{0} ({1} to {2} degrees)", 3, 43, 45),

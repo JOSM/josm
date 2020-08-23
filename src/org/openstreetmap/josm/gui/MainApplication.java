@@ -736,7 +736,7 @@ public class MainApplication {
         try {
             Policy.setPolicy(new Policy() {
                 // Permissions for plug-ins loaded when josm is started via webstart
-                private PermissionCollection pc;
+                private final PermissionCollection pc;
 
                 {
                     pc = new Permissions();
