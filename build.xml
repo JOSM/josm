@@ -247,6 +247,7 @@ Build-Date: ${build.tstamp}
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <java classname="javacc" fork="true" failonerror="true">
+            <classpath path="${tools.dir}/javacc"/>
             <classpath refid="javacc.classpath"/>
             <arg value="-DEBUG_PARSER=false"/>
             <arg value="-DEBUG_TOKEN_MANAGER=false"/>
