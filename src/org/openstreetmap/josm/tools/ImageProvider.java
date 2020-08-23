@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
@@ -37,7 +36,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -295,11 +293,6 @@ public class ImageProvider {
      * The icon cache
      */
     private static final Map<String, ImageResource> cache = new ConcurrentHashMap<>();
-
-    /**
-     * Caches the image data for rotated versions of the same image.
-     */
-    private static final Map<Image, Map<Long, Image>> ROTATE_CACHE = new HashMap<>();
 
     /** small cache of critical images used in many parts of the application */
     private static final Map<OsmPrimitiveType, ImageIcon> osmPrimitiveTypeCache = new EnumMap<>(OsmPrimitiveType.class);
@@ -854,9 +847,6 @@ public class ImageProvider {
      */
     public static void clearCache() {
         cache.clear();
-        synchronized (ROTATE_CACHE) {
-            ROTATE_CACHE.clear();
-        }
         synchronized (osmPrimitiveTypeCache) {
             osmPrimitiveTypeCache.clear();
         }
@@ -1394,92 +1384,6 @@ public class ImageProvider {
 
     /** 90 degrees in radians units */
     private static final double DEGREE_90 = 90.0 * Math.PI / 180.0;
-
-    /**
-     * Creates a rotated version of the input image.
-     *
-     * @param img the image to be rotated.
-     * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
-     * will mod it with 360 before using it. More over for caching performance, it will be rounded to
-     * an entire value between 0 and 360.
-     *
-     * @return the image after rotating.
-     * @since 6172
-     */
-    public static Image createRotatedImage(Image img, double rotatedAngle) {
-        return createRotatedImage(img, rotatedAngle, ImageResource.DEFAULT_DIMENSION);
-    }
-
-    /**
-     * Creates a rotated version of the input image.
-     *
-     * @param img the image to be rotated.
-     * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
-     * will mod it with 360 before using it. More over for caching performance, it will be rounded to
-     * an entire value between 0 and 360.
-     * @param dimension ignored
-     * @return the image after rotating and scaling.
-     * @since 6172
-     */
-    public static Image createRotatedImage(Image img, double rotatedAngle, Dimension dimension) {
-        CheckParameterUtil.ensureParameterNotNull(img, "img");
-
-        // convert rotatedAngle to an integer value from 0 to 360
-        Long angleLong = Math.round(rotatedAngle % 360);
-        Long originalAngle = rotatedAngle != 0 && angleLong == 0 ? Long.valueOf(360L) : angleLong;
-
-        synchronized (ROTATE_CACHE) {
-            Map<Long, Image> cacheByAngle = ROTATE_CACHE.computeIfAbsent(img, k -> new HashMap<>());
-            Image rotatedImg = cacheByAngle.get(originalAngle);
-
-            if (rotatedImg == null) {
-                // convert originalAngle to a value from 0 to 90
-                double angle = originalAngle % 90;
-                if (originalAngle != 0 && angle == 0) {
-                    angle = 90.0;
-                }
-                double radian = Utils.toRadians(angle);
-
-                rotatedImg = HiDPISupport.processMRImage(img, img0 -> {
-                    new ImageIcon(img0); // load completely
-                    int iw = img0.getWidth(null);
-                    int ih = img0.getHeight(null);
-                    int w;
-                    int h;
-
-                    if ((originalAngle >= 0 && originalAngle <= 90) || (originalAngle > 180 && originalAngle <= 270)) {
-                        w = (int) (iw * Math.sin(DEGREE_90 - radian) + ih * Math.sin(radian));
-                        h = (int) (iw * Math.sin(radian) + ih * Math.sin(DEGREE_90 - radian));
-                    } else {
-                        w = (int) (ih * Math.sin(DEGREE_90 - radian) + iw * Math.sin(radian));
-                        h = (int) (ih * Math.sin(radian) + iw * Math.sin(DEGREE_90 - radian));
-                    }
-                    Image image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-                    Graphics g = image.getGraphics();
-                    Graphics2D g2d = (Graphics2D) g.create();
-
-                    // calculate the center of the icon.
-                    int cx = iw / 2;
-                    int cy = ih / 2;
-
-                    // move the graphics center point to the center of the icon.
-                    g2d.translate(w / 2, h / 2);
-
-                    // rotate the graphics about the center point of the icon
-                    g2d.rotate(Utils.toRadians(originalAngle));
-
-                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                    g2d.drawImage(img0, -cx, -cy, null);
-
-                    g2d.dispose();
-                    new ImageIcon(image); // load completely
-                    return image;
-                });
-                cacheByAngle.put(originalAngle, rotatedImg);
-            }
-            return rotatedImg;
-        }
-    }
 
     /**
      * Creates a scaled down version of the input image to fit maximum dimensions. (Keeps aspect ratio)
