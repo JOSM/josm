@@ -68,11 +68,18 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
 
     private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");
     private static final BooleanProperty PROP_SHOWDLAREA = new BooleanProperty("slippy_map_chooser.show_downloaded_area", true);
+
     /**
      * The property name used for the resize button.
      * @see #addPropertyChangeListener(java.beans.PropertyChangeListener)
      */
     public static final String RESIZE_PROP = SlippyMapBBoxChooser.class.getName() + ".resize";
+
+    /**
+     * The property name used for the {@link org.openstreetmap.josm.data.coor.ILatLon} of the mouse cursor on the map.
+     * @see #addPropertyChangeListener(java.beans.PropertyChangeListener)
+     */
+    public static final String CURSOR_COORDINATE_PROP = SlippyMapBBoxChooser.class.getName() + ".coordinate";
 
     private final SizeButton iSizeButton;
     private final ButtonModel showDownloadAreaButtonModel;
@@ -235,6 +242,16 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
         // fired for the stateChanged event of this.showDownloadAreaButtonModel
         PROP_SHOWDLAREA.put(this.showDownloadAreaButtonModel.isSelected());
         this.repaint();
+    }
+
+    /**
+     * Handles a {@link SlippyMapControler#mouseMoved} event
+     * @param point The point in the view
+     */
+    public void handleMouseMoved(Point point) {
+        final ICoordinate coordinate = getPosition(point);
+        final LatLon latLon = new LatLon(coordinate.getLat(), coordinate.getLon());
+        firePropertyChange(CURSOR_COORDINATE_PROP, null, latLon);
     }
 
     /**

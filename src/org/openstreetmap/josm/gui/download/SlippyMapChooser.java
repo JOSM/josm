@@ -10,6 +10,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.ActionMap;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.gui.bbox.BBoxChooser;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -72,6 +73,8 @@ public class SlippyMapChooser implements DownloadSelection, PropertyChangeListen
 
             // resize and center the DownloadDialog
             iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
+        } else if (evt.getPropertyName().equals(SlippyMapBBoxChooser.CURSOR_COORDINATE_PROP)) {
+            iGui.mapCursorChanged((ILatLon) evt.getNewValue());
         }
     }
 

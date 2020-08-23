@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -39,6 +41,11 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
+import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
@@ -51,6 +58,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.gui.widgets.ImageLabel;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -99,6 +107,18 @@ public class DownloadDialog extends JDialog {
     protected final transient List<DownloadSelection> downloadSelections = new ArrayList<>();
     protected final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
     protected final DownloadSourceTabs downloadSourcesTab = new DownloadSourceTabs();
+
+    private final ImageLabel latText;
+    private final ImageLabel lonText;
+    private final ImageLabel bboxText;
+    {
+        final LatLon sample = new LatLon(90, 180);
+        final ICoordinateFormat sampleFormat = DMSCoordinateFormat.INSTANCE;
+        final Color background = new JPanel().getBackground();
+        latText = new ImageLabel("lat", null, sampleFormat.latToString(sample).length(), background);
+        lonText = new ImageLabel("lon", null, sampleFormat.lonToString(sample).length(), background);
+        bboxText = new ImageLabel("name", null, sampleFormat.toString(sample, "").length() * 2, background);
+    }
 
     protected JCheckBox cbStartup;
     protected JCheckBox cbZoomToDownloadedData;
@@ -157,6 +177,14 @@ public class DownloadDialog extends JDialog {
         downloadSourcesTab.addChangeListener(tabChangedListener);
 
         mainPanel.add(dialogSplit, GBC.eol().fill());
+
+        JPanel statusBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        statusBarPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        statusBarPanel.add(latText);
+        statusBarPanel.add(lonText);
+        statusBarPanel.add(bboxText);
+        mainPanel.add(statusBarPanel, GBC.eol().fill(GBC.HORIZONTAL));
+        ExpertToggleAction.addVisibilitySwitcher(statusBarPanel);
 
         cbStartup = new JCheckBox(tr("Open this dialog on startup"));
         cbStartup.setToolTipText(
@@ -282,6 +310,19 @@ public class DownloadDialog extends JDialog {
         for (AbstractDownloadSourcePanel<?> ds : downloadSourcesTab.getAllPanels()) {
             ds.boundingBoxChanged(b);
         }
+
+        bboxText.setText(b == null ? "" : String.join("  ",
+                CoordinateFormatManager.getDefaultFormat().toString(b.getMin(), " "),
+                CoordinateFormatManager.getDefaultFormat().toString(b.getMax(), " ")));
+    }
+
+    /**
+     * Updates the coordinates after moving the mouse cursor
+     * @param latLon the coordinates under the mouse cursor
+     */
+    public void mapCursorChanged(ILatLon latLon) {
+        latText.setText(CoordinateFormatManager.getDefaultFormat().latToString(latLon));
+        lonText.setText(CoordinateFormatManager.getDefaultFormat().lonToString(latLon));
     }
 
     /**

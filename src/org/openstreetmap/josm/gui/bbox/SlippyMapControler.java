@@ -161,6 +161,7 @@ public class SlippyMapControler extends MouseAdapter {
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        iSlippyMapChooser.handleMouseMoved(e.getPoint());
         iSlippyMapChooser.handleAttribution(e.getPoint(), false);
     }
 
