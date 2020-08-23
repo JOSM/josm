@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -163,15 +164,20 @@ public class DownloadDialog extends JDialog {
                         "You can open it manually from File menu or toolbar.</html>"));
         cbStartup.addActionListener(e -> DOWNLOAD_AUTORUN.put(cbStartup.isSelected()));
 
+        JLabel iconZoomToDownloadedData = new JLabel(ImageProvider.get("dialogs/autoscale/data", ImageProvider.ImageSizes.SMALLICON));
         cbZoomToDownloadedData = new JCheckBox(tr("Zoom to downloaded data"));
         cbZoomToDownloadedData.setToolTipText(tr("Select to zoom to entire newly downloaded data."));
 
-        mainPanel.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));
-        mainPanel.add(cbZoomToDownloadedData, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));
+        JPanel checkboxPanel = new JPanel(new FlowLayout());
+        checkboxPanel.add(cbStartup);
+        checkboxPanel.add(Box.createHorizontalStrut(6));
+        checkboxPanel.add(iconZoomToDownloadedData);
+        checkboxPanel.add(cbZoomToDownloadedData);
+        mainPanel.add(checkboxPanel, GBC.eol());
 
         ExpertToggleAction.addVisibilitySwitcher(cbZoomToDownloadedData);
+        ExpertToggleAction.addVisibilitySwitcher(iconZoomToDownloadedData);
 
-        mainPanel.add(new JLabel(), GBC.eol()); // place info label at a new line
         JLabel infoLabel = new JLabel(
                 tr("Use left click&drag to select area, arrows or right mouse button to scroll map, wheel or +/- to zoom."));
         mainPanel.add(infoLabel, GBC.eol().anchor(GBC.CENTER).insets(0, 0, 0, 0));
