@@ -1382,9 +1382,6 @@ public class ImageProvider {
         return image;
     }
 
-    /** 90 degrees in radians units */
-    private static final double DEGREE_90 = 90.0 * Math.PI / 180.0;
-
     /**
      * Creates a scaled down version of the input image to fit maximum dimensions. (Keeps aspect ratio)
      *

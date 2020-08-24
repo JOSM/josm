@@ -107,7 +107,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      * @return desktop environment.
      */
     public Optional<String> getDesktopEnvironment() {
-        return Optional.ofNullable(Utils.getSystemEnv("XDG_CURRENT_DESKTOP")).filter(s -> !s.isEmpty());
+        return Optional.ofNullable(getSystemEnv("XDG_CURRENT_DESKTOP")).filter(s -> !s.isEmpty());
     }
 
     /**
