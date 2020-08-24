@@ -117,7 +117,7 @@ public class DownloadDialog extends JDialog {
         final Color background = new JPanel().getBackground();
         latText = new ImageLabel("lat", null, sampleFormat.latToString(sample).length(), background);
         lonText = new ImageLabel("lon", null, sampleFormat.lonToString(sample).length(), background);
-        bboxText = new ImageLabel("name", null, sampleFormat.toString(sample, "").length() * 2, background);
+        bboxText = new ImageLabel("bbox", null, sampleFormat.toString(sample, "").length() * 2, background);
     }
 
     protected JCheckBox cbStartup;
