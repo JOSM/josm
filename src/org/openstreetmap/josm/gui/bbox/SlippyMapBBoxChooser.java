@@ -129,7 +129,8 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
 
         MapScaler scaler = new MapScaler(this::getDist100Pixel, () -> Color.BLACK);
         add(scaler);
-        springLayout.putConstraint(SpringLayout.SOUTH, scaler, 5, SpringLayout.SOUTH, this);
+        springLayout.putConstraint(SpringLayout.NORTH, scaler, 2, SpringLayout.NORTH, this);
+        springLayout.putConstraint(SpringLayout.WEST, scaler, 2, SpringLayout.EAST, iSizeButton);
 
         String mapStyle = PROP_MAPSTYLE.get();
         final TileSource tileSource = tileSources.stream()
