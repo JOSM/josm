@@ -16,8 +16,11 @@ import org.openstreetmap.josm.tools.OsmPrimitiveImageProvider.Options;
 import java.awt.Dimension;
 import java.util.EnumSet;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import javax.swing.ImageIcon;
 
 /**
  * Unit tests of {@link OsmPrimitiveImageProvider}
@@ -57,5 +60,11 @@ public class OsmPrimitiveImageProviderTest {
                 EnumSet.of(Options.NO_DEFAULT, Options.NO_DEPRECATED)));
         assertNotNull(OsmPrimitiveImageProvider.getResource(OsmUtils.createPrimitive("way waterway=stream"), noDefault));
         assertNotNull(OsmPrimitiveImageProvider.getResource(OsmUtils.createPrimitive("relation type=route route=railway"), noDefault));
+        // a non-square svg icon
+        final ImageIcon bankIcon = OsmPrimitiveImageProvider
+                .getResource(OsmUtils.createPrimitive("node amenity=bank"), Options.DEFAULT)
+                .getPaddedIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
+        assertEquals(ImageProvider.ImageSizes.LARGEICON.getVirtualWidth(), bankIcon.getIconWidth());
+        assertEquals(ImageProvider.ImageSizes.LARGEICON.getVirtualHeight(), bankIcon.getIconHeight());
     }
 }

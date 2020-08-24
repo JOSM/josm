@@ -296,6 +296,12 @@ public class ImageResource {
      * @return an {@code ImageIcon} for the given map image, at the specified size
      */
     public ImageIcon getPaddedIcon(Dimension iconSize) {
+        final ImageIcon imageIcon = getImageIcon(iconSize);
+        if (imageIcon.getIconWidth() == iconSize.width && imageIcon.getIconHeight() == iconSize.height) {
+            // fast path for square and svg icons
+            return imageIcon;
+        }
+
         final Dimension cacheKey = new Dimension(-iconSize.width, -iconSize.height); // use negative width/height for differentiation
         BufferedImage image = imgCache.get(cacheKey);
         if (image == null) {
