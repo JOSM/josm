@@ -203,7 +203,7 @@ public abstract class StyleSource extends SourceEntry {
      */
     private static synchronized ImageProvider getDefaultIconProvider() {
         if (defaultIconProvider == null) {
-            defaultIconProvider = new ImageProvider("dialogs/mappaint", "pencil");
+            defaultIconProvider = new ImageProvider("dialogs", "mapstyle");
         }
         return defaultIconProvider;
     }
