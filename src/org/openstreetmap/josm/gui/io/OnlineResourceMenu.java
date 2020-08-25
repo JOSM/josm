@@ -15,6 +15,7 @@ import javax.swing.event.MenuListener;
 import org.openstreetmap.josm.actions.ToggleAction;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Show list of {@link OnlineResource} to set online/offline via {@link NetworkManager}.
@@ -28,6 +29,7 @@ public class OnlineResourceMenu extends JMenu {
     public OnlineResourceMenu() {
         super(tr("Work Offline..."));
         setToolTipText(tr("Block network access to resources"));
+        setIcon(ImageProvider.get("offline", ImageProvider.ImageSizes.MENU));
         addMenuListener(new ToggleMenuListener());
 
         for (OnlineResource onlineResource : OnlineResource.values()) {
