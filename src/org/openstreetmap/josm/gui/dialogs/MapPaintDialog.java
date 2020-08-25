@@ -657,7 +657,7 @@ public class MapPaintDialog extends ToggleDialog {
 
             JMenu setMenu = new JMenu(tr("Style settings"));
             setMenu.setIcon(new ImageProvider("dialogs/mapstyle").setMaxSize(ImageSizes.MENU).addOverlay(
-                new ImageOverlay(new ImageProvider("preference"), 0.3, 0.3, 1.0, 1.0)).get());
+                new ImageOverlay(new ImageProvider("preference"), 0.25, 0.25, 1.0, 1.0)).get());
             setMenu.setToolTipText(tr("Customize the style"));
             add(setMenu);
 
