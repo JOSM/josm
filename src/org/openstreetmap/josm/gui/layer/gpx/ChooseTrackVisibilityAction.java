@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -33,6 +32,7 @@ import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -74,46 +74,6 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     }
 
     /**
-     * Class to format a length according to SystemOfMesurement.
-     */
-    private static final class TrackLength {
-        private final double value;
-
-        /**
-         * Constructs a new {@code TrackLength} object with a given length.
-         * @param value length of the track
-         */
-        TrackLength(double value) {
-            this.value = value;
-        }
-
-        /**
-         * Provides string representation.
-         * @return String representation depending of SystemOfMeasurement
-         */
-        @Override
-        public String toString() {
-            return SystemOfMeasurement.getSystemOfMeasurement().getDistText(value);
-        }
-    }
-
-    /**
-     * Comparator for TrackLength objects
-     */
-    private static final class LengthContentComparator implements Comparator<TrackLength>, Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * Compare 2 TrackLength objects relative to the real length
-         */
-        @Override
-        public int compare(TrackLength l0, TrackLength l1) {
-            return Double.compare(l0.value, l1.value);
-        }
-    }
-
-    /**
      * Gathers all available data for the tracks and returns them as array of arrays
      * in the expected column order.
      * @return table data
@@ -126,9 +86,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             String name = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_NAME)).orElse("");
             String desc = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_DESC)).orElse("");
             String time = GpxLayer.getTimespanForTrack(trk);
-            TrackLength length = new TrackLength(trk.length());
             String url = (String) Optional.ofNullable(attr.get("url")).orElse("");
-            tracks[i] = new Object[]{name, desc, time, length, url, trk};
+            tracks[i] = new Object[]{name, desc, time, trk.length(), url, trk};
             i++;
         }
         return tracks;
@@ -178,12 +137,20 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>();
         t.setRowSorter(rowSorter);
         rowSorter.setModel(model);
-        rowSorter.setComparator(3, new LengthContentComparator());
+        rowSorter.setComparator(3, Comparator.comparingDouble(length -> (double) length));
         // default column widths
         t.getColumnModel().getColumn(0).setPreferredWidth(220);
         t.getColumnModel().getColumn(1).setPreferredWidth(300);
         t.getColumnModel().getColumn(2).setPreferredWidth(200);
         t.getColumnModel().getColumn(3).setPreferredWidth(50);
+        t.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                value = SystemOfMeasurement.getSystemOfMeasurement().getDistText((Double) value);
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        });
         t.getColumnModel().getColumn(4).setPreferredWidth(100);
         // make the link clickable
         final MouseListener urlOpener = new MouseAdapter() {
