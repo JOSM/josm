@@ -156,24 +156,31 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      */
     public static String getTimespanForTrack(IGpxTrack trk) {
         Date[] bounds = GpxData.getMinMaxTimeForTrack(trk);
+        return bounds != null ? formatTimespan(bounds) : "";
+    }
+
+    /**
+     * Formats the timespan of the given track as a human readable string
+     * @param bounds The bounds to format, i.e., an array containing the min/max date
+     * @return The timespan as a string
+     */
+    public static String formatTimespan(Date[] bounds) {
         String ts = "";
-        if (bounds != null) {
-            DateFormat df = DateUtils.getDateFormat(DateFormat.SHORT);
-            String earliestDate = df.format(bounds[0]);
-            String latestDate = df.format(bounds[1]);
+        DateFormat df = DateUtils.getDateFormat(DateFormat.SHORT);
+        String earliestDate = df.format(bounds[0]);
+        String latestDate = df.format(bounds[1]);
 
-            if (earliestDate.equals(latestDate)) {
-                DateFormat tf = DateUtils.getTimeFormat(DateFormat.SHORT);
-                ts += earliestDate + ' ';
-                ts += tf.format(bounds[0]) + " - " + tf.format(bounds[1]);
-            } else {
-                DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
-                ts += dtf.format(bounds[0]) + " - " + dtf.format(bounds[1]);
-            }
-
-            int diff = (int) (bounds[1].getTime() - bounds[0].getTime()) / 1000;
-            ts += String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60);
+        if (earliestDate.equals(latestDate)) {
+            DateFormat tf = DateUtils.getTimeFormat(DateFormat.SHORT);
+            ts += earliestDate + ' ';
+            ts += tf.format(bounds[0]) + " - " + tf.format(bounds[1]);
+        } else {
+            DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
+            ts += dtf.format(bounds[0]) + " - " + dtf.format(bounds[1]);
         }
+
+        int diff = (int) (bounds[1].getTime() - bounds[0].getTime()) / 1000;
+        ts += String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60);
         return ts;
     }
 

@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -41,6 +42,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.commons.jcs3.access.exception.InvalidArgumentException;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
+import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -85,7 +87,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             Map<String, Object> attr = trk.getAttributes();
             String name = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_NAME)).orElse("");
             String desc = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_DESC)).orElse("");
-            String time = GpxLayer.getTimespanForTrack(trk);
+            Date[] time = GpxData.getMinMaxTimeForTrack(trk);
             String url = (String) Optional.ofNullable(attr.get("url")).orElse("");
             tracks[i] = new Object[]{name, desc, time, trk.length(), url, trk};
             i++;
@@ -137,11 +139,22 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>();
         t.setRowSorter(rowSorter);
         rowSorter.setModel(model);
+        rowSorter.setComparator(2, Comparator.comparing((Date[] d) -> d == null ? Long.MIN_VALUE : d[0].getTime()));
         rowSorter.setComparator(3, Comparator.comparingDouble(length -> (double) length));
         // default column widths
         t.getColumnModel().getColumn(0).setPreferredWidth(220);
         t.getColumnModel().getColumn(1).setPreferredWidth(300);
         t.getColumnModel().getColumn(2).setPreferredWidth(200);
+        t.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                if (value instanceof Date[]) {
+                    value = GpxLayer.formatTimespan(((Date[]) value));
+                }
+                return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            }
+        });
         t.getColumnModel().getColumn(3).setPreferredWidth(50);
         t.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
