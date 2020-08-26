@@ -66,11 +66,15 @@ public class GeoJSONReader extends AbstractReader {
         // Restricts visibility
     }
 
-    private void setParser(final JsonParser parser) {
-        this.parser = parser;
+    private void parse(InputStream inputStream) throws IllegalDataException {
+        try (JsonParser parser = Json.createParser(inputStream)) {
+            parse(parser);
+        } catch (JsonParsingException e) {
+            throw new IllegalDataException(e);
+        }
     }
 
-    private void parse() throws IllegalDataException {
+    private void parse(final JsonParser parser) throws IllegalDataException {
         while (parser.hasNext()) {
             Event event = parser.next();
             if (event == Event.START_OBJECT) {
@@ -389,24 +393,14 @@ public class GeoJSONReader extends AbstractReader {
                 while ((line = reader.readLine()) != null) {
                     line = line.replaceFirst(rs, "");
                     try (InputStream is = new ByteArrayInputStream(line.getBytes())) {
-                        setParser(Json.createParser(is));
-                        parse();
-                    } catch (JsonParsingException e) {
-                        throw new IllegalDataException(e);
-                    } finally {
-                        parser.close();
+                        parse(is);
                     }
                 }
             } catch (IOException e) {
                 throw new IllegalDataException(e);
             }
         } else {
-            setParser(Json.createParser(markSupported));
-            try {
-                parse();
-            } catch (JsonParsingException e) {
-                throw new IllegalDataException(e);
-            }
+            parse(markSupported);
         }
         return getDataSet();
     }
