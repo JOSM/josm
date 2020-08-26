@@ -414,13 +414,20 @@ way[barrier=wall][area?], relation[type=multipolygon][barrier=wall],
 way[barrier=city_wall][area?], relation[type=multipolygon][barrier=city_wall] {
     fill-color: barrier#F0F050;
 }
+way[barrier=city_wall][two_sided!=yes] {
+    repeat-image: "presets/barrier/barrier_pattern.svg";
+    repeat-image-align: top;
+    repeat-image-offset: 0.5;
+}
 way[barrier=kerb] {
     repeat-image: "presets/barrier/kerb_pattern.svg";
     repeat-image-align: top;
+    repeat-image-offset: 0.5;
 }
 way[barrier=retaining_wall] {
     repeat-image: "presets/misc/cliff_pattern.svg";
     repeat-image-align: top;
+    repeat-image-offset: 0.5;
 }
 node[barrier=hedge],
 node[barrier=wall],
@@ -4659,6 +4666,7 @@ area[natural=cliff]:closed {
 way[natural=cliff] {
     repeat-image: "presets/misc/cliff_pattern.svg";
     repeat-image-align: top;
+    repeat-image-offset: 0.5;
     width: 1;
     color: #b2b2b2;
 }

@@ -1632,6 +1632,7 @@
             <link wiki="Tag:barrier=city_wall" />
             <key key="barrier" value="city_wall" />
             <reference ref="optional_height" />
+            <check key="two_sided" text="Two-sided" disable_off="true" />
             <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
         </item> <!-- City Wall -->
         <item name="Retaining Wall" icon="presets/barrier/retaining_wall.svg" type="way,closedway" preset_name_label="true">
