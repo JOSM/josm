@@ -723,7 +723,7 @@ public class GpxData extends WithAttributes implements Data {
                 .flatMap(seg -> seg.getWayPoints().stream())
                 .mapToLong(WayPoint::getTimeInMillis)
                 .summaryStatistics();
-        return statistics.getCount() == 0
+        return statistics.getCount() == 0 || (statistics.getMin() == 0 && statistics.getMax() == 0)
                 ? null
                 : new Date[]{new Date(statistics.getMin()), new Date(statistics.getMax())};
     }
