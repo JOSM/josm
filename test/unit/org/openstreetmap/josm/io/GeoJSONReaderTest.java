@@ -162,6 +162,7 @@ public class GeoJSONReaderTest {
     /**
      * Test reading a JSON file which is not a proper GeoJSON (type missing).
      */
+    @Test
     public void testReadGeoJsonWithoutType() {
         assertThrows(IllegalDataException.class, () ->
                 new GeoJSONReader().doParseDataSet(new ByteArrayInputStream("{}".getBytes(StandardCharsets.UTF_8)), null));
