@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,6 +22,8 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.json.stream.JsonGenerator;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParsingException;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -52,6 +55,19 @@ public class GeoJSONWriter {
     private static final BooleanProperty SKIP_EMPTY_NODES = new BooleanProperty("geojson.export.skip-empty-nodes", true);
     private static final BooleanProperty UNTAGGED_CLOSED_IS_POLYGON = new BooleanProperty("geojson.export.untagged-closed-is-polygon", false);
     private static final Set<Way> processedMultipolygonWays = new HashSet<>();
+
+    /**
+     * This is used to determine that a tag should be interpreted as a json
+     * object or array. The tag should have both {@link #JSON_VALUE_START_MARKER}
+     * and {@link #JSON_VALUE_END_MARKER}.
+     */
+    static final String JSON_VALUE_START_MARKER = "{";
+    /**
+     * This is used to determine that a tag should be interpreted as a json
+     * object or array. The tag should have both {@link #JSON_VALUE_START_MARKER}
+     * and {@link #JSON_VALUE_END_MARKER}.
+     */
+    static final String JSON_VALUE_END_MARKER = "}";
 
     /**
      * Constructs a new {@code GeoJSONWriter}.
@@ -182,7 +198,7 @@ public class GeoJSONWriter {
         // Properties
         final JsonObjectBuilder propObj = Json.createObjectBuilder();
         for (Entry<String, String> t : p.getKeys().entrySet()) {
-            propObj.add(t.getKey(), t.getValue());
+            propObj.add(t.getKey(), convertValueToJson(t.getValue()));
         }
         final JsonObject prop = propObj.build();
 
@@ -198,6 +214,19 @@ public class GeoJSONWriter {
                     .add("properties", prop.isEmpty() ? JsonValue.NULL : prop)
                     .add("geometry", geom.isEmpty() ? JsonValue.NULL : geom));
         }
+    }
+
+    private static JsonValue convertValueToJson(String value) {
+        if (value.startsWith(JSON_VALUE_START_MARKER) && value.endsWith(JSON_VALUE_END_MARKER)) {
+            try (JsonParser parser = Json.createParser(new StringReader(value))) {
+                if (parser.hasNext() && parser.next() != null) {
+                    return parser.getValue();
+                }
+            } catch (JsonParsingException e) {
+                Logging.warn(e);
+            }
+        }
+        return Json.createValue(value);
     }
 
     protected void appendLayerBounds(DataSet ds, JsonObjectBuilder object) {

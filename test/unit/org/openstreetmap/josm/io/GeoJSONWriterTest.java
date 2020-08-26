@@ -39,6 +39,7 @@ public class GeoJSONWriterTest {
         final Node node = new Node(new LatLon(12.3, 4.56));
         node.put("name", "foo");
         node.put("source", "code");
+        node.put("data", "{\"foo\": 1, \"bar\": \"baz\"}");
         final DataSet ds = new DataSet();
         ds.addPrimitive(node);
         final GeoJSONWriter writer = new GeoJSONWriter(ds);
@@ -51,7 +52,11 @@ public class GeoJSONWriterTest {
                 "            'type': 'Feature',\n" +
                 "            'properties': {\n" +
                 "                'name': 'foo',\n" +
-                "                'source': 'code'\n" +
+                "                'source': 'code',\n" +
+                "                'data': {\n" +
+                "                    'foo': 1,\n" +
+                "                    'bar': 'baz'\n" +
+                "                }\n" +
                 "            },\n" +
                 "            'geometry': {\n" +
                 "                'type': 'Point',\n" +
