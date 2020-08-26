@@ -41,6 +41,7 @@ public final class ReverseWayNoTagCorrector {
             new Tag("barrier", "guard_rail"),
             new Tag("barrier", "kerb"),
             new Tag("barrier", "retaining_wall"),
+            new Tag("barrier", "city_wall"),
             new Tag("man_made", "embankment")
     ));
 
