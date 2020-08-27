@@ -1687,7 +1687,7 @@
             <link wiki="Tag:barrier=lift_gate" />
             <key key="barrier" value="lift_gate" />
             <space />
-            <combo key="lift_gate:type" text="Type" value="single,double" values_context="lift_gate" values_searchable="true" />
+            <combo key="lift_gate:type" text="Type" values="single,double" values_context="lift_gate" values_searchable="true" />
             <reference ref="optional_maxwidth" />
             <combo key="material" text="Material" values="concrete,metal,plastic,stone,wood" />
             <space />
