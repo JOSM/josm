@@ -53,14 +53,15 @@ public final class HiDPISupport {
      * HiDPI scale of the main display.
      * @param base the base image
      * @param ir a corresponding image resource
+     * @param resizeMode how to size/resize the image
      * @return multi-resolution image if necessary and possible, the base image otherwise
      */
-    public static Image getMultiResolutionImage(Image base, ImageResource ir) {
+    public static Image getMultiResolutionImage(Image base, ImageResource ir, ImageResizeMode resizeMode) {
         double uiScale = getHiDPIScale();
         if (uiScale != 1.0 && baseMultiResolutionImageConstructor != null) {
             ImageIcon zoomed = ir.getImageIconAlreadyScaled(new Dimension(
                     (int) Math.round(base.getWidth(null) * uiScale),
-                    (int) Math.round(base.getHeight(null) * uiScale)), false, true);
+                    (int) Math.round(base.getHeight(null) * uiScale)), false, true, resizeMode);
             Image mrImg = getMultiResolutionImage(Arrays.asList(base, zoomed.getImage()));
             if (mrImg != null) return mrImg;
         }

@@ -28,9 +28,9 @@ import com.kitfox.svg.SVGDiagram;
 public class ImageResource {
 
     /**
-     * Caches the image data for resized versions of the same image.
+     * Caches the image data for resized versions of the same image. The key is obtained using {@link ImageResizeMode#cacheKey(Dimension)}.
      */
-    private final Map<Dimension, BufferedImage> imgCache = new ConcurrentHashMap<>(4);
+    private final Map<Integer, BufferedImage> imgCache = new ConcurrentHashMap<>(4);
     /**
      * SVG diagram information in case of SVG vector image.
      */
@@ -137,10 +137,10 @@ public class ImageResource {
      * @param  dim The requested dimensions. Use (-1,-1) for the original size and (width, -1)
      *         to set the width, but otherwise scale the image proportionally.
      * @return ImageIcon object for the image of this resource, scaled according to dim
-     * @see #getImageIconBounded(java.awt.Dimension, boolean)
+     * @see #getImageIconBounded(java.awt.Dimension)
      */
     public ImageIcon getImageIcon(Dimension dim) {
-        return getImageIcon(dim, true);
+        return getImageIcon(dim, true, ImageResizeMode.AUTO);
     }
 
     /**
@@ -150,11 +150,12 @@ public class ImageResource {
      * @param  multiResolution If true, return a multi-resolution image
      * (java.awt.image.MultiResolutionImage in Java 9), otherwise a plain {@link BufferedImage}.
      * When running Java 8, this flag has no effect and a plain image will be returned in any case.
+     * @param resizeMode how to size/resize the image
      * @return ImageIcon object for the image of this resource, scaled according to dim
      * @since 12722
      */
-    ImageIcon getImageIcon(Dimension dim, boolean multiResolution) {
-        return getImageIconAlreadyScaled(GuiSizesHelper.getDimensionDpiAdjusted(dim), multiResolution, false);
+    ImageIcon getImageIcon(Dimension dim, boolean multiResolution, ImageResizeMode resizeMode) {
+        return getImageIconAlreadyScaled(GuiSizesHelper.getDimensionDpiAdjusted(dim), multiResolution, false, resizeMode);
     }
 
     /**
@@ -166,34 +167,26 @@ public class ImageResource {
      * (java.awt.image.MultiResolutionImage in Java 9), otherwise a plain {@link BufferedImage}.
      * When running Java 8, this flag has no effect and a plain image will be returned in any case.
      * @param highResolution whether the high resolution variant should be used for overlays
+     * @param resizeMode how to size/resize the image
      * @return ImageIcon object for the image of this resource, scaled according to dim
      */
-    ImageIcon getImageIconAlreadyScaled(Dimension dim, boolean multiResolution, boolean highResolution) {
+    ImageIcon getImageIconAlreadyScaled(Dimension dim, boolean multiResolution, boolean highResolution, ImageResizeMode resizeMode) {
         CheckParameterUtil.ensureThat((dim.width > 0 || dim.width == -1) && (dim.height > 0 || dim.height == -1),
                 () -> dim + " is invalid");
 
-        BufferedImage img = imgCache.get(dim);
+        final int cacheKey = resizeMode.cacheKey(dim);
+        BufferedImage img = imgCache.get(cacheKey);
         if (img == null) {
             if (svg != null) {
-                img = ImageProvider.createImageFromSvg(svg, dim);
+                img = ImageProvider.createImageFromSvg(svg, dim, resizeMode);
                 if (img == null) {
                     return null;
                 }
             } else {
                 if (baseImage == null) throw new AssertionError();
-
                 ImageIcon icon = new ImageIcon(baseImage);
-                if (dim.width == -1 && dim.height == -1) {
-                    dim.width = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconWidth());
-                    dim.height = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconHeight());
-                } else if (dim.width == -1) {
-                    dim.width = Math.max(1, icon.getIconWidth() * dim.height / icon.getIconHeight());
-                } else if (dim.height == -1) {
-                    dim.height = Math.max(1, icon.getIconHeight() * dim.width / icon.getIconWidth());
-                }
-                Image i = icon.getImage().getScaledInstance(dim.width, dim.height, Image.SCALE_SMOOTH);
-                img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-                img.getGraphics().drawImage(i, 0, 0, null);
+                img = resizeMode.createBufferedImage(dim, new Dimension(icon.getIconWidth(), icon.getIconHeight()),
+                        g -> g.drawImage(icon.getImage(), 0, 0, null));
             }
             if (overlayInfo != null) {
                 for (ImageOverlay o : overlayInfo) {
@@ -211,14 +204,14 @@ public class ImageResource {
                 img = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
                 disabledIcon.paintIcon(new JPanel(), img.getGraphics(), 0, 0);
             }
-            imgCache.put(dim, img);
+            imgCache.put(cacheKey, img);
         }
 
         if (!multiResolution)
             return new ImageIcon(img);
         else {
             try {
-                Image mrImg = HiDPISupport.getMultiResolutionImage(img, this);
+                Image mrImg = HiDPISupport.getMultiResolutionImage(img, this, resizeMode);
                 return new ImageIcon(mrImg);
             } catch (NoClassDefFoundError e) {
                 Logging.trace(e);
@@ -236,57 +229,9 @@ public class ImageResource {
      * @param maxSize The maximum size. One of the dimensions (width or height) can be -1,
      * which means it is not bounded.
      * @return ImageIcon object for the image of this resource, scaled down if needed, according to maxSize
-     * @see #getImageIconBounded(java.awt.Dimension, boolean)
      */
     public ImageIcon getImageIconBounded(Dimension maxSize) {
-        return getImageIconBounded(maxSize, true);
-    }
-
-    /**
-     * Get image icon with a certain maximum size. The image is scaled down
-     * to fit maximum dimensions. (Keeps aspect ratio)
-     *
-     * @param maxSize The maximum size. One of the dimensions (width or height) can be -1,
-     * which means it is not bounded.
-     * @param  multiResolution If true, return a multi-resolution image
-     * (java.awt.image.MultiResolutionImage in Java 9), otherwise a plain {@link BufferedImage}.
-     * When running Java 8, this flag has no effect and a plain image will be returned in any case.
-     * @return ImageIcon object for the image of this resource, scaled down if needed, according to maxSize
-     * @since 12722
-     */
-    public ImageIcon getImageIconBounded(Dimension maxSize, boolean multiResolution) {
-        CheckParameterUtil.ensureThat((maxSize.width > 0 || maxSize.width == -1) && (maxSize.height > 0 || maxSize.height == -1),
-                () -> maxSize + " is invalid");
-        float sourceWidth;
-        float sourceHeight;
-        int maxWidth = maxSize.width;
-        int maxHeight = maxSize.height;
-        if (svg != null) {
-            sourceWidth = svg.getWidth();
-            sourceHeight = svg.getHeight();
-        } else {
-            if (baseImage == null) throw new AssertionError();
-            ImageIcon icon = new ImageIcon(baseImage);
-            sourceWidth = icon.getIconWidth();
-            sourceHeight = icon.getIconHeight();
-            if (sourceWidth <= maxWidth) {
-                maxWidth = -1;
-            }
-            if (sourceHeight <= maxHeight) {
-                maxHeight = -1;
-            }
-        }
-
-        if (maxWidth == -1 && maxHeight == -1)
-            return getImageIcon(DEFAULT_DIMENSION, multiResolution);
-        else if (maxWidth == -1)
-            return getImageIcon(new Dimension(-1, maxHeight), multiResolution);
-        else if (maxHeight == -1)
-            return getImageIcon(new Dimension(maxWidth, -1), multiResolution);
-        else if (sourceWidth / maxWidth > sourceHeight / maxHeight)
-            return getImageIcon(new Dimension(maxWidth, -1), multiResolution);
-        else
-            return getImageIcon(new Dimension(-1, maxHeight), multiResolution);
+        return getImageIcon(maxSize, true, ImageResizeMode.BOUNDED);
     }
 
     /**
@@ -296,19 +241,7 @@ public class ImageResource {
      * @return an {@code ImageIcon} for the given map image, at the specified size
      */
     public ImageIcon getPaddedIcon(Dimension iconSize) {
-        final ImageIcon imageIcon = getImageIcon(iconSize);
-        if (imageIcon.getIconWidth() == iconSize.width && imageIcon.getIconHeight() == iconSize.height) {
-            // fast path for square and svg icons
-            return imageIcon;
-        }
-
-        final Dimension cacheKey = new Dimension(-iconSize.width, -iconSize.height); // use negative width/height for differentiation
-        BufferedImage image = imgCache.get(cacheKey);
-        if (image == null) {
-            image = ImageProvider.createPaddedIcon(getImageIcon().getImage(), iconSize);
-            imgCache.put(cacheKey, image);
-        }
-        return new ImageIcon(image);
+        return getImageIcon(iconSize, true, ImageResizeMode.PADDED);
     }
 
     @Override

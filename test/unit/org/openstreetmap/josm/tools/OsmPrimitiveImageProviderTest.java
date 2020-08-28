@@ -60,11 +60,22 @@ public class OsmPrimitiveImageProviderTest {
                 EnumSet.of(Options.NO_DEFAULT, Options.NO_DEPRECATED)));
         assertNotNull(OsmPrimitiveImageProvider.getResource(OsmUtils.createPrimitive("way waterway=stream"), noDefault));
         assertNotNull(OsmPrimitiveImageProvider.getResource(OsmUtils.createPrimitive("relation type=route route=railway"), noDefault));
-        // a non-square svg icon
+    }
+
+    /**
+     * Unit test of {@link OsmPrimitiveImageProvider#getResource} for non-square images.
+     */
+    @Test
+    public void testGetResourceNonSquare() {
         final ImageIcon bankIcon = OsmPrimitiveImageProvider
                 .getResource(OsmUtils.createPrimitive("node amenity=bank"), Options.DEFAULT)
                 .getPaddedIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
         assertEquals(ImageProvider.ImageSizes.LARGEICON.getVirtualWidth(), bankIcon.getIconWidth());
         assertEquals(ImageProvider.ImageSizes.LARGEICON.getVirtualHeight(), bankIcon.getIconHeight());
+        final ImageIcon addressIcon = OsmPrimitiveImageProvider
+                .getResource(OsmUtils.createPrimitive("node \"addr:housenumber\"=123"), Options.DEFAULT)
+                .getPaddedIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension());
+        assertEquals(ImageProvider.ImageSizes.LARGEICON.getVirtualWidth(), addressIcon.getIconWidth());
+        assertEquals(ImageProvider.ImageSizes.LARGEICON.getVirtualHeight(), addressIcon.getIconHeight());
     }
 }

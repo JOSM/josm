@@ -659,9 +659,9 @@ public class ImageProvider {
             Logging.trace("get {0} from {1}", this, Thread.currentThread());
         }
         if (virtualMaxWidth != -1 || virtualMaxHeight != -1)
-            return ir.getImageIconBounded(new Dimension(virtualMaxWidth, virtualMaxHeight), multiResolution);
+            return ir.getImageIcon(new Dimension(virtualMaxWidth, virtualMaxHeight), multiResolution, ImageResizeMode.BOUNDED);
         else
-            return ir.getImageIcon(new Dimension(virtualWidth, virtualHeight), multiResolution);
+            return ir.getImageIcon(new Dimension(virtualWidth, virtualHeight), multiResolution, ImageResizeMode.AUTO);
     }
 
     /**
@@ -1471,86 +1471,32 @@ public class ImageProvider {
         return resource != null ? resource.getPaddedIcon(iconSize) : null;
     }
 
-    static BufferedImage createPaddedIcon(Image icon, Dimension iconSize) {
-        int backgroundRealWidth = GuiSizesHelper.getSizeDpiAdjusted(iconSize.width);
-        int backgroundRealHeight = GuiSizesHelper.getSizeDpiAdjusted(iconSize.height);
-        int iconRealWidth = icon.getWidth(null);
-        int iconRealHeight = icon.getHeight(null);
-        BufferedImage image = new BufferedImage(backgroundRealWidth, backgroundRealHeight, BufferedImage.TYPE_INT_ARGB);
-        double scaleFactor = Math.min(
-                backgroundRealWidth / (double) iconRealWidth,
-                backgroundRealHeight / (double) iconRealHeight);
-        Image scaledIcon;
-        final int scaledWidth;
-        final int scaledHeight;
-        if (scaleFactor < 1) {
-            // Scale icon such that it fits on background.
-            scaledWidth = (int) (iconRealWidth * scaleFactor);
-            scaledHeight = (int) (iconRealHeight * scaleFactor);
-            scaledIcon = icon.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-        } else {
-            // Use original size, don't upscale.
-            scaledWidth = iconRealWidth;
-            scaledHeight = iconRealHeight;
-            scaledIcon = icon;
-        }
-        image.getGraphics().drawImage(scaledIcon,
-                (backgroundRealWidth - scaledWidth) / 2,
-                (backgroundRealHeight - scaledHeight) / 2, null);
-
-        return image;
-    }
-
     /**
      * Constructs an image from the given SVG data.
      * @param svg the SVG data
      * @param dim the desired image dimension
+     * @param resizeMode how to size/resize the image
      * @return an image from the given SVG data at the desired dimension.
      */
-    public static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim) {
+    static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim, ImageResizeMode resizeMode) {
         if (Logging.isTraceEnabled()) {
             Logging.trace("createImageFromSvg: {0} {1}", svg.getXMLBase(), dim);
         }
         final float sourceWidth = svg.getWidth();
         final float sourceHeight = svg.getHeight();
-        final float realWidth;
-        final float realHeight;
-        if (dim.width >= 0) {
-            realWidth = dim.width;
-            if (dim.height >= 0) {
-                realHeight = dim.height;
-            } else {
-                realHeight = sourceHeight * realWidth / sourceWidth;
-            }
-        } else if (dim.height >= 0) {
-            realHeight = dim.height;
-            realWidth = sourceWidth * realHeight / sourceHeight;
-        } else {
-            realWidth = GuiSizesHelper.getSizeDpiAdjusted(sourceWidth);
-            realHeight = GuiSizesHelper.getSizeDpiAdjusted(sourceHeight);
-        }
-
-        int roundedWidth = Math.round(realWidth);
-        int roundedHeight = Math.round(realHeight);
-        if (roundedWidth <= 0 || roundedHeight <= 0 || roundedWidth >= Integer.MAX_VALUE || roundedHeight >= Integer.MAX_VALUE) {
-            Logging.error("createImageFromSvg: {0} {1} realWidth={2} realHeight={3}",
-                    svg.getXMLBase(), dim, Float.toString(realWidth), Float.toString(realHeight));
+        if (sourceWidth <= 0 || sourceHeight <= 0) {
+            Logging.error("createImageFromSvg: {0} {1} sourceWidth={2} sourceHeight={3}", svg.getXMLBase(), dim, sourceWidth, sourceHeight);
             return null;
         }
-        BufferedImage img = new BufferedImage(roundedWidth, roundedHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = img.createGraphics();
-        g.setClip(0, 0, img.getWidth(), img.getHeight());
-        g.scale(realWidth / sourceWidth, realHeight / sourceHeight);
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        try {
-            synchronized (getSvgUniverse()) {
-                svg.render(g);
+        return resizeMode.createBufferedImage(dim, new Dimension((int) sourceWidth, (int) sourceHeight), g -> {
+            try {
+                synchronized (getSvgUniverse()) {
+                    svg.render(g);
+                }
+            } catch (SVGException ex) {
+                Logging.log(Logging.LEVEL_ERROR, "Unable to load svg:", ex);
             }
-        } catch (SVGException ex) {
-            Logging.log(Logging.LEVEL_ERROR, "Unable to load svg:", ex);
-            return null;
-        }
-        return img;
+        });
     }
 
     private static synchronized SVGUniverse getSvgUniverse() {
