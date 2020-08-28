@@ -128,7 +128,9 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
             for (IPrimitive osm : sel) {
-                String heading = tr("Styles for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance()));
+                String heading = tr("Styles for \"{0}\":", osm.getDisplayName(DefaultNameFormatter.getInstance())
+                        .replace(Character.toString(DefaultNameFormatter.BIDI_FIRST_STRONG_ISOLATE), "")
+                        .replace(Character.toString(DefaultNameFormatter.BIDI_POP_DIRECTIONAL_ISOLATE), ""));
                 txtMappaint.println(heading);
                 txtMappaint.println(repeatString("=", heading.length()));
 
