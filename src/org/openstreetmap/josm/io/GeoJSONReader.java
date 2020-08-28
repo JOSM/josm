@@ -59,7 +59,6 @@ public class GeoJSONReader extends AbstractReader {
     private static final String TYPE = "type";
     /** The record separator is 0x1E per RFC 7464 */
     private static final byte RECORD_SEPARATOR_BYTE = 0x1E;
-    private JsonParser parser;
     private Projection projection = Projections.getProjectionByCode("EPSG:4326"); // WGS 84
 
     GeoJSONReader() {
