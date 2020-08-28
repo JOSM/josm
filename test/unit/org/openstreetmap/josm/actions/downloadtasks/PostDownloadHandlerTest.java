@@ -127,7 +127,8 @@ public class PostDownloadHandlerTest {
         Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(null, newFuture("testRunExceptionFuture")).run();
         assertTrue(Logging.getLastErrorAndWarnings().toString(),
-                Logging.getLastErrorAndWarnings().contains("E: java.util.concurrent.ExecutionException: testRunExceptionFuture"));
+                Logging.getLastErrorAndWarnings().stream()
+                        .anyMatch(e -> e.endsWith("E: java.util.concurrent.ExecutionException: testRunExceptionFuture")));
     }
 
     /**
@@ -158,6 +159,7 @@ public class PostDownloadHandlerTest {
         Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(newTask(Arrays.asList("foo", new Exception("bar"), new Object())), newFuture(null)).run();
         assertTrue(Logging.getLastErrorAndWarnings().toString(),
-                Logging.getLastErrorAndWarnings().contains("E: java.lang.Exception: bar"));
+                Logging.getLastErrorAndWarnings().stream()
+                        .anyMatch(e -> e.endsWith("E: java.lang.Exception: bar")));
     }
 }

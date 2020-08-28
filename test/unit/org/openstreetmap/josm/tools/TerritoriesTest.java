@@ -91,7 +91,7 @@ public class TerritoriesTest {
         Map<String, TaginfoRegionalInstance> cache = Territories.taginfoGeofabrikCache;
         assertTrue(cache.isEmpty());
         String error = Logging.getLastErrorAndWarnings().get(0);
-        assertTrue(error, error.startsWith("W: Failed to parse external taginfo data at "));
+        assertTrue(error, error.contains("W: Failed to parse external taginfo data at "));
         assertTrue(error, error.contains(": Invalid token=EOF at (line no=3,"));
     }
 

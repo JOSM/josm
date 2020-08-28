@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -198,7 +197,7 @@ public class LoggingTest {
     public void testLogWithStackTraceLevelThrowable() {
         Consumer<String> test = string -> {
             assertTrue(string.startsWith("java.io.IOException: x"));
-            assertTrue(string.indexOf("testLogWithStackTraceLevelThrowable") >= 0);
+            assertTrue(string.contains("testLogWithStackTraceLevelThrowable"));
         };
         testLogCaptured(Logging.LEVEL_ERROR, test, () -> Logging.logWithStackTrace(Logging.LEVEL_ERROR, new IOException("x")));
         testLogCaptured(Logging.LEVEL_TRACE, test, () -> Logging.logWithStackTrace(Logging.LEVEL_TRACE, new IOException("x")));
@@ -206,7 +205,7 @@ public class LoggingTest {
         testLogCaptured(Logging.LEVEL_TRACE, string -> assertTrue(string.startsWith("java.io.IOException\n")),
                 () -> Logging.logWithStackTrace(Logging.LEVEL_TRACE, new IOException()));
 
-        testLogCaptured(Logging.LEVEL_TRACE, string -> assertTrue(string.indexOf("Cause:") >= 0),
+        testLogCaptured(Logging.LEVEL_TRACE, string -> assertTrue(string.contains("Cause:")),
                 () -> Logging.logWithStackTrace(Logging.LEVEL_TRACE, new IOException(new IOException())));
 
     }
@@ -267,7 +266,7 @@ public class LoggingTest {
         Logging.warn("x");
 
         assertEquals(1, Logging.getLastErrorAndWarnings().size());
-        assertEquals("W: x", Logging.getLastErrorAndWarnings().get(0));
+        assertTrue(Logging.getLastErrorAndWarnings().toString(), Logging.getLastErrorAndWarnings().get(0).endsWith("W: x"));
 
         Logging.setLogLevel(Logging.LEVEL_ERROR);
         Logging.warn("x");
@@ -277,7 +276,8 @@ public class LoggingTest {
         Logging.error("y\nz");
 
         assertEquals(2, Logging.getLastErrorAndWarnings().size());
-        assertArrayEquals(new Object[] {"W: x", "E: y"}, Logging.getLastErrorAndWarnings().toArray());
+        assertTrue(Logging.getLastErrorAndWarnings().toString(), Logging.getLastErrorAndWarnings().get(0).endsWith("W: x"));
+        assertTrue(Logging.getLastErrorAndWarnings().toString(), Logging.getLastErrorAndWarnings().get(1).endsWith("E: y"));
 
         // limit somewhere reasonable
         for (int i = 3; i < 6; i++) {
