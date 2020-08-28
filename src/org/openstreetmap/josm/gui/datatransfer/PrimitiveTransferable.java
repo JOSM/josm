@@ -90,6 +90,6 @@ public class PrimitiveTransferable implements Transferable {
             }
             sb.append(OsmPrimitiveType.from(primitive).getAPIName()).append(' ').append(primitive.getId());
         }
-        return sb.toString().replace("\u200E", "").replace("\u200F", "");
+        return sb.toString().replace("\u200C", "").replace("\u200E", "").replace("\u200F", "");
     }
 }

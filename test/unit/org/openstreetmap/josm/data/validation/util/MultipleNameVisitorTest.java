@@ -32,7 +32,7 @@ public class MultipleNameVisitorTest {
     public void testTicket11967() {
         MultipleNameVisitor visitor = new MultipleNameVisitor();
         visitor.visit(Arrays.asList(new Way(), new Way()));
-        assertEquals("2 ways: ‎0‎ (0 nodes), ‎0‎ (0 nodes)", visitor.toString());
+        assertEquals("2 ways: \u200E0\u200E (0 nodes)\u200C, \u200E0\u200E (0 nodes)\u200C", visitor.toString());
     }
 
     /**
@@ -45,6 +45,6 @@ public class MultipleNameVisitorTest {
                 TestUtils.newNode("name=foo"),
                 TestUtils.newWay("addr:housename=Stark"),
                 TestUtils.newRelation("type=route")));
-        assertEquals("3 objects: foo, ‎House Stark‎ (0 nodes), route (0, 0 members)", visitor.toString());
+        assertEquals("3 objects: foo, \u200EHouse Stark\u200E (0 nodes)\u200C, route (0, 0 members)", visitor.toString());
     }
 }

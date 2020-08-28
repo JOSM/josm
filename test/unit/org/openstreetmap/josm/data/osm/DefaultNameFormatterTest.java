@@ -123,20 +123,21 @@ public class DefaultNameFormatterTest {
      */
     @Test
     public void testWayName() {
-        assertEquals("building (0 nodes)", getFormattedWayName("building=yes"));
-        assertEquals("House number 123 (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123"));
-        assertEquals("House number 123 at FooStreet (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"));
-        assertEquals("House FooName (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123 addr:housename=FooName"));
+        assertEquals("\u200Ebuilding\u200E (0 nodes)\u200C", getFormattedWayName("building=yes"));
+        assertEquals("\u200EHouse number 123\u200E (0 nodes)\u200C",
+                getFormattedWayName("building=yes addr:housenumber=123"));
+        assertEquals("\u200EHouse number 123 at FooStreet\u200E (0 nodes)\u200C",
+                getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"));
+        assertEquals("\u200EHouse FooName\u200E (0 nodes)\u200C",
+                getFormattedWayName("building=yes addr:housenumber=123 addr:housename=FooName"));
     }
 
     static String getFormattedRelationName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Relation) OsmUtils.createPrimitive("relation " + tagsString))
-                .replace("\u200E", "").replace("\u200F", "");
+        return DefaultNameFormatter.getInstance().format((Relation) OsmUtils.createPrimitive("relation " + tagsString));
     }
 
     static String getFormattedWayName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Way) OsmUtils.createPrimitive("way " + tagsString))
-                .replace("\u200E", "").replace("\u200F", "");
+        return DefaultNameFormatter.getInstance().format((Way) OsmUtils.createPrimitive("way " + tagsString));
     }
 
     /**

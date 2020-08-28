@@ -212,7 +212,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             if (node.isLatLonKnown() && Config.getPref().getBoolean("osm-primitives.showcoor")) {
                 name.append(" \u200E(");
                 name.append(CoordinateFormatManager.getDefaultFormat().toString(node, ", "));
-                name.append(')');
+                name.append(")\u200C");
             }
         }
         decorateNameWithId(name, node);
@@ -305,6 +305,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name.append(mark).append(" (").append(nodes).append(')');
         }
         decorateNameWithId(name, way);
+        name.append('\u200C');
 
         String result = name.toString();
         return formatHooks.stream().map(hook -> hook.checkFormat(way, result))
