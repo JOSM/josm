@@ -106,7 +106,7 @@ public class RelationMemberTransferable implements Transferable {
               .append(" # ").append(member.getMember().getDisplayName(DefaultNameFormatter.getInstance()))
               .append('\n');
         }
-        return sb.toString().replace("\u200C", "").replace("\u200E", "").replace("\u200F", "");
+        return DefaultNameFormatter.removeBiDiCharacters(sb.toString());
     }
 
     protected Data getRelationMemberData() {

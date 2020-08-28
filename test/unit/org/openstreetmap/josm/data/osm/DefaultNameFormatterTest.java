@@ -167,4 +167,12 @@ public class DefaultNameFormatterTest {
                 DefaultNameFormatter.getInstance().buildDefaultToolTip(
                         TestUtils.newNode("tourism=hotel name:en=foo url=http://foo.bar xml=<tag/>")));
     }
+
+    /**
+     * Test of {@link DefaultNameFormatter#removeBiDiCharacters(String)}.
+     */
+    @Test
+    public void testRemoveBiDiCharacters() {
+        assertEquals("building (0 nodes)", DefaultNameFormatter.removeBiDiCharacters("\u200Ebuilding\u200E (0 nodes)\u200C"));
+    }
 }

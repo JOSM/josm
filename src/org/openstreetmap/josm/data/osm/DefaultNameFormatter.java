@@ -671,4 +671,13 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public String formatAsHtmlUnorderedList(OsmPrimitive primitive) {
         return formatAsHtmlUnorderedList(Collections.singletonList(primitive), 1);
     }
+
+    /**
+     * Removes the bidirectional text characters U+200C, U+200E, U+200F from the string
+     * @param string the string
+     * @return the string with the bidirectional text characters removed
+     */
+    public static String removeBiDiCharacters(String string) {
+        return string.replaceAll("[\\u200C\\u200E\\u200F]", "");
+    }
 }

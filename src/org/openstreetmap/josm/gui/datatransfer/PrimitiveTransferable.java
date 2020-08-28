@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.gui.datatransfer.data.OsmLayerTransferData;
@@ -90,6 +91,6 @@ public class PrimitiveTransferable implements Transferable {
             }
             sb.append(OsmPrimitiveType.from(primitive).getAPIName()).append(' ').append(primitive.getId());
         }
-        return sb.toString().replace("\u200C", "").replace("\u200E", "").replace("\u200F", "");
+        return DefaultNameFormatter.removeBiDiCharacters(sb.toString());
     }
 }
