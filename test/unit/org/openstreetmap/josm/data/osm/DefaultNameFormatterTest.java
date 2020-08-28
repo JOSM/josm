@@ -123,22 +123,20 @@ public class DefaultNameFormatterTest {
      */
     @Test
     public void testWayName() {
-        assertEquals("\u2068building\u2069 \u2068(0 nodes)\u2069",
-                getFormattedWayName("building=yes"));
-        assertEquals("\u2068House number 123\u2069 \u2068(0 nodes)\u2069",
-                getFormattedWayName("building=yes addr:housenumber=123"));
-        assertEquals("\u2068House number 123 at FooStreet\u2069 \u2068(0 nodes)\u2069",
-                getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"));
-        assertEquals("\u2068House FooName\u2069 \u2068(0 nodes)\u2069",
-                getFormattedWayName("building=yes addr:housenumber=123 addr:housename=FooName"));
+        assertEquals("building (0 nodes)", getFormattedWayName("building=yes"));
+        assertEquals("House number 123 (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123"));
+        assertEquals("House number 123 at FooStreet (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123 addr:street=FooStreet"));
+        assertEquals("House FooName (0 nodes)", getFormattedWayName("building=yes addr:housenumber=123 addr:housename=FooName"));
     }
 
     static String getFormattedRelationName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Relation) OsmUtils.createPrimitive("relation " + tagsString));
+        return DefaultNameFormatter.getInstance().format((Relation) OsmUtils.createPrimitive("relation " + tagsString))
+                .replace("\u200E", "").replace("\u200F", "");
     }
 
     static String getFormattedWayName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Way) OsmUtils.createPrimitive("way " + tagsString));
+        return DefaultNameFormatter.getInstance().format((Way) OsmUtils.createPrimitive("way " + tagsString))
+                .replace("\u200E", "").replace("\u200F", "");
     }
 
     /**
@@ -151,12 +149,7 @@ public class DefaultNameFormatterTest {
 
         List<Node> nodes = IntStream.rangeClosed(1, 10).mapToObj(i -> new Node(i, 1))
                 .collect(Collectors.toList());
-        assertEquals("<ul>" +
-                        "<li>\u20681\u2069</li>" +
-                        "<li>\u20682\u2069</li>" +
-                        "<li>\u20683\u2069</li>" +
-                        "<li>\u20684\u2069</li>" +
-                        "<li>...</li></ul>",
+        assertEquals("<ul><li>1</li><li>2</li><li>3</li><li>4</li><li>...</li></ul>",
                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(nodes, 5));
     }
 

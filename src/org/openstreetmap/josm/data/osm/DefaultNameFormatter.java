@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trcLazy;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.ComponentOrientation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -41,14 +43,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
  * @since 1990
  */
 public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter {
-    /**
-     * U+2068 FIRST STRONG ISOLATE
-     */
-    public static final char BIDI_FIRST_STRONG_ISOLATE = '\u2068';
-    /**
-     * U+2069 POP DIRECTIONAL ISOLATE
-     */
-    public static final char BIDI_POP_DIRECTIONAL_ISOLATE = '\u2069';
+
     private static DefaultNameFormatter instance;
 
     private static final List<NameFormatterHook> formatHooks = new LinkedList<>();
@@ -146,12 +141,12 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             long id = Config.getPref().getBoolean("osm-primitives.showid.new-primitives") ?
                     primitive.getUniqueId() : primitive.getId();
             if (Config.getPref().getBoolean("osm-primitives.showversion") && version > 0) {
-                bdi(name, tr(" [id: {0}, v{1}]", id, version));
+                name.append(tr(" [id: {0}, v{1}]", id, version));
             } else {
-                bdi(name, tr(" [id: {0}]", id));
+                name.append(tr(" [id: {0}]", id));
             }
         } else if (Config.getPref().getBoolean("osm-primitives.showversion")) {
-            bdi(name, tr(" [v{0}]", version));
+            name.append(tr(" [v{0}]", version));
         }
     }
 
@@ -210,13 +205,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 if (n == null) {
                     n = node.isNew() ? tr("node") : Long.toString(node.getId());
                 }
-                bdi(name, n);
+                name.append(n);
             } else {
                 preset.nameTemplate.appendText(name, (TemplateEngineDataProvider) node);
             }
             if (node.isLatLonKnown() && Config.getPref().getBoolean("osm-primitives.showcoor")) {
-                name.append(' ');
-                bdiParen(name, CoordinateFormatManager.getDefaultFormat().toString(node, ", "));
+                name.append(" \u200E(");
+                name.append(CoordinateFormatManager.getDefaultFormat().toString(node, ", "));
+                name.append(')');
             }
         }
         decorateNameWithId(name, node);
@@ -238,6 +234,19 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     @Override
     public String format(IWay<?> way) {
         StringBuilder name = new StringBuilder();
+
+        char mark;
+        // If current language is left-to-right (almost all languages)
+        if (ComponentOrientation.getOrientation(Locale.getDefault()).isLeftToRight()) {
+            // will insert Left-To-Right Mark to ensure proper display of text in the case when object name is right-to-left
+            mark = '\u200E';
+        } else {
+            // otherwise will insert Right-To-Left Mark to ensure proper display in the opposite case
+            mark = '\u200F';
+        }
+        // Initialize base direction of the string
+        name.append(mark);
+
         if (way.isIncomplete()) {
             name.append(tr("incomplete"));
         } else {
@@ -283,7 +292,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     n = String.valueOf(way.getId());
                 }
 
-                bdi(name, n);
+                name.append(n);
             } else {
                 preset.nameTemplate.appendText(name, (TemplateEngineDataProvider) way);
             }
@@ -293,8 +302,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                nevertheless, who knows what future brings */
             /* I18n: count of nodes as parameter */
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
-            name.append(" ");
-            bdiParen(name, nodes);
+            name.append(mark).append(" (").append(nodes).append(')');
         }
         decorateNameWithId(name, way);
 
@@ -631,30 +639,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
         decorateNameWithId(sb, relation);
         return sb.toString();
-    }
-
-    /**
-     * Wraps the content in a bidirectional isolate
-     * @param builder the builder to append to
-     * @param content the text to wrap
-     */
-    private static void bdi(StringBuilder builder, String content) {
-        builder.append(BIDI_FIRST_STRONG_ISOLATE);
-        builder.append(content);
-        builder.append(BIDI_POP_DIRECTIONAL_ISOLATE);
-    }
-
-    /**
-     * Wraps the content in parenthesis and a bidirectional isolate
-     * @param builder the builder to append to
-     * @param content the text to wrap
-     */
-    private static void bdiParen(StringBuilder builder, String content) {
-        builder.append(BIDI_FIRST_STRONG_ISOLATE);
-        builder.append('(');
-        builder.append(content);
-        builder.append(')');
-        builder.append(BIDI_POP_DIRECTIONAL_ISOLATE);
     }
 
     /**
