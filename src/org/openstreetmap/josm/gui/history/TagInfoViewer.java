@@ -24,6 +24,7 @@ import org.openstreetmap.josm.gui.dialogs.properties.CopyKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.HelpTagAction;
 import org.openstreetmap.josm.gui.dialogs.properties.TaginfoAction;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 
 /**
@@ -66,6 +67,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
     protected JTable buildTable(PointInTimeType pointInTime) {
         TagTableModel tagTableModel = model.getTagTableModel(pointInTime);
         JTable table = new JTable(tagTableModel, new TagTableColumnModel());
+        TableHelper.setFont(table, getClass());
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.getTableHeader().setReorderingAllowed(false);

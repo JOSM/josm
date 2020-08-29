@@ -193,6 +193,7 @@ public class AddTagsDialog extends ExtendedDialog {
             }
         };
 
+        TableHelper.setFont(propertyTable, getClass());
         propertyTable.setAutoCreateRowSorter(true);
         propertyTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         // a checkbox has a size of 15 px

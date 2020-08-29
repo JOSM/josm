@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -68,6 +69,7 @@ public class VersionTable extends JTable implements ChangeListener, Destroyable 
         setRowSelectionAllowed(false);
         setShowGrid(false);
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        TableHelper.setFont(this, getClass());
         GuiHelper.setBackgroundReadable(this, UIManager.getColor("Button.background"));
         setIntercellSpacing(new Dimension(6, 0));
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);

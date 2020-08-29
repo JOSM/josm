@@ -317,6 +317,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         GpxTrackTable(Object[][] content, TableModel model) {
             super(model);
             this.content = content;
+            TableHelper.setFont(this, getClass());
         }
 
         @Override

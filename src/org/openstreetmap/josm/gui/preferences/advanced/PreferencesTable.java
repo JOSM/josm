@@ -30,6 +30,7 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.ListListSetting;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
@@ -58,6 +59,7 @@ public class PreferencesTable extends JTable {
         getColumnModel().getColumn(1).setCellRenderer(new SettingCellRenderer());
         getColumnModel().getColumn(1).setCellEditor(new SettingCellEditor());
 
+        TableHelper.setFont(this, getClass());
         addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {

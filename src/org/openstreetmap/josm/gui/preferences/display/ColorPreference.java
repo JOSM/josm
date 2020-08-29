@@ -52,7 +52,9 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.advanced.PreferencesTable;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -306,6 +308,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         defaultSet.setEnabled(false);
 
         colors = new JTable(tableModel);
+        TableHelper.setFont(colors, PreferencesTable.class);
         colors.setAutoCreateRowSorter(true);
         FilterField colorFilter = new FilterField().filter(colors, tableModel);
         colors.addMouseListener(new MouseAdapter() {

@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -197,6 +198,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     return model.getValueAt(rowAtPoint(p), columnAtPoint(p)).toString();
                 }
             };
+            TableHelper.setFont(list, getClass());
             JScrollPane scroll = new JScrollPane(list);
             add(scroll, GBC.eol().fill(GridBagConstraints.BOTH));
             scroll.setPreferredSize(new Dimension(200, 200));

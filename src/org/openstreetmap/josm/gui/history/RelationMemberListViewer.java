@@ -12,6 +12,7 @@ import javax.swing.ListSelectionModel;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 
 /**
@@ -31,6 +32,7 @@ public class RelationMemberListViewer extends HistoryViewerPanel {
         final DiffTableModel tableModel = model.getRelationMemberTableModel(pointInTimeType);
         final RelationMemberTableColumnModel columnModel = new RelationMemberTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
+        TableHelper.setFont(table, getClass());
         tableModel.addTableModelListener(new ReversedChangeListener(
                 table, columnModel, tr("The members of this relation are in reverse order")));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

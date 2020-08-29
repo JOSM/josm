@@ -22,6 +22,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -54,6 +55,7 @@ public abstract class AbstractTableListEditor<T> extends AbstractListEditor<T> {
         entryList.getSelectionModel().addListSelectionListener(new EntryListener());
         tableModel = newTableModel();
         table = new JTable(tableModel);
+        TableHelper.setFont(table, PreferencesTable.class);
         setContent(build(), false);
     }
 

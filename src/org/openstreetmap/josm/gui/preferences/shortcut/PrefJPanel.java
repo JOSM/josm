@@ -40,6 +40,7 @@ import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.KeyboardUtils;
@@ -193,6 +194,7 @@ public class PrefJPanel extends JPanel {
         add(buildFilterPanel());
 
         // This is the list of shortcuts:
+        TableHelper.setFont(shortcutTable, getClass());
         shortcutTable.setModel(model);
         shortcutTable.getSelectionModel().addListSelectionListener(action);
         shortcutTable.setFillsViewportHeight(true);

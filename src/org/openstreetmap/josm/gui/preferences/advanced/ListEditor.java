@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.tools.GBC;
@@ -50,6 +51,7 @@ public class ListEditor extends AbstractListEditor<String> {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key: {0}", entry.getKey())), GBC.eol().insets(0, 0, 5, 0));
         JTable table = new JTable(model);
+        TableHelper.setFont(table, getClass());
         table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         table.setTableHeader(null);
 

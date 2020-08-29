@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 
 /**
@@ -40,6 +41,7 @@ public class NodeListViewer extends HistoryViewerPanel {
         final DiffTableModel tableModel = model.getNodeListTableModel(pointInTimeType);
         final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
+        TableHelper.setFont(table, getClass());
         tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel, tr("The nodes of this way are in reverse order")));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());

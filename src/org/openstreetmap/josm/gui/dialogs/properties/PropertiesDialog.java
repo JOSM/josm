@@ -314,6 +314,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
     private void buildTagsTable() {
         // setting up the tags table
+        TableHelper.setFont(tagTable, getClass());
         tagData.setColumnIdentifiers(new String[]{tr("Key"), tr("Value")});
         tagTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tagTable.getTableHeader().setReorderingAllowed(false);
@@ -338,6 +339,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     }
 
     private void buildMembershipTable() {
+        TableHelper.setFont(membershipTable, getClass());
         membershipData.setColumnIdentifiers(new String[]{tr("Member Of"), tr("Role"), tr("Position")});
         membershipTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 

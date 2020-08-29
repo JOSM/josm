@@ -23,6 +23,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import org.openstreetmap.josm.data.imagery.WMTSTileSource.Layer;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -95,6 +96,7 @@ public class WMTSLayerSelection extends JPanel {
         this.layers = layers;
         list = new JTable(
                 new AbstractTableModelExtension(layers));
+        TableHelper.setFont(list, getClass());
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setAutoCreateRowSorter(true);
         list.setRowSelectionAllowed(true);

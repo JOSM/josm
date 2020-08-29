@@ -16,6 +16,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import org.openstreetmap.josm.gui.util.TableHelper;
+
 /**
  * Generic table offering custom cell navigation features.
  * @since 9497
@@ -33,6 +35,7 @@ public abstract class JosmTable extends JTable {
 
     protected JosmTable(TableModel dm, TableColumnModel cm, ListSelectionModel sm) {
         super(dm, cm, sm);
+        TableHelper.setFont(this, getClass());
     }
 
     protected void installCustomNavigation(int colEnd) {

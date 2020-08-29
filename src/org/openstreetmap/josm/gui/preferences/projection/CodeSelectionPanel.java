@@ -21,6 +21,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice.CodeComparator;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -96,6 +97,7 @@ public class CodeSelectionPanel extends JPanel implements ListSelectionListener,
         filter.getDocument().addDocumentListener(this);
 
         table = new JTable(model);
+        TableHelper.setFont(table, getClass());
         table.setAutoCreateRowSorter(true);
         JScrollPane scroll = new JScrollPane(table);
         scroll.setPreferredSize(new Dimension(200, 214));

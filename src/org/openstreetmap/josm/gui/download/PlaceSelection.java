@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.NameFinder;
@@ -143,6 +144,7 @@ public class PlaceSelection implements DownloadSelection {
         model = new NamedResultTableModel(selectionModel);
         columnmodel = new NamedResultTableColumnModel();
         tblSearchResults = new JTable(model, columnmodel);
+        TableHelper.setFont(tblSearchResults, DownloadDialog.class);
         tblSearchResults.setSelectionModel(selectionModel);
         JScrollPane scrollPane = new JScrollPane(tblSearchResults);
         scrollPane.setPreferredSize(new Dimension(200, 200));

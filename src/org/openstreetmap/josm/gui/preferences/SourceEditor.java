@@ -337,6 +337,7 @@ public abstract class SourceEditor extends JPanel {
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         iconPathsModel = new IconPathTableModel(selectionModel);
         tblIconPaths = new JTable(iconPathsModel);
+        TableHelper.setFont(tblIconPaths, getClass());
         tblIconPaths.setSelectionModel(selectionModel);
         tblIconPaths.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tblIconPaths.setTableHeader(null);

@@ -209,6 +209,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         // create the list control
         //
         layerList = new LayerList(model);
+        TableHelper.setFont(layerList, getClass());
         layerList.setSelectionModel(selectionModel);
         layerList.addMouseListener(new PopupMenuHandler());
         layerList.setBackground(UIManager.getColor("Button.background"));
@@ -918,7 +919,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             int idx = getLayers().indexOf(layer);
             Icon icon = layer.getIcon();
             if (layerList != null && icon != null) {
-                layerList.setRowHeight(idx, Math.max(16, icon.getIconHeight()));
+                layerList.setRowHeight(idx, Math.max(layerList.getRowHeight(), icon.getIconHeight()));
             }
             selectionModel.setSelectionInterval(idx, idx);
             ensureSelectedIsVisible();

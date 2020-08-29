@@ -9,6 +9,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.gui.util.TableHelper;
+
 /**
  * Selection table of relation editor.
  * @since 2563
@@ -31,6 +33,7 @@ public class SelectionTable extends JTable {
     }
 
     protected void build() {
+        TableHelper.setFont(this, getClass());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         addMouseListener(new DoubleClickAdapter());
         memberTableModel.addTableModelListener(e -> repaint());

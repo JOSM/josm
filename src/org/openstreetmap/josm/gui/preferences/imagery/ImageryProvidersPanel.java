@@ -61,6 +61,7 @@ import org.openstreetmap.josm.gui.bbox.JosmMapViewer;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
@@ -223,10 +224,12 @@ public class ImageryProvidersPanel extends JPanel {
                 }
             }
         };
+        TableHelper.setFont(activeTable, getClass());
         activeTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         defaultModel = new ImageryDefaultLayerTableModel();
         defaultTable = new JTable(defaultModel);
+        TableHelper.setFont(defaultTable, getClass());
         defaultTable.setAutoCreateRowSorter(true);
         defaultFilter = new FilterField().filter(defaultTable, defaultModel);
 

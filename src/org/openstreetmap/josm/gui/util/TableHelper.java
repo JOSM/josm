@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.util;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.util.stream.IntStream;
 
 import javax.swing.JTable;
@@ -13,6 +14,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.openstreetmap.josm.gui.dialogs.IEnabledStateUpdating;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * The class that provide common JTable customization methods
@@ -160,5 +162,24 @@ public final class TableHelper {
         selectionModel.clearSelection();
         indices.filter(i -> i >= 0).forEach(i -> selectionModel.addSelectionInterval(i, i));
         selectionModel.setValueIsAdjusting(false);
+    }
+
+    /**
+     * Sets the table font size based on the font scaling from the preferences
+     * @param table the table
+     * @param parent the parent component used for determining the preference key
+     * @see JTable#setFont(Font)
+     * @see JTable#setRowHeight(int)
+     */
+    public static void setFont(JTable table, Class<? extends Component> parent) {
+        double fontFactor = Config.getPref().getDouble("gui.scale.table.font",
+                Config.getPref().getDouble("gui.scale.table." + parent.getSimpleName() + ".font", 1.0));
+        if (fontFactor == 1.0) {
+            return;
+        }
+        Font font = table.getFont();
+        table.setFont(font.deriveFont((float) (font.getSize2D() * fontFactor)));
+        // need to setRowHeight, see comment in javax.swing.plaf.basic.BasicTableUI.installDefaults
+        table.setRowHeight((int) (table.getRowHeight() * fontFactor));
     }
 }
