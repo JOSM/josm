@@ -37,6 +37,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.actions.AbstractSelectAction;
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -140,7 +141,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
         createLayout(lstConflicts, true, Arrays.asList(btnResolve, btnSelect));
 
-        popupMenuHandler.addAction(MainApplication.getMenu().autoScaleActions.get("conflict"));
+        popupMenuHandler.addAction(MainApplication.getMenu().autoScaleActions.get(AutoScaleAction.AutoScaleMode.CONFLICT));
 
         ResolveToMyVersionAction resolveToMyVersionAction = new ResolveToMyVersionAction();
         ResolveToTheirVersionAction resolveToTheirVersionAction = new ResolveToTheirVersionAction();

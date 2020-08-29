@@ -73,6 +73,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ImageryAdjustAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -1751,6 +1752,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return new Action[] {
             LayerListDialog.getInstance().createActivateLayerAction(this),
             LayerListDialog.getInstance().createShowHideLayerAction(),
+            MainApplication.getMenu().autoScaleActions.get(AutoScaleAction.AutoScaleMode.LAYER),
             LayerListDialog.getInstance().createDeleteLayerAction(),
             SeparatorLayerAction.INSTANCE,
             // color,

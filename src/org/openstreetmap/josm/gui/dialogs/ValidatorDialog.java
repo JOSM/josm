@@ -139,7 +139,7 @@ public class ValidatorDialog extends ToggleDialog
             }
         };
 
-        popupMenuHandler.addAction(MainApplication.getMenu().autoScaleActions.get("problem"));
+        popupMenuHandler.addAction(MainApplication.getMenu().autoScaleActions.get(AutoScaleAction.AutoScaleMode.PROBLEM));
         popupMenuHandler.addAction(new EditRelationAction());
         popupMenuHandler.addAction(ignoreForNowAction);
 

@@ -24,6 +24,7 @@ import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -264,6 +265,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
         List<Action> entries = new ArrayList<>(Arrays.asList(
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
+                MainApplication.getMenu().autoScaleActions.get(AutoScaleAction.AutoScaleMode.LAYER),
                 LayerListDialog.getInstance().createMergeLayerAction(this),
                 SeparatorLayerAction.INSTANCE,
                 new LayerSaveAction(this),

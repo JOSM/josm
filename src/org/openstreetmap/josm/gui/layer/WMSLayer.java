@@ -81,8 +81,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
 
     @Override
     public Action[] getMenuEntries() {
-        List<Action> ret = new ArrayList<>();
-        ret.addAll(Arrays.asList(super.getMenuEntries()));
+        List<Action> ret = new ArrayList<>(Arrays.asList(super.getMenuEntries()));
         ret.add(SeparatorLayerAction.INSTANCE);
         ret.add(new LayerSaveAction(this));
         ret.add(new LayerSaveAsAction(this));

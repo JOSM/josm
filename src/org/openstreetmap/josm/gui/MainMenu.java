@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -250,7 +250,7 @@ public class MainMenu extends JMenuBar {
     /** View / History (web) */
     public final HistoryInfoWebAction historyinfoweb = new HistoryInfoWebAction();
     /** View / "Zoom to"... actions */
-    public final Map<String, AutoScaleAction> autoScaleActions = new HashMap<>();
+    public final Map<AutoScaleMode, AutoScaleAction> autoScaleActions = new EnumMap<>(AutoScaleMode.class);
     /** View / Jump to position */
     public final JumpToAction jumpToAct = new JumpToAction();
 
@@ -797,7 +797,7 @@ public class MainMenu extends JMenuBar {
         viewMenu.addSeparator();
         for (AutoScaleMode mode : AutoScaleMode.values()) {
             AutoScaleAction autoScaleAction = new AutoScaleAction(mode);
-            autoScaleActions.put(mode.getEnglishLabel(), autoScaleAction);
+            autoScaleActions.put(mode, autoScaleAction);
             add(viewMenu, autoScaleAction);
         }
 

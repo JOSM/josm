@@ -15,10 +15,8 @@ import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +32,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.View;
 
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
@@ -404,13 +403,14 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
 
     @Override
     public Action[] getMenuEntries() {
-        List<Action> actions = new ArrayList<>();
-        actions.add(LayerListDialog.getInstance().createShowHideLayerAction());
-        actions.add(LayerListDialog.getInstance().createDeleteLayerAction());
-        actions.add(new LayerListPopup.InfoAction(this));
-        actions.add(new LayerSaveAction(this));
-        actions.add(new LayerSaveAsAction(this));
-        return actions.toArray(new Action[0]);
+        return new Action[]{
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                MainApplication.getMenu().autoScaleActions.get(AutoScaleAction.AutoScaleMode.LAYER),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                new LayerListPopup.InfoAction(this),
+                new LayerSaveAction(this),
+                new LayerSaveAsAction(this),
+        };
     }
 
     @Override

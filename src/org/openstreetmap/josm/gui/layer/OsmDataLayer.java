@@ -49,6 +49,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.ToggleUploadDiscouragedLayerAction;
@@ -719,10 +720,10 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
     @Override
     public Action[] getMenuEntries() {
-        List<Action> actions = new ArrayList<>();
-        actions.addAll(Arrays.asList(
+        List<Action> actions = new ArrayList<>(Arrays.asList(
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),
+                MainApplication.getMenu().autoScaleActions.get(AutoScaleAction.AutoScaleMode.LAYER),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
                 SeparatorLayerAction.INSTANCE,
                 LayerListDialog.getInstance().createMergeLayerAction(this),

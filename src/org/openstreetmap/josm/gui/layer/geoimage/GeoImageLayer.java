@@ -35,6 +35,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.mapmode.SelectLassoAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -400,6 +401,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         List<Action> entries = new ArrayList<>();
         entries.add(LayerListDialog.getInstance().createShowHideLayerAction());
         entries.add(LayerListDialog.getInstance().createDeleteLayerAction());
+        entries.add(MainApplication.getMenu().autoScaleActions.get(AutoScaleAction.AutoScaleMode.LAYER));
         entries.add(LayerListDialog.getInstance().createMergeLayerAction(this));
         entries.add(new RenameLayerAction(null, this));
         entries.add(SeparatorLayerAction.INSTANCE);
