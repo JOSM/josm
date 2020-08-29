@@ -901,19 +901,31 @@ public final class PluginHandler {
     }
 
     /**
-     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early} set to true.
+     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early} set to true
+     * <i>and</i> a negative {@link PluginInformation#stage} value.
+     *
+     * This is meant for plugins that provide additional {@link javax.swing.LookAndFeel}.
+     */
+    public static void loadVeryEarlyPlugins() {
+        List<PluginInformation> veryEarlyPlugins = PluginHandler.buildListOfPluginsToLoad(null, null)
+                .stream()
+                .filter(pi -> pi.early && pi.stage < 0)
+                .collect(Collectors.toList());
+        loadPlugins(null, veryEarlyPlugins, null);
+    }
+
+    /**
+     * Loads plugins from <code>plugins</code> which have the flag {@link PluginInformation#early} set to true
+     * <i>and</i> a non-negative {@link PluginInformation#stage} value.
      *
      * @param parent The parent component to be used for the displayed dialog
      * @param plugins the collection of plugins
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadEarlyPlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
-        List<PluginInformation> earlyPlugins = new ArrayList<>(plugins.size());
-        for (PluginInformation pi: plugins) {
-            if (pi.early) {
-                earlyPlugins.add(pi);
-            }
-        }
+        List<PluginInformation> earlyPlugins = plugins.stream()
+                .filter(pi -> pi.early && pi.stage >= 0)
+                .collect(Collectors.toList());
         loadPlugins(parent, earlyPlugins, monitor);
     }
 
@@ -925,12 +937,9 @@ public final class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
      */
     public static void loadLatePlugins(Component parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
-        List<PluginInformation> latePlugins = new ArrayList<>(plugins.size());
-        for (PluginInformation pi: plugins) {
-            if (!pi.early) {
-                latePlugins.add(pi);
-            }
-        }
+        List<PluginInformation> latePlugins = plugins.stream()
+                .filter(pi -> !pi.early)
+                .collect(Collectors.toList());
         loadPlugins(parent, latePlugins, monitor);
     }
 
@@ -1022,7 +1031,7 @@ public final class PluginHandler {
                     }
                 }
             }
-            if (!plugins.isEmpty()) {
+            if (!plugins.isEmpty() && parent != null) {
                 alertMissingPluginInformation(parent, plugins);
             }
             return ret;
