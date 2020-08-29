@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.Font;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -196,7 +196,7 @@ public abstract class StyleElement implements StyleKeys {
         }
     }
 
-    private static final Map<FontDescriptor, Font> FONT_MAP = new HashMap<>();
+    private static final Map<FontDescriptor, Font> FONT_MAP = new ConcurrentHashMap<>();
 
     private static Font getCachedFont(String name, int style, int size) {
         return FONT_MAP.computeIfAbsent(new FontDescriptor(name, style, size), fd -> new Font(fd.name, fd.style, fd.size));
