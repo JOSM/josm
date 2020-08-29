@@ -61,6 +61,7 @@ import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.FontUIResource;
 
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -1109,14 +1110,22 @@ public class MainApplication {
             UIManager.put(p+".caretForeground", UIManager.getColor(p+".foreground"));
         }
 
-        double menuFontFactor = Config.getPref().getDouble("gui.scale.menu.font", 1.0);
-        if (menuFontFactor != 1.0) {
-            for (String key : Arrays.asList(
-                    "Menu.font", "MenuItem.font", "CheckBoxMenuItem.font", "RadioButtonMenuItem.font", "MenuItem.acceleratorFont")) {
-                Font font = UIManager.getFont(key);
-                if (font != null) {
-                    UIManager.put(key, font.deriveFont(font.getSize2D() * (float) menuFontFactor));
-                }
+        scaleFonts(Config.getPref().getDouble("gui.scale.menu.font", 1.0),
+                "Menu.font", "MenuItem.font", "CheckBoxMenuItem.font", "RadioButtonMenuItem.font", "MenuItem.acceleratorFont");
+        scaleFonts(Config.getPref().getDouble("gui.scale.list.font", 1.0),
+                "List.font");
+        // "Table.font" see org.openstreetmap.josm.gui.util.TableHelper.setFont
+    }
+
+    private static void scaleFonts(double factor, String... fonts) {
+        if (factor == 1.0) {
+            return;
+        }
+        for (String key : fonts) {
+            Font font = UIManager.getFont(key);
+            if (font != null) {
+                font = font.deriveFont((float) (font.getSize2D() * factor));
+                UIManager.put(key, new FontUIResource(font));
             }
         }
     }
