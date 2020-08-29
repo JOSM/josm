@@ -319,7 +319,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         addTags(cs, "changeset", false); // also writes closing </changeset>
     }
 
-    protected static final Comparator<Entry<String, String>> byKeyComparator = (o1, o2) -> o1.getKey().compareTo(o2.getKey());
+    protected static final Comparator<Entry<String, String>> byKeyComparator = Comparator.comparing(Entry::getKey);
 
     protected void addTags(Tagged osm, String tagname, boolean tagOpen) {
         if (osm.hasKeys()) {

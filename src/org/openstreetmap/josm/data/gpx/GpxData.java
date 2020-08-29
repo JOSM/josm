@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -373,7 +374,7 @@ public class GpxData extends WithAttributes implements Data {
                     }
                 }
             }
-            segSpans.sort((o1, o2) -> o1.firstTime.compareTo(o2.firstTime));
+            segSpans.sort(Comparator.comparing(o -> o.firstTime));
         }
         return segSpans;
     }

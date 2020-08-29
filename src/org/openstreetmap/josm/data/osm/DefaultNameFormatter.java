@@ -224,7 +224,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     }
 
-    private final Comparator<INode> nodeComparator = (n1, n2) -> format(n1).compareTo(format(n2));
+    private final Comparator<INode> nodeComparator = Comparator.comparing(this::format);
 
     @Override
     public Comparator<INode> getNodeComparator() {
@@ -314,7 +314,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     }
 
-    private final Comparator<IWay<?>> wayComparator = (w1, w2) -> format(w1).compareTo(format(w2));
+    private final Comparator<IWay<?>> wayComparator = Comparator.comparing(this::format);
 
     @Override
     public Comparator<IWay<?>> getWayComparator() {

@@ -141,13 +141,13 @@ public class ConvertToDataLayerActionTest {
 
         List<String> ways = osm.getWays().stream()
                 .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream()
-                        .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).collect(Collectors.toList()).toString())
+                        .sorted(Comparator.comparing(Map.Entry::getKey)).collect(Collectors.toList()).toString())
                 .sorted()
                 .collect(Collectors.toList());
 
         List<String> waysExpected = osmExpected.getWays().stream()
                 .map(w -> Integer.toString(w.getNodes().size()) + ":" + w.getKeys().entrySet().stream()
-                        .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).collect(Collectors.toList()).toString())
+                        .sorted(Comparator.comparing(Map.Entry::getKey)).collect(Collectors.toList()).toString())
                 .sorted()
                 .collect(Collectors.toList());
 

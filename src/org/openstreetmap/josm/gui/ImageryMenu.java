@@ -99,7 +99,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
      * (for the preferences). We don't want this in the imagery menu.
      */
     public static final Comparator<ImageryInfo> alphabeticImageryComparator =
-            (ii1, ii2) -> ii1.getName().toLowerCase(Locale.ENGLISH).compareTo(ii2.getName().toLowerCase(Locale.ENGLISH));
+            Comparator.comparing(ii -> ii.getName().toLowerCase(Locale.ENGLISH));
 
     private final transient Action offsetAction = new AdjustImageryOffsetAction();
 

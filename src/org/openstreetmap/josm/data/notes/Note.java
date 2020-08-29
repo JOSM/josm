@@ -50,7 +50,7 @@ public class Note {
     };
 
     /** Sorts notes strictly by creation date */
-    public static final Comparator<Note> DATE_COMPARATOR = (n1, n2) -> n1.createdAt.compareTo(n2.createdAt);
+    public static final Comparator<Note> DATE_COMPARATOR = Comparator.comparing(n -> n.createdAt);
 
     /** Sorts notes by user, then creation date */
     public static final Comparator<Note> USER_COMPARATOR = (n1, n2) -> {

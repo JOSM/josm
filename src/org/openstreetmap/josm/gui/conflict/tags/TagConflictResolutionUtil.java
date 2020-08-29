@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -287,7 +288,7 @@ public final class TagConflictResolutionUtil {
             if ("String".equals(sort)) {
                 return new TreeSet<>();
             } else if ("Integer".equals(sort)) {
-                return new TreeSet<>((String v1, String v2) -> Long.valueOf(v1).compareTo(Long.valueOf(v2)));
+                return new TreeSet<>(Comparator.comparing(Long::valueOf));
             } else {
                 return new LinkedHashSet<>();
             }

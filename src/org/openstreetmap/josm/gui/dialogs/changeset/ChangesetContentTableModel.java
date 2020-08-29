@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -93,13 +94,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
      * Sort data.
      */
     protected void sort() {
-        data.sort((c1, c2) -> {
-            int d = c1.getModificationType().compareTo(c2.getModificationType());
-            if (d == 0) {
-                d = Long.compare(c1.getPrimitive().getId(), c2.getPrimitive().getId());
-            }
-            return d;
-            }
+        data.sort(Comparator.comparing(ChangesetContentEntry::getModificationType).thenComparingLong(c -> c.getPrimitive().getId())
         );
     }
 

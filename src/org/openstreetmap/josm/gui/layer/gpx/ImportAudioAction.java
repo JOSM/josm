@@ -272,7 +272,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // we must have got at least one waypoint now
-        ((ArrayList<WayPoint>) waypoints).sort((wp, other) -> wp.compareTo(other));
+        ((ArrayList<WayPoint>) waypoints).sort(Comparator.naturalOrder());
 
         firstTime = -1.0; // this time of the first waypoint, not first trackpoint
         for (WayPoint w : waypoints) {
