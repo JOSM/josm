@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -100,8 +101,6 @@ public class ImageryProvidersPanel extends JPanel {
     public final JToolBar activeToolbar;
     /** The toolbar on the middle of the panel **/
     public final JToolBar middleToolbar;
-    /** The toolbar on the right of default providers **/
-    public final JToolBar defaultToolbar;
 
     // Private members
     private final PreferenceTabbedPane gui;
@@ -260,7 +259,6 @@ public class ImageryProvidersPanel extends JPanel {
         // Add default item list
         JPanel defaultPane = new JPanel(new GridBagLayout());
         JScrollPane scrolldef = new JScrollPane(defaultTable);
-        scrolldef.setPreferredSize(new Dimension(200, 200));
         defaultPane.add(defaultFilter, GBC.eol().insets(0, 0, 0, 0).fill(GridBagConstraints.HORIZONTAL));
         defaultPane.add(scrolldef, GBC.eol().insets(0, 0, 0, 0).fill(GridBagConstraints.BOTH));
         add(defaultPane, GBC.std().fill(GridBagConstraints.BOTH).weight(1.0, 0.6).insets(5, 0, 0, 0));
@@ -278,22 +276,15 @@ public class ImageryProvidersPanel extends JPanel {
         });
         defaultMap.setZoomControlsVisible(false);
         defaultMap.setMinimumSize(new Dimension(100, 200));
-        add(defaultMap, GBC.std().fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
+        add(defaultMap, GBC.eol().fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));
 
         defaultTableListener = new DefListSelectionListener();
         defaultTable.getSelectionModel().addListSelectionListener(defaultTableListener);
 
-        defaultToolbar = new JToolBar(JToolBar.VERTICAL);
-        defaultToolbar.setFloatable(false);
-        defaultToolbar.setBorderPainted(false);
-        defaultToolbar.setOpaque(false);
-        defaultToolbar.add(new ReloadAction());
-        add(defaultToolbar, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 5, 0));
-
         HtmlPanel help = new HtmlPanel(tr("New default entries can be added in the <a href=\"{0}\">Wiki</a>.",
             Config.getUrls().getJOSMWebsite()+"/wiki/Maps"));
         help.enableClickableHyperlinks();
-        add(help, GBC.eol().insets(10, 0, 0, 0).fill(GBC.HORIZONTAL));
+        add(help, GBC.eol().insets(5, 0, 0, 0).fill(GBC.HORIZONTAL));
 
         ActivateAction activate = new ActivateAction();
         defaultTable.getSelectionModel().addListSelectionListener(activate);
@@ -303,15 +294,16 @@ public class ImageryProvidersPanel extends JPanel {
         middleToolbar.setFloatable(false);
         middleToolbar.setBorderPainted(false);
         middleToolbar.setOpaque(false);
+        middleToolbar.add(new ReloadAction());
         middleToolbar.add(btnActivate);
         add(middleToolbar, GBC.eol().anchor(GBC.CENTER).insets(5, 5, 5, 0));
 
         add(Box.createHorizontalGlue(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
 
-        add(new JLabel(tr("Selected entries:")), GBC.eol().insets(5, 0, 0, 0));
+        JPanel activePanel = new JPanel(new BorderLayout());
+        activePanel.add(new JLabel(tr("Selected entries:")), BorderLayout.NORTH);
         JScrollPane scroll = new JScrollPane(activeTable);
-        add(scroll, GBC.std().fill(GridBagConstraints.BOTH).span(GridBagConstraints.RELATIVE).weight(1.0, 0.4).insets(5, 0, 0, 5));
-        scroll.setPreferredSize(new Dimension(200, 200));
+        activePanel.add(scroll, BorderLayout.CENTER);
 
         activeToolbar = new JToolBar(JToolBar.VERTICAL);
         activeToolbar.setFloatable(false);
@@ -321,7 +313,8 @@ public class ImageryProvidersPanel extends JPanel {
         activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.TMS));
         activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.WMTS));
         activeToolbar.add(remove);
-        add(activeToolbar, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
+        activePanel.add(activeToolbar, BorderLayout.EAST);
+        add(activePanel, GBC.eol().fill(GridBagConstraints.BOTH).weight(2.0, 0.4).insets(5, 0, 0, 5));
     }
 
     // Listener of default providers list selection
