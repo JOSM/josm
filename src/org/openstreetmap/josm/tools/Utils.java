@@ -743,9 +743,6 @@ public final class Utils {
      * @since 5772
      */
     public static String strip(final String str) {
-        if (str == null || str.isEmpty()) {
-            return str;
-        }
         return strip(str, DEFAULT_STRIP);
     }
 

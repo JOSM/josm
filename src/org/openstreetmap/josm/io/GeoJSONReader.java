@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Reader that reads GeoJSON files. See <a href="https://tools.ietf.org/html/rfc7946">RFC7946</a> for more information.
@@ -390,7 +391,7 @@ public class GeoJSONReader extends AbstractReader {
             String rs = new String(new byte[]{RECORD_SEPARATOR_BYTE}, StandardCharsets.US_ASCII);
             try {
                 while ((line = reader.readLine()) != null) {
-                    line = line.replaceFirst(rs, "");
+                    line = Utils.strip(line, rs);
                     try (InputStream is = new ByteArrayInputStream(line.getBytes(StandardCharsets.UTF_8))) {
                         parse(is);
                     }
