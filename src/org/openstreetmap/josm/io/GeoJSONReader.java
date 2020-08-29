@@ -385,13 +385,13 @@ public class GeoJSONReader extends AbstractReader {
         InputStream markSupported = source.markSupported() ? source : new BufferedInputStream(source);
         ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
         if (isLineDelimited(markSupported)) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(markSupported));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(markSupported, StandardCharsets.UTF_8));
             String line = null;
             String rs = new String(new byte[]{RECORD_SEPARATOR_BYTE}, StandardCharsets.US_ASCII);
             try {
                 while ((line = reader.readLine()) != null) {
                     line = line.replaceFirst(rs, "");
-                    try (InputStream is = new ByteArrayInputStream(line.getBytes())) {
+                    try (InputStream is = new ByteArrayInputStream(line.getBytes(StandardCharsets.UTF_8))) {
                         parse(is);
                     }
                 }
