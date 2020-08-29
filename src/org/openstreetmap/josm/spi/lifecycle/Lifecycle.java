@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.tools.JosmRuntimeException;
-import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -72,19 +70,13 @@ public final class Lifecycle {
 
         // Initializes tasks to be executed (in parallel) by a ExecutorService
         try {
-            ExecutorService service = Executors.newFixedThreadPool(
-                    Runtime.getRuntime().availableProcessors(), Utils.newThreadFactory("main-init-%d", Thread.NORM_PRIORITY));
+            ExecutorService service = ForkJoinPool.commonPool();
             for (Future<Void> i : service.invokeAll(initSequence.parallelInitializationTasks())) {
                 i.get();
             }
             // asynchronous initializations to be completed eventually
             initSequence.asynchronousRunnableTasks().forEach(service::submit);
             initSequence.asynchronousCallableTasks().forEach(service::submit);
-            try {
-                service.shutdown();
-            } catch (SecurityException e) {
-                Logging.log(Logging.LEVEL_ERROR, "Unable to shutdown executor service", e);
-            }
         } catch (InterruptedException | ExecutionException ex) {
             throw new JosmRuntimeException(ex);
         }
