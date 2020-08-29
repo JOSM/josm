@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 
 /**
- * File importer allowing to import geottaged images (*.jpg files).
+ * File importer allowing to import geotagged images (*.jpg files).
  *
  */
 public class JpgImporter extends FileImporter {

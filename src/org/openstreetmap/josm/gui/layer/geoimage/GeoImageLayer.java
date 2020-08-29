@@ -68,7 +68,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Layer displaying geottaged pictures.
+ * Layer displaying geotagged pictures.
  */
 public class GeoImageLayer extends AbstractModifiableLayer implements
         JumpToMarkerLayer, NavigatableComponent.ZoomChangeListener, ImageDataUpdateListener {
