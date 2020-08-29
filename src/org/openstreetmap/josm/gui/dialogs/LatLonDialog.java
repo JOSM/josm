@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusEvent;
@@ -18,9 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -29,6 +26,7 @@ import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
@@ -39,7 +37,6 @@ import org.openstreetmap.josm.tools.Utils;
  * A dialog that lets the user add a node at the coordinates he enters.
  */
 public class LatLonDialog extends ExtendedDialog {
-    private static final Color BG_COLOR_ERROR = new Color(255, 224, 224);
 
     /**
      * The tabs that define the coordinate mode.
@@ -47,7 +44,9 @@ public class LatLonDialog extends ExtendedDialog {
     public JTabbedPane tabs;
     private JosmTextField tfLatLon, tfEastNorth;
     private LatLon latLonCoordinates;
+    private LatLonValidator latLonValidator;
     private EastNorth eastNorthCoordinates;
+    private EastNorthValidator eastNorthValidator;
 
     protected JPanel buildLatLon() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -107,9 +106,7 @@ public class LatLonDialog extends ExtendedDialog {
                 GBC.eol().fill().weight(1.0, 1.0));
 
         // parse and verify input on the fly
-        //
-        LatLonInputVerifier inputVerifier = new LatLonInputVerifier();
-        tfLatLon.getDocument().addDocumentListener(inputVerifier);
+        latLonValidator = new LatLonValidator(tfLatLon);
 
         // select the text in the field on focus
         //
@@ -135,8 +132,7 @@ public class LatLonDialog extends ExtendedDialog {
 
         pnl.add(GBC.glue(1, 1), GBC.eol().fill().weight(1.0, 1.0));
 
-        EastNorthInputVerifier inputVerifier = new EastNorthInputVerifier();
-        tfEastNorth.getDocument().addDocumentListener(inputVerifier);
+        eastNorthValidator = new EastNorthValidator(tfEastNorth);
 
         TextFieldFocusHandler focusHandler = new TextFieldFocusHandler();
         tfEastNorth.addFocusListener(focusHandler);
@@ -150,8 +146,8 @@ public class LatLonDialog extends ExtendedDialog {
         tabs.addTab(tr("East/North"), buildEastNorth());
         tabs.getModel().addChangeListener(e -> {
             switch (tabs.getModel().getSelectedIndex()) {
-                case 0: parseLatLonUserInput(); break;
-                case 1: parseEastNorthUserInput(); break;
+                case 0: latLonValidator.validate(); break;
+                case 1: eastNorthValidator.validate(); break;
                 default: throw new AssertionError();
             }
         });
@@ -232,56 +228,68 @@ public class LatLonDialog extends ExtendedDialog {
         return eastNorthCoordinates;
     }
 
-    protected void setErrorFeedback(JosmTextField tf, String message) {
-        tf.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
-        tf.setToolTipText(message);
-        tf.setBackground(BG_COLOR_ERROR);
-    }
+    private class LatLonValidator extends AbstractTextComponentValidator {
+        LatLonValidator(JTextComponent tc) {
+            super(tc);
+        }
 
-    protected void clearErrorFeedback(JosmTextField tf, String message) {
-        tf.setBorder(UIManager.getBorder("TextField.border"));
-        tf.setToolTipText(message);
-        tf.setBackground(UIManager.getColor("TextField.background"));
-    }
-
-    protected void parseLatLonUserInput() {
-        LatLon latLon;
-        try {
-            latLon = LatLonParser.parse(tfLatLon.getText());
-            if (!LatLon.isValidLat(latLon.lat()) || !LatLon.isValidLon(latLon.lon())) {
+        @Override
+        public void validate() {
+            LatLon latLon;
+            try {
+                latLon = LatLonParser.parse(tfLatLon.getText());
+                if (!LatLon.isValidLat(latLon.lat()) || !LatLon.isValidLon(latLon.lon())) {
+                    latLon = null;
+                }
+            } catch (IllegalArgumentException e) {
+                Logging.trace(e);
                 latLon = null;
             }
-        } catch (IllegalArgumentException e) {
-            Logging.trace(e);
-            latLon = null;
+            if (latLon == null) {
+                feedbackInvalid(tr("Please enter a GPS coordinates"));
+                latLonCoordinates = null;
+                setOkEnabled(false);
+            } else {
+                feedbackValid(null);
+                latLonCoordinates = latLon;
+                setOkEnabled(true);
+            }
         }
-        if (latLon == null) {
-            setErrorFeedback(tfLatLon, tr("Please enter a GPS coordinates"));
-            latLonCoordinates = null;
-            setOkEnabled(false);
-        } else {
-            clearErrorFeedback(tfLatLon, tr("Please enter a GPS coordinates"));
-            latLonCoordinates = latLon;
-            setOkEnabled(true);
+
+        @Override
+        public boolean isValid() {
+            throw new UnsupportedOperationException();
         }
     }
 
-    protected void parseEastNorthUserInput() {
-        EastNorth en;
-        try {
-            en = parseEastNorth(tfEastNorth.getText());
-        } catch (IllegalArgumentException e) {
-            Logging.trace(e);
-            en = null;
+    private class EastNorthValidator extends AbstractTextComponentValidator {
+        EastNorthValidator(JTextComponent tc) {
+            super(tc);
         }
-        if (en == null) {
-            setErrorFeedback(tfEastNorth, tr("Please enter a Easting and Northing"));
-            latLonCoordinates = null;
-            setOkEnabled(false);
-        } else {
-            clearErrorFeedback(tfEastNorth, tr("Please enter a Easting and Northing"));
-            eastNorthCoordinates = en;
-            setOkEnabled(true);
+
+        @Override
+        public void validate() {
+            EastNorth en;
+            try {
+                en = parseEastNorth(tfEastNorth.getText());
+            } catch (IllegalArgumentException e) {
+                Logging.trace(e);
+                en = null;
+            }
+            if (en == null) {
+                feedbackInvalid(tr("Please enter a Easting and Northing"));
+                latLonCoordinates = null;
+                setOkEnabled(false);
+            } else {
+                feedbackValid(null);
+                eastNorthCoordinates = en;
+                setOkEnabled(true);
+            }
+        }
+
+        @Override
+        public boolean isValid() {
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -303,40 +311,6 @@ public class LatLonDialog extends ExtendedDialog {
             new WindowGeometry(this).remember(preferenceKey);
         }
         super.setVisible(visible);
-    }
-
-    class LatLonInputVerifier implements DocumentListener {
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            parseLatLonUserInput();
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            parseLatLonUserInput();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            parseLatLonUserInput();
-        }
-    }
-
-    class EastNorthInputVerifier implements DocumentListener {
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            parseEastNorthUserInput();
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            parseEastNorthUserInput();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            parseEastNorthUserInput();
-        }
     }
 
     static class TextFieldFocusHandler implements FocusListener {
