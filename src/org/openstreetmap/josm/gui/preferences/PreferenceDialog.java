@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Pair;
 
 /**
  * The main preferences dialog.
@@ -44,6 +45,7 @@ public class PreferenceDialog extends JDialog {
     private final ContextSensitiveHelpAction helpAction = new ContextSensitiveHelpAction();
     private final WindowEventHandler windowEventHandler = new WindowEventHandler();
     private boolean canceled;
+    private static Pair<Class<? extends TabPreferenceSetting>, Class<? extends SubPreferenceSetting>> previouslySelected;
 
     /**
      * Constructs a new {@code PreferenceDialog}.
@@ -144,6 +146,17 @@ public class PreferenceDialog extends JDialog {
     }
 
     /**
+     * Select preferences tab that was selected previously.
+     */
+    public void selectPreviouslySelectedPreferences() {
+        if (previouslySelected != null && previouslySelected.b != null) {
+            tpPreferences.selectSubTabByPref(previouslySelected.b);
+        } else if (previouslySelected != null && previouslySelected.a != null) {
+            tpPreferences.selectTabByPref(previouslySelected.a);
+        }
+    }
+
+    /**
      * Select preferences tab by name.
      * @param name preferences tab name (icon)
      */
@@ -214,6 +227,7 @@ public class PreferenceDialog extends JDialog {
 
     @Override
     public void dispose() {
+        previouslySelected = tpPreferences.getSelectedTab();
         removeWindowListener(windowEventHandler);
         super.dispose();
     }

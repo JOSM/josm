@@ -71,6 +71,12 @@ public interface TabPreferenceSetting extends PreferenceSetting {
     Component getSubTab(SubPreferenceSetting sub);
 
     /**
+     * Returns the currently selected sub preference setting
+     * @return the currently selected sub preference setting
+     */
+    Class<? extends SubPreferenceSetting> getSelectedSubTab();
+
+    /**
      * Selects the specified sub preference settings, if applicable. Not all Tab preference settings need to implement this.
      * @param subPref The sub preference settings to be selected.
      * @return true if the specified preference settings have been selected, false otherwise.

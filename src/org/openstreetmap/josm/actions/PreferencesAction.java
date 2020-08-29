@@ -108,6 +108,8 @@ public class PreferencesAction extends JosmAction implements Runnable {
             p.selectPreferencesTabByClass(tab);
         } else if (subTab != null) {
             p.selectSubPreferencesTabByClass(subTab);
+        } else {
+            p.selectPreviouslySelectedPreferences();
         }
         p.setVisible(true);
     }

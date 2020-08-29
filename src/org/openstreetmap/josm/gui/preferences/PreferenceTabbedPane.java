@@ -70,6 +70,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
@@ -353,6 +354,20 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         } catch (NoSuchElementException ignore) {
             Logging.trace(ignore);
             return false;
+        }
+    }
+
+    /**
+     * Returns the currently selected preference and sub preference setting
+     * @return the currently selected preference and sub preference setting
+     */
+    public Pair<Class<? extends TabPreferenceSetting>, Class<? extends SubPreferenceSetting>> getSelectedTab() {
+        final Component selected = getSelectedComponent();
+        if (selected instanceof PreferenceTab) {
+            final TabPreferenceSetting setting = ((PreferenceTab) selected).getTabPreferenceSetting();
+            return Pair.create(setting.getClass(), setting.getSelectedSubTab());
+        } else {
+            return null;
         }
     }
 

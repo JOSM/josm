@@ -141,6 +141,18 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
     }
 
     @Override
+    public Class<? extends SubPreferenceSetting> getSelectedSubTab() {
+        if (tabpane == null || subSettingMap == null) {
+            return null;
+        }
+        final Component selected = tabpane.getSelectedComponent();
+        return subSettingMap.entrySet().stream()
+                .filter(e -> e.getValue() == selected)
+                .map(e -> e.getKey().getClass())
+                .findFirst().orElse(null);
+    }
+
+    @Override
     public String getHelpContext() {
         return HelpUtil.ht("/Action/Preferences");
     }
