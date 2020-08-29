@@ -76,6 +76,7 @@ public class MoveCommandTest {
 
         assertEquals("east", 1, moveCommand.getOffset().east(), 0.0001);
         assertEquals("north", 2, moveCommand.getOffset().north(), 0.0001);
+        assertEquals("distance", 2.236068, moveCommand.getDistance(n -> true), 0.0001);
     }
 
     /**
@@ -88,6 +89,7 @@ public class MoveCommandTest {
         command.executeCommand();
         assertEquals("east", 4, testData.existingNode.getEastNorth().east(), 0.0001);
         assertEquals("north", 9, testData.existingNode.getEastNorth().north(), 0.0001);
+        assertEquals("distance", 2.236068, command.getDistance(n -> true), 0.0001);
     }
 
     /**

@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.RotateCommand;
 import org.openstreetmap.josm.command.ScaleCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -826,19 +826,23 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             ed.toggleEnable("movedHiddenElements");
             showConfirmMoveDialog(ed);
         }
-        Set<Node> nodes = new HashSet<>();
-        int max = Config.getPref().getInt("warn.move.maxelements", 20);
-        for (OsmPrimitive osm : getLayerManager().getEditDataSet().getSelected()) {
-            if (osm instanceof Way) {
-                nodes.addAll(((Way) osm).getNodes());
-            } else if (osm instanceof Node) {
-                nodes.add((Node) osm);
-            }
-            if (nodes.size() > max) {
-                break;
+        final int moveCount = UndoRedoHandler.getInstance().getLastCommand().getParticipatingPrimitives().size();
+        if (UndoRedoHandler.getInstance().getLastCommand() instanceof MoveCommand) {
+            final double moveDistance = ((MoveCommand) UndoRedoHandler.getInstance().getLastCommand()).getDistance(n -> !n.isNew());
+            if (Double.isFinite(moveDistance) && moveDistance > Config.getPref().getInt("warn.move.maxdistance", 200)) {
+                final ConfirmMoveDialog ed = new ConfirmMoveDialog();
+                ed.setContent(trn(
+                        "You moved {0} element by a distance of {1}. "
+                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
+                        "You moved {0} elements by a distance of {1}. "
+                                + "Moving elements by a large distance is often an error.\n" + "Really move them?",
+                        moveCount, moveCount, SystemOfMeasurement.getSystemOfMeasurement().getDistText(moveDistance)));
+                ed.toggleEnable("movedLargeDistance");
+                showConfirmMoveDialog(ed);
             }
         }
-        if (nodes.size() > max) {
+        int max = Config.getPref().getInt("warn.move.maxelements", 20);
+        if (moveCount > max) {
             final ConfirmMoveDialog ed = new ConfirmMoveDialog();
             ed.setContent(
                     /* for correct i18n of plural forms - see #9110 */

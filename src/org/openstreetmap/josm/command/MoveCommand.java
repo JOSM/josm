@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import javax.swing.Icon;
 
@@ -299,11 +300,28 @@ public class MoveCommand extends Command {
     }
 
     /**
-     * Gets the offset.
-     * @return The current offset.
+     * Gets the current move offset.
+     * @return The current move offset.
      */
     protected EastNorth getOffset() {
         return new EastNorth(x, y);
+    }
+
+    /**
+     * Computes the move distance for one node matching the specified predicate
+     * @param predicate predicate to match
+     * @return distance in metres
+     */
+    public double getDistance(Predicate<Node> predicate) {
+        return nodes.stream()
+                .filter(predicate)
+                .filter(node -> node.getCoor() != null && node.getEastNorth() != null)
+                .findFirst()
+                .map(node -> {
+                    final Node old = new Node(node);
+                    old.setEastNorth(old.getEastNorth().add(-x, -y));
+                    return node.getCoor().greatCircleDistance(old.getCoor());
+                }).orElse(Double.NaN);
     }
 
     @Override
