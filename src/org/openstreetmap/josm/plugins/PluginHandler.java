@@ -158,7 +158,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("geojson", inCore),
             new DeprecatedPlugin("gpxfilter", inCore),
             new DeprecatedPlugin("tag2link", inCore),
-            new DeprecatedPlugin("rapid", tr(replacedByPlugin, "MapWithAI"))
+            new DeprecatedPlugin("rapid", tr(replacedByPlugin, "MapWithAI")),
+            new DeprecatedPlugin("MovementAlert", inCore)
         );
         Collections.sort(DEPRECATED_PLUGINS);
     }
