@@ -35,7 +35,7 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
      * Further changes to the map won't change the tags that we iterate over but they also won't raise any exceptions.
      * @author Michael Zangl
      */
-    private static class TagEntryInterator implements Iterator<Entry<String, String>> {
+    private static class TagEntryIterator implements Iterator<Entry<String, String>> {
         /**
          * The current state of the tags we iterate over.
          */
@@ -46,10 +46,10 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
         private int currentIndex;
 
         /**
-         * Create a new {@link TagEntryInterator}
+         * Create a new {@link TagEntryIterator}
          * @param tags The tags array. It is never changed but should also not be changed by you.
          */
-        TagEntryInterator(String... tags) {
+        TagEntryIterator(String... tags) {
             super();
             this.tags = tags;
         }
@@ -95,7 +95,7 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
 
         @Override
         public Iterator<Entry<String, String>> iterator() {
-            return new TagEntryInterator(tags);
+            return new TagEntryIterator(tags);
         }
 
         @Override
