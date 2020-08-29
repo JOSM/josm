@@ -56,6 +56,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
     private static final String STYLE = "<style type=\"text/css\">\n"
             + "body {font-family: sans-serif; font-weight: bold; }\n"
             + "h1 {text-align: center; }\n"
+            + "a {color: #316ed9; }\n"
             + ".icon {font-size: 0; }\n"
             + "</style>\n";
 
