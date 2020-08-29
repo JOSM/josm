@@ -551,7 +551,7 @@ public abstract class SourceEditor extends JPanel {
      * Performs the initial loading of source providers. Does nothing if already done.
      */
     public void initiallyLoadAvailableSources() {
-        if (!sourcesInitiallyLoaded) {
+        if (!sourcesInitiallyLoaded && !NetworkManager.isOffline(OnlineResource.CACHE_UPDATES)) {
             reloadAvailableSources(availableSourcesUrl, sourceProviders);
         }
         sourcesInitiallyLoaded = true;
