@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,15 +20,13 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.Capabilities;
@@ -53,8 +50,6 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
      */
     public static final String UPLOAD_STRATEGY_SPECIFICATION_PROP =
         UploadStrategySelectionPanel.class.getName() + ".uploadStrategySpecification";
-
-    private static final Color BG_COLOR_ERROR = new Color(255, 224, 224);
 
     private transient Map<UploadStrategy, JRadioButton> rbStrategy;
     private transient Map<UploadStrategy, JLabel> lblNumRequests;
@@ -173,7 +168,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         pnl.add(lblNumRequests.get(UploadStrategy.INDIVIDUAL_OBJECTS_STRATEGY), gc);
 
         tfChunkSize.addFocusListener(new TextFieldFocusHandler());
-        tfChunkSize.getDocument().addDocumentListener(new ChunkSizeInputVerifier());
+        new ChunkSizeValidator(tfChunkSize);
 
         StrategyChangeListener strategyChangeListener = new StrategyChangeListener();
         tfChunkSize.addFocusListener(strategyChangeListener);
@@ -419,38 +414,31 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
     }
 
-    class ChunkSizeInputVerifier implements DocumentListener, PropertyChangeListener {
-        protected void setErrorFeedback(JosmTextField tf, String message) {
-            tf.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
-            tf.setToolTipText(message);
-            tf.setBackground(BG_COLOR_ERROR);
+    class ChunkSizeValidator extends AbstractTextComponentValidator {
+        ChunkSizeValidator(JTextComponent tc) {
+            super(tc);
         }
 
-        protected void clearErrorFeedback(JosmTextField tf, String message) {
-            tf.setBorder(UIManager.getBorder("TextField.border"));
-            tf.setToolTipText(message);
-            tf.setBackground(UIManager.getColor("TextField.background"));
-        }
-
-        protected void validateChunkSize() {
+        @Override
+        public void validate() {
             try {
                 int chunkSize = Integer.parseInt(tfChunkSize.getText().trim());
                 int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
                 if (chunkSize <= 0) {
-                    setErrorFeedback(tfChunkSize, tr("Illegal chunk size <= 0. Please enter an integer > 1"));
+                    feedbackInvalid(tr("Illegal chunk size <= 0. Please enter an integer > 1"));
                 } else if (maxChunkSize > 0 && chunkSize > maxChunkSize) {
-                    setErrorFeedback(tfChunkSize, tr("Chunk size {0} exceeds max. changeset size {1} for server ''{2}''",
+                    feedbackInvalid(tr("Chunk size {0} exceeds max. changeset size {1} for server ''{2}''",
                             chunkSize, maxChunkSize, OsmApi.getOsmApi().getBaseUrl()));
                 } else {
-                    clearErrorFeedback(tfChunkSize, tr("Please enter an integer > 1"));
+                    feedbackValid(null);
                 }
 
                 if (maxChunkSize > 0 && chunkSize > maxChunkSize) {
-                    setErrorFeedback(tfChunkSize, tr("Chunk size {0} exceeds max. changeset size {1} for server ''{2}''",
+                    feedbackInvalid(tr("Chunk size {0} exceeds max. changeset size {1} for server ''{2}''",
                             chunkSize, maxChunkSize, OsmApi.getOsmApi().getBaseUrl()));
                 }
             } catch (NumberFormatException e) {
-                setErrorFeedback(tfChunkSize, tr("Value ''{0}'' is not a number. Please enter an integer > 1",
+                feedbackInvalid(tr("Value ''{0}'' is not a number. Please enter an integer > 1",
                         tfChunkSize.getText().trim()));
             } finally {
                 updateNumRequestsLabels();
@@ -458,28 +446,8 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
 
         @Override
-        public void changedUpdate(DocumentEvent e) {
-            validateChunkSize();
-        }
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            validateChunkSize();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            validateChunkSize();
-        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getSource() == tfChunkSize
-                    && "enabled".equals(evt.getPropertyName())
-                    && (Boolean) evt.getNewValue()
-            ) {
-                validateChunkSize();
-            }
+        public boolean isValid() {
+            throw new UnsupportedOperationException();
         }
     }
 
