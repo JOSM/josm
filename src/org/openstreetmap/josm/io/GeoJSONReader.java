@@ -5,10 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -64,14 +64,6 @@ public class GeoJSONReader extends AbstractReader {
 
     GeoJSONReader() {
         // Restricts visibility
-    }
-
-    private void parse(InputStream inputStream) throws IllegalDataException {
-        try (JsonParser parser = Json.createParser(inputStream)) {
-            parse(parser);
-        } catch (JsonParsingException e) {
-            throw new IllegalDataException(e);
-        }
     }
 
     private void parse(final JsonParser parser) throws IllegalDataException {
@@ -383,24 +375,26 @@ public class GeoJSONReader extends AbstractReader {
 
     @Override
     protected DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
-        InputStream markSupported = source.markSupported() ? source : new BufferedInputStream(source);
-        ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
-        if (isLineDelimited(markSupported)) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(markSupported, StandardCharsets.UTF_8));
-            String line = null;
-            String rs = new String(new byte[]{RECORD_SEPARATOR_BYTE}, StandardCharsets.US_ASCII);
-            try {
-                while ((line = reader.readLine()) != null) {
-                    line = Utils.strip(line, rs);
-                    try (InputStream is = new ByteArrayInputStream(line.getBytes(StandardCharsets.UTF_8))) {
-                        parse(is);
+        try (InputStream markSupported = source.markSupported() ? source : new BufferedInputStream(source)) {
+            ds.setUploadPolicy(UploadPolicy.DISCOURAGED);
+            if (isLineDelimited(markSupported)) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(markSupported, StandardCharsets.UTF_8))) {
+                    String line;
+                    String rs = new String(new byte[]{RECORD_SEPARATOR_BYTE}, StandardCharsets.US_ASCII);
+                    while ((line = reader.readLine()) != null) {
+                        line = Utils.strip(line, rs);
+                        try (JsonParser parser = Json.createParser(new StringReader(line))) {
+                            parse(parser);
+                        }
                     }
                 }
-            } catch (IOException e) {
-                throw new IllegalDataException(e);
+            } else {
+                try (JsonParser parser = Json.createParser(markSupported)) {
+                    parse(parser);
+                }
             }
-        } else {
-            parse(markSupported);
+        } catch (IOException | JsonParsingException e) {
+            throw new IllegalDataException(e);
         }
         return getDataSet();
     }
