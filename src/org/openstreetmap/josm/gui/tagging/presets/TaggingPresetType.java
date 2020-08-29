@@ -12,15 +12,15 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
  */
 public enum TaggingPresetType {
     /** Node */
-    NODE(/* ICON */ "Mf_node", "node"),
+    NODE(/* ICON */ "Osm_element_node", "node"),
     /** Way */
-    WAY(/* ICON */ "Mf_way", "way"),
+    WAY(/* ICON */ "Osm_element_way", "way"),
     /** Relation */
-    RELATION(/* ICON */ "Mf_relation", "relation"),
+    RELATION(/* ICON */ "Osm_element_relation", "relation"),
     /** Closed way */
-    CLOSEDWAY(/* ICON */ "Mf_closedway", "closedway"),
+    CLOSEDWAY(/* ICON */ "Osm_element_closedway", "closedway"),
     /** Multipolygon */
-    MULTIPOLYGON(/* ICON */ "Mf_multipolygon", "multipolygon");
+    MULTIPOLYGON(/* ICON */ "Osm_element_multipolygon", "multipolygon");
     private final String iconName;
     private final String name;
 
