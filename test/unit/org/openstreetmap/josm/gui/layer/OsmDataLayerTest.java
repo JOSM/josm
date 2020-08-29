@@ -198,10 +198,10 @@ public class OsmDataLayerTest {
     @Test
     public void testGetMenuEntries() {
         ExpertToggleAction.getInstance().setExpert(true);
-        assertEquals(16, layer.getMenuEntries().length);
+        assertEquals(17, layer.getMenuEntries().length);
 
         ExpertToggleAction.getInstance().setExpert(false);
-        assertEquals(13, layer.getMenuEntries().length);
+        assertEquals(14, layer.getMenuEntries().length);
     }
 
     /**
