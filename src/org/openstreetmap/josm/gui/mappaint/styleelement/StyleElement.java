@@ -170,9 +170,9 @@ public abstract class StyleElement implements StyleKeys {
     }
 
     private static class FontDescriptor {
-        public String name;
-        public int style;
-        public int size;
+        final String name;
+        final int style;
+        final int size;
 
         FontDescriptor(String name, int style, int size) {
             this.name = name;
@@ -198,16 +198,8 @@ public abstract class StyleElement implements StyleKeys {
 
     private static final Map<FontDescriptor, Font> FONT_MAP = new HashMap<>();
 
-    private static Font getCachedFont(FontDescriptor fd) {
-        Font f = FONT_MAP.get(fd);
-        if (f != null) return f;
-        f = new Font(fd.name, fd.style, fd.size);
-        FONT_MAP.put(fd, f);
-        return f;
-    }
-
     private static Font getCachedFont(String name, int style, int size) {
-        return getCachedFont(new FontDescriptor(name, style, size));
+        return FONT_MAP.computeIfAbsent(new FontDescriptor(name, style, size), fd -> new Font(fd.name, fd.style, fd.size));
     }
 
     protected static Font getFont(Cascade c, String s) {
