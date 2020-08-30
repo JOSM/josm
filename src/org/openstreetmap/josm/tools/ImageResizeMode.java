@@ -34,16 +34,17 @@ enum ImageResizeMode {
         Dimension computeDimension(Dimension dim, Dimension icon) {
             CheckParameterUtil.ensureThat((dim.width > 0 || dim.width == -1) && (dim.height > 0 || dim.height == -1),
                     () -> dim + " is invalid");
+            final int maxWidth = Math.min(dim.width, icon.width);
+            final int maxHeight = Math.min(dim.height, icon.height);
             final Dimension spec;
-            if (dim.width == -1 || dim.height == -1) {
+            if (maxWidth == -1 || maxHeight == -1) {
                 spec = dim;
-            } else if (icon.getWidth() / dim.width > icon.getHeight() / dim.height) {
-                spec = new Dimension(dim.width, -1);
+            } else if (icon.getWidth() / maxWidth > icon.getHeight() / maxHeight) {
+                spec = new Dimension(maxWidth, -1);
             } else {
-                spec = new Dimension(-1, dim.height);
+                spec = new Dimension(-1, maxHeight);
             }
             return AUTO.computeDimension(spec, icon);
-            // TODO disable upscaling non-svg icons?
         }
     },
 
