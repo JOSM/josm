@@ -73,4 +73,16 @@ public class Mediawiki {
         }
         return Optional.empty();
     }
+
+    /**
+     * Computes the URL for the given filename on the MediaWiki server
+     * @param fileBaseUrl the base URL of the file MediaWiki storage, such as {@code "https://upload.wikimedia.org/wikipedia/commons/"}
+     * @param filename    the filename
+     * @return the URL for the given filename on the MediaWiki server
+     * @see <a href="https://www.mediawiki.org/wiki/Manual:$wgHashedUploadDirectory">MediaWiki $wgHashedUploadDirectory</a>
+     */
+    public static String getImageUrl(String fileBaseUrl, String filename) {
+        final String md5 = Utils.md5Hex(filename);
+        return String.join("/", Utils.strip(fileBaseUrl, "/"), md5.substring(0, 1), md5.substring(0, 2), filename);
+    }
 }

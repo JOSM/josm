@@ -1084,8 +1084,7 @@ public class ImageProvider {
                     continue;
                 }
             } else {
-                final String fnMD5 = Utils.md5Hex(fn);
-                url = b + fnMD5.substring(0, 1) + '/' + fnMD5.substring(0, 2) + '/' + fn;
+                url = Mediawiki.getImageUrl(b, fn);
             }
             result = getIfAvailableHttp(url, type);
             if (result != null) {
