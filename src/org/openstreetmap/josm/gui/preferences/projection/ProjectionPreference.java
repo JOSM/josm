@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.projection;
 
-import static org.openstreetmap.josm.data.SystemOfMeasurement.ALL_SYSTEMS;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -10,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,13 +295,6 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static final StringProperty PROP_PROJECTION_DEFAULT = new StringProperty("projection.default", mercator.getId());
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
     private static final ListProperty PROP_SUB_PROJECTION_DEFAULT = new ListProperty("projection.default.sub", null);
-    private static final String[] unitsValues = ALL_SYSTEMS.keySet().toArray(new String[ALL_SYSTEMS.size()]);
-    private static final String[] unitsValuesTr = new String[unitsValues.length];
-    static {
-        for (int i = 0; i < unitsValues.length; ++i) {
-            unitsValuesTr[i] = tr(unitsValues[i]);
-        }
-    }
 
     /**
      * Combobox with all projections available
@@ -313,7 +306,13 @@ public class ProjectionPreference implements SubPreferenceSetting {
      */
     private final JosmComboBox<ICoordinateFormat> coordinatesCombo;
 
-    private final JosmComboBox<String> unitsCombo = new JosmComboBox<>(unitsValuesTr);
+    /**
+     * Combobox with all system of measurements
+     */
+    private final JosmComboBox<SystemOfMeasurement> unitsCombo = new JosmComboBox<>(
+            SystemOfMeasurement.ALL_SYSTEMS.values().stream()
+                    .sorted(Comparator.comparing(SystemOfMeasurement::toString))
+                    .toArray(SystemOfMeasurement[]::new));
 
     /**
      * This variable holds the JPanel with the projection's preferences. If the
@@ -358,9 +357,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
                 .filter(i -> coordinatesCombo.getItemAt(i).getId().equals(PROP_COORDINATES.get())).findFirst()
                 .ifPresent(coordinatesCombo::setSelectedIndex);
 
-        IntStream.range(0, unitsValues.length)
-                .filter(i -> unitsValues[i].equals(SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.get())).findFirst()
-                .ifPresent(unitsCombo::setSelectedIndex);
+        unitsCombo.setSelectedItem(SystemOfMeasurement.getSystemOfMeasurement());
 
         projPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5, 5, 0, 5));
@@ -447,8 +444,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
             CoordinateFormatManager.setCoordinateFormat((ICoordinateFormat) coordinatesCombo.getSelectedItem());
         }
 
-        int i = unitsCombo.getSelectedIndex();
-        SystemOfMeasurement.setSystemOfMeasurement(unitsValues[i]);
+        SystemOfMeasurement.setSystemOfMeasurement(((SystemOfMeasurement) unitsCombo.getSelectedItem()));
 
         return false;
     }

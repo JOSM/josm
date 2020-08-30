@@ -545,7 +545,7 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
 
         // Make sure we're using the metric system
         if (metric) {
-            SystemOfMeasurement.setSystemOfMeasurement(SystemOfMeasurement.METRIC.getName());
+            SystemOfMeasurement.setSystemOfMeasurement(SystemOfMeasurement.METRIC);
         }
 
         if (useHttps) {

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.NumberFormat;
 import java.util.Collections;
@@ -126,11 +127,12 @@ public class SystemOfMeasurement {
 
     /**
      * Sets the current global system of measurement.
-     * @param somKey The system of measurement key. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
+     * @param som The system of measurement to set. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
      * @throws IllegalArgumentException if {@code somKey} is not known
-     * @since 8554
+     * @since xxx (signature)
      */
-    public static void setSystemOfMeasurement(String somKey) {
+    public static void setSystemOfMeasurement(SystemOfMeasurement som) {
+        String somKey = som.getName();
         if (!SystemOfMeasurement.ALL_SYSTEMS.containsKey(somKey)) {
             throw new IllegalArgumentException("Invalid system of measurement: "+somKey);
         }
@@ -281,6 +283,15 @@ public class SystemOfMeasurement {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Returns the localized name of this system of measurement
+     * @return the localized name
+     */
+    @Override
+    public String toString() {
+        return tr(name);
     }
 
     /**

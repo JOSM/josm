@@ -34,13 +34,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.TreeSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -126,6 +127,10 @@ public final class MapStatus extends JPanel implements
     private static final AbstractProperty<Double> DISTANCE_THRESHOLD = new DoubleProperty("statusbar.distance-threshold", 0.01).cached();
 
     private static final AbstractProperty<Boolean> SHOW_ID = new BooleanProperty("osm-primitives.showid", false);
+
+    private static final List<SystemOfMeasurement> SORTED_SYSTEM_OF_MEASUREMENTS = SystemOfMeasurement.ALL_SYSTEMS.values().stream()
+            .sorted(Comparator.comparing(SystemOfMeasurement::toString))
+            .collect(Collectors.toList());
 
     /**
      * Property for map status background color.
@@ -800,11 +805,11 @@ public final class MapStatus extends JPanel implements
         });
 
         MapStatusPopupMenu() {
-            for (final String key : new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet())) {
-                JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(key) {
+            for (final SystemOfMeasurement som : SORTED_SYSTEM_OF_MEASUREMENTS) {
+                JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(som.toString()) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        updateSystemOfMeasurement(key);
+                        updateSystemOfMeasurement(som);
                     }
                 });
                 somItems.add(item);
@@ -918,13 +923,12 @@ public final class MapStatus extends JPanel implements
 
         if (Config.getPref().getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
             distText.addMouseListener(new MouseAdapter() {
-                private final List<String> soms = new ArrayList<>(new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet()));
-
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
-                        String som = SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.get();
-                        String newsom = soms.get((soms.indexOf(som)+1) % soms.size());
+                        SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
+                        int i = (SORTED_SYSTEM_OF_MEASUREMENTS.indexOf(som) + 1) % SORTED_SYSTEM_OF_MEASUREMENTS.size();
+                        SystemOfMeasurement newsom = SORTED_SYSTEM_OF_MEASUREMENTS.get(i);
                         updateSystemOfMeasurement(newsom);
                     }
                 }
@@ -996,13 +1000,13 @@ public final class MapStatus extends JPanel implements
 
     /**
      * Updates the system of measurement and displays a notification.
-     * @param newsom The new system of measurement to set
+     * @param som The new system of measurement to set
      * @since 6960
      */
-    public void updateSystemOfMeasurement(String newsom) {
-        SystemOfMeasurement.setSystemOfMeasurement(newsom);
+    public void updateSystemOfMeasurement(SystemOfMeasurement som) {
+        SystemOfMeasurement.setSystemOfMeasurement(som);
         if (Config.getPref().getBoolean("statusbar.notify.change-system-of-measurement", true)) {
-            new Notification(tr("System of measurement changed to {0}", newsom))
+            new Notification(tr("System of measurement changed to {0}", som.toString()))
                 .setDuration(Notification.TIME_SHORT)
                 .show();
         }
