@@ -47,6 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -1330,7 +1331,7 @@ public class ImageProvider {
         }
 
         Point hotSpot = new Point();
-        Image image = getCursorImage(name, overlay, hotSpot);
+        Image image = getCursorImage(name, overlay, dim -> Toolkit.getDefaultToolkit().getBestCursorSize(dim.width, dim.height), hotSpot);
 
         return Toolkit.getDefaultToolkit().createCustomCursor(image, hotSpot, name);
     }
@@ -1347,10 +1348,11 @@ public class ImageProvider {
      *
      * @param name the cursor image filename in "cursor" directory
      * @param overlay optional overlay image
+     * @param bestCursorSizeFunction computes the best cursor size, see {@link Toolkit#getBestCursorSize(int, int)}
      * @param hotSpot will be set to the properly scaled hotspot of the cursor
      * @return cursor with a given file name, optionally decorated with an overlay image
      */
-    static Image getCursorImage(String name, String overlay, /* out */ Point hotSpot) {
+    static Image getCursorImage(String name, String overlay, UnaryOperator<Dimension> bestCursorSizeFunction, /* out */ Point hotSpot) {
         ImageProvider imageProvider = new ImageProvider("cursor", name);
         if (overlay != null) {
             imageProvider
@@ -1365,7 +1367,7 @@ public class ImageProvider {
 
         // AWT will resize the cursor to bestCursorSize internally anyway, but miss to scale the hotspot as well
         // (bug JDK-8238734).  So let's do this ourselves, and also scale the hotspot accordingly.
-        Dimension bestCursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(width, height);
+        Dimension bestCursorSize = bestCursorSizeFunction.apply(new Dimension(width, height));
         if (bestCursorSize.width != 0 && bestCursorSize.height != 0) {
             // In principle, we could pass the MultiResolutionImage itself to AWT, but due to bug JDK-8240568,
             // this results in bad alpha blending and thus jaggy edges.  So let's select the best variant ourselves.

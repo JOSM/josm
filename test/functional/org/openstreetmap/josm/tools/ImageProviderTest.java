@@ -1,19 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.openstreetmap.josm.gui.mappaint.MapCSSRendererTest.assertImageEquals;
 
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,16 +17,19 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.UnaryOperator;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -53,7 +52,7 @@ public class ImageProviderTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -79,12 +78,12 @@ public class ImageProviderTest {
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
 
-    @Before
+    @BeforeEach
     public void resetPixelDensity() {
         GuiSizesHelper.setPixelDensity(1.0f);
     }
@@ -203,11 +202,14 @@ public class ImageProviderTest {
 
     private static void testImage(int width, int height, String reference, ImageIcon icon) throws IOException {
         final BufferedImage image = (BufferedImage) icon.getImage();
-        final File referenceFile = new File(
-                TestUtils.getTestDataRoot() + "/" + ImageProviderTest.class.getSimpleName() + "/" + reference + ".png");
+        final File referenceFile = getReferenceFile(reference);
         assertEquals("width", width, image.getWidth(null));
         assertEquals("height", height, image.getHeight(null));
         assertImageEquals(reference, referenceFile, image, 0, 0, null);
+    }
+
+    private static File getReferenceFile(String reference) {
+        return new File(TestUtils.getTestDataRoot() + "/" + ImageProviderTest.class.getSimpleName() + "/" + reference + ".png");
     }
 
     /**
@@ -236,52 +238,37 @@ public class ImageProviderTest {
     /**
      * Test getting an image for a crosshair cursor.
      */
-    @Test
-    public void testGetCursorImageForCrosshair() {
-        if (GraphicsEnvironment.isHeadless()) {
-            // TODO mock Toolkit.getDefaultToolkit().getBestCursorSize()
-            return;
-        }
+    @ParameterizedTest
+    @ValueSource(floats = {1.0f, 1.5f, 3.0f})
+    public void testGetCursorImageForCrosshair(float guiScale) throws IOException {
+        GuiSizesHelper.setPixelDensity(guiScale);
         Point hotSpot = new Point();
-        Image image = ImageProvider.getCursorImage("crosshair", null, hotSpot);
-        assertCursorDimensionsCorrect(new Point.Double(10.0, 10.0), image, hotSpot);
+        final UnaryOperator<Dimension> bestCursorSizeFunction = dim -> dim;
+        Image image = ImageProvider.getCursorImage("crosshair", null, bestCursorSizeFunction, hotSpot);
+        assertCursorDimensionsCorrect(new Point.Double(10.0, 10.0), image, bestCursorSizeFunction, hotSpot);
+        assertImageEquals("cursor", getReferenceFile("cursor-crosshair-" + Math.round(guiScale * 10)),
+                ((BufferedImage) image), 0, 0, null);
     }
 
     /**
      * Test getting an image for a custom cursor with overlay.
      */
-    @Test
-    public void testGetCursorImageWithOverlay() {
-        testCursorImageWithOverlay(1.0f);  // normal case
-        testCursorImageWithOverlay(1.5f);  // user has configured a GUI scale of 1.5 in the JOSM advanced preferences
-    }
-
-    private void testCursorImageWithOverlay(float guiScale) {
-        if (GraphicsEnvironment.isHeadless()) {
-            // TODO mock Toolkit.getDefaultToolkit().getBestCursorSize()
-            return;
-        }
+    @ParameterizedTest
+    @ValueSource(floats = {1.0f, 1.5f, 3.0f})
+    public void testGetCursorImageWithOverlay(float guiScale) throws IOException {
         GuiSizesHelper.setPixelDensity(guiScale);
         Point hotSpot = new Point();
-        Image image = ImageProvider.getCursorImage("normal", "selection", hotSpot);
-        assertCursorDimensionsCorrect(new Point.Double(3.0, 2.0), image, hotSpot);
-        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getWidth(null), TYPE_INT_ARGB);
-        bufferedImage.getGraphics().drawImage(image, 0, 0, null);
-
-        // check that the square of 1/4 size right lower to the center has some non-empty pixels
-        boolean nonEmptyPixelExistsRightLowerToCenter = false;
-        for (int x = image.getWidth(null) / 2; x < image.getWidth(null) * 3 / 4; ++x) {
-            for (int y = image.getHeight(null) / 2; y < image.getWidth(null) * 3 / 4; ++y) {
-                if (bufferedImage.getRGB(x, y) != 0)
-                    nonEmptyPixelExistsRightLowerToCenter = true;
-            }
-        }
-        assertTrue(nonEmptyPixelExistsRightLowerToCenter);
+        final UnaryOperator<Dimension> bestCursorSizeFunction = dim -> dim;
+        Image image = ImageProvider.getCursorImage("normal", "selection", bestCursorSizeFunction, hotSpot);
+        assertCursorDimensionsCorrect(new Point.Double(3.0, 2.0), image, bestCursorSizeFunction, hotSpot);
+        assertImageEquals("cursor", getReferenceFile("cursor-normal-selection-" + Math.round(guiScale * 10)),
+                ((BufferedImage) image), 0, 0, null);
     }
 
-    private void assertCursorDimensionsCorrect(Point.Double originalHotspot, Image image, Point hotSpot) {
+    private void assertCursorDimensionsCorrect(Point.Double originalHotspot, Image image,
+                                               UnaryOperator<Dimension> bestCursorSizeFunction, Point hotSpot) {
         int originalCursorSize = ImageProvider.CURSOR_SIZE_HOTSPOT_IS_RELATIVE_TO;
-        Dimension bestCursorSize = Toolkit.getDefaultToolkit().getBestCursorSize(originalCursorSize, originalCursorSize);
+        Dimension bestCursorSize = bestCursorSizeFunction.apply(new Dimension(originalCursorSize, originalCursorSize));
         Image bestCursorImage = HiDPISupport.getResolutionVariant(image, bestCursorSize.width, bestCursorSize.height);
         int bestCursorImageWidth = bestCursorImage.getWidth(null);
         assertEquals((int) Math.round(bestCursorSize.getWidth()), bestCursorImageWidth);
