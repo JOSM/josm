@@ -489,7 +489,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         if (newMapMode == null || !newMapMode.layerIsSupported(newLayer)) {
             newMapMode = null;
         }
-        Logging.info("Switching map mode from {0} to {1}",
+        Logging.debug("Switching map mode from {0} to {1}",
                 Optional.ofNullable(oldMapMode).map(m -> m.getClass().getSimpleName()).orElse("(none)"),
                 Optional.ofNullable(newMapMode).map(m -> m.getClass().getSimpleName()).orElse("(none)"));
 
