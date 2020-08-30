@@ -209,7 +209,9 @@ public class ImageProviderTest {
     }
 
     private static File getReferenceFile(String reference) {
-        return new File(TestUtils.getTestDataRoot() + "/" + ImageProviderTest.class.getSimpleName() + "/" + reference + ".png");
+        // Java 8 renders SVG images differently, thus, use separate reference files
+        final String javaSuffix = Utils.getJavaVersion() == 8 ? "-java8" : "";
+        return new File(TestUtils.getTestDataRoot() + "/" + ImageProviderTest.class.getSimpleName() + javaSuffix + "/" + reference + ".png");
     }
 
     /**
