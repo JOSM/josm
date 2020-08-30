@@ -385,7 +385,7 @@ public class LayerManagerTest {
      * {@link LayerManager#addLayerChangeListener(LayerChangeListener)} twice
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testAddLayerChangeListenerDupplicates() {
+    public void testAddLayerChangeListenerDuplicates() {
         CapturingLayerChangeListener l = new CapturingLayerChangeListener();
         layerManager.addLayerChangeListener(l);
         layerManager.addLayerChangeListener(l);

@@ -463,7 +463,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
      * Replies the tags of this tag collection as list.
      * Note that the order of the list is not preserved between method invocations.
      *
-     * @return the tags of this tag collection as list. There are no dupplicate values.
+     * @return the tags of this tag collection as list. There are no duplicate values.
      */
     public List<Tag> asList() {
         return new ArrayList<>(tags.keySet());
@@ -712,7 +712,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
     }
 
     /**
-     * Replies the sum of all numeric tag values. Ignores dupplicates.
+     * Replies the sum of all numeric tag values. Ignores duplicates.
      * @param key the key to look up
      *
      * @return the sum of all numeric tag values, as string.

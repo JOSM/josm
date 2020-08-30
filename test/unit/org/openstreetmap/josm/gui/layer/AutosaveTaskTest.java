@@ -214,7 +214,7 @@ public class AutosaveTaskTest {
      * Tests that {@link AutosaveTask#run()} handles duplicate layers
      */
     @Test
-    public void testAutosaveHandlesDupplicateNames() {
+    public void testAutosaveHandlesDuplicateNames() {
         DataSet data1 = new DataSet();
         OsmDataLayer layer1 = new OsmDataLayer(data1, "OsmData", null);
         MainApplication.getLayerManager().addLayer(layer1);

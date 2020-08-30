@@ -153,7 +153,7 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
     }
 
     /**
-     * Creates a new map using the given list of tags. For dupplicate keys the last value found is used.
+     * Creates a new map using the given list of tags. For duplicate keys the last value found is used.
      * @param tags The tags
      * @since 10736
      */

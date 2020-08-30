@@ -154,7 +154,7 @@ public class LayerManager {
         /**
          * Schedule the removal of other layers after this layer has been deleted.
          * <p>
-         * Dupplicate removal requests are ignored.
+         * Duplicate removal requests are ignored.
          * @param layers The layers to remove.
          * @since 10507
          */
