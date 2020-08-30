@@ -236,7 +236,7 @@ public class ImageProviderTest {
         BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getWidth(null), TYPE_INT_ARGB);
         bufferedImage.getGraphics().drawImage(image, 0, 0, null);
 
-        // check that the square of 1/4 size right lower to the center has some non-emtpy pixels
+        // check that the square of 1/4 size right lower to the center has some non-empty pixels
         boolean nonEmptyPixelExistsRightLowerToCenter = false;
         for (int x = image.getWidth(null) / 2; x < image.getWidth(null) * 3 / 4; ++x) {
             for (int y = image.getHeight(null) / 2; y < image.getWidth(null) * 3 / 4; ++y) {

@@ -543,7 +543,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * Scans a key/value array for a given key.
-     * @param keys The key array. It is not modified. It may be null to indicate an emtpy array.
+     * @param keys The key array. It is not modified. It may be null to indicate an empty array.
      * @param key The key to search for.
      * @return The position of that key in the keys array - which is always a multiple of 2 - or -1 if it was not found.
      */
