@@ -834,7 +834,7 @@ public final class MapStatus extends JPanel implements
                 public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                     Component invoker = ((JPopupMenu) e.getSource()).getInvoker();
                     jumpButton.setVisible(latText.equals(invoker) || lonText.equals(invoker));
-                    String currentSOM = SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.get();
+                    String currentSOM = SystemOfMeasurement.getSystemOfMeasurement().toString();
                     for (JMenuItem item : somItems) {
                         item.setSelected(item.getText().equals(currentSOM));
                         item.setVisible(distText.equals(invoker));
