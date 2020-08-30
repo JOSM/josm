@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -216,14 +218,39 @@ public class MapCSSRendererTest {
         System.out.println("Running " + getClass() + "[" + testConfig.testDirectory + "]");
         BufferedImage image = rh.render();
 
+        assertImageEquals(testConfig.testDirectory,
+                testConfig.getReference(), image,
+                testConfig.thresholdPixels, testConfig.thresholdTotalColorDiff, diffImage -> {
+                    try {
+                        // You can use this to debug:
+                        ImageIO.write(image, "png", new File(testConfig.getTestDirectory() + "/test-output.png"));
+                        ImageIO.write(diffImage, "png", new File(testConfig.getTestDirectory() + "/test-differences.png"));
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                });
+    }
+
+    /**
+     * Compares the reference image file with the actual images given as {@link BufferedImage}.
+     * @param testIdentifier a test identifier for error messages
+     * @param referenceImageFile the reference image file to be read using {@link ImageIO#read(File)}
+     * @param image the actual image
+     * @param thresholdPixels maximum number of differing pixels
+     * @param thresholdTotalColorDiff maximum sum of color value differences
+     * @param diffImageConsumer a consumer for a rendered image highlighting the differing pixels, may be null
+     * @throws IOException in case of I/O error
+     */
+    public static void assertImageEquals(
+            String testIdentifier, File referenceImageFile, BufferedImage image,
+            int thresholdPixels, int thresholdTotalColorDiff, Consumer<BufferedImage> diffImageConsumer) throws IOException {
+
+        // TODO move to separate class ImageTestUtils
         if (UPDATE_ALL) {
-            ImageIO.write(image, "png", new File(testConfig.getTestDirectory() + "/reference.png"));
+            ImageIO.write(image, "png", referenceImageFile);
             return;
         }
-
-        BufferedImage reference = testConfig.getReference();
-
-        // now compute differences:
+        final BufferedImage reference = ImageIO.read(referenceImageFile);
         assertEquals(image.getWidth(), reference.getWidth());
         assertEquals(image.getHeight(), reference.getHeight());
 
@@ -235,7 +262,9 @@ public class MapCSSRendererTest {
             for (int x = 0; x < reference.getWidth(); x++) {
                 int expected = reference.getRGB(x, y);
                 int result = image.getRGB(x, y);
-                if (!colorsAreSame(expected, result)) {
+                int expectedAlpha = expected >> 24;
+                boolean colorsAreSame = expectedAlpha == 0 ? result >> 24 == 0 : expected == result;
+                if (!colorsAreSame) {
                     Color expectedColor = new Color(expected, true);
                     Color resultColor = new Color(result, true);
                     int colorDiff = Math.abs(expectedColor.getRed() - resultColor.getRed())
@@ -273,23 +302,22 @@ public class MapCSSRendererTest {
             }
         }
 
-        if (differencePoints.size() > testConfig.thresholdPixels || colorDiffSum > testConfig.thresholdTotalColorDiff) {
-            // You can use this to debug:
-            ImageIO.write(image, "png", new File(testConfig.getTestDirectory() + "/test-output.png"));
-
+        if (differencePoints.size() > thresholdPixels || colorDiffSum > thresholdTotalColorDiff) {
             // Add a nice image that highlights the differences:
             BufferedImage diffImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
             for (Point p : differencePoints) {
                 diffImage.setRGB(p.x, p.y, 0xffff0000);
             }
-            ImageIO.write(diffImage, "png", new File(testConfig.getTestDirectory() + "/test-differences.png"));
+            if (diffImageConsumer != null) {
+                diffImageConsumer.accept(diffImage);
+            }
 
-            if (differencePoints.size() > testConfig.thresholdPixels) {
+            if (differencePoints.size() > thresholdPixels) {
                 fail(MessageFormat.format("Images for test {0} differ at {1} points, threshold is {2}: {3}",
-                        testConfig.testDirectory, differencePoints.size(), testConfig.thresholdPixels, differences.toString()));
+                        testIdentifier, differencePoints.size(), thresholdPixels, differences.toString()));
             } else {
                 fail(MessageFormat.format("Images for test {0} differ too much in color, value is {1}, permitted threshold is {2}: {3}",
-                        testConfig.testDirectory, colorDiffSum, testConfig.thresholdTotalColorDiff, differences.toString()));
+                        testIdentifier, colorDiffSum, thresholdTotalColorDiff, differences.toString()));
             }
         }
     }
@@ -298,21 +326,6 @@ public class MapCSSRendererTest {
         n.setHighlighted(n.isKeyTrue("highlight"));
         if (n.isKeyTrue("disabled")) {
             n.setDisabledState(false);
-        }
-    }
-
-    /**
-     * Check if two colors differ
-     * @param expected The expected color
-     * @param actual The actual color
-     * @return <code>true</code> if they differ.
-     */
-    private boolean colorsAreSame(int expected, int actual) {
-        int expectedAlpha = expected >> 24;
-        if (expectedAlpha == 0) {
-            return actual >> 24 == 0;
-        } else {
-            return expected == actual;
         }
     }
 
@@ -368,8 +381,8 @@ public class MapCSSRendererTest {
             return this;
         }
 
-        public BufferedImage getReference() throws IOException {
-            return ImageIO.read(new File(getTestDirectory() + "/reference.png"));
+        public File getReference() {
+            return new File(getTestDirectory() + "/reference.png");
         }
 
         private String getTestDirectory() {

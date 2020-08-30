@@ -7,6 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.openstreetmap.josm.gui.mappaint.MapCSSRendererTest.assertImageEquals;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -176,6 +177,54 @@ public class ImageProviderTest {
         assertNotNull(ImageProvider.get("data:image/png;base64," +
                 "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4"+
                 "//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="));
+    }
+
+    /**
+     * Unit test of {@link ImageResource#getImageIcon(java.awt.Dimension)}
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void testImageIcon() throws IOException {
+        ImageResource resource = new ImageProvider("presets/misc/housenumber_small").getResource();
+        testImage(12, 9, "housenumber_small-AUTO-null", resource.getImageIcon());
+        testImage(12, 9, "housenumber_small-AUTO-default", resource.getImageIcon(ImageResource.DEFAULT_DIMENSION));
+        testImage(8, 8, "housenumber_small-AUTO-08x08", resource.getImageIcon(new Dimension(8, 8)));
+        testImage(16, 16, "housenumber_small-AUTO-16x16", resource.getImageIcon(new Dimension(16, 16)));
+        testImage(24, 24, "housenumber_small-AUTO-24x24", resource.getImageIcon(new Dimension(24, 24)));
+        testImage(36, 27, "housenumber_small-AUTO-36x27", resource.getImageIcon(new Dimension(36, 27)));
+    }
+
+    /**
+     * Unit test of {@link ImageResource#getImageIconBounded(java.awt.Dimension)}
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void testImageIconBounded() throws IOException {
+        ImageResource resource = new ImageProvider("presets/misc/housenumber_small").getResource();
+        testImage(8, 6, "housenumber_small-BOUNDED-08x08", resource.getImageIconBounded(new Dimension(8, 8)));
+        testImage(12, 9, "housenumber_small-BOUNDED-16x16", resource.getImageIconBounded(new Dimension(16, 16)));
+        testImage(12, 9, "housenumber_small-BOUNDED-24x24", resource.getImageIconBounded(new Dimension(24, 24)));
+    }
+
+    /**
+     * Unit test of {@link ImageResource#getPaddedIcon(java.awt.Dimension)}
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void testImageIconPadded() throws IOException {
+        ImageResource resource = new ImageProvider("presets/misc/housenumber_small").getResource();
+        testImage(8, 8, "housenumber_small-PADDED-08x08", resource.getPaddedIcon(new Dimension(8, 8)));
+        testImage(16, 16, "housenumber_small-PADDED-16x16", resource.getPaddedIcon(new Dimension(16, 16)));
+        testImage(24, 24, "housenumber_small-PADDED-24x24", resource.getPaddedIcon(new Dimension(24, 24)));
+    }
+
+    private static void testImage(int width, int height, String reference, ImageIcon icon) throws IOException {
+        final BufferedImage image = (BufferedImage) icon.getImage();
+        final File referenceFile = new File(
+                TestUtils.getTestDataRoot() + "/" + ImageProviderTest.class.getSimpleName() + "/" + reference + ".png");
+        assertEquals("width", width, image.getWidth(null));
+        assertEquals("height", height, image.getHeight(null));
+        assertImageEquals(reference, referenceFile, image, 0, 0, null);
     }
 
     /**
