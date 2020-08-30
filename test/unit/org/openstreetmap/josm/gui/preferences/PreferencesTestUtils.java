@@ -19,24 +19,13 @@ public final class PreferencesTestUtils {
      */
     public static void doTestPreferenceSettingAddGui(
             PreferenceSettingFactory factory, Class<? extends DefaultTabPreferenceSetting> parentClass) {
-        doTestPreferenceSettingAddGui(factory, parentClass, 1);
-    }
-
-    /**
-     * Generic test for {@link PreferenceSetting#addGui(PreferenceTabbedPane)}.
-     * @param factory setting factory to test
-     * @param parentClass optional parent setting, can be {@code null}
-     * @param increment expected tab number increment
-     */
-    public static void doTestPreferenceSettingAddGui(
-            PreferenceSettingFactory factory, Class<? extends DefaultTabPreferenceSetting> parentClass, int increment) {
         PreferenceSetting setting = factory.createPreferenceSetting();
         PreferenceTabbedPane tabPane = new PreferenceTabbedPane();
         tabPane.buildGui();
         int tabs = parentClass != null ? tabPane.getSetting(parentClass).getTabPane().getTabCount() : -1;
         setting.addGui(tabPane);
         if (parentClass != null) {
-            assertEquals(tabs + increment, tabPane.getSetting(parentClass).getTabPane().getTabCount());
+            assertEquals(tabs + 1, tabPane.getSetting(parentClass).getTabPane().getTabCount());
             assertEquals(tabPane.getSetting(parentClass), ((SubPreferenceSetting) setting).getTabPreferenceSetting(tabPane));
         }
         setting.ok();

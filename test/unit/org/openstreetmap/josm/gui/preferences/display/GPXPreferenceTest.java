@@ -9,9 +9,9 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 
 /**
- * Unit tests of {@link DrawingPreference} class.
+ * Unit tests of {@link GPXPreference} class.
  */
-public class DrawingPreferenceTest {
+public class GPXPreferenceTest {
 
     /**
      * Setup test.
@@ -22,18 +22,18 @@ public class DrawingPreferenceTest {
     }
 
     /**
-     * Unit test of {@link DrawingPreference#DrawingPreference}.
+     * Unit test of {@link GPXPreference.Factory}.
      */
     @Test
-    public void testDrawingPreference() {
-        assertNotNull(new DrawingPreference.Factory().createPreferenceSetting());
+    public void testGPXPreference() {
+        assertNotNull(new GPXPreference.Factory().createPreferenceSetting());
     }
 
     /**
-     * Unit test of {@link DrawingPreference#addGui}.
+     * Unit test of {@link GPXPreference#addGui}.
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new DrawingPreference.Factory(), DisplayPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new GPXPreference.Factory(), DisplayPreference.class);
     }
 }

@@ -28,7 +28,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
- * Map drawing preferences.
+ * "OSM Data" drawing preferences.
  */
 public class DrawingPreference implements SubPreferenceSetting {
 
@@ -48,7 +48,6 @@ public class DrawingPreference implements SubPreferenceSetting {
      */
     public static final BooleanProperty SOURCE_BOUNDS_PROP = new BooleanProperty("draw.data.downloaded_area", true);
 
-    private GPXSettingsPanel gpxPanel;
     private final JCheckBox directionHint = new JCheckBox(tr("Draw Direction Arrows"));
     private final JCheckBox headArrow = new JCheckBox(tr("Only on the head of a way."));
     private final JCheckBox onewayArrow = new JCheckBox(tr("Draw oneway arrows."));
@@ -73,22 +72,6 @@ public class DrawingPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        addOsmPane(gui);
-        addGpxPane(gui);
-    }
-
-    private void addGpxPane(PreferenceTabbedPane gui) {
-        gpxPanel = new GPXSettingsPanel();
-        gui.addValidationListener(gpxPanel);
-        JPanel panel = gpxPanel;
-
-        JScrollPane scrollpane = new JScrollPane(panel);
-        scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        GuiHelper.setDefaultIncrement(scrollpane);
-        gui.getDisplayPreference().addSubTab(this, tr("GPS Points"), scrollpane);
-    }
-
-    private void addOsmPane(PreferenceTabbedPane gui) {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -216,7 +199,6 @@ public class DrawingPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        boolean restart = gpxPanel.savePreferences();
         OsmDataLayer.PROPERTY_HIDE_LABELS_WHILE_DRAGGING.put(hideLabelsWhileDragging.isSelected());
         Config.getPref().putBoolean("draw.data.area_outline_only", outlineOnly.isSelected());
         Config.getPref().putBoolean("draw.segment.direction", directionHint.isSelected());
@@ -242,7 +224,7 @@ public class DrawingPreference implements SubPreferenceSetting {
             vn = 0;
         }
         Config.getPref().putInt("mappaint.node.virtual-size", vn);
-        return restart;
+        return false;
     }
 
     @Override

@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.preferences.audio.AudioPreference;
 import org.openstreetmap.josm.gui.preferences.display.ColorPreference;
 import org.openstreetmap.josm.gui.preferences.display.DisplayPreference;
 import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
+import org.openstreetmap.josm.gui.preferences.display.GPXPreference;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.display.LanguagePreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
@@ -571,6 +572,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         // order is important!
         SETTINGS_FACTORIES.add(new DisplayPreference.Factory());
         SETTINGS_FACTORIES.add(new DrawingPreference.Factory());
+        SETTINGS_FACTORIES.add(new GPXPreference.Factory());
         SETTINGS_FACTORIES.add(new ColorPreference.Factory());
         SETTINGS_FACTORIES.add(new LafPreference.Factory());
         SETTINGS_FACTORIES.add(new LanguagePreference.Factory());
