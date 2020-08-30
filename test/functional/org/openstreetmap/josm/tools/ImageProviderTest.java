@@ -9,17 +9,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.openstreetmap.josm.gui.mappaint.MapCSSRendererTest.assertImageEquals;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Transparency;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -31,12 +26,9 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
@@ -157,15 +149,6 @@ public class ImageProviderTest {
         Node node = new Node(LatLon.ZERO);
         node.put("amenity", "fuel");
         assertDoesNotThrow(() -> OsmPrimitiveImageProvider.getResource(node, Collections.emptyList()));
-    }
-
-    /**
-     * Test fetching an image using {@code wiki://} protocol.
-     */
-    @Test
-    public void testWikiProtocol() {
-        // https://commons.wikimedia.org/wiki/File:OpenJDK_logo.svg
-        assertNotNull(ImageProvider.get("wiki://OpenJDK_logo.svg"));
     }
 
     /**
@@ -308,56 +291,4 @@ public class ImageProviderTest {
         assertEquals(originalHotspot.y / originalCursorSize * bestCursorImageHeight, hotSpot.y, 1 /* at worst one pixel off */);
     }
 
-
-    /**
-     * Test getting a cursor
-     */
-    @Ignore("manual execution only, as the look of the cursor cannot be checked automatedly")
-    @Test
-    public void testGetCursor() throws InterruptedException {
-        JFrame frame = new JFrame();
-        frame.setSize(500, 500);
-        frame.setLayout(new GridLayout(2, 2));
-        JPanel leftUpperPanel = new JPanel(), rightUpperPanel = new JPanel(), leftLowerPanel = new JPanel(), rightLowerPanel = new JPanel();
-        leftUpperPanel.setBackground(Color.DARK_GRAY);
-        rightUpperPanel.setBackground(Color.DARK_GRAY);
-        leftLowerPanel.setBackground(Color.DARK_GRAY);
-        rightLowerPanel.setBackground(Color.DARK_GRAY);
-        frame.add(leftUpperPanel);
-        frame.add(rightUpperPanel);
-        frame.add(leftLowerPanel);
-        frame.add(rightLowerPanel);
-
-        leftUpperPanel.setCursor(ImageProvider.getCursor("normal", "select_add")); // contains diagonal sensitive to alpha blending
-        rightUpperPanel.setCursor(ImageProvider.getCursor("crosshair", "joinway")); // combination of overlay and hotspot not top left
-        leftLowerPanel.setCursor(ImageProvider.getCursor("hand", "parallel_remove")); // reasonably nice bitmap cursor
-        rightLowerPanel.setCursor(ImageProvider.getCursor("rotate", null)); // ugly bitmap cursor, cannot do much here
-
-        frame.setVisible(true);
-
-        // hover over the four quadrant to observe different cursors
-
-        // draw red dot at hotspot when clicking
-        frame.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Graphics graphics = frame.getGraphics();
-                graphics.setColor(Color.RED);
-                graphics.drawRect(e.getX(), e.getY(), 1, 1);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) { }
-
-            @Override
-            public void mouseReleased(MouseEvent e) { }
-
-            @Override
-            public void mouseEntered(MouseEvent e) { }
-
-            @Override
-            public void mouseExited(MouseEvent e) { }
-        });
-        Thread.sleep(9000); // test would time out after 10s
-    }
 }
