@@ -1857,6 +1857,8 @@ area[leisure=sports_centre],
 area[leisure=fitness_centre],
 area[leisure=stadium],
 area[leisure=horse_riding],
+area[leisure=amusement_arcade],
+area[leisure=adult_gaming_centre],
 area[leisure=hackerspace],
 area[leisure=outdoor_seating],
 area[leisure=resort],
@@ -1882,6 +1884,14 @@ node[leisure=stadium] {
 }
 node[leisure=horse_riding] {
     icon-image: "presets/leisure/horse_riding.svg";
+    set icon_z17;
+}
+node[leisure=amusement_arcade] {
+    icon-image: "presets/leisure/amusement_arcade.svg";
+    set icon_z17;
+}
+node[leisure=adult_gaming_centre] {
+    icon-image: "presets/leisure/adult_gaming_centre.svg";
     set icon_z17;
 }
 node[leisure=hackerspace] {
@@ -2721,8 +2731,6 @@ node[healthcare=laboratory] {
 area[amenity=pub],
 area[amenity=biergarten],
 area[amenity=nightclub],
-area[amenity=amusement_arcade],
-area[amenity=adult_gaming_centre],
 area[amenity=gambling],
 area[amenity=stripclub],
 area[amenity=casino],
@@ -2745,14 +2753,6 @@ node[amenity=biergarten] {
 }
 node[amenity=nightclub] {
     icon-image: "presets/leisure/nightclub.svg";
-    set icon_z17;
-}
-node[amenity=amusement_arcade] {
-    icon-image: "presets/leisure/amusement_arcade.svg";
-    set icon_z17;
-}
-node[amenity=adult_gaming_centre] {
-    icon-image: "presets/leisure/adult_gaming_centre.svg";
     set icon_z17;
 }
 node[amenity=gambling] {
