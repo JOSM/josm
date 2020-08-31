@@ -814,3 +814,13 @@ way[highway]["placement:backward"]["placement:both_ways"]!.PlacementTransitionWa
   assertNoMatch: "way highway=primary placement:forward=right_of:1";
   assertNoMatch: "way highway=primary placement:forward=transition placement:both_ways=transition";
 }
+
+/* #19742 */
+node:righthandtraffic[highway=mini_roundabout][direction=clockwise] {
+  throwWarning: tr("{0} together with {1} at right-hand traffic", "{1.tag}", "{2.tag}");
+  group: tr("suspicious tag combination");
+}
+node!:righthandtraffic[highway=mini_roundabout][direction=anticlockwise] {
+  throwWarning: tr("{0} together with {1} at left-hand traffic", "{1.tag}", "{2.tag}");
+  group: tr("suspicious tag combination");
+}

@@ -723,10 +723,6 @@ node[highway=milestone] {
     icon-image: "presets/vehicle/milestone.svg";
     set icon_z17;
 }
-node[direction=clockwise] {
-    icon-image: "presets/vehicle/restriction/roundabout_left.svg";
-    set icon_z17;
-}
 node[highway=mini_roundabout] {
     icon-image: "presets/vehicle/restriction/mini_roundabout_left.svg";
     set icon_z17;
