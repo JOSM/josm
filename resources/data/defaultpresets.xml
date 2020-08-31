@@ -1021,7 +1021,25 @@
                 <text key="width" text="Width (meters)" />
             </optional>
             <reference ref="link_road_access_restrictions" />
+            <preset_link preset_name="Circular junction" text="Similar but different tags:" />
+            <preset_link preset_name="Mini-Roundabout" text="Similar but different tags:" />
         </item> <!-- Roundabout -->
+        <item name="Circular junction" icon="presets/vehicle/restriction/junction_circular.svg" type="way,closedway" preset_name_label="true">
+            <link wiki="Tag:junction=circular" />
+            <space />
+            <key key="junction" value="circular" />
+            <combo key="highway" text="Type" values="motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,tertiary,unclassified,residential,living_street,service,bus_guideway,construction" values_context="Highway" />
+            <optional>
+                <reference ref="name_layer" />
+                <combo key="lanes" text="Lanes" values="1,2,3" length="3" />
+                <reference ref="highway_yesno" />
+                <check key="oneway" text="Oneway" />
+                <text key="width" text="Width (meters)" />
+            </optional>
+            <reference ref="link_road_access_restrictions" />
+            <preset_link preset_name="Roundabout" text="Similar but different tags:" />
+            <preset_link preset_name="Mini-Roundabout" text="Similar but different tags:" />
+        </item> <!-- Circular junction -->
         <item name="Ford" icon="presets/vehicle/ford.svg" type="node,way" preset_name_label="true">
             <link wiki="Tag:ford=yes" />
             <combo key="ford" text="Ford" values="yes,stepping_stones" default="yes" values_searchable="true" match="keyvalue!" />
@@ -1302,6 +1320,8 @@
             <key key="highway" value="mini_roundabout" />
             <space />
             <combo key="direction" text="Direction" values="clockwise" />
+            <preset_link preset_name="Roundabout" text="Similar but different tags:" />
+            <preset_link preset_name="Circular junction" text="Similar but different tags:" />
         </item> <!-- Mini-Roundabout -->
         <item name="Pedestrian Crossing" icon="presets/vehicle/crossing.svg" type="node" preset_name_label="true">
             <link wiki="Key:crossing" />
