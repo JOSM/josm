@@ -128,8 +128,8 @@ public class SystemOfMeasurement {
     /**
      * Sets the current global system of measurement.
      * @param som The system of measurement to set. Must be defined in {@link SystemOfMeasurement#ALL_SYSTEMS}.
-     * @throws IllegalArgumentException if {@code somKey} is not known
-     * @since xxx (signature)
+     * @throws IllegalArgumentException if {@code som} is not known
+     * @since 16985 (signature)
      */
     public static void setSystemOfMeasurement(SystemOfMeasurement som) {
         String somKey = som.getName();
