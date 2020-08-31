@@ -1221,7 +1221,7 @@
             <key key="highway" value="steps" />
             <optional>
                 <text key="name" text="Name" />
-                <combo key="level" text="Storeys" values="1;2,0;1,-1;0,-2;-1,1.5;2,1;1.5,0.5;1,0;0.5,-0.5;0,-1;-0.5,-1.5;-1,-2;-1.5" values_sort="false" />
+                <combo key="level" text="Storeys" values="1;2,0;1,-1;0,-2;-1,1.5;2,1;1.5,0.5;1,0;0.5,-0.5;0,-1;-0.5,-1.5;-1,-2;-1.5" values_sort="false" values_no_i18n="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <reference ref="surface" />
                 <text key="step_count" text="Amount of Steps" />
@@ -1458,7 +1458,7 @@
             <key key="highway" value="elevator" />
             <text key="capacity:persons" text="Capacity (persons)" />
             <text key="maxweight" text="Max. weight (tonnes)" />
-            <combo key="level" text="Storeys" values="0;1;2;3;4;5;6;7,-2;-1;0;1;2;3;4;5;6;7;8;9" values_sort="false" />
+            <combo key="level" text="Storeys" values="0;1;2;3;4;5;6;7,-2;-1;0;1;2;3;4;5;6;7;8;9" values_sort="false" values_no_i18n="true" />
             <optional>
                 <text key="manufacturer" text="Manufacturer" />
                 <reference ref="name_ref_operator" />
