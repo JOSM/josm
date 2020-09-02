@@ -307,16 +307,11 @@ public class CreateMultipolygonAction extends JosmAction {
 
     private static void showErrors(List<TestError> errors) {
         if (!errors.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            Set<String> errorMessages = new LinkedHashSet<>();
-            errors.forEach(e-> errorMessages.add(e.getMessage()));
-            Iterator<String> iter = errorMessages.iterator();
-            while (iter.hasNext()) {
-                sb.append(iter.next());
-                if (iter.hasNext())
-                    sb.append('\n');
-            }
-            GuiHelper.runInEDT(() -> new Notification(sb.toString()).setIcon(JOptionPane.INFORMATION_MESSAGE).show());
+            String errorMessages = errors.stream()
+                    .map(TestError::getMessage)
+                    .distinct()
+                    .collect(Collectors.joining("\n"));
+            GuiHelper.runInEDT(() -> new Notification(errorMessages).setIcon(JOptionPane.INFORMATION_MESSAGE).show());
         }
     }
 
