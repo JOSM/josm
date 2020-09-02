@@ -44,6 +44,7 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -382,7 +383,9 @@ public class MapCSSRendererTest {
         }
 
         public File getReference() {
-            return new File(getTestDirectory() + "/reference.png");
+            // Java 8 renders SVG images differently, thus, use separate reference files
+            final String javaSuffix = Utils.getJavaVersion() == 8 ? "-java8" : "";
+            return new File(getTestDirectory() + "/reference" + javaSuffix + ".png");
         }
 
         private String getTestDirectory() {
