@@ -1500,7 +1500,7 @@ public class ImageProvider {
             } catch (SVGException ex) {
                 Logging.log(Logging.LEVEL_ERROR, "Unable to load svg:", ex);
             }
-        });
+        }, null);
     }
 
     private static synchronized SVGUniverse getSvgUniverse() {

@@ -186,7 +186,7 @@ public class ImageResource {
                 if (baseImage == null) throw new AssertionError();
                 ImageIcon icon = new ImageIcon(baseImage);
                 img = resizeMode.createBufferedImage(dim, new Dimension(icon.getIconWidth(), icon.getIconHeight()),
-                        g -> g.drawImage(icon.getImage(), 0, 0, null));
+                        null, icon.getImage());
             }
             if (overlayInfo != null) {
                 for (ImageOverlay o : overlayInfo) {

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
@@ -86,15 +87,23 @@ enum ImageResizeMode {
      * @param dim the desired image dimension
      * @param icon the dimensions of the image to resize
      * @param renderer the rendering function
+     * @param sourceIcon the source icon to draw
      * @return a new buffered image
      */
-    BufferedImage createBufferedImage(Dimension dim, Dimension icon, Consumer<Graphics2D> renderer) {
+    BufferedImage createBufferedImage(Dimension dim, Dimension icon, Consumer<Graphics2D> renderer, Image sourceIcon) {
         final Dimension real = computeDimension(dim, icon);
         final BufferedImage bufferedImage = new BufferedImage(real.width, real.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = bufferedImage.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        prepareGraphics(icon, bufferedImage, g);
-        renderer.accept(g);
+        if (renderer != null) {
+            prepareGraphics(icon, bufferedImage, g);
+            renderer.accept(g);
+        } else if (sourceIcon != null) {
+            sourceIcon = sourceIcon.getScaledInstance(real.width, real.height, Image.SCALE_SMOOTH);
+            g.drawImage(sourceIcon, 0, 0, null);
+        } else {
+            throw new NullPointerException("renderer or sourceIcon");
+        }
         return bufferedImage;
     }
 
