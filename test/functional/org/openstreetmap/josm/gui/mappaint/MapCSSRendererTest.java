@@ -85,83 +85,83 @@ public class MapCSSRendererTest {
         return Stream.of(
                 /** Tests for StyledMapRenderer#drawNodeSymbol */
                 new TestConfig("node-shapes", AREA_DEFAULT)
-                        .setThresholdPixels(100).setThresholdTotalColorDiff(2_110),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Text for nodes */
                 new TestConfig("node-text", AREA_DEFAULT).usesFont("DejaVu Sans")
-                        .setThresholdPixels(530).setThresholdTotalColorDiff(23_800),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests that StyledMapRenderer#drawWay respects width */
                 new TestConfig("way-width", AREA_DEFAULT)
-                        .setThresholdPixels(280).setThresholdTotalColorDiff(22_500),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests the way color property, including alpha */
                 new TestConfig("way-color", AREA_DEFAULT)
-                        .setThresholdPixels(100).setThresholdTotalColorDiff(3_400),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests dashed ways. */
                 new TestConfig("way-dashes", AREA_DEFAULT)
-                        .setThresholdPixels(460).setThresholdTotalColorDiff(12_100),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests dashed way clamping algorithm */
                 new TestConfig("way-dashes-clamp", AREA_DEFAULT)
-                        .setThresholdPixels(200).setThresholdTotalColorDiff(6_800),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests fill-color property */
                 new TestConfig("area-fill-color", AREA_DEFAULT),
 
                 /** Tests the fill-image property. */
                 new TestConfig("area-fill-image", AREA_DEFAULT)
-                        .setThresholdPixels(420).setThresholdTotalColorDiff(11_200),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests area label drawing/placement */
                 new TestConfig("area-text", AREA_DEFAULT)
-                        .setThresholdPixels(550).setThresholdTotalColorDiff(17_400),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests area icon drawing/placement */
                 new TestConfig("area-icon", AREA_DEFAULT)
-                        .setThresholdPixels(680).setThresholdTotalColorDiff(23_000),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests if all styles are sorted correctly. Tests {@link StyleRecord#compareTo(StyleRecord)} */
                 new TestConfig("order", AREA_DEFAULT)
-                        .setThresholdPixels(2050).setThresholdTotalColorDiff(101_800),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests repeat-image feature for ways */
                 new TestConfig("way-repeat-image", AREA_DEFAULT)
                         .setThresholdPixels(2100).setThresholdTotalColorDiff(93_000),
                 /** Tests the clamping for repeat-images and repeat-image-phase */
                 new TestConfig("way-repeat-image-clamp", AREA_DEFAULT)
-                        .setThresholdPixels(80).setThresholdTotalColorDiff(2_300),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests text along a way */
                 new TestConfig("way-text", AREA_DEFAULT)
-                        .setThresholdPixels(3400).setThresholdTotalColorDiff(122_700),
+                        .setThresholdPixels(3400).setThresholdTotalColorDiff(0),
 
                 /** Another test for node shapes */
                 new TestConfig("node-shapes2").setImageWidth(600)
-                        .setThresholdPixels(1230).setThresholdTotalColorDiff(43_700),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
                 /** Tests default values for node shapes */
                 new TestConfig("node-shapes-default")
-                        .setThresholdPixels(10).setThresholdTotalColorDiff(270),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
                 /** Tests node shapes with both fill and stroke combined */
                 new TestConfig("node-shapes-combined")
-                        .setThresholdPixels(360).setThresholdTotalColorDiff(9_200),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
                 /** Another test for dashed ways */
                 new TestConfig("way-dashes2")
-                        .setThresholdPixels(340).setThresholdTotalColorDiff(16_100),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
                 /** Tests node text placement */
                 new TestConfig("node-text2")
-                        .setThresholdPixels(1020).setThresholdTotalColorDiff(345_000),
+                        .setThresholdPixels(1020).setThresholdTotalColorDiff(0),
                 /** Tests relation link selector */
                 new TestConfig("relation-linkselector")
-                        .setThresholdPixels(430).setThresholdTotalColorDiff(13_000),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
                 /** Tests parent selector on relation */
                 new TestConfig("relation-parentselector")
-                        .setThresholdPixels(310).setThresholdTotalColorDiff(8_200),
+                        .setThresholdPixels(0).setThresholdTotalColorDiff(0),
 
                 /** Tests evaluation of expressions */
                 new TestConfig("eval").setImageWidth(600)
-                        .setThresholdPixels(6610).setThresholdTotalColorDiff(3_304_000)
+                        .setThresholdPixels(6610).setThresholdTotalColorDiff(0)
 
                 ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());
