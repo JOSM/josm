@@ -1489,6 +1489,9 @@ public class ImageProvider {
             Logging.error("createImageFromSvg: {0} {1} sourceWidth={2} sourceHeight={3}", svg.getXMLBase(), dim, sourceWidth, sourceHeight);
             return null;
         }
+        if (resizeMode == ImageResizeMode.BOUNDED) {
+            resizeMode = ImageResizeMode.BOUNDED_UPSCALE;
+        }
         return resizeMode.createBufferedImage(dim, new Dimension((int) sourceWidth, (int) sourceHeight), g -> {
             try {
                 synchronized (getSvgUniverse()) {

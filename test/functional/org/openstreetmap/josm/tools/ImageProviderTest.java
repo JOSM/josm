@@ -184,8 +184,8 @@ public class ImageProviderTest {
     public void testImageIconBounded() throws IOException {
         ImageResource resource = new ImageProvider("presets/misc/housenumber_small").getResource();
         testImage(8, 6, "housenumber_small-BOUNDED-08x08", resource.getImageIconBounded(new Dimension(8, 8)));
-        testImage(12, 9, "housenumber_small-BOUNDED-16x16", resource.getImageIconBounded(new Dimension(16, 16)));
-        testImage(12, 9, "housenumber_small-BOUNDED-24x24", resource.getImageIconBounded(new Dimension(24, 24)));
+        testImage(16, 12, "housenumber_small-BOUNDED-16x16", resource.getImageIconBounded(new Dimension(16, 16)));
+        testImage(24, 18, "housenumber_small-BOUNDED-24x24", resource.getImageIconBounded(new Dimension(24, 24)));
     }
 
     /**
@@ -260,8 +260,9 @@ public class ImageProviderTest {
     public void testGetCursorImageWithOverlay(float guiScale) throws IOException {
         GuiSizesHelper.setPixelDensity(guiScale);
         Point hotSpot = new Point();
-        final UnaryOperator<Dimension> bestCursorSizeFunction = dim -> dim;
+        UnaryOperator<Dimension> bestCursorSizeFunction = dim -> dim;
         Image image = ImageProvider.getCursorImage("normal", "selection", bestCursorSizeFunction, hotSpot);
+        bestCursorSizeFunction = dim -> new Dimension((int) (dim.width * guiScale), (int) (dim.height * guiScale));
         assertCursorDimensionsCorrect(new Point.Double(3.0, 2.0), image, bestCursorSizeFunction, hotSpot);
         assertImageEquals("cursor", getReferenceFile("cursor-normal-selection-" + Math.round(guiScale * 10)),
                 ((BufferedImage) image), 0, 0, null);
