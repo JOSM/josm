@@ -84,9 +84,9 @@ public class ImageResizeModeTest {
     public void testCacheKey() {
         assertEquals(0x00180018, ImageResizeMode.AUTO.cacheKey(ImageProvider.ImageSizes.LARGEICON.getImageDimension()));
         assertEquals(0x10180018, ImageResizeMode.BOUNDED.cacheKey(ImageProvider.ImageSizes.LARGEICON.getImageDimension()));
-        assertEquals(0x20180018, ImageResizeMode.PADDED.cacheKey(ImageProvider.ImageSizes.LARGEICON.getImageDimension()));
-        assertEquals(0x21000100, ImageResizeMode.PADDED.cacheKey(ImageProvider.ImageSizes.ABOUT_LOGO.getImageDimension()));
+        assertEquals(0x30180018, ImageResizeMode.PADDED.cacheKey(ImageProvider.ImageSizes.LARGEICON.getImageDimension()));
+        assertEquals(0x31000100, ImageResizeMode.PADDED.cacheKey(ImageProvider.ImageSizes.ABOUT_LOGO.getImageDimension()));
         assertEquals(0x0fff0fff, ImageResizeMode.AUTO.cacheKey(ImageResource.DEFAULT_DIMENSION));
-        assertEquals(0x2fff0fff, ImageResizeMode.PADDED.cacheKey(ImageResource.DEFAULT_DIMENSION));
+        assertEquals(0x3fff0fff, ImageResizeMode.PADDED.cacheKey(ImageResource.DEFAULT_DIMENSION));
     }
 }
