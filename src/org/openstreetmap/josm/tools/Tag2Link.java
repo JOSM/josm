@@ -186,20 +186,20 @@ public final class Tag2Link {
             linkConsumer.acceptLink(tr("View Wikipedia article"), url, imageResource.get());
         }
         if (key.matches("(.*:)?wikidata")) {
-            OsmUtils.splitMultipleValues(value)
-                    .forEach(q -> linkConsumer.acceptLink(tr("View Wikidata item"), "https://www.wikidata.org/wiki/" + q, imageResource.get()));
+            OsmUtils.splitMultipleValues(value).forEach(q -> linkConsumer.acceptLink(
+                    tr("View Wikidata item"), "https://www.wikidata.org/wiki/" + q, imageResource.get()));
         }
         if (key.matches("(.*:)?species")) {
             final String url = "https://species.wikimedia.org/wiki/" + value;
             linkConsumer.acceptLink(getLinkName(url, key), url, imageResource.get());
         }
         if (key.matches("wikimedia_commons|image") && value.matches("(?i:File):.*")) {
-            String url = "https://commons.wikimedia.org/wiki/" + value;
-            linkConsumer.acceptLink(tr("View image on Wikimedia Commons"), url, imageResource.get());
+            OsmUtils.splitMultipleValues(value).forEach(i -> linkConsumer.acceptLink(
+                    tr("View image on Wikimedia Commons"), "https://commons.wikimedia.org/wiki/" + i, imageResource.get()));
         }
         if (key.matches("wikimedia_commons|image") && value.matches("(?i:Category):.*")) {
-            String url = "https://commons.wikimedia.org/wiki/" + value;
-            linkConsumer.acceptLink(tr("View category on Wikimedia Commons"), url, imageResource.get());
+            OsmUtils.splitMultipleValues(value).forEach(i -> linkConsumer.acceptLink(
+                    tr("View category on Wikimedia Commons"), "https://commons.wikimedia.org/wiki/" + i, imageResource.get()));
         }
 
         wikidataRules.getValues(key).forEach(urlFormatter -> {

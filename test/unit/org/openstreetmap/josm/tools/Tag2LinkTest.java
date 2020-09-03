@@ -87,6 +87,11 @@ public class Tag2LinkTest {
     public void testImageCommonsImage() {
         Tag2Link.getLinksForTag("image", "File:Witten Brücke Gasstraße.jpg", this::addLink);
         checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Witten Brücke Gasstraße.jpg");
+        links.clear();
+        // non-regression test for #19754
+        Tag2Link.getLinksForTag("image", "File:Foo.jpg;File:Bar.jpg", this::addLink);
+        checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Foo.jpg",
+                "View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Bar.jpg");
     }
 
     /**
