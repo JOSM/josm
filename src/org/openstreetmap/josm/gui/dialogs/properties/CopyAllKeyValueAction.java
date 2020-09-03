@@ -32,9 +32,17 @@ public class CopyAllKeyValueAction extends AbstractCopyAction {
         super(tagTable, keyFn, objectSp);
         putValue(NAME, tr("Copy all Keys/Values"));
         putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
+    }
+
+    /**
+     * Registers this action shortcut
+     * @return this instance, for easy chaining
+     */
+    CopyAllKeyValueAction registerShortcut() {
         Shortcut sc = Shortcut.registerShortcut("system:copytags", tr("Edit: {0}", tr("Copy Tags")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
         MainApplication.registerActionShortcut(this, sc);
         sc.setAccelerator(this);
+        return this;
     }
 
     @Override
