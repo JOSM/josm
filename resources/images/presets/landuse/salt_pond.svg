@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -9,42 +7,43 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="16"
-   height="16"
-   viewBox="0 0 16 16"
-   id="svg2"
+   sodipodi:docname="salt_pond.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    version="1.1"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
-   sodipodi:docname="06.svg">
+   id="svg2"
+   viewBox="0 0 16 16"
+   height="16"
+   width="16">
   <defs
      id="defs4" />
   <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="4.9885817"
-     inkscape:cy="9.1950345"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     units="px"
-     inkscape:window-width="1680"
-     inkscape:window-height="987"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:document-rotation="0"
+     viewbox-height="16"
      inkscape:window-maximized="1"
-     viewbox-height="16">
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:window-height="987"
+     inkscape:window-width="1680"
+     units="px"
+     showgrid="true"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="px"
+     inkscape:cy="9.1950345"
+     inkscape:cx="4.9885817"
+     inkscape:zoom="34.516383"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base">
     <inkscape:grid
-       type="xygrid"
-       id="grid4136"
-       originx="0"
-       originy="0"
+       spacingy="1"
        spacingx="1"
-       spacingy="1" />
+       originy="0"
+       originx="0"
+       id="grid4136"
+       type="xygrid" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -70,54 +69,46 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
+     transform="translate(0,-1037.3622)"
      id="layer1"
-     transform="translate(0,-1037.3622)">
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect856"
-       width="16"
-       height="16"
-       x="0"
-       y="1037.3622"
-       ry="3.0000174" />
-    <rect
-       style="opacity:1;fill:#917c6f;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect852"
-       width="14"
-       height="14.000017"
-       x="1"
+       ry="3.0000174"
        y="1038.3622"
-       ry="3.0000174" />
+       x="1"
+       height="14.000017"
+       width="14"
+       id="rect852"
+       style="opacity:1;fill:#917c6f;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect854"
-       width="12"
-       height="11.999983"
-       x="2"
+       ry="2.0000174"
        y="1039.3622"
-       ry="2.0000174" />
+       x="2"
+       height="11.999983"
+       width="12"
+       id="rect854"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
-       style="opacity:1;fill:#917c6f;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect844"
-       width="2"
-       height="13.999983"
+       y="1038.3622"
        x="7"
-       y="1038.3622" />
+       height="13.999983"
+       width="2"
+       id="rect844"
+       style="opacity:1;fill:#917c6f;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
-       style="opacity:1;fill:#917c6f;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       y="1047.3622"
+       x="1"
+       height="1.0000174"
+       width="14"
        id="rect848"
-       width="14"
-       height="1.0000174"
-       x="1"
-       y="1047.3622" />
+       style="opacity:1;fill:#917c6f;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <rect
-       style="opacity:1;fill:#917c6f;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect850"
-       width="14"
-       height="1.0000174"
+       y="1042.3622"
        x="1"
-       y="1042.3622" />
+       height="1.0000174"
+       width="14"
+       id="rect850"
+       style="opacity:1;fill:#917c6f;fill-opacity:1;stroke:none;stroke-width:0.55400002;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>
