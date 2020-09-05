@@ -457,7 +457,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * @return the fix or {@code null}
          */
         Command fixPrimitive(OsmPrimitive p) {
-            if (fixCommands.isEmpty() && !deletion) {
+            if (p.getDataSet() == null || (fixCommands.isEmpty() && !deletion)) {
                 return null;
             }
             try {
