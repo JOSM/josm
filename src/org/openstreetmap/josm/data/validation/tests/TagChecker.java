@@ -479,6 +479,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         // CHECKSTYLE.OFF: BooleanExpressionComplexity
         return c == 0x0259 || c == 0x018F // U+0259 is paired with the capital letter U+018F in Azeri, see #18740
             || c == 0x0254 || c == 0x0186 // U+0254 is paired with the capital letter U+0186 in several African languages, see #18740
+            || c == 0x0257 || c == 0x018A // "ɗ/Ɗ" (U+0257/U+018A), see #19760
             || c == 0x025B || c == 0x0190 // U+025B is paired with the capital letter U+0190 in several African languages, see #18740
             || c == 0x0263 || c == 0x0194 // "ɣ/Ɣ" (U+0263/U+0194), see #18740
             || c == 0x0268 || c == 0x0197 // "ɨ/Ɨ" (U+0268/U+0197), see #18740
