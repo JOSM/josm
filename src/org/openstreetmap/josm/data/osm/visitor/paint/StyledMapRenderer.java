@@ -848,6 +848,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         temporaryGraphics.rotate(theta);
         int drawX = -img.getWidth() / 2 + img.offsetX;
         int drawY = -img.getHeight() / 2 + img.offsetY;
+        temporaryGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         temporaryGraphics.drawImage(img.getImage(disabled), drawX, drawY, nc);
         if (selected || member) {
             selectionDrawer.accept(temporaryGraphics, new Rectangle2D.Double(drawX - 2d, drawY - 2d, img.getWidth() + 4d, img.getHeight() + 4d));
