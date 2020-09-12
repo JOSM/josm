@@ -53,7 +53,7 @@ public class JumpToAction extends JosmAction {
      * Constructs a new {@code JumpToAction}.
      */
     public JumpToAction() {
-        super(tr("Jump to Position"), (ImageProvider) null, tr("Opens a dialog that allows to jump to a specific location"),
+        super(tr("Jump to Position"), "dialogs/position", tr("Opens a dialog that allows to jump to a specific location"),
                 Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump to Position")),
                         KeyEvent.VK_J, Shortcut.CTRL), true, "action/jumpto", false);
         // make this action listen to mapframe change events

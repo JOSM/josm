@@ -24,7 +24,7 @@ public class WireframeToggleAction extends ToggleAction {
      */
     public WireframeToggleAction() {
         super(tr("Wireframe View"),
-              null, /* no icon */
+              "dialogs/mappaint/wireframe_small",
               tr("Enable/disable rendering the map as wireframe only"),
               Shortcut.registerShortcut("menu:view:wireframe", tr("Toggle Wireframe view"), KeyEvent.VK_W, Shortcut.CTRL),
               false /* register toolbar */

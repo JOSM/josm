@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This class toggles the full-screen mode.
@@ -37,7 +38,7 @@ public class FullscreenToggleAction extends ToggleAction {
      */
     public FullscreenToggleAction() {
         super(tr("Fullscreen view"),
-              null, /* no icon */
+              new ImageProvider("fullscreen"),
               tr("Toggle fullscreen view"),
               Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle fullscreen view"), KeyEvent.VK_F11, Shortcut.DIRECT),
               false /* register */, null, false
