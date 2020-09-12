@@ -16,4 +16,4 @@ Potlatch 2's repository is git://git.openstreetmap.org/potlatch2.git
 
 When updating from upstream, keep all 4 locations in sync.
 
-At time of writing, the last update used 0a21b8bca71f6105c244cb52d7b7dcb5a840bd3a (2014-10-07) but better check the commit dates as well.
+At time of writing, the last update used 28c84372002671c8d71a81a2e423f4965388edd7 (2019-06-21) but better check the commit dates as well.

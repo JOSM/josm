@@ -69,12 +69,12 @@ way[railway=light_rail]::dashes { z-index: 7; color: #999999; width: 2; dashes: 
 way[construction=light_rail] { z-index: 6; color: black; width: 4; dashes: 8, 4, 4, 4; }
 way[construction=light_rail]::dashes { z-index: 7; color: #999999; width: 2; dashes: 8,12; }
 
-/* Waterways */ 
+/* Waterways */	
 
 way[waterway=river], 
 way[waterway=canal], 
 way[waterway=stream]   { color: #3434ff; width: 2; text:name; text-color: #3434ff; font-size:9; text-position: offset; text-offset: 7;}
-way[waterway=drain]              {color: #3434ff; width: 1; text:name; text-color: #3434ff; text-position: offset; text-offset: 3;}
+way[waterway=drain] 			 {color: #3434ff; width: 1; text:name; text-color: #3434ff; text-position: offset; text-offset: 3;}
 way[waterway][tunnel=yes]                {dashes: 8,4;}
 
 /* Aeroways */
