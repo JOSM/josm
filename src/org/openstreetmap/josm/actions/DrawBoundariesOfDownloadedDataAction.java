@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.display.DrawingPreference;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This class toggles whether to draw boundaries of downloaded data.
@@ -20,6 +21,7 @@ public class DrawBoundariesOfDownloadedDataAction extends PreferenceToggleAction
      */
     public DrawBoundariesOfDownloadedDataAction() {
         super(tr("Draw boundaries of downloaded data"),
+                new ImageProvider("hatched.svg"),
                 tr("Enable/disable hatched background rendering of areas outside of the downloaded areas."),
                 DrawingPreference.SOURCE_BOUNDS_PROP
         );

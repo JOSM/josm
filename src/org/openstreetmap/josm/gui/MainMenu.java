@@ -132,6 +132,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -827,9 +828,11 @@ public class MainMenu extends JMenuBar {
         add(viewMenu, historyinfoweb);
         viewMenu.addSeparator();
         viewMenu.add(new PreferenceToggleAction(tr("Main toolbar"),
+                new ImageProvider("dialogs/main_toolbar.svg"),
                 tr("Toggles the visibility of the main toolbar (i.e., the horizontal toolbar)"),
                 MapFrame.TOOLBAR_VISIBLE).getCheckbox());
         viewMenu.add(new PreferenceToggleAction(tr("Edit toolbar"),
+                new ImageProvider("dialogs/edit_toolbar.svg"),
                 tr("Toggles the visibility of the edit toolbar (i.e., the vertical tool)"),
                 MapFrame.SIDE_TOOLBAR_VISIBLE).getCheckbox());
         // -- dialogs panel toggle action

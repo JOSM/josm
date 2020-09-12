@@ -9,6 +9,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * User action to toggle a custom boolean preference value.
@@ -28,7 +29,19 @@ public class PreferenceToggleAction extends JosmAction implements PreferenceChan
      * @param pref the preference to toggle
      */
     public PreferenceToggleAction(String name, String tooltip, BooleanProperty pref) {
-        super(name, null, tooltip, null, false);
+        this(name, null, tooltip, pref);
+    }
+
+    /**
+     * Create a new PreferenceToggleAction.
+     * @param name the (translated) title
+     * @param icon icon to display e.g. in menu
+     * @param tooltip tooltip text
+     * @param pref the preference to toggle
+     * @since 17021
+     */
+    public PreferenceToggleAction(String name, ImageProvider icon, String tooltip, BooleanProperty pref) {
+        super(name, icon, tooltip, null, false, null, true);
         setToolbarId("toggle-" + pref.getKey());
         this.pref = pref;
         checkbox = new JCheckBoxMenuItem(this);
