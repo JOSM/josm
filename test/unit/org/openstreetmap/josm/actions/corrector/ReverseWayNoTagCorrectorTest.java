@@ -6,6 +6,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -33,5 +35,12 @@ public class ReverseWayNoTagCorrectorTest {
         assertEquals(0, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("aerialway", "station")).size());
         assertEquals(0, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("incline", "up")).size());
         assertEquals(0, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("oneway", "yes")).size());
+        assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("barrier", "kerb")).size());
+        assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("barrier", "city_wall")).size());
+
+        final Tagged twoSidedCityWall = new Way();
+        twoSidedCityWall.put("barrier", "city_wall");
+        twoSidedCityWall.put("two_sided", "yes");
+        assertEquals(0, ReverseWayNoTagCorrector.getDirectionalTags(twoSidedCityWall).size());
     }
 }

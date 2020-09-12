@@ -57,7 +57,9 @@ public final class ReverseWayNoTagCorrector {
             final boolean isDirectional = DIRECTIONAL_TAGS.contains(tag) || tag.isDirectionKey();
             if (isDirectional) {
                 final boolean cannotBeCorrected = ReverseWayTagCorrector.getTagCorrections(tag).isEmpty();
-                if (cannotBeCorrected) {
+
+                if (cannotBeCorrected && !way.isKeyTrue("two_sided")) {
+                    // two_sided=yes is a special (documented) barrier=city_wall attribute, see #197140
                     collection.add(tag);
                 }
             }
