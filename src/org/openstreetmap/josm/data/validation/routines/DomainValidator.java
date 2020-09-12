@@ -943,7 +943,6 @@ public final class DomainValidator extends AbstractValidator {
         "men", // men Exclusive Registry Limited
         "menu", // menu Wedding TLD2, LLC
         "merckmsd", // merckmsd MSD Registry Holdings, Inc.
-        "metlife", // metlife MetLife Services and Solutions, LLC
         "miami", // miami Top Level Domain Holdings Limited
         "microsoft", // microsoft Microsoft Corporation
         "mil", // mil DoD Network Information Center

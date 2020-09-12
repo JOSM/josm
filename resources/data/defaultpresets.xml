@@ -7883,6 +7883,15 @@
             <text key="name" text="Name" />
             <text key="height" text="Height (meters)" length="7" />
         </item> <!-- Cliff -->
+        <item name="Sinkhole" icon="presets/landmark/sinkhole.svg" type="node,closedway" preset_name_label="true">
+            <link wiki="Tag:natural=sinkhole" />
+            <space />
+            <key key="natural" value="sinkhole" />
+            <combo key="sinkhole" text="Type" values="bluehole,doline,estavelle,pit,ponor" />
+            <optional>
+                <reference ref="name_wikipedia_wikidata" />
+            </optional>
+        </item> <!-- Sinkhole -->
         <item name="Cave Entrance" icon="presets/landmark/cave_entrance.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:natural=cave_entrance" />
             <label text="The entrance to a cave." />

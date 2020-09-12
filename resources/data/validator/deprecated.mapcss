@@ -2046,4 +2046,12 @@ node[lamp_type=electrical] {
   /* without autofix, it is not clear if a building or a building part is mapped */
 }
 
+/* #19739 */
+*[natural=sink_hole] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "natural=sinkhole";
+  group: tr("deprecated tagging");
+  fixAdd: "natural=sinkhole";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

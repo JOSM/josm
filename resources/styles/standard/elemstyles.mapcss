@@ -4769,11 +4769,16 @@ node[natural=strait] {
     set icon_z17;
 }
 area[natural=cape],
+area[natural=sinkhole],
 area[natural=cave_entrance] {
     fill-color: natural#002f00;
 }
 node[natural=cape] {
     icon-image: "presets/nautical/cape.svg";
+    set icon_z17;
+}
+node[natural=sinkhole] {
+    icon-image: "presets/landmark/sinkhole.svg";
     set icon_z17;
 }
 node[natural=cave_entrance] {
