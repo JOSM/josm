@@ -3366,8 +3366,8 @@ node[craft=metal_construction] {
     icon-image: "presets/craft/electrician.svg";
     set icon_z17;
 }
-node[craft=brewery][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=brewery] {
+    icon-image: "presets/craft/brewery.svg";
     set icon_z17;
 }
 node[craft=plumber] {
@@ -3382,8 +3382,8 @@ node[craft=gardener] {
     icon-image: "presets/craft/gardener.svg";
     set icon_z17;
 }
-node[craft=winery][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=winery] {
+    icon-image: "presets/craft/winery.svg";
     set icon_z17;
 }
 node[craft=hvac] {
@@ -3398,8 +3398,8 @@ node[craft=stonemason] {
     icon-image: "presets/craft/stonemason.svg";
     set icon_z17;
 }
-node[craft=handicraft][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=handicraft] {
+    icon-image: "presets/craft/handicraft.svg";
     set icon_z17;
 }
 node[craft=pottery] {

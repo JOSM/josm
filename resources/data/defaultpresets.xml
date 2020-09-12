@@ -7492,14 +7492,14 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Beekeeper -->
-    <item name="Brewery" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Brewery" icon="presets/craft/brewery.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=brewery" />
         <space />
         <key key="craft" value="brewery" />
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Brewery -->
-    <item name="Winery" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Winery" icon="presets/craft/winery.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=winery" />
         <space />
         <key key="craft" value="winery" />
@@ -7599,7 +7599,7 @@
         <reference ref="name_operator_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Photographer -->
-    <item name="Handicraft" type="node,closedway,multipolygon" preset_name_label="true">
+    <item name="Handicraft" icon="presets/craft/handicraft.svg" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:craft=handicraft" />
         <space />
         <key key="craft" value="handicraft" />
