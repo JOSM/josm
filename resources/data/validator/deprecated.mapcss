@@ -2054,4 +2054,30 @@ node[lamp_type=electrical] {
   fixAdd: "natural=sinkhole";
 }
 
+/* #19782 */
+*[climbing:grade:UIAA:min] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "climbing:grade:uiaa:min";
+  group: tr("deprecated tagging");
+  fixChangeKey: "climbing:grade:UIAA:min => climbing:grade:uiaa:min";
+}
+*[climbing:grade:UIAA:max] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "climbing:grade:uiaa:max";
+  group: tr("deprecated tagging");
+  fixChangeKey: "climbing:grade:UIAA:max => climbing:grade:uiaa:max";
+}
+*[climbing:grade:UIAA:mean] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "climbing:grade:uiaa:mean";
+  group: tr("deprecated tagging");
+  fixChangeKey: "climbing:grade:UIAA:mean => climbing:grade:uiaa:mean";
+}
+*[climbing:grade:UIAA] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "climbing:grade:uiaa";
+  group: tr("deprecated tagging");
+  fixChangeKey: "climbing:grade:UIAA => climbing:grade:uiaa";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
