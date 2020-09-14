@@ -81,7 +81,7 @@
     <chunk id="railway_electrified_yesno">
         <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" values_context="electrified" />
         <combo key="voltage" text="Voltage in Volts (V)" values="600,650,750,1500,3000,15000,25000" length="5" />
-        <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,25" length="5" />
+        <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,25" length="5" values_sort="false" />
         <reference ref="highway_yesno" />
     </chunk>
     <chunk id="railway_service_gauge_electrified_yesno">
@@ -346,7 +346,7 @@
         <combo key="voltage" text="Voltage in Volts (V)" values="1150000,765000,750000,735000,500000,450000,420000,400000,380000,350000,345000,330000,315000,300000,275000,238000,230000,225000,220000,200000,161000,154000,150000,138000,132000,120000,115000,110000,100000,90000,69000,66000,65000,63000,60000,55000,49000,45000,35000,33000,30000,22000,20000,15000,110000;20000" />
     </chunk>
     <chunk id="frequency">
-        <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,25,50,60" length="5" />
+        <combo key="frequency" text="Frequency in Hertz (Hz)" values="0,16.67,16.7,25,50,60" length="5" values_sort="false" />
     </chunk>
     <chunk id="voltage_frequency">
         <reference ref="voltage" />
