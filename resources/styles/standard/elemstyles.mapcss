@@ -3419,8 +3419,8 @@ node[craft=key_cutter] {
     icon-image: "presets/craft/key_cutter.svg";
     set icon_z17;
 }
-node[craft=caterer][!is_prop_set(icon-image)] {
-    icon-image: "presets/misc/no_icon.svg";
+node[craft=caterer] {
+    icon-image: "presets/craft/caterer.svg";
     set icon_z17;
 }
 node[craft=roofer] {
