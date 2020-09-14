@@ -166,7 +166,7 @@ public class VersionTable extends JTable implements ChangeListener, Destroyable 
             super(true);
             putValue(NAME, tr("Changeset info"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the changeset"));
-            new ImageProvider("data/changeset").getResource().attachImageIcon(this, true);
+            new ImageProvider("help/internet").getResource().attachImageIcon(this, true);
         }
 
         @Override
