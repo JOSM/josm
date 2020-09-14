@@ -307,6 +307,13 @@ way[highway=~/^(cycleway|footway|path)$/][segregated=no][sidewalk =~/^(left|righ
   group: tr("suspicious tag combination");
 }
 
+/* {0.key} together with {1.tag} and {2.key}, #19747 */
+way[railway][electrified=no][frequency],
+way[railway][electrified=no][voltage] {
+  throwWarning: tr("{0} together with {1} and {2}", "{0.key}", "{1.tag}", "{2.key}");
+  group: tr("suspicious tag combination");
+}
+
 /* #11127, #13727 */
 way[waterway][bridge=yes][waterway!=weir] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.tag}");
