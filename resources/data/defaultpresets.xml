@@ -5452,6 +5452,13 @@
                 </checkgroup>
             </optional>
         </item> <!-- Goods conveyor -->
+        <item name="Pumping station" icon="presets/misc/pumping_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:man_made=pumping_station" />
+            <space />
+            <key key="man_made" value="pumping_station" />
+            <reference ref="name_ref" />
+            <reference ref="operator_substance" />
+        </item> <!-- Pumping station -->
         <item name="Mineshaft" icon="presets/landmark/mine.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:man_made=mineshaft" />
             <space />
@@ -5712,8 +5719,7 @@
             <link wiki="Tag:man_made=pipeline" />
             <space />
             <key key="man_made" value="pipeline" />
-            <text key="name" text="Name" />
-            <text key="ref" text="Reference" />
+            <reference ref="name_ref" />
             <reference ref="operator_substance" />
             <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
             <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />

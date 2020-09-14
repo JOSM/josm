@@ -1394,6 +1394,7 @@ area[man_made=storage_tank],
 area[man_made=bunker_silo],
 area[man_made=lighthouse],
 area[man_made=monitoring_station],
+area[man_made=pumping_station],
 area[man_made=mineshaft] {
     fill-color: manmade#d8d8d8;
 }
@@ -1472,6 +1473,10 @@ node[man_made=lighthouse] {
 }
 node[man_made=monitoring_station] {
     icon-image: "presets/misc/monitoring_station.svg";
+    set icon_z17;
+}
+node[man_made=pumping_station] {
+    icon-image: "presets/misc/pumping_station.svg";
     set icon_z17;
 }
 node[man_made=mineshaft] {
