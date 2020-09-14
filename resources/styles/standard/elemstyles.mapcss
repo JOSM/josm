@@ -2645,6 +2645,10 @@ node[emergency=water_tank] {
     icon-image: "presets/emergency/water_tank.svg";
     set icon_z17;
 }
+node[emergency=suction_point] {
+    icon-image: "presets/emergency/suction_point.svg";
+    set icon_z17;
+}
 node[emergency=emergency_ward_entrance] {
     icon-image: "presets/emergency/emergency_ward_entrance.svg";
     set icon_z17;

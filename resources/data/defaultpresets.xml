@@ -4350,6 +4350,12 @@
             <space />
             <text key="water_tank:volume" text="Volume (in liters)" />
         </item> <!-- Water Tank -->
+        <item name="Suction point" icon="presets/emergency/suction_point.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:emergency=suction_point" />
+            <space />
+            <key key="emergency" value="suction_point" />
+            <reference ref="name_ref_operator" />
+        </item> <!-- Suction point -->
         <separator />
         <item name="Assembly Point" icon="presets/emergency/assembly_point.svg" type="node" preset_name_label="true">
             <link wiki="Tag:emergency=assembly_point" />
