@@ -474,14 +474,14 @@ way[destination][!oneway?][junction!=roundabout][highway] {
 }
 
 /* #11389, #19010 */
-way["maxspeed:forward"=*"maxspeed:backward"][!maxspeed] {
+way[maxspeed:forward][maxspeed:backward][!maxspeed]["maxspeed:forward"=*"maxspeed:backward"] {
   throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
   suggestAlternative: "maxspeed";
   group: tr("suspicious tag combination");
   fixChangeKey: "maxspeed:forward=>maxspeed";
   fixRemove: "maxspeed:backward";
 }
-way["maxspeed:forward"=*maxspeed]["maxspeed:backward"=*maxspeed][maxspeed] {
+way[maxspeed:forward][maxspeed:backward][maxspeed]["maxspeed:forward"=*maxspeed]["maxspeed:backward"=*maxspeed] {
   throwWarning: tr("Same value of {0}, {1} and {2}", "{0.key}", "{1.key}", "{2.key}");
   set AllSameMaxspeed;
   suggestAlternative: "maxspeed";
@@ -489,14 +489,14 @@ way["maxspeed:forward"=*maxspeed]["maxspeed:backward"=*maxspeed][maxspeed] {
   fixRemove: "maxspeed:forward";
   fixRemove: "maxspeed:backward";
 }
-way["cycleway:left"=*"cycleway:right"][!cycleway] {
+way[cycleway:left][cycleway:right][!cycleway]["cycleway:left"=*"cycleway:right"] {
   throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
   suggestAlternative: "cycleway";
   group: tr("suspicious tag combination");
   fixChangeKey: "cycleway:left=>cycleway";
   fixRemove: "cycleway:right";
 }
-way["cycleway:left"=*cycleway]["cycleway:right"=*cycleway][cycleway] {
+way[cycleway:left][cycleway:right][cycleway]["cycleway:left"=*cycleway]["cycleway:right"=*cycleway] {
   throwWarning: tr("Same value of {0}, {1} and {2}", "{0.key}", "{1.key}", "{2.key}");
   set AllSameCycleway;
   suggestAlternative: "cycleway";
@@ -504,14 +504,14 @@ way["cycleway:left"=*cycleway]["cycleway:right"=*cycleway][cycleway] {
   fixRemove: "cycleway:left";
   fixRemove: "cycleway:right";
 }
-way["sidewalk:left"=*"sidewalk:right"][!sidewalk] {
+way[sidewalk:left][sidewalk:right][!sidewalk]["sidewalk:left"=*"sidewalk:right"] {
   throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
   suggestAlternative: "sidewalk";
   group: tr("suspicious tag combination");
   fixChangeKey: "sidewalk:left=>sidewalk";
   fixRemove: "sidewalk:right";
 }
-way["sidewalk:left"=*sidewalk]["sidewalk:right"=*sidewalk][sidewalk] {
+way[sidewalk:left][sidewalk:right][sidewalk]["sidewalk:left"=*sidewalk]["sidewalk:right"=*sidewalk] {
   throwWarning: tr("Same value of {0}, {1} and {2}", "{0.key}", "{1.key}", "{2.key}");
   set AllSameSidewalk;
   suggestAlternative: "sidewalk";
