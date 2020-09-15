@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="90.000000"
+   inkscape:export-xdpi="90.000000"
+   inkscape:export-filename="/home/jimmac/Desktop/wi-fi.png"
+   width="24"
+   height="24"
+   id="svg11300"
+   sodipodi:version="0.32"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="relationlist.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   version="1.1">
+  <defs
+     id="defs3">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 24 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="48 : 24 : 1"
+       inkscape:persp3d-origin="24 : 16 : 1"
+       id="perspective22" />
+    <linearGradient
+       id="linearGradient3264">
+      <stop
+         style="stop-color:#c9c9c9;stop-opacity:1;"
+         offset="0"
+         id="stop3266" />
+      <stop
+         id="stop3276"
+         offset="0.25"
+         style="stop-color:#f8f8f8;stop-opacity:1;" />
+      <stop
+         id="stop3272"
+         offset="0.5"
+         style="stop-color:#e2e2e2;stop-opacity:1;" />
+      <stop
+         style="stop-color:#b0b0b0;stop-opacity:1;"
+         offset="0.75"
+         id="stop3274" />
+      <stop
+         style="stop-color:#c9c9c9;stop-opacity:1;"
+         offset="1"
+         id="stop3268" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3256">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3258" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3260" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3256"
+       id="radialGradient3262"
+       cx="25.455845"
+       cy="39.161163"
+       fx="25.455845"
+       fy="39.161163"
+       r="19.622213"
+       gradientTransform="matrix(0.50217863,0,0,0.15864677,-0.5935871,38.824211)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3264"
+       id="linearGradient3281"
+       gradientUnits="userSpaceOnUse"
+       x1="14.462892"
+       y1="12.284524"
+       x2="34.534348"
+       y2="39.684914"
+       gradientTransform="matrix(0.61821137,0,0,0.61933986,-2.6454327,20.69509)" />
+  </defs>
+  <sodipodi:namedview
+     stroke="#ef2929"
+     fill="#eeeeec"
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="0.25490196"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="16"
+     inkscape:cx="9.5843162"
+     inkscape:cy="12.343906"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:showpageshadow="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     showborder="true"
+     inkscape:pagecheckerboard="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid829" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata4">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Jakub Steiner</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:source>http://jimmac.musichall.cz</dc:source>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:title></dc:title>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>emblem</rdf:li>
+            <rdf:li>system</rdf:li>
+            <rdf:li>library</rdf:li>
+            <rdf:li>crucial</rdf:li>
+            <rdf:li>base</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     transform="translate(0,-24)">
+    <ellipse
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:0.40909089;fill:url(#radialGradient3262);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.50265777;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none;marker-mid:none;marker-end:none"
+       id="path3254"
+       cx="12.18979"
+       cy="45.036999"
+       rx="9.8538561"
+       ry="3.113003" />
+    <path
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:url(#linearGradient3281);fill-opacity:1;fill-rule:nonzero;stroke:#606060;stroke-width:0.84769261;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none;marker-mid:none;marker-end:none"
+       d="m 11.430567,24.523897 c -0.231688,0.01589 -0.456882,0.05183 -0.684451,0.07793 h -0.01555 l -0.544443,2.976548 C 9.2987132,27.780837 8.4638418,28.124436 7.7127693,28.591338 L 5.2705338,26.830341 c -0.6601994,0.513495 -1.2609765,1.112375 -1.7888984,1.760997 l 1.6955639,2.477867 c -0.5148194,0.788184 -0.901962,1.688174 -1.120005,2.633704 -3.75e-5,0.0045 -3.15e-5,0.01485 0,0.01559 l -2.955573,0.467524 c -0.05403,0.442154 -0.077775,0.899106 -0.077775,1.355813 0,0.373666 0.01035,0.742344 0.046665,1.106467 l 2.9555745,0.529857 c 0.210201,1.028242 0.6095116,1.98853 1.166673,2.836297 l -1.7577884,2.415525 c 0.5034194,0.626114 1.084611,1.196163 1.7111219,1.698661 L 7.6349958,42.4144 c 0.869838,0.555897 1.8408345,0.945702 2.8933502,1.137635 l 0.466669,2.945386 c 0.331611,0.03024 0.671681,0.03117 1.011117,0.03117 0.479207,0 0.936941,-0.01819 1.400009,-0.07793 l 0.560002,-3.00772 c 0.999327,-0.249147 1.938094,-0.681356 2.75335,-1.262309 l 2.395571,1.745412 c 0.621243,-0.529507 1.189335,-1.138138 1.680009,-1.792167 L 19.05284,39.609262 c 0.471825,-0.816348 0.798754,-1.717059 0.964452,-2.680456 l 2.940018,-0.467522 c 0.0258,-0.307365 0.03113,-0.605452 0.03113,-0.919458 0,-0.545673 -0.06332,-1.080702 -0.139995,-1.605156 l -2.98671,-0.545448 C 19.627674,32.525386 19.243646,31.717571 18.757276,30.99128 l 1.757789,-2.415533 c -0.544858,-0.667548 -1.166388,-1.284214 -1.851124,-1.807749 l -2.535571,1.745414 c -0.728749,-0.431784 -1.512983,-0.763086 -2.364457,-0.950627 l -0.466669,-2.960969 c -0.424757,-0.05006 -0.853008,-0.07793 -1.291119,-0.07793 -0.11841,0 -0.24027,-0.0038 -0.35778,0 -0.05729,0.0018 -0.11397,-0.0033 -0.171113,0 -0.01548,8.97e-4 -0.03123,-0.0011 -0.04668,0 z m 0.404445,7.573847 c 0.05683,-0.0029 0.113565,0 0.171113,0 1.841353,0 3.344464,1.505854 3.344464,3.350571 0,1.844715 -1.503111,3.334987 -3.344464,3.334987 -1.841352,0 -3.3289097,-1.490272 -3.3289097,-3.334987 1.5e-6,-1.787067 1.3960777,-3.261011 3.1577967,-3.350571 z"
+       id="path3243"
+       inkscape:connector-curvature="0" />
+    <ellipse
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:0.64772728;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.51788872;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none;marker-mid:none;marker-end:none"
+       id="path3283"
+       cx="12.042584"
+       cy="35.438091"
+       rx="3.9941418"
+       ry="4.0017667" />
+  </g>
+</svg>

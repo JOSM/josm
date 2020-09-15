@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" version="1.1">
+  <path d="M4.5,4.5l8,-2l9,5v11l-20,4zm6,5l-1,7l7,-5z" fill="#9393ff" stroke="#7f7fff" fill-opacity=".4"/>
+  <path d="M3.5,3.5h2v2h-2z
+    m8,-2h2v2h-2z
+    m9,5h2v2h-2z
+    m0,11h2v2h-2z
+    m-20,4h2v2h-2z
+    m9,-13h2v2h-2z
+    m-1,7h2v2h-2z
+    m7,-5h2v2h-2z" stroke="#df421e" fill="#ffffff"/>
+</svg>

@@ -376,7 +376,7 @@ public class RelationListDialog extends ToggleDialog
         NewAction() {
             putValue(SHORT_DESCRIPTION, tr("Create a new relation"));
             putValue(NAME, tr("New"));
-            new ImageProvider("dialogs", "addrelation").getResource().attachImageIcon(this, true);
+            new ImageProvider("dialogs", "add").getResource().attachImageIcon(this, true);
             updateEnabledState();
         }
 
