@@ -16,6 +16,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.util.TableHelper;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Obtains the selected key and values from a table and restores those properties on the specified primitive.
@@ -44,6 +45,7 @@ public class RestorePropertyAction extends AbstractAction {
         this.valueFn = valueFn;
         this.objectSp = objectSp;
         this.selectionModel = selectionModel;
+        new ImageProvider("undo").getResource().attachImageIcon(this, true);
     }
 
     @Override

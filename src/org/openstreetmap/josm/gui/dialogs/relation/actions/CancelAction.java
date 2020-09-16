@@ -69,7 +69,7 @@ public class CancelAction extends SavingAction {
                 ),
                 new ButtonSpec(
                         tr("No, discard the changes and close"),
-                        new ImageProvider("cancel"),
+                        new ImageProvider("undo"),
                         tr("Click to discard the changes and close this relation editor"),
                         null /* no specific help topic */
                 ),
