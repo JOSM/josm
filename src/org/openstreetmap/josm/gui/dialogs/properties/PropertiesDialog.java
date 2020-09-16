@@ -112,6 +112,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -1269,6 +1270,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         PasteValueAction() {
             putValue(NAME, tr("Paste Value"));
             putValue(SHORT_DESCRIPTION, tr("Paste the value of the selected tag from clipboard"));
+            new ImageProvider("paste").getResource().attachImageIcon(this, true);
         }
 
         @Override
@@ -1292,9 +1294,11 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             if (sameType) {
                 putValue(NAME, tr("Search Key/Value/Type"));
                 putValue(SHORT_DESCRIPTION, tr("Search with the key and value of the selected tag, restrict to type (i.e., node/way/relation)"));
+                new ImageProvider("dialogs/search").getResource().attachImageIcon(this, true);
             } else {
                 putValue(NAME, tr("Search Key/Value"));
                 putValue(SHORT_DESCRIPTION, tr("Search with the key and value of the selected tag"));
+                new ImageProvider("dialogs/search").getResource().attachImageIcon(this, true);
             }
         }
 

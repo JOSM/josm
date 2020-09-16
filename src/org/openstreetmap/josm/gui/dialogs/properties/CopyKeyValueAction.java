@@ -15,6 +15,7 @@ import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Copy the key and value of the selected tag(s) to clipboard.
@@ -32,6 +33,7 @@ public class CopyKeyValueAction extends AbstractCopyAction implements PopupMenuL
         super(tagTable, keyFn, objectSp);
         setName(0);
         putValue(SHORT_DESCRIPTION, tr("Copy the key and value of the selected tags to clipboard"));
+        new ImageProvider("copy").getResource().attachImageIcon(this, true);
     }
 
     private void setName(long n) {

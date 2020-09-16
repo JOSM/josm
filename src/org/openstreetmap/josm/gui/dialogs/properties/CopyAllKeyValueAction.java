@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Copy the key and value of all the tags to clipboard.
@@ -32,6 +33,7 @@ public class CopyAllKeyValueAction extends AbstractCopyAction {
         super(tagTable, keyFn, objectSp);
         putValue(NAME, tr("Copy all Keys/Values"));
         putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
+        new ImageProvider("copy").getResource().attachImageIcon(this, true);
     }
 
     /**

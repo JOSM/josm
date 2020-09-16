@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Copy the value of the selected tag to clipboard.
@@ -28,6 +29,7 @@ public class CopyValueAction extends AbstractCopyAction {
         super(tagTable, keyFn, objectSp);
         putValue(NAME, tr("Copy Value"));
         putValue(SHORT_DESCRIPTION, tr("Copy the value of the selected tag to clipboard"));
+        new ImageProvider("copy").getResource().attachImageIcon(this, true);
     }
 
     @Override

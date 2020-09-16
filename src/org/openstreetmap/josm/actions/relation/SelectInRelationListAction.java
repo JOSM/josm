@@ -21,7 +21,7 @@ public class SelectInRelationListAction extends AbstractRelationAction {
     public SelectInRelationListAction() {
         putValue(NAME, tr("Select in relation list"));
         putValue(SHORT_DESCRIPTION, tr("Select relation in relation list."));
-        new ImageProvider("dialogs", "selectionlist").getResource().attachImageIcon(this, true);
+        new ImageProvider("dialogs", "relationlist").getResource().attachImageIcon(this, true);
     }
 
     @Override
