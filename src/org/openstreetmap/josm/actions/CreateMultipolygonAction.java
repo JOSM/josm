@@ -78,7 +78,9 @@ public class CreateMultipolygonAction extends JosmAction {
      * @param update {@code true} if the multipolygon must be updated, {@code false} if it must be created
      */
     public CreateMultipolygonAction(final boolean update) {
-        super(getName(update), /* ICON */ "multipoly_create", getName(update),
+        super(getName(update),
+                update ? /* ICON */ "multipoly_update" : /* ICON */ "multipoly_create",
+                getName(update),
                 /* at least three lines for each shortcut or the server extractor fails */
                 update ? Shortcut.registerShortcut("tools:multipoly_update",
                             tr("Tool: {0}", getName(true)),
