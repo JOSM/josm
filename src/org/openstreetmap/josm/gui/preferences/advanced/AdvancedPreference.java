@@ -59,6 +59,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
@@ -95,7 +96,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
      */
     private static final class EditBoundariesAction extends AbstractAction {
         EditBoundariesAction() {
-            super(tr("Edit boundaries"));
+            super(tr("Edit boundaries"), ImageProvider.get("dialogs/edit", ImageProvider.ImageSizes.MENU));
         }
 
         @Override
@@ -110,7 +111,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
     private final class ResetPreferencesAction extends AbstractAction {
         ResetPreferencesAction() {
-            super(tr("Reset preferences"));
+            super(tr("Reset preferences"), ImageProvider.get("undo", ImageProvider.ImageSizes.MENU));
         }
 
         @Override
@@ -200,7 +201,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         p.add(scroll, GBC.eol().fill(GBC.BOTH));
         scroll.setPreferredSize(new Dimension(400, 200));
 
-        JButton add = new JButton(tr("Add"));
+        JButton add = new JButton(tr("Add"), ImageProvider.get("dialogs/add", ImageProvider.ImageSizes.SMALLICON));
         p.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
         p.add(add, GBC.std().insets(0, 5, 0, 0));
         add.addActionListener(e -> {
@@ -212,7 +213,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             }
         });
 
-        JButton edit = new JButton(tr("Edit"));
+        JButton edit = new JButton(tr("Edit"), ImageProvider.get("dialogs/edit", ImageProvider.ImageSizes.SMALLICON));
         p.add(edit, GBC.std().insets(5, 5, 5, 0));
         edit.addActionListener(e -> {
             if (table.editPreference(gui))
@@ -220,16 +221,16 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         });
         table.getSelectionModel().addListSelectionListener(event -> edit.setEnabled(table.getSelectedRowCount() == 1));
 
-        JButton reset = new JButton(tr("Reset"));
+        JButton reset = new JButton(tr("Reset"), ImageProvider.get("undo", ImageProvider.ImageSizes.SMALLICON));
         p.add(reset, GBC.std().insets(0, 5, 0, 0));
         reset.addActionListener(e -> table.resetPreferences(gui));
         table.getSelectionModel().addListSelectionListener(event -> reset.setEnabled(table.getSelectedRowCount() > 0));
 
-        JButton read = new JButton(tr("Read from file"));
+        JButton read = new JButton(tr("Read from file"), ImageProvider.get("open", ImageProvider.ImageSizes.SMALLICON));
         p.add(read, GBC.std().insets(5, 5, 0, 0));
         read.addActionListener(e -> readPreferencesFromXML());
 
-        JButton export = new JButton(tr("Export selected items"));
+        JButton export = new JButton(tr("Export selected items"), ImageProvider.get("save", ImageProvider.ImageSizes.SMALLICON));
         p.add(export, GBC.std().insets(5, 5, 0, 0));
         export.addActionListener(e -> exportSelectedToXML());
 
@@ -407,6 +408,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
     private JMenu getProfileMenu() {
         final JMenu p = new JMenu(tr("Load profile"));
+        p.setIcon(ImageProvider.get("open", ImageProvider.ImageSizes.MENU));
         p.addMenuListener(new MenuListener() {
             @Override
             public void menuSelected(MenuEvent me) {

@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.io.CustomConfigurator;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Action that exports some fragment of settings to custom configuration file
@@ -40,6 +41,7 @@ public class ExportProfileAction extends AbstractAction {
      */
     public ExportProfileAction(Preferences prefs, String schemaKey, String prefPattern) {
         super(tr("Save {0} profile", tr(schemaKey)));
+        new ImageProvider("save").getResource().attachImageIcon(this, true);
         this.prefs = prefs;
         this.prefPattern = prefPattern;
         this.schemaKey = schemaKey;

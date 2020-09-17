@@ -490,6 +490,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         SelectByListAction() {
             putValue(NAME, tr("Load from list..."));
             putValue(SHORT_DESCRIPTION, tr("Load plugins from a list of plugins"));
+            new ImageProvider("misc/statusreport").getResource().attachImageIcon(this);
         }
 
         @Override
