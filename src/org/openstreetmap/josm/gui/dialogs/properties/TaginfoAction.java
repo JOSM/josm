@@ -152,7 +152,7 @@ public class TaginfoAction extends AbstractAction {
      */
     public TaginfoAction toTagHistoryAction() {
         String url = TAG_HISTORY_URL_PROP.get();
-        return new TaginfoAction(tr("Go to OSM Tag History"), tagSupplier, relationTypeSupplier, url) {
+        TaginfoAction action = new TaginfoAction(tr("Go to OSM Tag History"), tagSupplier, relationTypeSupplier, url) {
             @Override
             public String getTaginfoUrlForTag(Tag tag) {
                 return String.join("/", taginfoUrl, tag.getKey(), tag.getValue());
@@ -163,5 +163,7 @@ public class TaginfoAction extends AbstractAction {
                 return null;
             }
         };
+        new ImageProvider("dialogs/taghistory").getResource().attachImageIcon(action, true);
+        return action;
     }
 }
