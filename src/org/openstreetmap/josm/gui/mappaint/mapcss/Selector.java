@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 import java.util.regex.PatternSyntaxException;
@@ -361,9 +362,9 @@ public interface Selector {
 
             @Override
             public void visit(Collection<? extends IPrimitive> primitives) {
-                List<? extends IPrimitive> toIgnore;
+                Set<? extends IPrimitive> toIgnore;
                 if (e.osm instanceof Relation) {
-                    toIgnore = ((IRelation<?>) e.osm).getMemberPrimitivesList();
+                    toIgnore = ((Relation) e.osm).getMemberPrimitives();
                 } else {
                     toIgnore = null;
                 }
@@ -372,6 +373,8 @@ public interface Selector {
                     if (isPrimitiveUsable(p) && Objects.equals(layer, OsmUtils.getLayer(p))
                             && left.matches(new Environment(p).withParent(e.osm)) && isArea(p)
                             && (toIgnore == null || !toIgnore.contains(p))) {
+                        if (e.osm instanceof Way && ((Way)e.osm).referrers(Relation.class).anyMatch(ref -> ref == p))
+                            continue;
                         visitArea(p);
                     }
                 }
