@@ -224,8 +224,8 @@ way[usage=penstock][waterway!=pressurised] {
   group: tr("missing tag");
 }
 
-/* {0.key} without {1.key}, {2.key} or {3.key}, #17253 */
-way[oneway   ][!highway][!railway][!aerialway][attraction!=summer_toboggan][aeroway!~/^(runway|taxiway)$/],
+/* {0.key} without {1.key}, {2.key} or {3.key}, #17253, #19821 */
+way[oneway   ][!highway][!railway][!aerialway][attraction!=summer_toboggan][aeroway!~/^(runway|taxiway)$/][leisure!=track],
 *[snowplowing][!highway][!amenity][!leisure] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.key}");
   group: tr("missing tag");
