@@ -38,6 +38,27 @@ public enum OnlineResource {
     public final String getLocName() {
         return locName;
     }
+    
+    /**
+     * Replies the offline icon.
+     * @return the offline icon
+     */
+    public final String getOfflineIcon() {
+        switch (this) {
+            case OSM_API:
+                return /* ICON() */ "offline_osm_api";
+            case JOSM_WEBSITE:
+                return /* ICON() */ "offline_josm_website";
+            case CACHE_UPDATES:
+                return /* ICON() */ "offline_cache_updates";
+            case CERTIFICATES:
+                return /* ICON() */ "offline_certificates";
+            case ALL:
+                return /* ICON() */ "offline_all";
+            default:
+                return null;
+        }
+    }
 
     /**
      * Replies whether the given URL matches this online resource

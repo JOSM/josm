@@ -44,7 +44,7 @@ public class OnlineResourceMenu extends JMenu {
         private final OnlineResource onlineResource;
 
         ToggleOnlineResourceAction(OnlineResource onlineResource) {
-            super(onlineResource.getLocName(), null, null, null, false);
+            super(onlineResource.getLocName(), onlineResource.getOfflineIcon(), null, null, false);
             this.onlineResource = onlineResource;
             setToolbarId("menu:offline:" + onlineResource.name());
             updateSelectedState();
