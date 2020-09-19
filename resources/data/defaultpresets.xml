@@ -3060,6 +3060,9 @@
             <key key="aeroway" value="runway" />
             <optional>
                 <text key="ref" text="Reference" />
+                <text key="length" text="Length (meters)" />
+                <combo key="width" text="Width (meters)" values="18,23,30,45,60" />
+                <text key="ele" text="Elevation (meters)" length="10" />
                 <reference ref="surface" />
             </optional>
         </item> <!-- Runway -->
@@ -3068,6 +3071,8 @@
             <key key="aeroway" value="taxiway" />
             <optional>
                 <text key="ref" text="Reference" />
+                <text key="width" text="Width (meters)" />
+                <reference ref="surface" />
             </optional>
         </item> <!-- Taxiway -->
         <item name="Holding Position" icon="presets/transport/airport/holding_position.svg" type="node" preset_name_label="true">
@@ -3081,15 +3086,21 @@
             <link wiki="Tag:aeroway=helipad" />
             <key key="aeroway" value="helipad" />
             <optional>
-                <text key="ref" text="Reference" />
+                <reference ref="name_ref" />
                 <text key="iata" text="IATA" />
                 <text key="icao" text="ICAO" />
+                <text key="ele" text="Elevation (meters)" length="10" />
+                <reference ref="surface"/>
                 <reference ref="wikipedia_wikidata" />
             </optional>
         </item> <!-- Helipad -->
         <item name="Apron" icon="presets/transport/airport/apron.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:aeroway=apron" />
             <key key="aeroway" value="apron" />
+            <optional>
+                <reference ref="name_ref" />
+                <reference ref="surface"/>
+            </optional>
         </item> <!-- Apron -->
         <item name="Plane Parking Position" icon="presets/transport/airport/parking_position.svg" type="node,way" preset_name_label="true">
             <link wiki="Tag:aeroway=parking_position" />
@@ -4348,7 +4359,7 @@
             <key key="emergency" value="water_tank" />
             <reference ref="name_ref_operator" />
             <space />
-            <text key="water_tank:volume" text="Volume (in liters)" />
+            <text key="water_tank:volume" text="Volume (liters)" />
         </item> <!-- Water Tank -->
         <item name="Suction point" icon="presets/emergency/suction_point.svg" type="node" preset_name_label="true">
             <link wiki="Tag:emergency=suction_point" />
@@ -4377,7 +4388,7 @@
             <space />
             <combo key="siren:type" text="Type" values="pneumatic,electronic,mechanical" />
             <multiselect key="siren:purpose" text="Purpose" values="tornado;fire;air_raid;civil_defense" rows="5" values_searchable="true" />
-            <text key="siren:range" text="Range (in meters)" />
+            <text key="siren:range" text="Range (meters)" />
         </item> <!-- Siren -->
     </group> <!-- Emergency -->
     <group name="Social Facility" icon="presets/social_facility/outreach.svg">
@@ -4404,7 +4415,7 @@
             <key key="amenity" value="social_facility" />
             <key key="social_facility" value="group_home" />
             <reference ref="name_operator" />
-            <combo key="social_facility:for" text="For" value="senior" default="senior" />
+            <combo key="social_facility:for" text="For" values="senior" default="senior" />
             <text key="capacity" text="Capacity" />
             <reference ref="link_contact_address" />
         </item> <!-- Group Home -->
@@ -4414,7 +4425,7 @@
             <key key="amenity" value="social_facility" />
             <key key="social_facility" value="assisted_living" />
             <reference ref="name_operator" />
-            <combo key="social_facility:for" text="For" value="senior" default="senior" />
+            <combo key="social_facility:for" text="For" values="senior" default="senior" />
             <text key="capacity" text="Capacity" />
             <reference ref="link_contact_address" />
         </item> <!-- Assisted Living -->
@@ -5465,7 +5476,7 @@
             <key key="man_made" value="mineshaft" />
             <text key="name" text="Name" />
             <combo key="mineshaft_type" text="Function" values="winding,air" />
-            <text key="depth" text="Depth in meters" />
+            <text key="depth" text="Depth (meters)" />
             <text key="operator" text="Operator" />
             <combo key="resource" text="Resource" values="aggregate,bauxite,clay,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             <check key="headframe" text="Visible Headframe" />
@@ -5476,7 +5487,7 @@
             <space />
             <key key="man_made" value="adit" />
             <text key="name" text="Name" />
-            <text key="length" text="Length in meters" />
+            <text key="length" text="Length (meters)" />
             <text key="operator" text="Operator" />
             <combo key="resource" text="Resource" values="aggregate,bauxite,clay,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" />
             <check key="disused" text="Disused" />

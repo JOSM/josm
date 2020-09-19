@@ -42,6 +42,7 @@ public enum OnlineResource {
     /**
      * Replies the offline icon.
      * @return the offline icon
+     * @since 17041
      */
     public final String getOfflineIcon() {
         switch (this) {
