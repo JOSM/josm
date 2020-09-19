@@ -223,7 +223,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     }
 
     private void removeAllButtons() {
-        MapFrame map= MainApplication.getMap();
+        MapFrame map = MainApplication.getMap();
         if (map != null) {
             buttons.values().forEach(map.mapView::remove);
         }

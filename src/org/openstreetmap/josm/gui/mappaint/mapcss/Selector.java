@@ -373,7 +373,7 @@ public interface Selector {
                     if (isPrimitiveUsable(p) && Objects.equals(layer, OsmUtils.getLayer(p))
                             && left.matches(new Environment(p).withParent(e.osm)) && isArea(p)
                             && (toIgnore == null || !toIgnore.contains(p))) {
-                        if (e.osm instanceof Way && ((Way)e.osm).referrers(Relation.class).anyMatch(ref -> ref == p))
+                        if (e.osm instanceof Way && ((Way) e.osm).referrers(Relation.class).anyMatch(ref -> ref == p))
                             continue;
                         visitArea(p);
                     }
