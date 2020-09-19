@@ -7910,8 +7910,16 @@
             <link wiki="Tag:natural=sinkhole" />
             <space />
             <key key="natural" value="sinkhole" />
-            <combo key="sinkhole" text="Type" values="bluehole,doline,estavelle,pit,ponor" />
+            <combo key="sinkhole" text="Type" values_searchable="true">
+                <list_entry value="bluehole" icon="presets/landmark/bluehole.svg" />
+                <list_entry value="doline" icon="presets/landmark/doline.svg" />
+                <list_entry value="estavelle" icon="presets/landmark/estavelle.svg" />
+                <list_entry value="pit" icon="presets/landmark/pit.svg" />
+                <list_entry value="ponor" icon="presets/landmark/ponor.svg" />
+            </combo>
             <optional>
+                <check key="anthropogenic" text="Caused by human activity" disable_off="true" />
+                <check key="refitted" text="Modified by human hand" disable_off="true" />
                 <reference ref="name_wikipedia_wikidata" />
             </optional>
         </item> <!-- Sinkhole -->

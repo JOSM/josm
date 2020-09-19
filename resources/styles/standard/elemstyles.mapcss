@@ -4790,6 +4790,26 @@ node[natural=sinkhole] {
     icon-image: "presets/landmark/sinkhole.svg";
     set icon_z17;
 }
+node[natural=sinkhole][sinkhole=bluehole] {
+    icon-image: "presets/landmark/bluehole.svg";
+    set icon_z17;
+}
+node[natural=sinkhole][sinkhole=doline] {
+    icon-image: "presets/landmark/doline.svg";
+    set icon_z17;
+}
+node[natural=sinkhole][sinkhole=estavelle] {
+    icon-image: "presets/landmark/estavelle.svg";
+    set icon_z17;
+}
+node[natural=sinkhole][sinkhole=pit] {
+    icon-image: "presets/landmark/pit.svg";
+    set icon_z17;
+}
+node[natural=sinkhole][sinkhole=ponor] {
+    icon-image: "presets/landmark/ponor.svg";
+    set icon_z17;
+}
 node[natural=cave_entrance] {
     icon-image: "presets/landmark/cave_entrance.svg";
     set icon_z17;
