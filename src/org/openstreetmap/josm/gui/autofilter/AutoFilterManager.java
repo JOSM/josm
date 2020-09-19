@@ -153,7 +153,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             this.value = value;
             this.enable = true;
             this.inverted = true;
-            this.text = rule.getKey() + "=" + value;
+            this.text = rule.getKey() + "=" + rule.formatValue(value);
         }
 
         @Override
