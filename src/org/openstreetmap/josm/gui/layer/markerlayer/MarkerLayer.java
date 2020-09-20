@@ -171,6 +171,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         syncAudioMarker = null;
         currentMarker = null;
         fromLayer = null;
+        data.forEach(Marker::destroy);
         data.clear();
         super.destroy();
     }

@@ -316,6 +316,10 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 noteLayer.getNoteData().removeNoteDataUpdateListener(this);
                 cleanupLayer(noteLayer);
             }
+        } else if (e.getRemovedLayer() instanceof AbstractModifiableLayer) {
+            synchronized (layersLock) {
+                cleanupLayer((AbstractModifiableLayer) e.getRemovedLayer());
+            }
         }
     }
 

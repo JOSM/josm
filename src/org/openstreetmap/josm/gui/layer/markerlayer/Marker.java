@@ -31,6 +31,8 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
@@ -73,7 +75,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateParser;
  *
  * @author Frederik Ramm
  */
-public class Marker implements TemplateEngineDataProvider, ILatLon {
+public class Marker implements TemplateEngineDataProvider, ILatLon, Destroyable {
 
     /**
      * Plugins can add their Marker creation stuff at the bottom or top of this list
@@ -147,6 +149,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
     private String cachedDefaultTemplate;
 
     private CachedLatLon coor;
+    private PreferenceChangedListener listener = l -> updateText();
 
     private boolean erroneous;
 
@@ -174,7 +177,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
         this.dataProvider = dataProvider;
         this.text = text;
 
-        Preferences.main().addKeyPreferenceChangeListener("draw.rawgps." + getTextTemplateKey(), l -> updateText());
+        Preferences.main().addKeyPreferenceChangeListener(getPreferenceKey(), listener);
     }
 
     /**
@@ -369,7 +372,7 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
     public void updateText() {
         cachedText = null;
         cachedDefaultTemplate = null;
-        cachedTemplates = new HashMap<>();
+        cachedTemplates.clear();
     }
 
     @Override
@@ -431,5 +434,15 @@ public class Marker implements TemplateEngineDataProvider, ILatLon {
         if (!erroneous) {
             redSymbol = null;
         }
+    }
+
+    @Override
+    public void destroy() {
+        cachedTemplates.clear();
+        Preferences.main().removeKeyPreferenceChangeListener(getPreferenceKey(), listener);
+    }
+
+    private String getPreferenceKey() {
+        return "draw.rawgps." + getTextTemplateKey();
     }
 }
