@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
@@ -13,6 +14,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Action that downloads the notes within the current view from the server.
@@ -22,7 +24,9 @@ import org.openstreetmap.josm.io.OnlineResource;
 public final class DownloadNotesInViewAction extends JosmAction {
 
     private DownloadNotesInViewAction(String iconName) {
-        super(tr("Download notes in current view"), iconName, tr("Download notes in current view"), null, false,
+        super(tr("Download notes in current view"), iconName, tr("Download notes in current view"),
+                Shortcut.registerShortcut("file:downloadnotesinview",
+                tr("Download notes in current view"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false,
                 "dialogs/notes/download_in_view", true);
     }
 
