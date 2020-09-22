@@ -2080,4 +2080,34 @@ node[lamp_type=electrical] {
   fixChangeKey: "climbing:grade:UIAA => climbing:grade:uiaa";
 }
 
+/* #19835 */
+*[cuisine][cuisine =~ /^(?i)(bbq)$/] { /* single value cases with autofix */
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "cuisine=barbecue";
+  group: tr("deprecated tagging");
+  fixAdd: "cuisine=barbecue";
+  set bbq_autofix;
+  assertMatch: "way cuisine=bbq";
+  assertMatch: "way cuisine=BBQ";
+  assertNoMatch: "way cuisine=pizza;Bbq";
+  assertNoMatch: "way cuisine=pizza;bbq";
+  assertNoMatch: "way cuisine=bbq;pizza";
+  assertNoMatch: "way cuisine=pasta;bbq;pizza";
+  assertNoMatch: "way cuisine=korean_bbq";
+  assertNoMatch: "way cuisine=korean_bbq;bbq";
+}
+*[cuisine =~ /(?i)(;bbq|bbq;)/][cuisine!~/(?i)(_bbq)/] { /* multi value cases without autofix */
+  throwWarning: tr("{0} is deprecated", "cuisine=bbq");
+  suggestAlternative: "cuisine=barbecue";
+  group: tr("deprecated tagging");
+  assertNoMatch: "way cuisine=bbq";
+  assertNoMatch: "way cuisine=BBQ";
+  assertMatch: "way cuisine=pizza;Bbq";
+  assertMatch: "way cuisine=pizza;bbq";
+  assertMatch: "way cuisine=bbq;pizza";
+  assertMatch: "way cuisine=pasta;bbq;pizza";
+  assertNoMatch: "way cuisine=korean_bbq";
+  assertNoMatch: "way cuisine=korean_bbq;bbq"; /* corner case (mixed ; and _) not supported by these rules, probably not present in the osm database */
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
