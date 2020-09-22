@@ -795,7 +795,7 @@ public class SyncEditorLayerIndex {
             if (isBlank(jt)) {
                 myprintln("- Missing JOSM privacy policy URL ("+et+"): "+getDescription(j));
             } else if (isNotBlank(et)) {
-                myprintln("+ Privacy policy URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
+                myprintln("* Privacy policy URL differs ('"+et+"' != '"+jt+"'): "+getDescription(j));
             } else if (!optionNoEli) {
                 myprintln("+ Missing ELI privacy policy URL ('"+jt+"'): "+getDescription(j));
             }
