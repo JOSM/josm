@@ -8,7 +8,6 @@ way[surface=~/^(unpaved|compacted|gravel|fine_gravel|pebblestone|ground|earth|di
 
 /* {0.key} without {1.key} (warning level) */
 way[junction                   ][!highway][junction!=yes][!area:highway],
-way[lanes                      ][!highway][leisure!=track][leisure!=swimming_pool],
 way[living_street              ][!highway],
 way[maintenance                ][!highway],
 way[median                     ][!highway],
@@ -73,8 +72,6 @@ way[have_riverbank             ][!waterway],
 *[source:addr:housenumber      ][!addr:housenumber] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
   group: tr("missing tag");
-  assertMatch: "way lanes=42";
-  assertNoMatch: "way lanes=42 highway=unclassified";
   assertMatch: "node source:addr:postcode=postman";
 }
 
@@ -337,13 +334,16 @@ relation[type=multipolygon] >[role="inner"] way[area][eval(number_of_tags()) = 1
   group: tr("suspicious tag combination");
 }
 
-/* only {0.key}, see #11104 #12422 #14950 */
+/* only {0.key}, #11104, #12422, #14950, #19572 */
+*[lanes][eval(number_of_tags()) = 1],
+*[surface][eval(number_of_tags()) = 1],
 *[access][eval(number_of_tags()) = 1],
 *[area][eval(number_of_tags()) = 1]!.area_yes_autofix,
 *[name][eval(number_of_tags()) = 1],
 *[ref][eval(number_of_tags()) = 1],
 *[lit][eval(number_of_tags()) = 1] {
   throwWarning: tr("incomplete object: only {0}", "{0.key}");
+  set only_one_tag;
   group: tr("missing tag");
 }
 /* only {0.key} and {1.key} */
@@ -405,7 +405,9 @@ way[highway=footway][cycleway=lane] {
   group: tr("suspicious tag combination");
 }
 
-/* {0} on suspicious object, #17255, #19650 */
+/* {0} on suspicious object, #17255, #19650, #19572 */
+node[lanes ][!barrier][!ford][highway!=mini_roundabout][!junction][leisure!~/^(bowling_alley|slipway|swimming_pool|track)$/][!traffic_calming]!.only_one_tag,
+way[lanes  ][!barrier][!ford][!highway                ][!junction][leisure!~/^(bowling_alley|slipway|swimming_pool|track)$/][!traffic_calming]!.only_one_tag,
 *[tunnel   ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=tunnel],
 *[bridge   ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=bridge][building!=bridge],
 *[psv      ][!highway][!railway][!waterway][barrier!=bollard][amenity !~ /^parking.*/],
