@@ -26,7 +26,7 @@ public final class DownloadNotesInViewAction extends JosmAction {
     private DownloadNotesInViewAction(String iconName) {
         super(tr("Download notes in current view"), iconName, tr("Download notes in current view"),
                 Shortcut.registerShortcut("file:downloadnotesinview",
-                tr("Download notes in current view"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false,
+                tr("File: {0}", tr("Download notes in current view")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false,
                 "dialogs/notes/download_in_view", true);
     }
 
