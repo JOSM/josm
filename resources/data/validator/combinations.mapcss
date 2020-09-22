@@ -833,3 +833,23 @@ node!:righthandtraffic[highway=mini_roundabout][direction=anticlockwise] {
   throwWarning: tr("{0} together with {1} at left-hand traffic", "{1.tag}", "{2.tag}");
   group: tr("suspicious tag combination");
 }
+
+/* #19603 */
+way[footway][highway][footway=sidewalk ][highway!~/^(path|footway|cycleway|construction|proposed)$/] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "sidewalk=left";
+  suggestAlternative: "sidewalk=right";
+  suggestAlternative: "sidewalk=both";
+  suggestAlternative: "sidewalk=separate";
+}
+way[footway][highway][footway!=sidewalk][highway!~/^(path|footway|cycleway|construction|proposed)$/] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+}
+way[footway][!highway][!/:highway$/],
+way[cycleway][!highway][!/:highway$/] {
+  throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
+  group: tr("missing tag");
+  assertNoMatch: "way footway=sidewalk abandoned:highway=unclassified";
+}
