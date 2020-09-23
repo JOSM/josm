@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -294,9 +295,7 @@ public class GeoJSONReader extends AbstractReader {
         final boolean doAutoclose;
         if (size > 1) {
             if (latlons.get(0).equals(latlons.get(size - 1))) {
-                // Remove last coordinate, but later add first node to the end
-                latlons.remove(size - 1);
-                doAutoclose = true;
+                doAutoclose = false; // already closed
             } else {
                 doAutoclose = autoClose;
             }
@@ -306,10 +305,19 @@ public class GeoJSONReader extends AbstractReader {
 
         final Way way = new Way();
         getDataSet().addPrimitive(way);
-        way.setNodes(latlons.stream().map(this::createNode).collect(Collectors.toList()));
+        final List<Node> rawNodes = latlons.stream().map(this::createNode).collect(Collectors.toList());
         if (doAutoclose) {
-            way.addNode(way.getNode(0));
+            rawNodes.add(rawNodes.get(0));
         }
+        // see #19833: remove duplicated references to the same node
+        final List<Node> wayNodes = new ArrayList<>(rawNodes.size());
+        Node last = null;
+        for (Node curr : rawNodes) {
+            if (last != curr)
+                wayNodes.add(curr);
+            last = curr;
+        }
+        way.setNodes(wayNodes);
 
         return Optional.of(way);
     }
