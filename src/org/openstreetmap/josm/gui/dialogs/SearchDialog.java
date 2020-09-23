@@ -68,7 +68,7 @@ public class SearchDialog extends ExtendedDialog {
     private JRadioButton add;
     private JRadioButton remove;
     private JRadioButton inSelection;
-
+    private TaggingPresetSelector selector;
     /**
      * Constructs a new {@code SearchDialog}.
      * @param initialValues initial search settings
@@ -231,7 +231,7 @@ public class SearchDialog extends ExtendedDialog {
          * selected preset by the user. Every query is of the form ' group/sub-group/.../presetName'
          * if the corresponding group of the preset exists, otherwise it is simply ' presetName'.
          */
-        TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
+        selector = new TaggingPresetSelector(false, false);
         selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
         selector.setDblClickListener(ev -> setPresetDblClickListener(selector, editorComponent));
 
@@ -530,5 +530,12 @@ public class SearchDialog extends ExtendedDialog {
             }
             return this;
         }
+    }
+
+    @Override
+    public void dispose() {
+        if (selector != null)
+            selector.destroy();
+        super.dispose();
     }
 }

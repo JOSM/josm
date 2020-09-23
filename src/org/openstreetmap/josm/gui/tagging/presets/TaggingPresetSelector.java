@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.gui.widgets.SearchTextResultListPanel;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -53,7 +54,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 6068
  */
 public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPreset>
-        implements DataSelectionListener, TaggingPresetListener {
+        implements DataSelectionListener, TaggingPresetListener, Destroyable {
 
     private static final int CLASSIFICATION_IN_FAVORITES = 300;
     private static final int CLASSIFICATION_NAME_MATCH = 300;
@@ -464,4 +465,10 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
         classifications.clear();
         classifications.loadPresets(TaggingPresets.getTaggingPresets());
     }
+
+    @Override
+    public void destroy() {
+        TaggingPresets.removeListener(this);
+    }
+
 }
