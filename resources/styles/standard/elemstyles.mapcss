@@ -349,6 +349,7 @@ node[building=transformer_tower] {
 }
 node[entrance=yes],
 node[entrance=home],
+node[entrance=garage],
 node[entrance=staircase] {
     icon-image: "presets/misc/entrance_yes.svg";
     set icon_z17;

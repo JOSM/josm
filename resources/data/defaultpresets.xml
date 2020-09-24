@@ -5348,6 +5348,7 @@
                 <list_entry value="emergency" icon="presets/misc/entrance_emergency.svg" />
                 <list_entry value="staircase" icon="presets/misc/entrance_yes.svg" />
                 <list_entry value="home" icon="presets/misc/entrance_yes.svg" />
+                <list_entry value="garage" icon="presets/misc/entrance_yes.svg" />
             </combo>
             <combo key="access" text="General Access" values="yes,private,delivery,customers,permissive,no" />
             <reference ref="wheelchair" />
