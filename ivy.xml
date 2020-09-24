@@ -46,7 +46,7 @@
         <!-- commonslang->default -->
         <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.10"/>
         <!-- jacocoant->default -->
-        <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.6-SNAPSHOT">
+        <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.6">
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
         </dependency>
         <!-- jmockit->default - Don't upgrade JMockit until https://josm.openstreetmap.de/ticket/18200 is resolved -->
