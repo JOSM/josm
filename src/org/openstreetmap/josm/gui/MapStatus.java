@@ -1259,6 +1259,8 @@ public final class MapStatus extends JPanel implements
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        refreshDistText(event.getDataset().getSelected());
+        if (event.getDataset() != null) {
+            refreshDistText(event.getDataset().getSelected());
+        }
     }
 }
