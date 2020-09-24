@@ -1224,18 +1224,12 @@ public final class MapStatus extends JPanel implements
 
     @Override
     public void wayNodesChanged(WayNodesChangedEvent event) {
-        Collection<OsmPrimitive> sel = event.getDataset().getSelected();
-        if (sel.size() == 1 && sel.contains(event.getChangedWay())) {
-            refreshDistText(sel);
-        }
+        refreshDistText(event.getDataset().getSelected());
     }
 
     @Override
     public void nodeMoved(NodeMovedEvent event) {
-        Collection<OsmPrimitive> sel = event.getDataset().getSelected();
-        if (sel.size() == 2 && sel.contains(event.getNode())) {
-            refreshDistText(sel);
-        }
+        refreshDistText(event.getDataset().getSelected());
     }
 
     @Override
@@ -1265,6 +1259,6 @@ public final class MapStatus extends JPanel implements
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        // Do nothing
+        refreshDistText(event.getDataset().getSelected());
     }
 }
