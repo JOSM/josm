@@ -409,7 +409,7 @@ public class TagEditHelper {
                 MainApplication.getMainFrame(),
                 tr("Overwrite key"),
                 tr("Replace"), tr("Cancel"))
-            .setButtonIcons("purge", "cancel")
+            .setButtonIcons("ok", "cancel")
             .setContent(action+'\n'+ tr("The new key is already used, overwrite values?"))
             .setCancelButton(2)
             .toggleEnable(togglePref)
