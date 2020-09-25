@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -212,11 +213,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             JPanel buttonPanel = new JPanel(new FlowLayout());
 
-            JButton add = new JButton(tr("Add"));
+            JButton add = new JButton(tr("Add"), ImageProvider.get("dialogs/add", ImageProvider.ImageSizes.SMALLICON));
             buttonPanel.add(add, GBC.std().insets(0, 5, 0, 0));
             add.addActionListener(e -> model.addRow(new OffsetBookmark(ProjectionRegistry.getProjection().toCode(), "", "", "", 0, 0)));
 
-            JButton delete = new JButton(tr("Delete"));
+            JButton delete = new JButton(tr("Delete"), ImageProvider.get("dialogs/delete", ImageProvider.ImageSizes.SMALLICON));
             buttonPanel.add(delete, GBC.std().insets(0, 5, 0, 0));
             delete.addActionListener(e -> {
                 if (list.getSelectedRow() == -1) {

@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.I18n;
 
 /**
@@ -263,7 +264,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         fixColorPrefixes();
         setColors(Preferences.main().getAllNamedColors());
 
-        colorEdit = new JButton(tr("Choose"));
+        colorEdit = new JButton(tr("Choose"), ImageProvider.get("colorchooser", ImageProvider.ImageSizes.SMALLICON));
         colorEdit.addActionListener(e -> {
             int sel = colors.getSelectedRow();
             ColorEntry ce = (ColorEntry) colors.getValueAt(sel, 0);
@@ -277,7 +278,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
                 colors.setValueAt(chooser.getColor(), sel, 1);
             }
         });
-        defaultSet = new JButton(tr("Reset to default"));
+        defaultSet = new JButton(tr("Reset to default"), ImageProvider.get("undo", ImageProvider.ImageSizes.SMALLICON));
         defaultSet.addActionListener(e -> {
             int sel = colors.getSelectedRow();
             ColorEntry ce = (ColorEntry) colors.getValueAt(sel, 0);
@@ -286,7 +287,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
                 colors.setValueAt(c, sel, 1);
             }
         });
-        JButton defaultAll = new JButton(tr("Set all to default"));
+        JButton defaultAll = new JButton(tr("Set all to default"), ImageProvider.get("undo", ImageProvider.ImageSizes.SMALLICON));
         defaultAll.addActionListener(e -> {
             List<ColorEntry> data = tableModel.getData();
             for (ColorEntry ce : data) {
@@ -297,7 +298,7 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
             }
             tableModel.fireTableDataChanged();
         });
-        remove = new JButton(tr("Remove"));
+        remove = new JButton(tr("Remove"), ImageProvider.get("dialogs/delete", ImageProvider.ImageSizes.SMALLICON));
         remove.addActionListener(e -> {
             int sel = colors.getSelectedRow();
             sel = colors.convertRowIndexToModel(sel);
