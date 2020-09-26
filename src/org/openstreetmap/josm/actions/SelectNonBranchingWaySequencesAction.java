@@ -23,7 +23,8 @@ public class SelectNonBranchingWaySequencesAction extends JosmAction {
         super(tr("Non-branching way sequences"),
                 "way-select",
                 tr("Select non-branching sequences of ways"),
-                Shortcut.registerShortcut("wayselector:wayselect", tr("Non-branching way sequences"), KeyEvent.VK_W, Shortcut.SHIFT),
+                Shortcut.registerShortcut("wayselector:wayselect", tr("Selection: {0}", tr("Non-branching way sequences")),
+                    KeyEvent.VK_W, Shortcut.SHIFT),
                 true);
     }
 

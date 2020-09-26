@@ -11,6 +11,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,6 +63,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * ChangesetDialog is a toggle dialog which displays the current list of changesets.
@@ -250,7 +252,8 @@ public class ChangesetDialog extends ToggleDialog {
                 tr("Changesets"),
                 "changesetdialog",
                 tr("Open the list of changesets in the current layer."),
-                null, /* no keyboard shortcut */
+                Shortcut.registerShortcut("subwindow:changesets", tr("Toggle: {0}", tr("Changesets")),
+                    KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
                 200, /* the preferred height */
                 false, /* don't show if there is no preference */
                 null /* no preferences settings */,

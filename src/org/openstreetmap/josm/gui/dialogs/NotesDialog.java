@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,6 +51,7 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.date.DateUtils;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Dialog to display and manipulate notes.
@@ -73,7 +75,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
 
     /** Creates a new toggle dialog for notes */
     public NotesDialog() {
-        super(tr("Notes"), "notes/note_open", tr("List of notes"), null, 150);
+        super(tr("Notes"), "notes/note_open", tr("List of notes"),
+                Shortcut.registerShortcut("subwindow:notes", tr("Toggle: {0}", tr("Notes")),
+                KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), 150);
         addCommentAction = new AddCommentAction();
         closeAction = new CloseAction();
         downloadNotesInViewAction = DownloadNotesInViewAction.newActionWithDownloadIcon();

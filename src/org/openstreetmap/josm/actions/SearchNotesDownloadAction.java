@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Action to use the Notes search API to download all notes matching a given search term.
@@ -34,7 +36,9 @@ public class SearchNotesDownloadAction extends JosmAction {
 
     /** Constructs a new note search action */
     public SearchNotesDownloadAction() {
-        super(tr("Search Notes..."), "note_search", tr("Download notes from the note search API"), null, false, false);
+        super(tr("Search Notes..."), "note_search", tr("Download notes from the note search API"),
+                Shortcut.registerShortcut("file:notesearch",
+                tr("File: {0}", tr("Search Notes...")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), false, false);
     }
 
     @Override
