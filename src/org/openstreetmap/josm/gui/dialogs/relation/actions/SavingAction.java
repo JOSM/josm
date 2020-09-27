@@ -4,8 +4,6 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -17,7 +15,6 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -50,15 +47,6 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         final Relation newRelation = new Relation();
         tagEditorModel.applyToPrimitive(newRelation);
         getMemberTableModel().applyToRelation(newRelation);
-        List<RelationMember> newMembers = newRelation.getMembers().stream()
-                .filter(rm -> !rm.getMember().isDeleted())
-                .collect(Collectors.toList());
-        if (newRelation.getMembersCount() != newMembers.size()) {
-            newRelation.setMembers(newMembers);
-            String msg = tr("One or more members of this new relation have been deleted while the relation editor\n" +
-            "was open. They have been removed from the relation members list.");
-            JOptionPane.showMessageDialog(MainApplication.getMainFrame(), msg, tr("Warning"), JOptionPane.WARNING_MESSAGE);
-        }
         // If the user wanted to create a new relation, but hasn't added any members or
         // tags, don't add an empty relation
         if (newRelation.isEmpty() && !newRelation.hasKeys())

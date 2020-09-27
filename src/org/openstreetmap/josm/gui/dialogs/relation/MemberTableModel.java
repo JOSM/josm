@@ -363,8 +363,9 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @param relation relation
      */
     public void applyToRelation(Relation relation) {
-        relation.setMembers(members.stream()
-                .filter(rm -> !rm.getMember().isDeleted()).collect(Collectors.toList()));
+        relation.setMembers(
+                members.stream().filter(rm -> !rm.getMember().isDeleted() && rm.getMember().getDataSet() != null)
+                        .collect(Collectors.toList()));
     }
 
     /**

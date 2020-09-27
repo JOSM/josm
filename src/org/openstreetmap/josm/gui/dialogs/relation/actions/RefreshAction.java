@@ -67,12 +67,9 @@ public class RefreshAction extends SavingAction implements CommandQueueListener 
 
     @Override
     public void updateEnabledState() {
-        Relation relation = editorAccess.getEditor().getRelation();
         Relation snapshot = editorAccess.getEditor().getRelationSnapshot();
-        setEnabled(snapshot != null && (
-            !relation.hasEqualTechnicalAttributes(snapshot) ||
-            !relation.hasEqualSemanticAttributes(snapshot)
-        ));
+        setEnabled((!getMemberTableModel().hasSameMembersAs(snapshot) || getTagModel().isDirty())
+                && !(snapshot == null && getTagModel().getTags().isEmpty()));
     }
 
     protected int confirmDiscardDirtyData() {
