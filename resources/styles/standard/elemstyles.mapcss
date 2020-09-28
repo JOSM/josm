@@ -2180,6 +2180,7 @@ area[shop=stationery],
 area[shop=tailor],
 area[shop=travel_agency],
 area[shop=scuba_diving],
+area[shop=fishing],
 area[shop=toys],
 area[shop=vacuum_cleaner],
 area[shop=variety_store],
@@ -2489,6 +2490,10 @@ node[shop=travel_agency] {
 }
 node[shop=scuba_diving] {
     icon-image: "presets/shop/scuba_diving.svg";
+    set icon_z17;
+}
+node[shop=fishing] {
+    icon-image: "presets/shop/fishing.svg";
     set icon_z17;
 }
 node[shop=toys] {
