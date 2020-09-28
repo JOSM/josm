@@ -205,7 +205,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     private final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction(
             tagTable, editHelper::getDataKey, OsmDataManager.getInstance()::getInProgressISelection);
     private final CopyAllKeyValueAction copyAllKeyValueAction = new CopyAllKeyValueAction(
-            tagTable, editHelper::getDataKey, OsmDataManager.getInstance()::getInProgressISelection).registerShortcut();
+            tagTable, editHelper::getDataKey, OsmDataManager.getInstance()::getInProgressISelection).registerShortcut(); /* NO-SHORTCUT */
     private final SearchAction searchActionSame = new SearchAction(true);
     private final SearchAction searchActionAny = new SearchAction(false);
     private final AddAction addAction = new AddAction();
