@@ -2206,6 +2206,7 @@ area[shop=herbalist],
 area[shop=tea],
 area[shop=coffee],
 area[shop=antiques],
+area[shop=swimming_pool],
 area[shop=storage_rental],
 area[shop=music],
 area[shop=weapons],
@@ -2596,6 +2597,10 @@ node[shop=coffee] {
 }
 node[shop=antiques] {
     icon-image: "presets/shop/antique.svg";
+    set icon_z17;
+}
+node[shop=swimming_pool] {
+    icon-image: "presets/shop/swimming_pool.svg";
     set icon_z17;
 }
 node[shop=storage_rental] {
