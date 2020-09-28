@@ -2134,6 +2134,7 @@ area[shop=e-cigarette],
 area[shop=clothes],
 area[shop=computer],
 area[shop=confectionery],
+area[shop=chocolate],
 area[shop=pastry],
 area[shop=copyshop],
 area[shop=curtain],
@@ -2306,6 +2307,10 @@ node[shop=computer] {
 }
 node[shop=confectionery] {
     icon-image: "presets/shop/groceries/confectionery.svg";
+    set icon_z17;
+}
+node[shop=chocolate] {
+    icon-image: "presets/shop/groceries/chocolate.svg";
     set icon_z17;
 }
 node[shop=pastry] {
