@@ -2998,6 +2998,7 @@ area[amenity=school],
 area[amenity=university],
 area[amenity=college],
 area[amenity=kindergarten],
+area[amenity=language_school],
 area[amenity=driving_school] {
     fill-color: amenity_light#f7efb7;
 }
@@ -3107,6 +3108,10 @@ node[amenity=college] {
 }
 node[amenity=kindergarten] {
     icon-image: "presets/education/kindergarten.svg";
+    set icon_z17;
+}
+node[amenity=language_school] {
+    icon-image: "presets/education/language_school.svg";
     set icon_z17;
 }
 node[amenity=driving_school] {
