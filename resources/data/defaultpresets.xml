@@ -4050,6 +4050,19 @@
             <reference ref="link_contact_address" />
             <preset_link preset_name="Building" />
         </item> <!-- Other Place of Worship -->
+        <separator/>
+        <item name="Monastery" icon="presets/religion/monastery.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=monastery" />
+            <space />
+            <key key="amenity" value="monastery" />
+            <text key="name" text="Name" />
+            <reference ref="religious" />
+            <combo key="community:gender" text="Community gender" values="female,male,mixed" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="wikipedia_wikidata" />
+            <reference ref="link_contact_address" />
+            <preset_link preset_name="Historic monastery" text="Similar but different tags:" />
+        </item> <!-- Monastery -->
     </group> <!-- Place of Worship -->
     <group name="Public Building" icon="presets/service/townhall.svg">
         <item name="Town Hall" icon="presets/service/townhall.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -5308,7 +5321,7 @@
         <item name="Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Key:building" />
             <space />
-            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,farm_auxiliary,fire_station,garage,garages,gasometer,greenhouse,hangar,hospital,industrial,kindergarten,manufacture,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="allotment_house,bakehouse,barn,basilica,bunker,cabin,carport,cathedral,chapel,church,college,commercial,construction,cowshed,farm_auxiliary,fire_station,garage,garages,gasometer,greenhouse,hangar,hospital,industrial,kindergarten,manufacture,monastery,mosque,office,parking,public,retail,roof,ruins,school,service,shed,silo,stable,storage_tank,sty,supermarket,synagogue,temple,toilets,train_station,transformer_tower,transportation,university,warehouse,yes" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -6385,6 +6398,17 @@
             </optional>
             <reference ref="religious"/>
         </item> <!-- Church -->
+        <item name="Historic monastery" icon="presets/sightseeing/monastery.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:historic=monastery" />
+            <space />
+            <key key="historic" value="monastery" />
+            <optional>
+            <text key="name" text="Name" />
+                <reference ref="religious" />
+                <reference ref="wikipedia_wikidata" />
+            </optional>
+            <preset_link preset_name="Monastery" text="Similar but different tags:" />
+        </item> <!-- Monastery -->
         <separator/>
         <item name="Charcoal pile" icon="presets/misc/charcoal_pile.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:historic=charcoal_pile" />

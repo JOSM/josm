@@ -2988,6 +2988,7 @@ node[amenity=fountain] {
     set icon_z17;
 }
 area[amenity=place_of_worship],
+area[amenity=monastery],
 area[amenity=grave_yard],
 area[amenity=crematorium],
 area[amenity=post_office],
@@ -3066,6 +3067,10 @@ node[amenity=place_of_worship][religion=unitarian_universalist][!is_prop_set(ico
 }
 node[amenity=place_of_worship][religion=zoroastrian][!is_prop_set(icon-image)] {
     icon-image: "presets/misc/no_icon.svg";
+    set icon_z17;
+}
+node[amenity=monastery] {
+    icon-image: "presets/religion/monastery.svg";
     set icon_z17;
 }
 node[amenity=grave_yard] {
@@ -3632,6 +3637,7 @@ area[geological=palaeontological_site],
 area[historic=city_gate],
 area[historic=manor],
 area[historic=church],
+area[historic=monastery],
 area[historic=charcoal_pile],
 area[historic=mine],
 area[historic=mine_shaft],
@@ -3691,6 +3697,10 @@ node[historic=manor] {
 }
 node[historic=church] {
     icon-image: "presets/religion/historic_church.svg";
+    set icon_z17;
+}
+node[historic=monastery] {
+    icon-image: "presets/sightseeing/monastery.svg";
     set icon_z17;
 }
 node[historic=charcoal_pile] {
