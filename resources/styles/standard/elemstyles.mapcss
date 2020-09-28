@@ -2202,6 +2202,7 @@ area[shop=bed],
 area[shop=beauty],
 area[shop=cosmetics],
 area[shop=perfumery],
+area[shop=herbalist],
 area[shop=tea],
 area[shop=coffee],
 area[shop=antiques],
@@ -2579,6 +2580,10 @@ node[shop=cosmetics] {
 }
 node[shop=perfumery] {
     icon-image: "presets/shop/perfumery.svg";
+    set icon_z17;
+}
+node[shop=herbalist] {
+    icon-image: "presets/shop/groceries/herbalist.svg";
     set icon_z17;
 }
 node[shop=tea] {

@@ -6608,6 +6608,13 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Chocolate -->
+        <item name="Herbalist" icon="presets/shop/groceries/herbalist.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:shop=herbalist" />
+            <space />
+            <key key="shop" value="herbalist" />
+            <reference ref="name_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Herbalist -->
         <item name="Tea" icon="presets/shop/groceries/tea.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=tea" />
             <space />
