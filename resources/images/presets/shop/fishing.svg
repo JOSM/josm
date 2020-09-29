@@ -7,56 +7,63 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   height="16"
-   width="16"
-   sodipodi:docname="fishing5.svg"
-   x="0px"
-   y="0px"
-   version="1.1"
-   viewBox="-0.258 -0.548 16 16"
+   id="Layer_1"
    xml:space="preserve"
-   id="Layer_1"><defs
+   viewBox="0 0 16 16"
+   version="1.1"
+   y="0px"
+   x="0px"
+   sodipodi:docname="fishing9.svg"
+   width="16"
+   height="16"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"><defs
    id="defs17">
 	
 	
 	
 	
 </defs><sodipodi:namedview
-   inkscape:current-layer="Layer_1"
-   inkscape:window-maximized="1"
-   inkscape:window-y="-8"
-   inkscape:window-x="-8"
-   inkscape:cy="5.3387583"
-   inkscape:cx="10.578949"
-   inkscape:zoom="32"
-   showgrid="true"
-   id="namedview15"
-   inkscape:window-height="987"
-   inkscape:window-width="1680"
-   inkscape:pageshadow="2"
-   inkscape:pageopacity="0"
-   guidetolerance="10"
-   gridtolerance="10"
-   objecttolerance="10"
-   borderopacity="1"
+   viewbox-x="0"
+   inkscape:document-rotation="0"
+   pagecolor="#ffffff"
    bordercolor="#666666"
-   pagecolor="#ffffff"><inkscape:grid
-     id="grid842"
-     type="xygrid" /></sodipodi:namedview>
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1680"
+   inkscape:window-height="987"
+   id="namedview15"
+   showgrid="true"
+   inkscape:zoom="24.406768"
+   inkscape:cx="6.8845623"
+   inkscape:cy="5.0540421"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="Layer_1"><inkscape:grid
+     type="xygrid"
+     id="grid842" /></sodipodi:namedview>
 <path
+   id="path6"
+   d="m 9.504122,11.274212 c 0.363434,0 0.654083,-0.29326 0.654083,-0.655389 0,-0.360823 -0.290649,-0.6565323 -0.654083,-0.6565323 -0.3621288,0 -0.6565318,0.2957093 -0.6565318,0.6565323 0,0.362129 0.294566,0.655389 0.6565318,0.655389 z M 15.998612,16 c -3.884846,0.05744 -7.9443108,-0.685907 -11.0526768,-3.180988 -0.01909,-0.01779 -0.02807,-0.0421 -0.02807,-0.07017 0,-0.05989 0.04847,-0.10575 0.104608,-0.10575 l 3.063651,0.0038 c 0.146549,0 0.27025,-0.121091 0.27025,-0.270251 0,-0.112277 -0.05092,-0.189958 -0.170864,-0.24985 l -2.768759,-1.322856 c -0.05222,-0.03182 -0.08796,-0.08796 -0.08796,-0.155524 0,-0.04847 0.0204,-0.09302 0.05222,-0.127455 0,0 3.374863,-2.9820543 10.6177638,-2.9171023 V 16.00005 Z"
+   style="fill:#ac39ac;fill-opacity:1;stroke-width:0.163195" /><path
+   id="path8"
+   d="m 14.415629,1.0003817 c -2.398144,0.02676 -4.402926,0.503772 -7.0370498,2.663488 -0.09824,-0.02676 -0.3370621,-0.1063071 -0.3370621,-0.1063071 -0.418105,0 -0.758528,0.339118 -0.758528,0.75608 0,0 0.02938,0.14149 0.04716,0.228146 -0.08013,0.0754 -2.487106,2.5077346 -2.487106,2.5077346 L 2.0979066,8.7525517 C 1.9283476,8.9080767 1.7255864,8.9472498 1.4948294,8.9369688 1.2666834,8.9255488 1.1224536,8.8480939 0.96954061,8.6798399 c -0.147854,-0.1645 -0.220639,-0.3156983 -0.220639,-0.5209973 0,-0.233368 0.0384475,-0.4798306 0.22334749,-0.6480836 C 1.3612226,7.1746309 3.0740983,5.7545559 3.998612,5 H 0.73897122 L 1.3824346,6.1181793 C 0.99861199,6.3480646 0.82335448,6.4209167 0.369669,6.9595614 -0.08401648,7.4982061 -0.16629685,8.6510895 0.38464318,9.2617635 0.93917818,9.8737425 2.057613,9.999854 2.668287,9.446461 l 0.01665,-0.0204 1.684904,-1.664501 c 0,0 2.4958136,-2.4131229 2.5646816,-2.4795439 0.101996,0.02807 0.302236,0.07784 0.302236,0.07784 0.416962,0 0.754775,-0.339118 0.754775,-0.757386 0,0 -0.01909,-0.110972 -0.03443,-0.189958 2.5474664,-2.095908 4.2593164,-2.3549295 6.4911644,-2.3803885 0.457761,-0.0051 0.824949,-0.00636 1.426647,0.121094 l 0.123701,0.02807 V 1.1916387 l -0.08029,-0.01779 c -0.621772,-0.132677 -1.03139,-0.178535 -1.503022,-0.173476 z"
    style="fill:#ac39ac;fill-opacity:1;stroke-width:0.163195"
-   d="m 9.24751,10.726212 c 0.363434,0 0.654083,-0.29326 0.654083,-0.655389 0,-0.3608233 -0.290649,-0.6565323 -0.654083,-0.6565323 -0.3621288,0 -0.6565318,0.295709 -0.6565318,0.6565323 0,0.362129 0.294566,0.655389 0.6565318,0.655389 z M 15.742,15.452 c -3.884846,0.05744 -7.9443108,-0.685907 -11.0526768,-3.180988 -0.01909,-0.01779 -0.02807,-0.0421 -0.02807,-0.07017 0,-0.05989 0.04847,-0.10575 0.104608,-0.10575 l 3.063651,0.0038 c 0.146549,0 0.27025,-0.121091 0.27025,-0.270251 0,-0.112277 -0.05092,-0.189958 -0.170864,-0.24985 l -2.768759,-1.322856 c -0.05222,-0.03182 -0.08796,-0.08796 -0.08796,-0.155524 0,-0.04847 0.0204,-0.09302 0.05222,-0.1274553 0,0 3.374863,-2.982054 10.6177638,-2.917102 V 15.45205 Z"
-   id="path6" /><path
-   sodipodi:nodetypes="cccccccccscccczccccccccccccccc"
-   style="fill:#ac39ac;fill-opacity:1;stroke-width:0.163195"
-   d="m 14.159017,0.4523817 c -2.398144,0.02676 -4.402926,0.503772 -7.0370498,2.663488 -0.09824,-0.02676 -0.3370621,-0.1063071 -0.3370621,-0.1063071 -0.418105,0 -0.758528,0.339118 -0.758528,0.75608 0,0 0.02938,0.14149 0.04716,0.228146 -0.08013,0.0754 -2.487106,2.5077346 -2.487106,2.5077346 L 1.8412946,8.2045517 C 1.6717356,8.3600767 1.4689744,8.3992498 1.2382174,8.3889688 1.0100714,8.3775488 0.86584162,8.3000939 0.71292862,8.1318399 c -0.147854,-0.1645 -0.220639,-0.3156983 -0.220639,-0.5209973 0,-0.233368 0.0384475,-0.4798306 0.22334749,-0.6480836 C 1.1046106,6.6266309 2.8174863,5.2065559 3.742,4.452 H 0.48235923 L 1.1258226,5.5701793 C 0.742,5.8000646 0.56674249,5.8729167 0.11305701,6.4115614 -0.34062847,6.9502061 -0.42290884,8.1030895 0.12803119,8.7137635 0.68256619,9.3257425 1.801001,9.451854 2.411675,8.898461 l 0.01665,-0.0204 1.684904,-1.664501 c 0,0 2.4958136,-2.4131229 2.5646816,-2.4795439 0.101996,0.02807 0.302236,0.07784 0.302236,0.07784 0.416962,0 0.754775,-0.339118 0.754775,-0.757386 0,0 -0.01909,-0.110972 -0.03443,-0.189958 2.5474664,-2.095908 4.2593164,-2.3549295 6.4911644,-2.3803885 0.457761,-0.0051 0.824949,-0.00636 1.426647,0.121094 l 0.123701,0.02807 V 0.6436387 l -0.08029,-0.01779 c -0.621772,-0.132677 -1.03139,-0.178535 -1.503022,-0.173476 z"
-   id="path8" />
+   sodipodi:nodetypes="cccccccccscccczccccccccccccccc" />
 <metadata
    id="metadata12"><rdf:RDF><cc:Work><dc:format>image/svg+xml</dc:format><dc:type
          rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><cc:license
          rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" /><dc:publisher><cc:Agent
-           rdf:about="http://openclipart.org/"><dc:title>Openclipart</dc:title></cc:Agent></dc:publisher><dc:title></dc:title><dc:date>2008-01-20T22:07:47</dc:date><dc:description>Second set of 4 sets of map pictographs for U.S. national park maps. PD US Government - National Park Service, U.S. Dept. of the Interior\n\nrest of sets:\nhttp://openclipart.org/media/files/johnny_automatic/6741\nhttp://openclipart.org/media/files/johnny_automatic/6757\nhttp://openclipart.org/media/files/johnny_automatic/6765</dc:description><dc:source>https://openclipart.org/detail/11304/nps-map-pictographs-part-2-by-johnny_automatic</dc:source><dc:creator><cc:Agent><dc:title>johnny_automatic</dc:title></cc:Agent></dc:creator><dc:subject><rdf:Bag><rdf:li>cartography</rdf:li><rdf:li>externalsource</rdf:li><rdf:li>map</rdf:li><rdf:li>park</rdf:li><rdf:li>pictograph</rdf:li><rdf:li>sign</rdf:li><rdf:li>symbol</rdf:li></rdf:Bag></dc:subject></cc:Work><cc:License
+           rdf:about="http://openclipart.org/"><dc:title>Openclipart</dc:title></cc:Agent></dc:publisher><dc:title></dc:title><dc:date>2008-01-20T22:07:47</dc:date><dc:description>Second set of 4 sets of map pictographs for U.S. national park maps. PD US Government - National Park Service, U.S. Dept. of the Interior
+\n
+\nrest of sets:
+\nhttp://openclipart.org/media/files/johnny_automatic/6741
+\nhttp://openclipart.org/media/files/johnny_automatic/6757
+\nhttp://openclipart.org/media/files/johnny_automatic/6765</dc:description><dc:source>https://openclipart.org/detail/11304/nps-map-pictographs-part-2-by-johnny_automatic</dc:source><dc:creator><cc:Agent><dc:title>johnny_automatic</dc:title></cc:Agent></dc:creator><dc:subject><rdf:Bag><rdf:li>cartography</rdf:li><rdf:li>externalsource</rdf:li><rdf:li>map</rdf:li><rdf:li>park</rdf:li><rdf:li>pictograph</rdf:li><rdf:li>sign</rdf:li><rdf:li>symbol</rdf:li></rdf:Bag></dc:subject></cc:Work><cc:License
        rdf:about="http://creativecommons.org/publicdomain/zero/1.0/"><cc:permits
          rdf:resource="http://creativecommons.org/ns#Reproduction" /><cc:permits
          rdf:resource="http://creativecommons.org/ns#Distribution" /><cc:permits
