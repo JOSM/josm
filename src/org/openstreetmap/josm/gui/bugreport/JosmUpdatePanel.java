@@ -49,14 +49,18 @@ public class JosmUpdatePanel extends JPanel {
     }
 
     private void readCurrentVersion() {
-        int testedVersion = getTestedVersion();
+        try {
+            int testedVersion = getTestedVersion();
 
-        if (testedVersion < 0) {
-            SwingUtilities.invokeLater(this::displayError);
-        } else if (josmVersion < testedVersion) {
-            SwingUtilities.invokeLater(() -> displayOutOfDate(testedVersion));
-        } else {
-            SwingUtilities.invokeLater(this::displayUpToDate);
+            if (testedVersion < 0) {
+                SwingUtilities.invokeLater(this::displayError);
+            } else if (josmVersion < testedVersion) {
+                SwingUtilities.invokeLater(() -> displayOutOfDate(testedVersion));
+            } else {
+                SwingUtilities.invokeLater(this::displayUpToDate);
+            }
+        } catch (RuntimeException e) {
+            Logging.error(e);
         }
     }
 

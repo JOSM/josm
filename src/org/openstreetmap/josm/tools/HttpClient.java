@@ -536,6 +536,9 @@ public abstract class HttpClient {
      * @return a new instance
      */
     public static HttpClient create(URL url, String requestMethod) {
+        if (factory == null) {
+            throw new IllegalStateException("HTTP factory has not been set");
+        }
         return factory.create(url, requestMethod)
                 // #18812: specify `Accept=*/*` to prevent Java from adding `Accept=text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2`
                 .setAccept("*/*");
