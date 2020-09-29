@@ -89,6 +89,7 @@ enum ImageResizeMode {
      * @param renderer the rendering function
      * @param sourceIcon the source icon to draw
      * @return a new buffered image
+     * @throws IllegalArgumentException if renderer or sourceIcon is null
      */
     BufferedImage createBufferedImage(Dimension dim, Dimension icon, Consumer<Graphics2D> renderer, Image sourceIcon) {
         final Dimension real = computeDimension(dim, icon);
@@ -102,7 +103,7 @@ enum ImageResizeMode {
             sourceIcon = sourceIcon.getScaledInstance(real.width, real.height, Image.SCALE_SMOOTH);
             g.drawImage(sourceIcon, 0, 0, null);
         } else {
-            throw new NullPointerException("renderer or sourceIcon");
+            throw new IllegalArgumentException("renderer or sourceIcon");
         }
         return bufferedImage;
     }
