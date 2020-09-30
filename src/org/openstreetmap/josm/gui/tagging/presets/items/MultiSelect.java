@@ -34,8 +34,7 @@ public class MultiSelect extends ComboMultiSelect {
         component = list;
         ListCellRenderer<PresetListEntry> renderer = getListCellRenderer();
         list.setCellRenderer(renderer);
-        list.setSelectedItem(getItemToSelect(def, presetInitiallyMatches));
-
+        list.setSelectedItem(getItemToSelect(def, presetInitiallyMatches, true));
         JScrollPane sp = new JScrollPane(list);
         // if a number of rows has been specified in the preset,
         // modify preferred height of scroll pane to match that row count.

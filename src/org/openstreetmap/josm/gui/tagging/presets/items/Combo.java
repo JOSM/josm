@@ -76,7 +76,7 @@ public class Combo extends ComboMultiSelect {
             acList.add(getDisplayValues(), AutoCompletionPriority.IS_IN_STANDARD);
         }
         combobox.setEditor(tf);
-        combobox.setSelectedItem(getItemToSelect(def, presetInitiallyMatches));
+        combobox.setSelectedItem(getItemToSelect(def, presetInitiallyMatches, false));
 
         if (key != null && ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour"))) {
             p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
