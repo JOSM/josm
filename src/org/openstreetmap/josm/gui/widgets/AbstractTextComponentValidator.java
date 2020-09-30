@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *   <li>the text component is a {@link JosmTextField} and an {@link ActionEvent} is detected</li>
  * </ul>
  *
- *
+ * @since 2688
  */
 public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener {
 

@@ -230,7 +230,7 @@ public class LatLonDialog extends ExtendedDialog {
 
     private class LatLonValidator extends AbstractTextComponentValidator {
         LatLonValidator(JTextComponent tc) {
-            super(tc);
+            super(tc, false);
         }
 
         @Override
@@ -264,7 +264,7 @@ public class LatLonDialog extends ExtendedDialog {
 
     private class EastNorthValidator extends AbstractTextComponentValidator {
         EastNorthValidator(JTextComponent tc) {
-            super(tc);
+            super(tc, false);
         }
 
         @Override
