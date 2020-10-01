@@ -162,11 +162,11 @@ public final class CertificateAmendment {
                 "DST_Root_CA_X3.pem",
                 "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739",
                 "https://acme-v02.api.letsencrypt.org"),
-        // #14649 - Government of Netherlands - for PDOK aerial imagery at ​https://geodata.nationaalgeoregister.nl
-        new NativeCertAmend(Collections.singleton("Staat der Nederlanden Root CA - G2"),
-                "Staat_der_Nederlanden_Root_CA_-_G2.crt",
-                "668c83947da63b724bece1743c31a0e6aed0db8ec5b31be377bb784f91b6716f",
-                "https://roottest-g2.pkioverheid.nl"),
+        // #19872 - Government of Netherlands - for PDOK aerial imagery at ​https://geodata.nationaalgeoregister.nl
+        new NativeCertAmend(Collections.singleton("Staat der Nederlanden EV Root CA"),
+                "Staat_der_Nederlanden_EV_Root_CA.crt",
+                "4d2491414cfe956746ec4cefa6cf6f72e28a1329432f9d8a907ac4cb5dadc15a",
+                "https://roottest-ev.pkioverheid.nl"),
         // #14649 - Government of Netherlands - for PDOK aerial imagery at ​https://geodata.nationaalgeoregister.nl
         new NativeCertAmend(Arrays.asList("Government of Netherlands G3", "Staat der Nederlanden Root CA - G3"),
                 "Staat_der_Nederlanden_Root_CA_-_G3.crt",
