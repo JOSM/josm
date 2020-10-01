@@ -844,7 +844,7 @@ public class MainApplication {
 
         try {
             CertificateAmendment.addMissingCertificates();
-        } catch (IOException | GeneralSecurityException ex) {
+        } catch (IOException | GeneralSecurityException | SecurityException | ExceptionInInitializerError ex) {
             Logging.warn(ex);
             Logging.warn(Logging.getErrorMessage(Utils.getRootCause(ex)));
         }
