@@ -80,6 +80,12 @@ public class MainInitialization implements InitializationSequence {
                 // help shortcut
                 MainApplication.registerActionShortcut(MainApplication.menu.help,
                         Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.DIRECT));
+            }),
+            new InitializationTask(tr("Initializing internal boundaries data"), () -> {
+                Territories.initialize();
+                if (Config.getPref().getBoolean("override.numbering.format", true)) {
+                    I18n.initializeNumberingFormat();
+                }
             })
         );
     }
@@ -110,12 +116,6 @@ public class MainInitialization implements InitializationSequence {
                         Logging.warn(Logging.getErrorMessage(Utils.getRootCause(e)));
                     }
                 }),
-            new InitializationTask(tr("Initializing internal boundaries data"), () -> {
-                Territories.initialize();
-                if (Config.getPref().getBoolean("override.numbering.format", true)) {
-                    I18n.initializeNumberingFormat();
-                }
-            }),
             new InitializationTask(tr("Initializing validator"), OsmValidator::initialize),
             new InitializationTask(tr("Initializing presets"), TaggingPresets::initialize),
             new InitializationTask(tr("Initializing map styles"), MapPaintPreference::initialize),
