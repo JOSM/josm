@@ -195,6 +195,20 @@ public class ImageDataTest {
     }
 
     @Test
+    public void testRemoveSelectedImagesWithRemainingImages() {
+        List<ImageEntry> list = getOneImage();
+        list.add(new ImageEntry());
+        list.add(new ImageEntry());
+
+        ImageData data = new ImageData(list);
+        data.selectLastImage();
+        data.addImageToSelection(list.get(1));
+        data.removeSelectedImages();
+        assertEquals(1, data.getImages().size());
+        assertEquals(1, data.getSelectedImages().size());
+    }
+
+    @Test
     public void testSelectImageAfterRemove() {
         List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry());
@@ -346,7 +360,6 @@ public class ImageDataTest {
         assertEquals(0, data.getSelectedImages().size());
         data.selectFirstImage();
         assertEquals(1, data.getSelectedImages().size());
-
     }
 
     @Test

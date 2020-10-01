@@ -266,7 +266,7 @@ public class ImageData implements Data {
         for (ImageEntry img: getSelectedImages()) {
             data.remove(img);
         }
-        if (selectedImagesIndex.get(0) == data.size()) {
+        if (selectedImagesIndex.get(0) >= data.size()) {
             setSelectedImageIndex(data.size() - 1);
         } else {
             setSelectedImageIndex(selectedImagesIndex.get(0), true);
