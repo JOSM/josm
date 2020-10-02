@@ -52,7 +52,8 @@ public final class MapPaintStyles {
 
         MapPaintStylesPreferenceListener(IPreferences pref) {
             this.pref = pref;
-            this.preferenceIgnoreList = Arrays.asList("mappaint.style.entries", "mappaint.style.known-defaults");
+            this.preferenceIgnoreList = Arrays.asList("mappaint.style.entries", "mappaint.style.known-defaults",
+                    "mappaint.renderer-class-name");
         }
 
         @Override
