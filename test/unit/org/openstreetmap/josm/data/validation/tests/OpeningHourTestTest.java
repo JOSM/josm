@@ -73,6 +73,8 @@ public class OpeningHourTestTest {
         assertThat(checkOpeningHourSyntax(key, "Mo-Fr sunrise-sunset"), isEmpty());
         assertThat(checkOpeningHourSyntax(key, "09:00-21:00"), isEmpty());
         assertThat(checkOpeningHourSyntax(key, "Su-Th sunset-24:00,04:00-sunrise; Fr-Sa sunset-sunrise"), isEmpty());
+        assertThat(checkOpeningHourSyntax(key, "PH Su 10:00-12:00"), isEmpty()); // see #19743
+        assertThat(checkOpeningHourSyntax(key, "SH Mo-Fr 09:33-15:35"), isEmpty()); // see #19743
     }
 
     /**
