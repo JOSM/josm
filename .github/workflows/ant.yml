@@ -1,8 +1,8 @@
 name: Java CI
 env:
-  junit_platform_version: '1.6.2'
+  junit_platform_version: '1.7.0'
   # ANT_HOME is also our ant version
-  ANT_HOME: 'apache-ant-1.10.8'
+  ANT_HOME: 'apache-ant-1.10.9'
 on:
   push:
     branches: [master]
