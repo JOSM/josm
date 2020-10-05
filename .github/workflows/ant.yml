@@ -74,7 +74,7 @@ jobs:
         # Careful, you will only have a resources/REVISION if you've already built
         run: |
           ant create-revision
-          echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
+          echo "josm_revision=`awk '/Revision/{print $2}' resources/REVISION`" >> $GITHUB_ENV
       # - name: Upload Ant reports
       #   if: ${{ always() }}
       #   uses: actions/upload-artifact@v2
