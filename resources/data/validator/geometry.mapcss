@@ -132,7 +132,7 @@ way[route=bus] {
   throwError: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
 }
 
-/* #14395, #17025 */
+/* #14395, #17025, #19506 */
 way[highway][area!=yes][!tunnel][!covered] > node {
   set node_in_highway;
 }
@@ -143,8 +143,11 @@ way[highway][area!=yes][!tunnel][!covered] >[index=1] node,
 way[highway][area!=yes][!tunnel][!covered] >[index=-1] node {
   set first_last_highway_node;
 }
-way[building][building!=no] > node[!entrance].node_in_closed_highway,
-way[building][building!=no] > node[!entrance].node_in_highway!.first_last_highway_node {
+way[building][building!=no] > node[!entrance].node_in_closed_highway {
+  set node_connects_highway_and_building; /* avoids duplicate warnings with folowing rule */
+  throwWarning: tr("node connects highway and building");
+}
+way[building][building!=no] > node[!entrance].node_in_highway!.first_last_highway_node!.node_connects_highway_and_building {
   throwWarning: tr("node connects highway and building");
 }
 
