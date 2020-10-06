@@ -52,10 +52,10 @@ jobs:
       - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
         # Todo: cache ant and junit, saves 12 seconds.
         run: |
-          curl -s https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz | tar -xz
+          curl -s https://archive.apache.org/dist/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz | tar -xz
           curl -o ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar"
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
-        run: ${{ env.ANT_HOME }}/bin/ant -version
+        run: ${{ env.ANT_HOME }}/bin/ant -diagnostics
       - name: Build with Ant, headless ${{ matrix.headless }}
         run: |
           ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
