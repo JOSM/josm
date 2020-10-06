@@ -1,6 +1,6 @@
 language: java
 script:
-  - ant -version
+  - ant -diagnostics
   - $ANT_INVOCATION -DnoJavaFX=true test-unit-hardfail
   - "grep -L ', Failures: 0, Errors: 0, ' test/report/*.txt | xargs cat"
 env:
@@ -26,6 +26,6 @@ matrix:
     jdk: oraclejdk11
     env: ANT_INVOCATION="ant -Dtest.headless=true"
 before_install:
-  - "curl https://downloads.apache.org/ant/binaries/apache-ant-1.10.8-bin.tar.gz | tar -xzv"
+  - "curl https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.8-bin.tar.gz | tar -xzv"
   - "export PATH=`pwd`/apache-ant-1.10.8/bin:$PATH"
   - if [ "$TRAVIS_OS_NAME" == "windows" ] ; then choco install jdk11 && export JAVA_HOME="/c/Program Files/Java/jdk-11" ; fi
