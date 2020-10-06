@@ -346,6 +346,6 @@ public class SequenceCommandTest {
                 " - sequence_index: 0\n" +
                 " - sequence_commands: [null]\n" +
                 " - sequence_commands_descriptions: [foo command]\n" +
-                "\n", stringWriter.toString());
+                "\n", stringWriter.toString().replace(System.lineSeparator(), "\n"));
     }
 }
