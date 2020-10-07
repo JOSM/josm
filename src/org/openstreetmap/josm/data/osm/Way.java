@@ -376,7 +376,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
      * Calculate the remaining nodes after a removal of the given set of {@link Node nodes} from this way.
      * @param selection The selection of nodes to remove. Ignored, if null
      * @return result of the removal, can be empty
-     * @since 17101
+     * @since 17102
      */
     public List<Node> calculateRemoveNodes(Set<? extends Node> selection) {
         if (selection == null || isIncomplete())
