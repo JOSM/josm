@@ -192,6 +192,12 @@ public class TemplatedWMSTileSourceTest {
         assertEquals("https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Transport/MapServer/WMSServer?LAYERS=8&"
                 + "TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS=EPSG:4326&"
                 + "BBOX=0.0000000,-90.0000000,90.0000000,-0.0000000&WIDTH=512&HEIGHT=512", ts.getTileUrl(3, 2, 1));
+        testImageryWMS.setTileSize(256);
+        ts = new TemplatedWMSTileSource(testImageryWMS, projection);
+        assertEquals("https://services.slip.wa.gov.au/public/services/SLIP_Public_Services/Transport/MapServer/WMSServer?LAYERS=8&"
+                        + "TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS=EPSG:4326&"
+                        + "BBOX=540.0000000,-1350.0000000,900.0000000,-990.0000000&WIDTH=256&HEIGHT=256",
+                ts.getTileUrl(1, 2, 3));
     }
 
     private void verifyMercatorTile(TemplatedWMSTileSource source, int x, int y, int z) {
