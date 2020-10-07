@@ -13,7 +13,7 @@ import mockit.MockUp;
  */
 public class EDTAssertionMocker extends MockUp<GuiHelper> {
     @Mock
-    private static void handleEDTException(final Invocation invocation, final Throwable t) {
+    static void handleEDTException(final Invocation invocation, final Throwable t) throws Throwable {
         final Throwable cause = t.getCause();
         if (cause instanceof AssertionError) {
             throw (AssertionError) cause;

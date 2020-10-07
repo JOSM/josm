@@ -16,12 +16,12 @@ import mockit.MockUp;
  */
 public class WindowlessMapViewStateMocker extends MockUp<MapViewState> {
     @Mock
-    private static Point findTopLeftInWindow(JComponent position) {
+    static Point findTopLeftInWindow(JComponent position) {
         return new Point();
     }
 
     @Mock
-    private static Point findTopLeftOnScreen(JComponent position) {
+    static Point findTopLeftOnScreen(JComponent position) {
         // in our imaginary universe the window is always (10, 10) from the top left of the screen
         Point topLeftInWindow = findTopLeftInWindow(position);
         return new Point(topLeftInWindow.x + 10, topLeftInWindow.y + 10);

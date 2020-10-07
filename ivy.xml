@@ -50,7 +50,7 @@
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
         </dependency>
         <!-- jmockit->default - Don't upgrade JMockit until https://josm.openstreetmap.de/ticket/18200 is resolved -->
-        <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.44"/>
+        <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49"/>
         <!-- test->default -->
         <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.0.1"/>
         <dependency conf="test->default" org="com.github.stefanbirkner" name="system-rules" rev="1.19.0">

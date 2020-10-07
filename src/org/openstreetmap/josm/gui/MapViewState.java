@@ -131,7 +131,13 @@ public final class MapViewState implements Serializable {
         this(projecting, mvs.viewWidth, mvs.viewHeight, mvs.scale, mvs.topLeft, mvs.topLeftInWindow, mvs.topLeftOnScreen);
     }
 
-    private static Point findTopLeftInWindow(JComponent position) {
+    /**
+     * This is visible for JMockit.
+     *
+     * @param position The component to get the top left position of its window
+     * @return the top left point in window
+     */
+    static Point findTopLeftInWindow(JComponent position) {
         Point result = new Point();
         // better than using swing utils, since this allows us to use the method if no screen is present.
         Container component = position;
@@ -143,7 +149,13 @@ public final class MapViewState implements Serializable {
         return result;
     }
 
-    private static Point findTopLeftOnScreen(JComponent position) {
+    /**
+     * This is visible for JMockit.
+     *
+     * @param position The component to get the top left position of its screen
+     * @return the top left point on screen
+     */
+    static Point findTopLeftOnScreen(JComponent position) {
         try {
             return position.getLocationOnScreen();
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {

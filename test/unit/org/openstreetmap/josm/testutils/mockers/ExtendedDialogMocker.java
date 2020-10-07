@@ -5,19 +5,20 @@ import static org.junit.Assert.fail;
 
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.WeakHashMap;
 
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.Logging;
 
-import mockit.Deencapsulation;
 import mockit.Invocation;
 import mockit.Mock;
-import mockit.internal.reflection.FieldReflection;
 
 /**
  * MockUp for {@link ExtendedDialog} allowing a test to pre-seed uses of {@link ExtendedDialog}
@@ -76,7 +77,8 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
     }
 
     protected int getButtonPositionFromLabel(final ExtendedDialog instance, final String label) {
-        final String[] bTexts = Deencapsulation.getField(instance, "bTexts");
+        final String[] bTexts = (String[]) ReflectionUtils.tryToReadFieldValue(ExtendedDialog.class, "bTexts", instance)
+                .toOptional().orElseThrow(NoSuchElementException::new);
         final int position = Arrays.asList(bTexts).indexOf(label);
         if (position == -1) {
             fail("Unable to find button labeled \"" + label + "\". Instead found: " + Arrays.toString(bTexts));
@@ -150,14 +152,16 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
     }
 
     @Mock
-    private void setVisible(final Invocation invocation, final boolean value) {
+    private void setVisible(final Invocation invocation, final boolean value) throws Throwable {
         if (value == true) {
             try {
                 final ExtendedDialog instance = invocation.getInvokedInstance();
                 this.act(instance);
                 final int mockResult = this.getMockResult(instance);
                 // TODO check validity of mockResult?
-                FieldReflection.setField(instance.getClass(), instance, "result", mockResult);
+                Field resultField = instance.getClass().getDeclaredField("result");
+                resultField.setAccessible(true);
+                resultField.set(instance, mockResult);
                 Logging.info(
                     "{0} answering {1} to ExtendedDialog with content {2}",
                     this.getClass().getName(),
@@ -165,7 +169,7 @@ public class ExtendedDialogMocker extends BaseDialogMockUp<ExtendedDialog> {
                     this.getString(instance)
                 );
                 this.getInvocationLogInternal().add(this.getInvocationLogEntry(instance, mockResult));
-            } catch (AssertionError e) {
+            } catch (AssertionError | NoSuchFieldException | IllegalAccessException e) {
                 // in case this exception gets ignored by the calling thread we want to signify this failure
                 // in the invocation log. it's hard to know what to add to the log in these cases as it's
                 // probably unsafe to call getInvocationLogEntry, so add the exception on its own.

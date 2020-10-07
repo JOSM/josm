@@ -203,7 +203,13 @@ public final class GuiHelper {
         }
     }
 
-    private static void handleEDTException(Throwable t) {
+    /**
+     * Handle exceptions in the EDT. This should only be used in {@link GuiHelper}
+     * and {@code org.openstreetmap.josm.testutils.mockers.EDTAssertionMocker}.
+     *
+     * @param t The throwable to handle
+     */
+    static void handleEDTException(Throwable t) {
         Logging.logWithStackTrace(Logging.LEVEL_ERROR, t, "Exception raised in EDT");
     }
 
