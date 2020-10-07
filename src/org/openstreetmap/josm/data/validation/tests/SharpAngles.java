@@ -104,7 +104,9 @@ public class SharpAngles extends Test {
     private void processSharpAngleForErrorCreation(double angle, int i, Way way, boolean last, Node pointNode) {
         WaySegment ws1 = new WaySegment(way, i);
         WaySegment ws2 = new WaySegment(way, last ? 0 : i + 1);
-        double shorterLen = Math.min(ws1.toWay().getLength(), ws2.toWay().getLength());
+        double d1 = ws1.getFirstNode().getEastNorth().distance(ws1.getSecondNode().getEastNorth());
+        double d2 = ws2.getFirstNode().getEastNorth().distance(ws2.getSecondNode().getEastNorth());
+        double shorterLen = Math.min(d1, d2);
         if (shorterLen < maxLength) {
             createNearlyOverlappingError(angle, way, pointNode);
         }
