@@ -2,9 +2,11 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
-import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -15,7 +17,7 @@ import org.openstreetmap.josm.tools.Pair;
 public final class StyleCache {
 
     // TODO: clean up the intern pool from time to time (after purge or layer removal)
-    private static final Storage<StyleCache> internPool = new Storage<>();
+    private static final Map<StyleCache, StyleCache> internPool = new ConcurrentHashMap<>();
 
     /**
      * An empty style cache entry
@@ -97,7 +99,7 @@ public final class StyleCache {
      * @return style cache
      */
     private StyleCache intern() {
-        return internPool.putUnique(this);
+        return internPool.computeIfAbsent(this, Function.identity());
     }
 
     /**

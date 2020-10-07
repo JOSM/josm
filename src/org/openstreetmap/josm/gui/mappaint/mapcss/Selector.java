@@ -652,15 +652,14 @@ public interface Selector {
         @Override
         public boolean matches(Environment env) {
             CheckParameterUtil.ensureParameterNotNull(env, "env");
-            for (Condition c : conds) {
+            return conds.stream().allMatch(c -> {
                 try {
-                    if (!c.applies(env)) return false;
+                    return c.applies(env);
                 } catch (PatternSyntaxException e) {
                     Logging.log(Logging.LEVEL_ERROR, "PatternSyntaxException while applying condition" + c + ':', e);
                     return false;
                 }
-            }
-            return true;
+            });
         }
 
         @Override
