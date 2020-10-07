@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.StringParser;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlUtils;
 import org.xml.sax.Attributes;
@@ -361,15 +363,12 @@ public class ImageryReader implements Closeable {
                 if (mirrorEntry != null) {
                     switch(qName) {
                     case "type":
-                        boolean found = false;
-                        for (ImageryType type : ImageryType.values()) {
-                            if (Objects.equals(accumulator.toString(), type.getTypeString())) {
-                                mirrorEntry.setImageryType(type);
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
+                        Optional<ImageryType> type = Arrays.stream(ImageryType.values())
+                                .filter(t -> Objects.equals(accumulator.toString(), t.getTypeString()))
+                                .findFirst();
+                        if (type.isPresent()) {
+                            mirrorEntry.setImageryType(type.get());
+                        } else {
                             mirrorEntry = null;
                         }
                         break;
@@ -384,33 +383,23 @@ public class ImageryReader implements Closeable {
                         break;
                     case MIN_ZOOM:
                     case MAX_ZOOM:
-                        Integer val = null;
-                        try {
-                            val = Integer.valueOf(accumulator.toString());
-                        } catch (NumberFormatException e) {
-                            val = null;
-                        }
-                        if (val == null) {
+                        Optional<Integer> zoom = tryParseInt();
+                        if (!zoom.isPresent()) {
                             mirrorEntry = null;
                         } else {
                             if (MIN_ZOOM.equals(qName)) {
-                                mirrorEntry.setDefaultMinZoom(val);
+                                mirrorEntry.setDefaultMinZoom(zoom.get());
                             } else {
-                                mirrorEntry.setDefaultMaxZoom(val);
+                                mirrorEntry.setDefaultMaxZoom(zoom.get());
                             }
                         }
                         break;
                     case TILE_SIZE:
-                        Integer tileSize = null;
-                        try {
-                            tileSize = Integer.valueOf(accumulator.toString());
-                        } catch (NumberFormatException e) {
-                            tileSize = null;
-                        }
-                        if (tileSize == null) {
+                        Optional<Integer> tileSize = tryParseInt();
+                        if (!tileSize.isPresent()) {
                             mirrorEntry = null;
                         } else {
-                            entry.setTileSize(tileSize.intValue());
+                            entry.setTileSize(tileSize.get());
                         }
                         break;
                     default: // Do nothing
@@ -461,19 +450,14 @@ public class ImageryReader implements Closeable {
                     break;
                 case MIN_ZOOM:
                 case MAX_ZOOM:
-                    Integer val = null;
-                    try {
-                        val = Integer.valueOf(accumulator.toString());
-                    } catch (NumberFormatException e) {
-                        val = null;
-                    }
-                    if (val == null) {
+                    Optional<Integer> zoom = tryParseInt();
+                    if (!zoom.isPresent()) {
                         skipEntry = true;
                     } else {
                         if (MIN_ZOOM.equals(qName)) {
-                            entry.setDefaultMinZoom(val);
+                            entry.setDefaultMinZoom(zoom.get());
                         } else {
-                            entry.setDefaultMaxZoom(val);
+                            entry.setDefaultMaxZoom(zoom.get());
                         }
                     }
                     break;
@@ -508,16 +492,11 @@ public class ImageryReader implements Closeable {
                     entry.setIcon(accumulator.toString());
                     break;
                 case TILE_SIZE:
-                    Integer tileSize = null;
-                    try {
-                        tileSize = Integer.valueOf(accumulator.toString());
-                    } catch (NumberFormatException e) {
-                        tileSize = null;
-                    }
-                    if (tileSize == null) {
+                    Optional<Integer> tileSize = tryParseInt();
+                    if (!tileSize.isPresent()) {
                         skipEntry = true;
                     } else {
-                        entry.setTileSize(tileSize.intValue());
+                        entry.setTileSize(tileSize.get());
                     }
                     break;
                 case "valid-georeference":
@@ -572,6 +551,10 @@ public class ImageryReader implements Closeable {
 
         private ImageryBounds intern(ImageryBounds imageryBounds) {
             return boundsInterner.computeIfAbsent(imageryBounds, ignore -> imageryBounds);
+        }
+
+        private Optional<Integer> tryParseInt() {
+            return StringParser.DEFAULT.tryParse(Integer.class, accumulator.toString());
         }
     }
 
