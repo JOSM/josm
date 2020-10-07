@@ -184,23 +184,25 @@ public class DeleteCommand extends Command {
     @Override
     public boolean executeCommand() {
         ensurePrimitivesAreInDataset();
-        // Make copy and remove all references (to prevent inconsistent dataset (delete referenced) while command is executed)
-        for (OsmPrimitive osm: toDelete) {
-            if (osm.isDeleted())
-                throw new IllegalArgumentException(osm + " is already deleted");
-            clonedPrimitives.put(osm, osm.save());
 
-            if (osm instanceof Way) {
-                ((Way) osm).setNodes(null);
-            } else if (osm instanceof Relation) {
-                ((Relation) osm).setMembers(null);
+        getAffectedDataSet().update(() -> {
+            // Make copy and remove all references (to prevent inconsistent dataset (delete referenced) while command is executed)
+            for (OsmPrimitive osm : toDelete) {
+                if (osm.isDeleted())
+                    throw new IllegalArgumentException(osm + " is already deleted");
+                clonedPrimitives.put(osm, osm.save());
+
+                if (osm instanceof Way) {
+                    ((Way) osm).setNodes(null);
+                } else if (osm instanceof Relation) {
+                    ((Relation) osm).setMembers(null);
+                }
             }
-        }
 
-        for (OsmPrimitive osm: toDelete) {
-            osm.setDeleted(true);
-        }
-
+            for (OsmPrimitive osm : toDelete) {
+                osm.setDeleted(true);
+            }
+        });
         return true;
     }
 
@@ -208,13 +210,15 @@ public class DeleteCommand extends Command {
     public void undoCommand() {
         ensurePrimitivesAreInDataset();
 
-        for (OsmPrimitive osm: toDelete) {
-            osm.setDeleted(false);
-        }
+        getAffectedDataSet().update(() -> {
+            for (OsmPrimitive osm : toDelete) {
+                osm.setDeleted(false);
+            }
 
-        for (Entry<OsmPrimitive, PrimitiveData> entry: clonedPrimitives.entrySet()) {
-            entry.getKey().load(entry.getValue());
-        }
+            for (Entry<OsmPrimitive, PrimitiveData> entry : clonedPrimitives.entrySet()) {
+                entry.getKey().load(entry.getValue());
+            }
+        });
     }
 
     @Override
@@ -426,12 +430,13 @@ public class DeleteCommand extends Command {
         Collection<Command> cmds = new LinkedList<>();
         Set<Node> nodesToRemove = new HashSet<>(Utils.filteredCollection(primitivesToDelete, Node.class));
         for (Way w : waysToBeChanged) {
-            Way wnew = new Way(w);
-            wnew.removeNodes(nodesToRemove);
-            if (wnew.getNodesCount() < 2) {
+            if (primitivesToDelete.contains(w))
+                continue;
+            List<Node> remainingNodes = w.calculateRemoveNodes(nodesToRemove);
+            if (remainingNodes.size() < 2) {
                 primitivesToDelete.add(w);
             } else {
-                cmds.add(new ChangeNodesCommand(w, wnew.getNodes()));
+                cmds.add(new ChangeNodesCommand(w, remainingNodes));
             }
         }
 

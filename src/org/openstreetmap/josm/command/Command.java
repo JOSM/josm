@@ -227,7 +227,7 @@ public abstract class Command implements PseudoCommand {
         for (OsmPrimitive osm : primitives) {
             if (osm.isIncomplete()) {
                 res |= IS_INCOMPLETE;
-            } else if ((osm.isOutsideDownloadArea()
+            } else if ((res & IS_OUTSIDE) == 0 && (osm.isOutsideDownloadArea()
                     || (osm instanceof Node && !osm.isNew() && osm.getDataSet() != null && osm.getDataSet().getDataSourceBounds().isEmpty()))
                             && (ignore == null || !ignore.contains(osm))) {
                 res |= IS_OUTSIDE;

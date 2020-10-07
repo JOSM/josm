@@ -363,24 +363,36 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         if (selection == null || isIncomplete()) return;
         boolean locked = writeLock();
         try {
-            boolean closed = isClosed() && selection.contains(lastNode());
-            List<Node> copy = Arrays.stream(nodes)
-                    .filter(n -> !selection.contains(n))
-                    .collect(Collectors.toList());
-
-            int i = copy.size();
-            if (closed && i > 2) {
-                copy.add(copy.get(0));
-            } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
-                copy.remove(i-1);
-            }
-            setNodes(removeDouble(copy));
+            setNodes(calculateRemoveNodes(selection));
             for (Node n : selection) {
                 n.clearCachedStyle();
             }
         } finally {
             writeUnlock(locked);
         }
+    }
+
+    /**
+     * Calculate the remaining nodes after a removal of the given set of {@link Node nodes} from this way.
+     * @param selection The selection of nodes to remove. Ignored, if null
+     * @return result of the removal, can be empty
+     * @since 17101
+     */
+    public List<Node> calculateRemoveNodes(Set<? extends Node> selection) {
+        if (selection == null || isIncomplete())
+            return getNodes();
+        boolean closed = isClosed() && selection.contains(lastNode());
+        List<Node> copy = Arrays.stream(nodes)
+                .filter(n -> !selection.contains(n))
+                .collect(Collectors.toList());
+
+        int i = copy.size();
+        if (closed && i > 2) {
+            copy.add(copy.get(0));
+        } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
+            copy.remove(i-1);
+        }
+        return removeDouble(copy);
     }
 
     /**
