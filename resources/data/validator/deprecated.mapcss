@@ -7,7 +7,7 @@
   assertMatch: "way barrier=wire_fence";
   assertNoMatch: "way barrier=fence";
 }
-  
+
 *[barrier=wood_fence] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "barrier=fence + fence_type=wood";
@@ -15,7 +15,7 @@
   fixAdd: "barrier=fence";
   fixAdd: "fence_type=wood";
 }
-  
+
 node[highway=ford] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "ford=yes";
@@ -28,83 +28,65 @@ way[highway=ford] {
   suggestAlternative: "highway=* + ford=yes";
   group: tr("deprecated tagging");
 }
-  
+
+/* from http://wiki.openstreetmap.org/wiki/Deprecated_features */  
 way[class] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "highway";
   group: tr("deprecated tagging");
 }
-  
 *[highway=stile] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "barrier=stile";
   group: tr("deprecated tagging");
   fixRemove: "highway";
   fixAdd: "barrier=stile";
 }
-  
 *[highway=incline] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "incline";
   group: tr("deprecated tagging");
 }
-  
 *[highway=incline_steep] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "incline";
   group: tr("deprecated tagging");
 }
-  
 *[highway=unsurfaced] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "highway=* + surface=unpaved";
   group: tr("deprecated tagging");
   fixAdd: "highway=road";
   fixAdd: "surface=unpaved";
 }
-  
 *[landuse=wood] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "landuse=forest";
   suggestAlternative: "natural=wood";
   group: tr("deprecated tagging");
 }
-  
 *[natural=marsh] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "natural=wetland + wetland=marsh";
   group: tr("deprecated tagging");
   fixAdd: "natural=wetland";
   fixAdd: "wetland=marsh";
 }
-  
 *[highway=byway] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   group: tr("deprecated tagging");
 }
-  
 *[power_source] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "generator:source";
   group: tr("deprecated tagging");
 }
-  
 *[power_rating] {
-  /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "generator:output";
   group: tr("deprecated tagging");
 }
-  
+
 *[shop=antique] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "shop=antiques";
@@ -128,7 +110,6 @@ way[class] {
 }
 
 *[shop=organic] {
-  /* from http://wiki.openstreetmap.org/wiki/Tag:shop=organic */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "shop=* + organic=yes";
   suggestAlternative: "shop=* + organic=only";
@@ -150,32 +131,30 @@ way[class] {
 }
 
 *[bicycle_parking=sheffield] {
-  /* from http://wiki.openstreetmap.org/wiki/Key:bicycle_parking */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "bicycle_parking=stands";
   group: tr("deprecated tagging");
   fixAdd: "bicycle_parking=stands";
 }
-  
+
 *[amenity=emergency_phone] {
-  /* http://wiki.openstreetmap.org/wiki/Tag:emergency=phone */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "emergency=phone";
   group: tr("deprecated tagging");
   fixRemove: "amenity";
   fixAdd: "emergency=phone";
 }
-  
+ 
+/* #8132 */ 
 *[sport=gaelic_football] {
-  /* fix #8132 - http://wiki.openstreetmap.org/wiki/Tag:sport=gaelic_football */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "sport=gaelic_games";
   group: tr("deprecated tagging");
   fixAdd: "sport=gaelic_games";
 }
-  
+
+/* #8847, #8961 */  
 *[power=station] {
-  /* see #8847 / #8961 - http://wiki.openstreetmap.org/wiki/Tag:power=station */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "power=plant";
   suggestAlternative: "power=substation";
@@ -209,51 +188,51 @@ way[class] {
   group: tr("deprecated tagging");
   fixAdd: "generator:method=water-storage";
 }
-  
+
 *[generator:method=pumped-storage] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "generator:method=water-pumped-storage";
   group: tr("deprecated tagging");
   fixAdd: "generator:method=water-pumped-storage";
 }
-  
+
 *[generator:method=pumping] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "generator:method=water-pumped-storage";
   group: tr("deprecated tagging");
   fixAdd: "generator:method=water-pumped-storage";
 }
-  
+
+/* #8962 */ 
 *[fence_type=chain] {
-  /* see #8962 - http://wiki.openstreetmap.org/wiki/Key:fence_type */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "barrier=chain";
   suggestAlternative: "barrier=fence + fence_type=chain_link";
   group: tr("deprecated tagging");
 }
 
+/* #9000 */ 
 *[building=entrance] {
-  /* see #9000 - http://wiki.openstreetmap.org/wiki/Key:entrance */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "entrance";
   group: tr("deprecated tagging");
 }
-  
+
+/* #9213 */ 
 *[board_type=board] {
-  /* see #9213 - Useless tag proposed in internal preset for years */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   group: tr("deprecated tagging");
   fixRemove: "board_type";
 }
-  
+
+/* #8434 */
 *[man_made=measurement_station] {
-  /* see #8434 - http://wiki.openstreetmap.org/wiki/Proposed_features/monitoring_station */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "man_made=monitoring_station";
   group: tr("deprecated tagging");
   fixAdd: "man_made=monitoring_station";
 }
-  
+
 *[measurement=water_level] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "monitoring:water_level=yes";
@@ -261,7 +240,7 @@ way[class] {
   fixRemove: "measurement";
   fixAdd: "monitoring:water_level=yes";
 }
-  
+
 *[measurement=weather] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "monitoring:weather=yes";
@@ -269,7 +248,7 @@ way[class] {
   fixRemove: "measurement";
   fixAdd: "monitoring:weather=yes";
 }
-  
+
 *[measurement=seismic] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "monitoring:seismic_activity=yes";
@@ -292,8 +271,8 @@ way[class] {
   fixChangeKey: "stay => maxstay";
 }
 
+/* #9554 */
 *[emergency=aed] {
-  /* see #9554 - http://wiki.openstreetmap.org/wiki/Proposed_features/automated_external_defibrillator */
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "emergency=defibrillator";
   group: tr("deprecated tagging");
@@ -313,7 +292,7 @@ way[class] {
   assertMatch: "node day_on=0-12";
 }
 
-/* see #10000, http://wiki.openstreetmap.org/wiki/Tag%3Aaccess%3Ddesignated */
+/* #10000 */
 *[access=designated] {
   throwWarning: tr("''{0}'' is meaningless, use more specific tags, e.g. ''{1}''", "access=designated", "bicycle=designated");
   assertMatch: "way access=designated";
@@ -323,7 +302,7 @@ way[class] {
   assertMatch: "way access=official";
 }
 
-/* see #10085 - give warning for fixme=yes */
+/* #10085 */
 *[fixme=yes], *[FIXME=yes] {
   throwWarning: tr("{0}={1} is unspecific. Instead of ''{1}'' please give more information about what exactly should be fixed.", "{0.key}", "{0.value}");
   assertMatch: "way fixme=yes";
@@ -342,7 +321,7 @@ way[class] {
   throwWarning: tr("{0} is unspecific. Instead use the key fixme with the information what exactly should be fixed in the value of fixme.", "{0.tag}");
 }
 
-/* see #10107, #10108, #10929, #13391 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
+/* #10107, #10108, #10929, #13391 - http://wiki.openstreetmap.org/wiki/Proposed_features/leaftype#Features.2FPages_affected */
 *[type=broad_leaved],
 *[type=broad_leafed] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -351,7 +330,6 @@ way[class] {
   fixRemove: "{0.key}";
   fixAdd: "leaf_type=broadleaved";
 }
-
 *[wood=coniferous],
 *[type=coniferous],
 *[type=conifer] {
@@ -361,7 +339,6 @@ way[class] {
   fixRemove: "{0.key}";
   fixAdd: "leaf_type=needleleaved";
 }
-
 *[wood=mixed] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "leaf_type=mixed";
@@ -369,7 +346,6 @@ way[class] {
   fixRemove: "wood";
   fixAdd: "leaf_type=mixed";
 }
-
 *[wood=evergreen],
 *[type=evergreen] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -378,7 +354,6 @@ way[class] {
   fixRemove: "{0.key}";
   fixAdd: "leaf_cycle=evergreen";
 }
-
 *[type=deciduous],
 *[type=deciduos] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -387,13 +362,11 @@ way[class] {
   fixRemove: "type";
   fixAdd: "leaf_cycle=deciduous";
 }
-
 *[wood=deciduous] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "leaf_type + leaf_cycle";
   group: tr("deprecated tagging");
 }
-
 node[type=palm],
 way[type=palm] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
@@ -409,7 +382,7 @@ way[type=palm] {
   assertMatch: "way natural=land";
 }
 
-/* see #10447 - https://wiki.openstreetmap.org/wiki/Proposed_features/Bridge_types#Deprecated_bridge_key_values */
+/* #10447 - https://wiki.openstreetmap.org/wiki/Proposed_features/Bridge_types#Deprecated_bridge_key_values */
 *[bridge=causeway] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "ford=yes";
@@ -438,7 +411,7 @@ way[type=palm] {
   fixAdd: "bridge:structure=floating";
 }
 
-/* See #10530 - Incorrect tag proposed in internal preset for years */
+/* #10530 - Incorrect tag proposed in internal preset for years */
 *[fee=interval],
 *[lit=interval],
 *[supervised=interval] {
@@ -446,14 +419,14 @@ way[type=palm] {
   group: tr("deprecated tagging");
 }
 
-/* See #10582 - JOSM supported this tag as "don't upload this" feature, before the introduction of upload flag at layer level */
+/* #10582 - JOSM supported this tag as "don't upload this" feature, before the introduction of upload flag at layer level */
 *[/josm\/ignore/] {
   throwError: tr("{0} is deprecated. Please delete this object and use a private layer instead", "{0.key}");
   group: tr("deprecated tagging");
   fixDeleteObject: this;
 }
 
-/* see #8281 */
+/* #8281 */
 *[sport=diving] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "sport=scuba_diving";
@@ -461,7 +434,7 @@ way[type=palm] {
   group: tr("deprecated tagging");
 }
 
-/* see #8281 */
+/* #8281 */
 *[parking=park_and_ride] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "amenity=parking + park_ride=yes";
@@ -471,7 +444,7 @@ way[type=palm] {
   fixAdd: "park_ride=yes";
 }
 
-/* see #19287, #18334, #17950, #10661, #10837, #11737, #12771 */
+/* #19287, #18334, #17950, #10661, #10837, #11737, #12771 */
 *[playground=yes],
 *[manhole=plain],
 *[manhole=unknown],
@@ -491,7 +464,7 @@ way[type=palm] {
   throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by a specific value.", "{0.key}", "{0.value}");
 }
 
-/* see #10693 - http://wiki.openstreetmap.org/wiki/Proposed_features/drop_recommendation_for_place_name , #10837 */
+/* #10693 - http://wiki.openstreetmap.org/wiki/Proposed_features/drop_recommendation_for_place_name , #10837 */
 *[place_name][!name] {
   throwWarning: tr("{0} should be replaced with {1}", "{0.key}", "{1.key}");
   fixChangeKey: "place_name => name";
@@ -525,7 +498,7 @@ way[sidewalk=yes] {
   fixAdd: "mooring=yes";
 }
 
-/* see #10837 */
+/* #10837 */
 *[building][levels],
 *[building:part=yes][levels] {
   throwWarning: tr("{0} is deprecated", "{1.key}");
@@ -534,7 +507,7 @@ way[sidewalk=yes] {
   fixChangeKey: "levels => building:levels";
 }
 
-/* see #10691 */
+/* #10691 */
 *[protected_class] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "protect_class";
@@ -542,7 +515,7 @@ way[sidewalk=yes] {
   fixChangeKey: "protected_class => protect_class";
 }
 
-/* see #11070 */
+/* #11070 */
 *[kerb=unknown],
 *[lock=unknown],
 *[hide=unknown],
@@ -556,14 +529,14 @@ way[sidewalk=yes] {
   throwWarning: tr("Unspecific tag {0}", "{0.tag}");
 }
 
-/* unclear definition, see #11183 */
+/* #11183 */
 *[sport=skiing] {
   throwWarning: tr("Definition of {0} is unclear", "{0.tag}");
   suggestAlternative: tr("{0} + {1} + {2}", "piste:type=*", "piste:difficulty=*", "piste:grooming=*");
   group: tr("deprecated tagging");
 }
 
-/* see #11223 */
+/* #11223 */
 *[waterway=wadi] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "{0.key}=* + intermittent=yes";
@@ -571,7 +544,7 @@ way[sidewalk=yes] {
   group: tr("deprecated tagging");
 }
 
-/* see #10346, #15667 (waterway has its own rules in unnecessary.mapcss) */
+/* #10346, #15667 (waterway has its own rules in unnecessary.mapcss) */
 way[oneway=1][!waterway] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "oneway=yes";
@@ -579,7 +552,7 @@ way[oneway=1][!waterway] {
   fixAdd: "oneway=yes";
 }
 
-/* see #11329, #15667 */
+/* #11329, #15667 */
 way[oneway=-1][!waterway] {
   throwWarning: tr("{0} is not recommended. Use the Reverse Ways function from the Tools menu.", "{0.tag}");
 }
@@ -590,7 +563,7 @@ way[oneway=-1][!waterway] {
   group: tr("deprecated tagging");
 }
 
-/* see #10329, #15877 */
+/* #10329, #15877 */
   /* simple key change */
 *[color][!colour] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
@@ -684,13 +657,13 @@ area[roof:color][roof:colour]["roof:color"=*"roof:colour"] {
   assertMatch: "way color:back=grey";
 }
 
-/* see #11234 */
+/* #11234 */
 *[/=|\+|\/|&|<|>|;|'|"|%|#|@|\\|,|\.|\{|\}|\?|\*|\^|\$/] {
   throwWarning: tr("{0}", "{0.key}");
   group: tr("key with uncommon character");
 }
 
-/* see #11330, #18642 */
+/* #11330, #18642 */
 *[/^.$/],
 node[/^..$/],
 way[/^..$/][route=ferry][!to],
@@ -705,7 +678,7 @@ relation[/^..$/][!to] {
   assertMatch: "node f=b";
 }
 
-/* see #11439 */
+/* #11439 */
 *[sport=hockey] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "sport=field_hockey";
@@ -713,7 +686,7 @@ relation[/^..$/][!to] {
   group: tr("deprecated tagging");
 }
 
-/* see #11471 */
+/* #11471 */
 *[sport=billard],
 *[sport=billards],
 *[sport=billiard] {
@@ -723,7 +696,7 @@ relation[/^..$/][!to] {
   fixAdd: "sport=billiards";
 }
 
-/* see #11499, #16928 */
+/* #11499, #16928 */
 *[payment:credit_cards=yes] {
   throwWarning: tr("{0} is inaccurate. Use separate tags for each specific type, e.g. {1} or {2}.", "{0.tag}", "payment:mastercard=yes", "payment:visa=yes");
 }
@@ -737,7 +710,7 @@ relation[/^..$/][!to] {
   throwWarning: tr("{0} is inaccurate. Use separate tags for each specific type, e.g. {1} or {2}.", "{0.tag}", "payment:bitcoin=yes", "payment:litecoin=yes");
 }
 
-/* defunct payment cards */
+/* #16253 */
 *[payment:ep_quick],
 *[payment:ep_cash],
 *[payment:ep_proton],
@@ -747,7 +720,7 @@ relation[/^..$/][!to] {
   fixRemove: "{0.key}";
 }
 
-/* see #8717 */
+/* #8717 */
 *[kp][highway=milestone],
 *[kp][railway=milestone],
 *[kp][waterway=milestone] {
@@ -809,7 +782,7 @@ node[type][pipeline=marker] {
   suggestAlternative: "{1.tag}";
   group: tr("deprecated tagging");
 }
-/* #12135 - Tag removed rom rendering https://github.com/gravitystorm/openstreetmap-carto/pull/1830 */
+/* #12135 */
 *[landuse=conservation] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "boundary=protected_area";
