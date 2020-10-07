@@ -333,8 +333,8 @@ public class DuplicateNode extends Test {
         // never merge nodes with different tags.
         if (testError.getCode() == DUPLICATE_NODE) return false;
         // cannot merge nodes outside download area
-        final Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
-        return it.hasNext() && !it.next().isOutsideDownloadArea();
+        return testError.getPrimitives().stream().filter(p -> !p.isDeleted()).count() > 1
+                && Command.checkOutlyingOrIncompleteOperation(testError.getPrimitives(), null) == Command.IS_OK;
         // everything else is ok to merge
     }
 }
