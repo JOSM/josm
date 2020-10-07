@@ -298,9 +298,8 @@ public final class TagConflictResolutionUtil {
         public String resolve(Set<String> values) {
             Set<String> results = instantiateSortedSet();
             for (String value: values) {
-                for (String part: value.split(Pattern.quote(separator), -1)) {
-                    results.add(part);
-                }
+                String[] parts = value.split(Pattern.quote(separator), -1);
+                results.addAll(Arrays.asList(parts));
             }
             return String.join(separator, results);
         }

@@ -183,9 +183,7 @@ public class ImageryLayerInfo {
             defaultLayers.addAll(newLayers);
             for (ImageryInfo layer : newLayers) {
                 allDefaultLayers.add(layer);
-                for (ImageryInfo sublayer : layer.getMirrors()) {
-                    allDefaultLayers.add(sublayer);
-                }
+                allDefaultLayers.addAll(layer.getMirrors());
             }
             defaultLayerIds.clear();
             Collections.sort(defaultLayers);

@@ -171,12 +171,8 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     @Override
     public void changesetCacheUpdated(ChangesetCacheEvent event) {
         List<Changeset> selected = getSelectedChangesets();
-        for (Changeset cs: event.getAddedChangesets()) {
-            data.add(cs);
-        }
-        for (Changeset cs: event.getRemovedChangesets()) {
-            data.remove(cs);
-        }
+        data.addAll(event.getAddedChangesets());
+        data.removeAll(event.getRemovedChangesets());
         for (Changeset cs: event.getUpdatedChangesets()) {
             int idx = data.indexOf(cs);
             if (idx >= 0) {

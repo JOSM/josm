@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
@@ -148,9 +149,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
             File[] files = deletedLayersDir.listFiles();
             if (files != null) {
-                for (File f: files) {
-                    deletedLayers.add(f); // FIXME: sort by mtime
-                }
+                // FIXME: sort by mtime
+                deletedLayers.addAll(Arrays.asList(files));
             }
 
             new Timer(true).schedule(this, TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(PROP_INTERVAL.get()));

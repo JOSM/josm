@@ -279,9 +279,7 @@ public class MoveCommand extends Command {
 
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
-        for (OsmPrimitive osm : nodes) {
-            modified.add(osm);
-        }
+        modified.addAll(nodes);
     }
 
     @Override

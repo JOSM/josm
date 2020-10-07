@@ -482,9 +482,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = new LinkedList<>();
             synchronized (this) {
-                for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
-                    sel.add(o);
-                }
+                sel.addAll(lstConflicts.getSelectedValuesList());
             }
             DataSet ds = MainApplication.getLayerManager().getEditDataSet();
             if (ds != null) { // Can't see how it is possible but it happened in #7942

@@ -448,11 +448,7 @@ public class QuadBuckets<T extends IPrimitive> implements Collection<T> {
      * @return elements as list
      */
     public List<T> toList() {
-        List<T> a = new ArrayList<>();
-        for (T n : this) {
-            a.add(n);
-        }
-        return a;
+        return new ArrayList<>(this);
     }
 
     @Override
