@@ -9,17 +9,14 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 
 /**
@@ -43,18 +40,6 @@ public final class DateUtils {
      */
     public static final BooleanProperty PROP_ISO_DATES = new BooleanProperty("iso.dates", false);
 
-    private static final DatatypeFactory XML_DATE;
-
-    static {
-        DatatypeFactory fact = null;
-        try {
-            fact = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            Logging.error(e);
-        }
-        XML_DATE = fact;
-    }
-
     /**
      * Constructs a new {@code DateUtils}.
      */
@@ -69,7 +54,7 @@ public final class DateUtils {
      * @throws UncheckedParseException if the date does not match any of the supported date formats
      * @throws DateTimeException if the value of any field is out of range, or if the day-of-month is invalid for the month-year
      */
-    public static synchronized Date fromString(String str) {
+    public static Date fromString(String str) {
         return new Date(tsFromString(str));
     }
 
@@ -80,9 +65,16 @@ public final class DateUtils {
      * @throws UncheckedParseException if the date does not match any of the supported date formats
      * @throws DateTimeException if the value of any field is out of range, or if the day-of-month is invalid for the month-year
      */
-    public static synchronized long tsFromString(String str) {
+    public static long tsFromString(String str) {
         // "2007-07-25T09:26:24{Z|{+|-}01[:00]}"
-        if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
+        if (checkLayout(str, "xxxx-xx-xx")) {
+            final ZonedDateTime local = ZonedDateTime.of(
+                    parsePart4(str, 0),
+                    parsePart2(str, 5),
+                    parsePart2(str, 8),
+                    0, 0, 0, 0, ZoneOffset.UTC);
+            return local.toInstant().toEpochMilli();
+        } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
                 checkLayout(str, "xxxx:xx:xx xx:xx:xx") ||
                 checkLayout(str, "xxxx-xx-xx xx:xx:xxZ") ||
@@ -135,8 +127,9 @@ public final class DateUtils {
         }
 
         try {
-            return XML_DATE.newXMLGregorianCalendar(str).toGregorianCalendar().getTimeInMillis();
-        } catch (IllegalArgumentException ex) {
+            // slow path for fractional seconds different from millisecond precision
+            return Instant.parse(str).toEpochMilli();
+        } catch (IllegalArgumentException | DateTimeParseException ex) {
             throw new UncheckedParseException("The date string (" + str + ") could not be parsed.", ex);
         }
     }
@@ -157,7 +150,7 @@ public final class DateUtils {
      * @return The formatted date
      * @since 14434
      */
-    public static synchronized String fromTimestampInMillis(long timestamp) {
+    public static String fromTimestampInMillis(long timestamp) {
         final ZonedDateTime temporal = Instant.ofEpochMilli(timestamp).atZone(ZoneOffset.UTC);
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(temporal);
     }
@@ -167,7 +160,7 @@ public final class DateUtils {
      * @param timestamp number of seconds since the epoch
      * @return The formatted date
      */
-    public static synchronized String fromTimestamp(int timestamp) {
+    public static String fromTimestamp(int timestamp) {
         return fromTimestamp(Integer.toUnsignedLong(timestamp));
     }
 
@@ -176,7 +169,7 @@ public final class DateUtils {
      * @param date The date to format
      * @return The formatted date
      */
-    public static synchronized String fromDate(Date date) {
+    public static String fromDate(Date date) {
         final ZonedDateTime temporal = date.toInstant().atZone(ZoneOffset.UTC);
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(temporal);
     }

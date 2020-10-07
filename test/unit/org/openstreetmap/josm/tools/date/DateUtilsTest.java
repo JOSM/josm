@@ -9,8 +9,11 @@ import static org.junit.Assert.assertNull;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.TimeZone;
+import java.util.concurrent.ForkJoinPool;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -191,8 +194,17 @@ public class DateUtilsTest {
         assertEquals(1459695600123L + 5 * 3600 * 1000, DateUtils.tsFromString("2016-04-03T15:00:00.123-05:00"));
 
         // Local time
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
+        setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
         assertEquals(1459688400000L, DateUtils.tsFromString("03-APR-16 15:00:00"));
+    }
+
+    @Test
+    @Ignore("slow; use for thread safety testing")
+    public void testTsFromString800k() throws Exception {
+        new ForkJoinPool(64).submit(() -> new Random()
+                .longs(800_000)
+                .parallel()
+                .forEach(ignore -> testTsFromString())).get();
     }
 
     /**
