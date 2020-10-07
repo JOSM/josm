@@ -8,7 +8,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -39,18 +38,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -58,7 +56,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
@@ -93,6 +90,7 @@ import org.openstreetmap.josm.gui.util.ReorderableTableModel;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.NetworkManager;
@@ -124,9 +122,9 @@ public abstract class SourceEditor extends JPanel {
     /** the underlying model of active sources **/
     protected final ActiveSourcesModel activeSourcesModel;
     /** the list of available sources **/
-    protected final JList<ExtendedSourceEntry> lstAvailableSources;
+    protected final JTable tblAvailableSources;
     /** the underlying model of available sources **/
-    protected final AvailableSourcesListModel availableSourcesModel;
+    protected final AvailableSourcesModel availableSourcesModel;
     /** the URL from which the available sources are fetched **/
     protected final String availableSourcesUrl;
     /** the list of source providers **/
@@ -151,12 +149,13 @@ public abstract class SourceEditor extends JPanel {
         this.canEnable = sourceType == SourceType.MAP_PAINT_STYLE || sourceType == SourceType.TAGCHECKER_RULE;
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
-        this.availableSourcesModel = new AvailableSourcesListModel(selectionModel);
-        this.lstAvailableSources = new JList<>(availableSourcesModel);
-        this.lstAvailableSources.setSelectionModel(selectionModel);
-        final SourceEntryListCellRenderer listCellRenderer = new SourceEntryListCellRenderer();
-        this.lstAvailableSources.setCellRenderer(listCellRenderer);
-        GuiHelper.extendTooltipDelay(lstAvailableSources);
+        this.availableSourcesModel = new AvailableSourcesModel();
+        this.tblAvailableSources = new ScrollHackTable(availableSourcesModel);
+        this.tblAvailableSources.setAutoCreateRowSorter(true);
+        this.tblAvailableSources.setSelectionModel(selectionModel);
+        final FancySourceEntryTableCellRenderer availableSourcesEntryRenderer = new FancySourceEntryTableCellRenderer();
+        this.tblAvailableSources.getColumnModel().getColumn(0).setCellRenderer(availableSourcesEntryRenderer);
+        GuiHelper.extendTooltipDelay(tblAvailableSources);
         this.availableSourcesUrl = availableSourcesUrl;
         this.sourceProviders = sourceProviders;
 
@@ -165,11 +164,13 @@ public abstract class SourceEditor extends JPanel {
         tblActiveSources = new ScrollHackTable(activeSourcesModel);
         tblActiveSources.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tblActiveSources.setSelectionModel(selectionModel);
-        tblActiveSources.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tblActiveSources.setShowGrid(false);
-        tblActiveSources.setIntercellSpacing(new Dimension(0, 0));
-        tblActiveSources.setTableHeader(null);
-        tblActiveSources.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        Stream.of(tblAvailableSources, tblActiveSources).forEach(t -> {
+            t.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            t.setShowGrid(false);
+            t.setIntercellSpacing(new Dimension(0, 0));
+            t.setTableHeader(null);
+            t.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        });
         SourceEntryTableCellRenderer sourceEntryRenderer = new SourceEntryTableCellRenderer();
         if (canEnable) {
             tblActiveSources.getColumnModel().getColumn(0).setMaxWidth(1);
@@ -180,15 +181,16 @@ public abstract class SourceEditor extends JPanel {
         }
 
         activeSourcesModel.addTableModelListener(e -> {
-            listCellRenderer.updateSources(activeSourcesModel.getSources());
-            lstAvailableSources.repaint();
+            availableSourcesEntryRenderer.updateSources(activeSourcesModel.getSources());
+            tblAvailableSources.repaint();
         });
         tblActiveSources.addPropertyChangeListener(evt -> {
-            listCellRenderer.updateSources(activeSourcesModel.getSources());
-            lstAvailableSources.repaint();
+            availableSourcesEntryRenderer.updateSources(activeSourcesModel.getSources());
+            tblAvailableSources.repaint();
         });
         // Force Swing to show horizontal scrollbars for the JTable
         // Yes, this is a little ugly, but should work
+        availableSourcesModel.addTableModelListener(e -> TableHelper.adjustColumnWidth(tblAvailableSources, 0, 800));
         activeSourcesModel.addTableModelListener(e -> TableHelper.adjustColumnWidth(tblActiveSources, canEnable ? 1 : 0, 800));
         activeSourcesModel.setActiveSources(getInitialSourcesList());
 
@@ -226,7 +228,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         ActivateSourcesAction activateSourcesAction = new ActivateSourcesAction();
-        lstAvailableSources.addListSelectionListener(activateSourcesAction);
+        tblAvailableSources.getSelectionModel().addListSelectionListener(activateSourcesAction);
         JButton activate = new JButton(activateSourcesAction);
 
         setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -255,8 +257,12 @@ public abstract class SourceEditor extends JPanel {
         gbc.anchor = GBC.CENTER;
         gbc.insets = new Insets(0, 11, 0, 0);
 
-        JScrollPane sp1 = new JScrollPane(lstAvailableSources);
-        add(sp1, gbc);
+        FilterField availableSourcesFilter = new FilterField().filter(tblAvailableSources, availableSourcesModel);
+        JPanel defaultPane = new JPanel(new GridBagLayout());
+        JScrollPane sp1 = new JScrollPane(tblAvailableSources);
+        defaultPane.add(availableSourcesFilter, GBC.eol().insets(0, 0, 0, 0).fill(GridBagConstraints.HORIZONTAL));
+        defaultPane.add(sp1, GBC.eol().insets(0, 0, 0, 0).fill(GridBagConstraints.BOTH));
+        add(defaultPane, gbc);
 
         gbc.gridx = 1;
         gbc.weightx = 0.0;
@@ -560,17 +566,14 @@ public abstract class SourceEditor extends JPanel {
     /**
      * List model of available sources.
      */
-    protected static class AvailableSourcesListModel extends DefaultListModel<ExtendedSourceEntry> {
+    protected static class AvailableSourcesModel extends AbstractTableModel {
         private final transient List<ExtendedSourceEntry> data;
-        private final DefaultListSelectionModel selectionModel;
 
         /**
          * Constructs a new {@code AvailableSourcesListModel}
-         * @param selectionModel selection model
          */
-        public AvailableSourcesListModel(DefaultListSelectionModel selectionModel) {
+        public AvailableSourcesModel() {
             data = new ArrayList<>();
-            this.selectionModel = selectionModel;
         }
 
         /**
@@ -582,45 +585,27 @@ public abstract class SourceEditor extends JPanel {
             if (sources != null) {
                 data.addAll(sources);
             }
-            fireContentsChanged(this, 0, data.size());
+            fireTableDataChanged();
+        }
+
+        public ExtendedSourceEntry getValueAt(int rowIndex) {
+            return data.get(rowIndex);
         }
 
         @Override
-        public ExtendedSourceEntry getElementAt(int index) {
-            return data.get(index);
+        public ExtendedSourceEntry getValueAt(int rowIndex, int ignored) {
+            return getValueAt(rowIndex);
         }
 
         @Override
-        public int getSize() {
+        public int getRowCount() {
             if (data == null) return 0;
             return data.size();
         }
 
-        /**
-         * Deletes the selected sources.
-         */
-        public void deleteSelected() {
-            Iterator<ExtendedSourceEntry> it = data.iterator();
-            int i = 0;
-            while (it.hasNext()) {
-                it.next();
-                if (selectionModel.isSelectedIndex(i)) {
-                    it.remove();
-                }
-                i++;
-            }
-            fireContentsChanged(this, 0, data.size());
-        }
-
-        /**
-         * Returns the selected sources.
-         * @return the selected sources
-         */
-        public List<ExtendedSourceEntry> getSelected() {
-            return IntStream.range(0, data.size())
-                    .filter(selectionModel::isSelectedIndex)
-                    .mapToObj(data::get)
-                    .collect(Collectors.toList());
+        @Override
+        public int getColumnCount() {
+            return 1;
         }
     }
 
@@ -1065,7 +1050,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         protected final void updateEnabledState() {
-            setEnabled(lstAvailableSources.getSelectedIndices().length > 0);
+            setEnabled(tblAvailableSources.getSelectedRowCount() > 0);
         }
 
         @Override
@@ -1075,7 +1060,11 @@ public abstract class SourceEditor extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            List<ExtendedSourceEntry> sources = availableSourcesModel.getSelected();
+            List<ExtendedSourceEntry> sources = Arrays.stream(tblAvailableSources.getSelectedRows())
+                    .map(tblAvailableSources::convertRowIndexToModel)
+                    .mapToObj(availableSourcesModel::getValueAt)
+                    .collect(Collectors.toList());
+
             int josmVersion = Version.getInstance().getVersion();
             if (josmVersion != Version.JOSM_UNKNOWN_VERSION) {
                 Collection<String> messages = new ArrayList<>();
@@ -1329,7 +1318,7 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
-    static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer<ExtendedSourceEntry> {
+    static class FancySourceEntryTableCellRenderer extends DefaultTableCellRenderer {
 
         private static final NamedColorProperty SOURCE_ENTRY_ACTIVE_BACKGROUND_COLOR = new NamedColorProperty(
                 marktr("External resource entry: Active"),
@@ -1341,21 +1330,11 @@ public abstract class SourceEditor extends JPanel {
         private final Map<String, SourceEntry> entryByUrl = new HashMap<>();
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends ExtendedSourceEntry> list, ExtendedSourceEntry value,
-                int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getTableCellRendererComponent(JTable list, Object object, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(list, object, isSelected, hasFocus, row, column);
+            final ExtendedSourceEntry value = (ExtendedSourceEntry) object;
             String s = value.toString();
             setText(s);
-            if (isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-            } else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
-            }
-            setEnabled(list.isEnabled());
-            setFont(list.getFont());
-            setFont(getFont().deriveFont(Font.PLAIN));
-            setOpaque(true);
             setToolTipText(value.getTooltip());
             if (!isSelected) {
                 final SourceEntry sourceEntry = entryByUrl.get(value.url);
