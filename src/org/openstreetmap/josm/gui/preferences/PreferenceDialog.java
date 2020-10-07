@@ -229,6 +229,7 @@ public class PreferenceDialog extends JDialog {
     public void dispose() {
         previouslySelected = tpPreferences.getSelectedTab();
         removeWindowListener(windowEventHandler);
+        setVisible(false); // save current geometry
         super.dispose();
     }
 }
