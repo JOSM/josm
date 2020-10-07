@@ -853,3 +853,18 @@ way[cycleway][!highway][!/:highway$/] {
   group: tr("missing tag");
   assertNoMatch: "way footway=sidewalk abandoned:highway=unclassified";
 }
+
+/* #17498 */
+way[bicycle][/^cycleway(:|$)/][!/^bicycle:/][bicycle=~/^(no|none|use_sidepath)$/][/^cycleway(:|$)/!~/^(no|none|separate)$/] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
+  assertMatch: "way bicycle=no cycleway=track";
+  assertMatch: "way bicycle=use_sidepath cycleway=lane";
+  assertMatch: "way bicycle=use_sidepath cycleway:left=lane";
+  assertNoMatch: "way bicycle=use_sidepath cycleway=no";
+  assertNoMatch: "way bicycle=use_sidepath bicycle:backward=yes cycleway:left=lane"; /* instead of :backward, could also be :forward or :conditional */
+  assertNoMatch: "way bicycle=no cycleway:right=no";
+  assertNoMatch: "way bicycle=use_sidepath cycleway:left=none";
+  assertNoMatch: "way highway=cycleway cycleway=separate";
+  assertNoMatch: "way highway=residential bicycle=use_sidepath";
+}
