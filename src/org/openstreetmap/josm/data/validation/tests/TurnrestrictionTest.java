@@ -256,12 +256,20 @@ public class TurnrestrictionTest extends Test {
                         .build());
                 return;
             }
-            final Way viaPseudoWay = new Way();
-            viaPseudoWay.addNode(viaNode);
-            checkIfConnected(r, fromWay, viaPseudoWay,
-                    tr("The \"from\" way does not start or end at a \"via\" node."), FROM_VIA_NODE);
-            checkIfConnected(r, viaPseudoWay, toWay,
-                    tr("The \"to\" way does not start or end at a \"via\" node."), TO_VIA_NODE);
+            if (!fromWay.isFirstLastNode(viaNode)) {
+                errors.add(TestError.builder(this, Severity.WARNING, FROM_VIA_NODE)
+                        .message(tr("The \"from\" way does not start or end at a \"via\" node."))
+                        .primitives(r, fromWay, viaNode)
+                        .highlight(fromWay, viaNode)
+                        .build());
+            }
+            if (!toWay.isFirstLastNode(viaNode)) {
+                errors.add(TestError.builder(this, Severity.WARNING, TO_VIA_NODE)
+                        .message(tr("The \"to\" way does not start or end at a \"via\" node."))
+                        .primitives(r, toWay, viaNode)
+                        .highlight(toWay, viaNode)
+                        .build());
+            }
         } else {
             if (isFullOneway(toWay) && ((Way) via.get(via.size() - 1)).isFirstLastNode(toWay.lastNode(true))) {
                 errors.add(TestError.builder(this, Severity.WARNING, SUPERFLUOUS)
@@ -315,22 +323,10 @@ public class TurnrestrictionTest extends Test {
             c = current.isFirstLastNode(previous.firstNode()) || current.isFirstLastNode(previous.lastNode());
         }
         if (!c) {
-            List<OsmPrimitive> hilite = new ArrayList<>();
-            if (previous.getNodesCount() == 1 && previous.isNew())
-                hilite.add(previous.firstNode());
-            else
-                hilite.add(previous);
-            if (current.getNodesCount() == 1 && current.isNew())
-                hilite.add(current.firstNode());
-            else
-                hilite.add(current);
-            List<OsmPrimitive> primitives = new ArrayList<>();
-            primitives.add(r);
-            primitives.addAll(hilite);
             errors.add(TestError.builder(this, Severity.ERROR, code)
                     .message(msg)
-                    .primitives(primitives)
-                    .highlight(hilite)
+                    .primitives(r, previous, current)
+                    .highlight(previous, current)
                     .build());
         }
     }
