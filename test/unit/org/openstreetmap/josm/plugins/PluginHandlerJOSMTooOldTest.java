@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,7 +28,6 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
-import org.openstreetmap.josm.tools.Utils;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -105,7 +105,7 @@ public class PluginHandlerJOSMTooOldTest {
         + "Please open the Preference Dialog after JOSM has started and try to update it manually.</html>";
 
     private static String u202f(String s) {
-        return Utils.getJavaVersion() < 9 ? s.replace('\u202F', ',') : s;
+        return s.replace('\u202F', DecimalFormatSymbols.getInstance().getGroupingSeparator());
     }
 
     /**
