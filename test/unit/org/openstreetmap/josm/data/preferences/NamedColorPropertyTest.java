@@ -6,6 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.Collections;
+
+import javax.swing.UIManager;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,6 +45,18 @@ public class NamedColorPropertyTest {
      */
     @Test
     public void testGet() {
+        assertEquals(Color.RED, base.get());
+
+        UIManager.put("JOSM.clr.general.test", Color.GRAY);
+        base = new NamedColorProperty("test", Color.RED);
+        assertEquals(Color.GRAY, base.get());
+
+        Config.getPref().putList("clr.general.test", Collections.singletonList("#123456"));
+        assertEquals(new Color(0x123456), base.get());
+
+        Config.getPref().putList("clr.general.test", null);
+        UIManager.put("JOSM.clr.general.test", null);
+        base = new NamedColorProperty("test", Color.RED);
         assertEquals(Color.RED, base.get());
     }
 

@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.UIManager;
+
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 
@@ -29,6 +31,8 @@ public class NamedColorProperty extends AbstractToStringProperty<Color> {
 
     /**
      * Construct a new {@code NamedColorProperty}.
+     *
+     * The priority for getting the color is: 1. a set property, 2. {@link UIManager#getColor}, 3. the given {@code defaultValue}
      * @param category a category, can be any identifier, but the following values are recognized by
      * the GUI preferences: {@link #COLOR_CATEGORY_GENERAL} and {@link #COLOR_CATEGORY_MAPPAINT}
      * @param source a filename or similar associated with the color, can be null if not applicable
