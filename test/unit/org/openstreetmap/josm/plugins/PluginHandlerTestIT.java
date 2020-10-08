@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -72,8 +71,8 @@ public class PluginHandlerTestIT {
         loadAllPlugins();
 
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
-                .filter(e -> !(ExceptionUtils.getRootCause(e.getValue()) instanceof HeadlessException))
-                .collect(Collectors.toMap(e -> e.getKey(), e -> ExceptionUtils.getRootCause(e.getValue())));
+                .filter(e -> !(Utils.getRootCause(e.getValue()) instanceof HeadlessException))
+                .collect(Collectors.toMap(e -> e.getKey(), e -> Utils.getRootCause(e.getValue())));
 
         List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
         Map<String, List<String>> invalidManifestEntries = loadedPlugins.stream().filter(pi -> !pi.invalidManifestEntries.isEmpty())
@@ -129,7 +128,7 @@ public class PluginHandlerTestIT {
             assertTrue(PluginHandler.removePlugins(loadedPlugins));
             assertTrue(restartable.parallelStream().noneMatch(info -> PluginHandler.getPlugins().contains(info)));
         } catch (Exception | LinkageError t) {
-            Throwable root = ExceptionUtils.getRootCause(t);
+            Throwable root = Utils.getRootCause(t);
             root.printStackTrace();
             noRestartExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
         }
@@ -211,7 +210,7 @@ public class PluginHandlerTestIT {
         try {
             consumer.accept(layer);
         } catch (Exception | LinkageError t) {
-            Throwable root = ExceptionUtils.getRootCause(t);
+            Throwable root = Utils.getRootCause(t);
             root.printStackTrace();
             layerExceptions.put(findFaultyPlugin(loadedPlugins, root), root);
         }
