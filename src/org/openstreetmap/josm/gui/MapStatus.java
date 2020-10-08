@@ -762,6 +762,9 @@ public final class MapStatus extends JPanel implements
         }
     };
 
+    /** see #19887: determine if the {@code distValue} field should be filled with length of selected object */
+    private boolean autoLength = true;
+
     private void registerListeners() {
         // Listen to keyboard/mouse events for pressing/releasing alt key and inform the collector.
         try {
@@ -1185,6 +1188,10 @@ public final class MapStatus extends JPanel implements
     }
 
     private void refreshDistText(Collection<? extends OsmPrimitive> newSelection) {
+        if (!autoLength) {
+            return;
+        }
+
         if (newSelection.size() == 2) {
             Iterator<? extends OsmPrimitive> it = newSelection.iterator();
             OsmPrimitive n1 = it.next();
@@ -1263,4 +1270,15 @@ public final class MapStatus extends JPanel implements
             refreshDistText(event.getDataset().getSelected());
         }
     }
+
+    /**
+     * Enable or disable the automatic refresh of the length field.
+     * @param b if {@code true} the automatic refresh is enabled, else disabled
+     * @since 17108
+     */
+    public void setAutoLength(boolean b) {
+        autoLength = b;
+    }
+
+
 }

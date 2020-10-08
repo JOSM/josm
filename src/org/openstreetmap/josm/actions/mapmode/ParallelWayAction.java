@@ -163,8 +163,10 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         // super.enterMode() updates the status line and cursor so we need our state to be set correctly
         setMode(Mode.NORMAL);
         pWays = null;
-
         super.enterMode();
+
+        // #19887: overwrite default: we want to show the distance to the original way
+        MainApplication.getMap().statusLine.setAutoLength(false);
 
         mv.addMouseListener(this);
         mv.addMouseMotionListener(this);
@@ -186,7 +188,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         mv.removeTemporaryLayer(temporaryLayer);
         MapFrame map = MainApplication.getMap();
         map.statusLine.setDist(-1);
-        map.statusLine.repaint();
+        map.statusLine.setAutoLength(true);
         map.keyDetector.removeModifierExListener(this);
         removeWayHighlighting(sourceWays);
         pWays = null;
@@ -331,6 +333,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
             } // else -> invalid modifier combination
         } else if (mode == Mode.DRAGGING) {
             clearSourceWays();
+            MainApplication.getMap().statusLine.setDist(pWays.getWays());
         }
 
         setMode(Mode.NORMAL);
