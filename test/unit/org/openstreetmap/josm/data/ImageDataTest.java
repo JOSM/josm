@@ -19,6 +19,8 @@ import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import mockit.Expectations;
 import mockit.Mock;
 import mockit.MockUp;
+import mockit.Mocked;
+import mockit.Verifications;
 
 /**
  * Unit tests for class {@link ImageData}.
@@ -55,14 +57,14 @@ public class ImageDataTest {
     }
 
     @Test
-    public void testSortData() {
+    public void testSortData(@Mocked Collections ignore) {
         List<ImageEntry> list = getOneImage();
 
-        new Expectations(Collections.class) {{
+        new ImageData(list);
+
+        new Verifications() {{
             Collections.sort(list);
         }};
-
-        new ImageData(list);
     }
 
     @Test
