@@ -1280,5 +1280,4 @@ public final class MapStatus extends JPanel implements
         autoLength = b;
     }
 
-
 }
