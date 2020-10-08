@@ -15,6 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -100,7 +101,7 @@ public class JosmEditorPane extends JEditorPane implements Destroyable {
         final Font f = UIManager.getFont("Label.font");
         final StyleSheet ss = new StyleSheet();
         ss.addRule((allBold ? "html" : "strong, b") + " {" + getFontRule(f) + '}');
-        ss.addRule("a {text-decoration: underline; color: blue}");
+        ss.addRule("a {text-decoration: underline; color: " + getLinkColor("blue") + "}");
         ss.addRule("h1 {" + getFontRule(GuiHelper.getTitleFont()) + '}');
         ss.addRule("ol {margin-left: 1cm; margin-top: 0.1cm; margin-bottom: 0.2cm; list-style-type: decimal}");
         ss.addRule("ul {margin-left: 1cm; margin-top: 0.1cm; margin-bottom: 0.2cm; list-style-type: disc}");
@@ -138,6 +139,17 @@ public class JosmEditorPane extends JEditorPane implements Destroyable {
                 "bold",
                 f.isItalic() ? "italic" : "normal"
         );
+    }
+
+    /**
+     * Returns the color (in CSS format) that should be used for links.
+     * If the current look and feel does not provide a link color, the passed default color is used.
+     * @param defaultColor the default color
+     * @return link color
+     */
+    public static String getLinkColor(String defaultColor) {
+        Color color = UIManager.getColor("Component.linkColor");
+        return color != null ? ColorHelper.color2html(color) : defaultColor;
     }
 
     @Override

@@ -135,6 +135,12 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
             return ss;
         }
         ss.addRule(css);
+
+        // overwrite link color
+        String linkColor = JosmEditorPane.getLinkColor(null);
+        if (linkColor != null) {
+            ss.addRule("a {color: " + linkColor + "}");
+        }
         return ss;
     }
 

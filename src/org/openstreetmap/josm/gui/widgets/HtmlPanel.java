@@ -56,7 +56,7 @@ public class HtmlPanel extends JPanel {
                 "bold",
                 f.isItalic() ? "italic" : "normal"
         ) + '}');
-        ss.addRule("a {text-decoration: underline; color: blue}");
+        ss.addRule("a {text-decoration: underline; color: " + JosmEditorPane.getLinkColor("blue") + "}");
         ss.addRule("ul {margin-left: 1cm; list-style-type: disc}");
         JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
         kit.setStyleSheet(ss);
