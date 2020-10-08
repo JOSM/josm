@@ -912,6 +912,12 @@ public final class MapStatus extends JPanel implements
         setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 
+        latText.setForeground(PROP_FOREGROUND_COLOR.get());
+        lonText.setForeground(PROP_FOREGROUND_COLOR.get());
+        headingText.setForeground(PROP_FOREGROUND_COLOR.get());
+        distText.setForeground(PROP_FOREGROUND_COLOR.get());
+        nameText.setForeground(PROP_FOREGROUND_COLOR.get());
+
         latText.setInheritsPopupMenu(true);
         lonText.setInheritsPopupMenu(true);
         headingText.setInheritsPopupMenu(true);
@@ -1157,8 +1163,7 @@ public final class MapStatus extends JPanel implements
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
         String key = e.getKey();
-        if (key.startsWith("color.")) {
-            key = key.substring("color.".length());
+        if (key.startsWith(NamedColorProperty.NAMED_COLOR_PREFIX)) {
             if (PROP_BACKGROUND_COLOR.getKey().equals(key) || PROP_FOREGROUND_COLOR.getKey().equals(key)) {
                 for (ImageLabel il : new ImageLabel[]{latText, lonText, headingText, distText, nameText}) {
                     il.setBackground(PROP_BACKGROUND_COLOR.get());

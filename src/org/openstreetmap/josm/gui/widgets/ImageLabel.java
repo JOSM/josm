@@ -55,6 +55,18 @@ public class ImageLabel extends JPanel {
         imgLabel.setIcon(ImageProvider.get("statusline/", img, ImageSizes.STATUSLINE));
     }
 
+    /**
+     * Sets the foreground color of the text.
+     * @param fg text color
+     */
+    @Override
+    public void setForeground(Color fg) {
+        super.setForeground(fg);
+        if (tf != null) {
+            tf.setForeground(fg);
+        }
+    }
+
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(25 + charCount*tf.getFontMetrics(tf.getFont()).charWidth('0'), super.getPreferredSize().height);
