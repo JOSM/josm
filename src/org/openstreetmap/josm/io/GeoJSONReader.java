@@ -40,6 +40,8 @@ import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
@@ -401,10 +403,52 @@ public class GeoJSONReader extends AbstractReader {
                     parse(parser);
                 }
             }
+            mergeEqualMultipolygonWays();
         } catch (IOException | JsonParsingException e) {
             throw new IllegalDataException(e);
         }
         return getDataSet();
+    }
+
+    /**
+     * Import may create duplicate ways were one is member of a multipolygon and untagged and the other is tagged.
+     * Try to merge them here.
+     */
+    private void mergeEqualMultipolygonWays() {
+        DuplicateWay test = new DuplicateWay();
+        test.startTest(null);
+        for (Way w: getDataSet().getWays()) {
+            test.visit(w);
+        }
+        test.endTest();
+
+        if (test.getErrors().isEmpty())
+            return;
+
+        for (TestError e : test.getErrors()) {
+            if (e.getPrimitives().size() == 2 && !e.isFixable()) {
+                Way mpWay = null;
+                Way tagged = null;
+                for (OsmPrimitive p : e.getPrimitives()) {
+                    if (p.isTagged() && p.referrers(Relation.class).count() == 0)
+                        tagged = (Way) p;
+                    else if (p.referrers(Relation.class).anyMatch(Relation::isMultipolygon))
+                        mpWay = (Way) p;
+                }
+                if (mpWay != null && tagged != null) {
+                    for (Relation r : mpWay.referrers(Relation.class).filter(Relation::isMultipolygon)
+                            .collect(Collectors.toList())) {
+                        for (int i = 0; i < r.getMembersCount(); i++) {
+                            if (r.getMember(i).getMember().equals(mpWay)) {
+                                r.setMember(i, new RelationMember(r.getRole(i), tagged));
+                            }
+                        }
+                    }
+                    mpWay.setDeleted(true);
+                }
+            }
+        }
+        ds.cleanupDeletedPrimitives();
     }
 
     /**
