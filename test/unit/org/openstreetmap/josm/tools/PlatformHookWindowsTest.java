@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -14,28 +14,37 @@ import java.io.IOException;
 import java.security.KeyStoreException;
 import java.util.Collection;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import mockit.Expectations;
-import mockit.Injectable;
+import mockit.Mocked;
 
 /**
  * Unit tests of {@link PlatformHookWindows} class.
  */
 public class PlatformHookWindowsTest {
 
+    /**
+     * Setup tests
+     */
+    @RegisterExtension
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().https();
+
     static PlatformHookWindows hook;
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
         hook = new PlatformHookWindows();
     }
 
@@ -79,13 +88,11 @@ public class PlatformHookWindowsTest {
      * @throws IOException if an error occurs
      */
     @Test
-    public void testOpenUrlSuccess(@Injectable final Desktop mockDesktop) throws IOException {
+    public void testOpenUrlSuccess(@Mocked final Desktop mockDesktop) throws IOException {
         TestUtils.assumeWorkingJMockit();
-        new Expectations(Desktop.class) {{
+        new Expectations() {{
             // real implementation would raise HeadlessException
             Desktop.getDesktop(); result = mockDesktop; times = 1;
-        }};
-        new Expectations() {{
             mockDesktop.browse(withNotNull()); times = 1;
         }};
 
@@ -95,20 +102,19 @@ public class PlatformHookWindowsTest {
     /**
      * Test method for {@code PlatformHookWindows#openUrl} when Desktop fails
      * @param mockDesktop desktop mock
+     * @param anyRuntime runtime mock
      * @throws IOException if an error occurs
      */
     @Test
-    public void testOpenUrlFallback(@Injectable final Desktop mockDesktop) throws IOException {
+    public void testOpenUrlFallback(@Mocked final Desktop mockDesktop, @Mocked Runtime anyRuntime) throws IOException {
         TestUtils.assumeWorkingJMockit();
-        new Expectations(Desktop.class) {{
+        new Expectations() {{
             // real implementation would raise HeadlessException
             Desktop.getDesktop(); result = mockDesktop; times = 1;
-        }};
-        new Expectations() {{
             mockDesktop.browse(withNotNull()); result = new IOException(); times = 1;
-        }};
-        final Runtime anyRuntime = Runtime.getRuntime();
-        new Expectations(Runtime.class) {{
+
+            // mock rundll32 in Runtime
+            Runtime.getRuntime(); result = anyRuntime; times = 1;
             anyRuntime.exec(new String[] {"rundll32", "url.dll,FileProtocolHandler", Config.getUrls().getJOSMWebsite()});
             result = null;
             times = 1;
