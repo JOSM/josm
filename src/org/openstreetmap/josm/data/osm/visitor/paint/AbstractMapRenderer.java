@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmData;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
@@ -148,7 +149,9 @@ public abstract class AbstractMapRenderer implements Rendering {
             path = new GeneralPath();
             for (WaySegment wseg: data.getHighlightedVirtualNodes()) {
                 if (wseg.way.isUsable() && !wseg.way.isDisabled()) {
-                    visitVirtual(path, wseg.toWay());
+                    Way tmpWay = wseg.toWay();
+                    visitVirtual(path, tmpWay);
+                    tmpWay.setNodes(null);
                 }
             }
             g.setColor(highlightColor);

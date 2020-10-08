@@ -16,13 +16,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.RotateCommand;
@@ -1241,9 +1242,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             virtualCmds.add(new AddCommand(ds, virtualNode));
             for (WaySegment virtualWay : virtualWays) {
                 Way w = virtualWay.way;
-                Way wnew = new Way(w);
-                wnew.addNode(virtualWay.lowerIndex + 1, virtualNode);
-                virtualCmds.add(new ChangeCommand(ds, w, wnew));
+                List<Node> modNodes = w.getNodes();
+                modNodes.add(virtualWay.lowerIndex + 1, virtualNode);
+                virtualCmds.add(new ChangeNodesCommand(ds, w, modNodes));
             }
             virtualCmds.add(new MoveCommand(ds, virtualNode, startEN, currentEN));
             String text = trn("Add and move a virtual new node to way",

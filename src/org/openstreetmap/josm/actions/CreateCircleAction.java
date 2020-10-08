@@ -15,7 +15,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -233,9 +233,7 @@ public final class CreateCircleAction extends JosmAction {
             newWay.setNodes(nodesToAdd);
             cmds.add(new AddCommand(ds, newWay));
         } else {
-            Way newWay = new Way(existingWay);
-            newWay.setNodes(nodesToAdd);
-            cmds.add(new ChangeCommand(ds, existingWay, newWay));
+            cmds.add(new ChangeNodesCommand(ds, existingWay, nodesToAdd));
         }
 
         UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Create Circle"), cmds));

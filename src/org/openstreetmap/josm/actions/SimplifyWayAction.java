@@ -30,7 +30,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -410,9 +410,7 @@ public class SimplifyWayAction extends JosmAction {
         if (delNodes.isEmpty()) return null;
 
         Collection<Command> cmds = new LinkedList<>();
-        Way newWay = new Way(w);
-        newWay.setNodes(newNodes);
-        cmds.add(new ChangeCommand(w, newWay));
+        cmds.add(new ChangeNodesCommand(w, newNodes));
         cmds.add(new DeleteCommand(w.getDataSet(), delNodes));
         w.getDataSet().clearSelection(delNodes);
         return new SequenceCommand(

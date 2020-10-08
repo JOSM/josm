@@ -489,6 +489,7 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                         if (deleteCmd != null) {
                             UndoRedoHandler.getInstance().add(deleteCmd);
                         }
+                        newWay.setNodes(null);
                     } else {
                         UndoRedoHandler.getInstance().add(new ChangeCommand(targetWay, newWay));
                     }

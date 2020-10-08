@@ -1095,6 +1095,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
         checkModifiable();
         update(() -> {
             clearSelection();
+            clearSelectionHistory();
             for (OsmPrimitive primitive : allPrimitives) {
                 primitive.setDataset(null);
             }
