@@ -38,14 +38,14 @@ import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Tagged;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.MergeSourceBuildingVisitor;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -971,23 +971,21 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             return;
 
         int unchangedDeprecated = countDeprecated(p);
+
+        // see #19895: create deep clone. This complex method works even with locked files
+        MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(p.getDataSet());
+        p.accept(builder);
+        DataSet clonedDs = builder.build();
+        OsmPrimitive clone = clonedDs.getPrimitiveById(p.getPrimitiveId());
+
         Iterator<String> iter = fixVals.iterator();
-        OsmPrimitive clone;
-        if (p instanceof Node) {
-            clone = new Node((Node) p);
-        } else if (p instanceof Way) {
-            clone = new Way((Way) p);
-        } else if (p instanceof Relation) {
-            clone = new Relation((Relation) p);
-        } else {
-            return; // should not happen
-        }
         while (iter.hasNext()) {
             clone.put(key, iter.next());
             if (countDeprecated(clone) > unchangedDeprecated)
                 iter.remove();
         }
     }
+
 
     private int countDeprecated(OsmPrimitive p) {
         if (deprecatedChecker == null)
