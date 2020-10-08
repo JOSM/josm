@@ -806,7 +806,6 @@ public final class DomainValidator extends AbstractValidator {
         "insurance", // insurance fTLD Registry Services LLC
         "insure", // insure Pioneer Willow, LLC
         "int", // int Internet Assigned Numbers Authority
-        "intel", // intel Intel Corporation
         "international", // international Wild Way, LLC
         "intuit", // intuit Intuit Administrative Services, Inc.
         "investments", // investments Holly Glen, LLC
