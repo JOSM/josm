@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- License: GPL. For details, see LICENSE file. -->
 <ivysettings>
-  <settings defaultResolver="chain"/>
+  <settings defaultResolver="josm-nexus"/>
   <resolvers>
-    <chain name="chain">
-      <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
-      <ibiblio name="jcenter" m2compatible="true" root="https://jcenter.bintray.com/" />
-      <ibiblio name="oss-sonatype-snapshots" m2compatible="true" root="https://oss.sonatype.org/content/repositories/snapshots/" />
-    </chain>
+    <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
+    <ibiblio name="jcenter" m2compatible="true" root="https://jcenter.bintray.com/" />
   </resolvers>
+  <modules>
+    <module organisation="ch.poole" name="OpeningHoursParser" resolver="jcenter"/>
+  </modules>
 </ivysettings>
