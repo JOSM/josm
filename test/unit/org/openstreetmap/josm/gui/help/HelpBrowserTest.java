@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.help;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
@@ -20,11 +20,12 @@ import org.openstreetmap.josm.tools.PlatformManager;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Expectations;
 import mockit.Injectable;
+import mockit.Mocked;
 
 /**
  * Unit tests of {@link HelpBrowser} class.
  */
-public class HelpBrowserTest {
+class HelpBrowserTest {
 
     static final String URL_1 = "https://josm.openstreetmap.de/wiki/Help";
     static final String URL_2 = "https://josm.openstreetmap.de/wiki/Introduction";
@@ -33,9 +34,9 @@ public class HelpBrowserTest {
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().https();
+    static JOSMTestRules test = new JOSMTestRules().preferences().https();
 
     static IHelpBrowser newHelpBrowser() {
         return new IHelpBrowser() {
@@ -75,7 +76,7 @@ public class HelpBrowserTest {
      * Unit test of {@link HelpBrowser.BackAction} and {@link HelpBrowser.ForwardAction} classes.
      */
     @Test
-    public void testBackAndForwardActions() {
+    void testBackAndForwardActions() {
         IHelpBrowser browser = newHelpBrowser();
         browser.openUrl(URL_1);
         assertEquals(URL_1, browser.getUrl());
@@ -91,7 +92,7 @@ public class HelpBrowserTest {
      * Unit test of {@link HelpBrowser.HomeAction} class.
      */
     @Test
-    public void testHomeAction() {
+    void testHomeAction() {
         IHelpBrowser browser = newHelpBrowser();
         assertNull(browser.getUrl());
         new HelpBrowser.HomeAction(browser).actionPerformed(null);
@@ -101,15 +102,14 @@ public class HelpBrowserTest {
     /**
      * Unit test of {@link HelpBrowser.EditAction} class handling a null url.
      * @param mockPlatformHook platform hook mock
+     * @param platformManager {@link PlatformManager} mock
      * @throws Exception  in case of error
      */
     @Test
-    public void testEditActionNull(@Injectable final PlatformHook mockPlatformHook) throws Exception {
+    void testEditActionNull(@Injectable final PlatformHook mockPlatformHook, @Mocked final PlatformManager platformManager) throws Exception {
         TestUtils.assumeWorkingJMockit();
-        new Expectations(PlatformManager.class) {{
-            PlatformManager.getPlatform(); result = mockPlatformHook; minTimes = 0;
-        }};
         new Expectations() {{
+            PlatformManager.getPlatform(); result = mockPlatformHook; minTimes = 0;
             // should not be called
             mockPlatformHook.openUrl((String) any); times = 0;
         }};
@@ -122,15 +122,15 @@ public class HelpBrowserTest {
     /**
      * Unit test of {@link HelpBrowser.EditAction} class handling an "internal" url.
      * @param mockPlatformHook platform hook mock
+     * @param platformManager {@link PlatformManager} mock
      * @throws Exception  in case of error
      */
     @Test
-    public void testEditActionInternal(@Injectable final PlatformHook mockPlatformHook) throws Exception {
+    void testEditActionInternal(@Injectable final PlatformHook mockPlatformHook,
+                                @Mocked final PlatformManager platformManager) throws Exception {
         TestUtils.assumeWorkingJMockit();
-        new Expectations(PlatformManager.class) {{
-            PlatformManager.getPlatform(); result = mockPlatformHook;
-        }};
         new Expectations() {{
+            PlatformManager.getPlatform(); result = mockPlatformHook;
             mockPlatformHook.openUrl(URL_2 + "?action=edit"); result = null; times = 1;
         }};
 
@@ -143,15 +143,15 @@ public class HelpBrowserTest {
     /**
      * Unit test of {@link HelpBrowser.EditAction} class handling an "external" url.
      * @param mockPlatformHook platform hook mock
+     * @param platformManager {@link PlatformManager} mock
      * @throws Exception  in case of error
      */
     @Test
-    public void testEditActionExternal(@Injectable final PlatformHook mockPlatformHook) throws Exception {
+    void testEditActionExternal(@Injectable final PlatformHook mockPlatformHook,
+                                @Mocked final PlatformManager platformManager) throws Exception {
         TestUtils.assumeWorkingJMockit();
-        new Expectations(PlatformManager.class) {{
-            PlatformManager.getPlatform(); result = mockPlatformHook; minTimes = 0;
-        }};
         new Expectations() {{
+            PlatformManager.getPlatform(); result = mockPlatformHook; minTimes = 0;
             // should not be called
             mockPlatformHook.openUrl((String) any); times = 0;
         }};
@@ -177,16 +177,16 @@ public class HelpBrowserTest {
 
     /**
      * Unit test of {@link HelpBrowser.OpenInBrowserAction} class.
-     * @param mockPlatformHook platform hook mock
+     * @param mockPlatformHook platform hook moc
+     * @param platformManager {@link PlatformManager} mock
      * @throws Exception  in case of error
      */
     @Test
-    public void testOpenInBrowserAction(@Injectable final PlatformHook mockPlatformHook) throws Exception {
+    void testOpenInBrowserAction(@Injectable final PlatformHook mockPlatformHook,
+                                 @Mocked final PlatformManager platformManager) throws Exception {
         TestUtils.assumeWorkingJMockit();
-        new Expectations(PlatformManager.class) {{
-            PlatformManager.getPlatform(); result = mockPlatformHook;
-        }};
         new Expectations() {{
+            PlatformManager.getPlatform(); result = mockPlatformHook;
             mockPlatformHook.openUrl(URL_1); result = null; times = 1;
         }};
 
@@ -200,7 +200,7 @@ public class HelpBrowserTest {
      * Unit test of {@link HelpBrowser.ReloadAction} class.
      */
     @Test
-    public void testReloadAction() {
+    void testReloadAction() {
         IHelpBrowser browser = newHelpBrowser();
         browser.openUrl(URL_1);
         assertEquals(URL_1, browser.getUrl());
