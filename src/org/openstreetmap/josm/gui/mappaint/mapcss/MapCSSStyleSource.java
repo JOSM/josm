@@ -175,6 +175,8 @@ public class MapCSSStyleSource extends StyleSource {
                     if (!metadataOnly) {
                         loadCanvas();
                         loadSettings();
+                    } else {
+                        rules.clear();
                     }
                 } finally {
                     closeSourceInputStream(in);
