@@ -36,7 +36,7 @@ public class NamedColorProperty extends AbstractToStringProperty<Color> {
      * @param defaultValue the default value, can be null
      */
     public NamedColorProperty(String category, String source, String name, Color defaultValue) {
-        super(getKey(category, source, name), defaultValue);
+        super(getKey(category, source, name), getUIColor("JOSM." + getKey(category, source, name), defaultValue));
         CheckParameterUtil.ensureParameterNotNull(category, "category");
         CheckParameterUtil.ensureParameterNotNull(name, "name");
         this.category = category;
@@ -57,6 +57,11 @@ public class NamedColorProperty extends AbstractToStringProperty<Color> {
         CheckParameterUtil.ensureParameterNotNull(category, "category");
         CheckParameterUtil.ensureParameterNotNull(name, "name");
         return NAMED_COLOR_PREFIX + category + "." + (source == null ? "" : source + ".") + name;
+    }
+
+    private static Color getUIColor(String uiKey, Color defaultValue) {
+        Color color = UIManager.getColor(uiKey);
+        return color != null ? color : defaultValue;
     }
 
     private List<String> getDefaultValuePref() {
