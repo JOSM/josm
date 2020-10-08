@@ -6,11 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.JoinedWay;
@@ -29,6 +32,7 @@ public class PowerLines extends Test {
 
     /** Test identifier */
     protected static final int POWER_LINES = 2501;
+    protected static final int POWER_CONNECTION = 2502;
 
     /** Values for {@code power} key interpreted as power lines */
     static final Collection<String> POWER_LINE_TAGS = Arrays.asList("line", "minor_line");
@@ -42,7 +46,8 @@ public class PowerLines extends Test {
     static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear",
             "portal", "terminal", "insulator");
 
-    private final List<TestError> potentialErrors = new ArrayList<>();
+    private final Set<Node> badConnections = new LinkedHashSet<>();
+    private final Set<Node> missingTowerOrPole = new LinkedHashSet<>();
 
     private final List<OsmPrimitive> powerStations = new ArrayList<>();
 
@@ -60,16 +65,42 @@ public class PowerLines extends Test {
                 for (Node n : w.getNodes()) {
                     if (!isPowerTower(n) && !isPowerAllowed(n) && IN_DOWNLOADED_AREA.test(n)
                         && (!w.isFirstLastNode(n) || !isPowerStation(n))) {
-                        potentialErrors.add(TestError.builder(this, Severity.WARNING, POWER_LINES)
-                                .message(tr("Missing power tower/pole within power line"))
-                                .primitives(n)
-                                .build());
+                        missingTowerOrPole.add(n);
                     }
                 }
             } else if (w.isClosed() && isPowerStation(w)) {
                 powerStations.add(w);
             }
         }
+    }
+
+    @Override
+    public void visit(Node n) {
+        boolean nodeInLineOrCable = false;
+        boolean connectedToUnrelated = false;
+        for (Way parent : n.getParentWays()) {
+            if (parent.hasTag("power", "line", "minor_line", "cable"))
+                nodeInLineOrCable = true;
+            else if (!isRelatedToPower(parent)) {
+                connectedToUnrelated = true;
+            }
+        }
+        if (nodeInLineOrCable && connectedToUnrelated)
+            badConnections.add(n);
+    }
+
+    private static boolean isRelatedToPower(Way way) {
+        if (way.hasTag("power") || way.hasTag("building"))
+            return true;
+        for (OsmPrimitive ref : way.getReferrers()) {
+            if (ref instanceof Relation && ref.isMultipolygon() && (ref.hasTag("power") || ref.hasTag("building"))) {
+                for (RelationMember rm : ((Relation) ref).getMembers()) {
+                    if (way == rm.getMember())
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -82,20 +113,27 @@ public class PowerLines extends Test {
     @Override
     public void startTest(ProgressMonitor progressMonitor) {
         super.startTest(progressMonitor);
-        powerStations.clear();
-        potentialErrors.clear();
+        clearCollections();
     }
 
     @Override
     public void endTest() {
-        for (TestError e : potentialErrors) {
-            e.primitives(Node.class)
-                    .filter(n -> !isInPowerStation(n))
-                    .findAny()
-                    .ifPresent(ignore -> errors.add(e));
+        for (Node n : missingTowerOrPole) {
+            if (!isInPowerStation(n)) {
+                errors.add(TestError.builder(this, Severity.WARNING, POWER_LINES)
+                        .message(tr("Missing power tower/pole within power line"))
+                        .primitives(n)
+                        .build());
+            }
         }
-        potentialErrors.clear();
-        powerStations.clear();
+
+        for (Node n : badConnections) {
+            errors.add(TestError.builder(this, Severity.WARNING, POWER_CONNECTION)
+                    .message(tr("Node connects a power line or cable with an object "
+                            + "which is not related to the power infrastructure."))
+                    .primitives(n).build());
+        }
+        clearCollections();
         super.endTest();
     }
 
@@ -175,5 +213,11 @@ public class PowerLines extends Test {
      */
     private static boolean isBuildingIn(OsmPrimitive p, Collection<String> values) {
         return p.hasTag("building", values);
+    }
+
+    private void clearCollections() {
+        powerStations.clear();
+        badConnections.clear();
+        missingTowerOrPole.clear();
     }
 }

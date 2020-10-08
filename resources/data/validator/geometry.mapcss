@@ -344,16 +344,6 @@ area:closed[building][building!=no][eval(areasize()) > 520000] {
   throwError: tr("Too large building");
 }
 
-/* #12577 */
-way[power=line] > node,
-way[power=minor_line] > node,
-way[power=cable] > node {
-  set node_in_power_way;
-}
-way[!power][!building] > node.node_in_power_way {
-  throwWarning: tr("Node connects a power line or cable with an object which is not related to the power infrastructure.");
-}
-
 /* #12646, #12992, #16334 */
 way[waterway=~/^(stream|river|drain)$/]!:closed >[index=-1] node[natural!=sinkhole][natural!=cave_entrance]!:connection:in-downloaded-area { 
   throwWarning: tr("Waterway ends without a connection to another waterway or the direction of the waterway is wrong.");
