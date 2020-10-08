@@ -63,7 +63,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * @param p existing waypoint
      */
     public WayPoint(WayPoint p) {
-        attr = new LegacyMap();
+        attr = new HashMap<>();
         attr.putAll(p.attr);
         attr.put(PT_TIME, p.getDate());
         lat = p.lat;
@@ -81,45 +81,9 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * @param ll lat/lon coordinates
      */
     public WayPoint(LatLon ll) {
-        attr = new LegacyMap();
+        attr = new HashMap<>();
         lat = ll.lat();
         lon = ll.lon();
-    }
-
-    /**
-     * Interim to detect legacy code that is not using {@code WayPoint.setTime(x)}
-     * functions, but {@code attr.put(PT_TIME, (String) x)} logic.
-     * To remove mid 2019
-     */
-    private static class LegacyMap extends HashMap<String, Object> {
-        private static final long serialVersionUID = 1;
-
-        LegacyMap() {
-            super(0);
-        }
-
-        @Override
-        public Object put(String key, Object value) {
-            Object ret = null;
-            if (!PT_TIME.equals(key) || value instanceof Date) {
-                ret = super.put(key, value);
-            } else if (value instanceof String) {
-                ret = super.put(PT_TIME, DateUtils.fromString((String) value));
-                List<String> lastErrorAndWarnings = Logging.getLastErrorAndWarnings();
-                if (!lastErrorAndWarnings.isEmpty() && !lastErrorAndWarnings.get(0).contains("calling WayPoint.put")) {
-                    StackTraceElement[] e = Thread.currentThread().getStackTrace();
-                    int n = 1;
-                    while (n < e.length && "put".equals(e[n].getMethodName())) {
-                        n++;
-                    }
-                    if (n < e.length) {
-                        Logging.warn("{0}:{1} calling WayPoint.put(PT_TIME, ..) is deprecated. " +
-                            "Use WayPoint.setTime(..) instead.", e[n].getClassName(), e[n].getMethodName());
-                    }
-                }
-            }
-            return ret;
-        }
     }
 
     /**
