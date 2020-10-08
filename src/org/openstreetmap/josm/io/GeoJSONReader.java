@@ -253,7 +253,6 @@ public class GeoJSONReader extends AbstractReader {
         } else if (size > 1) {
             // create multipolygon
             final Relation multipolygon = new Relation();
-            multipolygon.put(TYPE, "multipolygon");
             createWay(coordinates.getJsonArray(0), true)
                 .ifPresent(way -> multipolygon.addMember(new RelationMember("outer", way)));
 
@@ -263,6 +262,7 @@ public class GeoJSONReader extends AbstractReader {
             }
 
             fillTagsFromFeature(feature, multipolygon);
+            multipolygon.put(TYPE, "multipolygon");
             getDataSet().addPrimitive(multipolygon);
         }
     }
