@@ -2083,4 +2083,14 @@ node[lamp_type=electrical] {
   assertNoMatch: "way cuisine=korean_bbq;bbq"; /* corner case (mixed ; and _) not supported by these rules, probably not present in the osm database */
 }
 
+/* #17498 */
+way[cycleway=none],
+way[cycleway:left=none],
+way[cycleway:right=none] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: concat("{0.key}", "=no");
+  group: tr("deprecated tagging");
+  fixAdd: concat("{0.key}", "=no");
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

@@ -855,7 +855,7 @@ way[cycleway][!highway][!/:highway$/] {
 }
 
 /* #17498 */
-way[bicycle][/^cycleway(:|$)/][!/^bicycle:/][bicycle=~/^(no|none|use_sidepath)$/][/^cycleway(:|$)/!~/^(no|none|separate)$/] {
+way[bicycle][/^cycleway(:|$)/][!/^bicycle:/][bicycle=~/^(no|use_sidepath)$/][/^cycleway(:|$)/!~/^(no|none|separate)$/] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
   assertMatch: "way bicycle=no cycleway=track";
