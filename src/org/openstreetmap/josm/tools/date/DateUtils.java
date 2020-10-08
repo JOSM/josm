@@ -67,11 +67,13 @@ public final class DateUtils {
      */
     public static long tsFromString(String str) {
         // "2007-07-25T09:26:24{Z|{+|-}01[:00]}"
-        if (checkLayout(str, "xxxx-xx-xx")) {
+        if (checkLayout(str, "xxxx-xx-xx") ||
+                checkLayout(str, "xxxx-xx") ||
+                checkLayout(str, "xxxx")) {
             final ZonedDateTime local = ZonedDateTime.of(
                     parsePart4(str, 0),
-                    parsePart2(str, 5),
-                    parsePart2(str, 8),
+                    str.length() > 5 ? parsePart2(str, 5) : 1,
+                    str.length() > 8 ? parsePart2(str, 8) : 1,
                     0, 0, 0, 0, ZoneOffset.UTC);
             return local.toInstant().toEpochMilli();
         } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
@@ -128,7 +130,7 @@ public final class DateUtils {
 
         try {
             // slow path for fractional seconds different from millisecond precision
-            return Instant.parse(str).toEpochMilli();
+            return ZonedDateTime.parse(str).toInstant().toEpochMilli();
         } catch (IllegalArgumentException | DateTimeParseException ex) {
             throw new UncheckedParseException("The date string (" + str + ") could not be parsed.", ex);
         }

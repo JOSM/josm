@@ -95,6 +95,10 @@ public class DateUtilsTest {
         assertEquals(482196050520L, DateUtils.fromString("1985-04-12T23:20:50.52Z").getTime());
         assertEquals(851042397000L, DateUtils.fromString("1996-12-19T16:39:57-08:00").getTime());
         assertEquals(-1041337172130L, DateUtils.fromString("1937-01-01T12:00:27.87+00:20").getTime());
+        // (partial) dates
+        assertEquals(482112000000L, DateUtils.fromString("1985-04-12").getTime());
+        assertEquals(481161600000L, DateUtils.fromString("1985-04").getTime());
+        assertEquals(473385600000L, DateUtils.fromString("1985").getTime());
     }
 
     /**

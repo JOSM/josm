@@ -431,12 +431,15 @@ public class SearchCompilerTest {
      */
     @Test
     public void testTimestamp() throws SearchParseError {
-        final Match search = SearchCompiler.compile("timestamp:2010/2011");
         final Node n1 = new Node();
         n1.setTimestamp(DateUtils.fromString("2010-01-22"));
-        assertTrue(search.match(n1));
+        assertTrue(SearchCompiler.compile("timestamp:2010/2011").match(n1));
+        assertTrue(SearchCompiler.compile("timestamp:2010-01/2011").match(n1));
+        assertTrue(SearchCompiler.compile("timestamp:2010-01-22/2011").match(n1));
+        assertFalse(SearchCompiler.compile("timestamp:2010-01-23/2011").match(n1));
+        assertFalse(SearchCompiler.compile("timestamp:2010/2010-01-21").match(n1));
         n1.setTimestamp(DateUtils.fromString("2016-01-22"));
-        assertFalse(search.match(n1));
+        assertFalse(SearchCompiler.compile("timestamp:2010/2011").match(n1));
     }
 
     /**
