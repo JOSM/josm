@@ -64,7 +64,7 @@
         <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.6.2"/>
         <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.6.2"/>
         <dependency conf="test->default" org="net.trajano.commons" name="commons-testing" rev="2.1.0"/>
-        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.1.13"/>
+        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.4.3"/>
         <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.10"/>
         <dependency conf="test->default" org="org.awaitility" name="awaitility" rev="4.0.2"/>
     </dependencies>
