@@ -162,8 +162,8 @@ public class GeoJSONReader extends AbstractReader {
 
         // create misc. non-geometry feature
         final Relation relation = new Relation();
-        relation.put(TYPE, type.toString());
         fillTagsFromFeature(feature, relation);
+        relation.put(TYPE, type.toString());
         getDataSet().addPrimitive(relation);
     }
 
@@ -324,6 +324,11 @@ public class GeoJSONReader extends AbstractReader {
         return Optional.of(way);
     }
 
+    /**
+     * Replace all existing tags in primitive by the values given in the GeoJSON feature.
+     * @param feature the GeoJSON feature
+     * @param primitive the OSM primitive
+     */
     private static void fillTagsFromFeature(final JsonObject feature, final OsmPrimitive primitive) {
         if (feature != null) {
             primitive.setKeys(getTags(feature));

@@ -24,6 +24,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -185,4 +186,18 @@ public class GeoJSONReaderTest {
         return IntStream.range(0, ((Way) p1).getNodes().size())
                 .allMatch(i -> areEqualNodes(((Way) p1).getNode(i), ((Way) p2).getNode(i)));
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19822">Bug #19822</a>.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testTicket19822() throws Exception {
+        try (InputStream in = TestUtils.getRegressionDataStream(19822, "data.geojson")) {
+            final List<OsmPrimitive> primitives = new ArrayList<>(
+                    new GeoJSONReader().doParseDataSet(in, null).getPrimitives(it -> true));
+            assertTrue(primitives.stream().anyMatch(p -> p instanceof Relation && p.isMultipolygon()));
+        }
+    }
+
 }
