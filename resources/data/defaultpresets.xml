@@ -8440,12 +8440,14 @@
             <text key="email" text="Email Address" match="key" />
             <space />
             <text key="phone" text="Phone number" match="key" />
+            <text key="mobile" text="Mobile phone number" match="key" />
             <text key="fax" text="Fax Number" match="key" />
             <label text="Use E.123 format, e.g. +49 11223 456 7890" />
             <space />
             <reference ref="wikipedia_wikidata" />
             <text key="image" text="Image" />
             <preset_link preset_name="Contact (Schema with 'contact:*' Prefix)" text="Similar tags but different tagging schema:" text_context="Contact" />
+            <preset_link preset_name="Social Networks" />
         </item> <!-- Contact (Common Schema) -->
         <item name="Contact (Schema with 'contact:*' Prefix)" icon="presets/misc/contact.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Key:contact" />
@@ -8454,13 +8456,36 @@
             <text key="contact:email" text="Email Address" match="key" />
             <space />
             <text key="contact:phone" text="Phone number" match="key" />
+            <text key="contact:mobile" text="Mobile phone number" match="key" />
             <text key="contact:fax" text="Fax Number" match="key" />
             <label text="Use E.123 format, e.g. +49 11223 456 7890" />
             <space />
             <reference ref="wikipedia_wikidata" />
             <text key="image" text="Image" />
             <preset_link preset_name="Contact (Common Schema)" text="Similar tags but different tagging schema:" text_context="Contact" />
+            <preset_link preset_name="Social Networks" />
         </item> <!-- Contact (Schema with 'contact:*' Prefix) -->
+        <item name="Social Networks" icon="presets/misc/social_networks.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
+            <link wiki="Key:contact" />
+            <space />
+            <text key="contact:facebook" text="Facebook" match="key" text_context="social_network" />
+            <text key="contact:foursquare" text="Foursquare" match="key" text_context="social_network" />
+            <text key="contact:instagram" text="Instagram" match="key" text_context="social_network" />
+            <text key="contact:linkedin" text="Linkedin" match="key" text_context="social_network" />
+            <text key="contact:ok" text="ok" match="key" text_context="social_network" />
+            <text key="contact:pinterest" text="Pinterest" match="key" text_context="social_network" />
+            <text key="contact:skype" text="Skype" match="key" text_context="social_network" />
+            <text key="contact:telegram" text="Telegram" match="key" text_context="social_network" />
+            <text key="contact:tripadvisor" text="Tripadvisor" match="key" text_context="social_network" />
+            <text key="contact:twitter" text="Twitter" match="key" text_context="social_network" />
+            <text key="contact:vk" text="Vk" match="key" text_context="social_network" />
+            <text key="contact:whatsapp" text="Whatsapp" match="key" text_context="social_network" />
+            <text key="contact:xing" text="Xing" match="key" text_context="social_network" />
+            <text key="contact:yelp" text="Yelp" match="key" text_context="social_network" />
+            <text key="contact:youtube" text="Youtube" match="key" text_context="social_network" />
+            <preset_link preset_name="Contact (Common Schema)" text_context="Contact" />
+            <preset_link preset_name="Contact (Schema with 'contact:*' Prefix)" text_context="Contact" />
+        </item> <!-- Social Networks -->
         <item name="Description" icon="presets/misc/description.svg" type="node,way,closedway,multipolygon,relation" preset_name_label="true">
             <link wiki="Key:description" />
             <space />
