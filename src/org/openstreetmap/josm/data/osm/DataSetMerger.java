@@ -424,30 +424,40 @@ public class DataSetMerger {
             progressMonitor.beginTask(tr("Merging data..."), sourceDataSet.allPrimitives().size());
         }
         targetDataSet.update(() -> {
-            List<? extends OsmPrimitive> candidates = new ArrayList<>(targetDataSet.getNodes());
+            List<? extends OsmPrimitive> candidates = null;
             for (Node node: sourceDataSet.getNodes()) {
+                // lazy initialisation to improve performance, see #19898
+                if (candidates == null) {
+                    candidates = new ArrayList<>(targetDataSet.getNodes());
+                }
                 mergePrimitive(node, candidates);
                 if (progressMonitor != null) {
                     progressMonitor.worked(1);
                 }
             }
-            candidates.clear();
-            candidates = new ArrayList<>(targetDataSet.getWays());
+            candidates = null;
             for (Way way: sourceDataSet.getWays()) {
+                // lazy initialisation to improve performance
+                if (candidates == null) {
+                    candidates = new ArrayList<>(targetDataSet.getWays());
+                }
                 mergePrimitive(way, candidates);
                 if (progressMonitor != null) {
                     progressMonitor.worked(1);
                 }
             }
-            candidates.clear();
-            candidates = new ArrayList<>(targetDataSet.getRelations());
+            candidates = null;
             for (Relation relation: sourceDataSet.getRelations()) {
+                // lazy initialisation to improve performance
+                if (candidates == null) {
+                    candidates = new ArrayList<>(targetDataSet.getRelations());
+                }
                 mergePrimitive(relation, candidates);
                 if (progressMonitor != null) {
                     progressMonitor.worked(1);
                 }
             }
-            candidates.clear();
+            candidates = null;
             fixReferences();
 
             Area a = targetDataSet.getDataSourceArea();
