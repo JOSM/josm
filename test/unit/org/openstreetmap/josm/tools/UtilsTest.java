@@ -56,7 +56,7 @@ public class UtilsTest {
         final String someWhite =
             "\u00A0"+ // SPACE_SEPARATOR
             "\u2007"+ // LINE_SEPARATOR
-            "\u202F"+ // PARAGRAPH_SEPARATOR
+            "\u202F"+ // NARROW NO-BREAK SPACE
             "\u0009"+ // HORIZONTAL TABULATION
             "\n"    + // LINE FEED (U+000A, cannot be put as it in Java)
             "\u000B"+ // VERTICAL TABULATION
