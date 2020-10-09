@@ -63,9 +63,11 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * @param p existing waypoint
      */
     public WayPoint(WayPoint p) {
-        attr = new HashMap<>();
+        attr = new HashMap<>(0);
         attr.putAll(p.attr);
-        attr.put(PT_TIME, p.getDate());
+        if (p.getDate() != null) {
+            attr.put(PT_TIME, p.getDate());
+        }
         lat = p.lat;
         lon = p.lon;
         east = p.east;
@@ -81,7 +83,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * @param ll lat/lon coordinates
      */
     public WayPoint(LatLon ll) {
-        attr = new HashMap<>();
+        attr = new HashMap<>(0);
         lat = ll.lat();
         lon = ll.lon();
     }
