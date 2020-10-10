@@ -986,7 +986,6 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         }
     }
 
-
     private int countDeprecated(OsmPrimitive p) {
         if (deprecatedChecker == null)
             return 0;
