@@ -170,9 +170,9 @@ public class ImageProviderTest {
         ImageResource resource = new ImageProvider("presets/misc/housenumber_small").getResource();
         testImage(12, 9, "housenumber_small-AUTO-null", resource.getImageIcon());
         testImage(12, 9, "housenumber_small-AUTO-default", resource.getImageIcon(ImageResource.DEFAULT_DIMENSION));
-        testImage(8, 8, "housenumber_small-AUTO-08x08", resource.getImageIcon(new Dimension(8, 8)));
-        testImage(16, 16, "housenumber_small-AUTO-16x16", resource.getImageIcon(new Dimension(16, 16)));
-        testImage(24, 24, "housenumber_small-AUTO-24x24", resource.getImageIcon(new Dimension(24, 24)));
+        testImage(8, 6, "housenumber_small-AUTO-08x08", resource.getImageIcon(new Dimension(8, 8)));
+        testImage(16, 12, "housenumber_small-AUTO-16x16", resource.getImageIcon(new Dimension(16, 16)));
+        testImage(24, 18, "housenumber_small-AUTO-24x24", resource.getImageIcon(new Dimension(24, 24)));
         testImage(36, 27, "housenumber_small-AUTO-36x27", resource.getImageIcon(new Dimension(36, 27)));
     }
 
@@ -184,8 +184,8 @@ public class ImageProviderTest {
     public void testImageIconBounded() throws IOException {
         ImageResource resource = new ImageProvider("presets/misc/housenumber_small").getResource();
         testImage(8, 6, "housenumber_small-BOUNDED-08x08", resource.getImageIconBounded(new Dimension(8, 8)));
-        testImage(16, 12, "housenumber_small-BOUNDED-16x16", resource.getImageIconBounded(new Dimension(16, 16)));
-        testImage(24, 18, "housenumber_small-BOUNDED-24x24", resource.getImageIconBounded(new Dimension(24, 24)));
+        testImage(12, 9, "housenumber_small-BOUNDED-16x16", resource.getImageIconBounded(new Dimension(16, 16)));
+        testImage(12, 9, "housenumber_small-BOUNDED-24x24", resource.getImageIconBounded(new Dimension(24, 24)));
     }
 
     /**

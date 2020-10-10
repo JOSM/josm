@@ -660,7 +660,7 @@ public class ImageProvider {
             Logging.trace("get {0} from {1}", this, Thread.currentThread());
         }
         if (virtualMaxWidth != -1 || virtualMaxHeight != -1)
-            return ir.getImageIcon(new Dimension(virtualMaxWidth, virtualMaxHeight), multiResolution, ImageResizeMode.BOUNDED);
+            return ir.getImageIcon(new Dimension(virtualMaxWidth, virtualMaxHeight), multiResolution, null);
         else
             return ir.getImageIcon(new Dimension(virtualWidth, virtualHeight), multiResolution, ImageResizeMode.AUTO);
     }
@@ -1488,9 +1488,6 @@ public class ImageProvider {
         if (sourceWidth <= 0 || sourceHeight <= 0) {
             Logging.error("createImageFromSvg: {0} {1} sourceWidth={2} sourceHeight={3}", svg.getXMLBase(), dim, sourceWidth, sourceHeight);
             return null;
-        }
-        if (resizeMode == ImageResizeMode.BOUNDED) {
-            resizeMode = ImageResizeMode.BOUNDED_UPSCALE;
         }
         return resizeMode.createBufferedImage(dim, new Dimension((int) sourceWidth, (int) sourceHeight), g -> {
             try {

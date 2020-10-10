@@ -39,7 +39,7 @@ public class ImageResizeModeTest {
         assertEquals(new Dimension(64, 48), ImageResizeMode.AUTO.computeDimension(new Dimension(64, 48), image));
         assertEquals(new Dimension(32, 24), ImageResizeMode.AUTO.computeDimension(new Dimension(32, -1), image));
         assertEquals(new Dimension(21, 16), ImageResizeMode.AUTO.computeDimension(new Dimension(-1, 16), image));
-        assertEquals(new Dimension(24, 32), ImageResizeMode.AUTO.computeDimension(new Dimension(24, 32), image));
+        assertEquals(new Dimension(24, 18), ImageResizeMode.AUTO.computeDimension(new Dimension(24, 32), image));
     }
 
     /**

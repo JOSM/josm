@@ -189,7 +189,11 @@ public class MapImage {
                     ImageIcon noIcon = MapPaintStyles.getNoIconIcon(source);
                     img = noIcon == null ? null : noIcon.getImage();
                 } else {
-                    img = rescale(result.getImageIcon(new Dimension(width, height)).getImage());
+                    img = result.getImageIcon(new Dimension(width, height)).getImage();
+                    if (img != null && mustRescale(img)) {
+                        // Scale down large images to 16x16 pixels if no size is explicitly specified
+                        img = result.getImageIconBounded(ImageProvider.ImageSizes.MAP.getImageDimension()).getImage();
+                    }
                 }
                 if (temporary) {
                     disabledImgCache = null;
@@ -298,21 +302,6 @@ public class MapImage {
      */
     public BoxProvider getBoxProvider() {
         return new MapImageBoxProvider();
-    }
-
-    /**
-     * Rescale excessively large images.
-     * @param image the unscaled image
-     * @return The scaled down version to 16x16 pixels if the image height and width exceeds 48 pixels and no size has been explicitly specified
-     */
-    private Image rescale(Image image) {
-        if (image == null) return null;
-        // Scale down large (.svg) images to 16x16 pixels if no size is explicitly specified
-        if (mustRescale(image)) {
-            return ImageProvider.createBoundedImage(image, 16);
-        } else {
-            return image;
-        }
     }
 
     private boolean mustRescale(Image image) {

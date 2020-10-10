@@ -101,11 +101,11 @@ public class ImageResource {
      */
     public void attachImageIcon(AbstractAction a) {
         Dimension iconDimension = ImageProvider.ImageSizes.SMALLICON.getImageDimension();
-        ImageIcon icon = getImageIconBounded(iconDimension);
+        ImageIcon icon = getImageIcon(iconDimension);
         a.putValue(Action.SMALL_ICON, icon);
 
         iconDimension = ImageProvider.ImageSizes.LARGEICON.getImageDimension();
-        icon = getImageIconBounded(iconDimension);
+        icon = getImageIcon(iconDimension);
         a.putValue(Action.LARGE_ICON_KEY, icon);
     }
 
@@ -140,7 +140,7 @@ public class ImageResource {
      * @see #getImageIconBounded(java.awt.Dimension)
      */
     public ImageIcon getImageIcon(Dimension dim) {
-        return getImageIcon(dim, true, ImageResizeMode.AUTO);
+        return getImageIcon(dim, true, null);
     }
 
     /**
@@ -174,6 +174,12 @@ public class ImageResource {
         CheckParameterUtil.ensureThat((dim.width > 0 || dim.width == -1) && (dim.height > 0 || dim.height == -1),
                 () -> dim + " is invalid");
 
+        if (resizeMode == null && svg != null) {
+            // upscale SVG icons
+            resizeMode = ImageResizeMode.AUTO;
+        } else if (resizeMode == null) {
+            resizeMode = ImageResizeMode.BOUNDED;
+        }
         final int cacheKey = resizeMode.cacheKey(dim);
         BufferedImage img = imgCache.get(cacheKey);
         if (img == null) {
