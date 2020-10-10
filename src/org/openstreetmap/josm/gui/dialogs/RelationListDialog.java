@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
+import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.FocusManager;
 import javax.swing.JComponent;
@@ -176,6 +177,9 @@ public class RelationListDialog extends ToggleDialog
         pane.add(filter, BorderLayout.NORTH);
         pane.add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
+        Shortcut editShortcut = Shortcut.registerShortcut("relation:edit", tr("Open Relation Editor"), KeyEvent.VK_R, Shortcut.ALT);
+        editShortcut.setTooltip(editAction, String.valueOf(editAction.getValue(Action.SHORT_DESCRIPTION)));
+        MainApplication.registerActionShortcut(editAction, editShortcut);
         SideButton editButton = new SideButton(editAction, false);
         recentRelationsAction = new RecentRelationsAction(editButton);
 
