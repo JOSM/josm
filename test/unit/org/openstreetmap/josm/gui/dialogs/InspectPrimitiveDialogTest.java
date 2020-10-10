@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.openstreetmap.josm.TestUtils.assertEqualsNewline;
 
 import java.util.ArrayList;
 
@@ -67,7 +67,7 @@ public class InspectPrimitiveDialogTest {
     @Test
     public void testBuildDataText() {
         DataSet ds = new DataSet();
-        assertEquals("", InspectPrimitiveDialog.buildDataText(ds, new ArrayList<>(ds.allPrimitives())));
+        assertEqualsNewline("", InspectPrimitiveDialog.buildDataText(ds, new ArrayList<>(ds.allPrimitives())));
         final Way way = new Way();
         way.addNode(new Node(new LatLon(47.2687921, 11.390525)));
         way.addNode(new Node(new LatLon(47.2689194, 11.3907301)));
@@ -82,7 +82,7 @@ public class InspectPrimitiveDialogTest {
         way.getNodes().forEach(ds::addPrimitive);
         ds.addPrimitive(way);
         way.addNode(way.firstNode()); // close way
-        assertEquals(
+        assertEqualsNewline(
             "Way: 1\n" +
                 "  Data Set: "+Integer.toHexString(ds.hashCode())+"\n" +
                 "  Edited at: <new object>\n" +
@@ -109,16 +109,16 @@ public class InspectPrimitiveDialogTest {
     @Test
     public void testBuildListOfEditorsText() {
         DataSet ds = new DataSet();
-        assertEquals("0 users last edited the selection:\n\n", InspectPrimitiveDialog.buildListOfEditorsText(ds.allPrimitives()));
+        assertEqualsNewline("0 users last edited the selection:\n\n", InspectPrimitiveDialog.buildListOfEditorsText(ds.allPrimitives()));
         ds.addPrimitive(new Node(LatLon.ZERO));
-        assertEquals("0 users last edited the selection:\n\n", InspectPrimitiveDialog.buildListOfEditorsText(ds.allPrimitives()));
+        assertEqualsNewline("0 users last edited the selection:\n\n", InspectPrimitiveDialog.buildListOfEditorsText(ds.allPrimitives()));
         Node n = new Node(LatLon.ZERO);
         n.setUser(User.getAnonymous());
         ds.addPrimitive(n);
         n = new Node(LatLon.ZERO);
         n.setUser(User.getAnonymous());
         ds.addPrimitive(n);
-        assertEquals(
+        assertEqualsNewline(
                 "1 user last edited the selection:\n" +
                 "\n" +
                 "     2  <anonymous>\n",
@@ -152,18 +152,18 @@ public class InspectPrimitiveDialogTest {
 
         try {
             MainApplication.getLayerManager().addLayer(layer);
-            assertEquals("", InspectPrimitiveDialog.buildMapPaintText());
+            assertEqualsNewline("", InspectPrimitiveDialog.buildMapPaintText());
             Node n = new Node(LatLon.ZERO);
             n.setUser(User.getAnonymous());
             ds.addPrimitive(n);
             ds.addSelected(n);
             String text = InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", "");
-            assertEquals(baseText, text);
+            assertEqualsNewline(baseText, text);
             n = new Node(LatLon.ZERO);
             n.setUser(User.getAnonymous());
             ds.addPrimitive(n);
             ds.addSelected(n);
-            assertEquals(baseText + baseText + "The 2 selected objects have identical style caches.\n",
+            assertEqualsNewline(baseText + baseText + "The 2 selected objects have identical style caches.\n",
                     InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", ""));
         } finally {
             MainApplication.getLayerManager().removeLayer(layer);

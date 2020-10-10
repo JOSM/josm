@@ -33,6 +33,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.Assert;
 import org.junit.Assume;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -536,6 +537,16 @@ public final class TestUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Replaces {@linkplain System#lineSeparator() system dependent line separators} with {@code \n}
+     * and calls {@link Assert#assertEquals(java.lang.Object, java.lang.Object)}.
+     * @param expected expected value
+     * @param actual the value to check against <code>expected</code>
+     */
+    public static void assertEqualsNewline(String expected, String actual) {
+        assertEquals(expected, actual.replace(System.lineSeparator(), "\n"));
     }
 
     /**

@@ -1,12 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
+import static org.openstreetmap.josm.TestUtils.assertEqualsNewline;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneOffset;
@@ -50,17 +49,17 @@ public class GpxWriterTest {
         try (GpxWriter writer = new GpxWriter(baos)) {
             writer.write(gpx);
         }
-        assertEquals(String.format("<?xml version='1.0' encoding='UTF-8'?>%n" +
-                "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"%n" +
-                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"%n" +
-                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">%n" +
-                "  <metadata>%n" +
-                "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>%n" +
-                "  </metadata>%n" +
-                "  <wpt lat=\"0.0\" lon=\"0.0\">%n" +
+        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
+                "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
+                "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">\n" +
+                "  <metadata>\n" +
+                "    <bounds minlat=\"0.0\" minlon=\"0.0\" maxlat=\"0.0\" maxlon=\"0.0\"/>\n" +
+                "  </metadata>\n" +
+                "  <wpt lat=\"0.0\" lon=\"0.0\">\n" +
                 atts +
-                "  </wpt>%n" +
-                "</gpx>"), baos.toString(StandardCharsets.UTF_8.name()));
+                "  </wpt>\n" +
+                "</gpx>", baos.toString());
     }
 
     /**
@@ -72,7 +71,7 @@ public class GpxWriterTest {
         // Checks that time stored as date is correctly written into XML timestamp
         testSingleWaypoint(
                 w -> w.put(GpxConstants.PT_TIME, Date.from(LocalDate.of(2018, Month.AUGUST, 2).atStartOfDay(ZoneOffset.UTC).toInstant())),
-                "    <time>2018-08-02T00:00:00Z</time>%n");
+                "    <time>2018-08-02T00:00:00Z</time>\n");
     }
 
     /**
@@ -89,10 +88,10 @@ public class GpxWriterTest {
                     w.put(GpxConstants.PT_VDOP, 0.9);
                     w.put(GpxConstants.PT_PDOP, 1.2);
                 },
-                "    <sat>16</sat>%n" +
-                "    <hdop>0.7</hdop>%n" +
-                "    <vdop>0.9</vdop>%n" +
-                "    <pdop>1.2</pdop>%n");
+                "    <sat>16</sat>\n" +
+                "    <hdop>0.7</hdop>\n" +
+                "    <vdop>0.9</vdop>\n" +
+                "    <pdop>1.2</pdop>\n");
     }
 
     /**
@@ -133,7 +132,7 @@ public class GpxWriterTest {
         // CHECKSTYLE.OFF: LineLength
 
         writer.write(data);
-        assertEquals("<?xml version='1.0' encoding='UTF-8'?>\n" +
+        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
                 "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
                 "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
@@ -170,7 +169,7 @@ public class GpxWriterTest {
 
         baos.reset();
         writer.write(data, GpxConstants.ColorFormat.GPXX, true);
-        assertEquals("<?xml version='1.0' encoding='UTF-8'?>\n" +
+        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
                 "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
                 "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
@@ -209,7 +208,7 @@ public class GpxWriterTest {
 
         baos.reset();
         writer.write(data, null, false);
-        assertEquals("<?xml version='1.0' encoding='UTF-8'?>\n" +
+        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
                 "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
                 "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
@@ -242,7 +241,7 @@ public class GpxWriterTest {
         // checked again to make sure that extensions are shown again after
         // being hidden, even if they don't actually have to be converted
         // (GPXD -> convertColor() -> GPXX -> hide() -> null -> show() -> GPXX)
-        assertEquals("<?xml version='1.0' encoding='UTF-8'?>\n" +
+        assertEqualsNewline("<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
                 "    xmlns:knownprefix=\"http://example.com/URI\"\n" +
                 "    xmlns:josm=\"http://josm.openstreetmap.de/gpx-extensions-1.1\"\n" +
