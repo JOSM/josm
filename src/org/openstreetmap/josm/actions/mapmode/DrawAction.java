@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
@@ -515,8 +515,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
         Collection<Command> cmds = new LinkedList<>();
         Collection<OsmPrimitive> newSelection = new LinkedList<>(ds.getSelected());
-        List<Way> reuseWays = new ArrayList<>();
-        List<Way> replacedWays = new ArrayList<>();
+        Map<Way, List<Node>> reuseWays = new HashMap<>();
 
         if (newNode) {
             if (n.isOutSideWorld()) {
@@ -537,7 +536,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
                 if (snapHelper.isActive()) {
                     tryToMoveNodeOnIntersection(wss, n);
                 }
-                insertNodeIntoAllNearbySegments(wss, n, newSelection, cmds, replacedWays, reuseWays);
+                insertNodeIntoAllNearbySegments(wss, n, newSelection, cmds, reuseWays);
             }
         }
         // now "n" is newly created or reused node that shoud be added to some way
@@ -599,7 +598,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
                 // existing way or make a new way of its own? The "alt" modifier means that the
                 // user wants a new way.
                 Way way = alt ? null : (selectedWay != null ? selectedWay : getWayForNode(n0));
-                Way wayToSelect;
 
                 // Don't allow creation of self-overlapping ways
                 if (way != null) {
@@ -612,37 +610,31 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
                 if (way == null) {
                     way = new Way();
                     way.addNode(n0);
-                    cmds.add(new AddCommand(ds, way));
-                    wayToSelect = way;
-                } else {
-                    int i;
-                    if ((i = replacedWays.indexOf(way)) != -1) {
-                        way = reuseWays.get(i);
-                        wayToSelect = way;
-                    } else {
-                        wayToSelect = way;
-                        Way wnew = new Way(way);
-                        cmds.add(new ChangeCommand(way, wnew));
-                        way = wnew;
-                    }
-                }
-
-                // Connected to a node that's already in the way
-                if (way.containsNode(n)) {
-                    wayIsFinished = true;
-                    selection.clear();
-                }
-
-                // Add new node to way
-                if (way.getNode(way.getNodesCount() - 1) == n0) {
                     way.addNode(n);
+                    cmds.add(new AddCommand(ds, way));
                 } else {
-                    way.addNode(0, n);
+                    List<Node> modNodes = reuseWays.get(way);
+                    boolean reuse = (modNodes != null);
+                    if (modNodes == null) {
+                        modNodes = way.getNodes();
+                    }
+                    // Connected to a node that's already in the way
+                    if (modNodes.contains(n)) {
+                        wayIsFinished = true;
+                        selection.clear();
+                    }
+                    if (modNodes.get(modNodes.size() - 1) == n0)
+                        modNodes.add(n);
+                    else
+                        modNodes.add(0, n);
+                    if (!reuse) {
+                        cmds.add(new ChangeNodesCommand(way, modNodes));
+                    }
                 }
 
                 extendedWay = true;
                 newSelection.clear();
-                newSelection.add(wayToSelect);
+                newSelection.add(way);
             }
         }
         if (!extendedWay && !newNode) {
@@ -669,7 +661,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         removeHighlighting(e);
     }
 
-    private static String getTitle(boolean newNode, Node n, Collection<OsmPrimitive> newSelection, List<Way> reuseWays,
+    private static String getTitle(boolean newNode, Node n, Collection<OsmPrimitive> newSelection, Map<Way, List<Node>> reuseWays,
             boolean extendedWay) {
         String title;
         if (!extendedWay) {
@@ -677,7 +669,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
                 title = tr("Add node");
             } else {
                 title = tr("Add node into way");
-                for (Way w : reuseWays) {
+                for (Way w : reuseWays.keySet()) {
                     newSelection.remove(w);
                 }
             }
@@ -694,7 +686,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     }
 
     private void insertNodeIntoAllNearbySegments(List<WaySegment> wss, Node n, Collection<OsmPrimitive> newSelection,
-            Collection<Command> cmds, List<Way> replacedWays, List<Way> reuseWays) {
+            Collection<Command> cmds, Map<Way, List<Node>> reuseWays) {
         Map<Way, List<Integer>> insertPoints = new HashMap<>();
         for (WaySegment ws : wss) {
             List<Integer> is;
@@ -714,12 +706,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
             Way w = insertPoint.getKey();
             List<Integer> is = insertPoint.getValue();
 
-            Way wnew = new Way(w);
-
+            List<Node> modNodes = w.getNodes();
             pruneSuccsAndReverse(is);
             for (int i : is) {
                 segSet.add(Pair.sort(new Pair<>(w.getNode(i), w.getNode(i+1))));
-                wnew.addNode(i + 1, n);
+                modNodes.add(i + 1, n);
             }
 
             // If ALT is pressed, a new way should be created and that new way should get
@@ -731,9 +722,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
                 newSelection.add(insertPoint.getKey());
             }
 
-            cmds.add(new ChangeCommand(insertPoint.getKey(), wnew));
-            replacedWays.add(insertPoint.getKey());
-            reuseWays.add(wnew);
+            cmds.add(new ChangeNodesCommand(insertPoint.getKey(), modNodes));
+            reuseWays.put(w, modNodes);
         }
 
         adjustNode(segSet, n);
