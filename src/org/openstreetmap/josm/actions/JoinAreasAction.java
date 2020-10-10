@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.actions.ReverseWayAction.ReverseWayResult;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -792,9 +793,7 @@ public class JoinAreasAction extends JosmAction {
         if (oldest != null) {
             discardedWays.remove(oldest);
             discardedWays.add(way);
-            Way copy = new Way(oldest);
-            copy.setNodes(way.getNodes());
-            cmds.add(new ChangeCommand(oldest, copy));
+            cmds.add(new ChangeNodesCommand(oldest, way.getNodes()));
             return oldest;
         }
         return way;
@@ -874,9 +873,7 @@ public class JoinAreasAction extends JosmAction {
                     newNodes.add(newNodes.get(0));
                 }
 
-                Way newWay = new Way(way);
-                newWay.setNodes(newNodes);
-                cmds.add(new ChangeCommand(way, newWay));
+                cmds.add(new ChangeNodesCommand(way, newNodes));
                 ++totalWaysModified;
             }
         }

@@ -30,7 +30,7 @@ import javax.swing.JCheckBoxMenuItem;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -585,11 +585,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             EastNorth a = ws.getFirstNode().getEastNorth();
             EastNorth b = ws.getSecondNode().getEastNorth();
             n.setEastNorth(Geometry.closestPointToSegment(a, b, n.getEastNorth()));
-            Way wnew = new Way(ws.way);
-            wnew.addNode(ws.lowerIndex+1, n);
+            List<Node> modnodes = ws.way.getNodes();
+            modnodes.add(ws.lowerIndex+1, n);
             DataSet ds = ws.way.getDataSet();
             UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Add a new node to an existing way"),
-                    new AddCommand(ds, n), new ChangeCommand(ds, ws.way, wnew)));
+                    new AddCommand(ds, n), new ChangeNodesCommand(ds, ws.way, modnodes)));
         }
     }
 
@@ -633,9 +633,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         DataSet ds = getLayerManager().getEditDataSet();
         // create extrusion
         Collection<Command> cmds = new LinkedList<>();
-        Way wnew = new Way(selectedSegment.way);
+        List<Node> modNodes = selectedSegment.way.getNodes();
         boolean wayWasModified = false;
-        boolean wayWasSingleSegment = wnew.getNodesCount() == 2;
+        boolean wayWasSingleSegment = modNodes.size() == 2;
         int insertionPoint = selectedSegment.lowerIndex + 1;
 
         //find if the new points overlap existing segments (in case of 90 degree angles)
@@ -655,15 +655,15 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             // replace shared node with new one
             Node n1Old = selectedSegment.getFirstNode();
             Node n1New = new Node(ProjectionRegistry.getProjection().eastNorth2latlon(newN1en));
-            wnew.addNode(insertionPoint, n1New);
-            wnew.removeNode(n1Old);
+            modNodes.add(insertionPoint, n1New);
+            modNodes.remove(n1Old);
             wayWasModified = true;
             cmds.add(new AddCommand(ds, n1New));
             changedNodes.add(n1New);
         } else {
             //introduce new node
             Node n1New = new Node(ProjectionRegistry.getProjection().eastNorth2latlon(newN1en));
-            wnew.addNode(insertionPoint, n1New);
+            modNodes.add(insertionPoint, n1New);
             wayWasModified = true;
             insertionPoint++;
             cmds.add(new AddCommand(ds, n1New));
@@ -685,15 +685,15 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             // replace shared node with new one
             Node n2Old = selectedSegment.getSecondNode();
             Node n2New = new Node(ProjectionRegistry.getProjection().eastNorth2latlon(newN2en));
-            wnew.addNode(insertionPoint, n2New);
-            wnew.removeNode(n2Old);
+            modNodes.add(insertionPoint, n2New);
+            modNodes.remove(n2Old);
             wayWasModified = true;
             cmds.add(new AddCommand(ds, n2New));
             changedNodes.add(n2New);
         } else {
             //introduce new node
             Node n2New = new Node(ProjectionRegistry.getProjection().eastNorth2latlon(newN2en));
-            wnew.addNode(insertionPoint, n2New);
+            modNodes.add(insertionPoint, n2New);
             wayWasModified = true;
             cmds.add(new AddCommand(ds, n2New));
             changedNodes.add(n2New);
@@ -701,12 +701,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         //the way was a single segment, close the way
         if (wayWasSingleSegment) {
-            wnew.addNode(selectedSegment.getFirstNode());
+            modNodes.add(modNodes.get(0));
             wayWasModified = true;
         }
         if (wayWasModified) {
             // we only need to change the way if its node list was really modified
-            cmds.add(new ChangeCommand(selectedSegment.way, wnew));
+            cmds.add(new ChangeNodesCommand(selectedSegment.way, modNodes));
         }
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         UndoRedoHandler.getInstance().add(c);

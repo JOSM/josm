@@ -22,7 +22,7 @@ import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -191,9 +191,7 @@ public class JoinNodeWayAction extends JosmAction {
                         w.getNode(segmentIndex), w.getNode(segmentIndex+1), !joinWayToNode));
                 wayNodes.addAll(segmentIndex + 1, nodesToAdd);
             }
-            Way wnew = new Way(w);
-            wnew.setNodes(wayNodes);
-            cmds.add(new ChangeCommand(ds, w, wnew));
+            cmds.add(new ChangeNodesCommand(ds, w, wayNodes));
         }
 
         if (cmds.isEmpty()) return;

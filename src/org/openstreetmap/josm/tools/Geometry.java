@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
@@ -230,15 +230,9 @@ public final class Geometry {
 
 
         for (int pos = 0; pos < ways.size(); pos++) {
-            if (!changedWays[pos]) {
-                continue;
+            if (changedWays[pos]) {
+                cmds.add(new ChangeNodesCommand(dataset, ways.get(pos), newNodes[pos]));
             }
-
-            Way way = ways.get(pos);
-            Way newWay = new Way(way);
-            newWay.setNodes(newNodes[pos]);
-
-            cmds.add(new ChangeCommand(dataset, way, newWay));
         }
 
         return intersectionNodes;

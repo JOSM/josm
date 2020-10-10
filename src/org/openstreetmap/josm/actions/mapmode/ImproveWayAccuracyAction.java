@@ -23,7 +23,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.MoveCommand;
@@ -460,9 +460,9 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 // Adding the node to all segments found
                 for (WaySegment virtualSegment : virtualSegments) {
                     Way w = virtualSegment.way;
-                    Way wnew = new Way(w);
-                    wnew.addNode(virtualSegment.lowerIndex + 1, virtualNode);
-                    virtualCmds.add(new ChangeCommand(w, wnew));
+                    List<Node> modNodes = w.getNodes();
+                    modNodes.add(virtualSegment.lowerIndex + 1, virtualNode);
+                    virtualCmds.add(new ChangeNodesCommand(w, modNodes));
                 }
 
                 // Finishing the sequence command
@@ -480,18 +480,15 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
                 long referrerWayCount = candidateNode.referrers(Way.class).count();
                 if (referrersCount != 1 || referrerWayCount != 1) {
                     // detach node from way
-                    final Way newWay = new Way(targetWay);
-                    final List<Node> nodes = newWay.getNodes();
+                    final List<Node> nodes = targetWay.getNodes();
                     nodes.remove(candidateNode);
-                    newWay.setNodes(nodes);
                     if (nodes.size() < 2) {
                         final Command deleteCmd = DeleteCommand.delete(Collections.singleton(targetWay), true);
                         if (deleteCmd != null) {
                             UndoRedoHandler.getInstance().add(deleteCmd);
                         }
-                        newWay.setNodes(null);
                     } else {
-                        UndoRedoHandler.getInstance().add(new ChangeCommand(targetWay, newWay));
+                        UndoRedoHandler.getInstance().add(new ChangeNodesCommand(targetWay, nodes));
                     }
                 } else if (candidateNode.isTagged()) {
                     JOptionPane.showMessageDialog(MainApplication.getMainFrame(),

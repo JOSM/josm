@@ -3,10 +3,12 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -58,24 +60,19 @@ public class DuplicatedWayNodes extends Test {
         Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
         if (it.hasNext()) {
             Way w = (Way) it.next();
-            Way wnew = new Way(w);
-            wnew.setNodes(null);
             Node lastN = null;
+            List<Node> modNodes = new ArrayList<>();
             for (Node n : w.getNodes()) {
-                if (lastN == null) {
-                    wnew.addNode(n);
-                } else if (n == lastN) {
-                    // Skip this node
-                } else {
-                    wnew.addNode(n);
+                if (n != lastN) {
+                    modNodes.add(n);
                 }
                 lastN = n;
             }
-            if (wnew.getNodesCount() < 2)
+            if (modNodes.size() < 2)
                 // Empty way, delete
                 return deletePrimitivesIfNeeded(Collections.singleton(w));
             else
-                return new ChangeCommand(w, wnew);
+                return new ChangeNodesCommand(w, modNodes);
         }
         return null;
     }
