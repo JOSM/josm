@@ -119,9 +119,8 @@ public final class AlignInCircleAction extends JosmAction {
             // Temporary closed way used to reorder nodes
             Way closedWay = new Way(w);
             closedWay.addNode(w.firstNode());
-            List<Way> usedWays = new ArrayList<>(1);
-            usedWays.add(closedWay);
-            nodes = collectNodesAnticlockwise(usedWays);
+            nodes = collectNodesAnticlockwise(Collections.singletonList(closedWay));
+            closedWay.setNodes(null);
         } else if (!ways.isEmpty() && checkWaysArePolygon(ways)) {
             // Case 2
             List<Node> inside = new ArrayList<>();

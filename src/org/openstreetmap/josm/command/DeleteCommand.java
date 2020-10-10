@@ -488,10 +488,7 @@ public class DeleteCommand extends Command {
             n.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount() - 1));
             n.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
 
-            Way wnew = new Way(ws.way);
-            wnew.setNodes(n);
-
-            return new ChangeCommand(ws.way, wnew);
+            return new ChangeNodesCommand(ws.way, n);
         }
 
         List<Node> n1 = new ArrayList<>();
@@ -500,14 +497,10 @@ public class DeleteCommand extends Command {
         n1.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
         n2.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount()));
 
-        Way wnew = new Way(ws.way);
-
         if (n1.size() < 2) {
-            wnew.setNodes(n2);
-            return new ChangeCommand(ws.way, wnew);
+            return new ChangeNodesCommand(ws.way, n2);
         } else if (n2.size() < 2) {
-            wnew.setNodes(n1);
-            return new ChangeCommand(ws.way, wnew);
+            return new ChangeNodesCommand(ws.way, n1);
         } else {
             return SplitWayCommand.splitWay(ws.way, Arrays.asList(n1, n2), Collections.<OsmPrimitive>emptyList());
         }
