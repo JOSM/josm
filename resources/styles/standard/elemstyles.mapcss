@@ -3012,6 +3012,7 @@ node[amenity=fountain] {
     icon-image: "presets/misc/fountain.svg";
     set icon_z17;
 }
+area[amenity=animal_boarding],
 area[amenity=place_of_worship],
 area[amenity=monastery],
 area[amenity=grave_yard],
@@ -3026,6 +3027,10 @@ area[amenity=kindergarten],
 area[amenity=language_school],
 area[amenity=driving_school] {
     fill-color: amenity_light#f7efb7;
+}
+node[amenity=animal_boarding] {
+    icon-image: "presets/accommodation/animal_boarding.svg";
+    set icon_z17;
 }
 node[amenity=place_of_worship] {
     icon-image: "presets/religion/religion.svg";
@@ -3151,6 +3156,7 @@ area[amenity=social_facility],
 area[amenity=baby_hatch],
 area[amenity=doctors],
 area[amenity=dentist],
+area[amenity=animal_shelter],
 area[amenity=veterinary] {
     fill-color: health#eeeeee;
 }
@@ -3201,6 +3207,10 @@ node[amenity=doctors] {
 }
 node[amenity=dentist] {
     icon-image: "presets/health/dentist.svg";
+    set icon_z17;
+}
+node[amenity=animal_shelter] {
+    icon-image: "presets/health/animal_shelter.svg";
     set icon_z17;
 }
 node[amenity=veterinary] {

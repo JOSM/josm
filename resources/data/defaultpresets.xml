@@ -3320,6 +3320,16 @@
                 <check key="permanent_camping" text="Permanent camping only" />
             </checkgroup>
         </item> <!-- Camp pitch -->
+        <separator/>
+        <item name="Animal boarding" icon="presets/accommodation/animal_boarding.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=animal_boarding" />
+            <space />
+            <key key="amenity" value="animal_boarding" />
+            <text key="name" text="Name" />
+            <multiselect key="animal_boarding" text="Type" values="bird;cat;dog;duck;horse;mammal;wildlife" values_searchable="true" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Animal boarding -->
     </group> <!-- Accommodation -->
     <group name="Food+Drinks" icon="presets/food/restaurant.svg">
         <item name="Restaurant" icon="presets/food/restaurant.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -4269,6 +4279,15 @@
             <reference ref="name_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Veterinary -->
+        <item name="Animal shelter" icon="presets/health/animal_shelter.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=animal_shelter" />
+            <space />
+            <key key="amenity" value="animal_shelter" />
+            <text key="name" text="Name" />
+            <multiselect key="animal_shelter" text="Type" values="bird;cat;dog;duck;horse;mammal;wildlife" values_searchable="true" />
+            <reference ref="oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Animal shelter -->
     </group> <!-- Health -->
     <group name="Emergency" icon="presets/emergency/ambulance_station.svg">
         <item name="Ambulance Station" icon="presets/emergency/ambulance_station.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -8472,7 +8491,7 @@
             <text key="contact:foursquare" text="Foursquare" match="key" text_context="social_network" />
             <text key="contact:instagram" text="Instagram" match="key" text_context="social_network" />
             <text key="contact:linkedin" text="Linkedin" match="key" text_context="social_network" />
-            <text key="contact:ok" text="ok" match="key" text_context="social_network" />
+            <text key="contact:ok" text="Ok" match="key" text_context="social_network" />
             <text key="contact:pinterest" text="Pinterest" match="key" text_context="social_network" />
             <text key="contact:skype" text="Skype" match="key" text_context="social_network" />
             <text key="contact:telegram" text="Telegram" match="key" text_context="social_network" />
