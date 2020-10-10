@@ -63,7 +63,7 @@ public class UntaggedNode extends Test implements KeyValueVisitor {
         if (key.toLowerCase(Locale.ENGLISH).contains("fixme") || value.toLowerCase(Locale.ENGLISH).contains("fixme")) {
             /* translation note: don't translate quoted words */
             errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_NODE_FIXME)
-                    .message(ERROR_MESSAGE, marktr("Has tag containing ''fixme'' or ''FIXME''"))
+                    .message(ERROR_MESSAGE, marktr("Has tag containing ''fixme''"))
                     .primitives(castPrim(n))
                     .build());
             return;

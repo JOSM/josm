@@ -627,7 +627,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             }
             if (checkFixmes && key != null && value != null && !value.isEmpty() && isFixme(key, value) && !withErrors.contains(p, "FIXME")) {
                 errors.add(TestError.builder(this, Severity.OTHER, FIXME)
-                        .message(tr("FIXMES"))
+                        .message(tr("fixme"))
                         .primitives(p)
                         .build());
                 withErrors.put(p, "FIXME");
@@ -1105,8 +1105,8 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         prefCheckValuesBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckValuesBeforeUpload, a);
 
-        prefCheckFixmes = new JCheckBox(tr("Check for FIXMES."), Config.getPref().getBoolean(PREF_CHECK_FIXMES, true));
-        prefCheckFixmes.setToolTipText(tr("Looks for nodes or ways with FIXME in any property value."));
+        prefCheckFixmes = new JCheckBox(tr("Check for fixme."), Config.getPref().getBoolean(PREF_CHECK_FIXMES, true));
+        prefCheckFixmes.setToolTipText(tr("Looks for nodes or ways with fixme in any property value."));
         testPanel.add(prefCheckFixmes, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckFixmesBeforeUpload = new JCheckBox();

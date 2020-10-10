@@ -24,7 +24,6 @@ public class DuplicateRelationAction extends AbstractRelationEditorAction {
     public DuplicateRelationAction(IRelationEditorActionAccess editorAccess) {
         super(editorAccess);
         putValue(SHORT_DESCRIPTION, tr("Create a copy of this relation and open it in another editor window"));
-        // FIXME provide an icon
         new ImageProvider("duplicate").getResource().attachImageIcon(this, true);
         putValue(NAME, tr("Duplicate"));
         setEnabled(true);

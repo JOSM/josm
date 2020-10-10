@@ -1622,7 +1622,7 @@ public class SearchCompiler {
 
     /**
      * Matches objects that don't have any interesting tags (i.e. only has source,
-     * FIXME, etc.). The complete list of uninteresting tags can be found here:
+     * fixme, etc.). The complete list of uninteresting tags can be found here:
      * org.openstreetmap.josm.data.osm.OsmPrimitive.getUninterestingKeys()
      */
     private static class Untagged extends Match {

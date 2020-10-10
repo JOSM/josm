@@ -2093,4 +2093,15 @@ way[cycleway:right=none] {
   fixAdd: concat("{0.key}", "=no");
 }
 
+/* #17809 */
+*[Fixme] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "fixme";
+  group: tr("deprecated tagging");
+  fixChangeKey: "Fixme => fixme";
+  assertMatch: "way Fixme=foo";
+  assertNoMatch: "way fixme=foo";
+  assertNoMatch: "way FIXME=foo";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
