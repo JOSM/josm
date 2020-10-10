@@ -390,6 +390,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         }
         if (isChanged)
             return new ChangeCommand(relation, modifiedRelation);
+        modifiedRelation.setMembers(null); // see #19885
         return null;
     }
 

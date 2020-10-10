@@ -87,6 +87,8 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         getMemberTableModel().applyToRelation(editedRelation);
         if (!editedRelation.hasEqualSemanticAttributes(originRelation, false)) {
             UndoRedoHandler.getInstance().add(new ChangeCommand(originRelation, editedRelation));
+        } else {
+            editedRelation.setMembers(null); // see #19885
         }
     }
 

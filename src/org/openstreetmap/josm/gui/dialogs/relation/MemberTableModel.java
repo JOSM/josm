@@ -221,8 +221,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
     public void populate(Relation relation) {
         members.clear();
         if (relation != null) {
-            // make sure we work with clones of the relation members in the model.
-            members.addAll(new Relation(relation).getMembers());
+            members.addAll(relation.getMembers());
         }
         fireTableDataChanged();
     }

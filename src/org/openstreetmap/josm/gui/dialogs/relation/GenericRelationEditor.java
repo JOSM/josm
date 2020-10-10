@@ -950,6 +950,9 @@ public class GenericRelationEditor extends RelationEditor {
                 relation.addMember(new RelationMember(roles.size() == 1 ? roles.iterator().next() : "", p));
                 modified = true;
             }
+            if (!modified) {
+                relation.setMembers(null); // see #19885
+            }
             return modified ? new ChangeCommand(orig, relation) : null;
         } catch (AddAbortException ign) {
             Logging.trace(ign);

@@ -125,6 +125,9 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
     }
 
     protected final void setRelationSnapshot(Relation snapshot) {
+        if (relationSnapshot != null && relationSnapshot.getDataSet() == null)
+            relationSnapshot.setMembers(null); // see #19885
+
         Relation oldValue = relationSnapshot;
         relationSnapshot = snapshot;
         if (relationSnapshot != oldValue) {
@@ -154,6 +157,7 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
     @Override
     public void dispose() {
         layer.setRecentRelation(relation);
+        setRelation(null);
         super.dispose();
     }
 }
