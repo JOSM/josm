@@ -1,6 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.binaryEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -11,17 +19,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
-
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.spi.JsonProvider;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,11 +37,18 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.HttpClient.Response;
+
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.HttpHeaders;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.matching.UrlPattern;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Tests the {@link HttpClient} using the webservice <a href="https://httpbin.org/">https://httpbin.org/</a>.
+ * Tests the {@link HttpClient}.
  */
 public class HttpClientTest {
 
@@ -45,6 +58,12 @@ public class HttpClientTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().timeout(15000);
+
+    /**
+     * mocked local http server
+     */
+    @Rule
+    public WireMockRule localServer = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
     private ProgressMonitor progress;
 
@@ -70,6 +89,7 @@ public class HttpClientTest {
      */
     @Before
     public void setUp() {
+        localServer.resetAll();
         progress = TestUtils.newTestProgressMonitor();
         captured = null;
         Logging.getLogger().addHandler(handler);
@@ -82,8 +102,9 @@ public class HttpClientTest {
      */
     @Test
     public void testConstructorGetterSetter() throws IOException {
-        final HttpClient client = HttpClient.create(new URL("https://httpbin.org/"));
-        assertThat(client.getURL(), is(new URL("https://httpbin.org/")));
+        final URL localUrl = url("");
+        final HttpClient client = HttpClient.create(localUrl);
+        assertThat(client.getURL(), is(localUrl));
         assertThat(client.getRequestMethod(), is("GET"));
         assertThat(client.getRequestHeader("Accept"), is("*/*"));
         client.setAccept("text/html");
@@ -103,50 +124,37 @@ public class HttpClientTest {
      */
     @Test
     public void testGet() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/get?foo=bar")).connect(progress);
+        final UrlPattern pattern = urlEqualTo("/get?foo=bar");
+        localServer.stubFor(get(pattern).willReturn(aResponse().withStatusMessage("OK")
+                .withHeader("Content-Type", "application/json; encoding=utf-8")));
+        final Response response = connect("/get?foo=bar");
         assertThat(response.getRequestMethod(), is("GET"));
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getResponseMessage(), equalToIgnoringCase("OK"));
-        assertThat(response.getContentType(), is("application/json"));
-        assertThat(response.getHeaderField("Content-Type"), is("application/json"));
-        assertThat(response.getHeaderField("Content-TYPE"), is("application/json"));
-        assertThat(response.getHeaderFields().get("Content-Type"), is(Collections.singletonList("application/json")));
-        assertThat(response.getHeaderFields().get("Content-TYPE"), is(Collections.singletonList("application/json")));
-        try (InputStream in = response.getContent();
-             JsonReader json = JsonProvider.provider().createReader(in)) {
-            final JsonObject root = json.readObject();
-            assertThat(root.getJsonObject("args").getString("foo"), is("bar"));
-            assertThat(root.getString("url"), is("https://httpbin.org/get?foo=bar"));
-            assertThat(root.getJsonObject("headers").get("Cache-Control"), nullValue());
-            assertThat(root.getJsonObject("headers").get("Pragma"), nullValue());
-        }
+        assertThat(response.getContentType(), is("application/json; encoding=utf-8"));
+        assertThat(response.getHeaderField("Content-Type"), is("application/json; encoding=utf-8"));
+        assertThat(response.getHeaderField("Content-TYPE"), is("application/json; encoding=utf-8"));
+        assertThat(response.getHeaderFields().get("Content-Type"), is(Collections.singletonList("application/json; encoding=utf-8")));
+        assertThat(response.getHeaderFields().get("Content-TYPE"), is(Collections.singletonList("application/json; encoding=utf-8")));
+        localServer.verify(getRequestedFor(pattern)
+                .withQueryParam("foo", equalTo("bar"))
+                .withoutHeader("Cache-Control")
+                .withoutHeader("Pragma"));
     }
 
     /**
-     * Test JOSM User-Agent
+     * Test JOSM User-Agent and the incoming request's HTTP headers.
      * @throws IOException if an I/O error occurs
      */
     @Test
     public void testHeaders() throws IOException {
-        try (InputStream in = HttpClient.create(new URL("https://httpbin.org/headers")).connect(progress).getContent();
-             JsonReader json = JsonProvider.provider().createReader(in)) {
-            final JsonObject headers = json.readObject().getJsonObject("headers");
-            assertThat(headers.getString("Accept"), is("*/*"));
-            assertThat(headers.getString("Accept-Encoding"), is("gzip, deflate"));
-            assertThat(headers.getString("User-Agent"), is(Version.getInstance().getFullAgentString()));
-        }
-    }
-
-    /**
-     * Test JOSM User-Agent
-     * @throws IOException if an I/O error occurs
-     */
-    @Test
-    public void testUserAgent() throws IOException {
-        try (InputStream in = HttpClient.create(new URL("https://httpbin.org/user-agent")).connect(progress).getContent();
-             JsonReader json = JsonProvider.provider().createReader(in)) {
-            assertThat(json.readObject().getString("user-agent"), is(Version.getInstance().getFullAgentString()));
-        }
+        final UrlPattern pattern = urlEqualTo("/headers");
+        localServer.stubFor(get(pattern).willReturn(aResponse()));
+        connect("/headers");
+        localServer.verify(getRequestedFor(pattern)
+                .withHeader("Accept", equalTo("*/*"))
+                .withHeader("Accept-Encoding", equalTo("gzip, deflate"))
+                .withHeader("User-Agent", equalTo(Version.getInstance().getFullAgentString())));
     }
 
     /**
@@ -155,7 +163,9 @@ public class HttpClientTest {
      */
     @Test
     public void testFetchUtf8Content() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/encoding/utf8")).connect(progress);
+        localServer.stubFor(get(urlEqualTo("/encoding/utf8"))
+                .willReturn(aResponse().withBody("∀x∈ℝ: UTF-8 encoded sample plain-text file")));
+        final Response response = connect("/encoding/utf8");
         assertThat(response.getResponseCode(), is(200));
         final String content = response.fetchContent();
         assertThat(content, containsString("UTF-8 encoded sample plain-text file"));
@@ -163,60 +173,68 @@ public class HttpClientTest {
     }
 
     /**
-     * Test HTTP POST
+     * Test HTTP POST with non-empty body
      * @throws IOException if an I/O error occurs
      */
     @Test
     public void testPost() throws IOException {
+        final UrlPattern pattern = urlEqualTo("/post");
+        localServer.stubFor(post(pattern).willReturn(aResponse()));
         final String text = "Hello World!\nGeetings from JOSM, the Java OpenStreetMap Editor";
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/post"), "POST")
+        final Response response = HttpClient.create(url("/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
                 .setRequestBody(text.getBytes(StandardCharsets.UTF_8))
                 .setFinishOnCloseOutput(false) // to fix #12583, not sure if it's the best way to do it
                 .connect(progress);
         assertThat(response.getResponseCode(), is(200));
-        try (InputStream in = response.getContent();
-             JsonReader json = JsonProvider.provider().createReader(in)) {
-            assertThat(json.readObject().getString("data"), is(text));
-        }
+        assertThat(response.getRequestMethod(), is("POST"));
+        localServer.verify(postRequestedFor(pattern).withRequestBody(equalTo(text)));
     }
 
+    /**
+     * Test HTTP POST with empty body
+     * @throws IOException if an I/O error occurs
+     */
     @Test
     public void testPostZero() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/post"), "POST")
+        final UrlPattern pattern = urlEqualTo("/post");
+        localServer.stubFor(post(pattern).willReturn(aResponse()));
+        final byte[] bytes = "".getBytes(StandardCharsets.UTF_8);
+        final Response response = HttpClient.create(url("/post"), "POST")
                 .setHeader("Content-Type", "text/plain")
-                .setRequestBody("".getBytes(StandardCharsets.UTF_8))
+                .setRequestBody(bytes)
                 .setFinishOnCloseOutput(false) // to fix #12583, not sure if it's the best way to do it
                 .connect(progress);
         assertThat(response.getResponseCode(), is(200));
-        try (InputStream in = response.getContent();
-             JsonReader json = JsonProvider.provider().createReader(in)) {
-            assertThat(json.readObject().getString("data"), is(""));
-        }
+        assertThat(response.getRequestMethod(), is("POST"));
+        localServer.verify(postRequestedFor(pattern).withRequestBody(binaryEqualTo(bytes)));
     }
 
-    /*@Test
+    @Test
     public void testRelativeRedirects() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/relative-redirect/3")).connect(progress);
+        mockRedirects(false, 3);
+        final Response response = connect("/relative-redirect/3");
         assertThat(response.getResponseCode(), is(200));
-        assertThat(response.getContentLength() > 100, is(true));
-    }*/
+        assertThat(response.getHeaderField("foo"), is("bar"));
+    }
 
-    /*@Test
+    @Test
     public void testAbsoluteRedirects() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/absolute-redirect/3")).connect(progress);
+        mockRedirects(true, 3);
+        final Response response = connect("/absolute-redirect/3");
         assertThat(response.getResponseCode(), is(200));
-        assertThat(response.getContentLength() > 100, is(true));
-    }*/
+        assertThat(response.getHeaderField("foo"), is("bar"));
+    }
 
     /**
      * Test maximum number of redirections.
      * @throws IOException if an I/O error occurs
      */
-    /*@Test(expected = IOException.class)
+    @Test(expected = IOException.class)
     public void testTooMuchRedirects() throws IOException {
-        HttpClient.create(new URL("https://httpbin.org/redirect/3")).setMaxRedirects(2).connect(progress);
-    }*/
+        mockRedirects(false, 3);
+        HttpClient.create(url("/relative-redirect/3")).setMaxRedirects(2).connect(progress);
+    }
 
     /**
      * Test HTTP error 418
@@ -225,12 +243,9 @@ public class HttpClientTest {
     @Test
     public void testHttp418() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/418")).connect(progress);
-        assertThat(response.getResponseCode(), is(418));
-        final String content = response.fetchContent();
-        assertThat(content, containsString("-=[ teapot ]=-"));
-        assertThat(captured.getMessage(), containsString("-=[ teapot ]=-"));
-        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+        final Response response = doTestHttp(418, "I'm a teapot!", "I'm a teapot!",
+                Collections.singletonMap("X-More-Info", "http://tools.ietf.org/html/rfc2324"));
+        assertThat(response.getHeaderField("X-More-Info"), is("http://tools.ietf.org/html/rfc2324"));
     }
 
     /**
@@ -240,13 +255,7 @@ public class HttpClientTest {
     @Test
     public void testHttp401() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/401")).connect(progress);
-        assertThat(response.getResponseCode(), is(401));
-        assertThat(response.getResponseMessage(), equalToIgnoringCase("UNAUTHORIZED"));
-        final String content = response.fetchContent();
-        assertThat(content, is(""));
-        assertThat(captured.getMessage(), containsString("Server did not return any body"));
-        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+        doTestHttp(401, "UNAUTHORIZED", null);
     }
 
     /**
@@ -256,13 +265,7 @@ public class HttpClientTest {
     @Test
     public void testHttp402() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/402")).connect(progress);
-        assertThat(response.getResponseCode(), is(402));
-        assertThat(response.getResponseMessage(), equalToIgnoringCase("PAYMENT REQUIRED"));
-        final String content = response.fetchContent();
-        assertThat(content, containsString("Fuck you, pay me!"));
-        assertThat(captured.getMessage(), containsString("Fuck you, pay me!"));
-        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+        doTestHttp(402, "PAYMENT REQUIRED", "Fuck you, pay me!");
     }
 
     /**
@@ -272,13 +275,7 @@ public class HttpClientTest {
     @Test
     public void testHttp403() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/403")).connect(progress);
-        assertThat(response.getResponseCode(), is(403));
-        assertThat(response.getResponseMessage(), equalToIgnoringCase("FORBIDDEN"));
-        final String content = response.fetchContent();
-        assertThat(content, is(""));
-        assertThat(captured.getMessage(), containsString("Server did not return any body"));
-        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+        doTestHttp(403, "FORBIDDEN", null);
     }
 
     /**
@@ -288,13 +285,7 @@ public class HttpClientTest {
     @Test
     public void testHttp404() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/404")).connect(progress);
-        assertThat(response.getResponseCode(), is(404));
-        assertThat(response.getResponseMessage(), equalToIgnoringCase("NOT FOUND"));
-        final String content = response.fetchContent();
-        assertThat(content, is(""));
-        assertThat(captured.getMessage(), containsString("Server did not return any body"));
-        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+        doTestHttp(404, "NOT FOUND", null);
     }
 
     /**
@@ -304,13 +295,7 @@ public class HttpClientTest {
     @Test
     public void testHttp500() throws IOException {
         // https://tools.ietf.org/html/rfc2324
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/500")).connect(progress);
-        assertThat(response.getResponseCode(), is(500));
-        assertThat(response.getResponseMessage(), equalToIgnoringCase("INTERNAL SERVER ERROR"));
-        final String content = response.fetchContent();
-        assertThat(content, containsString(""));
-        assertThat(captured.getMessage(), containsString("Server did not return any body"));
-        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+        doTestHttp(500, "INTERNAL SERVER ERROR", null);
     }
 
     /**
@@ -319,7 +304,8 @@ public class HttpClientTest {
      */
     @Test
     public void testRequestInTime() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/delay/1")).setReadTimeout(2000).connect(progress);
+        mockDelay(1);
+        final Response response = HttpClient.create(url("/delay/1")).setReadTimeout(2000).connect(progress);
         assertThat(response.getResponseCode(), is(200));
     }
 
@@ -329,21 +315,8 @@ public class HttpClientTest {
      */
     @Test(expected = IOException.class)
     public void testTakesTooLong() throws IOException {
-        HttpClient.create(new URL("https://httpbin.org/delay/1")).setReadTimeout(500).connect(progress);
-    }
-
-    /**
-     * Test reading Deflate-encoded data.
-     * @throws IOException if any I/O error occurs
-     */
-    @Test
-    public void testDeflate() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/deflate")).connect(progress);
-        assertThat(response.getResponseCode(), is(200));
-        try (InputStream in = response.getContent();
-             JsonReader json = JsonProvider.provider().createReader(in)) {
-            assertThat(json.readObject().getBoolean("deflated"), is(true));
-        }
+        mockDelay(1);
+        HttpClient.create(url("/delay/1")).setReadTimeout(500).connect(progress);
     }
 
     /**
@@ -352,16 +325,15 @@ public class HttpClientTest {
      */
     @Test
     public void testGzip() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/gzip")).connect(progress);
+        localServer.stubFor(get(urlEqualTo("/gzip")).willReturn(aResponse().withBody("foo")));
+        final Response response = connect("/gzip");
         assertThat(response.getResponseCode(), is(200));
-        try (InputStream in = response.getContent();
-             JsonReader json = JsonProvider.provider().createReader(in)) {
-            assertThat(json.readObject().getBoolean("gzipped"), is(true));
-        }
+        assertThat(response.getContentEncoding(), is("gzip"));
+        assertThat(response.fetchContent(), is("foo"));
     }
 
     /**
-     * Test of {@link HttpClient.Response#uncompress} method with Gzip compression.
+     * Test of {@link Response#uncompress} method with Gzip compression.
      * @throws IOException if any I/O error occurs
      */
     @Test
@@ -373,7 +345,7 @@ public class HttpClientTest {
     }
 
     /**
-     * Test of {@link HttpClient.Response#uncompress} method with Bzip compression.
+     * Test of {@link Response#uncompress} method with Bzip compression.
      * @throws IOException if any I/O error occurs
      */
     @Test
@@ -385,7 +357,7 @@ public class HttpClientTest {
     }
 
     /**
-     * Test of {@link HttpClient.Response#uncompress} method with Bzip compression.
+     * Test of {@link Response#uncompress} method with Bzip compression.
      * @throws IOException if any I/O error occurs
      */
     @Test
@@ -418,5 +390,49 @@ public class HttpClientTest {
             "<HR size=\"1\" noshade=\"noshade\"><h3>Apache Tomcat/DGFiP</h3></body></html>");
         assertTrue(m.matches());
         assertEquals("La commune demandée n'existe pas ou n'est pas accessible.", m.group(1));
+    }
+
+    private void mockDelay(int seconds) {
+        localServer.stubFor(get(urlEqualTo("/delay/" + seconds))
+                .willReturn(aResponse().withFixedDelay(1000 * seconds)));
+    }
+
+    private void mockRedirects(boolean absolute, int n) {
+        final String prefix = absolute ? "absolute" : "relative";
+        for (int i = n; i > 0; i--) {
+            final String location = "/" + prefix + "-redirect/" + (i-1);
+            localServer.stubFor(get(urlEqualTo("/" + prefix + "-redirect/" + i))
+                    .willReturn(aResponse().withStatus(302).withHeader(
+                            "Location", absolute ? localServer.url(location) : location)));
+        }
+        localServer.stubFor(get(urlEqualTo("/" + prefix + "-redirect/0"))
+                .willReturn(aResponse().withHeader("foo", "bar")));
+    }
+
+    private Response doTestHttp(int responseCode, String message, String body) throws IOException {
+        return doTestHttp(responseCode, message, body, Collections.emptyMap());
+    }
+
+    private Response doTestHttp(int responseCode, String message, String body, Map<String, String> headersMap) throws IOException {
+        localServer.stubFor(get(urlEqualTo("/status/" + responseCode))
+                .willReturn(aResponse().withStatus(responseCode).withStatusMessage(message).withBody(body).withHeaders(
+                        new HttpHeaders(headersMap.entrySet().stream().map(
+                                e -> new HttpHeader(e.getKey(), e.getValue())).collect(Collectors.toList())))));
+        Response response = connect("/status/" + responseCode);
+        assertThat(response.getResponseCode(), is(responseCode));
+        assertThat(response.getResponseMessage(), equalToIgnoringCase(message));
+        final String content = response.fetchContent();
+        assertThat(content, is(body == null ? "" : body));
+        assertThat(captured.getMessage(), containsString(body == null ? "Server did not return any body" : body));
+        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+        return response;
+    }
+
+    private Response connect(String path) throws IOException {
+        return HttpClient.create(url(path)).connect(progress);
+    }
+
+    private URL url(String path) throws MalformedURLException {
+        return new URL(localServer.url(path));
     }
 }
