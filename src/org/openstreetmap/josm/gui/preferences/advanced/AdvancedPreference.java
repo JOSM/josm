@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -23,7 +24,6 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -201,9 +201,10 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         p.add(scroll, GBC.eol().fill(GBC.BOTH));
         scroll.setPreferredSize(new Dimension(400, 200));
 
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 6));
         JButton add = new JButton(tr("Add"), ImageProvider.get("dialogs/add", ImageProvider.ImageSizes.SMALLICON));
-        p.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-        p.add(add, GBC.std().insets(0, 5, 0, 0));
+        buttonPanel.add(add);
+        add.setToolTipText(add.getText());
         add.addActionListener(e -> {
             PrefEntry pe = table.addPreference(gui);
             if (pe != null) {
@@ -214,7 +215,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         });
 
         JButton edit = new JButton(tr("Edit"), ImageProvider.get("dialogs/edit", ImageProvider.ImageSizes.SMALLICON));
-        p.add(edit, GBC.std().insets(5, 5, 5, 0));
+        buttonPanel.add(edit);
+        edit.setToolTipText(edit.getText());
         edit.addActionListener(e -> {
             if (table.editPreference(gui))
                 applyFilter();
@@ -222,20 +224,24 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         table.getSelectionModel().addListSelectionListener(event -> edit.setEnabled(table.getSelectedRowCount() == 1));
 
         JButton reset = new JButton(tr("Reset"), ImageProvider.get("undo", ImageProvider.ImageSizes.SMALLICON));
-        p.add(reset, GBC.std().insets(0, 5, 0, 0));
+        buttonPanel.add(reset);
+        reset.setToolTipText(reset.getText());
         reset.addActionListener(e -> table.resetPreferences(gui));
         table.getSelectionModel().addListSelectionListener(event -> reset.setEnabled(table.getSelectedRowCount() > 0));
 
         JButton read = new JButton(tr("Read from file"), ImageProvider.get("open", ImageProvider.ImageSizes.SMALLICON));
-        p.add(read, GBC.std().insets(5, 5, 0, 0));
+        buttonPanel.add(read);
+        read.setToolTipText(read.getText());
         read.addActionListener(e -> readPreferencesFromXML());
 
         JButton export = new JButton(tr("Export selected items"), ImageProvider.get("save", ImageProvider.ImageSizes.SMALLICON));
-        p.add(export, GBC.std().insets(5, 5, 0, 0));
+        buttonPanel.add(export);
+        export.setToolTipText(export.getText());
         export.addActionListener(e -> exportSelectedToXML());
 
         final JButton more = new JButton(tr("More..."));
-        p.add(more, GBC.std().insets(5, 5, 0, 0));
+        buttonPanel.add(more);
+        more.setToolTipText(more.getText());
         more.addActionListener(new ActionListener() {
             private final JPopupMenu menu = buildPopupMenu();
             @Override
@@ -245,6 +251,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                 }
             }
         });
+        p.add(buttonPanel, GBC.eol());
     }
 
     private void readPreferences(Preferences tmpPrefs) {
