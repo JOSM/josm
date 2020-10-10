@@ -36,9 +36,6 @@ area:closed[aeroway=helipad][area?] {
   fixRemove: "{2.key}";
 }
 
-/* #9257, #17482 */
-way[foot][highway][foot =~ /^(yes|designated)$/][highway =~ /^(footway|pedestrian)$/][!access],
-way[bicycle][highway][bicycle =~ /^(yes|designated)$/][highway=cycleway][!vehicle][!access][foot!=designated],
 *[gnis:Class="Populated Place"][place=city],
 *[gnis:Class="Populated Place"][place=town],
 *[gnis:Class="Populated Place"][place=village],
@@ -47,8 +44,6 @@ way[bicycle][highway][bicycle =~ /^(yes|designated)$/][highway=cycleway][!vehicl
   throwWarning: tr("{0} is unnecessary for {1}", "{0.tag}", "{1.tag}");
   group: tr("unnecessary tag");
   fixRemove: "{0.key}";
-  assertMatch: "way highway=pedestrian foot=designated";
-  assertNoMatch: "way highway=pedestrian access=no foot=designated";
   assertMatch: "node gnis:Class=\"Populated Place\" place=village";
   assertNoMatch: "node gnis:Class=\"Populated Place\" place=locality";
 }
