@@ -365,7 +365,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
      */
     public void updateDialogHeader() {
         SwingUtilities.invokeLater(() -> setTitle(
-                tr("Filter Hidden:{0} Disabled:{1}",
+                tr("Filter Hidden: {0} Disabled: {1}",
                         filterModel.model.getDisabledAndHiddenCount(), filterModel.model.getDisabledCount())));
     }
 
