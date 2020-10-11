@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -344,9 +347,11 @@ public class OsmReaderTest {
             OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
             fail("should throw exception");
         } catch (IllegalDataException e) {
-            assertEquals("Illegal value for attributes 'lat', 'lon' on node with ID 1425146006." +
-                    " Got '550.3311950157', '10.49428298298'." +
-                    " (at line 5, column 179). 578 bytes have been read", e.getMessage());
+            String prefix = "Illegal value for attributes 'lat', 'lon' on node with ID 1425146006. Got '550.3311950157', '10.49428298298'.";
+            assertThat(e.getMessage(), anyOf(
+                    is(prefix + " (at line 5, column 179). 578 bytes have been read"),
+                    is(prefix + " (at line 5, column 179). 581 bytes have been read") // GitHub Actions
+            ));
         }
     }
 
@@ -360,9 +365,11 @@ public class OsmReaderTest {
             OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
             fail("should throw exception");
         } catch (IllegalDataException e) {
-            assertEquals("Illegal value for attributes 'lat', 'lon' on node with ID 978." +
-                    " Got 'nan', 'nan'." +
-                    " (at line 4, column 151). 336 bytes have been read", e.getMessage());
+            String prefix = "Illegal value for attributes 'lat', 'lon' on node with ID 978. Got 'nan', 'nan'.";
+            assertThat(e.getMessage(), anyOf(
+                    is(prefix + " (at line 4, column 151). 336 bytes have been read"),
+                    is(prefix + " (at line 5, column 179). 338 bytes have been read") // GitHub Actions
+            ));
         }
     }
 
