@@ -104,7 +104,7 @@ public class MapPaintDialog extends ToggleDialog {
     /**
      * Action that opens the map paint preferences.
      */
-    public static final JosmAction PREFERENCE_ACTION = PreferencesAction.forPreferenceSubTab(
+    public static final JosmAction PREFERENCE_ACTION = PreferencesAction.forPreferenceTab(
             tr("Map paint preferences..."), null, MapPaintPreference.class, /* ICON */ "dialogs/mappaintpreference");
 
     /**

@@ -11,16 +11,13 @@ import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
@@ -29,7 +26,7 @@ import org.openstreetmap.josm.tools.GBC;
 /**
  * Preference settings for data layer autosave.
  */
-public class BackupPreference implements SubPreferenceSetting {
+public class BackupPreference extends DefaultTabPreferenceSetting {
 
     /**
      * Factory used to create a new {@code BackupPreference}.
@@ -47,6 +44,10 @@ public class BackupPreference implements SubPreferenceSetting {
     private JCheckBox autosave;
     private final JosmTextField autosaveInterval = new JosmTextField(8);
     private final JosmTextField backupPerLayer = new JosmTextField(8);
+
+    BackupPreference() {
+        super(null, tr("File backup"), tr("Configure whether to create backup files"));
+    }
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
@@ -110,9 +111,7 @@ public class BackupPreference implements SubPreferenceSetting {
         autosaveEnabled.actionPerformed(null);
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
-        JScrollPane sp = GuiHelper.embedInVerticalScrollPane(panel);
-
-        gui.getMapPreference().addSubTab(this, tr("File backup"), sp, tr("Configure whether to create backup files"));
+        gui.createPreferenceTab(this).add(panel, GBC.eol().fill(GBC.BOTH));
     }
 
     @Override
@@ -132,8 +131,4 @@ public class BackupPreference implements SubPreferenceSetting {
         return false;
     }
 
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
-        return gui.getMapPreference();
-    }
 }

@@ -23,13 +23,13 @@ import org.openstreetmap.josm.data.preferences.sources.SourceProvider;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -42,7 +42,7 @@ import org.xml.sax.SAXParseException;
 /**
  * Preference settings for tagging presets.
  */
-public final class TaggingPresetPreference implements SubPreferenceSetting {
+public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
 
     private final class TaggingPresetValidationListener implements ValidationListener {
         @Override
@@ -145,7 +145,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
     }
 
     private TaggingPresetPreference() {
-        super();
+        super(null, tr("Tagging Presets"), tr("Tagging Presets"));
     }
 
     private static final List<SourceProvider> presetSourceProviders = new ArrayList<>();
@@ -176,9 +176,9 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         panel.add(sortMenu, GBC.eol().insets(5, 5, 5, 0));
         sources = new TaggingPresetSourceEditor();
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
-        final MapPreference mapPref = gui.getMapPreference();
-        mapPref.addSubTab(this, tr("Tagging Presets"), panel);
-        sources.deferLoading(mapPref, panel);
+        PreferencePanel preferencePanel = gui.createPreferenceTab(this);
+        preferencePanel.add(panel, GBC.eol().fill(GBC.BOTH));
+        sources.deferLoading(gui, preferencePanel);
         gui.addValidationListener(validationListener);
     }
 
@@ -261,8 +261,4 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
         return false;
     }
 
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
-        return gui.getMapPreference();
-    }
 }

@@ -53,6 +53,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
@@ -1657,8 +1658,18 @@ public abstract class SourceEditor extends JPanel {
      * @since 6670
      */
     public final void deferLoading(final DefaultTabPreferenceSetting tab, final Component component) {
-        tab.getTabPane().addChangeListener(e -> {
-            if (tab.getTabPane().getSelectedComponent() == component) {
+        deferLoading(tab.getTabPane(), component);
+    }
+
+    /**
+     * Defers loading of sources to the first time the adequate tab is selected.
+     * @param tab The tabbed pane
+     * @param component The tab component
+     * @since 17161
+     */
+    public final void deferLoading(final JTabbedPane tab, final Component component) {
+        tab.addChangeListener(e -> {
+            if (tab.getSelectedComponent() == component) {
                 initiallyLoadAvailableSources();
             }
         });

@@ -35,11 +35,10 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -63,7 +62,7 @@ import org.openstreetmap.josm.tools.Logging;
  *    a manual implementation of the projection. Use {@link CustomProjection}
  *    if possible.
  */
-public class ProjectionPreference implements SubPreferenceSetting {
+public class ProjectionPreference extends DefaultTabPreferenceSetting {
 
     /**
      * Factory used to create a new {@code ProjectionPreference}.
@@ -343,6 +342,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     private static final GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
 
     public ProjectionPreference() {
+        super(null, tr("Map Projection"), tr("Map Projection"));
         this.projectionCombo = new JosmComboBox<>(
             projectionChoices.toArray(new ProjectionChoice[0]));
         this.coordinatesCombo = new JosmComboBox<>(
@@ -403,7 +403,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         projPanel.add(unitsCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
         projPanel.add(GBC.glue(1, 1), GBC.std().fill(GBC.HORIZONTAL).weight(1.0, 1.0));
 
-        gui.getMapPreference().addSubTab(this, tr("Map Projection"), projPanel.getVerticalScrollPane());
+        gui.createPreferenceTab(this).add(projPanel.getVerticalScrollPane(), GBC.std().fill());
 
         selectedProjectionChanged(pc);
     }
@@ -559,11 +559,6 @@ public class ProjectionPreference implements SubPreferenceSetting {
     @Override
     public boolean isExpert() {
         return false;
-    }
-
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
-        return gui.getMapPreference();
     }
 
     /**

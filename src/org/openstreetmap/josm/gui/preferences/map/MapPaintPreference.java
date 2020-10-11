@@ -21,12 +21,12 @@ import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
@@ -34,9 +34,13 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * Preference settings for map paint styles.
  */
-public class MapPaintPreference implements SubPreferenceSetting {
+public class MapPaintPreference extends DefaultTabPreferenceSetting {
     private SourceEditor sources;
     private JCheckBox enableIconDefault;
+
+    MapPaintPreference() {
+        super(null, tr("Map Paint Styles"), tr("Map Paint Styles"));
+    }
 
     private static final List<SourceProvider> styleSourceProviders = new ArrayList<>();
 
@@ -74,9 +78,9 @@ public class MapPaintPreference implements SubPreferenceSetting {
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         panel.add(enableIconDefault, GBC.eol().insets(11, 2, 5, 0));
 
-        final MapPreference mapPref = gui.getMapPreference();
-        mapPref.addSubTab(this, tr("Map Paint Styles"), panel);
-        sources.deferLoading(mapPref, panel);
+        PreferencePanel preferencePanel = gui.createPreferenceTab(this);
+        preferencePanel.add(panel, GBC.std().fill());
+        sources.deferLoading(gui, preferencePanel);
     }
 
     static class MapPaintSourceEditor extends SourceEditor {
@@ -192,8 +196,4 @@ public class MapPaintPreference implements SubPreferenceSetting {
         return false;
     }
 
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
-        return gui.getMapPreference();
-    }
 }
