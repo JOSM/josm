@@ -27,7 +27,6 @@ import org.openstreetmap.josm.actions.ReverseWayAction.ReverseWayResult;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
-import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -1719,7 +1718,9 @@ public class JoinAreasAction extends JosmAction {
      */
     private void stripTags(Collection<Way> ways) {
         for (Way w : ways) {
-            cmds.add(new ChangePropertyCommand(Collections.singleton(w), Collections.emptyMap()));
+            final Way wayWithoutTags = new Way(w);
+            wayWithoutTags.removeAll();
+            cmds.add(new ChangeCommand(w, wayWithoutTags));
         }
         /* I18N: current action printed in status display */
         commitCommands(marktr("Remove tags from inner ways"));
