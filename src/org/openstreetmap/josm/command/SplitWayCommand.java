@@ -350,7 +350,7 @@ public class SplitWayCommand extends SequenceCommand {
         newWays.remove(wayToKeep);
 
         // Figure out the order of relation members (if any).
-        Analysis analysis = analyseSplit(way, wayToKeep, newWays, indexOfWayToKeep);
+        Analysis analysis = analyseSplit(way, wayToKeep, newWays);
 
         // If there are relations that cannot be split properly without downloading more members,
         // present the user with an option to do so, or to abort the split.
@@ -405,7 +405,7 @@ public class SplitWayCommand extends SequenceCommand {
                 }
                 // If missing relation members were downloaded, perform the analysis again to find the relation
                 // member order for all relations.
-                analysis = analyseSplit(way, wayToKeep, newWays, indexOfWayToKeep);
+                analysis = analyseSplit(way, wayToKeep, newWays);
                 return Optional.of(splitBasedOnAnalyses(way, newWays, newSelection, analysis, indexOfWayToKeep));
             case GO_AHEAD_WITHOUT_DOWNLOADS:
                 // Proceed with the split with the information we have.
@@ -420,8 +420,7 @@ public class SplitWayCommand extends SequenceCommand {
 
     static Analysis analyseSplit(Way way,
                                  Way wayToKeep,
-                                 List<Way> newWays,
-                                 int indexOfWayToKeep) {
+                                 List<Way> newWays) {
         Collection<Command> commandList = new ArrayList<>();
         Collection<String> nowarnroles = Config.getPref().getList("way.split.roles.nowarn",
                 Arrays.asList("outer", "inner", "forward", "backward", "north", "south", "east", "west"));
@@ -429,8 +428,7 @@ public class SplitWayCommand extends SequenceCommand {
         // Change the original way
         final Way changedWay = new Way(way);
         changedWay.setNodes(wayToKeep.getNodes());
-        commandList.add(new ChangeCommand(way, changedWay));
-
+        commandList.add(new ChangeNodesCommand(way, changedWay.getNodes()));
         for (Way wayToAdd : newWays) {
             commandList.add(new AddCommand(way.getDataSet(), wayToAdd));
         }
@@ -558,7 +556,7 @@ public class SplitWayCommand extends SequenceCommand {
                 commandList.add(new ChangeCommand(r.getDataSet(), r, c));
             }
         }
-
+        changedWay.setNodes(null); // see #19885
         return new Analysis(relationAnalyses, commandList, warnings, numberOfRelations);
     }
 
