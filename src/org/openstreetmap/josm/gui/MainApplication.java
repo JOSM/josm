@@ -1353,7 +1353,7 @@ public class MainApplication {
                 ed.setContent(message);
 
                 if (ed.showDialog().getValue() == 1) {
-                    PreferencesAction.forPreferenceSubTab(null, null, ProxyPreference.class).run();
+                    PreferencesAction.forPreferenceTab(null, null, ProxyPreference.class).run();
                 }
             }
             return hasErrors;

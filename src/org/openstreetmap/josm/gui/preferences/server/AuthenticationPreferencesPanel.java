@@ -15,7 +15,6 @@ import java.beans.PropertyChangeListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -41,8 +40,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     private BasicAuthenticationPreferencesPanel pnlBasicAuthPreferences;
     /** the panel for the OAuth authentication parameters */
     private OAuthAuthenticationPreferencesPanel pnlOAuthPreferences;
-    /** the panel for messages notifier preferences */
-    private FeaturesPanel pnlFeaturesPreferences;
 
     /**
      * Constructs a new {@code AuthenticationPreferencesPanel}.
@@ -101,15 +98,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
 
         rbBasicAuthentication.setSelected(true);
         pnlAuthenticationParameteters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
-
-        gc.gridy = 2;
-        add(new JSeparator(), gc);
-
-        //-- the panel for API feature preferences
-        gc.gridy = 3;
-        gc.fill = GridBagConstraints.NONE;
-        pnlFeaturesPreferences = new FeaturesPanel();
-        add(pnlFeaturesPreferences, gc);
     }
 
     /**
@@ -128,7 +116,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         }
         pnlBasicAuthPreferences.initFromPreferences();
         pnlOAuthPreferences.initFromPreferences();
-        pnlFeaturesPreferences.initFromPreferences();
     }
 
     /**
@@ -154,8 +141,6 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             pnlBasicAuthPreferences.saveToPreferences();
             pnlOAuthPreferences.saveToPreferences();
         }
-        // save message notifications preferences. To be done after authentication preferences.
-        pnlFeaturesPreferences.saveToPreferences();
     }
 
     /**

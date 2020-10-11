@@ -11,9 +11,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Unit tests of {@link AuthenticationPreference} class.
+ * Unit tests of {@link ConnectionPreference} class.
  */
-public class AuthenticationPreferenceTest {
+public class ConnectionPreferenceTest {
 
     /**
      * Setup tests
@@ -23,18 +23,18 @@ public class AuthenticationPreferenceTest {
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
-     * Unit test of {@link AuthenticationPreference#AuthenticationPreference}.
+     * Unit test of {@link ConnectionPreference#AuthenticationPreference}.
      */
     @Test
     public void testAuthenticationPreference() {
-        assertNotNull(new AuthenticationPreference.Factory().createPreferenceSetting());
+        assertNotNull(new ConnectionPreference.Factory().createPreferenceSetting());
     }
 
     /**
-     * Unit test of {@link AuthenticationPreference#addGui}.
+     * Unit test of {@link ConnectionPreference#addGui}.
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new AuthenticationPreference.Factory(), ServerAccessPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ConnectionPreference.Factory(), ServerAccessPreference.class);
     }
 }

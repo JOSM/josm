@@ -4,9 +4,7 @@ package org.openstreetmap.josm.gui.preferences.server;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -37,6 +35,7 @@ import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IUrls;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -81,28 +80,13 @@ public class OsmApiUrlInputPanel extends JPanel {
 
     protected final void build() {
         setLayout(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
 
         // the checkbox for the default UL
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 1.0;
-        gc.insets = new Insets(0, 0, 0, 0);
-        gc.gridwidth = 4;
-        add(buildDefaultServerUrlPanel(), gc);
-
+        add(buildDefaultServerUrlPanel(), GBC.eop().fill(GBC.HORIZONTAL));
 
         // the input field for the URL
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.weightx = 0.0;
-        gc.insets = new Insets(0, 0, 0, 3);
-        add(lblApiUrl, gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        add(tfOsmServerUrl, gc);
+        add(lblApiUrl, GBC.std().insets(0, 0, 3, 0));
+        add(tfOsmServerUrl, GBC.std().fill(GBC.HORIZONTAL).insets(0, 0, 3, 0));
         lblApiUrl.setLabelFor(tfOsmServerUrl);
         SelectAllOnFocusGainedDecorator.decorate(tfOsmServerUrl.getEditorComponent());
         valOsmServerUrl = new ApiUrlValidator(tfOsmServerUrl.getEditorComponent());
@@ -111,16 +95,12 @@ public class OsmApiUrlInputPanel extends JPanel {
         tfOsmServerUrl.addActionListener(propagator);
         tfOsmServerUrl.addFocusListener(propagator);
 
-        gc.gridx = 2;
-        gc.weightx = 0.0;
-        add(lblValid, gc);
+        add(lblValid, GBC.std().insets(0, 0, 3, 0));
 
-        gc.gridx = 3;
-        gc.weightx = 0.0;
         ValidateApiUrlAction actTest = new ValidateApiUrlAction();
         tfOsmServerUrl.getEditorComponent().getDocument().addDocumentListener(actTest);
         btnTest = new JButton(actTest);
-        add(btnTest, gc);
+        add(btnTest, GBC.eop());
     }
 
     /**

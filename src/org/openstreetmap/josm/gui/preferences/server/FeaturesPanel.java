@@ -40,24 +40,24 @@ public class FeaturesPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         notifier = new JCheckBox(tr("Periodically check for new messages"));
-        add(notifier, GBC.eol());
+        add(notifier, GBC.std(0, 0).span(2).fill(GBC.HORIZONTAL));
         notifier.addChangeListener(e -> updateEnabledState());
 
         intervalLabel = new JLabel(tr("Check interval (minutes):"));
         intervalLabel.setLabelFor(notifierInterval);
-        add(intervalLabel, GBC.std().insets(25, 0, 0, 0));
+        add(intervalLabel, GBC.std(0, 1));
 
         notifierInterval.setToolTipText(tr("Default value: {0}", MessageNotifier.PROP_INTERVAL.getDefaultValue()));
         notifierInterval.setMinimumSize(notifierInterval.getPreferredSize());
-        add(notifierInterval, GBC.eol().insets(5, 0, 0, 0));
+        add(notifierInterval, GBC.std(1, 1).insets(5, 0, 0, 0));
 
         final JLabel notesDaysClosedLabel = new JLabel(tr("Max age for closed notes (days):"));
         notesDaysClosedLabel.setLabelFor(notesDaysClosed);
         notesDaysClosedLabel.setToolTipText(tr("Specifies the number of days a note needs to be closed to no longer be downloaded"));
-        add(notesDaysClosedLabel, GBC.std().insets(0, 20, 0, 0));
+        add(notesDaysClosedLabel, GBC.std(0, 2).insets(0, 20, 0, 0));
         notesDaysClosed.setToolTipText(tr("Default value: {0}", DownloadNotesTask.DAYS_CLOSED.getDefaultValue()));
         notesDaysClosed.setMinimumSize(notesDaysClosed.getPreferredSize());
-        add(notesDaysClosed, GBC.eol().insets(5, 20, 0, 0));
+        add(notesDaysClosed, GBC.std(1, 2).insets(5, 20, 0, 0));
     }
 
     private void updateEnabledState() {

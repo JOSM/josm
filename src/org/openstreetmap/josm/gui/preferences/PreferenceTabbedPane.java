@@ -55,7 +55,7 @@ import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.remotecontrol.RemoteControlPreference;
-import org.openstreetmap.josm.gui.preferences.server.AuthenticationPreference;
+import org.openstreetmap.josm.gui.preferences.server.ConnectionPreference;
 import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.preferences.server.ServerAccessPreference;
@@ -581,8 +581,9 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         SETTINGS_FACTORIES.add(new ColorPreference.Factory());
         SETTINGS_FACTORIES.add(new LafPreference.Factory());
         SETTINGS_FACTORIES.add(new LanguagePreference.Factory());
+
+        SETTINGS_FACTORIES.add(new ConnectionPreference.Factory());
         SETTINGS_FACTORIES.add(new ServerAccessPreference.Factory());
-        SETTINGS_FACTORIES.add(new AuthenticationPreference.Factory());
         SETTINGS_FACTORIES.add(new ProxyPreference.Factory());
         SETTINGS_FACTORIES.add(new OverpassServerPreference.Factory());
         SETTINGS_FACTORIES.add(new MapPreference.Factory());

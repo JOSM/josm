@@ -11,11 +11,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.GBC;
@@ -25,7 +24,7 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @since 9142
  */
-public class OverpassServerPreference implements SubPreferenceSetting {
+public class OverpassServerPreference extends DefaultTabPreferenceSetting {
 
     private final HistoryComboBox overpassServer = new HistoryComboBox();
     private final JCheckBox forMultiFetch = new JCheckBox(tr("Use Overpass server for object downloads"));
@@ -40,9 +39,8 @@ public class OverpassServerPreference implements SubPreferenceSetting {
         }
     }
 
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(PreferenceTabbedPane gui) {
-        return gui.getServerPreference();
+    OverpassServerPreference() {
+        super(null, tr("Overpass server"), tr("Configure Overpass server"));
     }
 
     @Override
@@ -59,8 +57,7 @@ public class OverpassServerPreference implements SubPreferenceSetting {
         forMultiFetch.setSelected(OverpassDownloadReader.FOR_MULTI_FETCH.get());
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill());
-
-        getTabPreferenceSetting(gui).addSubTab(this, tr("Overpass server"), panel);
+        gui.createPreferenceTab(this).add(panel, GBC.eol().fill());
     }
 
     @Override

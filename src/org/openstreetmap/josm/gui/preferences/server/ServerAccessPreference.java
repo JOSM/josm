@@ -3,13 +3,12 @@ package org.openstreetmap.josm.gui.preferences.server;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.Box;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -17,6 +16,7 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Connection preferences, including authentication and proxy sub-preferences.
@@ -35,49 +35,12 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
 
     /** indicates whether to use the default OSM URL or not */
     private final OsmApiUrlInputPanel pnlApiUrlPreferences = new OsmApiUrlInputPanel();
+    private final AuthenticationPreferencesPanel pnlAuthPreferences = new AuthenticationPreferencesPanel();
+    /** the panel for messages notifier preferences */
+    private final FeaturesPanel pnlFeaturesPreferences = new FeaturesPanel();
 
     private ServerAccessPreference() {
-        super(/* ICON(preferences/) */ "connection", tr("Connection Settings"),
-                tr("Connection Settings for the OSM server."), false, new JTabbedPane());
-    }
-
-    /**
-     * Builds the tabbed pane with the server preferences
-     *
-     * @return panel with server preferences tabs
-     */
-    private JPanel buildTabbedServerPreferences() {
-        JPanel pnl = new JPanel(new BorderLayout());
-        pnl.add(getTabPane(), BorderLayout.CENTER);
-        return pnl;
-    }
-
-    /**
-     * Builds the panel for entering the server access preferences
-     *
-     * @return preferences panel for server settings
-     */
-    private JPanel buildContentPanel() {
-        JPanel pnl = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-
-        // the checkbox for the default UL
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 1.0;
-        gc.insets = new Insets(0, 0, 0, 0);
-        pnl.add(pnlApiUrlPreferences, gc);
-
-        // the remaining access properties
-        gc.gridy = 1;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.weightx = 1.0;
-        gc.weighty = 1.0;
-        gc.insets = new Insets(10, 0, 3, 3);
-        pnl.add(buildTabbedServerPreferences(), gc);
-
-        HelpUtil.setHelpContext(pnl, HelpUtil.ht("/Preferences/Connection"));
-        return pnl;
+        super(null, tr("OSM Server"), tr("Connection Settings for the OSM server."), false, new JTabbedPane());
     }
 
     /**
@@ -91,14 +54,21 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.BOTH;
-        gc.weightx = 1.0;
-        gc.weighty = 1.0;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gui.createPreferenceTab(this).add(buildContentPanel(), gc);
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.add(pnlApiUrlPreferences, GBC.eop().fill(GBC.HORIZONTAL));
+        panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
+        panel.add(pnlAuthPreferences, GBC.eop().fill(GBC.HORIZONTAL));
+        panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
+        panel.add(pnlFeaturesPreferences, GBC.eop().fill(GBC.HORIZONTAL));
 
         pnlApiUrlPreferences.initFromPreferences();
+        pnlAuthPreferences.initFromPreferences();
+        pnlFeaturesPreferences.initFromPreferences();
+        addApiUrlChangeListener(pnlAuthPreferences);
+
+        HelpUtil.setHelpContext(panel, HelpUtil.ht("/Preferences/Connection"));
+        panel.add(Box.createVerticalGlue(), GBC.eol().fill());
+        gui.createPreferenceTab(this).add(panel, GBC.eol().fill());
     }
 
     /**
@@ -107,6 +77,9 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
     @Override
     public boolean ok() {
         pnlApiUrlPreferences.saveToPreferences();
+        pnlAuthPreferences.saveToPreferences();
+        // save message notifications preferences. To be done after authentication preferences.
+        pnlFeaturesPreferences.saveToPreferences();
         return false;
     }
 

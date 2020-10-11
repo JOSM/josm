@@ -6,17 +6,19 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.Box;
+
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.tools.GBC;
 
 /**
  * Proxy sub-preferences in server preferences.
  * @since 6523
  */
-public final class ProxyPreference implements SubPreferenceSetting {
+public final class ProxyPreference extends DefaultTabPreferenceSetting {
 
     /**
      * Factory used to create a new {@code ProxyPreference}.
@@ -33,15 +35,14 @@ public final class ProxyPreference implements SubPreferenceSetting {
     private ProxyPreferencesPanel pnlProxyPreferences;
 
     private ProxyPreference() {
-        super();
+        super(null, tr("Proxy settings"), tr("Configure whether to use a proxy server"));
     }
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
         pnlProxyPreferences = new ProxyPreferencesPanel();
-        gui.getServerPreference().addSubTab(this, tr("Proxy settings"),
-                pnlProxyPreferences.getVerticalScrollPane(),
-                tr("Configure whether to use a proxy server"));
+        pnlProxyPreferences.add(Box.createVerticalGlue(), GBC.eol().fill());
+        gui.createPreferenceTab(this).add(pnlProxyPreferences, GBC.eol().fill());
     }
 
     @Override
@@ -56,11 +57,6 @@ public final class ProxyPreference implements SubPreferenceSetting {
     @Override
     public boolean isExpert() {
         return false;
-    }
-
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(PreferenceTabbedPane gui) {
-        return gui.getServerPreference();
     }
 
     /**
