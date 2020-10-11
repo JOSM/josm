@@ -368,7 +368,7 @@ public class OsmReaderTest {
             String prefix = "Illegal value for attributes 'lat', 'lon' on node with ID 978. Got 'nan', 'nan'.";
             assertThat(e.getMessage(), anyOf(
                     is(prefix + " (at line 4, column 151). 336 bytes have been read"),
-                    is(prefix + " (at line 5, column 179). 338 bytes have been read") // GitHub Actions
+                    is(prefix + " (at line 4, column 151). 338 bytes have been read") // GitHub Actions
             ));
         }
     }
