@@ -175,9 +175,10 @@ public class ReprojectionTile extends Tile {
                 this.nativeScale = scale;
                 this.maxZoomReached = scaleFix != null;
             }
-        } catch (NegativeArraySizeException e) {
-            // See #17387 - https://bugs.openjdk.java.net/browse/JDK-4690476
-            throw BugReport.intercept(e).put("targetDim", targetDim);
+        } catch (NegativeArraySizeException | IllegalArgumentException e) {
+            // See #19746 + #17387 - https://bugs.openjdk.java.net/browse/JDK-4690476
+            throw BugReport.intercept(e).put("targetDim", targetDim).put("key", getKey())
+                .put("projCurrent", projCurrent).put("projServer", projServer).put("pbServer", pbServer);
         }
     }
 
