@@ -9,7 +9,6 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Box;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
@@ -38,9 +37,10 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
     private final AuthenticationPreferencesPanel pnlAuthPreferences = new AuthenticationPreferencesPanel();
     /** the panel for messages notifier preferences */
     private final FeaturesPanel pnlFeaturesPreferences = new FeaturesPanel();
+    private final OverpassServerPanel pnlOverpassPreferences = new OverpassServerPanel();
 
     private ServerAccessPreference() {
-        super(null, tr("OSM Server"), tr("Connection Settings for the OSM server."), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "connection", tr("OSM Server"), tr("Connection Settings for the OSM server."));
     }
 
     /**
@@ -60,10 +60,13 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         panel.add(pnlAuthPreferences, GBC.eop().fill(GBC.HORIZONTAL));
         panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
         panel.add(pnlFeaturesPreferences, GBC.eop().fill(GBC.HORIZONTAL));
+        panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
+        panel.add(pnlOverpassPreferences, GBC.eop().fill(GBC.HORIZONTAL));
 
         pnlApiUrlPreferences.initFromPreferences();
         pnlAuthPreferences.initFromPreferences();
         pnlFeaturesPreferences.initFromPreferences();
+        pnlOverpassPreferences.initFromPreferences();
         addApiUrlChangeListener(pnlAuthPreferences);
 
         HelpUtil.setHelpContext(panel, HelpUtil.ht("/Preferences/Connection"));
@@ -80,6 +83,7 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         pnlAuthPreferences.saveToPreferences();
         // save message notifications preferences. To be done after authentication preferences.
         pnlFeaturesPreferences.saveToPreferences();
+        pnlOverpassPreferences.saveToPreferences();
         return false;
     }
 

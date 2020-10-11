@@ -191,71 +191,32 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         }
 
         // radio button "No proxy"
-        gc.gridx = 0;
-        gc.gridy = 0;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.weightx = 0.0;
-        pnl.add(rbProxyPolicy.get(ProxyPolicy.NO_PROXY), gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(new JLabel(tr("No proxy")), gc);
+        rbProxyPolicy.get(ProxyPolicy.NO_PROXY).setText(tr("No proxy"));
+        pnl.add(rbProxyPolicy.get(ProxyPolicy.NO_PROXY), GBC.eop().anchor(GBC.NORTHWEST));
 
         // radio button "System settings"
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.weightx = 0.0;
-        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_SYSTEM_SETTINGS), gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        String msg;
-        if (DefaultProxySelector.willJvmRetrieveSystemProxies()) {
-            msg = tr("Use standard system settings");
-        } else {
-            msg = tr("Use standard system settings (disabled. Start JOSM with <tt>-Djava.net.useSystemProxies=true</tt> to enable)");
+        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_SYSTEM_SETTINGS), GBC.eol());
+        rbProxyPolicy.get(ProxyPolicy.USE_SYSTEM_SETTINGS).setText(tr("Use standard system settings"));
+        if (!DefaultProxySelector.willJvmRetrieveSystemProxies()) {
+            String msg = tr("Use standard system settings (disabled. Start JOSM with <tt>-Djava.net.useSystemProxies=true</tt> to enable)");
+            pnl.add(new JMultilineLabel("<html>" + msg + "</html>"), GBC.eop());
         }
-        pnl.add(new JMultilineLabel("<html>" + msg + "</html>"), gc);
 
         // radio button http proxy
-        gc.gridx = 0;
-        gc.gridy = 2;
-        gc.weightx = 0.0;
-        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_HTTP_PROXY), gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(new JLabel(tr("Manually configure a HTTP proxy")), gc);
+        rbProxyPolicy.get(ProxyPolicy.USE_HTTP_PROXY).setText(tr("Manually configure a HTTP proxy"));
+        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_HTTP_PROXY), GBC.eol());
 
         // the panel with the http proxy configuration parameters
-        gc.gridx = 1;
-        gc.gridy = 3;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
         pnlHttpProxyConfigurationPanel = buildHttpProxyConfigurationPanel();
-        pnl.add(pnlHttpProxyConfigurationPanel, gc);
+        pnl.add(pnlHttpProxyConfigurationPanel, GBC.eop().fill(GBC.HORIZONTAL));
 
         // radio button SOCKS proxy
-        gc.gridx = 0;
-        gc.gridy = 4;
-        gc.weightx = 0.0;
-        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_SOCKS_PROXY), gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(new JLabel(tr("Use a SOCKS proxy")), gc);
+        pnl.add(rbProxyPolicy.get(ProxyPolicy.USE_SOCKS_PROXY), GBC.eol());
+        rbProxyPolicy.get(ProxyPolicy.USE_SOCKS_PROXY).setText(tr("Use a SOCKS proxy"));
 
         // the panel with the SOCKS configuration parameters
-        gc.gridx = 1;
-        gc.gridy = 5;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.WEST;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
         pnlSocksProxyConfigurationPanel = buildSocksProxyConfigurationPanel();
-        pnl.add(pnlSocksProxyConfigurationPanel, gc);
+        pnl.add(pnlSocksProxyConfigurationPanel, GBC.eop().fill(GBC.HORIZONTAL));
 
         return pnl;
     }

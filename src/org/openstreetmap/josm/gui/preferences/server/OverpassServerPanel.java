@@ -11,10 +11,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.GBC;
@@ -22,54 +19,39 @@ import org.openstreetmap.josm.tools.GBC;
 /**
  * Preferences related to Overpass API servers.
  *
- * @since 9142
+ * @since 17162
  */
-public class OverpassServerPreference extends DefaultTabPreferenceSetting {
+public class OverpassServerPanel extends JPanel {
 
     private final HistoryComboBox overpassServer = new HistoryComboBox();
     private final JCheckBox forMultiFetch = new JCheckBox(tr("Use Overpass server for object downloads"));
 
-    /**
-     * Factory used to create a new {@link OverpassServerPreference}.
-     */
-    public static class Factory implements PreferenceSettingFactory {
-        @Override
-        public PreferenceSetting createPreferenceSetting() {
-            return new OverpassServerPreference();
-        }
-    }
-
-    OverpassServerPreference() {
-        super(null, tr("Overpass server"), tr("Configure Overpass server"));
-    }
-
-    @Override
-    public void addGui(PreferenceTabbedPane gui) {
-        final JPanel panel = new JPanel(new GridBagLayout());
-
+    OverpassServerPanel() {
+        super(new GridBagLayout());
+        ExpertToggleAction.addVisibilitySwitcher(this);
+        final JPanel panel = this;
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panel.add(new JLabel(tr("Overpass server: ")), GBC.std().insets(5, 5, 5, 5));
         panel.add(overpassServer, GBC.eop().fill(GBC.HORIZONTAL));
-        overpassServer.setPossibleItems(OverpassDownloadReader.OVERPASS_SERVER_HISTORY.get());
-        overpassServer.setText(OverpassDownloadReader.OVERPASS_SERVER.get());
-
         panel.add(forMultiFetch, GBC.eop());
-        forMultiFetch.setSelected(OverpassDownloadReader.FOR_MULTI_FETCH.get());
-
         panel.add(Box.createVerticalGlue(), GBC.eol().fill());
-        gui.createPreferenceTab(this).add(panel, GBC.eol().fill());
     }
 
-    @Override
-    public boolean ok() {
+    /**
+     * Initializes the panel from preferences
+     */
+    public final void initFromPreferences() {
+        overpassServer.setPossibleItems(OverpassDownloadReader.OVERPASS_SERVER_HISTORY.get());
+        overpassServer.setText(OverpassDownloadReader.OVERPASS_SERVER.get());
+        forMultiFetch.setSelected(OverpassDownloadReader.FOR_MULTI_FETCH.get());
+    }
+
+    /**
+     * Saves the current values to the preferences
+     */
+    public final void saveToPreferences() {
         OverpassDownloadReader.OVERPASS_SERVER.put(overpassServer.getText());
         OverpassDownloadReader.OVERPASS_SERVER_HISTORY.put(overpassServer.getHistory());
         OverpassDownloadReader.FOR_MULTI_FETCH.put(forMultiFetch.isSelected());
-        return false;
-    }
-
-    @Override
-    public boolean isExpert() {
-        return true;
     }
 }
