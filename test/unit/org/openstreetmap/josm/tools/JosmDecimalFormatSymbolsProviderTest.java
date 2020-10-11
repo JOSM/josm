@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.text.DecimalFormat;
 import java.util.Locale;
@@ -28,10 +29,9 @@ public class JosmDecimalFormatSymbolsProviderTest {
 
     @Test
     public void testGroupingSeparator() {
-        if (Utils.getJavaVersion() < 9) {
-            // not supported
-            return;
-        }
+        System.out.println(Locale.getDefault());
+        assumeTrue(Utils.getJavaVersion() >= 9);
+
         assertTrue(I18n.getAvailableTranslations().count() > 10);
         I18n.getAvailableTranslations().forEach(this::checkGroupingSymbol);
         Stream.of("", "AU", "IE", "US", "UK").map(country -> new Locale("en", country, "")).forEach(this::checkGroupingSymbol);
