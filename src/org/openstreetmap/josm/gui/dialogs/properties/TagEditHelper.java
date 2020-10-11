@@ -407,10 +407,10 @@ public class TagEditHelper {
     private static boolean warnOverwriteKey(String action, String togglePref) {
         return new ExtendedDialog(
                 MainApplication.getMainFrame(),
-                tr("Overwrite key"),
-                tr("Replace"), tr("Cancel"))
+                tr("Overwrite tag"),
+                tr("Overwrite"), tr("Cancel"))
             .setButtonIcons("ok", "cancel")
-            .setContent(action+'\n'+ tr("The new key is already used, overwrite values?"))
+            .setContent(action)
             .setCancelButton(2)
             .toggleEnable(togglePref)
             .showDialog().getValue() == 1;
@@ -543,7 +543,8 @@ public class TagEditHelper {
             } else {
                 for (OsmPrimitive osm: sel) {
                     if (osm.get(newkey) != null) {
-                        if (!warnOverwriteKey(tr("You changed the key from ''{0}'' to ''{1}''.", key, newkey),
+                        if (!warnOverwriteKey(tr("You changed the key from ''{0}'' to ''{1}''.", key, newkey)
+                                + "\n" + tr("The new key is already used, overwrite values?"),
                                 "overwriteEditKey"))
                             return;
                         break;
@@ -1099,8 +1100,10 @@ public class TagEditHelper {
             for (OsmPrimitive osm : sel) {
                 String val = osm.get(key);
                 if (val != null && !val.equals(value)) {
-                    if (!warnOverwriteKey(tr("You changed the value of ''{0}'' from ''{1}'' to ''{2}''.", key, val, value),
-                            "overwriteAddKey"))
+                    String valueHtmlString = Utils.joinAsHtmlUnorderedList(Arrays.asList("<strike>" + val + "</strike>", value));
+                    if (!warnOverwriteKey("<html>"
+                            + tr("You changed the value of ''{0}'': {1}", key, valueHtmlString)
+                            + tr("Overwrite?"), "overwriteAddKey"))
                         return;
                     break;
                 }
