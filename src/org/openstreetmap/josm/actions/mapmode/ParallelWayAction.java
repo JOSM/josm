@@ -188,7 +188,6 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
         mv.removeTemporaryLayer(temporaryLayer);
         MapFrame map = MainApplication.getMap();
         map.statusLine.setDist(-1);
-        map.statusLine.setAutoLength(true);
         map.keyDetector.removeModifierExListener(this);
         removeWayHighlighting(sourceWays);
         pWays = null;

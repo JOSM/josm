@@ -294,6 +294,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         MapFrame map = MainApplication.getMap();
         map.mapView.addMouseListener(this);
         map.mapView.addMouseMotionListener(this);
+        map.statusLine.setAutoLength(false);
         ignoreNextKeyRelease = true;
         map.keyDetector.addKeyListener(this);
         map.keyDetector.addModifierExListener(this);
@@ -554,6 +555,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 //the move command is already committed in mouseDragged
                 joinNodesIfCollapsed(movingNodeList);
             }
+            MainApplication.getMap().statusLine.setDist(getLayerManager().getEditDataSet().getSelectedWays());
+            MainApplication.getMap().statusLine.repaint();
 
             updateKeyModifiers(e);
             // Switch back into select mode

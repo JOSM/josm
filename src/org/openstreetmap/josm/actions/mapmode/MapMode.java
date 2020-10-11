@@ -85,6 +85,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
         putValue("active", Boolean.FALSE);
         Config.getPref().removePreferenceChangeListener(this);
         MainApplication.getMap().mapView.resetCursor(this);
+        MainApplication.getMap().statusLine.setAutoLength(true);
     }
 
     protected void updateStatusLine() {
