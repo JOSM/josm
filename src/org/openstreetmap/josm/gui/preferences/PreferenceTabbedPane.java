@@ -161,7 +161,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                         toLoad.add(pi);
                     }
                 }
-                // check if plugin dependences can also be loaded
+                // check if plugin dependencies can also be loaded
                 Collection<PluginInformation> allPlugins = new HashSet<>(toLoad);
                 allPlugins.addAll(PluginHandler.getPlugins());
                 boolean removed;
@@ -252,6 +252,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
 
         private PreferenceScrollPane(PreferencePanel preferencePanel) {
             this(preferencePanel.getComponent(), preferencePanel.getTabPreferenceSetting());
+            GuiHelper.setDefaultIncrement(this);
         }
 
         @Override
@@ -499,8 +500,10 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     private int insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int index) {
         int position = index;
         for (PreferenceTab tab : tabs) {
-            if (tab.getTabPreferenceSetting().equals(tps)) {
+            if (tab.getTabPreferenceSetting().equals(tps) && tps.getIconName() != null) {
                 insertTab(null, icon, tab.getComponent(), tps.getTooltip(), position++);
+            } else if (tab.getTabPreferenceSetting().equals(tps)) {
+                insertTab(tps.getTitle(), null, tab.getComponent(), tps.getTooltip(), position++);
             }
         }
         return position - 1;
@@ -527,9 +530,11 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                     if (settingsInitialized.contains(tps)) {
                         // If it has been initialized, add corresponding tab(s)
                         addGUITabsForSetting(icon, tps);
-                    } else {
+                    } else if (tps.getIconName() != null) {
                         // If it has not been initialized, create an empty tab with only icon and tooltip
                         addTab(null, icon, new PreferencePanel(tps), tps.getTooltip());
+                    } else {
+                        addTab(tps.getTitle(), null, new PreferencePanel(tps), tps.getTooltip());
                     }
                 }
             } else if (!(setting instanceof SubPreferenceSetting)) {

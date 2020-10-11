@@ -47,11 +47,10 @@ import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.advanced.PreferencesTable;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
@@ -68,7 +67,7 @@ import org.openstreetmap.josm.tools.I18n;
  * GUI preference to let the user customize named colors.
  * @see NamedColorProperty
  */
-public class ColorPreference implements SubPreferenceSetting, ListSelectionListener, TableModelListener {
+public class ColorPreference extends DefaultTabPreferenceSetting implements ListSelectionListener, TableModelListener {
 
     /**
      * Factory used to create a new {@code ColorPreference}.
@@ -78,6 +77,10 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         public PreferenceSetting createPreferenceSetting() {
             return new ColorPreference();
         }
+    }
+
+    ColorPreference() {
+        super(null, tr("Colors"), tr("Change colors used in program dialogs and in map paint styles."));
     }
 
     private ColorTableModel tableModel;
@@ -376,7 +379,8 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
         buttonPanel.add(defaultSet, GBC.std().insets(5, 5, 5, 0));
         buttonPanel.add(defaultAll, GBC.std().insets(0, 5, 0, 0));
         buttonPanel.add(remove, GBC.std().insets(0, 5, 0, 0));
-        gui.getDisplayPreference().addSubTab(this, tr("Colors"), panel);
+
+        createPreferenceTabWithScrollPane(gui, panel);
     }
 
     @SuppressWarnings({"PMD.UnusedFormalParameter", "UnusedVariable"})
@@ -419,11 +423,6 @@ public class ColorPreference implements SubPreferenceSetting, ListSelectionListe
     @Override
     public boolean isExpert() {
         return false;
-    }
-
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
-        return gui.getDisplayPreference();
     }
 
     @Override

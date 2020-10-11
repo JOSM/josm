@@ -72,7 +72,7 @@ public class AutoFilterButton extends JButton {
         button.setAction(new AbstractAction(name) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PreferencesAction.forPreferenceSubTab("", "null", DrawingPreference.class).actionPerformed(e);
+                PreferencesAction.forPreferenceTab("", "null", DrawingPreference.class).actionPerformed(e);
             }
         });
         return button;

@@ -10,19 +10,16 @@ import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterRule;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
@@ -30,7 +27,7 @@ import org.openstreetmap.josm.tools.GBC;
 /**
  * "OSM Data" drawing preferences.
  */
-public class DrawingPreference implements SubPreferenceSetting {
+public class DrawingPreference extends DefaultTabPreferenceSetting {
 
     /**
      * Factory used to create a new {@code DrawingPreference}.
@@ -69,6 +66,10 @@ public class DrawingPreference implements SubPreferenceSetting {
     private final JCheckBox useWireframeAntialiasing = new JCheckBox(tr("Smooth map graphics in wireframe mode (antialiasing)"));
     private final JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
     private final JCheckBox hideLabelsWhileDragging = new JCheckBox(tr("Hide labels while dragging the map"));
+
+    DrawingPreference() {
+        super(null, tr("OSM Data"), tr("Settings that control the drawing of OSM data."));
+    }
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
@@ -191,10 +192,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         ExpertToggleAction.addVisibilitySwitcher(discardableKeys);
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
-        JScrollPane scrollpane = new JScrollPane(panel);
-        scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        GuiHelper.setDefaultIncrement(scrollpane);
-        gui.getDisplayPreference().addSubTab(this, tr("OSM Data"), scrollpane);
+        createPreferenceTabWithScrollPane(gui, panel);
     }
 
     @Override
@@ -232,8 +230,4 @@ public class DrawingPreference implements SubPreferenceSetting {
         return false;
     }
 
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
-        return gui.getDisplayPreference();
-    }
 }

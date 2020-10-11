@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.display;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,11 +18,10 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
+import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
-import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  * Language preferences.
  * @since 1065
  */
-public class LanguagePreference implements SubPreferenceSetting {
+public class LanguagePreference extends DefaultTabPreferenceSetting {
 
     private static final String LANGUAGE = "language";
 
@@ -44,6 +44,10 @@ public class LanguagePreference implements SubPreferenceSetting {
         public PreferenceSetting createPreferenceSetting() {
             return new LanguagePreference();
         }
+    }
+
+    LanguagePreference() {
+        super(null, tr("Language"), tr("Change the language of JOSM."));
     }
 
     /** the combo box with the available locales */
@@ -58,15 +62,13 @@ public class LanguagePreference implements SubPreferenceSetting {
         langCombo = new JosmComboBox<>(model);
         langCombo.setRenderer(new LanguageCellRenderer());
 
-        LafPreference lafPreference = gui.getSetting(LafPreference.class);
-        final JPanel panel = lafPreference.panel;
+        final JPanel panel = new JPanel(new GridBagLayout());
         panel.add(new JLabel(tr("Language")), GBC.std().insets(20, 0, 0, 0));
         panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(langCombo, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
 
-        TabPreferenceSetting tabPref = lafPreference.getTabPreferenceSetting(gui);
-        tabPref.registerSubTab(this, tabPref.getSubTab(lafPreference));
+        createPreferenceTabWithScrollPane(gui, panel);
     }
 
     @Override
@@ -136,8 +138,4 @@ public class LanguagePreference implements SubPreferenceSetting {
         return false;
     }
 
-    @Override
-    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
-        return gui.getSetting(LafPreference.class).getTabPreferenceSetting(gui);
-    }
 }

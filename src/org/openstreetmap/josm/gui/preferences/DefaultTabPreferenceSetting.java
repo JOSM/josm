@@ -90,11 +90,8 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
         GBC a = GBC.eol().insets(-5, 0, 0, 0);
         a.anchor = GBC.EAST;
 
-        JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setBorder(null);
-
-        JPanel tab = gui.createPreferenceTab(this);
-        tab.add(scrollPane, GBC.eol().fill(GBC.BOTH));
+        JPanel tab = gui.createPreferenceTab(this, true);
+        tab.add(panel, GBC.eol().fill(GBC.BOTH));
         tab.add(GBC.glue(0, 10), a);
     }
 
