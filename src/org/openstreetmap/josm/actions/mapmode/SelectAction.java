@@ -827,9 +827,14 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             ed.toggleEnable("movedHiddenElements");
             showConfirmMoveDialog(ed);
         }
-        final int moveCount = UndoRedoHandler.getInstance().getLastCommand().getParticipatingPrimitives().size();
-        if (UndoRedoHandler.getInstance().getLastCommand() instanceof MoveCommand) {
-            final double moveDistance = ((MoveCommand) UndoRedoHandler.getInstance().getLastCommand()).getDistance(n -> !n.isNew());
+        final Command lastCommand = UndoRedoHandler.getInstance().getLastCommand();
+        if (lastCommand == null) {
+            Logging.warn("No command found in undo/redo history, skipping confirmOrUndoMovement");
+            return;
+        }
+        final int moveCount = lastCommand.getParticipatingPrimitives().size();
+        if (lastCommand instanceof MoveCommand) {
+            final double moveDistance = ((MoveCommand) lastCommand).getDistance(n -> !n.isNew());
             if (Double.isFinite(moveDistance) && moveDistance > Config.getPref().getInt("warn.move.maxdistance", 200)) {
                 final ConfirmMoveDialog ed = new ConfirmMoveDialog();
                 ed.setContent(trn(
