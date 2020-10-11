@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.text.Normalizer;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -200,13 +201,13 @@ public class SearchCompiler {
                             try {
                                 // if min timestamp is empty: use lowest possible date
                                 minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
-                            } catch (UncheckedParseException ex) {
+                            } catch (UncheckedParseException | DateTimeException ex) {
                                 throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
                             }
                             try {
                                 // if max timestamp is empty: use "now"
                                 maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
-                            } catch (UncheckedParseException ex) {
+                            } catch (UncheckedParseException | DateTimeException ex) {
                                 throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA2), ex);
                             }
                             return new TimestampRange(minDate, maxDate);

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.LruCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -424,9 +426,14 @@ public abstract class AbstractReader {
     private final Map<String, Integer> timestampCache = new LruCache<>(30);
 
     protected final void parseTimestamp(PrimitiveData current, String time) {
-        if (time != null && !time.isEmpty()) {
+        if (time == null || time.isEmpty()) {
+            return;
+        }
+        try {
             int timestamp = timestampCache.computeIfAbsent(time, t -> (int) (DateUtils.tsFromString(t) / 1000));
             current.setRawTimestamp(timestamp);
+        } catch (UncheckedParseException | DateTimeException e) {
+            Logging.error(e);
         }
     }
 

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -476,7 +477,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
                 case PT_TIME:
                     try {
                         currentWayPoint.setTimeInMillis(DateUtils.tsFromString(accumulator.toString()));
-                    } catch (UncheckedParseException e) {
+                    } catch (UncheckedParseException | DateTimeException e) {
                         Logging.error(e);
                     }
                     break;
