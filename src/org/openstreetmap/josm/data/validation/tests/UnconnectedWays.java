@@ -184,7 +184,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean ignoreUnconnectedEndNode(Node n) {
-            return n.hasTag("power", "terminal");
+            return n.hasTag("power", "terminal") || n.hasTag("location:transition", "yes");
         }
     }
 
