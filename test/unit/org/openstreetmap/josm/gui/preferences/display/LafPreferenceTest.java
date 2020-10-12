@@ -34,6 +34,6 @@ public class LafPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new LafPreference.Factory(), DisplayPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new LafPreference.Factory(), null);
     }
 }

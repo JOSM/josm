@@ -34,6 +34,6 @@ public class MapPaintPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new MapPaintPreference.Factory(), MapPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new MapPaintPreference.Factory(), null);
     }
 }

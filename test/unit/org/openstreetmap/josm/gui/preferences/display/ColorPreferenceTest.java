@@ -34,6 +34,6 @@ public class ColorPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ColorPreference.Factory(), DisplayPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ColorPreference.Factory(), null);
     }
 }

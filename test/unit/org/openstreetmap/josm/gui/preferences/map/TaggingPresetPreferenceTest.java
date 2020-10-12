@@ -34,6 +34,6 @@ public class TaggingPresetPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new TaggingPresetPreference.Factory(), MapPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new TaggingPresetPreference.Factory(), null);
     }
 }

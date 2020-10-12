@@ -34,6 +34,6 @@ public class GPXPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new GPXPreference.Factory(), DisplayPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new GPXPreference.Factory(), null);
     }
 }

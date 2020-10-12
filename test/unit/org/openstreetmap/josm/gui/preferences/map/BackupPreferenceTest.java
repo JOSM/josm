@@ -34,6 +34,6 @@ public class BackupPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new BackupPreference.Factory(), MapPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new BackupPreference.Factory(), null);
     }
 }

@@ -35,6 +35,6 @@ public class ProxyPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ProxyPreference.Factory(), ServerAccessPreference.class);
+        PreferencesTestUtils.doTestPreferenceSettingAddGui(new ProxyPreference.Factory(), null);
     }
 }
