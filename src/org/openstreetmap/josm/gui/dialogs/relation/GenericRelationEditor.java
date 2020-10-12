@@ -50,6 +50,8 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -114,7 +116,7 @@ import org.openstreetmap.josm.tools.Utils;
  * This dialog is for editing relations.
  * @since 343
  */
-public class GenericRelationEditor extends RelationEditor {
+public class GenericRelationEditor extends RelationEditor implements CommandQueueListener {
     /** the tag table and its model */
     private final TagEditorPanel tagEditorPanel;
     private final ReferringRelationsBrowser referrerBrowser;
@@ -309,6 +311,7 @@ public class GenericRelationEditor extends RelationEditor {
         selectionTable.setFocusable(false);
         memberTableModel.setSelectedMembers(selectedMembers);
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/RelationEditor"));
+        UndoRedoHandler.getInstance().addCommandQueueListener(this);
     }
 
     @Override
@@ -835,6 +838,8 @@ public class GenericRelationEditor extends RelationEditor {
     @Override
     public void dispose() {
         refreshAction.destroy();
+        UndoRedoHandler.getInstance().removeCommandQueueListener(this);
+        setRelation(null);
         super.dispose();
     }
 
@@ -1013,5 +1018,15 @@ public class GenericRelationEditor extends RelationEditor {
             return tfRole;
         }
 
+    }
+
+    @Override
+    public void commandChanged(int queueSize, int redoSize) {
+        Relation r = getRelation();
+        if (r != null && r.getDataSet() == null) {
+            // see #19915
+            setRelation(null);
+            applyAction.updateEnabledState();
+        }
     }
 }

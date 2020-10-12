@@ -157,7 +157,6 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
     @Override
     public void dispose() {
         layer.setRecentRelation(relation);
-        setRelation(null);
         super.dispose();
     }
 }

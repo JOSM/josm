@@ -34,7 +34,7 @@ public class ApplyAction extends SavingAction {
     }
 
     @Override
-    protected void updateEnabledState() {
+    public void updateEnabledState() {
         setEnabled(isEditorDirty());
     }
 }
