@@ -158,6 +158,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
                     }
                     applyExistingConflictingRelation(getTagModel());
                     hideEditor();
+                    return false;
                 } else
                     return false;
             } else {
