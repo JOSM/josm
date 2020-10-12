@@ -8859,7 +8859,7 @@
             <text key="name" text="Street name" />
             <roles>
                 <role key="street" text="street" requisite="required" type="way,closedway,multipolygon" member_expression="highway" />
-                <role key="house" text="house" requisite="required" type="node,way,closedway,multipolygon" member_expression="&quot;addr:housenumber&quot; | &quot;addr:interpolation&quot; | &quot;addr:housename&quot;" />
+                <role key="house" text="house" requisite="required" type="node,way,closedway,multipolygon" member_expression="&quot;addr:housenumber&quot; | &quot;addr:interpolation&quot; | &quot;addr:housename&quot; | nohousenumber=yes" />
             </roles>
         </item> <!-- Associated Street -->
         <item name="Street" type="relation" preset_name_label="true">
