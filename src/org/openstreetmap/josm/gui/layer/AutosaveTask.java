@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashSet;
@@ -149,7 +150,11 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
             File[] files = deletedLayersDir.listFiles();
             if (files != null) {
-                // FIXME: sort by mtime
+                try {
+                    Arrays.sort(files, Comparator.comparingLong(File::lastModified));
+                } catch (Exception e) {
+                    Logging.error(e);
+                }
                 deletedLayers.addAll(Arrays.asList(files));
             }
 
