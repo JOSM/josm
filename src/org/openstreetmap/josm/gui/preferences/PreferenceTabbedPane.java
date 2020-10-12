@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
@@ -217,16 +218,17 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
 
         private void buildPanel() {
             setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            add(buildHtmlPanel(preferenceSetting.getTitle(), Font.BOLD),
-                    GBC.eol().insets(0, 5, 0, 10).anchor(GBC.NORTHWEST).fill(GBC.HORIZONTAL));
-            add(buildHtmlPanel(preferenceSetting.getDescription(), Font.ITALIC),
-                    GBC.eol().insets(5, 0, 5, 20).fill(GBC.HORIZONTAL));
-        }
+            JPanel headerPanel = new JPanel(new BorderLayout());
+            add(headerPanel, GBC.eop().fill(GBC.HORIZONTAL));
 
-        private static JLabel buildHtmlPanel(String text, int fontStyle) {
-            JLabel label = new JLabel("<html>" + text + "</html>");
-            label.setFont(label.getFont().deriveFont(fontStyle));
-            return label;
+            JLabel label = new JLabel("<html>" +
+                    "<b>" + preferenceSetting.getTitle() + "</b><br>" +
+                    "<i>" + preferenceSetting.getDescription() + "</i></html>");
+            label.setFont(label.getFont().deriveFont(Font.PLAIN));
+            headerPanel.add(label, BorderLayout.CENTER);
+
+            ImageIcon icon = preferenceSetting.getIcon(ImageProvider.ImageSizes.SETTINGS_TAB);
+            headerPanel.add(new JLabel(icon), BorderLayout.EAST);
         }
 
         @Override
@@ -498,10 +500,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     private int insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int index) {
         int position = index;
         for (PreferenceTab tab : tabs) {
-            if (tab.getTabPreferenceSetting().equals(tps) && tps.getIconName() != null) {
-                insertTab(null, icon, tab.getComponent(), tps.getTooltip(), position++);
-            } else if (tab.getTabPreferenceSetting().equals(tps)) {
-                insertTab(tps.getTitle(), null, tab.getComponent(), tps.getTooltip(), position++);
+            if (tab.getTabPreferenceSetting().equals(tps)) {
+                insertTab(tps.getTitle(), icon, tab.getComponent(), tps.getTooltip(), position++);
             }
         }
         return position - 1;
@@ -518,21 +518,13 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
             if (setting instanceof TabPreferenceSetting) {
                 TabPreferenceSetting tps = (TabPreferenceSetting) setting;
                 if (expert || !tps.isExpert()) {
-                    // Get icon
-                    String iconName = tps.getIconName();
-                    ImageIcon icon = null;
-
-                    if (iconName != null && !iconName.isEmpty()) {
-                        icon = ImageProvider.get("preferences", iconName, ImageProvider.ImageSizes.SETTINGS_TAB);
-                    }
+                    ImageIcon icon = tps.getIcon(ImageProvider.ImageSizes.LARGEICON);
                     if (settingsInitialized.contains(tps)) {
                         // If it has been initialized, add corresponding tab(s)
                         addGUITabsForSetting(icon, tps);
-                    } else if (tps.getIconName() != null) {
-                        // If it has not been initialized, create an empty tab with only icon and tooltip
-                        addTab(null, icon, new PreferencePanel(tps), tps.getTooltip());
                     } else {
-                        addTab(tps.getTitle(), null, new PreferencePanel(tps), tps.getTooltip());
+                        // If it has not been initialized, create an empty tab with only icon and tooltip
+                        addTab(tps.getTitle(), icon, new PreferencePanel(tps), tps.getTooltip());
                     }
                 }
             } else if (!(setting instanceof SubPreferenceSetting)) {

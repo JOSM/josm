@@ -3,6 +3,10 @@ package org.openstreetmap.josm.gui.preferences;
 
 import java.awt.Component;
 
+import javax.swing.ImageIcon;
+
+import org.openstreetmap.josm.tools.ImageProvider;
+
 /**
  * Preference settings, that display a top level tab.
  *
@@ -15,6 +19,16 @@ public interface TabPreferenceSetting extends PreferenceSetting {
      * @return The icon name in the preferences folder.
      */
     String getIconName();
+
+    /**
+     * Returns the icon for this preference setting
+     * @param size the icon size
+     * @return the icon or {@code null}
+     */
+    default ImageIcon getIcon(ImageProvider.ImageSizes size) {
+        String iconName = getIconName();
+        return iconName == null || iconName.isEmpty() ? null : ImageProvider.get("preferences", iconName, size);
+    }
 
     /**
      * Called during preferences tab initialization to display its title.
