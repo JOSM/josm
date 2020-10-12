@@ -30,8 +30,12 @@ public class ShortcutTest {
      */
     @Test
     public void testMakeTooltip() {
-        assertEquals("<html>Foo Bar <font size='-2'>(Shift+J)</font>&nbsp;</html>",
-                Shortcut.makeTooltip("Foo Bar", KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.SHIFT_DOWN_MASK)));
+        final String tooltip = Shortcut.makeTooltip("Foo Bar", KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.SHIFT_DOWN_MASK));
+        if (Platform.determinePlatform() == Platform.OSX) {
+            assertEquals("Foo Bar (⇧+J)", tooltip);
+        } else {
+            assertEquals("<html>Foo Bar <font size='-2'>(Shift+J)</font>&nbsp;</html>", tooltip);
+        }
     }
 
 }
