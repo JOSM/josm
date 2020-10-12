@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -122,7 +123,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         // just trigger a repaint
         Collection<RelationMember> sel = getSelectedMembers();
         fireTableDataChanged();
-        setSelectedMembers(sel);
+        SwingUtilities.invokeLater(() -> setSelectedMembers(sel));
     }
 
     /* --------------------------------------------------------------------------- */
