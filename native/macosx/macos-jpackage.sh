@@ -83,7 +83,3 @@ ditto -c -k --keepParent dist/JOSM.app dist/JOSM.zip
 
 echo "Uploading to Apple"
 xcrun altool --notarize-app -f dist/JOSM.zip -p "$APPLE_ID_PW" -u "thomas.skowron@fossgis.de" --primary-bundle-id de.openstreetmap.josm
-
-# Prepare for upload-artifact
-mkdir dist-macOS
-unzip dist/JOSM.zip -d dist-macOS
