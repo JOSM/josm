@@ -197,6 +197,21 @@ public class GeoJSONReaderTest {
             final List<OsmPrimitive> primitives = new ArrayList<>(
                     new GeoJSONReader().doParseDataSet(in, null).getPrimitives(it -> true));
             assertTrue(primitives.stream().anyMatch(p -> p instanceof Relation && p.isMultipolygon()));
+            assertEquals(3, primitives.stream().filter(Way.class::isInstance).count());
+        }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19822">Bug #19822</a>.
+     * @throws Exception in case of error
+     */
+    @Test
+    public void testTicket19822Nested() throws Exception {
+        try (InputStream in = TestUtils.getRegressionDataStream(19822, "problem3.geojson")) {
+            final List<OsmPrimitive> primitives = new ArrayList<>(
+                    new GeoJSONReader().doParseDataSet(in, null).getPrimitives(it -> true));
+            assertTrue(primitives.stream().anyMatch(p -> p instanceof Relation && p.isMultipolygon()));
+            assertEquals(3, primitives.stream().filter(Way.class::isInstance).count());
         }
     }
 

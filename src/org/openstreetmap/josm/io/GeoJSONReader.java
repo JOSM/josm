@@ -432,20 +432,24 @@ public class GeoJSONReader extends AbstractReader {
 
         for (TestError e : test.getErrors()) {
             if (e.getPrimitives().size() == 2 && !e.isFixable()) {
-                Way mpWay = null;
-                Way tagged = null;
+                List<Way> mpWays = new ArrayList<>();
+                Way replacement = null;
                 for (OsmPrimitive p : e.getPrimitives()) {
                     if (p.isTagged() && p.referrers(Relation.class).count() == 0)
-                        tagged = (Way) p;
+                        replacement = (Way) p;
                     else if (p.referrers(Relation.class).anyMatch(Relation::isMultipolygon))
-                        mpWay = (Way) p;
+                        mpWays.add((Way) p);
                 }
-                if (mpWay != null && tagged != null) {
+                if (replacement == null && mpWays.size() == 2) {
+                    replacement = mpWays.remove(1);
+                }
+                if (replacement != null && mpWays.size() == 1) {
+                    Way mpWay = mpWays.get(0);
                     for (Relation r : mpWay.referrers(Relation.class).filter(Relation::isMultipolygon)
                             .collect(Collectors.toList())) {
                         for (int i = 0; i < r.getMembersCount(); i++) {
                             if (r.getMember(i).getMember().equals(mpWay)) {
-                                r.setMember(i, new RelationMember(r.getRole(i), tagged));
+                                r.setMember(i, new RelationMember(r.getRole(i), replacement));
                             }
                         }
                     }
