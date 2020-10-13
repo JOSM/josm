@@ -75,6 +75,11 @@ jobs:
         run: |
           ant create-revision
           echo "josm_revision=`awk '/Revision/{print $2}' resources/REVISION`" >> $GITHUB_ENV
+          echo "josm_tested=`curl --silent https://josm.openstreetmap.de/tested`" >> $GITHUB_ENV
+          if [[ "${{ env.josm_revision }}" == "${{ env.josm_tested }}" ]]; then
+            sed -i .bak '/Is-Local-Build/d' resources/REVISION
+            echo "josm_tested_release=true" >> $GITHUB_ENV
+          fi
       # - name: Upload Ant reports
       #   if: ${{ always() }}
       #   uses: actions/upload-artifact@v2
@@ -96,3 +101,16 @@ jobs:
         with:
           name: JOSM.app revision ${{ env.josm_revision }}
           path: dist/JOSM.zip
+      - name: Create macOS release
+        if: ${{ runner.os == 'macos' && always() }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: JOSM.app release ${{ env.josm_revision }}
+          body: |
+            JOSM.app release ${{ env.josm_revision }}
+          draft: false
+          prerelease: false
