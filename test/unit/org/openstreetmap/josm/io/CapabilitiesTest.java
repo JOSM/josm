@@ -23,7 +23,7 @@ public class CapabilitiesTest {
     @Test
     public void testCapabilities() throws Exception {
         final Capabilities capabilities;
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("__files/osm_api/0.6/capabilities")) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("__files/api/0.6/capabilities")) {
             capabilities = Capabilities.CapabilitiesParser.parse(new InputSource(inputStream));
         }
         assertEquals(10000, capabilities.getMaxChangesetSize());

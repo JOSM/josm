@@ -57,7 +57,7 @@ public class ApiUrlTestTaskTest {
      */
     @Test
     public void testNominalUrl() {
-        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, wireMockRule.url("/__files/osm_api"));
+        ApiUrlTestTask task = new ApiUrlTestTask(PARENT, wireMockRule.url("/__files/api"));
         task.run();
         assertTrue(task.isSuccess());
     }

@@ -1,29 +1,40 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertTrue;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+
 /**
- * History fetching tests. This test operates with production API.
+ * Unit tests of {@link OsmServerHistoryReader} class.
  */
 public class OsmServerHistoryReaderTest {
 
     /**
+     * HTTP mock.
+     */
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot()));
+
+    /**
      * Setup tests.
      */
-    @BeforeClass
-    public static void init() {
+    @Before
+    public void setUp() {
         JOSMFixture.createUnitTestFixture().init();
-        Config.getPref().put("osm-server.url", Config.getUrls().getDefaultOsmApiUrl());
+        Config.getPref().put("osm-server.url", wireMockRule.url("/__files/api"));
     }
 
     /**
@@ -35,7 +46,10 @@ public class OsmServerHistoryReaderTest {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.NODE, 266187);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         History h = ds.getHistory(266187, OsmPrimitiveType.NODE);
-        assertTrue("NumVersions", h.getNumVersions() >= 4);
+        assertEquals(5, h.getNumVersions());
+        assertEquals(1, h.getLatest().getNumKeys());
+        assertEquals(65565982, h.getLatest().getChangesetId());
+        assertEquals(1545089885000L, h.getLatest().getTimestamp().getTime());
     }
 
     /**
@@ -47,7 +61,10 @@ public class OsmServerHistoryReaderTest {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.WAY, 3058844);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         History h = ds.getHistory(3058844, OsmPrimitiveType.WAY);
-        assertTrue("NumVersions", h.getNumVersions() >= 13);
+        assertEquals(14, h.getNumVersions());
+        assertEquals(10, h.getLatest().getNumKeys());
+        assertEquals(26368284, h.getLatest().getChangesetId());
+        assertEquals(1414429134000L, h.getLatest().getTimestamp().getTime());
     }
 
     /**
@@ -59,6 +76,9 @@ public class OsmServerHistoryReaderTest {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.RELATION, 49);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         History h = ds.getHistory(49, OsmPrimitiveType.RELATION);
-        assertTrue("NumVersions", h.getNumVersions() >= 3);
+        assertEquals(3, h.getNumVersions());
+        assertEquals(0, h.getLatest().getNumKeys());
+        assertEquals(486501, h.getLatest().getChangesetId());
+        assertEquals(1194886166000L, h.getLatest().getTimestamp().getTime());
     }
 }

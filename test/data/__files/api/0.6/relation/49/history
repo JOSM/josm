@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.3 (1991881 spike-07.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+ <relation id="49" visible="true" version="1" changeset="123982" timestamp="2006-09-30T14:29:46Z">
+  <member type="way" ref="3466406" role=""/>
+  <member type="way" ref="8128290" role=""/>
+  <tag k="type" v="multipolygon"/>
+ </relation>
+ <relation id="49" visible="true" version="2" changeset="486501" timestamp="2007-11-12T16:49:06Z" user="dmgroom" uid="1164">
+  <member type="way" ref="8128290" role=""/>
+  <tag k="type" v="multipolygon"/>
+ </relation>
+ <relation id="49" visible="false" version="3" changeset="486501" timestamp="2007-11-12T16:49:26Z" user="dmgroom" uid="1164"/>
+</osm>
