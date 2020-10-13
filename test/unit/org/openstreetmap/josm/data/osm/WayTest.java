@@ -6,6 +6,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,6 +54,69 @@ public class WayTest {
         way.setNodes(Arrays.asList(n1, n2));
         assertTrue(way.getBBox().isValid());
         assertEquals(way.getBBox(), new BBox(10, 10));
+    }
+
+    /**
+     * Test remove node
+     */
+    @Test
+    public void testRemoveNode() {
+        DataSet ds = new DataSet();
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        Node n4 = new Node(4);
+        n1.setCoor(new LatLon(10, 10));
+        n2.setCoor(new LatLon(11, 11));
+        n3.setCoor(new LatLon(12, 12));
+        n4.setCoor(new LatLon(13, 13));
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        ds.addPrimitive(n3);
+        ds.addPrimitive(n4);
+        Way way = new Way(1);
+        ds.addPrimitive(way);
+        // duplicated way node
+        way.setNodes(Arrays.asList(n1, n2, n2, n3, n4, n1));
+        way.setIncomplete(false);
+        way.removeNode(n4);
+        assertEquals(Arrays.asList(n1, n2, n3, n1), way.getNodes());
+        way.removeNode(n3);
+        assertEquals(Arrays.asList(n1, n2), way.getNodes());
+        way.setNodes(Arrays.asList(n1, n2, n3, n4, n1));
+        way.removeNode(n1);
+        assertEquals(Arrays.asList(n2, n3, n4, n2), way.getNodes());
+
+    }
+
+    /**
+     * Test remove node
+     */
+    @Test
+    public void testRemoveNodes() {
+        DataSet ds = new DataSet();
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        Node n4 = new Node(4);
+        n1.setCoor(new LatLon(10, 10));
+        n2.setCoor(new LatLon(11, 11));
+        n3.setCoor(new LatLon(12, 12));
+        n4.setCoor(new LatLon(13, 13));
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        ds.addPrimitive(n3);
+        ds.addPrimitive(n4);
+        Way way = new Way(1);
+        ds.addPrimitive(way);
+        // duplicated way node
+        way.setNodes(Arrays.asList(n1, n2, n2, n3, n4, n1));
+        way.setIncomplete(false);
+        way.removeNodes(new HashSet<>(Arrays.asList(n3, n4)));
+        assertEquals(Arrays.asList(n1, n2, n1), way.getNodes());
+        way.setNodes(Arrays.asList(n1, n2, n3, n4, n1));
+        way.removeNodes(new HashSet<>(Arrays.asList(n1)));
+        assertEquals(Arrays.asList(n2, n3, n4, n2), way.getNodes());
     }
 
     /**
