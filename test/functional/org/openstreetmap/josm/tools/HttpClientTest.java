@@ -338,7 +338,14 @@ public class HttpClientTest {
      */
     @Test
     public void testOpenUrlGzip() throws IOException {
-        final URL url = new URL("https://www.openstreetmap.org/trace/1613906/data");
+        final byte[] gpx = Utils.readBytesFromStream(getClass().getClassLoader().getResourceAsStream("tracks/tracks.gpx.gz"));
+        localServer.stubFor(get(urlEqualTo("/trace/1613906/data"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("content-type", "application/x-gzip")
+                        .withBody(gpx)));
+
+        final URL url = new URL(localServer.url("/trace/1613906/data"));
         try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
             Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         }
@@ -350,7 +357,14 @@ public class HttpClientTest {
      */
     @Test
     public void testOpenUrlBzip() throws IOException {
-        final URL url = new URL("https://www.openstreetmap.org/trace/785544/data");
+        final byte[] gpx = Utils.readBytesFromStream(getClass().getClassLoader().getResourceAsStream("tracks/tracks.gpx.bz2"));
+        localServer.stubFor(get(urlEqualTo("/trace/785544/data"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("content-type", "application/x-bzip2")
+                        .withBody(gpx)));
+
+        final URL url = new URL(localServer.url("/trace/785544/data"));
         try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
             Assert.assertTrue(x.readLine().startsWith("<?xml version="));
         }
@@ -361,8 +375,16 @@ public class HttpClientTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testTicket9660() throws IOException {
-        final URL url = new URL("http://www.openstreetmap.org/trace/1350010/data");
+    public void testOpenUrlBzipAccordingToContentDisposition() throws IOException {
+        final byte[] gpx = Utils.readBytesFromStream(getClass().getClassLoader().getResourceAsStream("tracks/tracks.gpx.bz2"));
+        localServer.stubFor(get(urlEqualTo("/trace/1350010/data"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("content-type", "application/octet-stream")
+                        .withHeader("content-disposition", "attachment; filename=\"1350010.gpx.bz2\"")
+                        .withBody(gpx)));
+
+        final URL url = new URL(localServer.url("/trace/1350010/data"));
         try (BufferedReader x = HttpClient.create(url).connect()
                 .uncompress(true).uncompressAccordingToContentDisposition(true).getContentReader()) {
             Assert.assertTrue(x.readLine().startsWith("<?xml version="));
