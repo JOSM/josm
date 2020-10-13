@@ -138,11 +138,11 @@ public class PluginServer {
             return String.format("/%h/%s.jar", this.hashCode(), pluginName != null ? pluginName : Integer.toHexString(this.hashCode()));
         }
 
-        public String getPluginURL(Integer port) {
+        public String getPluginURL(WireMockServer wireMockServer) {
             if (this.pluginURL != null) {
                 return this.pluginURL;
-            } else if (port != null && this.getJarPathBeneathFilesDir() != null) {
-                return String.format("http://localhost:%s%s", port, this.getPluginURLPath());
+            } else if (wireMockServer != null && this.getJarPathBeneathFilesDir() != null) {
+                return wireMockServer.url(this.getPluginURLPath());
             }
             return "http://example.com" + this.getPluginURLPath();
         }
@@ -156,11 +156,11 @@ public class PluginServer {
             return Integer.toHexString(this.hashCode());
         }
 
-        public String getRemotePluginsListSection(Integer port) {
+        public String getRemotePluginsListSection(WireMockServer wireMockServer) {
             return String.format(
                 "%s.jar;%s\n%s",
                 this.getName(),
-                this.getPluginURL(port),
+                this.getPluginURL(wireMockServer),
                 this.getRemotePluginsListManifestSection()
             );
         }
@@ -198,7 +198,7 @@ public class PluginServer {
             WireMock.get(WireMock.urlEqualTo("/plugins")).willReturn(
                 WireMock.aResponse().withStatus(200).withHeader("Content-Type", "text/plain").withBody(
                     this.pluginList.stream().map(
-                        remotePlugin -> remotePlugin.getRemotePluginsListSection(wireMockServer.port())
+                        remotePlugin -> remotePlugin.getRemotePluginsListSection(wireMockServer)
                     ).collect(Collectors.joining())
                 )
             )

@@ -87,7 +87,7 @@ public class PluginPreferenceHighLevelTest {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
-            Collections.singletonList(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
+            Collections.singletonList(this.pluginServerRule.url("/plugins"))
         );
 
         this.referenceDummyJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31701.jar");
@@ -834,7 +834,7 @@ public class PluginPreferenceHighLevelTest {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
             new PluginServer.RemotePlugin(this.referenceBazJarNew, Collections.singletonMap(
-                "6800_Plugin-Url", "6;http://localhost:" + this.pluginServerRule.port() + bazOldServePath
+                "6800_Plugin-Url", "6;" + this.pluginServerRule.url(bazOldServePath)
             ))
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);

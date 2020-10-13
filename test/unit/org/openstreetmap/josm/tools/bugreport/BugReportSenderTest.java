@@ -77,6 +77,6 @@ public class BugReportSenderTest {
 
         List<URI> calledURIs = OpenBrowserMocker.getCalledURIs();
         assertEquals(1, calledURIs.size());
-        assertEquals(wireMockRule.baseUrl() + "/josmticket?pdata_stored=6bccff5c0417217bfbbe5fff", calledURIs.get(0).toString());
+        assertEquals(wireMockRule.url("/josmticket?pdata_stored=6bccff5c0417217bfbbe5fff"), calledURIs.get(0).toString());
     }
 }

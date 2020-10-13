@@ -54,7 +54,7 @@ public class OverpassDownloadReaderTest {
      */
     @Before
     public void setUp() {
-        NameFinder.NOMINATIM_URL_PROP.put("http://localhost:" + wireMockRule.port() + NOMINATIM_URL_PATH);
+        NameFinder.NOMINATIM_URL_PROP.put(wireMockRule.url(NOMINATIM_URL_PATH));
     }
 
     private String getExpandedQuery(String search) {

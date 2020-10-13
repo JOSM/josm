@@ -52,7 +52,7 @@ public abstract class AbstractDownloadTaskTestParent {
      * @return the http URL to remote test file to download
      */
     protected final String getRemoteFileUrl() {
-        return "http://localhost:" + wireMockRule.port() + "/" + getRemoteFile();
+        return wireMockRule.url(getRemoteFile());
     }
 
     /**

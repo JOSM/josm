@@ -63,7 +63,7 @@ public class PluginHandlerJOSMTooOldTest {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
-                Collections.singletonList(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
+                Collections.singletonList(this.pluginServerRule.url("/plugins"))
         );
 
         this.referenceDummyJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/dummy_plugin.v31701.jar");
@@ -309,7 +309,7 @@ public class PluginHandlerJOSMTooOldTest {
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
             new PluginServer.RemotePlugin(this.referenceQuxJarNewer, Collections.singletonMap(
-                "7499_Plugin-Url", "346;http://localhost:" + this.pluginServerRule.port() + "/dont/bother.jar"
+                "7499_Plugin-Url", "346;" + this.pluginServerRule.url("/dont/bother.jar")
             ))
         );
         pluginServer.applyToWireMockServer(this.pluginServerRule);

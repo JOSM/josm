@@ -81,7 +81,7 @@ public final class AddImageryLayerActionTest {
                 .willReturn(aResponse()
                         .withStatus(404)));
 
-        new AddImageryLayerAction(new ImageryInfo("localhost", "http://localhost:" + wireMockRule.port() + "/wms?",
+        new AddImageryLayerAction(new ImageryInfo("localhost", wireMockRule.url("/wms?"),
                 "wms_endpoint", null, null)).actionPerformed(null);
         List<WMSLayer> wmsLayers = MainApplication.getLayerManager().getLayersOfType(WMSLayer.class);
         assertEquals(1, wmsLayers.size());

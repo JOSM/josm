@@ -242,7 +242,7 @@ public class TileSourceRule extends WireMockRule {
                     // a hack to circumvent a WireMock bug concerning delayed server startup. sending an early request
                     // to the mock server seems to prompt it to start earlier (though this request itself is not
                     // expected to succeed). see https://github.com/tomakehurst/wiremock/issues/97
-                    (new java.net.URL(String.format("http://localhost:%d/_poke", TileSourceRule.this.port()))).getContent();
+                    new java.net.URL(TileSourceRule.this.url("/_poke")).getContent();
                 } catch (IOException e) {
                     Logging.trace(e);
                 }

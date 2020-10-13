@@ -59,7 +59,7 @@ public class PluginHandlerMultiVersionTest {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
         Config.getPref().putList("pluginmanager.sites",
-                Collections.singletonList(String.format("http://localhost:%s/plugins", this.pluginServerRule.port()))
+                Collections.singletonList(this.pluginServerRule.url("/plugins"))
         );
 
         this.referenceBazJarOld = new File(TestUtils.getTestDataRoot(), "__files/plugin/baz_plugin.v6.jar");
@@ -100,9 +100,9 @@ public class PluginHandlerMultiVersionTest {
 
         final String quxNewerServePath = "/qux/newer.jar";
         final Map<String, String> attrOverrides = new HashMap<String, String>() {{
-            put("7500_Plugin-Url", "432;http://localhost:" + pluginServerRule.port() + quxNewerServePath);
-            put("7499_Plugin-Url", "346;http://localhost:" + pluginServerRule.port() + "/not/served.jar");
-            put("6999_Plugin-Url", "345;http://localhost:" + pluginServerRule.port() + "/not/served/eithejar");
+            put("7500_Plugin-Url", "432;" + pluginServerRule.url(quxNewerServePath));
+            put("7499_Plugin-Url", "346;" + pluginServerRule.url("/not/served.jar"));
+            put("6999_Plugin-Url", "345;" + pluginServerRule.url("/not/served/eithejar"));
         }};
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceBazJarOld),
@@ -166,9 +166,9 @@ public class PluginHandlerMultiVersionTest {
         TestUtils.assumeWorkingJMockit();
 
         final Map<String, String> attrOverrides = new HashMap<String, String>() {{
-            put("7500_Plugin-Url", "432;http://localhost:" + pluginServerRule.port() + "/dont.jar");
-            put("7499_Plugin-Url", "346;http://localhost:" + pluginServerRule.port() + "/even.jar");
-            put("6999_Plugin-Url", "345;http://localhost:" + pluginServerRule.port() + "/bother.jar");
+            put("7500_Plugin-Url", "432;" + pluginServerRule.url("/dont.jar"));
+            put("7499_Plugin-Url", "346;" + pluginServerRule.url("/even.jar"));
+            put("6999_Plugin-Url", "345;" + pluginServerRule.url("/bother.jar"));
         }};
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceBazJarOld),

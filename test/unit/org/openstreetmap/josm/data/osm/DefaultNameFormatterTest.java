@@ -62,7 +62,7 @@ public class DefaultNameFormatterTest {
                     .withStatus(200)
                     .withHeader("Content-Type", "text/xml")
                     .withBodyFile(source)));
-        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll("http://localhost:" + wireMockRule.port() + "/" + source, true));
+        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll(wireMockRule.url(source), true));
 
         Comparator<IRelation<?>> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
 
