@@ -114,7 +114,7 @@ jobs:
           body: |
             JOSM.app release ${{ env.josm_revision }}
           draft: false
-          prerelease: false
+          prerelease: ${{ env.josm_prerelease }}
       - name: Upload Release Asset
         if: ${{ runner.os == 'macos' && always() }}
         id: upload-release-asset 
