@@ -187,8 +187,7 @@ public class UnGlueAction extends JosmAction {
     private void unglueOneNodeAtMostOneWay(Way way, PropertiesMembershipChoiceDialog dialog) {
         List<Command> cmds = new ArrayList<>();
         List<Node> newNodes = new ArrayList<>();
-        Way modWay = modifyWay(selectedNode, way, cmds, newNodes);
-        cmds.add(new ChangeNodesCommand(way, modWay.getNodes()));
+        cmds.add(new ChangeNodesCommand(way, modifyWay(selectedNode, way, cmds, newNodes)));
         if (dialog != null) {
             update(dialog, selectedNode, newNodes, cmds);
         }
@@ -300,17 +299,14 @@ public class UnGlueAction extends JosmAction {
      * @param newNodes List of nodes that will contain the new node
      * @return new way The modified way. Change command must be handled by the caller
      */
-    private static Way modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
+    private static List<Node> modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
         // clone the node for the way
         Node newNode = cloneNode(originalNode, cmds);
         newNodes.add(newNode);
 
         List<Node> nn = new ArrayList<>(w.getNodes());
         nn.replaceAll(n -> n == originalNode ? newNode : n);
-        Way newWay = new Way(w);
-        newWay.setNodes(nn);
-
-        return newWay;
+        return nn;
     }
 
     private static Node cloneNode(Node originalNode, List<Command> cmds) {
@@ -392,7 +388,7 @@ public class UnGlueAction extends JosmAction {
         for (Way w : parentWays) {
             if (w.isFirstLastNode(selectedNode))
                 warnParents.add(w);
-            cmds.add(new ChangeNodesCommand(w, modifyWay(selectedNode, w, cmds, newNodes).getNodes()));
+            cmds.add(new ChangeNodesCommand(w, modifyWay(selectedNode, w, cmds, newNodes)));
         }
 
         if (dialog != null) {
