@@ -420,7 +420,7 @@ public final class I18n {
         if ("en".equals(loadedCode))
             return;
         final ZipEntry enfile = new ZipEntry(PLUGIN_TRANS_DIRECTORY + "en.lang");
-        final ZipEntry langfile = new ZipEntry(PLUGIN_TRANS_DIRECTORY + loadedCode + ".lang");
+        final ZipEntry langfile = new ZipEntry(PLUGIN_TRANS_DIRECTORY + loadedCode.replace('@', '-') + ".lang");
         try (
             ZipFile zipFile = new ZipFile(source, StandardCharsets.UTF_8);
             InputStream orig = zipFile.getInputStream(enfile);
