@@ -593,7 +593,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             DataSet ds = ws.way.getDataSet();
             UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Add a new node to an existing way"),
                     new AddCommand(ds, n), new ChangeNodesCommand(ds, ws.way, wnew.getNodes())));
-            wnew.setNodes(null); // see #19855
+            wnew.setNodes(null); // see #19885
 
         }
     }
@@ -712,7 +712,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         if (wayWasModified) {
             // we only need to change the way if its node list was really modified
             cmds.add(new ChangeNodesCommand(selectedSegment.way, wnew.getNodes()));
-            wnew.setNodes(null); // see #19855
+            wnew.setNodes(null); // see #19885
         }
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         UndoRedoHandler.getInstance().add(c);
