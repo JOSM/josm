@@ -46,10 +46,10 @@ public class OsmOAuthAuthorizationClient {
     private boolean canceled;
     private HttpClient connection;
 
-    private static class SessionId {
-        private String id;
-        private String token;
-        private String userName;
+    protected static class SessionId {
+        protected String id;
+        protected String token;
+        protected String userName;
     }
 
     /**
