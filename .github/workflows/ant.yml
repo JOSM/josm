@@ -71,15 +71,16 @@ jobs:
       #   run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
       - name: Set revision env variable
         if: ${{ always() }}
-        # Careful, you will only have a resources/REVISION if you've already built
         run: |
           ant create-revision
-          echo "josm_revision=`awk '/Revision/{print $2}' resources/REVISION`" >> $GITHUB_ENV
-          echo "josm_tested=`curl --silent https://josm.openstreetmap.de/tested`" >> $GITHUB_ENV
-          if [[ "${{ env.josm_revision }}" -eq "${{ env.josm_tested }}" ]]; then
+          josm_revision=`awk '/Revision/{print $2}' resources/REVISION`
+          if [[ "$josm_revision" == `curl --silent https://josm.openstreetmap.de/tested` ]]; then
             sed -i .bak '/Is-Local-Build/d' resources/REVISION
-            echo "josm_tested_release=true" >> $GITHUB_ENV
+            echo "josm_prerelease=false" >> $GITHUB_ENV
+          else
+            echo "josm_prerelease=true" >> $GITHUB_ENV
           fi
+          echo "josm_revision=$josm_revision" >> $GITHUB_ENV
       # - name: Upload Ant reports
       #   if: ${{ always() }}
       #   uses: actions/upload-artifact@v2
