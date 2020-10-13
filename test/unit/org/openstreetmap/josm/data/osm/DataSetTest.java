@@ -159,6 +159,25 @@ public class DataSetTest {
     }
 
     /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14186">Bug #14186</a>.
+     */
+    @Test
+    public void testTicket19438() {
+        final DataSet ds = new DataSet();
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        Way w1 = new Way(1);
+        w1.setNodes(Arrays.asList(n1, n2, n3, n1));
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        ds.addPrimitive(n3);
+        ds.addPrimitive(w1);
+        ds.unlinkNodeFromWays(n1);
+        assertEquals(2, w1.getRealNodesCount());
+    }
+
+    /**
      * Test the selection order.
      * See <a href="https://josm.openstreetmap.de/ticket/14737">#14737</a>
      * @since 12069
