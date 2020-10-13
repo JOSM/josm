@@ -76,7 +76,7 @@ jobs:
           ant create-revision
           echo "josm_revision=`awk '/Revision/{print $2}' resources/REVISION`" >> $GITHUB_ENV
           echo "josm_tested=`curl --silent https://josm.openstreetmap.de/tested`" >> $GITHUB_ENV
-          if [[ "${{ env.josm_revision }}" == "${{ env.josm_tested }}" ]]; then
+          if [[ "${{ env.josm_revision }}" -eq "${{ env.josm_tested }}" ]]; then
             sed -i .bak '/Is-Local-Build/d' resources/REVISION
             echo "josm_tested_release=true" >> $GITHUB_ENV
           fi
@@ -123,5 +123,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: dist/JOSM.zip
-          asset_name: JOSM-.zip
+          asset_name: JOSM.zip
           asset_content_type: application/zip
