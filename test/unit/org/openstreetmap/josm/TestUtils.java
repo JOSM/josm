@@ -447,6 +447,10 @@ public final class TestUtils {
      * Use to assume that EqualsVerifier is working with the current JVM.
      */
     public static void assumeWorkingEqualsVerifier() {
+        if (Utils.getJavaVersion() >= 16) {
+            // Byte Buddy often supports new class file versions for current EA releases if its experimental flag is set to true
+            System.setProperty("net.bytebuddy.experimental", "true");
+        }
         try {
             // Workaround to https://github.com/jqno/equalsverifier/issues/177
             // Inspired by https://issues.apache.org/jira/browse/SOLR-11606
