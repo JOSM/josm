@@ -99,7 +99,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     private ImageViewerDialog() {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged",
-        tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.DIRECT), 200);
+        tr("Windows: {0}", tr("Geotagged Images")), KeyEvent.VK_Y, Shortcut.DIRECT), 200);
         build();
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
         MainApplication.getLayerManager().addLayerChangeListener(this);

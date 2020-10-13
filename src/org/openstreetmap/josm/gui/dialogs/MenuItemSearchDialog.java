@@ -124,7 +124,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
 
         // CHECKSTYLE.OFF: LineLength
         /** Action shortcut (ctrl / space by default), made public in order to be used from {@code GettingStarted} page. */
-        public static final Shortcut SHORTCUT = Shortcut.registerShortcut("help:search-items", "Search menu items", KeyEvent.VK_SPACE, Shortcut.CTRL);
+        public static final Shortcut SHORTCUT = Shortcut.registerShortcut("help:search-items", tr("Help: {0}", tr("Search menu items")), KeyEvent.VK_SPACE, Shortcut.CTRL);
         // CHECKSTYLE.ON: LineLength
 
         /**

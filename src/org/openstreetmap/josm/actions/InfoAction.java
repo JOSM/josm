@@ -26,7 +26,7 @@ public class InfoAction extends JosmAction {
         super(tr("Advanced info"), "info",
             tr("Display advanced object information about OSM nodes, ways, or relations."),
             Shortcut.registerShortcut("core:info",
-                tr("Advanced info"), KeyEvent.VK_I, Shortcut.CTRL),
+                tr("View: {0}", tr("Advanced info")), KeyEvent.VK_I, Shortcut.CTRL),
             true, "action/info", true);
         setHelpId(ht("/Action/InfoAboutElements"));
     }

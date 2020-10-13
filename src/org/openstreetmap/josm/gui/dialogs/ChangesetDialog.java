@@ -252,7 +252,7 @@ public class ChangesetDialog extends ToggleDialog {
                 tr("Changesets"),
                 "changesetdialog",
                 tr("Open the list of changesets in the current layer."),
-                Shortcut.registerShortcut("subwindow:changesets", tr("Toggle: {0}", tr("Changesets")),
+                Shortcut.registerShortcut("subwindow:changesets", tr("Windows: {0}", tr("Changesets")),
                     KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
                 200, /* the preferred height */
                 false, /* don't show if there is no preference */

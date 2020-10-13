@@ -254,7 +254,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
      */
     public PropertiesDialog() {
         super(tr("Tags/Memberships"), "propertiesdialog", tr("Tags for selected objects."),
-                Shortcut.registerShortcut("subwindow:properties", tr("Toggle: {0}", tr("Tags/Memberships")), KeyEvent.VK_P,
+                Shortcut.registerShortcut("subwindow:properties", tr("Windows: {0}", tr("Tags/Memberships")), KeyEvent.VK_P,
                         Shortcut.ALT_SHIFT), 150, true);
 
         setupTagsMenu();
@@ -1228,7 +1228,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         AtomicBoolean isPerforming = new AtomicBoolean(false);
         EditAction() {
             super(tr("Edit"), /* ICON() */ "dialogs/edit", tr("Edit the value of the selected key for all objects"),
-                    Shortcut.registerShortcut("properties:edit", tr("Edit Tags"), KeyEvent.VK_S,
+                    Shortcut.registerShortcut("properties:edit", tr("Edit: {0}", tr("Edit Tags")), KeyEvent.VK_S,
                             Shortcut.ALT), false);
             updateEnabledState();
         }

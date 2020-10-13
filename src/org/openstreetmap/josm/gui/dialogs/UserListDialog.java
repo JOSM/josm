@@ -71,7 +71,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
      */
     public UserListDialog() {
         super(tr("Authors"), "userlist", tr("Open a list of people working on the selected objects."),
-                Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.ALT_SHIFT), 150);
+                Shortcut.registerShortcut("subwindow:authors", tr("Windows: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.ALT_SHIFT), 150);
         build();
     }
 

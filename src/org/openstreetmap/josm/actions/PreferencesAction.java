@@ -89,7 +89,8 @@ public class PreferencesAction extends JosmAction implements Runnable {
      */
     public PreferencesAction() {
         super(tr("Preferences..."), "preference", tr("Open a preferences dialog for global settings."),
-                Shortcut.registerShortcut("system:preferences", tr("Preferences"), KeyEvent.VK_F12, Shortcut.DIRECT), true, false);
+                Shortcut.registerShortcut("system:preferences", tr("Edit: {0}", tr("Preferences")), KeyEvent.VK_F12, Shortcut.DIRECT),
+                true, false);
         setHelpId(ht("/Action/Preferences"));
         this.tab = null;
         this.subTab = null;

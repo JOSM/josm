@@ -64,7 +64,7 @@ public class SimplifyWayAction extends JosmAction {
      */
     public SimplifyWayAction() {
         super(tr("Simplify Way"), "simplify", tr("Delete unnecessary nodes from a way."),
-                Shortcut.registerShortcut("tools:simplify", tr("Tool: {0}", tr("Simplify Way")), KeyEvent.VK_Y, Shortcut.SHIFT), true);
+                Shortcut.registerShortcut("tools:simplify", tr("Tools: {0}", tr("Simplify Way")), KeyEvent.VK_Y, Shortcut.SHIFT), true);
         setHelpId(ht("/Action/SimplifyWay"));
     }
 

@@ -76,7 +76,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
     /** Creates a new toggle dialog for notes */
     public NotesDialog() {
         super(tr("Notes"), "notes/note_open", tr("List of notes"),
-                Shortcut.registerShortcut("subwindow:notes", tr("Toggle: {0}", tr("Notes")),
+                Shortcut.registerShortcut("subwindow:notes", tr("Windows: {0}", tr("Notes")),
                 KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), 150);
         addCommentAction = new AddCommentAction();
         closeAction = new CloseAction();

@@ -196,7 +196,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
      */
     public LayerListDialog(MainLayerManager layerManager) {
         super(tr("Layers"), "layerlist", tr("Open a list of all loaded layers."),
-                Shortcut.registerShortcut("subwindow:layers", tr("Toggle: {0}", tr("Layers")), KeyEvent.VK_L,
+                Shortcut.registerShortcut("subwindow:layers", tr("Windows: {0}", tr("Layers")), KeyEvent.VK_L,
                         Shortcut.ALT_SHIFT), 100, true);
         this.layerManager = layerManager;
 

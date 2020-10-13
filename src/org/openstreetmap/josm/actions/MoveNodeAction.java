@@ -29,7 +29,7 @@ public final class MoveNodeAction extends JosmAction {
      */
     public MoveNodeAction() {
         super(tr("Move Node..."), "movenode", tr("Edit latitude and longitude of a node."),
-                Shortcut.registerShortcut("movenode", tr("Edit: {0}", tr("Move Node...")),
+                Shortcut.registerShortcut("movenode", tr("Tools: {0}", tr("Move Node...")),
                         KeyEvent.VK_M, Shortcut.NONE), true);
         setHelpId(ht("/Action/MoveNode"));
     }

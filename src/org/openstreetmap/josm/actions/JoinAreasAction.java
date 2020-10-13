@@ -468,7 +468,7 @@ public class JoinAreasAction extends JosmAction {
      */
     public JoinAreasAction(boolean addShortcutToolbarAdapters) {
         super(tr("Join overlapping Areas"), "joinareas", tr("Joins areas that overlap each other"), addShortcutToolbarAdapters ?
-        Shortcut.registerShortcut("tools:joinareas", tr("Tool: {0}", tr("Join overlapping Areas")), KeyEvent.VK_J, Shortcut.SHIFT)
+        Shortcut.registerShortcut("tools:joinareas", tr("Tools: {0}", tr("Join overlapping Areas")), KeyEvent.VK_J, Shortcut.SHIFT)
         : null, addShortcutToolbarAdapters, null, addShortcutToolbarAdapters);
         addUndoRedo = addShortcutToolbarAdapters;
     }

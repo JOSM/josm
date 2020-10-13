@@ -231,7 +231,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         dualAlignCheckboxMenuItem.getAction().setEnabled(false);
         dualAlignCheckboxMenuItem.setState(dualAlignEnabled);
         dualAlignShortcut = Shortcut.registerShortcut("mapmode:extrudedualalign",
-                tr("Mode: {0}", tr("Extrude Dual alignment")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
+                tr("Edit: {0}", tr("Extrude Dual alignment")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
         readPreferences(); // to show prefernces in table before entering the mode
     }
 

@@ -29,7 +29,7 @@ public class MinimapDialog extends ToggleDialog implements NavigatableComponent.
      */
     public MinimapDialog() {
         super(tr("Mini map"), "minimap", tr("Displays a small map of the current edit location"),
-                Shortcut.registerShortcut("subwindow:minimap", tr("Toggle: {0}", tr("Mini map")),
+                Shortcut.registerShortcut("subwindow:minimap", tr("Windows: {0}", tr("Mini map")),
                 KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), 150);
     }
 

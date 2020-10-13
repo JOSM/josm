@@ -31,7 +31,7 @@ public class ViewportFollowToggleAction extends ToggleAction {
         super(tr("Viewport Following"),
               "viewport-follow",
               tr("Enable/disable automatic moving of the map view to last placed node"),
-              Shortcut.registerShortcut("menu:view:viewportfollow", tr("Toggle Viewport Following"),
+              Shortcut.registerShortcut("menu:view:viewportfollow", tr("View: {0}", tr("Viewport Following")),
               KeyEvent.VK_F, Shortcut.CTRL_SHIFT),
               true /* register shortcut */
         );

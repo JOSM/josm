@@ -23,7 +23,7 @@ public class ReorderImageryLayersAction extends JosmAction {
      */
     public ReorderImageryLayersAction() {
         super(tr("Reorder imagery layers"), "dialogs/reorderlayers", tr("Reorders non-overlay imagery layers."),
-            Shortcut.registerMultiShortcuts("imagery:reorder", tr("Reorder imagery layers"),
+            Shortcut.registerMultiShortcuts("imagery:reorder", tr("Imagery: {0}", tr("Reorder imagery layers")),
                     KeyboardUtils.getCharactersForKey('E', 0), Shortcut.DIRECT));
     }
 

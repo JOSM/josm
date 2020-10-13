@@ -30,7 +30,7 @@ public class DialogsToggleAction extends ToggleAction {
         super(tr("Dialogs panel"),
               new ImageProvider("dialogs/dialogs_panel"),
               tr("Toggle dialogs panel, maximize mapview"),
-              Shortcut.registerShortcut("menu:view:dialogspanel", tr("Toggle dialogs panel"), KeyEvent.VK_TAB, Shortcut.DIRECT),
+              Shortcut.registerShortcut("menu:view:dialogspanel", tr("View: {0}", tr("Dialogs panel")), KeyEvent.VK_TAB, Shortcut.DIRECT),
               true, "dialogspanel", /* register in toolbar */
               false
         );

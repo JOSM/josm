@@ -79,7 +79,7 @@ public class MainInitialization implements InitializationSequence {
                 GuiHelper.runInEDTAndWait(() -> MainApplication.contentPanePrivate.add(MainApplication.toolbar.control, BorderLayout.NORTH));
                 // help shortcut
                 MainApplication.registerActionShortcut(MainApplication.menu.help,
-                        Shortcut.registerShortcut("system:help", tr("Help"), KeyEvent.VK_F1, Shortcut.DIRECT));
+                        Shortcut.registerShortcut("system:help", tr("Help: {0}", tr("Help")), KeyEvent.VK_F1, Shortcut.DIRECT));
             }),
             new InitializationTask(tr("Initializing internal boundaries data"), () -> {
                 Territories.initialize();

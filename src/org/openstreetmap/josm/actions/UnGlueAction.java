@@ -60,7 +60,7 @@ public class UnGlueAction extends JosmAction {
      */
     public UnGlueAction() {
         super(tr("UnGlue Ways"), "unglueways", tr("Duplicate nodes that are used by multiple ways."),
-                Shortcut.registerShortcut("tools:unglue", tr("Tool: {0}", tr("UnGlue Ways")), KeyEvent.VK_G, Shortcut.DIRECT), true);
+                Shortcut.registerShortcut("tools:unglue", tr("Tools: {0}", tr("UnGlue Ways")), KeyEvent.VK_G, Shortcut.DIRECT), true);
         setHelpId(ht("/Action/UnGlue"));
     }
 

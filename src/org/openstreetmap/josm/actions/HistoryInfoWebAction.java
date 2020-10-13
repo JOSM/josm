@@ -24,7 +24,7 @@ public class HistoryInfoWebAction extends AbstractInfoAction {
         super(tr("History (web)"), "dialogs/history",
                 tr("Display history information about OSM ways, nodes, or relations in web browser."),
                 Shortcut.registerShortcut("core:historyinfoweb",
-                        tr("History (web)"), KeyEvent.VK_H, Shortcut.CTRL_SHIFT),
+                        tr("View: {0}", tr("History (web)")), KeyEvent.VK_H, Shortcut.CTRL_SHIFT),
                 true, "action/historyinfoweb", true);
         setHelpId(ht("/Action/ObjectHistoryWeb"));
     }

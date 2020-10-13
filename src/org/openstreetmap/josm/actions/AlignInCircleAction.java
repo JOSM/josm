@@ -48,7 +48,7 @@ public final class AlignInCircleAction extends JosmAction {
      */
     public AlignInCircleAction() {
         super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."),
-                Shortcut.registerShortcut("tools:aligncircle", tr("Tool: {0}", tr("Align Nodes in Circle")),
+                Shortcut.registerShortcut("tools:aligncircle", tr("Tools: {0}", tr("Align Nodes in Circle")),
                         KeyEvent.VK_O, Shortcut.DIRECT), true);
         setHelpId(ht("/Action/AlignInCircle"));
     }

@@ -112,7 +112,7 @@ public class MapPaintDialog extends ToggleDialog {
      */
     public MapPaintDialog() {
         super(tr("Map Paint Styles"), "mapstyle", tr("configure the map painting style"),
-                Shortcut.registerShortcut("subwindow:mappaint", tr("Toggle: {0}", tr("MapPaint")),
+                Shortcut.registerShortcut("subwindow:mappaint", tr("Windows: {0}", tr("Map Paint Styles")),
                         KeyEvent.VK_M, Shortcut.ALT_SHIFT), 150, false, MapPaintPreference.class);
         build();
     }

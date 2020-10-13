@@ -33,8 +33,8 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
          */
         public Action() {
             super(tr("Search for objects by preset..."), "dialogs/search", tr("Search for objects by their presets."),
-                    Shortcut.registerShortcut("preset:search-objects", tr("Search for objects by preset"), KeyEvent.VK_F3, Shortcut.SHIFT),
-                    false);
+                    Shortcut.registerShortcut("preset:search-objects", tr("Presets: {0}", tr("Search for objects by preset...")),
+                    KeyEvent.VK_F3, Shortcut.SHIFT), false);
             putValue("toolbar", "presets/search-objects");
             MainApplication.getToolbar().register(this);
         }

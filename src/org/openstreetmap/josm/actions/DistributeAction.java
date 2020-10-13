@@ -39,7 +39,7 @@ public final class DistributeAction extends JosmAction {
     public DistributeAction() {
         super(tr("Distribute Nodes"), "distribute",
               tr("Distribute the selected nodes to equal distances along a line."),
-              Shortcut.registerShortcut("tools:distribute", tr("Tool: {0}", tr("Distribute Nodes")), KeyEvent.VK_B, Shortcut.SHIFT),
+              Shortcut.registerShortcut("tools:distribute", tr("Tools: {0}", tr("Distribute Nodes")), KeyEvent.VK_B, Shortcut.SHIFT),
               true);
         setHelpId(ht("/Action/DistributeNodes"));
     }

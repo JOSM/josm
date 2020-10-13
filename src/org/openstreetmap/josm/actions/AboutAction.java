@@ -62,7 +62,7 @@ public final class AboutAction extends JosmAction {
      */
     public AboutAction() {
         super(tr("About"), "logo", tr("Display the about screen."),
-            Shortcut.registerShortcut("system:about", tr("About"),
+            Shortcut.registerShortcut("system:about", tr("Help: {0}", tr("About")),
             KeyEvent.VK_F1, Shortcut.SHIFT), true, false);
     }
 

@@ -80,7 +80,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
      */
     public FilterDialog() {
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
-                Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")),
+                Shortcut.registerShortcut("subwindow:filter", tr("Windows: {0}", tr("Filter")),
                         KeyEvent.VK_F, Shortcut.ALT_SHIFT), 162);
         build();
         MultikeyActionsHandler.getInstance().addAction(enableFilterAction);

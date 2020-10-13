@@ -29,7 +29,7 @@ public class ChangesetManagerToggleAction extends ToggleAction {
                 new ImageProvider("dialogs/changeset/changesetmanager").setOptional(true),
                 tr("Toggle visibility of Changeset Manager window"),
                 Shortcut.registerShortcut("menu:windows:changesetdialog",
-                        tr("Toggle visibility of Changeset Manager window"), KeyEvent.VK_C, Shortcut.ALT_CTRL),
+                        tr("Windows: {0}", tr("Changeset Manager")), KeyEvent.VK_C, Shortcut.ALT_CTRL),
                 true /* register shortcut */, "dialogs/changeset/changesetmanager", false);
         notifySelectedState();
         changesetCacheManagerClosedHandler = new ChangesetCacheManagerClosedHandler();

@@ -115,7 +115,7 @@ public class ValidatorDialog extends ToggleDialog
      */
     public ValidatorDialog() {
         super(tr("Validation Results"), "validator", tr("Open the validation window."),
-                Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation Results")),
+                Shortcut.registerShortcut("subwindow:validator", tr("Windows: {0}", tr("Validation Results")),
                         KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150, false, ValidatorPreference.class);
 
         tree = new ValidatorTreePanel();

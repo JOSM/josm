@@ -101,7 +101,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      */
     public ConflictDialog() {
         super(tr("Conflict"), "conflict", tr("Resolve conflicts"),
-                Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")),
+                Shortcut.registerShortcut("subwindow:conflict", tr("Windows: {0}", tr("Conflict")),
                 KeyEvent.VK_C, Shortcut.ALT_SHIFT), 100);
 
         build();
