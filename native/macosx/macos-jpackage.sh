@@ -79,7 +79,7 @@ codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --optio
 codesign -vvv dist/JOSM.app
 
 echo "Preparing for notarization"
-ditto -c -k --keepParent dist/JOSM.app dist/JOSM.zip
+ditto -c -k --zlibCompressionLevel 9 --keepParent dist/JOSM.app dist/JOSM.zip
 
 echo "Uploading to Apple"
 xcrun altool --notarize-app -f dist/JOSM.zip -p "$APPLE_ID_PW" -u "thomas.skowron@fossgis.de" --primary-bundle-id de.openstreetmap.josm
