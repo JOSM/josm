@@ -469,7 +469,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     public PreferenceTabbedPane() {
         super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
         super.addMouseWheelListener(new WheelListener(this));
-        super.getModel().addChangeListener(this);
         ExpertToggleAction.addExpertModeChangeListener(this);
     }
 
@@ -487,6 +486,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
             }
         }
         addGUITabs(false);
+        super.getModel().addChangeListener(this);
     }
 
     private void addGUITabsForSetting(Icon icon, TabPreferenceSetting tps) {
