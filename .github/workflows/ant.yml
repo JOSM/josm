@@ -39,7 +39,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 92
+          fetch-depth: 128
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
@@ -90,12 +90,11 @@ jobs:
       - name: Optimise images
         if: ${{ runner.os == 'macos' && always() }}
         run: |
-          # brew install svgcleaner
-          # sudo npm install -g svgo
           brew cask install imageoptim
-          # svgo --multipass -r -f resources/images/
-          # find resources/images/ -iname \*.svg -exec svgcleaner "{}" "{}" \;
-          find resources/images -name \*.svg -or -name \*.png -exec /Applications/ImageOptim.app/Contents/MacOS/ImageOptim {} +
+          defaults write net.pornel.ImageOptim SvgoEnabled 1
+          defaults write net.pornel.ImageOptim PngCrush2Enabled 1
+          defaults write net.pornel.ImageOptim PngOutEnabled 1
+          /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
         env:
