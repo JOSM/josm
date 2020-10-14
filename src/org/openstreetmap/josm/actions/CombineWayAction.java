@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.corrector.ReverseWayTagCorrector;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -185,8 +185,6 @@ public class CombineWayAction extends JosmAction {
         // create the new way and apply the new node list
         //
         Way targetWay = getTargetWay(ways);
-        Way modifiedTargetWay = new Way(targetWay);
-        modifiedTargetWay.setNodes(path);
 
         final List<Command> resolution;
         try {
@@ -202,7 +200,7 @@ public class CombineWayAction extends JosmAction {
         List<Way> deletedWays = new LinkedList<>(ways);
         deletedWays.remove(targetWay);
 
-        cmds.add(new ChangeCommand(dataSets.get(0), targetWay, modifiedTargetWay));
+        cmds.add(new ChangeNodesCommand(dataSets.get(0), targetWay, path));
         cmds.addAll(reverseWayTagCommands);
         cmds.addAll(resolution);
         cmds.add(new DeleteCommand(dataSets.get(0), deletedWays));
