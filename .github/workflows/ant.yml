@@ -90,9 +90,12 @@ jobs:
       - name: Optimise images
         if: ${{ runner.os == 'macos' && always() }}
         run: |
-          brew install svgcleaner svgo
-          svgo --multipass -r -f images
-          find images/ -iname \*.svg -printf 'svgcleaner "%p" "%p"\n'| sh
+          # brew install svgcleaner
+          # sudo npm install -g svgo
+          brew cask install imageoptim
+          # svgo --multipass -r -f resources/images/
+          # find resources/images/ -iname \*.svg -exec svgcleaner "{}" "{}" \;
+          find resources/images -name \*.svg -or -name \*.png -exec /Applications/ImageOptim.app/Contents/MacOS/ImageOptim {} +
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
         env:
