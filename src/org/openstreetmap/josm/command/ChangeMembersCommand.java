@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
  * Command that changes the members of a relation.
  * The same can be done with ChangeCommand, but this is more efficient.
  * @author Gerd Petermann
- * @since xxx
+ * @since 17199
  *
  */
 public class ChangeMembersCommand extends Command {
