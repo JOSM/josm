@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
@@ -306,7 +307,7 @@ public class DeleteCommand extends Command {
             return null;
         if (!silent && !callback.checkAndConfirmOutlyingDelete(parents, null))
             return null;
-        return new DeleteCommand(parents.iterator().next().getDataSet(), parents);
+        return new DeleteCommand(parents);
     }
 
     /**
@@ -456,15 +457,15 @@ public class DeleteCommand extends Command {
                 .flatMap(p -> p.referrers(Relation.class))
                 .collect(Collectors.toSet());
         for (Relation cur : relationsToBeChanged) {
-            Relation rel = new Relation(cur);
-            rel.removeMembersFor(primitivesToDelete);
-            cmds.add(new ChangeCommand(cur, rel));
+            List<RelationMember> newMembers = cur.getMembers();
+            cur.getMembersFor(primitivesToDelete).forEach(newMembers::remove);
+            cmds.add(new ChangeMembersCommand(cur, newMembers));
         }
 
         // build the delete command
         //
         if (!primitivesToDelete.isEmpty()) {
-            cmds.add(new DeleteCommand(primitivesToDelete.iterator().next().getDataSet(), primitivesToDelete));
+            cmds.add(new DeleteCommand(primitivesToDelete));
         }
 
         return SequenceCommand.wrapIfNeeded(tr("Delete"), cmds);

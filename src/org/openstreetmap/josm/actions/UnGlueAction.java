@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
@@ -297,7 +298,7 @@ public class UnGlueAction extends JosmAction {
      * @param w parent way
      * @param cmds List of commands that will contain the new "add node" command
      * @param newNodes List of nodes that will contain the new node
-     * @return new way The modified way. Change command must be handled by the caller
+     * @return The modified list of way nodes. Change command must be handled by the caller
      */
     private static List<Node> modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
         // clone the node for the way
@@ -331,7 +332,7 @@ public class UnGlueAction extends JosmAction {
             if (r.isDeleted()) {
                 continue;
             }
-            Relation newRel = new Relation(r);
+            List<RelationMember> newMembers = new ArrayList<>(r.getMembers());
             // loop backwards because we add or remove members, works also when nodes appear
             // multiple times in the same relation
             boolean changed = false;
@@ -340,16 +341,16 @@ public class UnGlueAction extends JosmAction {
                 if (rm.getMember() != originalNode)
                     continue;
                 for (Node n : newNodes) {
-                    newRel.addMember(i + 1, new RelationMember(rm.getRole(), n));
+                    newMembers.add(i + 1, new RelationMember(rm.getRole(), n));
                 }
                 if (ExistingBothNew.NEW == memberships) {
                     // remove old member
-                    newRel.removeMember(i);
+                    newMembers.remove(i);
                 }
                 changed = true;
             }
             if (changed) {
-                cmds.add(new ChangeCommand(r, newRel));
+                cmds.add(new ChangeMembersCommand(r, newMembers));
             }
         }
     }
