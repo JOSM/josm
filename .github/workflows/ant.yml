@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         # test against latest update of each major Java version, as well as specific updates of LTS versions:
-        java: [8, 11, 14, 15]
+        java: [8, 11, 14]
         os: [ubuntu-latest, macos-latest, windows-latest]
         headless: ["true", "false"]
         exclude:
