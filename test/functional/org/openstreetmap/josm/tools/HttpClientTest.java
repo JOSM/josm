@@ -12,6 +12,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.junit.Assert.assertEquals;
@@ -22,6 +23,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Handler;
@@ -29,7 +33,6 @@ import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -338,7 +341,8 @@ public class HttpClientTest {
      */
     @Test
     public void testOpenUrlGzip() throws IOException {
-        final byte[] gpx = Utils.readBytesFromStream(getClass().getClassLoader().getResourceAsStream("tracks/tracks.gpx.gz"));
+        final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.gz");
+        final byte[] gpx = Files.readAllBytes(path);
         localServer.stubFor(get(urlEqualTo("/trace/1613906/data"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -347,7 +351,7 @@ public class HttpClientTest {
 
         final URL url = new URL(localServer.url("/trace/1613906/data"));
         try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
-            Assert.assertTrue(x.readLine().startsWith("<?xml version="));
+            assertThat(x.readLine(), startsWith("<?xml version="));
         }
     }
 
@@ -357,7 +361,8 @@ public class HttpClientTest {
      */
     @Test
     public void testOpenUrlBzip() throws IOException {
-        final byte[] gpx = Utils.readBytesFromStream(getClass().getClassLoader().getResourceAsStream("tracks/tracks.gpx.bz2"));
+        final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.bz2");
+        final byte[] gpx = Files.readAllBytes(path);
         localServer.stubFor(get(urlEqualTo("/trace/785544/data"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -366,7 +371,7 @@ public class HttpClientTest {
 
         final URL url = new URL(localServer.url("/trace/785544/data"));
         try (BufferedReader x = HttpClient.create(url).connect().uncompress(true).getContentReader()) {
-            Assert.assertTrue(x.readLine().startsWith("<?xml version="));
+            assertThat(x.readLine(), startsWith("<?xml version="));
         }
     }
 
@@ -376,7 +381,8 @@ public class HttpClientTest {
      */
     @Test
     public void testOpenUrlBzipAccordingToContentDisposition() throws IOException {
-        final byte[] gpx = Utils.readBytesFromStream(getClass().getClassLoader().getResourceAsStream("tracks/tracks.gpx.bz2"));
+        final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.bz2");
+        final byte[] gpx = Files.readAllBytes(path);
         localServer.stubFor(get(urlEqualTo("/trace/1350010/data"))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -387,7 +393,7 @@ public class HttpClientTest {
         final URL url = new URL(localServer.url("/trace/1350010/data"));
         try (BufferedReader x = HttpClient.create(url).connect()
                 .uncompress(true).uncompressAccordingToContentDisposition(true).getContentReader()) {
-            Assert.assertTrue(x.readLine().startsWith("<?xml version="));
+            assertThat(x.readLine(), startsWith("<?xml version="));
         }
     }
 
