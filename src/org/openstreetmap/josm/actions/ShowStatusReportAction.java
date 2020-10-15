@@ -156,6 +156,12 @@ public final class ShowStatusReportAction extends JosmAction {
                     .append(atkWrapperDetails)
                     .append('\n');
             }
+            String lang = System.getenv("LANG");
+            {
+                text.append("Environment variable LANG: ")
+                    .append(lang)
+                    .append('\n');
+            }
             // Add dependencies details if found
             for (String p : new String[] {
                     "apache-commons-compress", "libcommons-compress-java",
