@@ -9,6 +9,9 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -22,11 +25,15 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.actions.downloadtasks.DownloadReferrersTask;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PrimitiveRenderer;
+import org.openstreetmap.josm.gui.io.DownloadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -117,19 +124,23 @@ public class ReferringRelationsBrowser extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            boolean full = cbReadFull.isSelected();
-            final ParentRelationLoadingTask task = new ParentRelationLoadingTask(
-                    model.getRelation(),
-                    getLayer(),
-                    full,
-                    new PleaseWaitProgressMonitor(tr("Loading parent relations"))
-            );
-            task.setContinuation(() -> {
-                    if (task.isCanceled() || task.hasError())
-                        return;
-                    model.populate(task.getParents());
-                });
+            DownloadReferrersTask task = new DownloadReferrersTask(getLayer(), Collections.singleton(model.getRelation()));
             MainApplication.worker.submit(task);
+            MainApplication.worker.submit(() -> {
+                if (cbReadFull.isSelected() && !task.getProgressMonitor().isCanceled()) {
+                    // download all members of parents
+                    List<PrimitiveId> parentsChildren = model.getRelation().referrers(Relation.class)
+                            .collect(Collectors.toSet()).stream().flatMap(r -> r.getMemberPrimitives().stream())
+                            .distinct().map(OsmPrimitive::getPrimitiveId).distinct().collect(Collectors.toList());
+                    new DownloadPrimitivesTask(getLayer(), parentsChildren, false).run();
+                }
+            });
+            GuiHelper.executeByMainWorkerInEDT(() ->
+                model.populate(model.getRelation().getReferrers().stream()
+                        .filter(Relation.class::isInstance)
+                        .map(Relation.class::cast)
+                        .collect(Collectors.toList()))
+                );
         }
 
         @Override
