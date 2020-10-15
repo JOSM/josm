@@ -7,15 +7,12 @@ options {
 PARSER_BEGIN(MapCSSParser)
 package org.openstreetmap.josm.gui.mappaint.mapcss.parsergen;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
@@ -50,7 +47,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Contains two independent grammars:
  * (a) the preprocessor and (b) the main mapcss parser.
  *
- * The preprocessor handles @supports and @media syntax (@media is deprecated).
+ * The preprocessor handles @supports syntax.
  * Basically this allows to write one style for different versions of JOSM (or different editors).
  * When the @supports condition is not fulfilled, it should simply skip over
  * the whole section and not attempt to parse the possibly unknown
@@ -136,7 +133,6 @@ TOKEN:
 |   < PP_OR: "or" >
 |   < PP_NOT: "not" >
 |   < PP_SUPPORTS: "@supports" >
-|   < PP_MEDIA: "@media" >
 |   < PP_NEWLINECHAR: "\n" | "\r" | "\f" >
 |   < PP_WHITESPACE: " " | "\t" >
 |   < PP_COMMENT_START: "/*" > : PP_COMMENT
@@ -293,8 +289,6 @@ void pp_black_box(boolean write):
         |
             pp_supports(!write)
         |
-            pp_media(!write)
-        |
             t=<LBRACE> { if (write) sb.append(t.image); } pp_black_box(write) t=<RBRACE> { if (write) sb.append(t.image); }
     )*
 }
@@ -376,77 +370,6 @@ boolean pp_supports_condition_in_parens():
  * @throws ParseException in case of parsing error
  */
 boolean pp_supports_declaration_condition():
-{
-    Token t;
-    String feature;
-    Object val = null;
-}
-{
-    <LPAR> pp_w() t=<IDENT> { feature = t.image; } pp_w() ( <COLON> pp_w() val=literal() )? <RPAR>
-    { return this.sheet.evalSupportsDeclCondition(feature, val); }
-}
-
-// deprecated
-void pp_media(boolean ignore):
-{
-    boolean pass = false;
-    boolean q;
-    boolean empty = true;
-}
-{
-    {
-        if (sheet != null) {
-            String msg = tr("Detected deprecated ''{0}'' in ''{1}'' which will be removed shortly. Use ''{2}'' instead.",
-                            "@media", sheet.getDisplayString(), "@supports");
-            Logging.error(msg);
-            sheet.logWarning(msg);
-        }
-    }
-    <PP_MEDIA> pp_w()
-    ( q=pp_media_query() { pass = pass || q; empty = false; }
-        ( <COMMA> pp_w() q=pp_media_query() { pass = pass || q; } )*
-    )?
-    <LBRACE>
-    pp_black_box((empty || pass) && !ignore)
-    <RBRACE>
-}
-
-// deprecated
-boolean pp_media_query():
-{
-    Token t;
-    String mediatype = "all";
-    boolean pass = true;
-    boolean invert = false;
-    boolean e;
-}
-{
-    ( <PP_NOT> { invert = true; } pp_w() )?
-    (
-            t=<IDENT> { mediatype = t.image.toLowerCase(Locale.ENGLISH); } pp_w()
-            ( <PP_AND> pp_w() e=pp_media_expression() { pass = pass && e; } pp_w() )*
-        |
-            e=pp_media_expression() { pass = pass && e; } pp_w()
-            ( <PP_AND> pp_w() e=pp_media_expression() { pass = pass && e; } pp_w() )*
-    )
-    { 
-        if (!"all".equals(mediatype)) {
-            pass = false;
-        }
-        return invert ? (!pass) : pass;
-    }
-}
-
-/**
- * Parse an @media expression.
- *
- * The parsing rule {@link #literal()} from the main mapcss parser is reused here.
- *
- * @return true if the condition is fulfilled
- * @throws ParseException in case of parsing error
- */
-// deprecated
-boolean pp_media_expression():
 {
     Token t;
     String feature;
