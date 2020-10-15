@@ -5,9 +5,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.xml.sax.InputSource;
 
 /**
@@ -22,8 +26,9 @@ public class CapabilitiesTest {
      */
     @Test
     public void testCapabilities() throws Exception {
+        final Path path = Paths.get(TestUtils.getTestDataRoot(), "__files/api/0.6/capabilities");
         final Capabilities capabilities;
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("__files/api/0.6/capabilities")) {
+        try (InputStream inputStream = Files.newInputStream(path)) {
             capabilities = Capabilities.CapabilitiesParser.parse(new InputSource(inputStream));
         }
         assertEquals(10000, capabilities.getMaxChangesetSize());
