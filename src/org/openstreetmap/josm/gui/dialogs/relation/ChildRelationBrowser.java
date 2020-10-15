@@ -46,7 +46,6 @@ import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -323,6 +322,7 @@ public class ChildRelationBrowser extends JPanel {
         protected boolean canceled;
         protected int conflictsCount;
         protected Exception lastException;
+        protected MultiFetchServerObjectReader reader;
 
         DownloadTask(String title, Dialog parent) {
             super(title, new PleaseWaitProgressMonitor(parent), false);
@@ -331,7 +331,11 @@ public class ChildRelationBrowser extends JPanel {
         @Override
         protected void cancel() {
             canceled = true;
-            OsmApi.getOsmApi().cancel();
+            synchronized (this) {
+                if (reader != null) {
+                    reader.cancel();
+                }
+            }
         }
 
         protected MultiFetchServerObjectReader createReader() {
@@ -422,8 +426,8 @@ public class ChildRelationBrowser extends JPanel {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                MultiFetchServerObjectReader reader = createReader();
-                reader.append(relation.getMemberPrimitives());
+                reader = createReader();
+                reader.append(relation.getMemberPrimitives(Relation.class));
                 DataSet dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                 mergeDataSet(dataSet);
                 Utils.filteredCollection(reader.getMissingPrimitives(), Relation.class).forEach(this::warnBecauseOfDeletedRelation);
@@ -455,7 +459,7 @@ public class ChildRelationBrowser extends JPanel {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                MultiFetchServerObjectReader reader = createReader();
+                reader = createReader();
                 reader.append(relations);
                 DataSet dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                 mergeDataSet(dataSet);
