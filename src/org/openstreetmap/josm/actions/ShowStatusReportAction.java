@@ -157,7 +157,7 @@ public final class ShowStatusReportAction extends JosmAction {
                     .append('\n');
             }
             String lang = System.getenv("LANG");
-            if(lang != null) {
+            if (lang != null) {
                 text.append("Environment variable LANG: ")
                     .append(lang)
                     .append('\n');
