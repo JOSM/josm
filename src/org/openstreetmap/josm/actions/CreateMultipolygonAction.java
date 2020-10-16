@@ -491,6 +491,8 @@ public class CreateMultipolygonAction extends JosmAction {
                     ds = MainApplication.getLayerManager().getEditDataSet();
                 }
                 commands.add(new ChangeCommand(ds, relation, r2));
+            } else {
+                r2.setMembers(null); // see #19885
             }
         }
 
