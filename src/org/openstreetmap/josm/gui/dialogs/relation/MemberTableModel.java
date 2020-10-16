@@ -221,6 +221,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      */
     public void populate(Relation relation) {
         members.clear();
+        getSelectionModel().clearSelection();
         if (relation != null) {
             members.addAll(relation.getMembers());
         }
