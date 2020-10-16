@@ -129,7 +129,7 @@ jobs:
           asset_content_type: application/zip
       - name: Upload jar
         if: ${{ runner.os == 'macos' && always() }}
-        id: upload-app
+        id: upload-jar
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
