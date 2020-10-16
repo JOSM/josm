@@ -475,7 +475,11 @@ way[type=palm] {
 }
 
 way[sidewalk=yes] {
-  throwWarning: tr("{0}={1} is unspecific. Please replace ''{1}'' by ''left'', ''right'' or ''both''.", "{0.key}", "{0.value}");
+  throwWarning: tr("{0} is unspecific", "{0.tag}");
+  suggestAlternative: "sidewalk=left";
+  suggestAlternative: "sidewalk=right";
+  suggestAlternative: "sidewalk=both";
+  suggestAlternative: "sidewalk=separate";
 }
 
 *[waterway=water_point] {
