@@ -55,7 +55,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.relation.DeleteRelationsAction;
 import org.openstreetmap.josm.actions.relation.DuplicateRelationAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -1153,11 +1153,12 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             if (ed.showDialog().getValue() != 1)
                 return;
 
-            Relation rel = new Relation(cur);
+            Relation copy = new Relation(cur);
             for (OsmPrimitive primitive: OsmDataManager.getInstance().getInProgressSelection()) {
-                rel.removeMembersFor(primitive);
+                copy.removeMembersFor(primitive);
             }
-            UndoRedoHandler.getInstance().add(new ChangeCommand(cur, rel));
+            UndoRedoHandler.getInstance().add(new ChangeMembersCommand(cur, copy.getMembers()));
+            copy.setMembers(null); // see #19885
 
             tagTable.clearSelection();
             if (nextRelation != null) {

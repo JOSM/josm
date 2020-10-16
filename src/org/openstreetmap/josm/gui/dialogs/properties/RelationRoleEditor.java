@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -44,10 +44,8 @@ final class RelationRoleEditor {
         if (newRole == null || oldRole.equals(newRole) || tr("<different>").equals(newRole)) {
             return;
         }
-        final Relation newRelation = new Relation(relation);
-        final List<RelationMember> newMembers = newRelation.getMembers();
+        final List<RelationMember> newMembers = relation.getMembers();
         newMembers.replaceAll(m -> members.contains(m) ? new RelationMember(newRole, m.getMember()) : m);
-        newRelation.setMembers(newMembers);
-        UndoRedoHandler.getInstance().add(new ChangeCommand(relation, newRelation));
+        UndoRedoHandler.getInstance().add(new ChangeMembersCommand(relation, newMembers));
     }
 }
