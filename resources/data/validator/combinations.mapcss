@@ -122,7 +122,7 @@ way[waterway=pressurised       ][tunnel!=flooded][man_made!=pipeline] {
 /* {0.tag} without {1.key} (warning level), #18411, #18246 */
 way[railway=construction][!construction],
 way[highway=construction][!construction],
-node[traffic_sign=maxspeed][!maxspeed],
+node[traffic_sign=maxspeed][!maxspeed][!/^maxspeed:.+/],
 node[actuator=manual][!handle],
 node[emergency=fire_hydrant][!fire_hydrant:type],
 way[     boundary=administrative][!admin_level],
@@ -143,6 +143,7 @@ relation[route=ski  ][!piste:type][type=route],
 *[man_made=tower][!tower:type] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
   group: tr("missing tag");
+  assertNoMatch: "node traffic_sign=maxspeed maxspeed:hgv:conditional=\"80 @ (weight>7.5 AND 22:00-05:00)\"";
 }
 
 /* {0.tag} without {1.key} (info level), #15107 */
