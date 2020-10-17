@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
@@ -742,7 +742,6 @@ public class MultipolygonTest extends Test {
             ArrayList<OsmPrimitive> primitives = new ArrayList<>(testError.getPrimitives());
             if (primitives.size() >= 2 && primitives.get(0) instanceof Relation) {
                 Relation oldRel = (Relation) primitives.get(0);
-                Relation newRel = new Relation(oldRel);
                 List<OsmPrimitive> repeatedPrims = primitives.subList(1, primitives.size());
                 List<RelationMember> oldMembers = oldRel.getMembers();
 
@@ -751,16 +750,14 @@ public class MultipolygonTest extends Test {
                 HashSet<OsmPrimitive> found = new HashSet<>(repeatedPrims.size());
                 for (RelationMember rm : oldMembers) {
                     if (toRemove.contains(rm.getMember())) {
-                        if (!found.contains(rm.getMember())) {
-                            found.add(rm.getMember());
+                        if (found.add(rm.getMember())) {
                             newMembers.add(rm);
                         }
                     } else {
                         newMembers.add(rm);
                     }
                 }
-                newRel.setMembers(newMembers);
-                return new ChangeCommand(oldRel, newRel);
+                return new ChangeMembersCommand(oldRel, newMembers);
             }
         }
         return null;
