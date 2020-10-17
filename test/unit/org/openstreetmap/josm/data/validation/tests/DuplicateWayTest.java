@@ -2,15 +2,22 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -87,4 +94,33 @@ public class DuplicateWayTest {
     public void testDuplicateWayDifferentTags() {
         doTest(DuplicateWay.SAME_WAY, "highway=motorway", "highway=trunk", false);
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14891">Bug #14891</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testFixError() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "duplicate-ways.osm")), null);
+        TEST.startTest(NullProgressMonitor.INSTANCE);
+        TEST.visit(ds.allPrimitives());
+        TEST.endTest();
+
+        assertEquals(2, TEST.getErrors().size());
+        for (TestError error: TEST.getErrors()) {
+            error = TEST.getErrors().iterator().next();
+            assertTrue(error.isFixable());
+            Command fix = error.getFix();
+            assertNotNull(fix);
+        }
+        for (TestError error: TEST.getErrors()) {
+            error.getFix().executeCommand();
+        }
+        TEST.startTest(NullProgressMonitor.INSTANCE);
+        TEST.visit(ds.allPrimitives());
+        TEST.endTest();
+        assertTrue(TEST.getErrors().isEmpty());
+
+    }
+
 }
