@@ -303,6 +303,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if (showNotif) {
             showErrors(mpTest.getErrors());
         }
+        calculated.setMembers(null); // see #19885
         return null; //could not make multipolygon.
     }
 
