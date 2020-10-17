@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -363,19 +363,18 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     }
 
     protected Command buildResolveCommand(Relation relation, OsmPrimitive newPrimitive) {
-        final Relation modifiedRelation = new Relation(relation);
-        modifiedRelation.setMembers(null);
+        List<RelationMember> modifiedMemberList = new ArrayList<>();
         boolean isChanged = false;
         for (int i = 0; i < relation.getMembersCount(); i++) {
             final RelationMember member = relation.getMember(i);
             RelationMemberConflictDecision decision = getDecision(relation, i);
             if (decision == null) {
-                modifiedRelation.addMember(member);
+                modifiedMemberList.add(member);
             } else {
                 switch(decision.getDecision()) {
                 case KEEP:
                     final RelationMember newMember = new RelationMember(decision.getRole(), newPrimitive);
-                    modifiedRelation.addMember(newMember);
+                    modifiedMemberList.add(newMember);
                     isChanged |= !member.equals(newMember);
                     break;
                 case REMOVE:
@@ -388,10 +387,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 }
             }
         }
-        if (isChanged)
-            return new ChangeCommand(relation, modifiedRelation);
-        modifiedRelation.setMembers(null); // see #19885
-        return null;
+        return isChanged ? new ChangeMembersCommand(relation, modifiedMemberList) : null;
     }
 
     /**
