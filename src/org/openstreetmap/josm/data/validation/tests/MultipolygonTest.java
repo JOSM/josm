@@ -184,8 +184,11 @@ public class MultipolygonTest extends Test {
     private void checkGeometryAndRoles(Relation r, Multipolygon polygon) {
         int oldErrorsSize = errors.size();
 
+        Map<Long, RelationMember> wayMap = r.getMembers().stream()
+                .filter(RelationMember::isWay)
+                .collect(Collectors.toMap(mem -> mem.getWay().getUniqueId(), mem -> mem, (a, b) -> b));
         List<Node> openNodes = polygon.getOpenEnds();
-        if (!openNodes.isEmpty()) {
+        if (!openNodes.isEmpty() || wayMap.isEmpty()) {
             errors.add(TestError.builder(this, Severity.ERROR, NON_CLOSED_WAY)
                     .message(tr("Multipolygon is not closed"))
                     .primitives(combineRelAndPrimitives(r, openNodes))
@@ -193,9 +196,6 @@ public class MultipolygonTest extends Test {
                     .build());
         }
 
-        Map<Long, RelationMember> wayMap = r.getMembers().stream()
-                .filter(RelationMember::isWay)
-                .collect(Collectors.toMap(mem -> mem.getWay().getUniqueId(), mem -> mem, (a, b) -> b));
         // duplicate members were checked before
         if (wayMap.isEmpty())
             return;
