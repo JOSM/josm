@@ -156,9 +156,12 @@ public class OsmJsonReader extends AbstractReader {
 
     private void readRelationMembersAndTags(JsonObject item, Relation r, Collection<RelationMemberData> members)
             throws IllegalDataException {
-        for (JsonValue v : item.getJsonArray("members")) {
-            JsonObject o = v.asJsonObject();
-            members.add(parseRelationMember(r, ((JsonNumber) o.get("ref")).longValue(), o.getString("type"), o.getString("role")));
+        JsonArray jsonArray = item.getJsonArray("members");
+        if (jsonArray != null) {
+            for (JsonValue v : jsonArray) {
+                JsonObject o = v.asJsonObject();
+                members.add(parseRelationMember(r, ((JsonNumber) o.get("ref")).longValue(), o.getString("type"), o.getString("role")));
+            }
         }
         readTags(item, r);
     }

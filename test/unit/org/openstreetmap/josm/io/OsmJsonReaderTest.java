@@ -235,6 +235,23 @@ public class OsmJsonReaderTest {
         assertFalse(it.hasNext());
         assertTrue(r.isTagged());
         assertEquals("route", r.get("type"));
+
+    }
+
+    /**
+     * Test a relation example without members.
+     * @throws Exception never
+     */
+    @Test
+    public void testEmptyRelation() throws Exception {
+        DataSet ds = parse("{\n" +
+                "  \"type\": \"relation\",\n" +
+                "  \"id\": 1,\n" +
+                "  \"tags\": {}\n" +
+                "}");
+        Relation r = ds.getRelations().iterator().next();
+        assertEquals(1, r.getUniqueId());
+        assertEquals(0, r.getMembersCount());
     }
 
     /**
