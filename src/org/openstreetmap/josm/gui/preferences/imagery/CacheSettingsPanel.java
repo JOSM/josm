@@ -106,7 +106,7 @@ public class CacheSettingsPanel extends JPanel {
                 }
             }
         }
-        return Long.valueOf(-1);
+        return 0L;
     }
 
     /**
