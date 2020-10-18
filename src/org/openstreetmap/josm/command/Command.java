@@ -3,7 +3,7 @@ package org.openstreetmap.josm.command;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Classes implementing Command modify a dataset in a specific way. A command is
@@ -122,7 +123,7 @@ public abstract class Command implements PseudoCommand {
     }
 
     /** the map of OsmPrimitives in the original state to OsmPrimitives in cloned state */
-    private Map<OsmPrimitive, PrimitiveData> cloneMap = new HashMap<>();
+    private Map<OsmPrimitive, PrimitiveData> cloneMap = Collections.emptyMap();
 
     /** the dataset which this command is applied to */
     private final DataSet data;
@@ -153,7 +154,7 @@ public abstract class Command implements PseudoCommand {
         for (OsmPrimitive osm : all) {
             osm.accept(visitor);
         }
-        cloneMap = visitor.orig;
+        cloneMap = Utils.toUnmodifiableMap(visitor.orig);
         return true;
     }
 
