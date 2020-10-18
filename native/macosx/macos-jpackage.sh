@@ -18,7 +18,7 @@ echo "Building JOSM.app"
 
 jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
-    --icon native/macosx/JOSM.app/Contents/Resources/JOSM.icns --type app-image --dest dist \
+    --icon ./native/macosx/JOSM.icns --type app-image --dest dist \
     --java-options "-Xmx8192m" --app-version $1 \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "https://josm.openstreetmap.de" \
@@ -79,11 +79,7 @@ codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --optio
 codesign -vvv dist/JOSM.app
 
 echo "Preparing for notarization"
-ditto -c -k --keepParent dist/JOSM.app dist/JOSM.zip
+ditto -c -k --zlibCompressionLevel 9 --keepParent dist/JOSM.app dist/JOSM.zip
 
 echo "Uploading to Apple"
 xcrun altool --notarize-app -f dist/JOSM.zip -p "$APPLE_ID_PW" -u "thomas.skowron@fossgis.de" --primary-bundle-id de.openstreetmap.josm
-
-# Prepare for upload-artifact
-mkdir dist-macOS
-unzip dist/JOSM.zip -d dist-macOS

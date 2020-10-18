@@ -193,7 +193,7 @@ Build-Date: ${build.tstamp}
                    applicationCategory="public.app-category.utilities"
                    shortversion="${version.entry.commit.revision} SVN"
                    version="${version.entry.commit.revision} SVN"
-                   icon="native/macosx/JOSM.app/Contents/Resources/JOSM.icns"
+                   icon="native/macosx/JOSM.icns"
                    highResolutionCapable="true">
 
             <arch name="x86_64"/>

@@ -1,7 +1,8 @@
 name: Java CI
 env:
+  junit_platform_version: '1.7.0'
   # ANT_HOME is also our ant version
-  ANT_HOME: "apache-ant-1.10.8"
+  ANT_HOME: 'apache-ant-1.10.9'
 on:
   push:
     branches: [master]
@@ -21,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         # test against latest update of each major Java version, as well as specific updates of LTS versions:
-        java: [8, 11, 14]
+        java: [8, 11, 14, 15, 16-ea]
         os: [ubuntu-latest, macos-latest, windows-latest]
         headless: ["true", "false"]
         exclude:
@@ -38,23 +39,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 64
+          fetch-depth: 128
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
-          path: |
+          path:  |
             ~/.ivy2/cache/
             ~/work/josm/josm/tools/
           key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
       - name: Setup java
-        uses: actions/setup-java@v1.3.0
+        uses: actions/setup-java@v1.4.3
         with:
           java-version: ${{ matrix.java }}
-      - name: Install ant ${{ env.ANT_HOME }}
+      - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
+        # Todo: cache ant and junit, saves 12 seconds.
         run: |
-          curl -s https://archive.apache.org/dist/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz | tar -xz
+          curl -s https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz | tar -xz
+          curl -o ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar"
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
-        run: ${{ env.ANT_HOME }}/bin/ant -diagnostics
+        run: ${{ env.ANT_HOME }}/bin/ant -version
+      - name: Set revision env variable
+        run: |
+          ant create-revision
+          josm_revision=`awk '/Revision/{print $2}' resources/REVISION`
+          if [[ "$josm_revision" == `curl --silent https://josm.openstreetmap.de/tested` ]]; then
+            sed -i .bak '/Is-Local-Build/d' resources/REVISION
+            echo "josm_prerelease=false" >> $GITHUB_ENV
+          else
+            echo "josm_prerelease=true" >> $GITHUB_ENV
+          fi
+          echo "josm_revision=$josm_revision" >> $GITHUB_ENV
       - name: Build with Ant, headless ${{ matrix.headless }}
         run: |
           ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
@@ -66,16 +80,20 @@ jobs:
       - name: Dump errors if failed
         if: ${{ failure() }}
         run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
-      - name: Set revision env variable
-        if: ${{ always() }}
-        # Careful, you will only have a resources/REVISION if you've already built
-        run: echo "::set-env name=josm_revision::`awk '/Revision/{print $2}' resources/REVISION`"
       - name: Upload Ant reports
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
           name: Ant reports for JOSM ${{ env.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
           path: test/report/*.txt
+      - name: Optimise images
+        if: ${{ runner.os == 'macos' && always() }}
+        run: |
+          brew cask install imageoptim
+          defaults write net.pornel.ImageOptim SvgoEnabled 1
+          defaults write net.pornel.ImageOptim PngCrush2Enabled 1
+          defaults write net.pornel.ImageOptim PngOutEnabled 1
+          /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
         env:
@@ -85,9 +103,38 @@ jobs:
         run: |
           $ANT_HOME/bin/ant dist
           ./native/macosx/macos-jpackage.sh ${{ env.josm_revision }}
-      - name: Upload JOSM.app for macOS
+      - name: Create macOS release
         if: ${{ runner.os == 'macos' && always() }}
-        uses: actions/upload-artifact@v2
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          name: JOSM.app revision ${{ env.josm_revision }}
-          path: dist/JOSM.zip
+          tag_name: ${{ env.josm_revision }}
+          release_name: JOSM.app release ${{ env.josm_revision }}
+          body: |
+            JOSM.app release ${{ env.josm_revision }}
+          draft: false
+          prerelease: ${{ env.josm_prerelease }}
+      - name: Upload app
+        if: ${{ runner.os == 'macos' && always() }}
+        id: upload-app
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: dist/JOSM.zip
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.zip
+          asset_content_type: application/zip
+      - name: Upload jar
+        if: ${{ runner.os == 'macos' && always() }}
+        id: upload-jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: dist/josm-custom.jar
+          asset_name: josm-latest.jar
+          asset_content_type: application/java-archive
