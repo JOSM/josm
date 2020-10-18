@@ -27,7 +27,11 @@ public interface TabPreferenceSetting extends PreferenceSetting {
      */
     default ImageIcon getIcon(ImageProvider.ImageSizes size) {
         String iconName = getIconName();
-        return iconName == null || iconName.isEmpty() ? null : ImageProvider.get("preferences", iconName, size);
+        return iconName == null || iconName.isEmpty()
+                ? null
+                : iconName.contains("/")
+                ? ImageProvider.get(iconName, size)
+                : ImageProvider.get("preferences", iconName, size);
     }
 
     /**

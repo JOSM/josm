@@ -47,7 +47,7 @@ public class LanguagePreference extends DefaultTabPreferenceSetting {
     }
 
     LanguagePreference() {
-        super(null, tr("Language"), tr("Change the language of JOSM."));
+        super(/* ICON(preferences/) */ "language", tr("Language"), tr("Change the language of JOSM."));
     }
 
     /** the combo box with the available locales */

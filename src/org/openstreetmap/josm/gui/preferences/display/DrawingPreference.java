@@ -68,7 +68,7 @@ public class DrawingPreference extends DefaultTabPreferenceSetting {
     private final JCheckBox hideLabelsWhileDragging = new JCheckBox(tr("Hide labels while dragging the map"));
 
     DrawingPreference() {
-        super(null, tr("OSM Data"), tr("Settings that control the drawing of OSM data."));
+        super(/* ICON(preferences/) */ "display", tr("OSM Data"), tr("Settings that control the drawing of OSM data."));
     }
 
     @Override
