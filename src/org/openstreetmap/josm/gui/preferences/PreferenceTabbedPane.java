@@ -492,7 +492,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     private void addGUITabsForSetting(Icon icon, TabPreferenceSetting tps) {
         for (PreferenceTab tab : tabs) {
             if (tab.getTabPreferenceSetting().equals(tps)) {
-                insertGUITabsForSetting(icon, tps, getTabCount());
+                insertGUITabsForSetting(icon, tps, tab.getComponent(), getTabCount());
             }
         }
     }
@@ -501,10 +501,16 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         int position = index;
         for (PreferenceTab tab : tabs) {
             if (tab.getTabPreferenceSetting().equals(tps)) {
-                insertTab(tps.getTitle(), icon, tab.getComponent(), tps.getTooltip(), position++);
+                insertGUITabsForSetting(icon, tps, tab.getComponent(), position);
+                position++;
             }
         }
         return position - 1;
+    }
+
+    private void insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, final Component component, int position) {
+        String title = "<html><div style='width:150px'>" + tps.getTitle();
+        insertTab(title, icon, component, tps.getTooltip(), position);
     }
 
     private void addGUITabs(boolean clear) {
@@ -524,7 +530,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                         addGUITabsForSetting(icon, tps);
                     } else {
                         // If it has not been initialized, create an empty tab with only icon and tooltip
-                        addTab(tps.getTitle(), icon, new PreferencePanel(tps), tps.getTooltip());
+                        insertGUITabsForSetting(icon, tps, new PreferencePanel(tps), getTabCount());
                     }
                 }
             } else if (!(setting instanceof SubPreferenceSetting)) {
