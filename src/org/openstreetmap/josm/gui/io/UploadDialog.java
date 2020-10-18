@@ -232,6 +232,10 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         pnlBasicUploadSettings.setUploadTagDownFocusTraversalHandlers(e -> btnUpload.requestFocusInWindow());
 
+        // Enable/disable the upload button if at least an upload validator rejects upload
+        pnlBasicUploadSettings.getUploadTextValidators().forEach(v -> v.addChangeListener(e -> btnUpload.setEnabled(
+                pnlBasicUploadSettings.getUploadTextValidators().stream().noneMatch(UploadTextComponentValidator::isUploadRejected))));
+
         setMinimumSize(new Dimension(600, 350));
 
         Config.getPref().addPreferenceChangeListener(this);

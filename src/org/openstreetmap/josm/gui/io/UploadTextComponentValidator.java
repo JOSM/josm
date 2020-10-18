@@ -21,6 +21,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 abstract class UploadTextComponentValidator extends AbstractTextComponentValidator {
     private final JLabel feedback;
+    protected boolean uploadRejected;
 
     UploadTextComponentValidator(JTextComponent tc, JLabel feedback) {
         super(tc);
@@ -59,6 +60,15 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
     }
 
     /**
+     * Determines if the input validator considers the violation bad enough to reject upload.
+     * @return {@code true} if the input validator considers the violation bad enough to reject upload
+     * @since 17238
+     */
+    public final boolean isUploadRejected() {
+        return uploadRejected;
+    }
+
+    /**
      * Validator for the changeset {@code comment} tag
      */
     static class UploadCommentValidator extends UploadTextComponentValidator {
@@ -84,7 +94,8 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
             } else {
                 String rejection = UploadDialog.UploadAction.validateUploadTag(uploadComment, "upload.comment",
                         Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-                if (rejection != null) {
+                uploadRejected = rejection != null;
+                if (uploadRejected) {
                     feedbackWarning(tr("Your upload comment is <i>rejected</i>.") + "<br />" + rejection);
                 } else {
                     feedbackValid(tr("Thank you for providing a changeset comment! " +
@@ -119,7 +130,8 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
             } else {
                 final String rejection = UploadDialog.UploadAction.validateUploadTag(
                         uploadSource, "upload.source", Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
-                if (rejection != null) {
+                uploadRejected = rejection != null;
+                if (uploadRejected) {
                     feedbackWarning(tr("Your changeset source is <i>rejected</i>.") + "<br />" + rejection);
                 } else {
                     feedbackValid(tr("Thank you for providing the data source!"));

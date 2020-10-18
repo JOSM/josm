@@ -92,7 +92,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         hcbUploadComment.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
-        populateHistoryComboBox(hcbUploadComment, HISTORY_KEY, new LinkedList<String>());
+        populateHistoryComboBox(hcbUploadComment, HISTORY_KEY, new LinkedList<>());
         CommentModelListener commentModelListener = new CommentModelListener(hcbUploadComment, changesetCommentModel);
         hcbUploadComment.getEditor().addActionListener(commentModelListener);
         hcbUploadComment.getEditorComponent().addFocusListener(commentModelListener);
@@ -171,7 +171,7 @@ public class BasicUploadSettingsPanel extends JPanel {
      * Refreshes contents of upload history combo boxes from preferences.
      */
     protected void refreshHistoryComboBoxes() {
-        populateHistoryComboBox(hcbUploadComment, HISTORY_KEY, new LinkedList<String>());
+        populateHistoryComboBox(hcbUploadComment, HISTORY_KEY, new LinkedList<>());
         populateHistoryComboBox(hcbUploadSource, SOURCE_HISTORY_KEY, getDefaultSources());
     }
 
@@ -194,6 +194,15 @@ public class BasicUploadSettingsPanel extends JPanel {
      */
     public static List<String> getDefaultSources() {
         return Arrays.asList("knowledge", "survey", "Bing");
+    }
+
+    /**
+     * Returns the list of {@link UploadTextComponentValidator} defined by this panel.
+     * @return the list of {@code UploadTextComponentValidator} defined by this panel.
+     * @since 17238
+     */
+    protected List<UploadTextComponentValidator> getUploadTextValidators() {
+        return Arrays.asList(areaValidator, uploadCommentValidator, uploadSourceValidator);
     }
 
     protected void build() {

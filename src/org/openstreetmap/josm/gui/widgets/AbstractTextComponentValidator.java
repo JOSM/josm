@@ -20,6 +20,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.preferences.NamedColorProperty;
+import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -34,7 +35,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * @since 2688
  */
-public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener {
+public abstract class AbstractTextComponentValidator extends ChangeNotifier
+    implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener {
 
     protected static final Color ERROR_COLOR = new NamedColorProperty(marktr("Input validation: error"), Color.RED).get();
     protected static final Border ERROR_BORDER = BorderFactory.createLineBorder(ERROR_COLOR, 1);
@@ -62,22 +64,14 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     protected void feedbackInvalid(String msg) {
         if (hasChanged(msg, Status.INVALID)) {
             // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
-            tc.setBorder(ERROR_BORDER);
-            tc.setBackground(ERROR_BACKGROUND);
-            tc.setToolTipText(msg);
-            this.status = Status.INVALID;
-            this.msg = msg;
+            feedback(ERROR_BORDER, ERROR_BACKGROUND, msg, Status.INVALID, msg);
         }
     }
 
     protected void feedbackWarning(String msg) {
         if (hasChanged(msg, Status.WARNING)) {
             // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
-            tc.setBorder(WARNING_BORDER);
-            tc.setBackground(WARNING_BACKGROUND);
-            tc.setToolTipText(msg);
-            this.status = Status.WARNING;
-            this.msg = msg;
+            feedback(WARNING_BORDER, WARNING_BACKGROUND, msg, Status.WARNING, msg);
         }
     }
 
@@ -88,16 +82,25 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     protected void feedbackValid(String msg) {
         if (hasChanged(msg, Status.VALID)) {
             // only provide feedback if the validity has changed. This avoids unnecessary UI updates.
-            tc.setBorder(msg == null ? UIManager.getBorder("TextField.border") : VALID_BORDER);
-            tc.setBackground(UIManager.getColor("TextField.background"));
-            tc.setToolTipText(msg == null ? "" : msg);
-            this.status = Status.VALID;
-            this.msg = msg;
+            feedback(msg == null ? UIManager.getBorder("TextField.border") : VALID_BORDER,
+                UIManager.getColor("TextField.background"),
+                msg == null ? "" : msg,
+                Status.VALID,
+                msg);
         }
     }
 
     private boolean hasChanged(String msg, Status status) {
         return !(Objects.equals(status, this.status) && Objects.equals(msg, this.msg));
+    }
+
+    private void feedback(Border border, Color background, String tooltip, Status status, String msg) {
+        tc.setBorder(border);
+        tc.setBackground(background);
+        tc.setToolTipText(tooltip);
+        this.status = status;
+        this.msg = msg;
+        fireStateChanged();
     }
 
     /**
@@ -170,10 +173,10 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* interface FocusListener                                                          */
     /* -------------------------------------------------------------------------------- */
     @Override
-    public void focusGained(FocusEvent arg0) {}
+    public void focusGained(FocusEvent e) {}
 
     @Override
-    public void focusLost(FocusEvent arg0) {
+    public void focusLost(FocusEvent e) {
         validate();
     }
 
@@ -181,7 +184,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* interface ActionListener                                                         */
     /* -------------------------------------------------------------------------------- */
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(ActionEvent e) {
         validate();
     }
 
@@ -189,17 +192,17 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
     /* interface DocumentListener                                                       */
     /* -------------------------------------------------------------------------------- */
     @Override
-    public void changedUpdate(DocumentEvent arg0) {
+    public void changedUpdate(DocumentEvent e) {
         validate();
     }
 
     @Override
-    public void insertUpdate(DocumentEvent arg0) {
+    public void insertUpdate(DocumentEvent e) {
         validate();
     }
 
     @Override
-    public void removeUpdate(DocumentEvent arg0) {
+    public void removeUpdate(DocumentEvent e) {
         validate();
     }
 
