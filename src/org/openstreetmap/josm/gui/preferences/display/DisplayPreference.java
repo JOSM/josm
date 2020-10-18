@@ -29,7 +29,7 @@ public final class DisplayPreference extends DefaultTabPreferenceSetting {
     }
 
     private DisplayPreference() {
-        super(/* ICON(preferences/) */ "display", tr("Display Settings"),
+        super(/* ICON(preferences/) */ "display", tr("Display"),
                 tr("Various settings that influence the visual representation of the whole program."), false, new JTabbedPane());
     }
 

@@ -786,7 +786,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
          * @param rootActionsNode root actions node
          */
         public Settings(DefaultMutableTreeNode rootActionsNode) {
-            super(/* ICON(preferences/) */ "toolbar", tr("Toolbar customization"), tr("Customize the elements on the toolbar."));
+            super(/* ICON(preferences/) */ "toolbar", tr("Toolbar"), tr("Customize the elements on the toolbar."));
             actionsTreeModel = new DefaultTreeModel(rootActionsNode);
             actionsTree = new JTree(actionsTreeModel);
         }

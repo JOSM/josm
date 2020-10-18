@@ -70,7 +70,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     private ImageryPreference() {
-        super(/* ICON(preferences/) */ "imagery", tr("Imagery preferences"),
+        super(/* ICON(preferences/) */ "imagery", tr("Imagery"),
                 tr("Modify list of imagery layers displayed in the Imagery menu"),
                 false, new JTabbedPane());
     }

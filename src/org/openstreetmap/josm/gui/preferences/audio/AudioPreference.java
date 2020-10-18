@@ -36,7 +36,7 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
     }
 
     private AudioPreference() {
-        super(/* ICON(preferences/) */ "audio", tr("Audio Settings"), tr("Settings for the audio player and audio markers."));
+        super(/* ICON(preferences/) */ "audio", tr("Audio"), tr("Settings for the audio player and audio markers."));
     }
 
     private final JCheckBox audioMenuVisible = new JCheckBox(tr("Display the Audio menu."));
