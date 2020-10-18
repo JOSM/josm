@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -317,12 +318,15 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         return p;
     }
 
-    private void selectTabBy(Predicate<TabPreferenceSetting> predicate) {
-        IntStream.range(0, getTabCount())
+    private OptionalInt indexOfTab(Predicate<TabPreferenceSetting> predicate) {
+        return IntStream.range(0, getTabCount())
                 .filter(i -> getComponentAt(i) instanceof PreferenceTab
                         && predicate.test(((PreferenceTab) getComponentAt(i)).getTabPreferenceSetting()))
-                .findFirst()
-                .ifPresent(this::setSelectedIndex);
+                .findFirst();
+    }
+
+    private void selectTabBy(Predicate<TabPreferenceSetting> predicate) {
+        indexOfTab(predicate).ifPresent(this::setSelectedIndex);
     }
 
     /**
@@ -536,6 +540,17 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
             } else if (!(setting instanceof SubPreferenceSetting)) {
                 Logging.warn("Ignoring preferences "+setting);
             }
+        }
+        // Hide empty TabPreferenceSetting (only present for plugins)
+        for (DefaultTabPreferenceSetting tps : Utils.filteredCollection(settings, DefaultTabPreferenceSetting.class)) {
+            if (!tps.canBeHidden() || Utils.filteredCollection(settings, SubPreferenceSetting.class).stream()
+                    .anyMatch(s -> s.getTabPreferenceSetting(this) == tps)) {
+                continue;
+            }
+            indexOfTab(tps::equals).ifPresent(index -> {
+                remove(index);
+                Logging.debug("{0}: hiding empty {1}", getClass().getSimpleName(), tps);
+            });
         }
         if (sel != null) {
             int index = indexOfComponent(sel);

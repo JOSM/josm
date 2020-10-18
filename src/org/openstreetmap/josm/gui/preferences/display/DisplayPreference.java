@@ -47,4 +47,9 @@ public final class DisplayPreference extends DefaultTabPreferenceSetting {
     public String getHelpContext() {
         return HelpUtil.ht("/Preferences/Display");
     }
+
+    @Override
+    protected boolean canBeHidden() {
+        return true;
+    }
 }

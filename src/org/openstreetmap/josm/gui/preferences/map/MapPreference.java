@@ -46,4 +46,9 @@ public final class MapPreference extends DefaultTabPreferenceSetting {
     public String getHelpContext() {
         return HelpUtil.ht("/Preferences/Map");
     }
+
+    @Override
+    protected boolean canBeHidden() {
+        return true;
+    }
 }

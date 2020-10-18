@@ -148,6 +148,14 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
                 .findFirst().orElse(null);
     }
 
+    /**
+     * Determines whether this tab may be hidden (since it does not contain any relevant content)
+     * @return whether this tab may be hidden
+     */
+    protected boolean canBeHidden() {
+        return false;
+    }
+
     @Override
     public String getHelpContext() {
         return HelpUtil.ht("/Action/Preferences");
