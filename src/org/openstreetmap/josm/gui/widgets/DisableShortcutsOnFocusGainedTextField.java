@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.event.FocusEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -142,7 +143,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
      */
     protected void unregisterActionShortcuts() {
         unregisteredActionShortcuts.clear();
-        // Unregister all actions without modifiers to avoid them to be triggered by typing in this text field
+        // Unregister all actions with Shift modifier or without modifiers to avoid them to be triggered by typing in this text field
         for (Shortcut shortcut : Shortcut.listAll()) {
             KeyStroke ks = shortcut.getKeyStroke();
             if (hasToBeDisabled(ks)) {
@@ -156,14 +157,22 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
     }
 
     /**
-     * Returns true if the given shortcut has no modifier and is not an actions key.
+     * Returns true if the given shortcut has Shift modifier or no modifier and is not an actions key.
      * @param ks key stroke
      * @return {@code true} if the given shortcut has to be disabled
      * @see KeyEvent#isActionKey()
      */
     protected boolean hasToBeDisabled(KeyStroke ks) {
-        return ks != null && ks.getModifiers() == 0 && !new KeyEvent(
+        return ks != null && (ks.getModifiers() == 0 || isOnlyShift(ks.getModifiers())) && !new KeyEvent(
                 this, KeyEvent.KEY_PRESSED, 0, ks.getModifiers(), ks.getKeyCode(), ks.getKeyChar()).isActionKey();
+    }
+
+    private static boolean isOnlyShift(int modifiers) {
+        return (modifiers & InputEvent.SHIFT_DOWN_MASK) != 0
+                && (modifiers & InputEvent.CTRL_DOWN_MASK) == 0
+                && (modifiers & InputEvent.ALT_DOWN_MASK) == 0
+                && (modifiers & InputEvent.ALT_GRAPH_DOWN_MASK) == 0
+                && (modifiers & InputEvent.META_DOWN_MASK) == 0;
     }
 
     /**
