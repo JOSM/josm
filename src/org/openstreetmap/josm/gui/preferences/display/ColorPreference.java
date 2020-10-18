@@ -80,7 +80,8 @@ public class ColorPreference extends DefaultTabPreferenceSetting implements List
     }
 
     ColorPreference() {
-        super("/colorchooser", tr("Colors"), tr("Change colors used in program dialogs and in map paint styles."));
+        super(/* ICON(preferences/) */ "color",
+                tr("Colors"), tr("Change colors used in program dialogs and in map paint styles."));
     }
 
     private ColorTableModel tableModel;
