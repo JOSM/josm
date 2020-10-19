@@ -19,17 +19,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangeRelationMemberRoleCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.correction.RoleCorrection;
 import org.openstreetmap.josm.data.correction.TagCorrection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.correction.RoleCorrectionTable;
 import org.openstreetmap.josm.gui.correction.TagCorrectionTable;
@@ -37,6 +34,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UserCancelException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Abstract base class for automatic tag corrections.
@@ -163,37 +161,29 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
                     OsmPrimitive primitive = entry.getKey();
 
-                    // create the clone
-                    OsmPrimitive clone;
-                    if (primitive instanceof Way) {
-                        clone = new Way((Way) primitive);
-                    } else if (primitive instanceof Node) {
-                        clone = new Node((Node) primitive);
-                    } else if (primitive instanceof Relation) {
-                        clone = new Relation((Relation) primitive);
-                    } else
-                        throw new AssertionError();
-
                     // use this structure to remember keys that have been set already so that
                     // they're not dropped by a later step
                     Set<String> keysChanged = new HashSet<>();
 
-                    // apply all changes to this clone
+                    // the map for the change command
+                    Map<String, String> tagMap = new HashMap<>();
+
                     List<TagCorrection> tagCorrections = entry.getValue();
                     for (int i = 0; i < tagCorrections.size(); i++) {
                         if (tagTableMap.get(primitive).getCorrectionTableModel().getApply(i)) {
                             TagCorrection tagCorrection = tagCorrections.get(i);
                             if (tagCorrection.isKeyChanged() && !keysChanged.contains(tagCorrection.oldKey)) {
-                                clone.remove(tagCorrection.oldKey);
+                                tagMap.put(tagCorrection.oldKey, null);
                             }
-                            clone.put(tagCorrection.newKey, tagCorrection.newValue);
+                            tagMap.put(tagCorrection.newKey, tagCorrection.newValue);
                             keysChanged.add(tagCorrection.newKey);
                         }
                     }
 
-                    // save the clone
                     if (!keysChanged.isEmpty()) {
-                        commands.add(new ChangeCommand(dataSet, primitive, clone));
+                        // change the properties of this object
+                        commands.add(new ChangePropertyCommand(dataSet, Collections.singleton(primitive),
+                                Utils.toUnmodifiableMap(tagMap)));
                     }
                 }
                 for (Entry<OsmPrimitive, List<RoleCorrection>> entry : roleCorrectionMap.entrySet()) {
