@@ -16,9 +16,10 @@ fi
 
 echo "Building JOSM.app"
 
+mkdir app
 jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
-    --icon ./native/macosx/JOSM.icns --type app-image --dest dist \
+    --icon ./native/macosx/JOSM.icns --type app-image --dest app \
     --java-options "-Xmx8192m" --app-version $1 \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "https://josm.openstreetmap.de" \
@@ -68,18 +69,18 @@ fi
 echo "Signing App Bundle…"
 
 codesign -vvv --timestamp --options runtime --deep --force --sign "$SIGNING_KEY_NAME" \
-    dist/JOSM.app/Contents/MacOS/JOSM \
-    dist/JOSM.app/Contents/MacOS/libapplauncher.dylib \
-    dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar \
-    dist/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib \
-    dist/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
+    app/JOSM.app/Contents/MacOS/JOSM \
+    app/JOSM.app/Contents/MacOS/libapplauncher.dylib \
+    app/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar \
+    app/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib \
+    app/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
 
-codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" dist/JOSM.app
+codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" app/JOSM.app
 
-codesign -vvv dist/JOSM.app
+codesign -vvv app/JOSM.app
 
 echo "Preparing for notarization"
-ditto -c -k --zlibCompressionLevel 9 --keepParent dist/JOSM.app dist/JOSM.zip
+ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip
 
 echo "Uploading to Apple"
-xcrun altool --notarize-app -f dist/JOSM.zip -p "$APPLE_ID_PW" -u "thomas.skowron@fossgis.de" --primary-bundle-id de.openstreetmap.josm
+xcrun altool --notarize-app -f app/JOSM.zip -p "$APPLE_ID_PW" -u "thomas.skowron@fossgis.de" --primary-bundle-id de.openstreetmap.josm
