@@ -70,7 +70,6 @@ echo "Signing App Bundle…"
 
 codesign -vvv --timestamp --options runtime --deep --force --sign "$SIGNING_KEY_NAME" \
     app/JOSM.app/Contents/MacOS/JOSM \
-    app/JOSM.app/Contents/MacOS/libapplauncher.dylib \
     app/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar \
     app/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib \
     app/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
