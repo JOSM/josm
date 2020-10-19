@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -282,14 +282,14 @@ public class DuplicateWay extends Test {
         // Fix relations.
         if (wayWithRelations != null && relations != null && wayToKeep != wayWithRelations) {
             for (Relation rel : relations) {
-                Relation newRel = new Relation(rel);
-                for (int i = 0; i < newRel.getMembers().size(); ++i) {
-                    RelationMember m = newRel.getMember(i);
+                List<RelationMember> members = rel.getMembers();
+                for (int i = 0; i < rel.getMembers().size(); ++i) {
+                    RelationMember m = rel.getMember(i);
                     if (wayWithRelations.equals(m.getMember())) {
-                        newRel.setMember(i, new RelationMember(m.getRole(), wayToKeep));
+                        members.set(i, new RelationMember(m.getRole(), wayToKeep));
                     }
                 }
-                commands.add(new ChangeCommand(rel, newRel));
+                commands.add(new ChangeMembersCommand(rel, members));
             }
         }
 

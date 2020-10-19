@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -385,9 +385,9 @@ public class RelationChecker extends Test implements TaggingPresetListener {
             }
             if (testError.getCode() == RELATION_LOOP) {
                 Relation old = (Relation) primitives.iterator().next();
-                Relation mod = new Relation(old);
-                mod.removeMembersFor(primitives);
-                return new ChangeCommand(old, mod);
+                List<RelationMember> remaining = new ArrayList<>(old.getMembers());
+                remaining.removeIf(rm -> primitives.contains(rm.getMember()));
+                return new ChangeMembersCommand(old, Utils.toUnmodifiableList(remaining));
             }
         }
         return null;

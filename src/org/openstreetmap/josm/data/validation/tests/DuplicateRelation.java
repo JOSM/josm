@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -201,7 +201,6 @@ public class DuplicateRelation extends Test {
 
     @Override
     public void endTest() {
-        super.endTest();
         for (Set<OsmPrimitive> duplicated : relations.values()) {
             if (duplicated.size() > 1) {
                 TestError testError = TestError.builder(this, Severity.ERROR, DUPLICATE_RELATION)
@@ -222,6 +221,7 @@ public class DuplicateRelation extends Test {
             }
         }
         relationsNoKeys = null;
+        super.endTest();
     }
 
     @Override
@@ -245,9 +245,10 @@ public class DuplicateRelation extends Test {
      */
     @Override
     public Command fixError(TestError testError) {
-        if (testError.getCode() == SAME_RELATION) return null;
+        if (!isFixable(testError)) return null;
+
         Set<Relation> relFix = testError.primitives(Relation.class)
-                .filter(r -> !r.isDeleted())
+                .filter(r -> !r.isDeleted() || r.getDataSet() == null || r.getDataSet().getPrimitiveById(r) == null)
                 .collect(Collectors.toSet());
 
         if (relFix.size() < 2)
@@ -258,19 +259,19 @@ public class DuplicateRelation extends Test {
         // Find the relation that is member of one or more relations. (If any)
         Relation relationWithRelations = null;
         Collection<Relation> relRef = null;
-        for (Relation w : relFix) {
-            Collection<Relation> rel = w.referrers(Relation.class).collect(Collectors.toList());
+        for (Relation r : relFix) {
+            Collection<Relation> rel = r.referrers(Relation.class).collect(Collectors.toList());
             if (!rel.isEmpty()) {
                 if (relationWithRelations != null)
                     throw new AssertionError("Cannot fix duplicate relations: More than one relation is member of another relation.");
-                relationWithRelations = w;
+                relationWithRelations = r;
                 relRef = rel;
             }
             // Only one relation will be kept - the one with lowest positive ID, if such exist
             // or one "at random" if no such exists. Rest of the relations will be deleted
-            if (!w.isNew() && (idToKeep == 0 || w.getId() < idToKeep)) {
-                idToKeep = w.getId();
-                relationToKeep = w;
+            if (!r.isNew() && (idToKeep == 0 || r.getId() < idToKeep)) {
+                idToKeep = r.getId();
+                relationToKeep = r;
             }
         }
 
@@ -279,14 +280,14 @@ public class DuplicateRelation extends Test {
         // Fix relations.
         if (relationWithRelations != null && relRef != null && relationToKeep != relationWithRelations) {
             for (Relation rel : relRef) {
-                Relation newRel = new Relation(rel);
-                for (int i = 0; i < newRel.getMembers().size(); ++i) {
-                    RelationMember m = newRel.getMember(i);
+                List<RelationMember> members = new ArrayList<>(rel.getMembers());
+                for (int i = 0; i < rel.getMembers().size(); ++i) {
+                    RelationMember m = rel.getMember(i);
                     if (relationWithRelations.equals(m.getMember())) {
-                        newRel.setMember(i, new RelationMember(m.getRole(), relationToKeep));
+                        members.set(i, new RelationMember(m.getRole(), relationToKeep));
                     }
                 }
-                commands.add(new ChangeCommand(rel, newRel));
+                commands.add(new ChangeMembersCommand(rel, members));
             }
         }
 
