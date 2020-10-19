@@ -24,7 +24,7 @@ public class GPXPreference extends DefaultTabPreferenceSetting {
     }
 
     GPXPreference() {
-        super("layer/gpx_small.svg", tr("GPS Points"), tr("Settings that control the drawing of GPS tracks."));
+        super("layer/gpx_small", tr("GPS Points"), tr("Settings that control the drawing of GPS tracks."));
     }
 
     private GPXSettingsPanel gpxPanel;

@@ -73,7 +73,7 @@ public class LafPreference extends DefaultTabPreferenceSetting {
     }
 
     LafPreference() {
-        super(null, tr("Look and Feel"), tr("Change the Look and Feel of the program"));
+        super(/* ICON(preferences/) */ "display", tr("Look and Feel"), tr("Change the Look and Feel of the program"));
     }
 
     /**

@@ -342,7 +342,7 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
     private static final GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
 
     public ProjectionPreference() {
-        super(null, tr("Map Projection"), tr("Map Projection"));
+        super(/* ICON(preferences/) */ "map", tr("Map Projection"), tr("Map Projection"));
         this.projectionCombo = new JosmComboBox<>(
             projectionChoices.toArray(new ProjectionChoice[0]));
         this.coordinatesCombo = new JosmComboBox<>(
