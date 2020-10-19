@@ -99,8 +99,9 @@ public class AddPrimitivesCommand extends Command {
             // When redoing this command, we have to add the same objects, otherwise
             // a subsequent command (e.g. MoveCommand) cannot be redone.
             for (OsmPrimitive osm : createdPrimitives) {
-                if (preExistingData.stream().anyMatch(pd -> pd.getUniqueId() == osm.getUniqueId())) {
-                    Optional<PrimitiveData> o = data.stream().filter(pd -> pd.getUniqueId() == osm.getUniqueId()).findAny();
+                if (preExistingData.stream().anyMatch(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId()))) {
+                    Optional<PrimitiveData> o = data.stream()
+                            .filter(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId())).findAny();
                     if (o.isPresent()) {
                         osm.load(o.get());
                     }
@@ -125,8 +126,11 @@ public class AddPrimitivesCommand extends Command {
             }
             createdPrimitives = PurgeCommand.topoSort(createdPrimitives);
         }
-        for (OsmPrimitive osm : createdPrimitives) {
-            Optional<PrimitiveData> previous = preExistingData.stream().filter(pd -> pd.getUniqueId() == osm.getUniqueId()).findAny();
+        // reversed order, see #14620
+        for (int i = createdPrimitives.size() - 1; i >= 0; i--) {
+            OsmPrimitive osm = createdPrimitives.get(i);
+            Optional<PrimitiveData> previous = preExistingData.stream()
+                    .filter(pd -> pd.getPrimitiveId().equals(osm.getPrimitiveId())).findAny();
             if (previous.isPresent()) {
                 osm.load(previous.get());
             } else {

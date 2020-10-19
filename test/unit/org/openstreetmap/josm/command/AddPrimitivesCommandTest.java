@@ -186,10 +186,91 @@ public class AddPrimitivesCommandTest {
 
         assertTrue(command.executeCommand());
 
-        assertEquals(3, ds.getNodes().size());
+        for (int i = 0; i < 2; i++) {
+            // Needs to work multiple times.
+            assertEquals(3, ds.getNodes().size());
+            assertEquals(1, ds.getWays().size());
+
+            command.undoCommand();
+
+            assertEquals(2, ds.getNodes().size());
+            assertEquals(1, ds.getWays().size());
+
+            // redo
+            assertTrue(command.executeCommand());
+        }
+    }
+
+    /**
+     * Tests if the undo command does not remove
+     * data ignored by by the add command because they where already existing.
+     * Simulates regression in #14620
+     */
+    @Test
+    public void testUndoIgnoresExistingAsDeleted() {
+        DataSet ds = new DataSet();
+
+        List<PrimitiveData> testData = createTestData();
+
+        assertTrue(new AddPrimitivesCommand(testData, ds).executeCommand());
+        assertEquals(2, ds.getNodes().size());
         assertEquals(1, ds.getWays().size());
 
+        ds.getNodes().forEach(n -> n.setDeleted(true));
+
+        AddPrimitivesCommand command = new AddPrimitivesCommand(testData, ds);
+
+        assertTrue(command.executeCommand());
+
         for (int i = 0; i < 2; i++) {
+            // Needs to work multiple times.
+            assertEquals(2, ds.getNodes().size());
+            assertEquals(1, ds.getWays().size());
+
+            command.undoCommand();
+
+            assertEquals(2, ds.getNodes().size());
+            assertEquals(1, ds.getWays().size());
+
+            // redo
+            assertTrue(command.executeCommand());
+        }
+    }
+
+    /**
+     * Tests if the undo command does not remove
+     * data ignored by by the add command because they where already existing.
+     */
+    @Test
+    public void testUndoIgnoresExistingSameUniqueIdDifferentType() {
+        DataSet ds = new DataSet();
+
+        List<PrimitiveData> testData = new ArrayList<>(createTestData());
+
+        assertTrue(new AddPrimitivesCommand(testData, ds).executeCommand());
+        assertEquals(2, ds.getNodes().size());
+        assertEquals(1, ds.getWays().size());
+
+        NodeData n7Data = createTestNode(7);
+        NodeData n8Data = createTestNode(8);
+        Way w2 = new Way(5);
+        Node n7 = new Node(7);
+        n7.load(n7Data);
+        Node n8 = new Node(8);
+        n8.load(n8Data);
+        w2.setNodes(Arrays.asList(n7, n8));
+        testData.set(2, createTestNode(7));
+        testData.add(n8.save());
+        testData.add(w2.save());
+
+        AddPrimitivesCommand command = new AddPrimitivesCommand(testData, ds);
+
+        assertTrue(command.executeCommand());
+
+        for (int i = 0; i < 2; i++) {
+            assertEquals(4, ds.getNodes().size());
+            assertEquals(2, ds.getWays().size());
+
             // Needs to work multiple times.
             command.undoCommand();
 
@@ -199,8 +280,6 @@ public class AddPrimitivesCommandTest {
             // redo
             assertTrue(command.executeCommand());
 
-            assertEquals(3, ds.getNodes().size());
-            assertEquals(1, ds.getWays().size());
         }
     }
 
@@ -265,7 +344,7 @@ public class AddPrimitivesCommandTest {
     private List<PrimitiveData> createTestData() {
         NodeData node1 = createTestNode(5);
         NodeData node2 = createTestNode(6);
-        WayData way = new WayData();
+        WayData way = new WayData(2);
         way.put("test", "test");
         way.setNodeIds(Arrays.asList(node1.getId(), node2.getId()));
         List<PrimitiveData> testData = Arrays.<PrimitiveData>asList(node1, node2, way);
