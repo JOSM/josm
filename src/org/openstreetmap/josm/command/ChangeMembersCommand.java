@@ -35,9 +35,6 @@ public class ChangeMembersCommand extends Command {
         super(data);
         this.relation = Objects.requireNonNull(relation, "relation");
         this.cmdMembers = Objects.requireNonNull(newMembers, "newMembers");
-        if (cmdMembers.isEmpty()) {
-            throw new IllegalArgumentException("Members collection is empty");
-        }
     }
 
     /**
