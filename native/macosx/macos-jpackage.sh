@@ -35,6 +35,7 @@ if [[ $IMPORT_AND_UNLOCK_KEYCHAIN == 1 ]]; then
     echo "Preparing certificates/keychain for signing…"
 
     KEYCHAIN=build.keychain
+    KEYCHAINPATH=~/Library/Keychains/$KEYCHAIN-db
     KEYCHAIN_PW=`head /dev/urandom | base64 | head -c 20`
     CERTIFICATE_P12=certificate.p12
 
@@ -59,8 +60,7 @@ echo "Building and signin app"
     --mac-sign \
     --mac-package-identifier de.openstreetmap.josm \
     --mac-package-signing-prefix de.openstreetmap.josm \
-    --mac-signing-key-user-name "$SIGNING_KEY_NAME" \
-    --mac-signing-keychain $KEYCHAIN \
+    --mac-signing-keychain $KEYCHAINPATH \
     --file-associations native/macosx/bz2.properties \
     --file-associations native/macosx/geojson.properties \
     --file-associations native/macosx/gpx.properties \
