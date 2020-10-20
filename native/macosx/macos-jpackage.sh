@@ -64,8 +64,7 @@ echo "Building and signin app"
     --mac-sign \
     --mac-package-identifier de.openstreetmap.josm \
     --mac-package-signing-prefix de.openstreetmap.josm \
-    --mac-signing-key-user-name "$SIGNING_KEY_NAME" \
-    --mac-signing-keychain $KEYCHAIN \
+    --mac-signing-keychain $KEYCHAINPATH \
     --file-associations native/macosx/bz2.properties \
     --file-associations native/macosx/geojson.properties \
     --file-associations native/macosx/gpx.properties \
