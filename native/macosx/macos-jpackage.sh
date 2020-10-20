@@ -17,23 +17,6 @@ fi
 echo "Building JOSM.app"
 
 mkdir app
-jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
-    --main-class org.openstreetmap.josm.gui.MainApplication \
-    --icon ./native/macosx/JOSM.icns --type app-image --dest app \
-    --java-options "-Xmx8192m" --app-version $1 \
-    --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
-    --vendor "https://josm.openstreetmap.de" \
-    --file-associations native/macosx/bz2.properties \
-    --file-associations native/macosx/geojson.properties \
-    --file-associations native/macosx/gpx.properties \
-    --file-associations native/macosx/gz.properties \
-    --file-associations native/macosx/jos.properties \
-    --file-associations native/macosx/joz.properties \
-    --file-associations native/macosx/osm.properties \
-    --file-associations native/macosx/zip.properties \
-    --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
-
-echo "Building done."
 
 if [[ $IMPORT_AND_UNLOCK_KEYCHAIN == 1 ]]; then
     if [ -z "$CERT_MACOS_P12" ]
@@ -66,17 +49,40 @@ if [[ $IMPORT_AND_UNLOCK_KEYCHAIN == 1 ]]; then
     echo "Signing preparation done."
 fi
 
+echo "Building and signin app"
+    jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
+    --main-class org.openstreetmap.josm.gui.MainApplication \
+    --icon ./native/macosx/JOSM.icns --type app-image --dest app \
+    --java-options "-Xmx8192m" --app-version $1 \
+    --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
+    --vendor "https://josm.openstreetmap.de" \
+    --mac-sign \
+    --mac-package-identifier de.openstreetmap.josm \
+    --mac-package-signing-prefix de.openstreetmap.josm \
+    --mac-signing-key-user-name "$SIGNING_KEY_NAME" \
+    --file-associations native/macosx/bz2.properties \
+    --file-associations native/macosx/geojson.properties \
+    --file-associations native/macosx/gpx.properties \
+    --file-associations native/macosx/gz.properties \
+    --file-associations native/macosx/jos.properties \
+    --file-associations native/macosx/joz.properties \
+    --file-associations native/macosx/osm.properties \
+    --file-associations native/macosx/zip.properties \
+    --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
+
+echo "Building done."
+
 echo "Signing App Bundle…"
 
-codesign -vvv --timestamp --options runtime --deep --force --sign "$SIGNING_KEY_NAME" \
-    app/JOSM.app/Contents/MacOS/JOSM \
-    app/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar \
-    app/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib \
-    app/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
+# codesign -vvv --timestamp --options runtime --deep --force --sign "$SIGNING_KEY_NAME" \
+#     app/JOSM.app/Contents/MacOS/JOSM \
+#     app/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar \
+#     app/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib \
+#     app/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
 
-codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" app/JOSM.app
+# codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" app/JOSM.app
 
-codesign -vvv app/JOSM.app
+# codesign -vvv app/JOSM.app
 
 echo "Preparing for notarization"
 ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip
