@@ -62,7 +62,7 @@ public final class Tag2Link {
             .collect(Collectors.joining("|"));
 
     static final ListProperty PREF_SOURCE = new ListProperty("tag2link.source",
-            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2020.8.3/index.json"));
+            Collections.singletonList("resource://META-INF/resources/webjars/tag2link/2020.10.18/index.json"));
 
     static final CachingProperty<List<String>> PREF_SEARCH_ENGINES = new ListProperty("tag2link.search",
             Arrays.asList("https://duckduckgo.com/?q=$1", "https://www.google.com/search?q=$1")).cached();
