@@ -237,11 +237,9 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
         registerProjectionChoice(new PuwgProjectionChoice());                                       // PL
 
         /**
-         * SWEREF99 13 30 projection. Based on data from spatialreference.org.
-         * http://spatialreference.org/ref/epsg/3008/
-         *
-         * @author Hanno Hecker
+         * SWEREF99 projections. Official coordinate system in Sweden.
          */
+        registerProjectionChoice(tr("SWEREF99 TM / EPSG:3006 (Sweden)"), "core:sweref99tm", 3006);  // SE
         registerProjectionChoice(tr("SWEREF99 13 30 / EPSG:3008 (Sweden)"), "core:sweref99", 3008); // SE
 
         /************************
@@ -255,6 +253,10 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
         registerProjectionChoice(new CustomProjectionChoice());
     }
 
+    /**
+     * Registers a new projection choice.
+     * @param c projection choice
+     */
     public static void registerProjectionChoice(ProjectionChoice c) {
         projectionChoices.add(c);
         projectionChoicesById.put(c.getId(), c);
@@ -285,6 +287,10 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
         return pc;
     }
 
+    /**
+     * Returns the list of projection choices.
+     * @return the list of projection choices
+     */
     public static List<ProjectionChoice> getProjectionChoices() {
         return Collections.unmodifiableList(projectionChoices);
     }
@@ -341,6 +347,9 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
      */
     private static final GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
 
+    /**
+     * Constructs a new {@code ProjectionPreference}.
+     */
     public ProjectionPreference() {
         super(/* ICON(preferences/) */ "map", tr("Map Projection"), tr("Map Projection"));
         this.projectionCombo = new JosmComboBox<>(
@@ -449,6 +458,9 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
         return false;
     }
 
+    /**
+     * Set default projection.
+     */
     public static void setProjection() {
         setProjection(PROP_PROJECTION_DEFAULT.get(), PROP_SUB_PROJECTION_DEFAULT.get(), false);
     }
