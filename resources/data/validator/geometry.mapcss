@@ -86,7 +86,7 @@ node[source:outline] {
   throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");
 }
 
-/* {0} on a node, should be a relation; Error level; see #10252, #10769, #14288 */
+/* {0} on a node, should be a relation; Error level; #10252, #10769, #14288 */
 node[type=multipolygon],
 node[interval],
 node[route],
@@ -125,12 +125,17 @@ way[highway=motorway_junction] {
   throwWarning: tr("{0} on a way. Should be used on a node.", "{0.tag}"); 
 }
 
-/* {0} on a way, should be a relation; see #15642, #10252, #14288 */
+/* {0} on a way, should be a relation; #15642, #10252, #14288 */
 way[restriction][restriction =~ /^(no_right_turn|no_left_turn|no_u_turn|no_straight_on|only_right_turn|only_left_turn|only_straight_on|no_entry|no_exit)$/],
 way[type=multipolygon],
 way[interval][route!=ferry],
 way[route=bus] {
   throwError: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
+}
+
+/* {0} on a closed way, should be a unclosed way; #19981 */
+way:closed[power=line] {
+  throwWarning: tr("{0} on a closed way. Should be used on an unclosed way.", "{1.tag}"); 
 }
 
 /* #14395, #17025, #19506 */
@@ -158,7 +163,7 @@ node[man_made!=monitoring_station][at(0.0,0.0)] {
   fixDeleteObject: this;
 }
 
-/* see ticket:#10125 */
+/* #10125 */
 node[source:geometry] {
   throwWarning: tr("{0} on a node", "{0.key}");
   fixChangeKey: "source:geometry => source:position";
@@ -197,13 +202,13 @@ area:closed:areaStyle ⧉ area:closed:areaStyle {
   throwOther: tr("Overlapping Areas");
 }
 
-/* see ticket #9311 */
+/* #9311 */
 node[amenity=parking]["capacity:disabled" !~ /^(yes|[0-9]+)$/] ∈ area[amenity=parking] {
   throwWarning: tr("{0} inside {1}", "amenity=parking", "amenity=parking");
   group: tr("{0} inside {1}", "amenity", "amenity");
 }
 
-/* see ticket #9556 */
+/* #9556 */
 area:closed:areaStyle[tag("natural") = parent_tag("natural")] ⧉ area:closed:areaStyle[natural] {
   throwWarning: tr("Overlapping Identical Natural Areas");
 }
@@ -212,7 +217,7 @@ area:closed:areaStyle[tag("landuse") = parent_tag("landuse")] ⧉ area:closed:ar
   throwWarning: tr("Overlapping Identical Landuses");
 }
 
-/* see ticket:#9522 */
+/* #9522 */
 node[tag("amenity") = parent_tag("amenity")] ∈ area[amenity][amenity != parking] {
   throwWarning: tr("{0} inside {1}", concat("amenity=", tag("amenity")), concat("amenity=", tag("amenity")));
   group: tr("{0} inside {1}", "amenity", "amenity");
@@ -234,7 +239,7 @@ node[tag("power") = parent_tag("power")] ∈ area[power] {
   group: tr("{0} inside {1}", "power", "power");
 }
 
-/* isolated nodes which should be part of a way, see #10825, #15478 */
+/* isolated nodes which should be part of a way; #10825, #15478 */
 node:unconnected:in-downloaded-area[entrance],
 node:unconnected:in-downloaded-area[traffic_calming],
 node:unconnected:in-downloaded-area[highway=passing_place],
