@@ -450,7 +450,8 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
+            if (!e.getValueIsAdjusting())
+                updateEnabledState();
         }
     }
 
@@ -494,7 +495,8 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
+            if (!e.getValueIsAdjusting())
+                updateEnabledState();
         }
     }
 
@@ -527,7 +529,8 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
+            if (!e.getValueIsAdjusting())
+                updateEnabledState();
         }
     }
 
@@ -560,7 +563,8 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
+            if (!e.getValueIsAdjusting())
+                updateEnabledState();
         }
     }
 
@@ -600,7 +604,8 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
+            if (!e.getValueIsAdjusting())
+                updateEnabledState();
         }
     }
 
@@ -693,6 +698,9 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
+            if (e.getValueIsAdjusting())
+                return;
+
             List<Changeset> selected = model.getSelectedChangesets();
             if (selected.size() == 1) {
                 model.setChangesetInDetailView(selected.get(0));
