@@ -49,9 +49,7 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
-import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ChangesetTransferable;
@@ -70,7 +68,6 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.StreamUtils;
 
 /**
  * ChangesetCacheManager manages the local cache of changesets
@@ -583,14 +580,13 @@ public class ChangesetCacheManager extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!GraphicsEnvironment.isHeadless()) {
-                actDownloadSelectedContent.actionPerformed(e);
+                if (model.getSelectedChangesets().stream().anyMatch(cs -> !cs.hasContent() || cs.isOpen()))
+                    actDownloadSelectedContent.actionPerformed(e);
                 MainApplication.worker.submit(() -> {
                     final List<PrimitiveId> primitiveIds = model.getSelectedChangesets().stream()
                             .map(Changeset::getContent)
                             .filter(Objects::nonNull)
-                            .flatMap(content -> StreamUtils.toStream(content::iterator))
-                            .map(ChangesetDataSet.ChangesetDataSetEntry::getPrimitive)
-                            .map(HistoryOsmPrimitive::getPrimitiveId)
+                            .flatMap(content -> content.getIds().stream())
                             .distinct()
                             .collect(Collectors.toList());
                     new DownloadPrimitivesWithReferrersTask(false, primitiveIds, true, true, null, null).run();
