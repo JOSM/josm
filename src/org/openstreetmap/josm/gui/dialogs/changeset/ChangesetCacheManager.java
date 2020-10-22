@@ -447,7 +447,7 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting())
+            if (e == null || !e.getValueIsAdjusting())
                 updateEnabledState();
         }
     }
@@ -492,7 +492,7 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting())
+            if (e == null || !e.getValueIsAdjusting())
                 updateEnabledState();
         }
     }
@@ -526,7 +526,7 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting())
+            if (e == null || !e.getValueIsAdjusting())
                 updateEnabledState();
         }
     }
@@ -560,7 +560,7 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting())
+            if (e == null || !e.getValueIsAdjusting())
                 updateEnabledState();
         }
     }
@@ -600,7 +600,7 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting())
+            if (e == null || !e.getValueIsAdjusting())
                 updateEnabledState();
         }
     }
@@ -694,7 +694,7 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            if (e.getValueIsAdjusting())
+            if (e != null && e.getValueIsAdjusting())
                 return;
 
             List<Changeset> selected = model.getSelectedChangesets();
