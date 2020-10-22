@@ -627,10 +627,13 @@ public class ValidatorDialog extends ToggleDialog
         protected void fixError(TestError error) throws InterruptedException, InvocationTargetException {
             if (error.isFixable()) {
                 if (error.getPrimitives().stream().noneMatch(p -> p.isDeleted() || p.getDataSet() == null)) {
-                    final Command fixCommand = error.getFix();
-                    if (fixCommand != null) {
-                        SwingUtilities.invokeAndWait(fixCommand::executeCommand);
-                        fixCommands.add(fixCommand);
+                    TestError checked = error.doubleCheck();
+                    if (checked != null) {
+                        final Command fixCommand = checked.getFix();
+                        if (fixCommand != null) {
+                            SwingUtilities.invokeAndWait(fixCommand::executeCommand);
+                            fixCommands.add(fixCommand);
+                        }
                     }
                 }
                 // It is wanted to ignore an error if it said fixable, even if fixCommand was null
