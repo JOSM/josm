@@ -30,7 +30,7 @@ jobs:
             os: macos-latest
           - java: 11
             os: macos-latest
-          - java: 16-ea
+          - java: 15
             os: macos-latest
           - headless: "false"
             os: macos-latest
@@ -103,7 +103,7 @@ jobs:
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
         run: |
-          $ANT_HOME/bin/ant dist
+          $ANT_HOME/bin/ant -DnoErrorProne dist
           ./native/macosx/macos-jpackage.sh ${{ env.josm_revision }}
       - name: Create macOS release
         if: ${{ runner.os == 'macos' && always() }}
