@@ -98,7 +98,7 @@ public abstract class UnconnectedWays extends Test {
         @Override
         protected boolean ignoreUnconnectedEndNode(Node n) {
             return n.hasTag(HIGHWAY, "turning_circle", "bus_stop", "elevator")
-                    || n.hasTag("amenity", "parking_entrance")
+                    || n.hasTag("amenity", "parking_entrance", "ferry_terminal")
                     || n.isKeyTrue("noexit")
                     || n.hasKey("entrance", "barrier")
                     || n.getParentWays().stream().anyMatch(p -> isBuilding(p) || p.hasTag(RAILWAY, "platform", "platform_edge"));
