@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2020070600, Last Updated Mon Jul  6 07:07:02 2020 UTC
+        // Taken from Version 2020102200, Last Updated Thu Oct 22 07:07:01 2020 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -1221,6 +1221,7 @@ public final class DomainValidator extends AbstractValidator {
         "song", // song Amazon EU S.à r.l.
         "sony", // sony Sony Corporation
         "soy", // soy Charleston Road Registry Inc.
+        "spa", // spa Asia Spa and Wellness Promotion Council Limited
         "space", // space DotSpace Inc.
         "sport", // sport Global Association of International Sports Federations (GAISF)
         "spot", // spot Amazon Registry Services, Inc.
