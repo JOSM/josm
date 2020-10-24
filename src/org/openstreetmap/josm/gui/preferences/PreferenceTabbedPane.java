@@ -491,7 +491,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         }
         addGUITabs(false);
         super.getModel().addChangeListener(this);
-        setSelectedIndex(-1);
     }
 
     private void addGUITabsForSetting(Icon icon, TabPreferenceSetting tps) {
