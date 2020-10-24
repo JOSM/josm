@@ -1799,12 +1799,73 @@ way[/^is_in:.*$/] {
   group: tr("deprecated tagging");
 }
 
-/* #17984 */
+/* #17984, #19383 */
 *[tower:type=anchor],
 *[tower:type=suspension] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: concat("line_attachment=", "{0.value}");
   fixChangeKey: "tower:type => line_attachment";
+  set power_tower_type_warning;
+  group: tr("deprecated tagging");
+}
+*[tower:type=branch][branch:type=split],
+*[tower:type=branch][branch:type=loop] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=split";
+  fixAdd: "line_management=split";
+  fixRemove: "tower:type";
+  fixRemove: "branch:type";
+  set power_tower_type_warning;
+  group: tr("deprecated tagging");
+}
+*[tower:type=branch][!branch:type],
+*[tower:type=branch][branch:type=tap] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=branch";
+  fixAdd: "line_management=branch";
+  fixRemove: "tower:type";
+  fixRemove: "branch:type";
+  set power_tower_type_warning;
+  group: tr("deprecated tagging");
+}
+*[tower:type=branch][branch:type=cross] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=cross";
+  fixAdd: "line_management=cross";
+  fixRemove: "tower:type";
+  fixRemove: "branch:type";
+  set power_tower_type_warning;
+  group: tr("deprecated tagging");
+}
+*[tower:type=termination] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=termination";
+  fixAdd: "line_management=termination";
+  fixRemove: "tower:type";
+  set power_tower_type_warning;
+  group: tr("deprecated tagging");
+}
+*[tower:type=transposing] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=transpose";
+  fixAdd: "line_management=transpose";
+  fixRemove: "tower:type";
+  set power_tower_type_warning;
+  group: tr("deprecated tagging");
+}
+*[tower:type=crossing] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "height=* + design=*";
+  set power_tower_type_warning;
+  group: tr("deprecated tagging");
+}
+*[tower:type][power][power=~/^(tower|pole|insulator|portal|terminal)$/]!.power_tower_type_warning {
+  throwWarning: tr("{0} is deprecated for {1}", "{0.key}", "{1.tag}");
+  suggestAlternative: "design";
+  suggestAlternative: "structure";
+  suggestAlternative: "line_management";
+  suggestAlternative: "line_attachment";
+  set generic_power_tower_type_warning;
   group: tr("deprecated tagging");
 }
 node[pole:type=anchor],
@@ -1812,6 +1873,50 @@ node[pole:type=suspension] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: concat("line_attachment=", "{0.value}");
   fixChangeKey: "pole:type => line_attachment";
+  set power_pole_type_warning;
+  group: tr("deprecated tagging");
+}
+node[pole:type=branch][branch:type=split],
+node[pole:type=branch][branch:type=loop] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=split";
+  fixAdd: "line_management=split";
+  fixRemove: "pole:type";
+  fixRemove: "branch:type";
+  set power_pole_type_warning;
+  group: tr("deprecated tagging");
+}
+node[pole:type=branch][!branch:type],
+node[pole:type=branch][branch:type=tap] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=branch";
+  fixAdd: "line_management=branch";
+  fixRemove: "pole:type";
+  fixRemove: "branch:type";
+  set power_pole_type_warning;
+  group: tr("deprecated tagging");
+}
+node[pole:type=branch][branch:type=cross] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=cross";
+  fixAdd: "line_management=cross";
+  fixRemove: "pole:type";
+  fixRemove: "branch:type";
+  set power_pole_type_warning;
+  group: tr("deprecated tagging");
+}
+node[pole:type=termination] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "line_management=termination";
+  fixAdd: "line_management=termination";
+  fixRemove: "pole:type";
+  set power_pole_type_warning;
+  group: tr("deprecated tagging");
+}
+*[pole:type][power][power=~/^(tower|pole|insulator|portal|terminal)$/]!.power_pole_type_warning!.generic_power_tower_type_warning {
+  throwWarning: tr("{0} is deprecated for {1}", "{0.key}", "{1.tag}");
+  suggestAlternative: "line_management";
+  suggestAlternative: "line_attachment";
   group: tr("deprecated tagging");
 }
 
