@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -24,13 +23,10 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Validation error
@@ -546,39 +542,6 @@ public class TestError implements Comparable<TestError> {
     @Override
     public String toString() {
         return "TestError [tester=" + tester + ", code=" + code + ", message=" + message + ']';
-    }
-
-    /**
-     * Test if the primitives still show the same error. Maybe data was already changed. See #19956
-     * @return updated test or null if error cannot be reproduced.
-     * @since 17252
-     */
-    public TestError doubleCheck() {
-        // see #19956 check again
-        if (getTester() instanceof MapCSSTagChecker)
-            return this;
-        Test tester2;
-        try {
-            tester2 = getTester().getClass().newInstance();
-            Set<OsmPrimitive> toFix = primitives.stream()
-                    .filter(tester2::isPrimitiveUsable)
-                    .collect(Collectors.toSet());
-            if (toFix.isEmpty())
-                return null;
-
-            tester2.startTest(NullProgressMonitor.INSTANCE);
-            tester2.visit(toFix);
-            tester2.endTest();
-            for (TestError e : tester2.getErrors()) {
-                if (e.getCode() == this.getCode()) {
-                    return e;
-                }
-            }
-        } catch (InstantiationException | IllegalAccessException e1) {
-            Logging.error(e1);
-        }
-        return null;
-
     }
 
 }
