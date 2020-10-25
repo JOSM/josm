@@ -153,6 +153,8 @@ public class PreferenceDialog extends JDialog {
             tpPreferences.selectSubTabByPref(previouslySelected.b);
         } else if (previouslySelected != null && previouslySelected.a != null) {
             tpPreferences.selectTabByPref(previouslySelected.a);
+        } else {
+            tpPreferences.setSelectedIndex(0);
         }
     }
 

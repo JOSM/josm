@@ -558,6 +558,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                 setSelectedIndex(index);
             }
         }
+        setSelectedIndex(-1);
     }
 
     @Override

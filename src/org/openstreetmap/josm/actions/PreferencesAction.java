@@ -7,8 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.SwingUtilities;
-
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
@@ -107,15 +105,13 @@ public class PreferencesAction extends JosmAction implements Runnable {
     @Override
     public void run() {
         final PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
-        SwingUtilities.invokeLater(() -> {
-            if (tab != null) {
-                p.selectPreferencesTabByClass(tab);
-            } else if (subTab != null) {
-                p.selectSubPreferencesTabByClass(subTab);
-            } else {
-                p.selectPreviouslySelectedPreferences();
-            }
-        });
+        if (tab != null) {
+            p.selectPreferencesTabByClass(tab);
+        } else if (subTab != null) {
+            p.selectSubPreferencesTabByClass(subTab);
+        } else {
+            p.selectPreviouslySelectedPreferences();
+        }
         p.setVisible(true);
     }
 }
