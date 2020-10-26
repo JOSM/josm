@@ -54,7 +54,7 @@
   assertNoMatch: "node building:levels=0"; /* valid because there can be building:levels:underground > 0 or roof:levels > 0 */
 }
 
-*[height][height =~ /^[0-9]+\.?[0-9]*(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
+*[height][height =~ /^[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set height_meter_autofix;
   fixAdd: concat("height=", get(regexp_match("([0-9.]+)( )*(.+)",tag("height")),1)," m");
@@ -64,7 +64,7 @@
   assertNoMatch: "node height=2 m";
   assertNoMatch: "node height=5";
 }
-*[height][height =~ /^[0-9]+\.?[0-9]*(( )*(foot|Foot|feet|Feet)|ft)$/] {
+*[height][height =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set height_foot_autofix;
   fixAdd: concat("height=", get(regexp_match("([0-9.]+)( )*(.+)",tag("height")),1)," ft");
@@ -87,7 +87,7 @@
   assertNoMatch: "node height=4";
 }
 
-*[maxheight][maxheight =~ /^[1-9][0-9]*\.?[0-9]*(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
+*[maxheight][maxheight =~ /^[1-9][0-9]*(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set maxheight_meter_autofix;
   fixAdd: concat("maxheight=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxheight")),1)," m");
@@ -97,7 +97,7 @@
   assertNoMatch: "node maxheight=2 m";
   assertNoMatch: "node maxheight=5";
 }
-*[maxheight][maxheight =~ /^[0-9]+\.?[0-9]*(( )*(foot|Foot|feet|Feet)|ft)$/] {
+*[maxheight][maxheight =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set maxheight_foot_autofix;
   fixAdd: concat("maxheight=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxheight")),1)," ft");
@@ -120,7 +120,7 @@
   assertNoMatch: "node maxheight=4";
 }
 
-*[maxlength][maxlength =~ /^[1-9][0-9]*\.?[0-9]*(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
+*[maxlength][maxlength =~ /^[1-9][0-9]*(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set maxlength_meter_autofix;
   fixAdd: concat("maxlength=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxlength")),1)," m");
@@ -130,7 +130,7 @@
   assertNoMatch: "node maxlength=2 m";
   assertNoMatch: "node maxlength=5";
 }
-*[maxlength][maxlength =~ /^[0-9]+\.?[0-9]*(( )*(foot|Foot|feet|Feet)|ft)$/] {
+*[maxlength][maxlength =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set maxlength_foot_autofix;
   fixAdd: concat("maxlength=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxlength")),1)," ft");
@@ -153,7 +153,7 @@
   assertNoMatch: "node maxlength=4";
 }
 
-*[width][width =~ /^[0-9]+\.?[0-9]*(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
+*[width][width =~ /^[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set width_meter_autofix;
   fixAdd: concat("width=", get(regexp_match("([0-9.]+)( )*(.+)",tag("width")),1)," m");
@@ -163,7 +163,7 @@
   assertNoMatch: "node width=2 m";
   assertNoMatch: "node width=5";
 }
-*[width][width =~ /^[0-9]+\.?[0-9]*(( )*(foot|Foot|feet|Feet)|ft)$/] {
+*[width][width =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set width_foot_autofix;
   fixAdd: concat("width=", get(regexp_match("([0-9.]+)( )*(.+)",tag("width")),1)," ft");
@@ -185,7 +185,7 @@
   assertNoMatch: "node width=4";
 }
 
-*[maxwidth][maxwidth=~ /^[0-9]+\.?[0-9]*(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
+*[maxwidth][maxwidth=~ /^[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set maxwidth_meter_autofix;
   fixAdd: concat("maxwidth=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxwidth")),1)," m");
@@ -195,7 +195,7 @@
   assertNoMatch: "node maxwidth=2 m";
   assertNoMatch: "node maxwidth=5";
 }
-*[maxwidth][maxwidth =~ /^[0-9]+\.?[0-9]*(( )*(foot|Foot|feet|Feet)|ft)$/] {
+*[maxwidth][maxwidth =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set maxwidth_foot_autofix;
   fixAdd: concat("maxwidth=", get(regexp_match("([0-9.]+)( )*(.+)",tag("maxwidth")),1)," ft");
@@ -305,7 +305,7 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
   assertNoMatch: "node distance=3.5";
   assertNoMatch: "node distance=4";
 }
-*[distance][distance !~ /^(([0-9]+(\.[0-9]+)?( (m|km|mi|nmi))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/]!.distance_separator_autofix {
+*[distance][distance !~ /^(([0-9]+(\.[0-9]+)?( (m|km|mi|nmi))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.distance_separator_autofix {
   throwWarning: tr("unusual value of {0}: kilometers is default; point is decimal separator; if units, put space then unit", "{0.key}");
   assertMatch: "way distance=something";
   assertMatch: "way distance=-5";
