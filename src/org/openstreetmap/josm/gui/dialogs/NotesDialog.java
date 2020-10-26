@@ -6,9 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,8 +50,8 @@ import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Dialog to display and manipulate notes.
@@ -228,7 +228,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         super.destroy();
     }
 
-    private static class NoteRenderer implements ListCellRenderer<Note> {
+    static class NoteRenderer implements ListCellRenderer<Note> {
 
         private final DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
         private final DateFormat dateFormat = DateUtils.getDateTimeFormat(DateFormat.MEDIUM, DateFormat.SHORT);
@@ -241,14 +241,14 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
                 NoteComment fstComment = note.getFirstComment();
                 JLabel jlabel = (JLabel) comp;
                 if (fstComment != null) {
-                    String text = note.getFirstComment().getText();
-                    String userName = note.getFirstComment().getUser().getName();
+                    String text = fstComment.getText();
+                    String userName = fstComment.getUser().getName();
                     if (userName == null || userName.isEmpty()) {
                         userName = "<Anonymous>";
                     }
                     String toolTipText = userName + " @ " + dateFormat.format(note.getCreatedAt());
                     jlabel.setToolTipText(toolTipText);
-                    jlabel.setText(note.getId() + ": " +text);
+                    jlabel.setText(note.getId() + ": " +text.replace("\n\n", "\n").replace("\n", "; ").replace(":; ", ": "));
                 } else {
                     jlabel.setToolTipText(null);
                     jlabel.setText(Long.toString(note.getId()));
