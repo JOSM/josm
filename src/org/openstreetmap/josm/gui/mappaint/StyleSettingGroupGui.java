@@ -44,7 +44,9 @@ public class StyleSettingGroupGui implements StyleSettingGui {
         submenu.setText(group.label);
         submenu.setIcon(group.icon);
         // Add the "toggle all settings" action
-        if (settings.size() >= 2) {
+        if (settings.isEmpty()) {
+            submenu.setEnabled(false);
+        } else if (settings.size() >= 2) {
             JMenuItem item = new JMenuItem(new AbstractAction(tr("Toggle all settings")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
