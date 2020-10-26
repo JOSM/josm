@@ -217,16 +217,19 @@
   assertNoMatch: "node maxwidth=4";
 }
 
-*[height      ][height !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.height_separator_autofix!.height_meter_autofix!.height_foot_autofix,
+*[height      ][height !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.height_separator_autofix!.height_meter_autofix!.height_foot_autofix,
 *[maxheight][maxheight !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxheight_separator_autofix!.maxheight_meter_autofix!.maxheight_foot_autofix,
 *[maxlength][maxlength !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxlength_separator_autofix!.maxlength_meter_autofix!.maxlength_foot_autofix,
-*[width        ][width !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([0-9]+\'([0-9]+\.?[0-9]*\")?))$/]!.width_separator_autofix!.width_meter_autofix!.width_foot_autofix,
-*[maxwidth  ][maxwidth !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/]!.maxwidth_separator_autofix!.maxwidth_meter_autofix!.maxwidth_foot_autofix {
+*[width        ][width !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.width_separator_autofix!.width_meter_autofix!.width_foot_autofix,
+*[maxwidth  ][maxwidth !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxwidth_separator_autofix!.maxwidth_meter_autofix!.maxwidth_foot_autofix {
   throwWarning: tr("unusual value of {0}: meters is default; point is decimal separator; if units, put space then unit", "{0.key}");
   assertMatch: "node height=medium";
   assertMatch: "node maxheight=-5";
   assertMatch: "node maxlength=0";
   assertMatch: "node maxlength=10'13\"";
+  assertMatch: "node width=10'2.\"";
+  assertMatch: "node maxheight=\"2. m\"";
+  assertMatch: "node height=\"12. m\"";
   assertNoMatch: "node height=6.78 meters";
   assertNoMatch: "node height=5  metre";
   assertNoMatch: "node height=2m";
@@ -236,6 +239,7 @@
   assertNoMatch: "node maxwidth=7 ft";
   assertNoMatch: "node height=22'";
   assertNoMatch: "node width=10'5\"";
+  assertNoMatch: "node width=10'";
 }
 
 *[maxaxleload][maxaxleload =~ /^[0-9]+,[0-9][0-9]?( (t|kg|st|lbs))?$/] {
@@ -262,12 +266,13 @@
   assertNoMatch: "node maxweight=4";
 }
 
-*[maxaxleload][maxaxleload !~ /^(([0-9]+\.?[0-9]*( (t|kg|st|lbs))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/]!.maxaxleload_separator_autofix,
-*[maxweight][maxweight !~ /^(([0-9]+\.?[0-9]*( (t|kg|st|lbs))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/]!.maxweight_separator_autofix {
+*[maxaxleload][maxaxleload !~ /^(([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxaxleload_separator_autofix,
+*[maxweight][maxweight !~ /^(([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxweight_separator_autofix {
   throwWarning: tr("unusual value of {0}: tonne is default; point is decimal separator; if units, put space then unit", "{0.key}");
   assertMatch: "node maxaxleload=something";
   assertMatch: "node maxweight=-5";
   assertNoMatch: "node maxaxleload=2";
+  assertNoMatch: "node maxweight=12'";
   assertNoMatch: "node maxweight=6'6\"";
   assertNoMatch: "node maxaxleload=2.5";
   assertNoMatch: "node maxaxleload=7 kg";
@@ -302,10 +307,11 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
   assertNoMatch: "node distance=3.5";
   assertNoMatch: "node distance=4";
 }
-*[distance][distance !~ /^(([0-9]+\.?[0-9]*( (m|km|mi|nmi))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/]!.distance_separator_autofix {
+*[distance][distance !~ /^(([0-9]+(\.[0-9]+)?( (m|km|mi|nmi))?)|([0-9]+\'[0-9]+\.?[0-9]*\"))$/]!.distance_separator_autofix {
   throwWarning: tr("unusual value of {0}: kilometers is default; point is decimal separator; if units, put space then unit", "{0.key}");
   assertMatch: "way distance=something";
   assertMatch: "way distance=-5";
+  assertMatch: "way distance=5.";
   assertNoMatch: "way distance=2";
   assertNoMatch: "way distance=2.5";
   assertNoMatch: "way distance=7 mi";
