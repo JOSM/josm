@@ -179,7 +179,6 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
     protected final JPanel buildProxySettingsPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
 
         ButtonGroup bgProxyPolicy = new ButtonGroup();
         rbProxyPolicy = new EnumMap<>(ProxyPolicy.class);
