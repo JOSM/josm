@@ -104,7 +104,6 @@ This is an overview of the files and directories in the JOSM code repository:
                             resolution and vector versions)
   - styles/                 files needed for map style maintenance
     - potlatch2/README      infos on how to update the Potlatch 2 style from upstream sources
-- patches/                  patches for external libraries used in JOSM (see below)
 - README                    this file
 - resources/                resource files that will be included in the JOSM jar file
   - data/                   data files that will be included in the JOSM jar file
@@ -160,20 +159,6 @@ This is an overview of the files and directories in the JOSM code repository:
     - spotbugs/             libs and config files for spotbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
     - xmltask.jar           used to edit XML files from Ant for the OSX package
-
-The 'patches' directory
------------------------
-Some libraries that JOSM depends on, are patched for various reasons. The
-files in the patches directory can be used to roll back these customizations.
-This is useful in order to
- * inspect the changes
- * update to a newer version of the library but keep the modifications
-
-You can use 'quilt' to manage the patches. E.g. the following command applies all of them:
-
- $ quilt push -a
-
-Of course, it is also possible to apply the patch files manually one by one.
 
 Third party libraries
 ---------------------
