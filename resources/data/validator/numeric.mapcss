@@ -266,14 +266,12 @@
   assertNoMatch: "node maxweight=4";
 }
 
-*[maxaxleload][maxaxleload !~ /^(([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxaxleload_separator_autofix,
-*[maxweight][maxweight !~ /^(([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxweight_separator_autofix {
+*[maxaxleload][maxaxleload !~ /^([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)$/]!.maxaxleload_separator_autofix,
+*[maxweight][maxweight !~ /^([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)$/]!.maxweight_separator_autofix {
   throwWarning: tr("unusual value of {0}: tonne is default; point is decimal separator; if units, put space then unit", "{0.key}");
   assertMatch: "node maxaxleload=something";
   assertMatch: "node maxweight=-5";
   assertNoMatch: "node maxaxleload=2";
-  assertNoMatch: "node maxweight=12'";
-  assertNoMatch: "node maxweight=6'6\"";
   assertNoMatch: "node maxaxleload=2.5";
   assertNoMatch: "node maxaxleload=7 kg";
 }
