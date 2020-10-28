@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.layer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -23,9 +23,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Taylor Smock
  */
-class CycleLayerActionTest {
+public class CycleLayerActionTest {
     /** Layers need a projection */
-    @RegisterExtension
+    @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().preferences().projection().fakeImagery();
 
@@ -36,7 +36,7 @@ class CycleLayerActionTest {
     /**
      * Set up common items (make layers, etc.)
      */
-    @BeforeEach
+    @Before
     public void setUp() {
         cycleDown = new CycleLayerDownAction();
         cycleUp = new CycleLayerUpAction();
@@ -50,7 +50,7 @@ class CycleLayerActionTest {
      * Test going down from the bottom
      */
     @Test
-    void testDownBottom() {
+    public void testDownBottom() {
         manager.setActiveLayer(manager.getLayers().get(0));
         cycleDown.actionPerformed(null);
         assertEquals(manager.getLayers().size() - 1, manager.getLayers().indexOf(manager.getActiveLayer()));
@@ -60,7 +60,7 @@ class CycleLayerActionTest {
      * Check going up from the top
      */
     @Test
-    void testUpTop() {
+    public void testUpTop() {
         manager.setActiveLayer(manager.getLayers().get(manager.getLayers().size() - 1));
         cycleUp.actionPerformed(null);
         assertEquals(0, manager.getLayers().indexOf(manager.getActiveLayer()));
@@ -70,7 +70,7 @@ class CycleLayerActionTest {
      * Check going down
      */
     @Test
-    void testDown() {
+    public void testDown() {
         manager.setActiveLayer(manager.getLayers().get(3));
         cycleDown.actionPerformed(null);
         assertEquals(2, manager.getLayers().indexOf(manager.getActiveLayer()));
@@ -80,7 +80,7 @@ class CycleLayerActionTest {
      * Check going up
      */
     @Test
-    void testUp() {
+    public void testUp() {
         manager.setActiveLayer(manager.getLayers().get(3));
         cycleUp.actionPerformed(null);
         assertEquals(4, manager.getLayers().indexOf(manager.getActiveLayer()));
@@ -90,7 +90,7 @@ class CycleLayerActionTest {
      * Test no layers
      */
     @Test
-    void testNoLayers() {
+    public void testNoLayers() {
         manager.getLayers().forEach(manager::removeLayer);
         cycleUp.actionPerformed(null);
         cycleDown.actionPerformed(null);
@@ -101,7 +101,7 @@ class CycleLayerActionTest {
      * Test with an aerial imagery layer
      */
     @Test
-    void testWithAerialImagery() {
+    public void testWithAerialImagery() {
         final ImageryInfo magentaTilesInfo = ImageryLayerInfo.instance.getLayers().stream()
                 .filter(i -> i.getName().equals("Magenta Tiles")).findAny().get();
         ImageryLayer imageryLayer = ImageryLayer.create(magentaTilesInfo);
