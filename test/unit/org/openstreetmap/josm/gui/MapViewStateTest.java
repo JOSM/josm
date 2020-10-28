@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
  * Test {@link MapViewState}
  * @author Michael Zangl
  */
-public class MapViewStateTest {
+class MapViewStateTest {
 
     private static final int WIDTH = 301;
     private static final int HEIGHT = 200;
@@ -31,7 +31,7 @@ public class MapViewStateTest {
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -39,7 +39,7 @@ public class MapViewStateTest {
     /**
      * Create the default state.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         state = MapViewState.createDefaultState(WIDTH, HEIGHT);
     }
@@ -55,30 +55,30 @@ public class MapViewStateTest {
         assertHasViewCoords(divider.apply(WIDTH), divider.apply(HEIGHT), center);
 
         center = getter.apply(newState);
-        assertEquals("east", 3, center.getEastNorth().east(), 0.01);
-        assertEquals("north", 4, center.getEastNorth().north(), 0.01);
+        assertEquals(3, center.getEastNorth().east(), 0.01, "east");
+        assertEquals(4, center.getEastNorth().north(), 0.01, "north");
     }
 
     /**
      * Test {@link MapViewState#getCenter()} returns map view center.
      */
     @Test
-    public void testGetCenter() {
+    void testGetCenter() {
         doTestGetCenter(s -> s.getCenter(), t -> t / 2d);
     }
 
     private static void assertHasViewCoords(double x, double y, MapViewPoint center) {
-        assertEquals("x", x, center.getInViewX(), 0.01);
-        assertEquals("y", y, center.getInViewY(), 0.01);
-        assertEquals("x", x, center.getInView().getX(), 0.01);
-        assertEquals("y", y, center.getInView().getY(), 0.01);
+        assertEquals(x, center.getInViewX(), 0.01, "x");
+        assertEquals(y, center.getInViewY(), 0.01, "y");
+        assertEquals(x, center.getInView().getX(), 0.01, "x");
+        assertEquals(y, center.getInView().getY(), 0.01, "y");
     }
 
     /**
      * Test {@link MapViewState#getForView(double, double)}
      */
     @Test
-    public void testGetForView() {
+    void testGetForView() {
         MapViewPoint corner = state.getForView(0, 0);
         assertHasViewCoords(0, 0, corner);
 
@@ -96,7 +96,7 @@ public class MapViewStateTest {
      * Test {@link MapViewState#getViewWidth()} and {@link MapViewState#getViewHeight()}
      */
     @Test
-    public void testGetViewSize() {
+    void testGetViewSize() {
         assertEquals(WIDTH, state.getViewWidth(), 0.01);
         assertEquals(HEIGHT, state.getViewHeight(), 0.01);
     }
@@ -105,40 +105,40 @@ public class MapViewStateTest {
      * Tests that all coordinate conversions for the point work.
      */
     @Test
-    public void testPointConversions() {
+    void testPointConversions() {
         MapViewPoint p = state.getForView(WIDTH / 2d, HEIGHT / 2d);
         assertHasViewCoords(WIDTH / 2d, HEIGHT / 2d, p);
 
         EastNorth eastnorth = p.getEastNorth();
         LatLon shouldLatLon = ProjectionRegistry.getProjection().getWorldBoundsLatLon().getCenter();
         EastNorth shouldEastNorth = ProjectionRegistry.getProjection().latlon2eastNorth(shouldLatLon);
-        assertEquals("east", shouldEastNorth.east(), eastnorth.east(), 0.01);
-        assertEquals("north", shouldEastNorth.north(), eastnorth.north(), 0.01);
+        assertEquals(shouldEastNorth.east(), eastnorth.east(), 0.01, "east");
+        assertEquals(shouldEastNorth.north(), eastnorth.north(), 0.01, "north");
         MapViewPoint reversed = state.getPointFor(shouldEastNorth);
         assertHasViewCoords(WIDTH / 2d, HEIGHT / 2d, reversed);
 
         LatLon latlon = p.getLatLon();
-        assertEquals("lat", shouldLatLon.lat(), latlon.lat(), 0.01);
-        assertEquals("lon", shouldLatLon.lon(), latlon.lon(), 0.01);
+        assertEquals(shouldLatLon.lat(), latlon.lat(), 0.01, "lat");
+        assertEquals(shouldLatLon.lon(), latlon.lon(), 0.01, "lon");
 
         MapViewPoint p2 = state.getPointFor(new EastNorth(2, 3));
-        assertEquals("east", 2, p2.getEastNorth().east(), 0.01);
-        assertEquals("north", 3, p2.getEastNorth().north(), 0.01);
+        assertEquals(2, p2.getEastNorth().east(), 0.01, "east");
+        assertEquals(3, p2.getEastNorth().north(), 0.01, "north");
     }
 
     /**
      * Test {@link MapViewState#getAffineTransform()}
      */
     @Test
-    public void testGetAffineTransform() {
+    void testGetAffineTransform() {
         for (EastNorth en : Arrays.asList(new EastNorth(100, 100), new EastNorth(0, 0), new EastNorth(300, 200),
                 new EastNorth(-1, -2.5))) {
             MapViewPoint should = state.getPointFor(en);
             AffineTransform transform = state.getAffineTransform();
             Point2D result = transform.transform(new Point2D.Double(en.getX(), en.getY()), null);
 
-            assertEquals("x", should.getInViewX(), result.getX(), 0.01);
-            assertEquals("y", should.getInViewY(), result.getY(), 0.01);
+            assertEquals(should.getInViewX(), result.getX(), 0.01, "x");
+            assertEquals(should.getInViewY(), result.getY(), 0.01, "y");
         }
     }
 
@@ -146,7 +146,7 @@ public class MapViewStateTest {
      * Test {@link MapViewState#OUTSIDE_BOTTOM} and similar constants.
      */
     @Test
-    public void testOutsideFlags() {
+    void testOutsideFlags() {
         assertEquals(1, Integer.bitCount(MapViewState.OUTSIDE_BOTTOM));
         assertEquals(1, Integer.bitCount(MapViewState.OUTSIDE_TOP));
         assertEquals(1, Integer.bitCount(MapViewState.OUTSIDE_LEFT));
@@ -159,7 +159,7 @@ public class MapViewStateTest {
      * Test {@link MapViewPoint#getOutsideRectangleFlags(MapViewRectangle)}
      */
     @Test
-    public void testPointGetOutsideRectangleFlags() {
+    void testPointGetOutsideRectangleFlags() {
         MapViewRectangle rect = state.getForView(0, 0).rectTo(state.getForView(10, 10));
         assertEquals(0, state.getForView(1, 1).getOutsideRectangleFlags(rect));
         assertEquals(0, state.getForView(1, 5).getOutsideRectangleFlags(rect));
@@ -189,7 +189,7 @@ public class MapViewStateTest {
      * Test {@link MapViewPoint#oneNormInView(MapViewPoint)}
      */
     @Test
-    public void testPointOneNormInView() {
+    void testPointOneNormInView() {
         MapViewPoint p = state.getForView(5, 15);
         assertEquals(0, p.oneNormInView(p), 1e-10);
         assertEquals(6, p.oneNormInView(state.getForView(-1, 15)), 1e-10);
@@ -202,7 +202,7 @@ public class MapViewStateTest {
      * Test {@link MapViewState.MapViewViewPoint#toString()} and {@link MapViewState.MapViewEastNorthPoint#toString()}
      */
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("MapViewViewPoint [x=1.0, y=2.0]",
                 state.getForView(1, 2).toString());
         assertEquals("MapViewEastNorthPoint [eastNorth=EastNorth[e=0.0, n=0.0]]",

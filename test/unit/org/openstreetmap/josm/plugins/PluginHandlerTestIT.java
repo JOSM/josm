@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
@@ -20,9 +20,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -58,7 +58,7 @@ public class PluginHandlerTestIT {
      *
      * @throws IOException in case of I/O error
      */
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException {
         errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(PluginHandlerTestIT.class));
     }
@@ -67,7 +67,7 @@ public class PluginHandlerTestIT {
      * Test that available plugins rules can be loaded.
      */
     @Test
-    public void testValidityOfAvailablePlugins() {
+    void testValidityOfAvailablePlugins() {
         loadAllPlugins();
 
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
@@ -108,7 +108,7 @@ public class PluginHandlerTestIT {
                      Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
                 Arrays.toString(layerExceptions.entrySet().toArray()) + '\n'
                 + Arrays.toString(noRestartExceptions.entrySet().toArray());
-        assertTrue(msg, invalidManifestEntries.isEmpty() && loadingExceptions.isEmpty() && layerExceptions.isEmpty());
+        assertTrue(invalidManifestEntries.isEmpty() && loadingExceptions.isEmpty() && layerExceptions.isEmpty(), msg);
     }
 
     private static void testCompletelyRestartlessPlugins(List<PluginInformation> loadedPlugins,
@@ -253,7 +253,7 @@ public class PluginHandlerTestIT {
         pluginDownloadTask.run();
         // Restore default timeout
         Config.getPref().putInt("socket.timeout.read", defTimeout);
-        assertTrue(pluginDownloadTask.getFailedPlugins().toString(), pluginDownloadTask.getFailedPlugins().isEmpty());
+        assertTrue(pluginDownloadTask.getFailedPlugins().isEmpty(), pluginDownloadTask.getFailedPlugins()::toString);
         assertEquals(plugins.size(), pluginDownloadTask.getDownloadedPlugins().size());
 
         // Update Plugin info for downloaded plugins

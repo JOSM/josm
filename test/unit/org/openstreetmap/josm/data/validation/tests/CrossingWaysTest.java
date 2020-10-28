@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -26,12 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit test of {@link CrossingWays}.
  */
-public class CrossingWaysTest {
+class CrossingWaysTest {
 
     /**
      * Setup test
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rule = new JOSMTestRules().preferences();
 
@@ -47,7 +47,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays#getSegments}
      */
     @Test
-    public void testGetSegments() {
+    void testGetSegments() {
         List<List<WaySegment>> list = CrossingWays.getSegments(new HashMap<>(), EastNorth.ZERO, EastNorth.ZERO);
         assertEquals(1, list.size());
         assertTrue(list.get(0).isEmpty());
@@ -57,7 +57,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays#isCoastline}
      */
     @Test
-    public void testIsCoastline() {
+    void testIsCoastline() {
         assertTrue(CrossingWays.isCoastline(TestUtils.newWay("natural=water")));
         assertTrue(CrossingWays.isCoastline(TestUtils.newWay("natural=coastline")));
         assertTrue(CrossingWays.isCoastline(TestUtils.newWay("landuse=reservoir")));
@@ -68,7 +68,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays#isHighway}
      */
     @Test
-    public void testIsHighway() {
+    void testIsHighway() {
         assertTrue(CrossingWays.isHighway(TestUtils.newWay("highway=motorway")));
         assertFalse(CrossingWays.isHighway(TestUtils.newWay("highway=rest_area")));
     }
@@ -77,7 +77,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays#isRailway}
      */
     @Test
-    public void testIsRailway() {
+    void testIsRailway() {
         assertTrue(CrossingWays.isRailway(TestUtils.newWay("railway=rail")));
         assertFalse(CrossingWays.isRailway(TestUtils.newWay("railway=subway")));
         assertFalse(CrossingWays.isRailway(TestUtils.newWay("highway=motorway")));
@@ -87,7 +87,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays#isSubwayOrTramOrRazed}
      */
     @Test
-    public void testIsSubwayOrTramOrRazed() {
+    void testIsSubwayOrTramOrRazed() {
         assertTrue(CrossingWays.isSubwayOrTramOrRazed(TestUtils.newWay("railway=subway")));
         assertTrue(CrossingWays.isSubwayOrTramOrRazed(TestUtils.newWay("railway=construction construction=tram")));
         assertTrue(CrossingWays.isSubwayOrTramOrRazed(TestUtils.newWay("railway=disused disused=tram")));
@@ -100,7 +100,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays#isProposedOrAbandoned}
      */
     @Test
-    public void testIsProposedOrAbandoned() {
+    void testIsProposedOrAbandoned() {
         assertTrue(CrossingWays.isProposedOrAbandoned(TestUtils.newWay("highway=proposed")));
         assertTrue(CrossingWays.isProposedOrAbandoned(TestUtils.newWay("railway=proposed")));
         assertTrue(CrossingWays.isProposedOrAbandoned(TestUtils.newWay("railway=abandoned")));
@@ -111,7 +111,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays.Ways}
      */
     @Test
-    public void testWays() {
+    void testWays() {
         Ways test = new CrossingWays.Ways();
         // isPrimitiveUsable
         assertFalse(test.isPrimitiveUsable(newUsableWay("amenity=restaurant")));
@@ -156,7 +156,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays.Boundaries}
      */
     @Test
-    public void testBoundaries() {
+    void testBoundaries() {
         Boundaries test = new CrossingWays.Boundaries();
         // isPrimitiveUsable
         assertFalse(test.isPrimitiveUsable(newUsableWay("amenity=restaurant")));
@@ -170,7 +170,7 @@ public class CrossingWaysTest {
      * Unit test of {@link CrossingWays.SelfCrossing}
      */
     @Test
-    public void testSelfCrossing() {
+    void testSelfCrossing() {
         SelfCrossing test = new CrossingWays.SelfCrossing();
         // isPrimitiveUsable
         assertFalse(test.isPrimitiveUsable(newUsableWay("highway=motorway")));

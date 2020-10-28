@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -18,13 +18,13 @@ import org.openstreetmap.josm.data.osm.Way;
 /**
  * JUnit Test of Multipolygon validation test.
  */
-public class SelfIntersectingWayTest {
+class SelfIntersectingWayTest {
 
     /**
      * Setup test.
      * @throws Exception if test cannot be initialized
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -44,7 +44,7 @@ public class SelfIntersectingWayTest {
      * Self-Intersection at inner node (not first / last).
      */
     @Test
-    public void testUnclosedWayNormal() {
+    void testUnclosedWayNormal() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -67,7 +67,7 @@ public class SelfIntersectingWayTest {
      * This is considered okay.
      */
     @Test
-    public void testUnclosedWayFirst() {
+    void testUnclosedWayFirst() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -89,7 +89,7 @@ public class SelfIntersectingWayTest {
      * This is considered okay.
      */
     @Test
-    public void testUnclosedWayFirstRepeated() {
+    void testUnclosedWayFirstRepeated() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -111,7 +111,7 @@ public class SelfIntersectingWayTest {
      * This is considered okay.
      */
     @Test
-    public void testUnclosedWayLast() {
+    void testUnclosedWayLast() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -133,7 +133,7 @@ public class SelfIntersectingWayTest {
      * This is considered to be an error.
      */
     @Test
-    public void testClosedWay() {
+    void testClosedWay() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -157,7 +157,7 @@ public class SelfIntersectingWayTest {
      * This is considered to be an error.
      */
     @Test
-    public void testSpikeWithStartInClosedWay() {
+    void testSpikeWithStartInClosedWay() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -180,7 +180,7 @@ public class SelfIntersectingWayTest {
      * This is considered to be an error.
      */
     @Test
-    public void testSpikeWithEndInClosedWay() {
+    void testSpikeWithEndInClosedWay() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -203,7 +203,7 @@ public class SelfIntersectingWayTest {
      * This is considered to be an error.
      */
     @Test
-    public void testSpikeInClosedWay() {
+    void testSpikeInClosedWay() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -226,7 +226,7 @@ public class SelfIntersectingWayTest {
      * This is considered to be an error.
      */
     @Test
-    public void testClosedWayBarbell() {
+    void testClosedWayBarbell() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");

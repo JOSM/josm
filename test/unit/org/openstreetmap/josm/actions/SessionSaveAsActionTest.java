@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -12,12 +12,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link SessionSaveAsAction}.
  */
-public class SessionSaveAsActionTest {
+class SessionSaveAsActionTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -25,7 +25,7 @@ public class SessionSaveAsActionTest {
      * Unit test of {@link SessionSaveAsAction#actionPerformed}
      */
     @Test
-    public void testSessionSaveAsAction() {
+    void testSessionSaveAsAction() {
         SessionSaveAsAction action = new SessionSaveAsAction();
         assertFalse(action.isEnabled());
         action.actionPerformed(null);

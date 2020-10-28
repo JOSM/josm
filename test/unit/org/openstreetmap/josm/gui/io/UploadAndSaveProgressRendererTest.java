@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.beans.PropertyChangeEvent;
 
 import javax.swing.JPanel;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -18,12 +18,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link UploadAndSaveProgressRenderer} class.
  */
-public class UploadAndSaveProgressRendererTest {
+class UploadAndSaveProgressRendererTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -31,7 +31,7 @@ public class UploadAndSaveProgressRendererTest {
      * Unit test of {@link UploadAndSaveProgressRenderer#UploadAndSaveProgressRenderer}.
      */
     @Test
-    public void testUploadAndSaveProgressRenderer() {
+    void testUploadAndSaveProgressRenderer() {
         JPanel parent = new JPanel();
         UploadAndSaveProgressRenderer r = new UploadAndSaveProgressRenderer();
         parent.add(r);

@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -21,11 +21,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ImportHandler} class.
  */
-public class ImportHandlerTest {
+class ImportHandlerTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main();
 
@@ -41,7 +41,7 @@ public class ImportHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket7434() throws Exception {
+    void testTicket7434() throws Exception {
         ImportHandler req = newHandler("http://localhost:8111/import?url=http://localhost:8888/relations?relations=19711&mode=recursive");
         assertEquals("http://localhost:8888/relations?relations=19711&mode=recursive", req.args.get("url"));
     }
@@ -51,7 +51,7 @@ public class ImportHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestNoParam() throws Exception {
+    void testBadRequestNoParam() throws Exception {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler(null).handle());
         assertEquals("MalformedURLException: null", e.getMessage());
     }
@@ -61,7 +61,7 @@ public class ImportHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestInvalidUrl() throws Exception {
+    void testBadRequestInvalidUrl() throws Exception {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost?url=invalid_url").handle());
         assertEquals("MalformedURLException: no protocol: invalid_url", e.getMessage());
     }
@@ -71,7 +71,7 @@ public class ImportHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestIncompleteUrl() throws Exception {
+    void testBadRequestIncompleteUrl() throws Exception {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost").handle());
         assertEquals("The following keys are mandatory, but have not been provided: url", e.getMessage());
     }
@@ -81,7 +81,7 @@ public class ImportHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testNominalRequest() throws Exception {
+    void testNominalRequest() throws Exception {
         String url = new File(TestUtils.getRegressionDataFile(11957, "data.osm")).toURI().toURL().toExternalForm();
         try {
             assertDoesNotThrow(() -> newHandler("https://localhost?url=" + Utils.encodeUrl(url)).handle());

@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -16,12 +16,12 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 /**
  * Unit tests of {@link ImageMarker} class.
  */
-public class ImageMarkerTest {
+class ImageMarkerTest {
 
     /**
      * Setup tests
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -31,7 +31,7 @@ public class ImageMarkerTest {
      * @throws MalformedURLException never
      */
     @Test
-    public void testImageMarker() throws MalformedURLException {
+    void testImageMarker() throws MalformedURLException {
         ImageMarker marker = new ImageMarker(
                 LatLon.ZERO,
                 new URL("file://something.jpg"),

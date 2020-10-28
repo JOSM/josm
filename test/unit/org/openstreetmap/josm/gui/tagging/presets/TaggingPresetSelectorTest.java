@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector.PresetClassification;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -14,12 +14,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link TaggingPresetSelector} class.
  */
-public class TaggingPresetSelectorTest {
+class TaggingPresetSelectorTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -27,7 +27,7 @@ public class TaggingPresetSelectorTest {
      * Unit test for {@link PresetClassification#isMatching}.
      */
     @Test
-    public void testIsMatching() {
+    void testIsMatching() {
         TaggingPreset preset = new TaggingPreset();
         preset.name = "estação de bombeiros"; // fire_station in brazilian portuguese
         PresetClassification pc = new PresetClassification(preset);

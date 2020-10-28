@@ -5,13 +5,13 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
  * Unit tests for class {@link Ellipsoid}.
  */
-public class EllipsoidTest {
+class EllipsoidTest {
 
     private static final double EPSILON = 1e-8;
 
@@ -19,7 +19,7 @@ public class EllipsoidTest {
      * convert latlon to cartesian coordinates back and forth
      */
     @Test
-    public void testLatLon2Cart2LatLon() {
+    void testLatLon2Cart2LatLon() {
         Random r = new SecureRandom();
         double maxErrLat = 0, maxErrLon = 0;
         Ellipsoid ellips = Ellipsoid.WGS84;

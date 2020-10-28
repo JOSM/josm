@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -33,8 +34,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Assert;
-import org.junit.Assume;
+import org.junit.jupiter.api.Assertions;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -446,6 +446,7 @@ public final class TestUtils {
     /**
      * Use to assume that EqualsVerifier is working with the current JVM.
      */
+    @SuppressWarnings("null")
     public static void assumeWorkingEqualsVerifier() {
         if (Utils.getJavaVersion() >= 16) {
             // Byte Buddy often supports new class file versions for current EA releases if its experimental flag is set to true
@@ -456,13 +457,14 @@ public final class TestUtils {
             // Inspired by https://issues.apache.org/jira/browse/SOLR-11606
             nl.jqno.equalsverifier.internal.lib.bytebuddy.ClassFileVersion.ofThisVm();
         } catch (IllegalArgumentException e) {
-            Assume.assumeNoException(e);
+            assumeFalse(e != null);
         }
     }
 
     /**
      * Use to assume that JMockit is working with the current JVM.
      */
+    @SuppressWarnings("null")
     public static void assumeWorkingJMockit() {
         try {
             // Workaround to https://github.com/jmockit/jmockit1/issues/534
@@ -470,7 +472,7 @@ public final class TestUtils {
             new WindowMocker();
             new JOptionPaneSimpleMocker();
         } catch (UnsupportedOperationException e) {
-            Assume.assumeNoException(e);
+            assumeFalse(e != null);
         } finally {
             TestRunnerDecorator.cleanUpAllMocks();
         }
@@ -545,7 +547,7 @@ public final class TestUtils {
 
     /**
      * Replaces {@linkplain System#lineSeparator() system dependent line separators} with {@code \n}
-     * and calls {@link Assert#assertEquals(java.lang.Object, java.lang.Object)}.
+     * and calls {@link Assertions#assertEquals(java.lang.Object, java.lang.Object)}.
      * @param expected expected value
      * @param actual the value to check against <code>expected</code>
      */

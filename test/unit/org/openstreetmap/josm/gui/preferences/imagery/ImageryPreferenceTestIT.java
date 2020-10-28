@@ -395,7 +395,7 @@ public class ImageryPreferenceTestIT {
      */
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
-    public void testImageryEntryValidity(String id, ImageryInfo info) {
+    void testImageryEntryValidity(String id, ImageryInfo info) {
         checkEntry(info);
         assertTrue(errors.isEmpty(), format(errors));
         assertFalse(workingURLs.isEmpty());

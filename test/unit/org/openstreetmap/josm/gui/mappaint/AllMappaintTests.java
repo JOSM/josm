@@ -14,6 +14,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.AllMapCSSTests;
     MapCSSWithExtendedTextDirectivesTest.class,
     AllMapCSSTests.class
 })
-public class AllMappaintTests {
+class AllMappaintTests {
 
 }

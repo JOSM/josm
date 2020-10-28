@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.routines.AbstractValidator;
@@ -23,14 +23,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of "Internet Tags" validation test.
  */
-public class InternetTagsTest {
+class InternetTagsTest {
 
     private static final InternetTags TEST = new InternetTags();
 
     /**
      * Setup test by initializing JOSM preferences and projection.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -38,7 +38,7 @@ public class InternetTagsTest {
      * Test of valid URLs.
      */
     @Test
-    public void testValidUrls() {
+    void testValidUrls() {
         testUrl("url", "www.domain.com", true);                                // No protocol
         testUrl("url", "http://josm.openstreetmap.de", true);                  // Simple HTTP
         testUrl("url", "http://josm.openstreetmap.de/", true);                 // Simple HTTP + slash
@@ -56,7 +56,7 @@ public class InternetTagsTest {
      * Test multiple URLs.
      */
     @Test
-    public void testMultipleUrls() {
+    void testMultipleUrls() {
         testUrl("url", "http://www.domain-a.com;https://www.domain-b.com", true); // multiple values
     }
 
@@ -64,7 +64,7 @@ public class InternetTagsTest {
      * Test of invalid URLs.
      */
     @Test
-    public void testInvalidUrls() {
+    void testInvalidUrls() {
         testUrl("url", "something://www.domain.com", false);                   // invalid protocol
         testUrl("url", "http://www.domain.invalidtld", false);                 // invalid TLD
     }
@@ -73,7 +73,7 @@ public class InternetTagsTest {
      * Test of valid e-mails.
      */
     @Test
-    public void testValidEmails() {
+    void testValidEmails() {
         testEmail("email", "contact@www.domain.com", true);                    // Simple email
         testEmail("contact:email", "john.doe@other-domain.org", true);         // Key with : + dash in domain
     }
@@ -82,7 +82,7 @@ public class InternetTagsTest {
      * Test of invalid e-mails.
      */
     @Test
-    public void testInvalidEmails() {
+    void testInvalidEmails() {
         testEmail("email", "contact at www.domain.com", false);                // No @
         testEmail("contact:email", "john.doe@other-domain.invalidtld", false); // invalid TLD
     }
@@ -91,7 +91,7 @@ public class InternetTagsTest {
      * Test of invalid slashes.
      */
     @Test
-    public void testInvalidSlashes() {
+    void testInvalidSlashes() {
         TestError error = testUrl("website", "http:\\\\www.sjoekurs.no", false).get(0);
         assertEquals(tr("''{0}'': {1}", "website", tr("URL contains backslashes instead of slashes")), error.getDescription());
         assertNotNull(error.getFix());

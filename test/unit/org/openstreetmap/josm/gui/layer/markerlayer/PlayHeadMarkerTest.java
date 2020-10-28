@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -13,12 +13,12 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 /**
  * Unit tests of {@link PlayHeadMarker} class.
  */
-public class PlayHeadMarkerTest {
+class PlayHeadMarkerTest {
 
     /**
      * Setup tests
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -27,7 +27,7 @@ public class PlayHeadMarkerTest {
      * Unit test of {@link PlayHeadMarker#PlayHeadMarker}.
      */
     @Test
-    public void testPlayHeadMarker() {
+    void testPlayHeadMarker() {
         PlayHeadMarker marker = PlayHeadMarker.create();
         assertNotNull(marker);
         marker.actionPerformed(null);

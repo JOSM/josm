@@ -1,20 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -36,11 +36,11 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link PurgeCommand} class.
  */
-public class PurgeCommandTest {
+class PurgeCommandTest {
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
     private CommandTestDataWithRelation testData;
@@ -48,7 +48,7 @@ public class PurgeCommandTest {
     /**
      * Set up the test data.
      */
-    @Before
+    @BeforeEach
     public void createTestData() {
         testData = new CommandTestDataWithRelation();
     }
@@ -57,7 +57,7 @@ public class PurgeCommandTest {
      * Test {@link PurgeCommand#executeCommand()}
      */
     @Test
-    public void testExecute() {
+    void testExecute() {
         Relation relationParent = testData.createRelation(100, new RelationMember("child", testData.existingRelation));
         Relation relationParent2 = testData.createRelation(101, new RelationMember("child", testData.existingRelation));
         // to check that algorithm ignores it:
@@ -82,7 +82,7 @@ public class PurgeCommandTest {
      * Test {@link PurgeCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         PurgeCommand command = new PurgeCommand(testData.layer.getDataSet(),
                 Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingWay),
                 Arrays.<OsmPrimitive>asList(testData.existingWay));
@@ -103,7 +103,7 @@ public class PurgeCommandTest {
      * Tests {@link PurgeCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
@@ -120,7 +120,7 @@ public class PurgeCommandTest {
      * Tests {@link PurgeCommand#getParticipatingPrimitives()}
      */
     @Test
-    public void testGetParticipatingPrimitives() {
+    void testGetParticipatingPrimitives() {
         PurgeCommand command = new PurgeCommand(testData.layer.getDataSet(), Arrays.<OsmPrimitive>asList(testData.existingNode),
                 Arrays.<OsmPrimitive>asList(testData.existingRelation));
         assertArrayEquals(new Object[] {testData.existingNode }, command.getParticipatingPrimitives().toArray());
@@ -130,7 +130,7 @@ public class PurgeCommandTest {
      * Test {@link PurgeCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         List<OsmPrimitive> shortList = Arrays.<OsmPrimitive>asList(testData.existingWay);
         assertTrue(new PurgeCommand(testData.layer.getDataSet(), shortList, Arrays.<OsmPrimitive>asList()).getDescriptionText()
                 .matches("Purged 1 object"));
@@ -144,7 +144,7 @@ public class PurgeCommandTest {
      * Unit test of methods {@link PurgeCommand#equals} and {@link PurgeCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(PurgeCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,

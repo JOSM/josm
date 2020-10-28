@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
@@ -23,12 +23,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link HistoryWay}.
  */
-public class HistoryWayTest {
+class HistoryWayTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -47,7 +47,7 @@ public class HistoryWayTest {
      * Unit test for {@link HistoryWay#HistoryWay}.
      */
     @Test
-    public void testHistoryWay() {
+    void testHistoryWay() {
         Date d = new Date();
         HistoryWay way = create(d);
 
@@ -66,12 +66,12 @@ public class HistoryWayTest {
      * Unit test for {@link HistoryWay#getType}.
      */
     @Test
-    public void testGetType() {
+    void testGetType() {
         assertEquals(OsmPrimitiveType.WAY, create(new Date()).getType());
     }
 
     @Test
-    public void testNodeManipulation() {
+    void testNodeManipulation() {
         HistoryWay way = create(new Date());
 
         way.addNode(1);
@@ -91,7 +91,7 @@ public class HistoryWayTest {
     }
 
     @Test
-    public void testIterating() {
+    void testIterating() {
         HistoryWay way = create(new Date());
 
         way.addNode(1);
@@ -107,7 +107,7 @@ public class HistoryWayTest {
      * Unit test for {@link HistoryWay#getDisplayName}.
      */
     @Test
-    public void testGetDisplayName() {
+    void testGetDisplayName() {
         HistoryNameFormatter hnf = DefaultNameFormatter.getInstance();
         HistoryWay way0 = create(new Date()); // no node
         HistoryWay way1 = create(new Date()); // 1 node

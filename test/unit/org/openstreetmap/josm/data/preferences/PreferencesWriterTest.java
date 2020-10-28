@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.spi.preferences.ListListSetting;
@@ -24,7 +24,7 @@ import org.openstreetmap.josm.spi.preferences.MapListSetting;
 /**
  * Unit tests for class {@link PreferencesWriter}.
  */
-public class PreferencesWriterTest {
+class PreferencesWriterTest {
 
     private static <T extends AbstractSetting<?>> T setting(T s, long time) {
         s.setTime(time);
@@ -36,7 +36,7 @@ public class PreferencesWriterTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testListList() throws IOException {
+    void testListList() throws IOException {
         try (StringWriter out = new StringWriter(); PreferencesWriter w = new PreferencesWriter(new PrintWriter(out), true, true)) {
             long time = System.currentTimeMillis() / 1000;
             w.visit(setting(new ListListSetting(Arrays.asList(Arrays.asList("bar"))), time));
@@ -55,7 +55,7 @@ public class PreferencesWriterTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testList() throws IOException {
+    void testList() throws IOException {
         try (StringWriter out = new StringWriter(); PreferencesWriter w = new PreferencesWriter(new PrintWriter(out), true, true)) {
             long time = System.currentTimeMillis() / 1000;
             w.visit(setting(new ListSetting(Arrays.asList("bar")), time));
@@ -72,7 +72,7 @@ public class PreferencesWriterTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testMapList() throws IOException {
+    void testMapList() throws IOException {
         try (StringWriter out = new StringWriter(); PreferencesWriter w = new PreferencesWriter(new PrintWriter(out), true, true)) {
             long time = System.currentTimeMillis() / 1000;
             Map<String, String> map = new HashMap<>();
@@ -93,7 +93,7 @@ public class PreferencesWriterTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testString() throws IOException {
+    void testString() throws IOException {
         try (StringWriter out = new StringWriter(); PreferencesWriter w = new PreferencesWriter(new PrintWriter(out), true, true)) {
             long time = System.currentTimeMillis() / 1000;
             w.visit(setting(new StringSetting("bar"), time));
@@ -108,7 +108,7 @@ public class PreferencesWriterTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testWrite() throws IOException {
+    void testWrite() throws IOException {
         try (StringWriter out = new StringWriter(); PreferencesWriter w = new PreferencesWriter(new PrintWriter(out), true, true)) {
             long time = System.currentTimeMillis() / 1000;
             Map<String, Setting<?>> map = new HashMap<>();
@@ -131,7 +131,7 @@ public class PreferencesWriterTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testNullValue() throws IOException {
+    void testNullValue() throws IOException {
         long time = System.currentTimeMillis() / 1000;
         // CHECKSTYLE.OFF: LineLength
         String expected = String.format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n" +

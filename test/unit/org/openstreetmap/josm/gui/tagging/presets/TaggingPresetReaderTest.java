@@ -3,9 +3,9 @@ package org.openstreetmap.josm.gui.tagging.presets;
 
 import static org.CustomMatchers.hasSize;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.tagging.presets.items.Check;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
@@ -26,12 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link TaggingPresetReader} class.
  */
-public class TaggingPresetReaderTest {
+class TaggingPresetReaderTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -41,7 +41,7 @@ public class TaggingPresetReaderTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testTicket8954() throws SAXException, IOException {
+    void testTicket8954() throws SAXException, IOException {
         String presetfile = TestUtils.getRegressionDataFile(8954, "preset.xml");
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(presetfile, false);
         Assert.assertEquals("Number of preset items", 1, presets.size());
@@ -57,7 +57,7 @@ public class TaggingPresetReaderTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testNestedChunks() throws SAXException, IOException {
+    void testNestedChunks() throws SAXException, IOException {
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(TestUtils.getTestDataRoot() + "preset_chunk.xml", true);
         assertThat(presets, hasSize(1));
         final TaggingPreset abc = presets.iterator().next();
@@ -69,9 +69,10 @@ public class TaggingPresetReaderTest {
     /**
      * Test external entity resolving.
      * See #19286
+     * @throws IOException in case of I/O error
      */
     @Test
-    public void testExternalEntityResolving() throws IOException {
+    void testExternalEntityResolving() throws IOException {
         try {
             TaggingPresetReader.readAll(TestUtils.getTestDataRoot() + "preset_external_entity.xml", true);
             fail("Reading a file with external entities should throw an SAXParseException!");
@@ -88,7 +89,7 @@ public class TaggingPresetReaderTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testReadDefaulPresets() throws SAXException, IOException {
+    void testReadDefaulPresets() throws SAXException, IOException {
         String presetfile = "resource://data/defaultpresets.xml";
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(presetfile, true);
         Assert.assertTrue("Default presets are empty", presets.size() > 0);

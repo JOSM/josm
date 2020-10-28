@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.corrector;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
@@ -15,12 +15,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ReverseWayNoTagCorrector} class.
  */
-public class ReverseWayNoTagCorrectorTest {
+class ReverseWayNoTagCorrectorTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -28,7 +28,7 @@ public class ReverseWayNoTagCorrectorTest {
      * Tests the {@link ReverseWayNoTagCorrector#getDirectionalTags} function
      */
     @Test
-    public void testDirectionalTags() {
+    void testDirectionalTags() {
         assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("waterway", "drain")).size());
         assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("man_made", "embankment")).size());
         assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("aerialway", "drag_lift")).size());

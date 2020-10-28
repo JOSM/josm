@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.awt.Color;
 import java.awt.GraphicsEnvironment;
@@ -26,10 +27,9 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -66,7 +66,7 @@ public class MapCSSRendererTest {
     /**
      * Minimal test rules required
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
@@ -180,14 +180,14 @@ public class MapCSSRendererTest {
      * It is ignored for other Java versions since they differ slightly in their rendering engine.
      * @since 11691
      */
-    @Before
+    @BeforeEach
     public void forOpenJDK() {
         String javaHome = System.getProperty("java.home");
-        Assume.assumeTrue("Test requires openJDK", javaHome != null && javaHome.toLowerCase(Locale.ENGLISH).contains("openjdk"));
+        assumeTrue(javaHome != null && javaHome.toLowerCase(Locale.ENGLISH).contains("openjdk"), "Test requires openJDK");
 
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
         for (String font : testConfig.fonts) {
-            Assume.assumeTrue("Test requires font: " + font, fonts.contains(font));
+            assumeTrue(fonts.contains(font), "Test requires font: " + font);
         }
     }
 
@@ -196,7 +196,7 @@ public class MapCSSRendererTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testRender() throws Exception {
+    void testRender() throws Exception {
         // Force reset of preferences
         StyledMapRenderer.PREFERENCE_ANTIALIASING_USE.put(true);
         StyledMapRenderer.PREFERENCE_TEXT_ANTIALIASING.put("gasp");

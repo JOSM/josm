@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.data.osm.Changeset.MAX_CHANGESET_TAG_LENGTH;
 
 import java.util.Calendar;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -28,12 +28,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link Changeset}.
  */
-public class ChangesetTest {
+class ChangesetTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -42,7 +42,7 @@ public class ChangesetTest {
      */
     @Test
     @SuppressFBWarnings(value = "NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS")
-    public void testSetKeys() {
+    void testSetKeys() {
         final Changeset cs = new Changeset();
         // Cannot add null map => IllegalArgumentException
         try {
@@ -81,7 +81,7 @@ public class ChangesetTest {
      * Unit test of method {@link Changeset#compareTo}.
      */
     @Test
-    public void testCompareTo() {
+    void testCompareTo() {
         Changeset cs1 = new Changeset(1);
         Changeset cs2 = new Changeset(2);
         assertEquals(0, cs1.compareTo(cs1));
@@ -93,7 +93,7 @@ public class ChangesetTest {
      * Unit test of method {@link Changeset#getBounds}.
      */
     @Test
-    public void testGetBounds() {
+    void testGetBounds() {
         Changeset cs = new Changeset();
         assertNull(cs.getBounds());
         cs.setMin(LatLon.NORTH_POLE);
@@ -111,7 +111,7 @@ public class ChangesetTest {
      * Unit test of methods {@link Changeset#getContent} / {@link Changeset#setContent} / {@link Changeset#hasContent}.
      */
     @Test
-    public void testGetSetHasContent() {
+    void testGetSetHasContent() {
         Changeset cs = new Changeset();
         assertNull(cs.getContent());
         assertFalse(cs.hasContent());
@@ -125,7 +125,7 @@ public class ChangesetTest {
      * Unit test of method {@link Changeset#getDisplayName}.
      */
     @Test
-    public void testGetDisplayName() {
+    void testGetDisplayName() {
         assertEquals("Changeset 0", new Changeset().getDisplayName(DefaultNameFormatter.getInstance()));
     }
 
@@ -133,7 +133,7 @@ public class ChangesetTest {
      * Unit test of method {@link Changeset#getName}.
      */
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals("changeset 0", new Changeset().getName());
     }
 
@@ -147,7 +147,7 @@ public class ChangesetTest {
      * Unit test of method {@link Changeset#hasEqualSemanticAttributes}.
      */
     @Test
-    public void testHasEqualSemanticAttributes() {
+    void testHasEqualSemanticAttributes() {
         Date today = new Date();
         Changeset cs1 = new Changeset();
         Changeset cs2 = new Changeset();
@@ -243,7 +243,7 @@ public class ChangesetTest {
      * Unit test of methods {@link Changeset#keySet} / {@link Changeset#put} / {@link Changeset#remove} / {@link Changeset#removeAll}.
      */
     @Test
-    public void testKeySet() {
+    void testKeySet() {
         Changeset cs = new Changeset();
         assertTrue(cs.keySet().isEmpty());
         Map<String, String> tags = new HashMap<>();

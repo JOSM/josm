@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -37,7 +37,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for Session writing.
  */
-public class SessionWriterTest {
+class SessionWriterTest {
 
     protected static final class OsmHeadlessJosExporter extends OsmDataSessionExporter {
         public OsmHeadlessJosExporter(OsmDataLayer layer) {
@@ -86,14 +86,14 @@ public class SessionWriterTest {
     /**
      * Setup tests.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().main();
 
     /**
      * Setup tests.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         MainApplication.getLayerManager().addLayer(createOsmLayer());
     }
@@ -156,7 +156,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteEmptyJos() throws IOException {
+    void testWriteEmptyJos() throws IOException {
         testWrite(Collections.<Layer>emptyList(), false);
     }
 
@@ -165,7 +165,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteEmptyJoz() throws IOException {
+    void testWriteEmptyJoz() throws IOException {
         testWrite(Collections.<Layer>emptyList(), true);
     }
 
@@ -174,7 +174,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteOsmJos() throws IOException {
+    void testWriteOsmJos() throws IOException {
         testWrite(Collections.<Layer>singletonList(createOsmLayer()), false);
     }
 
@@ -183,7 +183,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteOsmJoz() throws IOException {
+    void testWriteOsmJoz() throws IOException {
         testWrite(Collections.<Layer>singletonList(createOsmLayer()), true);
     }
 
@@ -192,7 +192,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteGpxJos() throws IOException {
+    void testWriteGpxJos() throws IOException {
         testWrite(Collections.<Layer>singletonList(createGpxLayer()), false);
     }
 
@@ -201,7 +201,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteGpxJoz() throws IOException {
+    void testWriteGpxJoz() throws IOException {
         testWrite(Collections.<Layer>singletonList(createGpxLayer()), true);
     }
 
@@ -210,7 +210,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteGpxAndMarkerJoz() throws IOException {
+    void testWriteGpxAndMarkerJoz() throws IOException {
         GpxLayer gpx = createGpxLayer();
         testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
     }
@@ -220,7 +220,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteImageryLayer() throws IOException {
+    void testWriteImageryLayer() throws IOException {
         final Layer layer = createImageryLayer();
         testWrite(Collections.singletonList(layer), true);
     }
@@ -230,7 +230,7 @@ public class SessionWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteNoteLayer() throws IOException {
+    void testWriteNoteLayer() throws IOException {
         final Layer layer = createNoteLayer();
         testWrite(Collections.singletonList(layer), true);
     }

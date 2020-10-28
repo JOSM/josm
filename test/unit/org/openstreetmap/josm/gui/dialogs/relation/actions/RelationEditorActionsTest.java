@@ -1,15 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation.actions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Component;
 import java.awt.Container;
+
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 import javax.swing.text.JTextComponent;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
@@ -17,18 +19,16 @@ import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import mockit.Mock;
 import mockit.MockUp;
 
-import org.junit.Test;
-
 /**
  * Unit tests for relation editor actions.
  */
-public class RelationEditorActionsTest extends AbstractRelationEditorActionTest {
+class RelationEditorActionsTest extends AbstractRelationEditorActionTest {
 
     /**
      * Check that all dialog-less actions do not crash.
      */
     @Test
-    public void testNoDialogActions() {
+    void testNoDialogActions() {
         new AddSelectedAfterSelection(relationEditorAccess).actionPerformed(null);
         new AddSelectedBeforeSelection(relationEditorAccess).actionPerformed(null);
         new AddSelectedAtStartAction(relationEditorAccess).actionPerformed(null);
@@ -68,9 +68,10 @@ public class RelationEditorActionsTest extends AbstractRelationEditorActionTest 
      * Test DeleteCurrentRelationAction
      */
     @Test
-    public void testDeleteCurrentRelationAction() {
+    void testDeleteCurrentRelationAction() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker() {
+            @Override
             public String getStringFromOriginalMessage(Object originalMessage) {
                 return ((JTextComponent) ((Container) originalMessage).getComponent(0)).getText();
             }
@@ -104,13 +105,13 @@ public class RelationEditorActionsTest extends AbstractRelationEditorActionTest 
      * Test SetRoleAction
      */
     @Test
-    public void testSetRoleAction() {
+    void testSetRoleAction() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker.MessagePanelMocker mpMocker = new JOptionPaneSimpleMocker.MessagePanelMocker();
         // JOptionPaneSimpleMocker doesn't handle showOptionDialog calls because of their potential
         // complexity, but this is quite a simple use of showOptionDialog which we can mock from scratch.
         final boolean[] jopMockerCalled = new boolean[] {false};
-        final MockUp<JOptionPane> jopMocker = new MockUp<JOptionPane>() {
+        new MockUp<JOptionPane>() {
             @Mock
             public int showOptionDialog(
                 Component parentComponent,

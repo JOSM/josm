@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.NoSuchElementException;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -22,28 +22,28 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ConflictResolver} class.
  */
-public class ConflictResolverTest {
+class ConflictResolverTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Unit test of {@link ConflictResolver#buildResolveCommand} - empty case.
      */
-    @Test(expected = NoSuchElementException.class)
-    public void testBuildResolveCommandEmpty() {
-        assertNotNull(new ConflictResolver().buildResolveCommand());
+    @Test
+    void testBuildResolveCommandEmpty() {
+        assertThrows(NoSuchElementException.class, () -> new ConflictResolver().buildResolveCommand());
     }
 
     /**
      * Unit test of {@link ConflictResolver#buildResolveCommand} - node case.
      */
     @Test
-    public void testBuildResolveCommandNode() {
+    void testBuildResolveCommandNode() {
         ConflictResolver resolver = new ConflictResolver();
         Node n1 = new Node(LatLon.SOUTH_POLE);
         n1.put("source", "my");
@@ -59,7 +59,7 @@ public class ConflictResolverTest {
      * Unit test of {@link ConflictResolver#buildResolveCommand} - way case.
      */
     @Test
-    public void testBuildResolveCommandWay() {
+    void testBuildResolveCommandWay() {
         ConflictResolver resolver = new ConflictResolver();
         Way w1 = new Way();
         w1.put("source", "my");
@@ -75,7 +75,7 @@ public class ConflictResolverTest {
      * Unit test of {@link ConflictResolver#buildResolveCommand} - relation case.
      */
     @Test
-    public void testBuildResolveCommandRelation() {
+    void testBuildResolveCommandRelation() {
         ConflictResolver resolver = new ConflictResolver();
         Relation r1 = new Relation();
         r1.put("source", "my");

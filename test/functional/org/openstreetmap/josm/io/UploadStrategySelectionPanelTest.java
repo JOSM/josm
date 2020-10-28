@@ -11,13 +11,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.gui.io.UploadStrategySelectionPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
 
-@Ignore
-public class UploadStrategySelectionPanelTest extends JFrame {
+@Disabled
+class UploadStrategySelectionPanelTest extends JFrame {
 
     protected UploadStrategySelectionPanel uploadStrategySelectionPanel;
 
@@ -55,12 +55,12 @@ public class UploadStrategySelectionPanelTest extends JFrame {
     /**
      * Constructs a new {@code UploadStrategySelectionPanelTest}.
      */
-    public UploadStrategySelectionPanelTest() {
+    UploadStrategySelectionPanelTest() {
         build();
         uploadStrategySelectionPanel.setNumUploadedObjects(51000);
     }
 
-    public static void main(String[] args) throws OsmApiInitializationException, OsmTransferCanceledException {
+    public static void main(String[] args) throws Exception {
         OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         new UploadStrategySelectionPanelTest().setVisible(true);
     }

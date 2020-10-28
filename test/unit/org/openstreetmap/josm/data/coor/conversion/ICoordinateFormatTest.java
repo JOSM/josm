@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor.conversion;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -14,11 +14,11 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 /**
  * Test for {@link ICoordinateFormat} implementations.
  */
-public class ICoordinateFormatTest {
+class ICoordinateFormatTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
@@ -29,7 +29,7 @@ public class ICoordinateFormatTest {
      * for various implementations.
      */
     @Test
-    public void testFormatting() {
+    void testFormatting() {
         LatLon c = new LatLon(47.000000, 19.000000);
         assertEquals("47.0", DecimalDegreesCoordinateFormat.INSTANCE.latToString(c));
         assertEquals("19.0", DecimalDegreesCoordinateFormat.INSTANCE.lonToString(c));

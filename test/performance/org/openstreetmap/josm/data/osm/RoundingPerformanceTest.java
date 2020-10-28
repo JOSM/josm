@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.LatLonTest;
 
@@ -12,7 +12,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Checks that rounding of coordinates is not too slow.
  */
-public class RoundingPerformanceTest {
+class RoundingPerformanceTest {
 
     private static double oldRoundToOsmPrecision(double value) {
         // Old method, causes rounding errors, but efficient
@@ -24,7 +24,7 @@ public class RoundingPerformanceTest {
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-    public void testRounding() {
+    void testRounding() {
         final int n = 1000000;
         long start = System.nanoTime();
         for (int i = 0; i < n; i++) {

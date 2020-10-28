@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -36,7 +36,7 @@ public class GpxWriterTest {
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -67,7 +67,7 @@ public class GpxWriterTest {
      * @throws IOException never
      */
     @Test
-    public void testTicket16550() throws IOException {
+    void testTicket16550() throws IOException {
         // Checks that time stored as date is correctly written into XML timestamp
         testSingleWaypoint(
                 w -> w.put(GpxConstants.PT_TIME, Date.from(LocalDate.of(2018, Month.AUGUST, 2).atStartOfDay(ZoneOffset.UTC).toInstant())),
@@ -79,7 +79,7 @@ public class GpxWriterTest {
      * @throws IOException never
      */
     @Test
-    public void testTicket16725() throws IOException {
+    void testTicket16725() throws IOException {
         // Checks that sat, hdop, pdop, vdop are correctly exported
         testSingleWaypoint(
                 w -> {
@@ -99,7 +99,7 @@ public class GpxWriterTest {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testExtensions() throws IOException {
+    void testExtensions() throws IOException {
         GpxData data = new GpxData();
         // only namespace, no location printed
         data.getNamespaces().add(new XMLNamespace("test", "http://example.com/testURI"));

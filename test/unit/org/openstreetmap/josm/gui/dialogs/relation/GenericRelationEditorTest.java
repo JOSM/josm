@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Collections;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -34,7 +34,7 @@ public class GenericRelationEditorTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().main();
 
@@ -84,7 +84,7 @@ public class GenericRelationEditorTest {
      * Unit test of {@link GenericRelationEditor#addPrimitivesToRelation}.
      */
     @Test
-    public void testAddPrimitivesToRelation() {
+    void testAddPrimitivesToRelation() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker();
 
@@ -116,7 +116,7 @@ public class GenericRelationEditorTest {
      * This test only tests if they do not throw exceptions.
      */
     @Test
-    public void testBuild() {
+    void testBuild() {
         DataSet ds = new DataSet();
         Relation relation = new Relation(1);
         ds.addPrimitive(relation);

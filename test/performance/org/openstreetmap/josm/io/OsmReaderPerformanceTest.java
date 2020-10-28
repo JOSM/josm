@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,17 +9,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.Timeout;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.DataSet;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * This test tests how fast we are at reading an OSM file.
@@ -28,21 +26,15 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Michael Zangl
  */
-public class OsmReaderPerformanceTest {
+@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+class OsmReaderPerformanceTest {
     private static final int TIMES = 4;
     private static final String DATA_FILE = "nodist/data/neubrandenburg.osm.bz2";
 
     /**
-     * Global timeout applied to all test methods.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public Timeout globalTimeout = Timeout.seconds(15*60);
-
-    /**
      * Prepare the test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createJOSMFixture() {
         JOSMFixture.createPerformanceTestFixture().init(true);
     }
@@ -52,7 +44,7 @@ public class OsmReaderPerformanceTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testCompressed() throws Exception {
+    void testCompressed() throws Exception {
         runTest("compressed (.osm.bz2)", false);
     }
 
@@ -61,7 +53,7 @@ public class OsmReaderPerformanceTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testPlain() throws Exception {
+    void testPlain() throws Exception {
         runTest(".osm-file", true);
     }
 

@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.rtklib;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -26,11 +26,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link RtkLibPosReader} class.
  */
-public class RtkLibPosReaderTest {
+class RtkLibPosReaderTest {
     /**
      * Set the timezone and timeout.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -39,7 +39,7 @@ public class RtkLibPosReaderTest {
     /**
      * Forces the timezone.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         iso8601.setTimeZone(DateUtils.UTC);
     }
@@ -56,7 +56,7 @@ public class RtkLibPosReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testReader() throws Exception {
+    void testReader() throws Exception {
         RtkLibPosReader in = read("nodist/data/rtklib_example.pos");
         assertEquals(137, in.getNumberOfCoordinates());
 
@@ -82,7 +82,7 @@ public class RtkLibPosReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testReader2() throws Exception {
+    void testReader2() throws Exception {
         RtkLibPosReader in = read("nodist/data/rtklib_example2.pos");
         assertEquals(6, in.getNumberOfCoordinates());
     }

@@ -1,22 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.shortcut;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 
 /**
  * Unit tests of {@link ShortcutPreference} class.
  */
-public class ShortcutPreferenceTest {
+class ShortcutPreferenceTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -25,7 +25,7 @@ public class ShortcutPreferenceTest {
      * Unit test of {@link ShortcutPreference#ShortcutPreference}.
      */
     @Test
-    public void testShortcutPreference() {
+    void testShortcutPreference() {
         assertNotNull(new ShortcutPreference.Factory().createPreferenceSetting());
     }
 
@@ -33,7 +33,7 @@ public class ShortcutPreferenceTest {
      * Unit test of {@link ShortcutPreference#addGui}.
      */
     @Test
-    public void testAddGui() {
+    void testAddGui() {
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new ShortcutPreference.Factory(), null);
     }
 }

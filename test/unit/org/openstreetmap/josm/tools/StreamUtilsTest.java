@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -16,12 +16,12 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests of {@link StreamUtils} class.
  */
-public class StreamUtilsTest {
+class StreamUtilsTest {
 
     /**
      * Setup rule.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -30,7 +30,7 @@ public class StreamUtilsTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(StreamUtils.class);
     }
 
@@ -38,7 +38,7 @@ public class StreamUtilsTest {
      * Tests {@link StreamUtils#reversedStream(java.util.List)}
      */
     @Test
-    public void testReverseStream() {
+    void testReverseStream() {
         assertEquals("baz/bar/foo",
                 StreamUtils.reversedStream(Arrays.asList("foo", "bar", "baz")).collect(Collectors.joining("/")));
     }

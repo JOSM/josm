@@ -1,23 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -28,12 +28,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link DataSetMerger}.
  */
-public class DataSetMergerTest {
+class DataSetMergerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -43,7 +43,7 @@ public class DataSetMergerTest {
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         my = new DataSet();
         my.setVersion("0.6");
@@ -66,7 +66,7 @@ public class DataSetMergerTest {
             fail(result);
     }
 
-    @After
+    @AfterEach
     public void checkDatasets() {
         runConsistencyTests(my);
         runConsistencyTests(their);
@@ -79,7 +79,7 @@ public class DataSetMergerTest {
      * on the other.
      */
     @Test
-    public void testNodeSimpleIdenticalNoConflict() {
+    void testNodeSimpleIdenticalNoConflict() {
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(false);
@@ -113,7 +113,7 @@ public class DataSetMergerTest {
      * => their version is going to be the merged version
      */
     @Test
-    public void testNodeSimpleLocallyUnmodifiedNoConflict() {
+    void testNodeSimpleLocallyUnmodifiedNoConflict() {
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(false);
@@ -153,7 +153,7 @@ public class DataSetMergerTest {
      * the server
      */
     @Test
-    public void testNodeSimpleTagConflict() {
+    void testNodeSimpleTagConflict() {
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setModified(true);
@@ -187,7 +187,7 @@ public class DataSetMergerTest {
      * the server
      */
     @Test
-    public void testNodeSimpleDeleteConflict() {
+    void testNodeSimpleDeleteConflict() {
         Node n = new Node(1, 1);
         n.setCoor(LatLon.ZERO);
         n.setDeleted(true);
@@ -217,7 +217,7 @@ public class DataSetMergerTest {
      * => mine has precedence
      */
     @Test
-    public void testNodeSimpleDeleteConflict2() {
+    void testNodeSimpleDeleteConflict2() {
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         n.setDeleted(true);
@@ -245,7 +245,7 @@ public class DataSetMergerTest {
      * => Ignore my node, no conflict
      */
     @Test
-    public void testNodeSimpleDeleteConflict3() {
+    void testNodeSimpleDeleteConflict3() {
         Node n = new Node(new LatLon(1, 1));
         n.setDeleted(true);
         my.addPrimitive(n);
@@ -268,7 +268,7 @@ public class DataSetMergerTest {
      * => take mine
      */
     @Test
-    public void testNodeSimpleDeleteConflict4() {
+    void testNodeSimpleDeleteConflict4() {
         Node n = new Node(new LatLon(1, 1));
         n.setDeleted(true);
         my.addPrimitive(n);
@@ -293,7 +293,7 @@ public class DataSetMergerTest {
      * => merge it onto my node.
      */
     @Test
-    public void testNodeSimpleNoIdSemanticallyEqual() {
+    void testNodeSimpleNoIdSemanticallyEqual() {
 
         User myUser = User.createOsmUser(1111, "my");
 
@@ -333,7 +333,7 @@ public class DataSetMergerTest {
      * => merge it onto my node. My node becomes complete
      */
     @Test
-    public void testNodeSimpleIncompleteNode() {
+    void testNodeSimpleIncompleteNode() {
 
         Node n = new Node(1);
         my.addPrimitive(n);
@@ -363,7 +363,7 @@ public class DataSetMergerTest {
      * => merge it onto my way.
      */
     @Test
-    public void testWaySimpleIdenticalNodesDifferentTags() {
+    void testWaySimpleIdenticalNodesDifferentTags() {
 
         // -- the target dataset
 
@@ -435,7 +435,7 @@ public class DataSetMergerTest {
      * => merge it onto my way, no conflict
      */
     @Test
-    public void testWaySimpleAdditionalNodesAndChangedNodes() {
+    void testWaySimpleAdditionalNodesAndChangedNodes() {
 
         // -- my data set
 
@@ -504,7 +504,7 @@ public class DataSetMergerTest {
      * => merge onto my way not possible, create a conflict
      */
     @Test
-    public void testWaySimpleDifferentNodesAndMyIsModified() {
+    void testWaySimpleDifferentNodesAndMyIsModified() {
 
         // -- the target dataset
 
@@ -568,7 +568,7 @@ public class DataSetMergerTest {
      * => conflict
      */
     @Test
-    public void testWaySimpleTheirVersionNotVisibleMyIsModified() {
+    void testWaySimpleTheirVersionNotVisibleMyIsModified() {
 
         Node mn1 = new Node(LatLon.ZERO);
         mn1.setOsmId(1, 1);
@@ -610,7 +610,7 @@ public class DataSetMergerTest {
      * their way can be merged on my way. No conflict.
      */
     @Test
-    public void testWaySimpleTwoWaysWithNoIdNodesWithId() {
+    void testWaySimpleTwoWaysWithNoIdNodesWithId() {
 
         // -- my data set
 
@@ -667,7 +667,7 @@ public class DataSetMergerTest {
      * their way can be merged on my way. No conflict.
      */
     @Test
-    public void testWaySimpleTwoWaysWithNoIdNodesWithoutId() {
+    void testWaySimpleTwoWaysWithNoIdNodesWithoutId() {
 
         // -- my data set
 
@@ -722,7 +722,7 @@ public class DataSetMergerTest {
      * special conflict with isDeleted should exist
      */
     @Test
-    public void testWayComplexMergingADeletedNode() {
+    void testWayComplexMergingADeletedNode() {
 
         // -- my dataset
 
@@ -776,7 +776,7 @@ public class DataSetMergerTest {
      * node with isMyDeleted set
      */
     @Test
-    public void testRelationComplexMergingADeletedNode() {
+    void testRelationComplexMergingADeletedNode() {
 
         Node mn1 = new Node(LatLon.ZERO);
         mn1.setOsmId(1, 1);
@@ -825,7 +825,7 @@ public class DataSetMergerTest {
      * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456
      */
     @Test
-    public void testNewIncompleteWay() {
+    void testNewIncompleteWay() {
 
         Node n1 = new Node(1);
         their.addPrimitive(n1);
@@ -867,7 +867,7 @@ public class DataSetMergerTest {
      * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456 after a "Update selection " of this way
      */
     @Test
-    public void testIncompleteWayOntoCompleteWay() {
+    void testIncompleteWayOntoCompleteWay() {
 
         // an incomplete node
         Node n1 = new Node(1);
@@ -922,7 +922,7 @@ public class DataSetMergerTest {
      * => both the nodes and the way should be complete in the target dataset after merging
      */
     @Test
-    public void testTwoCompleteNodesOntoAnIncompleteWay() {
+    void testTwoCompleteNodesOntoAnIncompleteWay() {
 
         // -- source dataset
 
@@ -1008,7 +1008,7 @@ public class DataSetMergerTest {
      * Non-regression test 1 for <a href="https://josm.openstreetmap.de/ticket/7481">Bug #7481</a>.
      */
     @Test
-    public void testTicket07481ab() {
+    void testTicket07481ab() {
         doTestTicket7481(my, their);
     }
 
@@ -1016,7 +1016,7 @@ public class DataSetMergerTest {
      * Non-regression test 2 for <a href="https://josm.openstreetmap.de/ticket/7481">Bug #7481</a>.
      */
     @Test
-    public void testTicket07481ba() {
+    void testTicket07481ba() {
         doTestTicket7481(their, my);
     }
 
@@ -1024,7 +1024,7 @@ public class DataSetMergerTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12599">Bug #12599</a>.
      */
     @Test
-    public void testTicket12599() {
+    void testTicket12599() {
         // Server node: no modifications
         Node n1 = new Node(1, 1);
         n1.setCoor(LatLon.ZERO);
@@ -1064,7 +1064,7 @@ public class DataSetMergerTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12616">Bug #12616</a>.
      */
     @Test
-    public void testTicket12616() {
+    void testTicket12616() {
         // Server node: no modifications
         Node n1 = new Node(1, 1);
         n1.setCoor(LatLon.ZERO);

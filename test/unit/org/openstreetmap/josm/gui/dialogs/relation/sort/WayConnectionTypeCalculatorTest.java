@@ -12,9 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -30,7 +30,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link WayConnectionTypeCalculator} class.
  */
-public class WayConnectionTypeCalculatorTest {
+class WayConnectionTypeCalculatorTest {
 
     private final RelationSorter sorter = new RelationSorter();
     private final WayConnectionTypeCalculator wayConnectionTypeCalculator = new WayConnectionTypeCalculator();
@@ -39,7 +39,7 @@ public class WayConnectionTypeCalculatorTest {
     /**
      * Use Mercator projection
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
@@ -48,7 +48,7 @@ public class WayConnectionTypeCalculatorTest {
      * @throws IllegalDataException if an error was found while parsing the data
      * @throws IOException in case of I/O error
      */
-    @Before
+    @BeforeEach
     public void loadData() throws IllegalDataException, IOException {
         if (testDataset == null) {
             try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/relation_sort.osm"))) {
@@ -99,7 +99,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(new ArrayList<>()));
         Assert.assertEquals("[]", actual);
     }
@@ -109,7 +109,7 @@ public class WayConnectionTypeCalculatorTest {
     // intentionally not sorted to ensure the sorting has some work.
 
     @Test
-    public void testGeneric() {
+    void testGeneric() {
         Relation relation = getRelation("generic");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
         Assert.assertEquals("[NONE, NONE, FORWARD, FORWARD, NONE, NONE, NONE, I, I]", actual);
@@ -118,7 +118,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testAssociatedStreet() {
+    void testAssociatedStreet() {
         Relation relation = getRelation("associatedStreet");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
         Assert.assertEquals("[NONE, I, I, I, NONE, I]", actual);
@@ -127,7 +127,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testLoop() {
+    void testLoop() {
         Relation relation = getRelation("loop");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(relation.getMembers()));
         Assert.assertEquals("[FPH FORWARD, FP FORWARD, NONE, FPH FORWARD, NONE, FPH FORWARD, NONE]", actual);
@@ -142,7 +142,7 @@ public class WayConnectionTypeCalculatorTest {
     // intentionally not sorted.
 
     @Test
-    public void testThreeLoopsEndsLoop() {
+    void testThreeLoopsEndsLoop() {
         Relation relation = getRelation("three-loops-ends-loop");
         // Check the first way before sorting, otherwise the sorter
         // might pick a different loop starting point than expected below
@@ -158,7 +158,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testThreeLoopsEndsWay() {
+    void testThreeLoopsEndsWay() {
         Relation relation = getRelation("three-loops-ends-way");
         // Check the first way before sorting, otherwise the sorter
         // might sort in reverse compared to what is expected below
@@ -174,7 +174,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testThreeLoopsEndsNode() {
+    void testThreeLoopsEndsNode() {
         Relation relation = getRelation("three-loops-ends-node");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
         String expected = "[" +
@@ -186,7 +186,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testOneLoopEndsSplit() {
+    void testOneLoopEndsSplit() {
         Relation relation = getRelation("one-loop-ends-split");
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
         String expected = "[" +
@@ -198,7 +198,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testNoLoopEndsSplit() {
+    void testNoLoopEndsSplit() {
         Relation relation = getRelation("no-loop-ends-split");
         // TODO: This is not yet sorted properly, so this route is
         // presorted in the data file
@@ -211,7 +211,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testIncompleteLoops() {
+    void testIncompleteLoops() {
         Relation relation = getRelation("incomplete-loops");
         // TODO: This is not yet sorted perfectly (might not be possible)
         String actual = getConnections(wayConnectionTypeCalculator.updateLinks(sorter.sortMembers(relation.getMembers())));
@@ -224,7 +224,7 @@ public class WayConnectionTypeCalculatorTest {
     }
 
     @Test
-    public void testParallelOneWay() {
+    void testParallelOneWay() {
         Relation relation = getRelation("parallel-oneway");
         // TODO: This is not always sorted properly, only when the right
         // way is already at the top, so check that
@@ -249,7 +249,7 @@ public class WayConnectionTypeCalculatorTest {
      * Test directional {@link WayConnectionTypeCalculator#computeNextWayConnection}
      */
     @Test
-    public void testDirectionsOnewaysOnly() {
+    void testDirectionsOnewaysOnly() {
         Relation relation = getRelation("direction");
 
         // Check with only one wrong oneway
@@ -317,7 +317,7 @@ public class WayConnectionTypeCalculatorTest {
      * Test directional {@link WayConnectionTypeCalculator#computeNextWayConnection}
      */
     @Test
-    public void testDirectionsOnewayMix() {
+    void testDirectionsOnewayMix() {
         Relation relation = getRelation("direction");
 
         // Remove the oneway in the wrong direction

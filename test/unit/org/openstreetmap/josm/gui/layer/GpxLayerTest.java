@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -15,8 +16,8 @@ import java.util.TimeZone;
 
 import javax.swing.JScrollPane;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -40,7 +41,7 @@ public class GpxLayerTest {
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().i18n().metricSystem();
 
@@ -73,7 +74,7 @@ public class GpxLayerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testGpxLayer() throws Exception {
+    void testGpxLayer() throws Exception {
         GpxLayer layer = new GpxLayer(new GpxData(), "foo", false);
         GpxTrack trk = new GpxTrack(new ArrayList<IGpxTrackSegment>(), new HashMap<>());
         trk.getExtensions().add("gpxd", "color", "#FF0000");
@@ -104,7 +105,7 @@ public class GpxLayerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testGetInfoComponent() throws Exception {
+    void testGetInfoComponent() throws Exception {
         assertEquals("<html>\n"+
                      "  <head>\n" +
                      "    <style type=\"text/css\">\n" +
@@ -191,7 +192,7 @@ public class GpxLayerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testGetTimespanForTrack() throws Exception {
+    void testGetTimespanForTrack() throws Exception {
         assertEquals("", GpxLayer.getTimespanForTrack(
                 new GpxTrack(new ArrayList<Collection<WayPoint>>(), new HashMap<String, Object>())));
 
@@ -206,7 +207,7 @@ public class GpxLayerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testMergeFrom() throws Exception {
+    void testMergeFrom() throws Exception {
         GpxLayer layer = new GpxLayer(new GpxData());
         assertTrue(layer.data.isEmpty());
         layer.mergeFrom(getMinimalGpxLayer());
@@ -218,9 +219,9 @@ public class GpxLayerTest {
     /**
      * Test that {@link GpxLayer#mergeFrom} throws IAE for invalid arguments
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testMergeFromIAE() {
-        new GpxLayer(new GpxData()).mergeFrom(new OsmDataLayer(new DataSet(), "", null));
+    @Test
+    void testMergeFromIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new GpxLayer(new GpxData()).mergeFrom(new OsmDataLayer(new DataSet(), "", null)));
     }
 
     /**
@@ -228,7 +229,7 @@ public class GpxLayerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testPaint() throws Exception {
+    void testPaint() throws Exception {
         GpxLayer layer = getMinimalGpxLayer();
         try {
             MainApplication.getLayerManager().addLayer(layer);
@@ -243,7 +244,7 @@ public class GpxLayerTest {
      * Unit test of {@link GpxLayer#getChangesetSourceTag}.
      */
     @Test
-    public void testGetChangesetSourceTag() {
+    void testGetChangesetSourceTag() {
         assertEquals("survey", new GpxLayer(new GpxData(), "", true).getChangesetSourceTag());
         assertNull(new GpxLayer(new GpxData(), "", false).getChangesetSourceTag());
     }

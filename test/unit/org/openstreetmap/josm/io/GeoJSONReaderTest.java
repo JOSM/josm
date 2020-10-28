@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -31,12 +31,12 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 /**
  * Unit tests of {@link GeoJSONReader}.
  */
-public class GeoJSONReaderTest {
+class GeoJSONReaderTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     public JOSMTestRules rules = new JOSMTestRules();
 
     /**
@@ -44,7 +44,7 @@ public class GeoJSONReaderTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testReadGeoJson() throws Exception {
+    void testReadGeoJson() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "geo.json"))) {
             final List<OsmPrimitive> primitives = new ArrayList<>(new GeoJSONReader()
                 .doParseDataSet(in, null)
@@ -59,7 +59,7 @@ public class GeoJSONReaderTest {
      * @throws Exception in case of an error
      */
     @Test
-    public void testReadLineByLineGeoJSON() throws Exception {
+    void testReadLineByLineGeoJSON() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "geoLineByLine.json"))) {
             final List<OsmPrimitive> primitives = new ArrayList<>(new GeoJSONReader()
                 .doParseDataSet(in, null)
@@ -149,7 +149,7 @@ public class GeoJSONReaderTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testReadGeoJsonNamedCrs() throws Exception {
+    void testReadGeoJsonNamedCrs() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "geocrs.json"))) {
             final List<OsmPrimitive> primitives = new ArrayList<>(new GeoJSONReader()
                     .doParseDataSet(in, null)
@@ -164,7 +164,7 @@ public class GeoJSONReaderTest {
      * Test reading a JSON file which is not a proper GeoJSON (type missing).
      */
     @Test
-    public void testReadGeoJsonWithoutType() {
+    void testReadGeoJsonWithoutType() {
         assertThrows(IllegalDataException.class, () ->
                 new GeoJSONReader().doParseDataSet(new ByteArrayInputStream("{}".getBytes(StandardCharsets.UTF_8)), null));
     }
@@ -192,7 +192,7 @@ public class GeoJSONReaderTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testTicket19822() throws Exception {
+    void testTicket19822() throws Exception {
         try (InputStream in = TestUtils.getRegressionDataStream(19822, "data.geojson")) {
             final List<OsmPrimitive> primitives = new ArrayList<>(
                     new GeoJSONReader().doParseDataSet(in, null).getPrimitives(it -> true));
@@ -206,7 +206,7 @@ public class GeoJSONReaderTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testTicket19822Nested() throws Exception {
+    void testTicket19822Nested() throws Exception {
         try (InputStream in = TestUtils.getRegressionDataStream(19822, "problem3.geojson")) {
             final List<OsmPrimitive> primitives = new ArrayList<>(
                     new GeoJSONReader().doParseDataSet(in, null).getPrimitives(it -> true));

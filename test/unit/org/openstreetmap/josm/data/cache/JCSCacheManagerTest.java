@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.cache;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.apache.commons.jcs3.auxiliary.disk.block.BlockDiskCacheAttributes;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -20,12 +20,12 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests for class {@link JCSCacheManager}.
  */
-public class JCSCacheManagerTest {
+class JCSCacheManagerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20000);
 
@@ -34,7 +34,7 @@ public class JCSCacheManagerTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(JCSCacheManager.class);
     }
 
@@ -43,13 +43,13 @@ public class JCSCacheManagerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testLoggingAdaptor12054() throws IOException {
+    void testLoggingAdaptor12054() throws IOException {
         JCSCacheManager.getCache("foobar", 1, 0, "foobar"); // cause logging adaptor to be initialized
         Logger.getLogger("org.apache.commons.jcs3").warning("{switch:0}");
     }
 
     @Test
-    public void testUseBigDiskFile() throws IOException {
+    void testUseBigDiskFile() throws IOException {
         if (JCSCacheManager.USE_BLOCK_CACHE.get()) {
             // test only when using block cache
             File cacheFile = new File("foobar/testUseBigDiskFile_BLOCK_v2.data");
@@ -64,8 +64,9 @@ public class JCSCacheManagerTest {
             }
 
             CacheAccess<Object, Object> cache = JCSCacheManager.getCache("testUseBigDiskFile", 1, 100, "foobar");
-            assertEquals("BlockDiskCache use file size to calculate its size", 10*1024,
-                    ((BlockDiskCacheAttributes) cache.getCacheControl().getAuxCaches()[0].getAuxiliaryCacheAttributes()).getMaxKeySize());
+            assertEquals(10*1024,
+                    ((BlockDiskCacheAttributes) cache.getCacheControl().getAuxCaches()[0].getAuxiliaryCacheAttributes()).getMaxKeySize(),
+                    "BlockDiskCache use file size to calculate its size");
         }
     }
 }

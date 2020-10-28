@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
@@ -20,7 +20,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * Tests for {@link ShiftedProjecting}
  * @author Michael Zangl
  */
-public class ShiftedProjectionTest {
+class ShiftedProjectionTest {
     private static final class ProjectingBase implements Projecting {
         @Override
         public EastNorth latlon2eastNorth(ILatLon ll) {
@@ -56,7 +56,7 @@ public class ShiftedProjectionTest {
      * Test {@link ShiftedProjecting#latlon2eastNorth(ILatLon)}
      */
     @Test
-    public void testLatlon2eastNorth() {
+    void testLatlon2eastNorth() {
         Projecting base = new ProjectingBase();
 
         ShiftedProjecting unshifted = new ShiftedProjecting(base, new EastNorth(0, 0));
@@ -80,7 +80,7 @@ public class ShiftedProjectionTest {
      * Test {@link ShiftedProjecting#eastNorth2latlonClamped(EastNorth)}
      */
     @Test
-    public void testEastNorth2latlonClamped() {
+    void testEastNorth2latlonClamped() {
         Projecting base = new ProjectingBase();
 
         ShiftedProjecting unshifted = new ShiftedProjecting(base, new EastNorth(0, 0));
@@ -104,7 +104,7 @@ public class ShiftedProjectionTest {
      * Test {@link ShiftedProjecting#getProjectingsForArea(ProjectionBounds)}, single area case
      */
     @Test
-    public void testGetProjectingsForArea() {
+    void testGetProjectingsForArea() {
         Projecting base = new ProjectingBase();
         ShiftedProjecting shifted = new ShiftedProjecting(base, new EastNorth(5, 7));
 
@@ -123,7 +123,7 @@ public class ShiftedProjectionTest {
      * Test {@link ShiftedProjecting#getProjectingsForArea(ProjectionBounds)}, multiple area case
      */
     @Test
-    public void testGetProjectingsForAreaMultiple() {
+    void testGetProjectingsForAreaMultiple() {
         Projecting base = new ProjectingBase();
         ShiftedProjecting shifted = new ShiftedProjecting(base, new EastNorth(5, 7));
 

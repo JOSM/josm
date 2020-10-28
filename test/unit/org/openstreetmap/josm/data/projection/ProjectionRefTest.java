@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -58,7 +58,7 @@ import org.openstreetmap.josm.tools.PlatformManager;
  * This means the test does not verify our definitions, but the correctness
  * of the algorithm, given a certain definition.
  */
-public class ProjectionRefTest {
+class ProjectionRefTest {
 
     private static final String CS2CS_EXE = "cs2cs";
 
@@ -85,7 +85,7 @@ public class ProjectionRefTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projectionNadGrids().timeout(90_000);
 
@@ -372,7 +372,7 @@ public class ProjectionRefTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testProjections() throws IOException {
+    void testProjections() throws IOException {
         StringBuilder fail = new StringBuilder();
         Map<String, Set<String>> failingProjs = new HashMap<>();
         Set<String> allCodes = new HashSet<>(Projections.getAllProjectionCodes());

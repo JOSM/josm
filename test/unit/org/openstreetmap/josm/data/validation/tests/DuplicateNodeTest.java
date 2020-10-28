@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -19,12 +19,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of "Duplicate node" validation test.
  */
-public class DuplicateNodeTest {
+class DuplicateNodeTest {
 
     /**
      * Setup test by initializing JOSM preferences and projection.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -69,7 +69,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - different tag sets.
      */
     @Test
-    public void testDuplicateNode() {
+    void testDuplicateNode() {
         DataSet ds = new DataSet();
 
         Node a = new Node(new LatLon(10.0, 5.0));
@@ -87,7 +87,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - mixed case.
      */
     @Test
-    public void testDuplicateNodeMixed() {
+    void testDuplicateNodeMixed() {
         doTest(DuplicateNode.DUPLICATE_NODE_MIXED, new Tag("building", "foo"), new Tag("highway", "bar"));
     }
 
@@ -95,7 +95,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - other case.
      */
     @Test
-    public void testDuplicateNodeOther() {
+    void testDuplicateNodeOther() {
         doTest(DuplicateNode.DUPLICATE_NODE_OTHER);
     }
 
@@ -103,7 +103,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - building case.
      */
     @Test
-    public void testDuplicateNodeBuilding() {
+    void testDuplicateNodeBuilding() {
         doTest(DuplicateNode.DUPLICATE_NODE_BUILDING, new Tag("building", "foo"));
     }
 
@@ -111,7 +111,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - boundary case.
      */
     @Test
-    public void testDuplicateNodeBoundary() {
+    void testDuplicateNodeBoundary() {
         doTest(DuplicateNode.DUPLICATE_NODE_BOUNDARY, new Tag("boundary", "foo"));
     }
 
@@ -119,7 +119,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - highway case.
      */
     @Test
-    public void testDuplicateNodeHighway() {
+    void testDuplicateNodeHighway() {
         doTest(DuplicateNode.DUPLICATE_NODE_HIGHWAY, new Tag("highway", "foo"));
     }
 
@@ -127,7 +127,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - landuse case.
      */
     @Test
-    public void testDuplicateNodeLanduse() {
+    void testDuplicateNodeLanduse() {
         doTest(DuplicateNode.DUPLICATE_NODE_LANDUSE, new Tag("landuse", "foo"));
     }
 
@@ -135,7 +135,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - natural case.
      */
     @Test
-    public void testDuplicateNodeNatural() {
+    void testDuplicateNodeNatural() {
         doTest(DuplicateNode.DUPLICATE_NODE_NATURAL, new Tag("natural", "foo"));
     }
 
@@ -143,7 +143,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - power case.
      */
     @Test
-    public void testDuplicateNodePower() {
+    void testDuplicateNodePower() {
         doTest(DuplicateNode.DUPLICATE_NODE_POWER, new Tag("power", "foo"));
     }
 
@@ -151,7 +151,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - railway case.
      */
     @Test
-    public void testDuplicateNodeRailway() {
+    void testDuplicateNodeRailway() {
         doTest(DuplicateNode.DUPLICATE_NODE_RAILWAY, new Tag("railway", "foo"));
     }
 
@@ -159,7 +159,7 @@ public class DuplicateNodeTest {
      * Test of "Duplicate node" validation test - waterway case.
      */
     @Test
-    public void testDuplicateNodeWaterway() {
+    void testDuplicateNodeWaterway() {
         doTest(DuplicateNode.DUPLICATE_NODE_WATERWAY, new Tag("waterway", "foo"));
     }
 }

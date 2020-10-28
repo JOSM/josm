@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 /**
  * Unit tests for class {@link Projection}.
  */
-public class ProjectionTest {
+class ProjectionTest {
 
     private static final Random rand = new SecureRandom();
 
@@ -29,7 +29,7 @@ public class ProjectionTest {
      * Tests that projections are numerically stable in their definition bounds (round trip error &lt; 1e-5)
      */
     @Test
-    public void testProjections() {
+    void testProjections() {
         error = false;
         text = "";
 
@@ -119,7 +119,7 @@ public class ProjectionTest {
      * Tests that projections are numerically stable in their definition bounds (round trip error &lt; epsilon)
      */
     @Test
-    public void testProjs() {
+    void testProjs() {
         error2 = false;
         text2 = "";
 
@@ -149,7 +149,7 @@ public class ProjectionTest {
             System.err.println(text2);
             Assert.fail();
         }
-        assertTrue("missing test: "+projIds, projIds.isEmpty());
+        assertTrue(projIds.isEmpty(), "missing test: "+projIds);
     }
 
     private void testProj(String id, double eps, String prefAdd) {
@@ -169,7 +169,7 @@ public class ProjectionTest {
             LatLon ll1 = random(b);
             EastNorth en = p.latlon2eastNorth(ll1);
             LatLon ll2 = p.eastNorth2latlon(en);
-            assertTrue(p.toCode() + " at " + ll1 + " is " + ll2, ll2.isValid());
+            assertTrue(ll2.isValid(), p.toCode() + " at " + ll1 + " is " + ll2);
             double dist = ll1.greatCircleDistance(ll2);
             if (dist > eps) {
                 error2 = true;
@@ -188,7 +188,7 @@ public class ProjectionTest {
      * Checks that Swedish projections have their axis defined correctly.
      */
     @Test
-    public void testSwedishProjections() {
+    void testSwedishProjections() {
         for (int code = 3006; code <= 3018; code++) {
             assertTrue(Projections.getProjectionByCode("EPSG:"+code).switchXY());
         }

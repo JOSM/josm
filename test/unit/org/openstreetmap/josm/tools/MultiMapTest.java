@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -20,13 +20,13 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Unit tests of {@link MultiMap} class.
  */
-public class MultiMapTest {
+class MultiMapTest {
 
     /**
      * Unit test of methods {@link MultiMap#equals} and {@link MultiMap#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(MultiMap.class).usingGetClass().verify();
     }
@@ -35,7 +35,7 @@ public class MultiMapTest {
      * Various test of {@link MultiMap}.
      */
     @Test
-    public void testMultiMap() {
+    void testMultiMap() {
         final MultiMap<String, String> map = new MultiMap<>();
         assertTrue(map.isEmpty());
         map.put("foo", "bar");

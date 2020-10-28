@@ -11,7 +11,7 @@ import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 /**
  * Custom matchers for unit tests.
  */
-@Ignore("no test")
+@Disabled("no test")
 public final class CustomMatchers {
 
     /**

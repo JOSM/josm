@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +14,8 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.TagChecker;
@@ -30,12 +30,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Various integration tests with Taginfo.
  */
-public class TaginfoTestIT {
+class TaginfoTestIT {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20000);
 
@@ -46,7 +46,7 @@ public class TaginfoTestIT {
      * @throws ParseException if any MapCSS parsing error occurs
      */
     @Test
-    public void testCheckPopularTags() throws SAXException, IOException, ParseException {
+    void testCheckPopularTags() throws SAXException, IOException, ParseException {
         TaggingPresets.readFromPreferences();
         new TagChecker().initialize();
         MapCSSTagChecker mapCssTagChecker = new MapCSSTagChecker();
@@ -89,6 +89,6 @@ public class TaginfoTestIT {
         for (String error : errors) {
             System.err.println(error);
         }
-        assertTrue(errors.toString(), errors.isEmpty());
+        assertTrue(errors.isEmpty(), errors::toString);
     }
 }

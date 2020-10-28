@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.tags;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -17,17 +17,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link TagMergeItem} class.
  */
-public class TagMergeItemTest {
+class TagMergeItemTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     @Test
-    public void testTagMergeItem() {
+    void testTagMergeItem() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         assertEquals("key", item.getKey());
         assertEquals("myvalue", item.getMyTagValue());
@@ -36,7 +36,7 @@ public class TagMergeItemTest {
     }
 
     @Test
-    public void testTagMergeItem2() {
+    void testTagMergeItem2() {
         Node n1 = new Node(1);
         Node n2 = new Node(1);
         n1.put("key", "myvalue");
@@ -50,7 +50,7 @@ public class TagMergeItemTest {
     }
 
     @Test
-    public void testTagMergeItem3() {
+    void testTagMergeItem3() {
         Node n1 = new Node(1);
         Node n2 = new Node(1);
         n1.put("key", "myvalue");
@@ -64,7 +64,7 @@ public class TagMergeItemTest {
     }
 
     @Test
-    public void testTagMergeItem4() {
+    void testTagMergeItem4() {
         Node n1 = new Node(1);
         Node n2 = new Node(1);
         // n1 does not have this key
@@ -79,14 +79,14 @@ public class TagMergeItemTest {
     }
 
     @Test
-    public void testDecide() {
+    void testDecide() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         item.decide(MergeDecisionType.KEEP_MINE);
         assertEquals(MergeDecisionType.KEEP_MINE, item.getMergeDecision());
     }
 
     @Test
-    public void testDecide1() {
+    void testDecide1() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         try {
             item.decide(null);
@@ -98,7 +98,7 @@ public class TagMergeItemTest {
     }
 
     @Test
-    public void testApplyToMyPrimitive() {
+    void testApplyToMyPrimitive() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         item.decide(MergeDecisionType.KEEP_MINE);
 
@@ -113,7 +113,7 @@ public class TagMergeItemTest {
     }
 
     @Test
-    public void testApplyToMyPrimitive2() {
+    void testApplyToMyPrimitive2() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         item.decide(MergeDecisionType.KEEP_THEIR);
 
@@ -128,7 +128,7 @@ public class TagMergeItemTest {
     }
 
     @Test
-    public void testApplyToMyPrimitive3() {
+    void testApplyToMyPrimitive3() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         // item is undecided
         // item.decide(MergeDecisionType.KEEP_THEIR);
@@ -145,7 +145,7 @@ public class TagMergeItemTest {
     }
 
     @Test
-    public void testApplyToMyPrimitive4() {
+    void testApplyToMyPrimitive4() {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
 
         try {

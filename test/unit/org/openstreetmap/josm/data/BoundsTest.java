@@ -1,22 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.geom.Rectangle2D;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
  * Unit tests for class {@link Bounds}.
  */
-public class BoundsTest {
+class BoundsTest {
 
     @Test
-    public void testCrossing() {
+    void testCrossing() {
         Bounds b1 = new Bounds(0, 170, 50, -170);
         assertTrue(b1.crosses180thMeridian());
         assertFalse(b1.contains(new LatLon(-10, -180)));
@@ -69,7 +69,7 @@ public class BoundsTest {
      * Unit tests for {@link Bounds#Bounds} - nominal cases.
      */
     @Test
-    public void testConstructorNominalCases() {
+    void testConstructorNominalCases() {
         doTestConstructorNominal(new Bounds(new LatLon(1d, 2d), new LatLon(3d, 4d)));
         doTestConstructorNominal(new Bounds(new LatLon(1d, 2d), new LatLon(3d, 4d), true));
         doTestConstructorNominal(new Bounds(1d, 2d, 3d, 4d));
@@ -84,7 +84,7 @@ public class BoundsTest {
      * Unit tests for {@link Bounds#Bounds} - single point cases.
      */
     @Test
-    public void testConstructorSinglePointCases() {
+    void testConstructorSinglePointCases() {
         doTestConstructorPoint(new Bounds(new LatLon(1d, 2d)));
         doTestConstructorPoint(new Bounds(new LatLon(1d, 2d), true));
         doTestConstructorPoint(new Bounds(1d, 2d, true));

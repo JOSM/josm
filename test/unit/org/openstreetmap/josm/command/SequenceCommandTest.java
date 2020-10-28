@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,9 +18,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -38,12 +38,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link SequenceCommand} class.
  */
-public class SequenceCommandTest {
+class SequenceCommandTest {
 
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
     private CommandTestDataWithRelation testData;
@@ -51,7 +51,7 @@ public class SequenceCommandTest {
     /**
      * Set up the test data.
      */
-    @Before
+    @BeforeEach
     public void createTestData() {
         testData = new CommandTestDataWithRelation();
     }
@@ -60,7 +60,7 @@ public class SequenceCommandTest {
      * Test {@link SequenceCommand#executeCommand()}
      */
     @Test
-    public void testExecute() {
+    void testExecute() {
         DataSet ds = new DataSet();
         final TestCommand command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode));
         TestCommand command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2)) {
@@ -82,7 +82,7 @@ public class SequenceCommandTest {
      * Test {@link SequenceCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         DataSet ds = new DataSet();
         final TestCommand command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2));
         TestCommand command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode)) {
@@ -111,7 +111,7 @@ public class SequenceCommandTest {
      * Test {@link SequenceCommand#executeCommand()} rollback if case of subcommand failure.
      */
     @Test
-    public void testExecuteRollback() {
+    void testExecuteRollback() {
         DataSet ds = new DataSet();
         TestCommand command1 = new TestCommand(ds, null);
         FailingCommand command2 = new FailingCommand(ds);
@@ -128,7 +128,7 @@ public class SequenceCommandTest {
      * Test {@link SequenceCommand#executeCommand()} with continueOnError = true
      */
     @Test
-    public void testContinueOnErrors() {
+    void testContinueOnErrors() {
         DataSet ds = new DataSet();
         TestCommand command1 = new TestCommand(ds, null);
         FailingCommand command2 = new FailingCommand(ds);
@@ -147,7 +147,7 @@ public class SequenceCommandTest {
      * Test {@link SequenceCommand#undoCommand()}
      */
     @Test
-    public void testGetLastCommand() {
+    void testGetLastCommand() {
         DataSet ds = new DataSet();
         final TestCommand command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode));
         final TestCommand command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2));
@@ -160,7 +160,7 @@ public class SequenceCommandTest {
      * Tests {@link SequenceCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         DataSet ds = new DataSet();
         Command command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode));
         Command command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2));
@@ -193,7 +193,7 @@ public class SequenceCommandTest {
      * Tests {@link SequenceCommand#getParticipatingPrimitives()}
      */
     @Test
-    public void testGetParticipatingPrimitives() {
+    void testGetParticipatingPrimitives() {
         DataSet ds = new DataSet();
         Command command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode));
         Command command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2));
@@ -210,7 +210,7 @@ public class SequenceCommandTest {
      * Test {@link SequenceCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         assertTrue(new SequenceCommand(new DataSet(), "test", Collections.emptyList(), false).getDescriptionText().matches("Sequence: test"));
     }
 
@@ -218,7 +218,7 @@ public class SequenceCommandTest {
      * Unit test of methods {@link SequenceCommand#equals} and {@link SequenceCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         DataSet ds = new DataSet();
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(SequenceCommand.class).usingGetClass()
@@ -262,14 +262,14 @@ public class SequenceCommandTest {
 
         @Override
         public boolean executeCommand() {
-            assertFalse("Cannot execute twice", executed);
+            assertFalse(executed, "Cannot execute twice");
             executed = true;
             return true;
         }
 
         @Override
         public void undoCommand() {
-            assertTrue("Cannot undo without execute", executed);
+            assertTrue(executed, "Cannot undo without execute");
             executed = false;
         }
 
@@ -294,7 +294,7 @@ public class SequenceCommandTest {
 
         @Override
         public void undoCommand() {
-            assertTrue("Cannot undo without execute", executed);
+            assertTrue(executed, "Cannot undo without execute");
             executed = false;
         }
 
@@ -308,7 +308,7 @@ public class SequenceCommandTest {
      * Test {@link SequenceCommand#wrapIfNeeded}
      */
     @Test
-    public void testWrapIfNeeded() {
+    void testWrapIfNeeded() {
         DataSet ds = new DataSet();
         TestCommand command1 = new TestCommand(ds, Collections.<OsmPrimitive>singletonList(testData.existingNode));
         TestCommand command2 = new TestCommand(ds, Collections.<OsmPrimitive>singletonList(testData.existingNode2));
@@ -321,7 +321,7 @@ public class SequenceCommandTest {
      * Test SequenceCommand#createReportedException
      */
     @Test
-    public void testCreateReportedException() {
+    void testCreateReportedException() {
         DataSet ds = new DataSet();
         Command c1 = new TestCommand(ds, Collections.emptyList()) {
             @Override

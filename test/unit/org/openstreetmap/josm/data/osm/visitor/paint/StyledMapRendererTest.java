@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 
@@ -16,13 +16,13 @@ import nl.jqno.equalsverifier.Warning;
  * @author Michael Zangl
  * @since 12078
  */
-public class StyledMapRendererTest {
+class StyledMapRendererTest {
 
     /**
      * Tests the floatToFixed function.
      */
     @Test
-    public void testFloatToFixed() {
+    void testFloatToFixed() {
         long inf = floatToFixedCheckBits(Float.POSITIVE_INFINITY, 24);
         long big = floatToFixedCheckBits(Float.MAX_VALUE, 24);
         long two = floatToFixedCheckBits(2, 24);
@@ -84,7 +84,7 @@ public class StyledMapRendererTest {
      * Unit test of methods {@link StyleRecord#equals} and {@link StyleRecord#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(StyleRecord.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)

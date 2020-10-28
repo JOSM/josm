@@ -1,22 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the {@link EastNorth} class
  * @author Michael Zangl
  * @since 10915
  */
-public class EastNorthTest {
+class EastNorthTest {
 
     /**
      * Test {@link EastNorth#interpolate(EastNorth, double)}
      */
     @Test
-    public void testInterpolate() {
+    void testInterpolate() {
         EastNorth en1 = new EastNorth(0, 0);
         EastNorth en2 = new EastNorth(30, 60);
         EastNorth en3 = new EastNorth(-70, -40);
@@ -36,7 +36,7 @@ public class EastNorthTest {
      * Test {@link EastNorth#getCenter(EastNorth)}
      */
     @Test
-    public void testGetCenter() {
+    void testGetCenter() {
         EastNorth en1 = new EastNorth(0, 0);
         EastNorth en2 = new EastNorth(30, 60);
         EastNorth en3 = new EastNorth(-70, -40);

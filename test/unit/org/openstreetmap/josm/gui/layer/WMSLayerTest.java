@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -15,12 +16,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link WMSLayer} class.
  */
-public class WMSLayerTest {
+class WMSLayerTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection();
 
@@ -28,7 +29,7 @@ public class WMSLayerTest {
      * Unit test of {@link WMSLayer#WMSLayer}.
      */
     @Test
-    public void testWMSLayer() {
+    void testWMSLayer() {
         WMSLayer wms = new WMSLayer(new ImageryInfo("test wms", "http://localhost"));
         MainApplication.getLayerManager().addLayer(wms);
         try {
@@ -42,8 +43,8 @@ public class WMSLayerTest {
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13828">Bug #13828</a>.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testTicket13828() {
-        new WMSLayer(new ImageryInfo("TMS", "http://203.159.29.217/try2/{z}/{x}/{y}.png"));
+    @Test
+    void testTicket13828() {
+        assertThrows(IllegalArgumentException.class, () -> new WMSLayer(new ImageryInfo("TMS", "http://203.159.29.217/try2/{z}/{x}/{y}.png")));
     }
 }

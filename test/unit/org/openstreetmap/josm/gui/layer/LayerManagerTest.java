@@ -3,13 +3,13 @@ package org.openstreetmap.josm.gui.layer;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.openstreetmap.josm.testutils.ThrowableRootCauseMatcher.hasRootCause;
 
@@ -24,8 +24,8 @@ import java.util.Collections;
 import javax.swing.Action;
 import javax.swing.Icon;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
@@ -165,7 +165,7 @@ public class LayerManagerTest {
     /**
      * Set up test layer manager.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         layerManager = new LayerManager();
     }
@@ -174,7 +174,7 @@ public class LayerManagerTest {
      * {@link LayerManager#addLayer(Layer)}
      */
     @Test
-    public void testAddLayer() {
+    void testAddLayer() {
         Layer layer1 = new TestLayer() {
             @Override
             public LayerPositionStrategy getDefaultLayerPosition() {
@@ -221,7 +221,7 @@ public class LayerManagerTest {
      * {@link LayerManager#addLayer(Layer)}: duplicate layers
      */
     @Test
-    public void testAddLayerFails() {
+    void testAddLayerFails() {
         Exception e = assertThrows(ReportedException.class, () -> {
             TestLayer layer1 = new TestLayer();
             layerManager.addLayer(layer1);
@@ -235,7 +235,7 @@ public class LayerManagerTest {
      * {@link LayerManager#addLayer(Layer)}: illegal default layer position
      */
     @Test
-    public void testAddLayerIllegalPosition() {
+    void testAddLayerIllegalPosition() {
         Exception e = assertThrows(ReportedException.class, () -> {
             TestLayer layer1 = new TestLayer() {
                 @Override
@@ -253,7 +253,7 @@ public class LayerManagerTest {
      * {@link LayerManager#removeLayer(Layer)}
      */
     @Test
-    public void testRemoveLayer() {
+    void testRemoveLayer() {
         TestLayer layer1 = new TestLayer();
         TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
@@ -274,7 +274,7 @@ public class LayerManagerTest {
      * {@link LayerManager#moveLayer(Layer, int)}
      */
     @Test
-    public void testMoveLayer() {
+    void testMoveLayer() {
         TestLayer layer1 = new TestLayer();
         TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
@@ -302,7 +302,7 @@ public class LayerManagerTest {
      * {@link LayerManager#moveLayer(Layer, int)} fails for wrong index
      */
     @Test
-    public void testMoveLayerFailsRange() {
+    void testMoveLayerFailsRange() {
         Exception e = assertThrows(ReportedException.class, () -> {
             TestLayer layer1 = new TestLayer();
             TestLayer layer2 = new TestLayer();
@@ -318,7 +318,7 @@ public class LayerManagerTest {
      * {@link LayerManager#moveLayer(Layer, int)} fails for wrong layer
      */
     @Test
-    public void testMoveLayerFailsNotInList() {
+    void testMoveLayerFailsNotInList() {
         Exception e = assertThrows(ReportedException.class, () -> {
             TestLayer layer1 = new TestLayer();
             TestLayer layer2 = new TestLayer();
@@ -332,21 +332,21 @@ public class LayerManagerTest {
     /**
      * {@link LayerManager#getLayers()} unmodifiable
      */
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetLayers() {
+    @Test
+    void testGetLayers() {
         // list should be immutable
         TestLayer layer1 = new TestLayer();
         TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer2);
-        layerManager.getLayers().remove(0);
+        assertThrows(UnsupportedOperationException.class, () -> layerManager.getLayers().remove(0));
     }
 
     /**
      * {@link LayerManager#getLayersOfType(Class)}
      */
     @Test
-    public void testGetLayersOfType() {
+    void testGetLayersOfType() {
         TestLayer2 layer1 = new TestLayer2();
         TestLayer2 layer2 = new TestLayer2();
         layerManager.addLayer(layer1);
@@ -360,7 +360,7 @@ public class LayerManagerTest {
      * {@link LayerManager#containsLayer(Layer)}
      */
     @Test
-    public void testContainsLayer() {
+    void testContainsLayer() {
         TestLayer layer = new TestLayer();
         layerManager.addLayer(layer);
         layerManager.addLayer(new TestLayer());
@@ -373,7 +373,7 @@ public class LayerManagerTest {
      * {@link LayerManager#addLayerChangeListener(LayerChangeListener)}
      */
     @Test
-    public void testAddLayerChangeListener() {
+    void testAddLayerChangeListener() {
         CapturingLayerChangeListener l = new CapturingLayerChangeListener();
         layerManager.addLayerChangeListener(l);
         assertNull(l.layerAdded);
@@ -384,18 +384,18 @@ public class LayerManagerTest {
     /**
      * {@link LayerManager#addLayerChangeListener(LayerChangeListener)} twice
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddLayerChangeListenerDuplicates() {
+    @Test
+    void testAddLayerChangeListenerDuplicates() {
         CapturingLayerChangeListener l = new CapturingLayerChangeListener();
         layerManager.addLayerChangeListener(l);
-        layerManager.addLayerChangeListener(l);
+        assertThrows(IllegalArgumentException.class, () -> layerManager.addLayerChangeListener(l));
     }
 
     /**
      * {@link LayerManager#addAndFireLayerChangeListener(LayerChangeListener)} fires fake add events
      */
     @Test
-    public void testAddLayerChangeListenerFire() {
+    void testAddLayerChangeListenerFire() {
         final ArrayList<Layer> fired = new ArrayList<>();
         TestLayer layer1 = new TestLayer();
         TestLayer layer2 = new TestLayer();
@@ -425,7 +425,7 @@ public class LayerManagerTest {
      * {@link LayerManager#removeLayerChangeListener(LayerChangeListener)}
      */
     @Test
-    public void testRemoveLayerChangeListener() {
+    void testRemoveLayerChangeListener() {
         CapturingLayerChangeListener l = new CapturingLayerChangeListener();
         layerManager.addLayerChangeListener(l);
         layerManager.addLayer(new TestLayer());
@@ -440,17 +440,17 @@ public class LayerManagerTest {
     /**
      * {@link LayerManager#removeLayerChangeListener(LayerChangeListener)} listener not in list
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testRemoveLayerChangeListenerNotAdded() {
+    @Test
+    void testRemoveLayerChangeListenerNotAdded() {
         CapturingLayerChangeListener l = new CapturingLayerChangeListener();
-        layerManager.removeLayerChangeListener(l);
+        assertThrows(IllegalArgumentException.class, () -> layerManager.removeLayerChangeListener(l));
     }
 
     /**
      * {@link LayerManager#removeAndFireLayerChangeListener(LayerChangeListener)} fires fake remove events
      */
     @Test
-    public void testRemoveLayerChangeListenerFire() {
+    void testRemoveLayerChangeListenerFire() {
         final ArrayList<Layer> fired = new ArrayList<>();
         TestLayer layer1 = new TestLayer();
         TestLayer layer2 = new TestLayer();
@@ -482,7 +482,7 @@ public class LayerManagerTest {
      * Test {@link LayerRemoveEvent#scheduleRemoval(java.util.Collection)}
      */
     @Test
-    public void testLayerRemoveScheduleRemoval() {
+    void testLayerRemoveScheduleRemoval() {
         TestLayer layer1 = new TestLayer();
         TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
@@ -515,7 +515,7 @@ public class LayerManagerTest {
      * Test {@link LayerManager#resetState()}
      */
     @Test
-    public void testResetState() {
+    void testResetState() {
         ResetStateChangeListener changeListener = new ResetStateChangeListener();
         layerManager.addLayer(new TestLayer());
         layerManager.addLayerChangeListener(changeListener);

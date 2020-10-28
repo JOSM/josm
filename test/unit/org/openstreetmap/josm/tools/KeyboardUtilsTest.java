@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -12,8 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -21,11 +21,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link KeyboardUtils} class.
  */
-public class KeyboardUtilsTest {
+class KeyboardUtilsTest {
     /**
      * Initializes test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules();
 
@@ -33,7 +33,7 @@ public class KeyboardUtilsTest {
      * Checks that definition of extended characters is correct
      */
     @Test
-    public void testExtendedCharacters() {
+    void testExtendedCharacters() {
         Map<Integer, Character> map = new LinkedHashMap<>();
         KeyboardUtils.addLatinCharacters(map);
         KeyboardUtils.addSymbolCharacters(map);
@@ -54,7 +54,7 @@ public class KeyboardUtilsTest {
      * Unit test of {@link KeyboardUtils#getCharactersForKey} - E00 character
      */
     @Test
-    public void testGetCharactersForKeyE00() {
+    void testGetCharactersForKeyE00() {
         char deadCircumflex = (char) KeyEvent.VK_DEAD_CIRCUMFLEX;
         char deadCaron = (char) KeyEvent.VK_DEAD_CARON;
         char deadCircumflex2 = 0x2C6;

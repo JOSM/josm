@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.beans.PropertyChangeEvent;
 
 import javax.swing.JSplitPane;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -16,12 +16,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link AutoAdjustingSplitPane} class.
  */
-public class AutoAdjustingSplitPaneTest {
+class AutoAdjustingSplitPaneTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -29,7 +29,7 @@ public class AutoAdjustingSplitPaneTest {
      * Unit test of {@link AutoAdjustingSplitPane} class.
      */
     @Test
-    public void testAutoAdjustingSplitPane() {
+    void testAutoAdjustingSplitPane() {
         AutoAdjustingSplitPane pane = new AutoAdjustingSplitPane(JSplitPane.VERTICAL_SPLIT);
         assertEquals(-1, pane.getDividerLocation());
         assertEquals(0, pane.getHeight());

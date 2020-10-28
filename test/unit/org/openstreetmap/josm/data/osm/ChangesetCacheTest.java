@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,10 +12,10 @@ import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
@@ -25,12 +25,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit test of {@link ChangesetCache}
  */
-public class ChangesetCacheTest {
+class ChangesetCacheTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -39,8 +39,8 @@ public class ChangesetCacheTest {
     /**
      * Clears cache before/after each unit test.
      */
-    @After
-    @Before
+    @AfterEach
+    @BeforeEach
     public void clearCache() {
         cache.listeners.clear();
         cache.clear();
@@ -72,12 +72,12 @@ public class ChangesetCacheTest {
      * Unit test of {@link ChangesetCache#ChangesetCache}
      */
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         assertNotNull(ChangesetCache.getInstance());
     }
 
     @Test
-    public void testAddAndRemoveListeners() {
+    void testAddAndRemoveListeners() {
         // should work
         cache.addChangesetCacheListener(null);
 
@@ -96,7 +96,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void testUpdateGetRemoveCycle() {
+    void testUpdateGetRemoveCycle() {
         cache.update(new Changeset(1));
         assertEquals(1, cache.size());
         assertNotNull(cache.get(1));
@@ -106,7 +106,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void testUpdateTwice() {
+    void testUpdateTwice() {
         Changeset cs = new Changeset(1);
         cs.setIncomplete(false);
         cs.put("key1", "value1");
@@ -129,7 +129,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void testContains() {
+    void testContains() {
         Changeset cs = new Changeset(1);
         cache.update(cs);
 
@@ -143,10 +143,10 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void testFireingEventsAddAChangeset() {
+    void testFireingEventsAddAChangeset() {
         TestListener listener = new TestListener() {
             @Override
-            public void test() {
+            void test() {
                 await();
                 assertNotNull(event);
                 assertEquals(1, event.getAddedChangesets().size());
@@ -162,7 +162,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void testFireingEventsUpdateChangeset() {
+    void testFireingEventsUpdateChangeset() {
         // Waiter listener to ensure the second listener does not receive the first event
         TestListener waiter = new TestListener() {
             @Override
@@ -194,7 +194,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void testFireingEventsRemoveChangeset() {
+    void testFireingEventsRemoveChangeset() {
         // Waiter listener to ensure the second listener does not receive the first event
         TestListener waiter = new TestListener() {
             @Override
@@ -228,25 +228,17 @@ public class ChangesetCacheTest {
      * Unit test of methods {@link ChangesetCache#getOpenChangesets} / {@link ChangesetCache#getChangesets}.
      */
     @Test
-    public void testGetOpenChangesets() {
+    void testGetOpenChangesets() {
         // empty cache => empty list
-        assertTrue(
-                "Empty cache should produce an empty list.",
-                cache.getOpenChangesets().isEmpty()
-        );
-        assertTrue(
-                "Empty cache should produce an empty list.",
-                cache.getChangesets().isEmpty()
-        );
+        assertTrue(cache.getOpenChangesets().isEmpty(), "Empty cache should produce an empty list.");
+        assertTrue(cache.getChangesets().isEmpty(), "Empty cache should produce an empty list.");
 
         // cache with only closed changesets => empty list
         Changeset closedCs = new Changeset(1);
         closedCs.setOpen(false);
         cache.update(closedCs);
-        assertTrue(
-                "Cache with only closed changesets should produce an empty list.",
-                cache.getOpenChangesets().isEmpty()
-        );
+        assertTrue(cache.getOpenChangesets().isEmpty(),
+                "Cache with only closed changesets should produce an empty list.");
         assertEquals(1, cache.getChangesets().size());
 
         // cache with open and closed changesets => list with only the open ones
@@ -264,12 +256,10 @@ public class ChangesetCacheTest {
      * Unit test of method {@link ChangesetCache#getOpenChangesetsForCurrentUser}.
      */
     @Test
-    public void testGetOpenChangesetsForCurrentUser() {
+    void testGetOpenChangesetsForCurrentUser() {
         // empty cache => empty list
-        assertTrue(
-                "Empty cache should produce an empty list.",
-                cache.getOpenChangesetsForCurrentUser().isEmpty()
-        );
+        assertTrue(cache.getOpenChangesetsForCurrentUser().isEmpty(),
+                "Empty cache should produce an empty list.");
 
         Changeset openCs1 = new Changeset(1);
         openCs1.setOpen(true);
@@ -298,7 +288,7 @@ public class ChangesetCacheTest {
      * Unit test of methods {@link ChangesetCache#remove}.
      */
     @Test
-    public void testRemove() {
+    void testRemove() {
         Changeset cs1 = new Changeset(1);
         cache.update(cs1);
         assertEquals(1, cache.getChangesets().size());

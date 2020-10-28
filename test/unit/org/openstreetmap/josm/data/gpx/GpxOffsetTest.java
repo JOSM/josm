@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.ParseException;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.date.DateUtilsTest;
@@ -17,19 +17,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link GpxTimeOffset} class.
  */
-public class GpxOffsetTest {
+class GpxOffsetTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         DateUtilsTest.setTimeZone(DateUtils.UTC);
     }
@@ -38,7 +38,7 @@ public class GpxOffsetTest {
      * Unit test of {@link GpxTimeOffset#formatOffset}.
      */
     @Test
-    public void testFormatOffset() {
+    void testFormatOffset() {
         assertEquals("0", GpxTimeOffset.seconds(0).formatOffset());
         assertEquals("123", GpxTimeOffset.seconds(123).formatOffset());
         assertEquals("-4242", GpxTimeOffset.seconds(-4242).formatOffset());
@@ -54,7 +54,7 @@ public class GpxOffsetTest {
      * @throws ParseException in case of parsing error
      */
     @Test
-    public void testParseOffest() throws ParseException {
+    void testParseOffest() throws ParseException {
         assertEquals(0, GpxTimeOffset.parseOffset("0").getSeconds());
         assertEquals(4242L, GpxTimeOffset.parseOffset("4242").getSeconds());
         assertEquals(-4242L, GpxTimeOffset.parseOffset("-4242").getSeconds());
@@ -68,7 +68,7 @@ public class GpxOffsetTest {
      * Unit test of {@link GpxTimeOffset#splitOutTimezone}.
      */
     @Test
-    public void testSplitOutTimezone() {
+    void testSplitOutTimezone() {
         assertEquals("+1:00", GpxTimeOffset.seconds(3602).splitOutTimezone().a.formatTimezone());
         assertEquals("2", GpxTimeOffset.seconds(3602).splitOutTimezone().b.formatOffset());
         assertEquals("-7:00", GpxTimeOffset.seconds(-7 * 3600 + 123).splitOutTimezone().a.formatTimezone());

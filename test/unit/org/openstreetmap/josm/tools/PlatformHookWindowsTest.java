@@ -29,7 +29,7 @@ import mockit.Mocked;
 /**
  * Unit tests of {@link PlatformHookWindows} class.
  */
-public class PlatformHookWindowsTest {
+class PlatformHookWindowsTest {
 
     /**
      * Setup tests
@@ -52,7 +52,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#startupHook}
      */
     @Test
-    public void testStartupHook() {
+    void testStartupHook() {
         hook.startupHook((a, b, c, d) -> System.out.println("callback"));
     }
 
@@ -61,7 +61,7 @@ public class PlatformHookWindowsTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testGetRootKeystore() throws Exception {
+    void testGetRootKeystore() throws Exception {
         if (PlatformManager.isPlatformWindows()) {
             assertNotNull(PlatformHookWindows.getRootKeystore());
         } else {
@@ -78,7 +78,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#afterPrefStartupHook}
      */
     @Test
-    public void testAfterPrefStartupHook() {
+    void testAfterPrefStartupHook() {
         hook.afterPrefStartupHook();
     }
 
@@ -88,7 +88,7 @@ public class PlatformHookWindowsTest {
      * @throws IOException if an error occurs
      */
     @Test
-    public void testOpenUrlSuccess(@Mocked final Desktop mockDesktop) throws IOException {
+    void testOpenUrlSuccess(@Mocked final Desktop mockDesktop) throws IOException {
         TestUtils.assumeWorkingJMockit();
         new Expectations() {{
             // real implementation would raise HeadlessException
@@ -106,7 +106,7 @@ public class PlatformHookWindowsTest {
      * @throws IOException if an error occurs
      */
     @Test
-    public void testOpenUrlFallback(@Mocked final Desktop mockDesktop, @Mocked Runtime anyRuntime) throws IOException {
+    void testOpenUrlFallback(@Mocked final Desktop mockDesktop, @Mocked Runtime anyRuntime) throws IOException {
         TestUtils.assumeWorkingJMockit();
         new Expectations() {{
             // real implementation would raise HeadlessException
@@ -129,7 +129,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#getAdditionalFonts}
      */
     @Test
-    public void testGetAdditionalFonts() {
+    void testGetAdditionalFonts() {
         assertFalse(hook.getAdditionalFonts().isEmpty());
     }
 
@@ -137,7 +137,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#getDefaultCacheDirectory}
      */
     @Test
-    public void testGetDefaultCacheDirectory() {
+    void testGetDefaultCacheDirectory() {
         File cache = hook.getDefaultCacheDirectory();
         assertNotNull(cache);
         if (PlatformManager.isPlatformWindows()) {
@@ -149,7 +149,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#getDefaultPrefDirectory}
      */
     @Test
-    public void testGetDefaultPrefDirectory() {
+    void testGetDefaultPrefDirectory() {
         File cache = hook.getDefaultPrefDirectory();
         assertNotNull(cache);
         if (PlatformManager.isPlatformWindows()) {
@@ -161,7 +161,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#getDefaultStyle}
      */
     @Test
-    public void testGetDefaultStyle() {
+    void testGetDefaultStyle() {
         assertEquals("com.sun.java.swing.plaf.windows.WindowsLookAndFeel", hook.getDefaultStyle());
     }
 
@@ -169,7 +169,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#getInstalledFonts}
      */
     @Test
-    public void testGetInstalledFonts() {
+    void testGetInstalledFonts() {
         Collection<String> fonts = hook.getInstalledFonts();
         if (PlatformManager.isPlatformWindows()) {
             assertFalse(fonts.isEmpty());
@@ -182,7 +182,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#getOSDescription}
      */
     @Test
-    public void testGetOSDescription() {
+    void testGetOSDescription() {
         String os = hook.getOSDescription();
         if (PlatformManager.isPlatformWindows()) {
             assertTrue(os.contains("Windows"));
@@ -195,7 +195,7 @@ public class PlatformHookWindowsTest {
      * Test method for {@code PlatformHookWindows#initSystemShortcuts}
      */
     @Test
-    public void testInitSystemShortcuts() {
+    void testInitSystemShortcuts() {
         hook.initSystemShortcuts();
     }
 }

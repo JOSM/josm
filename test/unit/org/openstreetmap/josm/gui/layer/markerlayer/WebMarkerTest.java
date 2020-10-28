@@ -24,7 +24,7 @@ import mockit.Mocked;
 /**
  * Unit tests of {@link WebMarker} class.
  */
-public class WebMarkerTest {
+class WebMarkerTest {
 
     /**
      * Setup tests
@@ -40,7 +40,7 @@ public class WebMarkerTest {
      * @throws Exception  in case of error
      */
     @Test
-    public void testWebMarker(@Injectable final PlatformHook mockPlatformHook,
+    void testWebMarker(@Injectable final PlatformHook mockPlatformHook,
                               @Mocked final PlatformManager platformManager) throws Exception {
         TestUtils.assumeWorkingJMockit();
         new Expectations() {{

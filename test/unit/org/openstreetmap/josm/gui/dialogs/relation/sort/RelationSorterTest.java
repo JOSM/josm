@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -24,7 +24,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link RelationSorter} class.
  */
-public class RelationSorterTest {
+class RelationSorterTest {
 
     private final RelationSorter sorter = new RelationSorter();
     private DataSet testDataset;
@@ -32,7 +32,7 @@ public class RelationSorterTest {
     /**
      * Use Mercator projection
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
@@ -41,7 +41,7 @@ public class RelationSorterTest {
      * @throws IllegalDataException if an error was found while parsing the data
      * @throws IOException in case of I/O error
      */
-    @Before
+    @BeforeEach
     public void loadData() throws IllegalDataException, IOException {
         if (testDataset == null) {
             try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/relation_sort.osm"))) {
@@ -63,7 +63,7 @@ public class RelationSorterTest {
     // data file.
 
     @Test
-    public void testGeneric() {
+    void testGeneric() {
         String[] actual = getNames(sorter.sortMembers(getRelation("generic").getMembers()));
         final String[] expected = {"t1w4", "t1w3", "t1w2", "t1w1", "t1w7", "t1w6", "t1w5", "t1n1", "t1n2"};
         // expect nodes to be sorted correctly
@@ -72,13 +72,13 @@ public class RelationSorterTest {
     }
 
     @Test
-    public void testAssociatedStreet() {
+    void testAssociatedStreet() {
         String[] actual = getNames(sorter.sortMembers(getRelation("associatedStreet").getMembers()));
         Assert.assertArrayEquals(new String[] {"t2w1", "t2w2", "t2n1", "t2n2", "t2n3", "t2n4"}, actual);
     }
 
     @Test
-    public void testStreet() {
+    void testStreet() {
         String[] actual = getNames(sorter.sortMembers(getRelation("street").getMembers()));
         Assert.assertArrayEquals(new String[]{"t2w1", "t2w2", "t2n1", "t2n2", "t2n3", "t2n4", "playground", "tree"}, actual);
     }
@@ -89,7 +89,7 @@ public class RelationSorterTest {
     // these are intentionally not already sorted.
 
     @Test
-    public void testThreeLoopsEndsLoop() {
+    void testThreeLoopsEndsLoop() {
         Relation relation = getRelation("three-loops-ends-loop");
         // Check the first way before sorting, otherwise the sorter
         // might pick a different loop starting point than expected below
@@ -105,7 +105,7 @@ public class RelationSorterTest {
     }
 
     @Test
-    public void testThreeLoopsEndsWay() {
+    void testThreeLoopsEndsWay() {
         Relation relation = getRelation("three-loops-ends-way");
         // Check the first way before sorting, otherwise the sorter
         // might sort in reverse compared to what is expected below
@@ -121,7 +121,7 @@ public class RelationSorterTest {
     }
 
     @Test
-    public void testThreeLoopsEndsNode() {
+    void testThreeLoopsEndsNode() {
         Relation relation = getRelation("three-loops-ends-node");
         String[] actual = getNames(sorter.sortMembers(relation.getMembers()));
         Assert.assertArrayEquals(new String[]{
@@ -132,7 +132,7 @@ public class RelationSorterTest {
     }
 
     @Test
-    public void testOneLoopEndsSplit() {
+    void testOneLoopEndsSplit() {
         Relation relation = getRelation("one-loop-ends-split");
         String[] actual = getNames(sorter.sortMembers(relation.getMembers()));
         Assert.assertArrayEquals(new String[]{
@@ -143,7 +143,7 @@ public class RelationSorterTest {
     }
 
     @Test
-    public void testNoLoopEndsSplit() {
+    void testNoLoopEndsSplit() {
         Relation relation = getRelation("no-loop-ends-split");
         // TODO: This is not yet sorted properly, so this route is
         // presorted in the data file, making this a bit of a dummy test
@@ -156,7 +156,7 @@ public class RelationSorterTest {
     }
 
     @Test
-    public void testIncompleteLoops() {
+    void testIncompleteLoops() {
         Relation relation = getRelation("incomplete-loops");
         // TODO: This is not yet sorted perfectly (might not be possible)
         String[] actual = getNames(sorter.sortMembers(relation.getMembers()));
@@ -168,7 +168,7 @@ public class RelationSorterTest {
     }
 
     @Test
-    public void testParallelOneWay() {
+    void testParallelOneWay() {
         Relation relation = getRelation("parallel-oneway");
         // TODO: This is not always sorted properly, only when the right
         // way is already at the top, so check that

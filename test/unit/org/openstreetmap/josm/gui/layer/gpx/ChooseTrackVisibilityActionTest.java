@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.gpx;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayerTest;
@@ -20,12 +20,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ChooseTrackVisibilityAction} class.
  */
-public class ChooseTrackVisibilityActionTest {
+class ChooseTrackVisibilityActionTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -34,8 +34,8 @@ public class ChooseTrackVisibilityActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore("broken, see #16796")
-    public void testAction() throws Exception {
+    @Disabled("broken, see #16796")
+    void testAction() throws Exception {
         TestUtils.assumeWorkingJMockit();
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker() {
             @Override

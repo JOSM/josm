@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.openstreetmap.josm.TestUtils.assertEqualsNewline;
 
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -27,19 +27,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link InspectPrimitiveDialog} class.
  */
-public class InspectPrimitiveDialogTest {
+class InspectPrimitiveDialogTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().mapStyles();
 
     /**
      * Setup test
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.put("METRIC");
 
@@ -48,7 +48,7 @@ public class InspectPrimitiveDialogTest {
     /**
      * Cleanup test
      */
-    @After
+    @AfterEach
     public void tearDown() {
         SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.put(null);
     }
@@ -57,7 +57,7 @@ public class InspectPrimitiveDialogTest {
      * Unit test of {@link InspectPrimitiveDialog#genericMonospacePanel}.
      */
     @Test
-    public void testGenericMonospacePanel() {
+    void testGenericMonospacePanel() {
         assertNotNull(InspectPrimitiveDialog.genericMonospacePanel(new JPanel(), ""));
     }
 
@@ -65,7 +65,7 @@ public class InspectPrimitiveDialogTest {
      * Unit test of {@link InspectPrimitiveDialog#buildDataText}.
      */
     @Test
-    public void testBuildDataText() {
+    void testBuildDataText() {
         DataSet ds = new DataSet();
         assertEqualsNewline("", InspectPrimitiveDialog.buildDataText(ds, new ArrayList<>(ds.allPrimitives())));
         final Way way = new Way();
@@ -107,7 +107,7 @@ public class InspectPrimitiveDialogTest {
      * Unit test of {@link InspectPrimitiveDialog#buildListOfEditorsText}.
      */
     @Test
-    public void testBuildListOfEditorsText() {
+    void testBuildListOfEditorsText() {
         DataSet ds = new DataSet();
         assertEqualsNewline("0 users last edited the selection:\n\n", InspectPrimitiveDialog.buildListOfEditorsText(ds.allPrimitives()));
         ds.addPrimitive(new Node(LatLon.ZERO));
@@ -129,7 +129,7 @@ public class InspectPrimitiveDialogTest {
      * Unit test of {@link InspectPrimitiveDialog#buildMapPaintText}.
      */
     @Test
-    public void testBuildMapPaintText() {
+    void testBuildMapPaintText() {
         DataSet ds = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
 

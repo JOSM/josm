@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
-public class ConflictResolutionDialogTestFT extends JFrame {
+class ConflictResolutionDialogTestFT extends JFrame {
 
     private ConflictResolutionDialog dialog;
 
@@ -37,7 +37,7 @@ public class ConflictResolutionDialogTestFT extends JFrame {
     /**
      * Constructs a new {@code ConflictResolutionDialogTest}.
      */
-    public ConflictResolutionDialogTestFT() {
+    ConflictResolutionDialogTestFT() {
         build();
     }
 

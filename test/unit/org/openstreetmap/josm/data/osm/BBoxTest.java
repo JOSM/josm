@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -18,12 +18,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests for class {@link BBox}.
  */
-public class BBoxTest {
+class BBoxTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -31,7 +31,7 @@ public class BBoxTest {
      * Unit test of methods {@link BBox#equals} and {@link BBox#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(BBox.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
@@ -42,7 +42,7 @@ public class BBoxTest {
      * Unit test of method {@link BBox#bboxesAreFunctionallyEqual}
      */
     @Test
-    public void testBboxesAreFunctionallyEqual() {
+    void testBboxesAreFunctionallyEqual() {
         BBox bbox1 = new BBox(0, 1, 1, 0);
         BBox bbox2 = new BBox(0.1, 0.9, 0.9, 0.1);
 
@@ -62,7 +62,7 @@ public class BBoxTest {
      * Test LatLon constructor which might result in invalid bbox
      */
     @Test
-    public void testLatLonConstructor() {
+    void testLatLonConstructor() {
         LatLon latLon1 = new LatLon(10, 20);
         LatLon latLon2 = new LatLon(20, 10);
         BBox b1 = new BBox(latLon1, latLon2);
@@ -94,7 +94,7 @@ public class BBoxTest {
      * Test double constructor which might result in invalid bbox
      */
     @Test
-    public void testDoubleConstructor() {
+    void testDoubleConstructor() {
         assertTrue(new BBox(1, 2, 3, 4).isValid());
         assertFalse(new BBox(Double.NaN, 2, 3, 4).isValid());
         assertFalse(new BBox(1, Double.NaN, 3, 4).isValid());
@@ -106,7 +106,7 @@ public class BBoxTest {
      * Test Node constructor which might result in invalid bbox
      */
     @Test
-    public void testNodeConstructor() {
+    void testNodeConstructor() {
         assertTrue(new BBox(new Node(LatLon.NORTH_POLE)).isValid());
         assertFalse(new BBox(new Node()).isValid());
     }
@@ -115,7 +115,7 @@ public class BBoxTest {
      * Unit test of {@link BBox#add(LatLon)} method.
      */
     @Test
-    public void testAddLatLon() {
+    void testAddLatLon() {
         BBox b = new BBox();
         b.add((LatLon) null);
         b.add(new LatLon(Double.NaN, Double.NaN));
@@ -129,7 +129,7 @@ public class BBoxTest {
      * Unit test of {@link BBox#addLatLon} method.
      */
     @Test
-    public void testAddLatLonBuffer() {
+    void testAddLatLonBuffer() {
         BBox b = new BBox();
         b.addLatLon(LatLon.NORTH_POLE, 0.5);
         assertEquals(LatLon.NORTH_POLE, b.getCenter());
@@ -141,7 +141,7 @@ public class BBoxTest {
      * Unit test of {@link BBox#add(double, double)} method.
      */
     @Test
-    public void testAddDouble() {
+    void testAddDouble() {
         BBox b = new BBox();
         b.add(1, Double.NaN);
         assertFalse(b.isValid());
@@ -156,7 +156,7 @@ public class BBoxTest {
      * Unit test of {@link BBox#addPrimitive} method.
      */
     @Test
-    public void testAddPrimitive() {
+    void testAddPrimitive() {
         BBox b = new BBox();
         b.addPrimitive(new Node(LatLon.NORTH_POLE), 0.5);
         assertEquals(LatLon.NORTH_POLE, b.getCenter());
@@ -168,7 +168,7 @@ public class BBoxTest {
      * Unit test of {@link BBox#height} and {@link BBox#width} and {@link BBox#area} methods.
      */
     @Test
-    public void testHeightWidthArea() {
+    void testHeightWidthArea() {
         BBox b1 = new BBox(1, 2, 3, 5);
         assertEquals(2, b1.width(), 1e-7);
         assertEquals(3, b1.height(), 1e-7);
@@ -183,7 +183,7 @@ public class BBoxTest {
      * Unit test of {@link BBox#toString} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("[ x: Infinity -> -Infinity, y: Infinity -> -Infinity ]", new BBox().toString());
         assertEquals("[ x: 1.0 -> 3.0, y: 2.0 -> 4.0 ]", new BBox(1, 2, 3, 4).toString());
     }

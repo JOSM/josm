@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.tools;
 
 import static java.util.Collections.singleton;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -24,11 +24,11 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests of {@link Territories} class.
  */
-public class TerritoriesTest {
+class TerritoriesTest {
     /**
      * Test rules.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules().projection().territories();
 
@@ -38,7 +38,7 @@ public class TerritoriesTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(Territories.class);
     }
 
@@ -46,13 +46,13 @@ public class TerritoriesTest {
      * Test of {@link Territories#isIso3166Code} method.
      */
     @Test
-    public void testIsIso3166Code() {
+    void testIsIso3166Code() {
         check("Paris", new LatLon(48.8567, 2.3508), "EU", "FR", "FX");
     }
 
     private static void check(String name, LatLon ll, String... expectedCodes) {
         for (String e : expectedCodes) {
-            assertTrue(name + " " + e, Territories.isIso3166Code(e, ll));
+            assertTrue(Territories.isIso3166Code(e, ll), name + " " + e);
         }
     }
 
@@ -60,7 +60,7 @@ public class TerritoriesTest {
      * Test of {@link Territories#initializeExternalData} - nominal case
      */
     @Test
-    public void testTaginfoGeofabrik_nominal() {
+    void testTaginfoGeofabrik_nominal() {
         Territories.initializeExternalData("foo", TestUtils.getTestDataRoot() + "/taginfo/geofabrik-index-v1-nogeom.json");
         Map<String, TaginfoRegionalInstance> cache = Territories.taginfoGeofabrikCache;
         assertEquals(5, cache.size());
@@ -85,21 +85,21 @@ public class TerritoriesTest {
      * Test of {@link Territories#initializeExternalData} - broken contents
      */
     @Test
-    public void testTaginfoGeofabrik_broken() {
+    void testTaginfoGeofabrik_broken() {
         Logging.clearLastErrorAndWarnings();
         Territories.initializeExternalData("foo", TestUtils.getTestDataRoot() + "taginfo/geofabrik-index-v1-nogeom-broken.json");
         Map<String, TaginfoRegionalInstance> cache = Territories.taginfoGeofabrikCache;
         assertTrue(cache.isEmpty());
         String error = Logging.getLastErrorAndWarnings().get(0);
-        assertTrue(error, error.contains("W: Failed to parse external taginfo data at "));
-        assertTrue(error, error.contains(": Invalid token=EOF at (line no=3,"));
+        assertTrue(error.contains("W: Failed to parse external taginfo data at "), error);
+        assertTrue(error.contains(": Invalid token=EOF at (line no=3,"), error);
     }
 
     /**
      * Unit test of {@link Territories#getCustomTags}
      */
     @Test
-    public void testGetCustomTags() {
+    void testGetCustomTags() {
         assertNull(Territories.getCustomTags(null));
         assertNull(Territories.getCustomTags("foo"));
         assertEquals("arab", Territories.getCustomTags("BH").get("ldml:nu:ar"));

@@ -1,18 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -33,12 +34,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link ChangeCommand} class.
  */
-public class ChangeCommandTest {
+class ChangeCommandTest {
 
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
     private CommandTestData testData;
@@ -46,7 +47,7 @@ public class ChangeCommandTest {
     /**
      * Set up the test data.
      */
-    @Before
+    @BeforeEach
     public void createTestData() {
         testData = new CommandTestData();
     }
@@ -54,17 +55,17 @@ public class ChangeCommandTest {
     /**
      * Test that empty ways are prevented.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testPreventEmptyWays() {
+    @Test
+    void testPreventEmptyWays() {
         Way emptyWay = new Way();
-        new ChangeCommand(testData.existingWay, emptyWay);
+        assertThrows(IllegalArgumentException.class, () -> new ChangeCommand(testData.existingWay, emptyWay));
     }
 
     /**
      * Test {@link ChangeCommand#executeCommand()}
      */
     @Test
-    public void testChange() {
+    void testChange() {
         Node newNode = new Node(5);
         newNode.setCoor(LatLon.NORTH_POLE);
         newNode.put("new", "new");
@@ -87,19 +88,19 @@ public class ChangeCommandTest {
     /**
      * Test {@link ChangeCommand#executeCommand()} fails if ID is changed
      */
-    @Test(expected = DataIntegrityProblemException.class)
-    public void testChangeIdChange() {
+    @Test
+    void testChangeIdChange() {
         Node newNode = new Node(1);
         newNode.setCoor(LatLon.NORTH_POLE);
 
-        new ChangeCommand(testData.existingNode, newNode).executeCommand();
+        assertThrows(DataIntegrityProblemException.class, () -> new ChangeCommand(testData.existingNode, newNode).executeCommand());
     }
 
     /**
      * Test {@link ChangeCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         Node newNode = new Node(5);
         newNode.setCoor(LatLon.NORTH_POLE);
         newNode.put("new", "new");
@@ -120,7 +121,7 @@ public class ChangeCommandTest {
      * Tests {@link ChangeCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
@@ -134,7 +135,7 @@ public class ChangeCommandTest {
      * Test {@link ChangeCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         Node node = new Node(LatLon.ZERO);
         node.put("name", "xy");
         Way way = new Way();
@@ -153,7 +154,7 @@ public class ChangeCommandTest {
      * Unit test of methods {@link ChangeCommand#equals} and {@link ChangeCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ChangeCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,

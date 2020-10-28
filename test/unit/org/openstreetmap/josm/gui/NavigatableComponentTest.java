@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -14,9 +14,9 @@ import javax.swing.JPanel;
 import org.CustomMatchers;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -32,7 +32,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Michael Zangl
  *
  */
-public class NavigatableComponentTest {
+class NavigatableComponentTest {
 
     private static final class NavigatableComponentMock extends NavigatableComponent {
         @Override
@@ -53,14 +53,14 @@ public class NavigatableComponentTest {
     /**
      * We need the projection for coordinate conversions.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
     /**
      * Create a new, fresh {@link NavigatableComponent}
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         component = new NavigatableComponentMock();
         component.setBounds(new Rectangle(WIDTH, HEIGHT));
@@ -80,7 +80,7 @@ public class NavigatableComponentTest {
      * Test if the default scale was set correctly.
      */
     @Test
-    public void testDefaultScale() {
+    void testDefaultScale() {
         assertEquals(ProjectionRegistry.getProjection().getDefaultZoomInPPD(), component.getScale(), 0.00001);
     }
 
@@ -88,7 +88,7 @@ public class NavigatableComponentTest {
      * Tests {@link NavigatableComponent#getPoint2D(EastNorth)}
      */
     @Test
-    public void testPoint2DEastNorth() {
+    void testPoint2DEastNorth() {
         assertThat(component.getPoint2D((EastNorth) null), CustomMatchers.is(new Point2D.Double()));
         Point2D shouldBeCenter = component.getPoint2D(component.getCenter());
         assertThat(shouldBeCenter, CustomMatchers.is(new Point2D.Double(WIDTH / 2, HEIGHT / 2)));
@@ -102,7 +102,7 @@ public class NavigatableComponentTest {
      * TODO: Implement this test.
      */
     @Test
-    public void testPoint2DLatLon() {
+    void testPoint2DLatLon() {
         assertThat(component.getPoint2D((LatLon) null), CustomMatchers.is(new Point2D.Double()));
         // TODO: Really test this.
     }
@@ -111,7 +111,7 @@ public class NavigatableComponentTest {
      * Tests {@link NavigatableComponent#zoomTo(LatLon)}
      */
     @Test
-    public void testZoomToLatLon() {
+    void testZoomToLatLon() {
         component.zoomTo(new LatLon(10, 10));
         Point2D shouldBeCenter = component.getPoint2D(new LatLon(10, 10));
         // 0.5 pixel tolerance, see isAfterZoom
@@ -123,7 +123,7 @@ public class NavigatableComponentTest {
      * Tests {@link NavigatableComponent#zoomToFactor(double)} and {@link NavigatableComponent#zoomToFactor(EastNorth, double)}
      */
     @Test
-    public void testZoomToFactor() {
+    void testZoomToFactor() {
         EastNorth center = component.getCenter();
         double initialScale = component.getScale();
 
@@ -149,7 +149,7 @@ public class NavigatableComponentTest {
      * Tests {@link NavigatableComponent#getEastNorth(int, int)}
      */
     @Test
-    public void testGetEastNorth() {
+    void testGetEastNorth() {
         EastNorth center = component.getCenter();
         assertThat(component.getEastNorth(WIDTH / 2, HEIGHT / 2), CustomMatchers.is(center));
 
@@ -161,7 +161,7 @@ public class NavigatableComponentTest {
      * Tests {@link NavigatableComponent#zoomToFactor(double, double, double)}
      */
     @Test
-    public void testZoomToFactorCenter() {
+    void testZoomToFactorCenter() {
         // zoomToFactor(double, double, double)
         // assumes getEastNorth works as expected
         EastNorth testPoint1 = component.getEastNorth(0, 0);
@@ -188,7 +188,7 @@ public class NavigatableComponentTest {
      * Tests {@link NavigatableComponent#getProjectionBounds()}
      */
     @Test
-    public void testGetProjectionBounds() {
+    void testGetProjectionBounds() {
         ProjectionBounds bounds = component.getProjectionBounds();
         assertThat(bounds.getCenter(), CustomMatchers.is(component.getCenter()));
 
@@ -200,7 +200,7 @@ public class NavigatableComponentTest {
      * Tests {@link NavigatableComponent#getRealBounds()}
      */
     @Test
-    public void testGetRealBounds() {
+    void testGetRealBounds() {
         Bounds bounds = component.getRealBounds();
         assertThat(bounds.getCenter(), CustomMatchers.is(component.getLatLon(WIDTH / 2, HEIGHT / 2)));
 

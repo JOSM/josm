@@ -1,26 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 
 /**
  * Unit tests of {@link SystemOfMeasurement} class.
  */
-public class SystemOfMeasurementTest {
+class SystemOfMeasurementTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -29,7 +29,7 @@ public class SystemOfMeasurementTest {
      * Test of {@link SystemOfMeasurement#getDistText} method.
      */
     @Test
-    public void testGetDistText() {
+    void testGetDistText() {
 
         assertEquals("< 0.01 m", SystemOfMeasurement.METRIC.getDistText(-1));
         assertEquals("< 0.01 m", SystemOfMeasurement.METRIC.getDistText(-0.99));
@@ -70,7 +70,7 @@ public class SystemOfMeasurementTest {
      * Test of {@link SystemOfMeasurement#getDistText} method with a non-English locale.
      */
     @Test
-    public void testGetDistTextLocalized() {
+    void testGetDistTextLocalized() {
         final DecimalFormat format = new DecimalFormat("0.000", DecimalFormatSymbols.getInstance(Locale.GERMAN));
         assertEquals("0,001 m", SystemOfMeasurement.METRIC.getDistText(0.001, format, 1e-6));
         assertEquals("< 0,010 m", SystemOfMeasurement.METRIC.getDistText(0.001, format, 0.01));
@@ -83,7 +83,7 @@ public class SystemOfMeasurementTest {
      * Test of {@link SystemOfMeasurement#getAreaText} method.
      */
     @Test
-    public void testGetAreaText() {
+    void testGetAreaText() {
         assertEquals("< 0.01 m²", SystemOfMeasurement.METRIC.getAreaText(-1));
         assertEquals("< 0.01 m²", SystemOfMeasurement.METRIC.getAreaText(-0.99));
         assertEquals("< 0.01 m²", SystemOfMeasurement.METRIC.getAreaText(-0));

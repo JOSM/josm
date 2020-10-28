@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -18,11 +18,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link AddNodeHandler} class.
  */
-public class AddNodeHandlerTest {
+class AddNodeHandlerTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().assertionsInEDT().projection();
 
@@ -37,7 +37,7 @@ public class AddNodeHandlerTest {
      * Unit test for bad request - no layer.
      */
     @Test
-    public void testBadRequestNoLayer() {
+    void testBadRequestNoLayer() {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost?lat=0&lon=0").handle());
         assertEquals("There is no layer opened to add node", e.getMessage());
     }
@@ -46,7 +46,7 @@ public class AddNodeHandlerTest {
      * Unit test for bad request - no param.
      */
     @Test
-    public void testBadRequestNoParam() {
+    void testBadRequestNoParam() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         MainApplication.getLayerManager().addLayer(layer);
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler(null).handle());
@@ -57,7 +57,7 @@ public class AddNodeHandlerTest {
      * Unit test for bad request - invalid URL.
      */
     @Test
-    public void testBadRequestInvalidUrl() {
+    void testBadRequestInvalidUrl() {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("invalid_url").handle());
         assertEquals("The following keys are mandatory, but have not been provided: lat, lon", e.getMessage());
     }
@@ -66,7 +66,7 @@ public class AddNodeHandlerTest {
      * Unit test for bad request - incomplete URL.
      */
     @Test
-    public void testBadRequestIncompleteUrl() {
+    void testBadRequestIncompleteUrl() {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost").handle());
         assertEquals("The following keys are mandatory, but have not been provided: lat, lon", e.getMessage());
     }
@@ -75,7 +75,7 @@ public class AddNodeHandlerTest {
      * Unit test for nominal request - local data file.
      */
     @Test
-    public void testNominalRequest() {
+    void testNominalRequest() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         MainApplication.getLayerManager().addLayer(layer);
         assertDoesNotThrow(() -> newHandler("https://localhost?lat=0&lon=0").handle());

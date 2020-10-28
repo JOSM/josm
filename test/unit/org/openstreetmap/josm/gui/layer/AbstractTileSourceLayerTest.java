@@ -1,19 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Point;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.Projected;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -38,12 +38,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Test of the base {@link AbstractTileSourceLayer} class
  */
-public class AbstractTileSourceLayerTest {
+class AbstractTileSourceLayerTest {
 
     /**
      * Setup test
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().main();
 
@@ -147,7 +147,7 @@ public class AbstractTileSourceLayerTest {
     /**
      * Create test layer
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
         testLayer = new TileSourceStubLayer();
@@ -158,7 +158,7 @@ public class AbstractTileSourceLayerTest {
      * Test {@link AbstractTileSourceLayer#filterChanged}
      */
     @Test
-    public void testFilterChanged() {
+    void testFilterChanged() {
         try {
             ImageryFilterSettings filterSettings = new ImageryFilterSettings();
             filterSettings.addFilterChangeListener(testLayer);
@@ -174,7 +174,7 @@ public class AbstractTileSourceLayerTest {
      * Test {@link AbstractTileSourceLayer#clearTileCache}
      */
     @Test
-    public void testClearTileCache() {
+    void testClearTileCache() {
         testLayer.loadAllTiles(true);
         assertTrue(testLayer.getTileCache().getTileCount() > 0);
         testLayer.clearTileCache();
@@ -185,7 +185,7 @@ public class AbstractTileSourceLayerTest {
      * Test {@link AbstractTileSourceLayer#getAdjustAction}
      */
     @Test
-    public void testGetAdjustAction() {
+    void testGetAdjustAction() {
         assertNotNull(testLayer.getAdjustAction());
     }
 
@@ -193,7 +193,7 @@ public class AbstractTileSourceLayerTest {
      * Test {@link AbstractTileSourceLayer#getInfoComponent}
      */
     @Test
-    public void testGetInfoComponent() {
+    void testGetInfoComponent() {
         assertNotNull(testLayer.getInfoComponent());
     }
 
@@ -201,7 +201,7 @@ public class AbstractTileSourceLayerTest {
      * Test {@link AbstractTileSourceLayer.TileSourceLayerPopup}
      */
     @Test
-    public void testTileSourceLayerPopup() {
+    void testTileSourceLayerPopup() {
         assertNotNull(testLayer.new TileSourceLayerPopup(100, 100));
     }
 }

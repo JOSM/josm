@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -12,28 +13,28 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link NodeListViewer} class.
  */
-public class NodeListViewerTest {
+class NodeListViewerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Test for {@link NodeListViewer#NodeListViewer} - {@code null} handling.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testNodeListViewerNull() {
-        new NodeListViewer(null);
+    @Test
+    void testNodeListViewerNull() {
+        assertThrows(IllegalArgumentException.class, () -> new NodeListViewer(null));
     }
 
     /**
      * Test for {@link NodeListViewer#NodeListViewer} - nominal case.
      */
     @Test
-    public void testNodeListViewerNominal() {
+    void testNodeListViewerNominal() {
         assertNotNull(new NodeListViewer(new HistoryBrowserModel()));
     }
 }

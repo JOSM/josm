@@ -5,8 +5,8 @@ import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -17,11 +17,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ExportProfileAction} class.
  */
-public class ExportProfileActionTest {
+class ExportProfileActionTest {
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().assertionsInEDT();
 
@@ -29,7 +29,7 @@ public class ExportProfileActionTest {
      * Unit test of {@link ExportProfileAction#actionPerformed}.
      */
     @Test
-    public void testAction() {
+    void testAction() {
         TestUtils.assumeWorkingJMockit();
         new JOptionPaneSimpleMocker(Collections.singletonMap(
             "All the preferences of this group are default, nothing to save", JOptionPane.OK_OPTION

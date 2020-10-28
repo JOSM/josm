@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -14,14 +14,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit test of {@link ConditionalKeys}.
  */
-public class ConditionalKeysTest {
+class ConditionalKeysTest {
 
     private final ConditionalKeys test = new ConditionalKeys();
 
     /**
      * Setup test
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rule = new JOSMTestRules().presets();
 
@@ -29,7 +29,7 @@ public class ConditionalKeysTest {
      * Setup test
      * @throws Exception if an error occurs
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         test.initialize();
     }
@@ -38,7 +38,7 @@ public class ConditionalKeysTest {
      * Unit test of {@link ConditionalKeys#isKeyValid}.
      */
     @Test
-    public void testKeyValid() {
+    void testKeyValid() {
         assertTrue(test.isKeyValid("maxspeed:conditional"));
         assertTrue(test.isKeyValid("motor_vehicle:conditional"));
         assertTrue(test.isKeyValid("bicycle:conditional"));
@@ -54,7 +54,7 @@ public class ConditionalKeysTest {
      * Unit test of {@link ConditionalKeys#isValueValid}.
      */
     @Test
-    public void testValueValid() {
+    void testValueValid() {
         assertTrue(test.isValueValid("maxspeed:conditional", "120 @ (06:00-19:00)"));
         assertFalse(test.isValueValid("maxspeed:conditional", " @ (06:00-19:00)"));
         assertFalse(test.isValueValid("maxspeed:conditional", "120 (06:00-19:00)"));

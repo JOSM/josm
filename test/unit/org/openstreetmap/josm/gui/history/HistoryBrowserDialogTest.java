@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -21,12 +21,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link HistoryBrowserDialog} class.
  */
-public class HistoryBrowserDialogTest {
+class HistoryBrowserDialogTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -34,7 +34,7 @@ public class HistoryBrowserDialogTest {
      * Test for {@link HistoryBrowserDialog#buildTitle}.
      */
     @Test
-    public void testBuildTitle() {
+    void testBuildTitle() {
         HistoryDataSet hds = new HistoryDataSet();
         User user = User.createOsmUser(1, "");
         Date date = DateUtils.fromString("2016-01-01");

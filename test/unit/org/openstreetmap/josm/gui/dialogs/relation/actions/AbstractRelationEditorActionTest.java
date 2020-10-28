@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -30,12 +30,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This class provides the basic test environment for relation editor actions.
  * @author Michael Zangl
  */
-@Ignore
+@Disabled
 public abstract class AbstractRelationEditorActionTest {
     /**
      * Platform for tooltips.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().main();
 
@@ -90,7 +90,7 @@ public abstract class AbstractRelationEditorActionTest {
     /**
      * Set up the test data required for common tests using one relation.
      */
-    @Before
+    @BeforeEach
     public void setupTestData() {
         DataSet ds = new DataSet();
         final Relation orig = new Relation(1);

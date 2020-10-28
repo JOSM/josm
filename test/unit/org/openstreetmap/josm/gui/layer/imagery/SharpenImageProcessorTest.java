@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.imagery;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -13,12 +13,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Tests for the {@link SharpenImageProcessor} class.
  * @author Michael Zangl
  */
-public class SharpenImageProcessorTest {
+class SharpenImageProcessorTest {
 
     /**
      * No special rules
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -26,7 +26,7 @@ public class SharpenImageProcessorTest {
      * Test {@link SharpenImageProcessor#setSharpenLevel(float)} and {@link SharpenImageProcessor#getSharpenLevel()}
      */
     @Test
-    public void testSetGet() {
+    void testSetGet() {
         SharpenImageProcessor processor = new SharpenImageProcessor();
 
         assertEquals(1, processor.getSharpenLevel(), 0.001);
@@ -54,7 +54,7 @@ public class SharpenImageProcessorTest {
      * Test {@link SharpenImageProcessor#toString()}
      */
     @Test
-    public void testToString() {
+    void testToString() {
         SharpenImageProcessor processor = new SharpenImageProcessor();
         assertEquals("SharpenImageProcessor [sharpenLevel=1.0]", processor.toString());
     }

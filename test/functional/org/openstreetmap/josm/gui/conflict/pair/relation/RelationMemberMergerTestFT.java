@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
-public class RelationMemberMergerTestFT extends JFrame {
+class RelationMemberMergerTestFT extends JFrame {
 
     private RelationMemberMerger merger;
 
@@ -41,7 +41,7 @@ public class RelationMemberMergerTestFT extends JFrame {
     /**
      * Constructs a new {@code RelationMemberMergerTest}.
      */
-    public RelationMemberMergerTestFT() {
+    RelationMemberMergerTestFT() {
         build();
         populate();
     }

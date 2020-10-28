@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.InputStream;
 import java.util.Collection;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -23,12 +23,12 @@ import org.openstreetmap.josm.io.OsmReader;
 /**
  * Unit test of {@link HighwaysTest}.
  */
-public class HighwaysTest {
+class HighwaysTest {
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -76,7 +76,7 @@ public class HighwaysTest {
      * Unit test of {@link Highways#isHighwayLinkOkay}.
      */
     @Test
-    public void testCombinations() {
+    void testCombinations() {
         assertTrue(Highways.isHighwayLinkOkay(createTestSetting("primary", "primary_link")));
         assertTrue(Highways.isHighwayLinkOkay(createTestSetting("primary", "primary")));
         assertFalse(Highways.isHighwayLinkOkay(createTestSetting("primary", "secondary_link")));
@@ -89,7 +89,7 @@ public class HighwaysTest {
      * Test source:maxspeed in United Kingdom.
      */
     @Test
-    public void testSourceMaxSpeedUnitedKingdom() {
+    void testSourceMaxSpeedUnitedKingdom() {
         Way link = createTestSetting("primary", "primary");
         link.put("maxspeed", "60 mph");
         link.put("source:maxspeed", "UK:nsl_single");
@@ -107,7 +107,7 @@ public class HighwaysTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket14891() throws Exception {
+    void testTicket14891() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(14891, "14891.osm.bz2")) {
             Collection<Way> ways = OsmReader.parseDataSet(is, null).getWays();
             Way roundabout = ways.stream().filter(w -> 10068083 == w.getId()).findFirst().get();

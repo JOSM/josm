@@ -1,23 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link FileFilterAllFiles} class.
  */
-public class FileFilterAllFilesTest {
+class FileFilterAllFilesTest {
 
     /**
      * Unit test of method {@link FileFilterAllFiles#getInstance}.
      */
     @Test
-    public void testFileFilterAllFiles() {
+    void testFileFilterAllFiles() {
         assertTrue(FileFilterAllFiles.getInstance().accept(new File(".")));
         assertNotNull(FileFilterAllFiles.getInstance().getDescription());
     }

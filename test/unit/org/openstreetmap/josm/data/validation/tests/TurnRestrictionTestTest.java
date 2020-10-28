@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -10,7 +10,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of turn restriction validation test.
  */
-public class TurnRestrictionTestTest {
+class TurnRestrictionTestTest {
 
     private static final TurnrestrictionTest TURNRESTRICTION_TEST = new TurnrestrictionTest();
     private static final RelationChecker RELATION_TEST = new RelationChecker();
@@ -18,7 +18,7 @@ public class TurnRestrictionTestTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().mapStyles().presets().main();
 
@@ -27,7 +27,7 @@ public class TurnRestrictionTestTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testTurnrestrictionFile() throws Exception {
+    void testTurnrestrictionFile() throws Exception {
         ValidatorTestUtils.testSampleFile("nodist/data/restriction.osm",
                 ds -> ds.getRelations(),
                 name -> name.startsWith("E"), TURNRESTRICTION_TEST, RELATION_TEST);

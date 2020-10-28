@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.io.StringReader;
@@ -15,9 +15,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
@@ -50,19 +50,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of {@link MapCSSTagChecker}.
  */
-public class MapCSSTagCheckerTest {
+class MapCSSTagCheckerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().territories().preferences();
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         MapCSSTagCheckerAsserts.clear();
     }
@@ -71,7 +71,7 @@ public class MapCSSTagCheckerTest {
         final MapCSSTagChecker test = new MapCSSTagChecker();
         Set<String> errors = new HashSet<>();
         test.checks.putAll("test", TagCheck.readMapCSS(new StringReader(css), errors::add).parseChecks);
-        assertTrue(errors.toString(), errors.isEmpty());
+        assertTrue(errors.isEmpty(), errors::toString);
         return test;
     }
 
@@ -80,7 +80,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testNaturalMarsh() throws ParseException {
+    void testNaturalMarsh() throws ParseException {
         ParseResult result = TagCheck.readMapCSS(new StringReader(
                 "*[natural=marsh] {\n" +
                 "   group: tr(\"deprecated\");\n" +
@@ -121,7 +121,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket10913() throws ParseException {
+    void testTicket10913() throws ParseException {
         final OsmPrimitive p = TestUtils.addFakeDataSet(TestUtils.newWay("highway=tertiary construction=yes"));
         final TagCheck check = TagCheck.readMapCSS(new StringReader("way {" +
                 "throwError: \"error\";" +
@@ -140,7 +140,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket9782() throws ParseException {
+    void testTicket9782() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker("*[/.+_name/][!name] {" +
                 "throwWarning: tr(\"has {0} but not {1}\", \"{0.key}\", \"{1.key}\");}");
         final OsmPrimitive p = OsmUtils.createPrimitive("way alt_name=Foo");
@@ -155,7 +155,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket10859() throws ParseException {
+    void testTicket10859() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker("way[highway=footway][foot?!] {\n" +
                 "  throwWarning: tr(\"{0} used with {1}\", \"{0.value}\", \"{1.tag}\");}");
         final OsmPrimitive p = OsmUtils.createPrimitive("way highway=footway foot=no");
@@ -170,7 +170,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket13630() throws ParseException {
+    void testTicket13630() throws ParseException {
         ParseResult result = TagCheck.readMapCSS(new StringReader(
                 "node[crossing=zebra] {fixRemove: \"crossing=zebra\";}"));
         assertTrue(result.parseChecks.isEmpty());
@@ -182,7 +182,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testPreprocessing() throws ParseException {
+    void testPreprocessing() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker(
                 "@supports (min-josm-version: 0) { *[foo] { throwWarning: \"!\"; } }\n" +
                 "@supports (min-josm-version: 2147483647) { *[bar] { throwWarning: \"!\"; } }");
@@ -195,12 +195,12 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testInit() throws Exception {
+    void testInit() throws Exception {
         Logging.clearLastErrorAndWarnings();
         MapCSSTagChecker c = new MapCSSTagChecker();
         c.initialize();
 
-        assertTrue("no warnings/errors are logged", Logging.getLastErrorAndWarnings().isEmpty());
+        assertTrue(Logging.getLastErrorAndWarnings().isEmpty(), "no warnings/errors are logged");
 
         // to trigger MapCSSStyleIndex code
         Node node = new Node(new LatLon(12, 34));
@@ -213,7 +213,7 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testAssertions() throws Exception {
+    void testAssertions() throws Exception {
         MapCSSTagChecker c = new MapCSSTagChecker();
         Set<String> assertionErrors = new LinkedHashSet<>();
 
@@ -225,7 +225,7 @@ public class MapCSSTagCheckerTest {
         for (String msg : assertionErrors) {
             Logging.error(msg);
         }
-        assertTrue("not all assertions included in the tests are met", assertionErrors.isEmpty());
+        assertTrue(assertionErrors.isEmpty(), "not all assertions included in the tests are met");
     }
 
     /**
@@ -233,7 +233,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testAssertInsideCountry() throws ParseException {
+    void testAssertInsideCountry() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker(
                 "node[amenity=parking][inside(\"BR\")] {\n" +
                 "  throwWarning: \"foo\";\n" +
@@ -248,7 +248,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket17058() throws ParseException {
+    void testTicket17058() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker(
                 "*[name =~ /(?i).*Straße.*/][inside(\"LI,CH\")] {\n" +
                 "  throwError: tr(\"street name contains ß\");\n" +
@@ -263,7 +263,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket13762() throws ParseException {
+    void testTicket13762() throws ParseException {
         final ParseResult parseResult = TagCheck.readMapCSS(new StringReader("" +
                 "meta[lang=de] {\n" +
                 "    title: \"Deutschlandspezifische Regeln\";" +
@@ -276,7 +276,7 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket14287() throws Exception {
+    void testTicket14287() throws Exception {
         final MapCSSTagChecker test = buildTagChecker(
                 "node[amenity=parking] ∈ *[amenity=parking] {" +
                 "  throwWarning: tr(\"{0} inside {1}\", \"amenity=parking\", \"amenity=parking\");" +
@@ -292,7 +292,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket17053() throws ParseException {
+    void testTicket17053() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker(
                 "way[highway=cycleway][cycleway=track] {\n" +
                 "   throwWarning: tr(\"{0} with {1}\", \"{0.tag}\", \"{1.tag}\");\n" +
@@ -335,7 +335,7 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket12627() throws Exception {
+    void testTicket12627() throws Exception {
         doTestNaturalWood(12627, "overlapping.osm", 1, 1);
     }
 
@@ -344,7 +344,7 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket14289() throws Exception {
+    void testTicket14289() throws Exception {
         doTestNaturalWood(14289, "example2.osm", 3, 3);
     }
 
@@ -353,7 +353,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if an error occurs
      */
     @Test
-    public void testTicket15641() throws ParseException {
+    void testTicket15641() throws ParseException {
         assertNotNull(buildTagChecker(
                 "relation[type=public_transport][public_transport=stop_area_group] > way {" +
                 "  throwWarning: eval(count(parent_tags(public_transport)));" +
@@ -365,7 +365,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if an error occurs
      */
     @Test
-    public void testTicket17358() throws ParseException {
+    void testTicket17358() throws ParseException {
         final Collection<TestError> errors = buildTagChecker(
                 "*[/^name/=~/Test/]{" +
                 "  throwWarning: \"Key value match\";" +
@@ -378,7 +378,7 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket17695() throws Exception {
+    void testTicket17695() throws Exception {
         final MapCSSTagChecker test = buildTagChecker(
                 "*[building] ∈  *[building] {" +
                 "throwWarning: tr(\"Building inside building\");" +
@@ -395,7 +395,7 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket13165() throws Exception {
+    void testTicket13165() throws Exception {
         final MapCSSTagChecker test = buildTagChecker(
                 "area:closed[tag(\"landuse\") = parent_tag(\"landuse\")] ⧉ area:closed[landuse] {"
                         + "throwWarning: tr(\"Overlapping Identical Landuses\");"
@@ -412,7 +412,7 @@ public class MapCSSTagCheckerTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket13165IncompleteMP() throws Exception {
+    void testTicket13165IncompleteMP() throws Exception {
         final MapCSSTagChecker test = buildTagChecker(
                 "area:closed[tag(\"landuse\") = parent_tag(\"landuse\")] ⧉ area:closed[landuse] {"
                         + "throwWarning: tr(\"Overlapping Identical Landuses\");"
@@ -430,7 +430,7 @@ public class MapCSSTagCheckerTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket19053() throws ParseException {
+    void testTicket19053() throws ParseException {
         final MapCSSTagChecker test = buildTagChecker(
                 "*[ele][ele =~ /^-?[0-9]+\\.[0-9][0-9][0-9]+$/] {"
                         + "throwWarning: tr(\"{0}\",\"{0.tag}\");"

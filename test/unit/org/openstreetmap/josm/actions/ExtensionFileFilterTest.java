@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.ExtensionFileFilter.AddArchiveExtension;
 
@@ -12,7 +12,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Unit tests for class {@link ExtensionFileFilter}.
  */
-public class ExtensionFileFilterTest {
+class ExtensionFileFilterTest {
 
     private static void test(String extensions, String defaultExtension, String description, boolean addArchiveExtensionsToDescription,
             String expectedExtensions, String expectedDescription) {
@@ -27,7 +27,7 @@ public class ExtensionFileFilterTest {
      * Unit test of method {@link ExtensionFileFilter#newFilterWithArchiveExtensions}.
      */
     @Test
-    public void testNewFilterWithArchiveExtensions() {
+    void testNewFilterWithArchiveExtensions() {
         test("ext1", "ext1", "description", true,
                 "ext1,ext1.gz,ext1.bz,ext1.bz2,ext1.xz,ext1.zip",
                 "description (*.ext1, *.ext1.gz, *.ext1.bz, *.ext1.bz2, *.ext1.xz, *.ext1.zip)");
@@ -46,7 +46,7 @@ public class ExtensionFileFilterTest {
      * Unit test of methods {@link ExtensionFileFilter#equals} and {@link ExtensionFileFilter#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ExtensionFileFilter.class).usingGetClass()
             .verify();
@@ -56,7 +56,7 @@ public class ExtensionFileFilterTest {
      * Unit test of {@link AddArchiveExtension} enum.
      */
     @Test
-    public void testEnumAddArchiveExtension() {
+    void testEnumAddArchiveExtension() {
         TestUtils.superficialEnumCodeCoverage(AddArchiveExtension.class);
     }
 }

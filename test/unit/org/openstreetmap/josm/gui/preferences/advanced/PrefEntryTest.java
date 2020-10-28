@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.advanced;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
@@ -16,12 +16,12 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Unit tests of {@link PrefEntry} class.
  */
-public class PrefEntryTest {
+class PrefEntryTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -30,7 +30,7 @@ public class PrefEntryTest {
      * Unit test of {@link PrefEntry#PrefEntry}.
      */
     @Test
-    public void testPrefEntry() {
+    void testPrefEntry() {
         String key = "key";
         StringSetting val = new StringSetting("value");
         StringSetting def = new StringSetting("defaultValue");
@@ -54,7 +54,7 @@ public class PrefEntryTest {
      * Unit test of methods {@link PrefEntry#equals} and {@link PrefEntry#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(PrefEntry.class).usingGetClass()
             .withIgnoredFields("value", "defaultValue", "isDefault", "changed")

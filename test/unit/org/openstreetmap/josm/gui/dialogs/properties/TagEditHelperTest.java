@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Field;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -43,12 +43,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link TagEditHelper} class.
  */
-public class TagEditHelperTest {
+class TagEditHelperTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().territories().projection();
 
@@ -63,7 +63,7 @@ public class TagEditHelperTest {
      * Checks that autocompleting list items are sorted correctly.
      */
     @Test
-    public void testAcItemComparator() {
+    void testAcItemComparator() {
         List<AutoCompletionItem> list = new ArrayList<>();
         list.add(new AutoCompletionItem("Bing Sat"));
         list.add(new AutoCompletionItem("survey"));
@@ -80,7 +80,7 @@ public class TagEditHelperTest {
      * Unit test of {@link TagEditHelper#containsDataKey}.
      */
     @Test
-    public void testContainsDataKey() {
+    void testContainsDataKey() {
         assertFalse(newTagEditHelper().containsDataKey("foo"));
         // TODO: complete test
     }
@@ -91,7 +91,7 @@ public class TagEditHelperTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket18764() throws Exception {
+    void testTicket18764() throws Exception {
         testIcon("*[building] ⧉ *[highway] { text: tr(\"Building crossing highway\"); }", ds -> {
             Way way = TestUtils.newWay("", new Node(LatLon.NORTH_POLE), new Node(LatLon.SOUTH_POLE));
             way.getNodes().forEach(ds::addPrimitive);
@@ -105,7 +105,7 @@ public class TagEditHelperTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket18798() throws Exception {
+    void testTicket18798() throws Exception {
         testIcon("node:righthandtraffic[junction=roundabout] { text: tr(\"Roundabout node\"); }", ds -> {
             Node node = new Node(LatLon.NORTH_POLE);
             ds.addPrimitive(node);

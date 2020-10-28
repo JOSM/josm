@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -25,12 +25,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of "Duplicate way" validation test.
  */
-public class DuplicateWayTest {
+class DuplicateWayTest {
 
     /**
      * Setup test by initializing JOSM preferences and projection.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -75,7 +75,7 @@ public class DuplicateWayTest {
      * Test of "Duplicate way" validation test - no tags.
      */
     @Test
-    public void testDuplicateWayNoTags() {
+    void testDuplicateWayNoTags() {
         doTest(DuplicateWay.DUPLICATE_WAY);
     }
 
@@ -83,7 +83,7 @@ public class DuplicateWayTest {
      * Test of "Duplicate way" validation test - same tags.
      */
     @Test
-    public void testDuplicateWaySameTags() {
+    void testDuplicateWaySameTags() {
         doTest(DuplicateWay.DUPLICATE_WAY, "highway=motorway");
     }
 
@@ -91,7 +91,7 @@ public class DuplicateWayTest {
      * Test of "Duplicate way" validation test - different tags.
      */
     @Test
-    public void testDuplicateWayDifferentTags() {
+    void testDuplicateWayDifferentTags() {
         doTest(DuplicateWay.SAME_WAY, "highway=motorway", "highway=trunk", false);
     }
 
@@ -100,7 +100,7 @@ public class DuplicateWayTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testFixError() throws Exception {
+    void testFixError() throws Exception {
         DataSet ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "duplicate-ways.osm")), null);
         TEST.startTest(NullProgressMonitor.INSTANCE);
         TEST.visit(ds.allPrimitives());

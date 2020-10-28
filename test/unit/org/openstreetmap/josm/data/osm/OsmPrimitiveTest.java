@@ -1,13 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -18,12 +20,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of the {@code OsmPrimitive} class.
  */
-public class OsmPrimitiveTest {
+class OsmPrimitiveTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -37,13 +39,13 @@ public class OsmPrimitiveTest {
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
     }
 
     @Test
-    public void testSimpleReferrersTest() {
+    void testSimpleReferrersTest() {
         Node n1 = new Node(LatLon.ZERO);
         Way w1 = new Way();
         w1.addNode(n1);
@@ -53,7 +55,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void testAddAndRemoveReferrer() {
+    void testAddAndRemoveReferrer() {
         Node n1 = new Node(LatLon.ZERO);
         Node n2 = new Node(LatLon.ZERO);
         Way w1 = new Way();
@@ -69,7 +71,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void testMultipleReferrers() {
+    void testMultipleReferrers() {
         Node n1 = new Node(LatLon.ZERO);
         Way w1 = new Way();
         Way w2 = new Way();
@@ -85,7 +87,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void testRemoveMemberFromRelationReferrerTest() {
+    void testRemoveMemberFromRelationReferrerTest() {
         Node n1 = new Node(LatLon.ZERO);
         Relation r1 = new Relation();
         r1.addMember(new RelationMember("", n1));
@@ -97,7 +99,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void testSetRelationMemberReferrerTest() {
+    void testSetRelationMemberReferrerTest() {
         Node n1 = new Node(LatLon.ZERO);
         Node n2 = new Node(LatLon.ZERO);
         Relation r1 = new Relation();
@@ -114,7 +116,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void testRemovePrimitiveReferrerTest() {
+    void testRemovePrimitiveReferrerTest() {
         Node n1 = new Node(LatLon.ZERO);
         Way w1 = new Way();
         w1.addNode(n1);
@@ -136,7 +138,7 @@ public class OsmPrimitiveTest {
     }
 
     @Test
-    public void testNodeFromMultipleDatasets() {
+    void testNodeFromMultipleDatasets() {
         // n has two referrers - w1 and w2. But only w1 is returned because it is in the same dataset as n
         Node n = new Node(LatLon.ZERO);
 
@@ -150,9 +152,9 @@ public class OsmPrimitiveTest {
         Assert.assertEquals(n.getReferrers().get(0), w1);
     }
 
-    @Test(expected = DataIntegrityProblemException.class)
-    public void testCheckMustBeInDatasate() {
+    @Test
+    void testCheckMustBeInDatasate() {
         Node n = new Node();
-        n.getReferrers();
+        assertThrows(DataIntegrityProblemException.class, () -> n.getReferrers());
     }
 }

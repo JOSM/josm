@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.util.stream.Collectors;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.io.OsmReader;
@@ -19,13 +19,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of Multipolygon validation test.
  */
-public class MultipolygonTestTest {
+class MultipolygonTestTest {
 
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().mapStyles().presets().main().preferences();
 
@@ -34,7 +34,7 @@ public class MultipolygonTestTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testMultipolygonFile() throws Exception {
+    void testMultipolygonFile() throws Exception {
         final MultipolygonTest MULTIPOLYGON_TEST = new MultipolygonTest();
         final RelationChecker RELATION_TEST = new RelationChecker();
         ValidatorTestUtils.testSampleFile("nodist/data/multipolygon.osm",
@@ -47,7 +47,7 @@ public class MultipolygonTestTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket17768TouchingInner() throws Exception {
+    void testTicket17768TouchingInner() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(17768, "touching-inner.osm")) {
             MultipolygonTest mpTest = new MultipolygonTest();
             mpTest.makeFromWays(OsmReader.parseDataSet(is, null).getWays());
@@ -61,7 +61,7 @@ public class MultipolygonTestTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket17768TouchingInnerOuter() throws Exception {
+    void testTicket17768TouchingInnerOuter() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(17768, "touching-inner-outer.osm")) {
             MultipolygonTest mpTest = new MultipolygonTest();
             mpTest.makeFromWays(OsmReader.parseDataSet(is, null).getWays());

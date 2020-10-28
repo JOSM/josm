@@ -1,22 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.map;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 
 /**
  * Unit tests of {@link BackupPreference} class.
  */
-public class BackupPreferenceTest {
+class BackupPreferenceTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -25,7 +25,7 @@ public class BackupPreferenceTest {
      * Unit test of {@link BackupPreference#BackupPreference}.
      */
     @Test
-    public void testBackupPreference() {
+    void testBackupPreference() {
         assertNotNull(new BackupPreference.Factory().createPreferenceSetting());
     }
 
@@ -33,7 +33,7 @@ public class BackupPreferenceTest {
      * Unit test of {@link BackupPreference#addGui}.
      */
     @Test
-    public void testAddGui() {
+    void testAddGui() {
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new BackupPreference.Factory(), null);
     }
 }

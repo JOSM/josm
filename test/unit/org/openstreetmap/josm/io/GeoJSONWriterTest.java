@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -21,12 +21,12 @@ import org.openstreetmap.josm.data.osm.Way;
 /**
  * Unit tests of {@link GeoJSONWriter} class.
  */
-public class GeoJSONWriterTest {
+class GeoJSONWriterTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -35,7 +35,7 @@ public class GeoJSONWriterTest {
      * Unit test for Point
      */
     @Test
-    public void testPoint() {
+    void testPoint() {
         final Node node = new Node(new LatLon(12.3, 4.56));
         node.put("name", "foo");
         node.put("source", "code");
@@ -74,7 +74,7 @@ public class GeoJSONWriterTest {
      * Unit test for LineString
      */
     @Test
-    public void testLineString() {
+    void testLineString() {
         final DataSet ds = new DataSet();
         final Node n1 = new Node(new LatLon(12.3, 4.56));
         final Node n2 = new Node(new LatLon(12.4, 4.57));
@@ -118,7 +118,7 @@ public class GeoJSONWriterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testMultipolygon() throws Exception {
+    void testMultipolygon() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final GeoJSONWriter writer = new GeoJSONWriter(ds);
@@ -131,7 +131,7 @@ public class GeoJSONWriterTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testMultipolygonRobustness() throws Exception {
+    void testMultipolygonRobustness() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get("nodist/data/multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final GeoJSONWriter writer = new GeoJSONWriter(ds);

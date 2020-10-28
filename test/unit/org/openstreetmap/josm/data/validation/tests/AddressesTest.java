@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.openstreetmap.josm.data.coor.LatLon.NORTH_POLE;
 import static org.openstreetmap.josm.data.coor.LatLon.SOUTH_POLE;
 import static org.openstreetmap.josm.data.coor.LatLon.ZERO;
 
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -26,12 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of {@link Addresses} validation test.
  */
-public class AddressesTest {
+class AddressesTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -56,7 +56,7 @@ public class AddressesTest {
      * Unit test of {@link Addresses#HOUSE_NUMBER_WITHOUT_STREET}
      */
     @Test
-    public void testHouseNumberWithoutStreet() {
+    void testHouseNumberWithoutStreet() {
         assertNull(doTestHouseNumberWithoutStreet("", null, null));
         assertNotNull(doTestHouseNumberWithoutStreet("addr:housenumber=1", null, null));
         assertNull(doTestHouseNumberWithoutStreet("addr:housenumber=1 addr:street=Foo", null, null));
@@ -89,7 +89,7 @@ public class AddressesTest {
      * Unit test of {@link Addresses#DUPLICATE_HOUSE_NUMBER}
      */
     @Test
-    public void testDuplicateHouseNumber() {
+    void testDuplicateHouseNumber() {
         String num1 = "addr:housenumber=1 addr:street=Foo ";
         String num2 = "addr:housenumber=2 addr:street=Foo ";
         String city1 = "addr:city=Gotham ";
@@ -115,7 +115,7 @@ public class AddressesTest {
      * Unit test of {@link Addresses#expandHouseNumber}
      */
     @Test
-    public void testMultiAddressDuplicates() {
+    void testMultiAddressDuplicates() {
         String num1 = "addr:housenumber=1,3 addr:street=Foo";
         String num2 = "addr:housenumber=1 addr:street=Foo";
         String num3 = "addr:housenumber=3 addr:street=Foo";

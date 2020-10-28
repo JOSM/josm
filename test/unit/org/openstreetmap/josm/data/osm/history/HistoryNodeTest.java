@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
@@ -22,12 +22,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link HistoryNode}.
  */
-public class HistoryNodeTest {
+class HistoryNodeTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -47,7 +47,7 @@ public class HistoryNodeTest {
      * Unit test for {@link HistoryNode#HistoryNode}.
      */
     @Test
-    public void testHistoryNode() {
+    void testHistoryNode() {
         Date d = new Date();
         HistoryNode node = create(d);
 
@@ -64,7 +64,7 @@ public class HistoryNodeTest {
      * Unit test for {@link HistoryNode#getType}.
      */
     @Test
-    public void testGetType() {
+    void testGetType() {
         assertEquals(OsmPrimitiveType.NODE, create(new Date()).getType());
     }
 
@@ -72,7 +72,7 @@ public class HistoryNodeTest {
      * Unit test for {@link HistoryNode#getCoords}.
      */
     @Test
-    public void testGetCoords() {
+    void testGetCoords() {
         Node n = new Node(new LatLon(45, 0));
         n.setOsmId(1, 2);
         n.setUser(User.createOsmUser(3, "testuser"));
@@ -84,7 +84,7 @@ public class HistoryNodeTest {
      * Unit test for {@link HistoryNode#getDisplayName}.
      */
     @Test
-    public void testGetDisplayName() {
+    void testGetDisplayName() {
         HistoryNode node = create(new Date());
         HistoryNameFormatter hnf = DefaultNameFormatter.getInstance();
         assertEquals("1 (0.0, 0.0)", node.getDisplayName(hnf));

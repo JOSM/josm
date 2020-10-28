@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -19,11 +21,11 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.TestUtils;
@@ -47,8 +49,6 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Performance test of map renderer.
@@ -86,7 +86,7 @@ public class MapRendererPerformanceTest {
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules josmTestRules = new JOSMTestRules().main().projection().preferences().timeout(15 * 60 * 1000);
 
@@ -94,7 +94,7 @@ public class MapRendererPerformanceTest {
      * Initializes test environment.
      * @throws Exception if any error occurs
      */
-    @BeforeClass
+    @BeforeAll
     public static void load() throws Exception {
         JOSMFixture.createPerformanceTestFixture().init(true);
 
@@ -178,7 +178,7 @@ public class MapRendererPerformanceTest {
     /**
      * Cleanup test environment.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanUp() {
         setFilterStyleActive(false);
         if (hideIconsSetting != null) {
@@ -282,7 +282,7 @@ public class MapRendererPerformanceTest {
      * @throws IOException in case of an I/O error
      */
     @Test
-    public void testPerformanceGenerate() throws IOException {
+    void testPerformanceGenerate() throws IOException {
         setFilterStyleActive(false);
         PerformanceTester test = new PerformanceTester();
         test.bounds = BOUNDS_CITY_ALL;
@@ -321,7 +321,7 @@ public class MapRendererPerformanceTest {
      * @throws IOException in case of an I/O error
      */
     @Test
-    public void testPerformanceDrawFeatures() throws IOException {
+    void testPerformanceDrawFeatures() throws IOException {
         testDrawFeature(null);
         for (Feature f : Feature.values()) {
             testDrawFeature(f);
@@ -351,7 +351,7 @@ public class MapRendererPerformanceTest {
         ImageIO.write(img, "png", outputfile);
     }
 
-    public static class BenchmarkData extends CapturingBenchmark {
+    static class BenchmarkData extends CapturingBenchmark {
 
         private List<StyleRecord> allStyleElems;
 

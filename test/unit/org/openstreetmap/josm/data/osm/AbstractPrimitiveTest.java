@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -15,12 +15,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of the {@code AbstractPrimitive} class.
  */
-public class AbstractPrimitiveTest {
+class AbstractPrimitiveTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -28,7 +28,7 @@ public class AbstractPrimitiveTest {
      * Unit test of {@link AbstractPrimitive#isUndeleted} method.
      */
     @Test
-    public void testIsUndeleted() {
+    void testIsUndeleted() {
         AbstractPrimitive p = new Node(1);
         p.setVisible(false);
         p.setDeleted(false);
@@ -59,7 +59,7 @@ public class AbstractPrimitiveTest {
      * Unit test of {@link AbstractPrimitive#hasTagDifferent} methods.
      */
     @Test
-    public void testHasTagDifferent() {
+    void testHasTagDifferent() {
         AbstractPrimitive p = new Node();
 
         assertFalse(p.hasTagDifferent("foo", "bar"));

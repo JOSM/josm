@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.TagKeyReference;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
@@ -22,12 +22,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Extended text directives tests.
  */
-public class MapCSSWithExtendedTextDirectivesTest {
+class MapCSSWithExtendedTextDirectivesTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -35,7 +35,7 @@ public class MapCSSWithExtendedTextDirectivesTest {
      * Test {@link DeriveLabelFromNameTagsCompositionStrategy}
      */
     @Test
-    public void testCreateAutoTextElement() {
+    void testCreateAutoTextElement() {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
         c.put("text", new Keyword("auto"));
@@ -52,7 +52,7 @@ public class MapCSSWithExtendedTextDirectivesTest {
      * Test {@link TagLookupCompositionStrategy}.
      */
     @Test
-    public void testCreateTextElementComposingTextFromTag() {
+    void testCreateTextElementComposingTextFromTag() {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
         c.put("text", new TagKeyReference("my_name"));
@@ -70,7 +70,7 @@ public class MapCSSWithExtendedTextDirectivesTest {
      * Test null strategy.
      */
     @Test
-    public void testCreateNullStrategy() {
+    void testCreateNullStrategy() {
         MultiCascade mc = new MultiCascade();
         Node osm = new Node();
         Environment env = new Environment(osm, mc, "default", null);

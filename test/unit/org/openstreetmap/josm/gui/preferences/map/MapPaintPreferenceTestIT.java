@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.map;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 import org.openstreetmap.josm.TestUtils;
@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Integration tests of {@link MapPaintPreference} class.
  */
 @RunWith(ParallelParameterized.class)
-public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
+class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
 
     /**
      * Setup rule
@@ -47,7 +47,7 @@ public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCas
      * Setup test
      * @throws IOException in case of I/O error
      */
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException {
         errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(MapPaintPreferenceTestIT.class));
     }
@@ -69,7 +69,7 @@ public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCas
      * @param url URL
      * @param source source entry to test
      */
-    public MapPaintPreferenceTestIT(String displayName, String url, ExtendedSourceEntry source) {
+    MapPaintPreferenceTestIT(String displayName, String url, ExtendedSourceEntry source) {
         super(source);
     }
 
@@ -78,7 +78,7 @@ public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCas
      * @throws Exception in case of error
      */
     @Test
-    public void testStyleValidity() throws Exception {
+    void testStyleValidity() throws Exception {
         assumeFalse(isIgnoredSubstring(source.url));
         StyleSource style = MapPaintStyles.addStyle(source);
         if (style instanceof MapCSSStyleSource) {
@@ -107,7 +107,7 @@ public class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCas
         warnings.stream().filter(this::isIgnoredSubstring).forEach(ignoredErrors::add);
         warnings.removeAll(ignoredErrors);
 
-        assertTrue(errors.toString() + '\n' + warnings.toString(), errors.isEmpty() && warnings.isEmpty());
+        assertTrue(errors.isEmpty() && warnings.isEmpty(), errors.toString() + '\n' + warnings.toString());
         assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
     }
 }

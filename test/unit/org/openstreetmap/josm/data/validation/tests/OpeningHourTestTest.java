@@ -5,9 +5,9 @@ import static org.CustomMatchers.hasSize;
 import static org.CustomMatchers.isEmpty;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -40,11 +40,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * JUnit Test of "Opening hours" validation test.
  * @see OpeningHourTest
  */
-public class OpeningHourTestTest {
+class OpeningHourTestTest {
     /**
      * We need preferences for this. We check strings so we need i18n.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
 
@@ -54,7 +54,7 @@ public class OpeningHourTestTest {
      * Setup test.
      * @throws Exception if test cannot be initialized
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         openingHourTest = new OpeningHourTest();
         openingHourTest.initialize();
@@ -65,7 +65,7 @@ public class OpeningHourTestTest {
      * Test #1 of opening_hours syntax.
      */
     @Test
-    public void testCheckOpeningHourSyntax1() {
+    void testCheckOpeningHourSyntax1() {
         final String key = "opening_hours";
         // frequently used tags according to https://taginfo.openstreetmap.org/keys/opening_hours#values
         assertThat(checkOpeningHourSyntax(key, "24/7"), isEmpty());
@@ -81,7 +81,7 @@ public class OpeningHourTestTest {
      * Test translated messages.
      */
     @Test
-    public void testI18n() {
+    void testI18n() {
         final String key = "opening_hours";
         String value = ".";
         assertEquals(String.format("Vorgefunden wurde:  \".\" \". \" in Zeile 0, Spalte 0%nErwartet wurde: <EOF>"),
@@ -99,7 +99,7 @@ public class OpeningHourTestTest {
      * Test #2 of opening_hours syntax.
      */
     @Test
-    public void testCheckOpeningHourSyntax2() {
+    void testCheckOpeningHourSyntax2() {
         final String key = "opening_hours";
         final List<TestError> errors = checkOpeningHourSyntax(key, "Mo-Tue");
         assertThat(errors, hasSize(1));
@@ -112,7 +112,7 @@ public class OpeningHourTestTest {
      * Test #3 of opening_hours syntax.
      */
     @Test
-    public void testCheckOpeningHourSyntax3() {
+    void testCheckOpeningHourSyntax3() {
         final String key = "opening_hours";
         final List<TestError> errors = checkOpeningHourSyntax(key, "Sa-Su 10.00-20.00");
         assertThat(errors, hasSize(1));
@@ -125,7 +125,7 @@ public class OpeningHourTestTest {
      * Test #4 of opening_hours syntax.
      */
     @Test
-    public void testCheckOpeningHourSyntax4() {
+    void testCheckOpeningHourSyntax4() {
         assertThat(checkOpeningHourSyntax(null, null), isEmpty());
         assertThat(checkOpeningHourSyntax(null, ""), isEmpty());
         assertEquals("opening_hours value can be prettified",
@@ -138,7 +138,7 @@ public class OpeningHourTestTest {
      * Test #5 of opening_hours syntax.
      */
     @Test
-    public void testCheckOpeningHourSyntax5() {
+    void testCheckOpeningHourSyntax5() {
         final String key = "opening_hours";
         assertThat(checkOpeningHourSyntax(key, "badtext"), hasSize(1));
         assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"b \" at line 0, column 0%nWas expecting: <EOF>"),
@@ -152,7 +152,7 @@ public class OpeningHourTestTest {
      * Test #6 of opening_hours syntax.
      */
     @Test
-    public void testCheckOpeningHourSyntax6() {
+    void testCheckOpeningHourSyntax6() {
         final String key = "opening_hours";
         assertThat(checkOpeningHourSyntax(key, "PH open \"always open on public holidays\""), isEmpty());
     }
@@ -161,7 +161,7 @@ public class OpeningHourTestTest {
      * Test #7 of opening_hours syntax.
      */
     @Test
-    public void testCheckOpeningHourSyntax7() {
+    void testCheckOpeningHourSyntax7() {
         final String key = "opening_hours";
         assertThat(checkOpeningHourSyntax(key, "9:00-18:00"), hasSize(1));
         assertEquals(Severity.OTHER, checkOpeningHourSyntax(key, "9:00-18:00").get(0).getSeverity());
@@ -172,7 +172,7 @@ public class OpeningHourTestTest {
      * Non-regression Test of opening_hours syntax for bug #9367.
      */
     @Test
-    public void testCheckOpeningHourSyntaxTicket9367() {
+    void testCheckOpeningHourSyntaxTicket9367() {
         final String key = "opening_hours";
         assertEquals(Severity.WARNING, checkOpeningHourSyntax(key, "Mo,Tu 04-17").get(0).getSeverity());
         assertEquals("Hours without minutes",
@@ -183,7 +183,7 @@ public class OpeningHourTestTest {
      * Test #1 of service_times syntax.
      */
     @Test
-    public void testCheckServiceTimeSyntax1() {
+    void testCheckServiceTimeSyntax1() {
         final String key = "service_times";
         // frequently used tags according to https://taginfo.openstreetmap.org/keys/service_times#values
         assertThat(checkOpeningHourSyntax(key, "Su 10:00"), isEmpty());
@@ -202,7 +202,7 @@ public class OpeningHourTestTest {
      * Test #1 of collection_times syntax.
      */
     @Test
-    public void testCheckCollectionTimeSyntax1() {
+    void testCheckCollectionTimeSyntax1() {
         final String key = "collection_times";
         // frequently used tags according to https://taginfo.openstreetmap.org/keys/collection_times#values
         assertThat(checkOpeningHourSyntax(key, "Mo-Sa 09:00"), isEmpty());
@@ -220,7 +220,7 @@ public class OpeningHourTestTest {
      * Tests that predefined values in presets are correct.
      */
     @Test
-    public void testPresetValues() {
+    void testPresetValues() {
         final Collection<TaggingPreset> presets = TaggingPresetReader.readFromPreferences(false, false);
         final Set<Tag> values = new LinkedHashSet<>();
         for (final TaggingPreset p : presets) {
@@ -246,7 +246,7 @@ public class OpeningHourTestTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17932">Bug #17932</a>.
      */
     @Test
-    public void testTicket17932() {
+    void testTicket17932() {
         Logging.clearLastErrorAndWarnings();
         assertTrue(checkOpeningHourSyntax("opening_hours", "SH off").isEmpty());
     }
@@ -260,8 +260,8 @@ public class OpeningHourTestTest {
     }
 
     private static void assertFixEquals(String value, TestError error) {
-        assertNotNull("fix is not null", error.getFix());
-        assertTrue("fix is ChangePropertyCommand", error.getFix() instanceof ChangePropertyCommand);
+        assertNotNull(error.getFix(), "fix is not null");
+        assertTrue(error.getFix() instanceof ChangePropertyCommand, "fix is ChangePropertyCommand");
         final ChangePropertyCommand command = (ChangePropertyCommand) error.getFix();
         assertEquals(1, command.getTags().size());
         assertEquals(value, command.getTags().values().iterator().next());

@@ -1,38 +1,38 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
 /**
  * Unit test of {@link SimilarNamedWays}
  */
-public class SimilarNamedWaysTest {
+class SimilarNamedWaysTest {
 
     private final SimilarNamedWays test = new SimilarNamedWays();
 
     /**
      * Setup test
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
 
     private void checkSimilarity(String message, String name1, String name2, boolean expected) {
         boolean actual = test.similaryName(name1, name2);
-        assertEquals(message, expected, actual);
+        assertEquals(expected, actual, message);
     }
 
     /**
      * Test similar names.
      */
     @Test
-    public void testSimilarNames() {
+    void testSimilarNames() {
         checkSimilarity("same string", "Testname", "Testname", false);
         checkSimilarity("different case", "Testname", "TestName", true);
         checkSimilarity("typo", "Testname", "Testxame", true);
@@ -80,7 +80,7 @@ public class SimilarNamedWaysTest {
       * Test names that previously caused a crash
       */
      @Test
-     public void testSimilarNamesRegression() {
+     void testSimilarNamesRegression() {
          assertFalse(test.similaryName("Unnecessary Name", "Third"));
      }
 }

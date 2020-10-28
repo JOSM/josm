@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -43,12 +43,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link JoinAreasAction} class.
  */
-public class JoinAreasActionTest {
+class JoinAreasActionTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
 
@@ -58,7 +58,7 @@ public class JoinAreasActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket9599() throws IOException, IllegalDataException {
+    void testTicket9599() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(9599, "ex5.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             Layer layer = new OsmDataLayer(ds, null, null);
@@ -81,7 +81,7 @@ public class JoinAreasActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket9599Simple() throws IOException, IllegalDataException {
+    void testTicket9599Simple() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(9599, "three_old.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ds.addDataSource(new DataSource(new Bounds(-90, -180, 90, 180), "Everywhere"));
@@ -105,7 +105,7 @@ public class JoinAreasActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket10511() throws IOException, IllegalDataException {
+    void testTicket10511() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(10511, "10511_mini.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             Layer layer = new OsmDataLayer(ds, null, null);
@@ -127,7 +127,7 @@ public class JoinAreasActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket11992() throws IOException, IllegalDataException {
+    void testTicket11992() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(11992, "shapes.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             assertEquals(10, ds.getWays().size());
@@ -153,7 +153,7 @@ public class JoinAreasActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket18744() throws IOException, IllegalDataException {
+    void testTicket18744() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18744, "18744-sample.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ds.addDataSource(new DataSource(new Bounds(-90, -180, 90, 180), "Everywhere"));
@@ -178,7 +178,7 @@ public class JoinAreasActionTest {
      */
     @Test
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void testExamples() throws Exception {
+    void testExamples() throws Exception {
         DataSet dsToJoin, dsExpected;
         try (InputStream is = Files.newInputStream(Paths.get("nodist/data/Join_Areas_Tests.osm"))) {
             dsToJoin = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
@@ -198,16 +198,16 @@ public class JoinAreasActionTest {
         for (String test : tests.keySet()) {
             Collection<OsmPrimitive> primitives = tests.get(test);
             for (OsmPrimitive osm : primitives) {
-                assertTrue(test + "; expected way, but got: " + osm, osm instanceof Way);
+                assertTrue(osm instanceof Way, test + "; expected way, but got: " + osm);
             }
             new JoinAreasAction(false).join((Collection) primitives);
             Collection<OsmPrimitive> joinedCol = dsToJoin.getPrimitives(osm -> !osm.isDeleted() && Objects.equals(osm.get("test"), test));
-            assertEquals("in test " + test + ":", 1, joinedCol.size());
+            assertEquals(1, joinedCol.size(), "in test " + test + ":");
             Collection<OsmPrimitive> expectedCol = dsExpected.getPrimitives(osm -> !osm.isDeleted() && Objects.equals(osm.get("test"), test));
-            assertEquals("in test " + test + ":", 1, expectedCol.size());
+            assertEquals(1, expectedCol.size(), "in test " + test + ":");
             OsmPrimitive osmJoined = joinedCol.iterator().next();
             OsmPrimitive osmExpected = expectedCol.iterator().next();
-            assertTrue("difference in test " + test, isSemanticallyEqual(osmExpected, osmJoined));
+            assertTrue(isSemanticallyEqual(osmExpected, osmJoined), "difference in test " + test);
         }
     }
 

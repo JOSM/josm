@@ -6,11 +6,11 @@ import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -28,7 +28,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link AsynchronousUploadPrimitivesTask}.
  */
-public class AsynchronousUploadPrimitivesTaskTest {
+class AsynchronousUploadPrimitivesTaskTest {
 
     private UploadStrategySpecification strategy;
     private OsmDataLayer layer;
@@ -39,14 +39,14 @@ public class AsynchronousUploadPrimitivesTaskTest {
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().assertionsInEDT();
 
     /**
      * Bootstrap.
      */
-    @Before
+    @BeforeEach
     public void bootStrap() {
         DataSet dataSet = new DataSet();
         Node node1 = new Node();
@@ -70,7 +70,7 @@ public class AsynchronousUploadPrimitivesTaskTest {
     /**
      * Tear down.
      */
-    @After
+    @AfterEach
     public void tearDown() {
         toUpload = null;
         layer = null;
@@ -86,7 +86,7 @@ public class AsynchronousUploadPrimitivesTaskTest {
      * Test single upload instance.
      */
     @Test
-    public void testSingleUploadInstance() {
+    void testSingleUploadInstance() {
         TestUtils.assumeWorkingJMockit();
         new JOptionPaneSimpleMocker(Collections.singletonMap(
                 "A background upload is already in progress. Kindly wait for it to finish before uploading new changes", JOptionPane.OK_OPTION

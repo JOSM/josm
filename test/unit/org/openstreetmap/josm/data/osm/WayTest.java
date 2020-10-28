@@ -1,15 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -17,12 +18,12 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * Unit tests of the {@code Way} class.
  * @since 11270
  */
-public class WayTest {
+class WayTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -31,7 +32,7 @@ public class WayTest {
      * Test BBox calculation with Way
      */
     @Test
-    public void testBBox() {
+    void testBBox() {
         DataSet ds = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -60,7 +61,7 @@ public class WayTest {
      * Test remove node
      */
     @Test
-    public void testRemoveNode() {
+    void testRemoveNode() {
         DataSet ds = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -86,14 +87,13 @@ public class WayTest {
         way.setNodes(Arrays.asList(n1, n2, n3, n4, n1));
         way.removeNode(n1);
         assertEquals(Arrays.asList(n2, n3, n4, n2), way.getNodes());
-
     }
 
     /**
      * Test remove node
      */
     @Test
-    public void testRemoveNodes() {
+    void testRemoveNodes() {
         DataSet ds = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -122,16 +122,16 @@ public class WayTest {
     /**
      * Test that {@link Way#cloneFrom} throws IAE for invalid arguments
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testCloneFromIAE() {
-        new Way().cloneFrom(new Node());
+    @Test
+    void testCloneFromIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new Way().cloneFrom(new Node()));
     }
 
     /**
      * Test that {@link Way#load} throws IAE for invalid arguments
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testLoadIAE() {
-        new Way().load(new NodeData());
+    @Test
+    void testLoadIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new Way().load(new NodeData()));
     }
 }

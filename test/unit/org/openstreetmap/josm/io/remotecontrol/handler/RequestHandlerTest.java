@@ -1,14 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol.handler;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -18,12 +19,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link RequestHandler} class.
  */
-public class RequestHandlerTest {
+class RequestHandlerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -61,7 +62,7 @@ public class RequestHandlerTest {
      * @throws RequestHandlerBadRequestException never
      */
     @Test
-    public void testRequestParameter1() throws RequestHandlerBadRequestException {
+    void testRequestParameter1() throws RequestHandlerBadRequestException {
         final Map<String, String> expected = new HashMap<>();
         expected.put("query", "a");
         expected.put("b", "=c");
@@ -73,7 +74,7 @@ public class RequestHandlerTest {
      * @throws RequestHandlerBadRequestException never
      */
     @Test
-    public void testRequestParameter2() throws RequestHandlerBadRequestException {
+    void testRequestParameter2() throws RequestHandlerBadRequestException {
         assertEquals(Collections.singletonMap("query", "a&b==c"),
                 getRequestParameter("http://example.com/?query=a%26b==c"));
     }
@@ -83,7 +84,7 @@ public class RequestHandlerTest {
      * @throws RequestHandlerBadRequestException never
      */
     @Test
-    public void testRequestParameter3() throws RequestHandlerBadRequestException {
+    void testRequestParameter3() throws RequestHandlerBadRequestException {
         assertEquals(Collections.singleton("blue+light blue"),
                 getRequestParameter("http://example.com/blue+light%20blue?blue%2Blight+blue").keySet());
     }
@@ -95,7 +96,7 @@ public class RequestHandlerTest {
      * @throws RequestHandlerBadRequestException never
      */
     @Test
-    public void testRequestParameter4() throws RequestHandlerBadRequestException {
+    void testRequestParameter4() throws RequestHandlerBadRequestException {
         assertEquals(Collections.singletonMap("/?:@-._~!$'()* ,;", "/?:@-._~!$'()* ,;=="), getRequestParameter(
             "http://example.com/:@-._~!$&'()*+,=;:@-._~!$&'()*+,=:@-._~!$&'()*+,==?/?:@-._~!$'()*+,;=/?:@-._~!$'()*+,;==#/?:@-._~!$&'()*+,;="
         ));
@@ -106,7 +107,7 @@ public class RequestHandlerTest {
      * @throws RequestHandlerBadRequestException never
      */
     @Test
-    public void testRequestParameter5() throws RequestHandlerBadRequestException {
+    void testRequestParameter5() throws RequestHandlerBadRequestException {
         final Map<String, String> expected = new HashMap<>();
         expected.put("space", " ");
         expected.put("tab", "\t");
@@ -118,7 +119,7 @@ public class RequestHandlerTest {
      * @throws RequestHandlerBadRequestException never
      */
     @Test
-    public void testRequestParameter6() throws RequestHandlerBadRequestException {
+    void testRequestParameter6() throws RequestHandlerBadRequestException {
         final Map<String, String> expected = new HashMap<>();
         expected.put("addtags", "wikipedia:de=Weiße_Gasse|maxspeed=5");
         expected.put("select", "way23071688,way23076176,way23076177,");
@@ -134,13 +135,13 @@ public class RequestHandlerTest {
 
     /**
      * Test request parameter - invalid case
-     * @throws RequestHandlerBadRequestException always
      */
-    @Test(expected = RequestHandlerBadRequestException.class)
-    public void testRequestParameterInvalid() throws RequestHandlerBadRequestException {
-        getRequestParameter("http://localhost:8111/load_and_zoom"+
+    @Test
+    void testRequestParameterInvalid() {
+        assertThrows(RequestHandlerBadRequestException.class,
+                () -> getRequestParameter("http://localhost:8111/load_and_zoom"+
                 "?addtags=wikipedia:de=Wei%C3%9Fe_Gasse|maxspeed=5"+
                 "&select=way23071688,way23076176,way23076177,"+
-                "&left=13.739727546842&right=13.740890970188&top=51.049987191025&bottom=51.048466954325");
+                "&left=13.739727546842&right=13.740890970188&top=51.049987191025&bottom=51.048466954325"));
     }
 }

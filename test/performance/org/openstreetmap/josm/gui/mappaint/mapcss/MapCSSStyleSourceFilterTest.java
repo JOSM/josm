@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.Timeout;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
@@ -12,13 +13,12 @@ import org.openstreetmap.josm.data.osm.OsmDataGenerator;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator.KeyValueDataGenerator;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Tests how fast {@link MapCSSStyleSource} finds the right style candidates for one object.
  * @author Michael Zangl
  */
-public class MapCSSStyleSourceFilterTest {
+@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+class MapCSSStyleSourceFilterTest {
 
     private static final int TEST_RULE_COUNT = 10000;
 
@@ -81,16 +81,9 @@ public class MapCSSStyleSourceFilterTest {
     private static final int APPLY_CALLS = 100000;
 
     /**
-     * Global timeout applied to all test methods.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public Timeout globalTimeout = Timeout.seconds(15*60);
-
-    /**
      * Prepare the test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createJOSMFixture() {
         JOSMFixture.createPerformanceTestFixture().init(true);
     }
@@ -99,7 +92,7 @@ public class MapCSSStyleSourceFilterTest {
      * Time how long it takes to evaluate [key=value] rules
      */
     @Test
-    public void testKeyValueRules() {
+    void testKeyValueRules() {
         KeyValueDataGenerator data = OsmDataGenerator.getKeyValue();
         data.generateDataSet();
         CssGenerator css = new CssGenerator(data).addKeyValueRules(TEST_RULE_COUNT);
@@ -110,7 +103,7 @@ public class MapCSSStyleSourceFilterTest {
      * Time how long it takes to evaluate [key] rules
      */
     @Test
-    public void testKeyOnlyRules() {
+    void testKeyOnlyRules() {
         KeyValueDataGenerator data = OsmDataGenerator.getKeyValue();
         data.generateDataSet();
         CssGenerator css = new CssGenerator(data).addHasKeyRules(TEST_RULE_COUNT);
@@ -121,7 +114,7 @@ public class MapCSSStyleSourceFilterTest {
      * Time how long it takes to evaluate [key=~...] rules
      */
     @Test
-    public void testRegularExpressionRules() {
+    void testRegularExpressionRules() {
         KeyValueDataGenerator data = OsmDataGenerator.getKeyValue();
         data.generateDataSet();
         CssGenerator css = new CssGenerator(data).addKeyRegexpRules(TEST_RULE_COUNT);
@@ -132,7 +125,7 @@ public class MapCSSStyleSourceFilterTest {
      * Time how long it takes to evaluate [key?] rules
      */
     @Test
-    public void testIsTrueRules() {
+    void testIsTrueRules() {
         KeyValueDataGenerator data = OsmDataGenerator.getKeyValue();
         data.generateDataSet();
         CssGenerator css = new CssGenerator(data).addIsTrueRules(TEST_RULE_COUNT);

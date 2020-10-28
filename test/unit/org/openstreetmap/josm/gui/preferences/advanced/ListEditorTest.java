@@ -1,26 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.advanced;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.advanced.ListEditor.ListSettingTableModel;
 
 /**
  * Unit tests of {@link ListEditor} class.
  */
-public class ListEditorTest {
+class ListEditorTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -29,7 +29,7 @@ public class ListEditorTest {
      * Unit test of {@link ListSettingTableModel} class.
      */
     @Test
-    public void testListSettingTableModel() {
+    void testListSettingTableModel() {
         ListSettingTableModel model = new ListSettingTableModel(null);
         assertNotNull(model.getData());
         model = new ListSettingTableModel(Arrays.asList("foo"));

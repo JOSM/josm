@@ -20,15 +20,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Performs Validation Test for url validations.
  *
  * @version $Revision: 1741724 $
  */
-public class UrlValidatorTest {
+class UrlValidatorTest {
 
    private static final boolean printStatus = false;
    private static final boolean printIndex = false; //print index that indicates current scheme,host,port,path, query test were using.
@@ -36,7 +36,7 @@ public class UrlValidatorTest {
    /**
     * Setup
     */
-   @Before
+   @BeforeEach
    public void setUp() {
       for (int index = 0; index < testPartsIndex.length - 1; index++) {
          testPartsIndex[index] = 0;
@@ -139,7 +139,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-202
      */
     @Test
-    public void testValidator202() {
+    void testValidator202() {
         String[] schemes = {"http", "https"};
         UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.NO_FRAGMENTS);
         assertTrue(urlValidator.isValid(
@@ -150,7 +150,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-204
      */
     @Test
-    public void testValidator204() {
+    void testValidator204() {
         String[] schemes = {"http", "https"};
         UrlValidator urlValidator = new UrlValidator(schemes);
         assertTrue(urlValidator.isValid("http://tech.yahoo.com/rc/desktops/102;_ylt=Ao8yevQHlZ4On0O3ZJGXLEQFLZA5"));
@@ -160,7 +160,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-218
      */
     @Test
-    public void testValidator218() {
+    void testValidator218() {
         UrlValidator validator = new UrlValidator(UrlValidator.ALLOW_2_SLASHES);
         assertTrue("parentheses should be valid in URLs",
                validator.isValid("http://somewhere.com/pathxyz/file(1).html"));
@@ -170,7 +170,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-235
      */
     @Test
-    public void testValidator235() {
+    void testValidator235() {
         String version = System.getProperty("java.version");
         if (version.compareTo("1.6") < 0) {
             System.out.println("Cannot run Unicode IDN tests");
@@ -189,7 +189,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-248
      */
     @Test
-    public void testValidator248() {
+    void testValidator248() {
         RegexValidator regex = new RegexValidator(new String[] {"localhost", ".*\\.my-testing"});
         UrlValidator validator = new UrlValidator(regex, 0);
 
@@ -223,7 +223,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-288
      */
     @Test
-    public void testValidator288() {
+    void testValidator288() {
         UrlValidator validator = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
 
         assertTrue("hostname should validate",
@@ -261,7 +261,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-276
      */
     @Test
-    public void testValidator276() {
+    void testValidator276() {
         // file:// isn't allowed by default
         UrlValidator validator = new UrlValidator();
 
@@ -318,7 +318,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-309
      */
     @Test
-    public void testValidator309() {
+    void testValidator309() {
         UrlValidator urlValidator = new UrlValidator();
         assertTrue(urlValidator.isValid("http://sample.ondemand.com/"));
         assertTrue(urlValidator.isValid("hTtP://sample.ondemand.CoM/"));
@@ -333,7 +333,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-339
      */
     @Test
-    public void testValidator339() {
+    void testValidator339() {
         UrlValidator urlValidator = new UrlValidator();
         assertTrue(urlValidator.isValid("http://www.cnn.com/WORLD/?hpt=sitenav")); // without
         assertTrue(urlValidator.isValid("http://www.cnn.com./WORLD/?hpt=sitenav")); // with
@@ -346,7 +346,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-339 - IDN
      */
     @Test
-    public void testValidator339IDN() {
+    void testValidator339IDN() {
         UrlValidator urlValidator = new UrlValidator();
         assertTrue(urlValidator.isValid("http://президент.рф/WORLD/?hpt=sitenav")); // without
         assertTrue(urlValidator.isValid("http://президент.рф./WORLD/?hpt=sitenav")); // with
@@ -359,7 +359,7 @@ public class UrlValidatorTest {
      * Non-regression test for VALIDATOR-342
      */
     @Test
-    public void testValidator342() {
+    void testValidator342() {
         UrlValidator urlValidator = new UrlValidator();
         assertTrue(urlValidator.isValid("http://example.rocks/"));
         assertTrue(urlValidator.isValid("http://example.rocks"));

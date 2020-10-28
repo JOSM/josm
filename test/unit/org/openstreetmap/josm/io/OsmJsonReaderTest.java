@@ -1,18 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -28,19 +28,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link OsmReader} class.
  */
-public class OsmJsonReaderTest {
+class OsmJsonReaderTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Setup test
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         DateUtils.newIsoDateTimeFormat().setTimeZone(DateUtils.UTC);
     }
@@ -88,7 +88,7 @@ public class OsmJsonReaderTest {
      * @throws Exception never
      */
     @Test
-    public void testHeader() throws Exception {
+    void testHeader() throws Exception {
         DataSet ds = parse("");
         assertEquals("0.6", ds.getVersion());
     }
@@ -98,7 +98,7 @@ public class OsmJsonReaderTest {
      * @throws Exception never
      */
     @Test
-    public void testNodeSpatialData() throws Exception {
+    void testNodeSpatialData() throws Exception {
         DataSet ds = parse("{\n" +
                 "  \"type\": \"node\",\n" +
                 "  \"id\": 1,\n" +
@@ -115,7 +115,7 @@ public class OsmJsonReaderTest {
      * @throws Exception never
      */
     @Test
-    public void testNodeMetaData() throws Exception {
+    void testNodeMetaData() throws Exception {
         DataSet ds = parse("{\n" +
                 "  \"type\": \"node\",\n" +
                 "  \"id\": 1,\n" +
@@ -142,7 +142,7 @@ public class OsmJsonReaderTest {
      * @throws Exception never
      */
     @Test
-    public void testNodeTags() throws Exception {
+    void testNodeTags() throws Exception {
         DataSet ds = parse("{\n" +
                 "  \"type\": \"node\",\n" +
                 "  \"id\": 1,\n" +
@@ -166,7 +166,7 @@ public class OsmJsonReaderTest {
      * @throws Exception never
      */
     @Test
-    public void testWay() throws Exception {
+    void testWay() throws Exception {
         DataSet ds = parse("{\n" +
                 "  \"type\": \"way\",\n" +
                 "  \"id\": 1,\n" +
@@ -198,7 +198,7 @@ public class OsmJsonReaderTest {
      * @throws Exception never
      */
     @Test
-    public void testRelation() throws Exception {
+    void testRelation() throws Exception {
         DataSet ds = parse("{\n" +
                 "  \"type\": \"relation\",\n" +
                 "  \"id\": 1,\n" +
@@ -243,7 +243,7 @@ public class OsmJsonReaderTest {
      * @throws Exception never
      */
     @Test
-    public void testEmptyRelation() throws Exception {
+    void testEmptyRelation() throws Exception {
         DataSet ds = parse("{\n" +
                 "  \"type\": \"relation\",\n" +
                 "  \"id\": 1,\n" +
@@ -259,7 +259,7 @@ public class OsmJsonReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testRemark() throws Exception {
+    void testRemark() throws Exception {
         DataSet ds = parse("", "," +
                 "  \"remark\": \"runtime error: Query ran out of memory in \\\"query\\\" at line 5.\"\n");
         assertEquals("runtime error: Query ran out of memory in \"query\" at line 5.", ds.getRemark());

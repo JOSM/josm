@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -11,8 +11,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
 /**
  * Unit tests of {@link PresetClassifications} class.
  */
-public class PresetClassificationsTest {
+class PresetClassificationsTest {
 
     static final PresetClassifications classifications = new PresetClassifications();
 
@@ -34,7 +34,7 @@ public class PresetClassificationsTest {
      * @throws SAXException if any XML error occurs
      * @throws IOException if any I/O error occurs
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException, SAXException {
         JOSMFixture.createUnitTestFixture().init();
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll("resource://data/defaultpresets.xml", true);
@@ -54,27 +54,28 @@ public class PresetClassificationsTest {
      * Test building preset.
      */
     @Test
-    public void testBuilding() {
+    void testBuilding() {
         final Way w = new Way();
         final Node n1 = new Node();
         w.addNode(n1);
         w.addNode(new Node());
         w.addNode(new Node());
-        assertFalse("unclosed way should not match building preset", getMatchingPresetNames("building", w).contains("Building"));
+        assertFalse(getMatchingPresetNames("building", w).contains("Building"), "unclosed way should not match building preset");
         w.addNode(n1);
-        assertTrue("closed way should match building preset", getMatchingPresetNames("building", w).contains("Building"));
+        assertTrue(getMatchingPresetNames("building", w).contains("Building"), "closed way should match building preset");
     }
 
     /**
      * Test public transport tram relations presets.
      */
     @Test
-    public void testRelationsForTram() {
+    void testRelationsForTram() {
         final OsmPrimitive tram = OsmUtils.createPrimitive("way railway=tram");
-        assertTrue("railway=tram should match 'Railway Route' for relation creation", getMatchingPresetNames("route", tram)
-                .contains("Railway Route"));
-        assertTrue("railway=tram should match 'Public Transport Route (Rail)' for relation creation", getMatchingPresetNames("route", tram)
-                .contains("Public Transport Route (Rail)"));
-        assertFalse("railway=tram should not match 'Bus'", getMatchingPresetNames("route", tram).toString().contains("Bus"));
+        assertTrue(getMatchingPresetNames("route", tram).contains("Railway Route"),
+                "railway=tram should match 'Railway Route' for relation creation");
+        assertTrue(getMatchingPresetNames("route", tram).contains("Public Transport Route (Rail)"),
+                "railway=tram should match 'Public Transport Route (Rail)' for relation creation");
+        assertFalse(getMatchingPresetNames("route", tram).toString().contains("Bus"),
+                "railway=tram should not match 'Bus'");
     }
 }

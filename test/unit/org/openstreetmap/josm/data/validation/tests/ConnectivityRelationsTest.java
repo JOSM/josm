@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
  *
  * @author Taylor Smock
  */
-public class ConnectivityRelationsTest {
+class ConnectivityRelationsTest {
     private ConnectivityRelations check;
     private static final String CONNECTIVITY = "connectivity";
     /**
@@ -24,7 +24,7 @@ public class ConnectivityRelationsTest {
      *
      * @throws Exception if an error occurs
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         JOSMFixture.createUnitTestFixture().init();
         check = new ConnectivityRelations();
@@ -42,7 +42,7 @@ public class ConnectivityRelationsTest {
      * Test for connectivity relations without a connectivity tag
      */
     @Test
-    public void testNoConnectivityTag() {
+    void testNoConnectivityTag() {
         Relation relation = createDefaultTestRelation();
         check.visit(relation);
 
@@ -57,7 +57,7 @@ public class ConnectivityRelationsTest {
      * Check for lanes that don't make sense
      */
     @Test
-    public void testMisMatchedLanes() {
+    void testMisMatchedLanes() {
         Relation relation = createDefaultTestRelation();
         check.visit(relation);
         int expectedFailures = 0;

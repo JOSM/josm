@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.correction;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.correction.TagCorrection;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -19,12 +19,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link TagCorrectionTable} class.
  */
-public class TagCorrectionTableTest {
+class TagCorrectionTableTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -32,7 +32,7 @@ public class TagCorrectionTableTest {
      * Test of {@link TagCorrectionTable#TagCorrectionTable}.
      */
     @Test
-    public void testTagCorrectionTable() {
+    void testTagCorrectionTable() {
         TagCorrection tc1 = new TagCorrection("foo", "bar", "foo", "baz");
         TagCorrection tc2 = new TagCorrection("bar", "foo", "baz", "foo");
         TagCorrectionTable t = new TagCorrectionTable(Arrays.asList(tc1, tc2));

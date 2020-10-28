@@ -1,21 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for class {@link OsmPrivileges}.
  */
-public class OsmPrivilegesTest {
+class OsmPrivilegesTest {
 
     /**
      * Unit test of getters/setters.
      */
     @Test
-    public void testGettersSetters() {
+    void testGettersSetters() {
         OsmPrivileges p = new OsmPrivileges();
         assertFalse(p.isAllowModifyNotes());
         assertFalse(p.isAllowReadGpx());

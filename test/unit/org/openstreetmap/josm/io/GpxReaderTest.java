@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -13,8 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -33,7 +34,7 @@ public class GpxReaderTest {
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -59,7 +60,7 @@ public class GpxReaderTest {
      * @throws Exception if something goes wrong
      */
     @Test
-    public void testMunich() throws Exception {
+    void testMunich() throws Exception {
         final GpxData result = parseGpxData("nodist/data/munich.gpx");
         assertEquals(2762, result.getTracks().size());
         assertEquals(0, result.getRoutes().size());
@@ -75,7 +76,7 @@ public class GpxReaderTest {
      * @throws Exception if track can't be parsed
      */
     @Test
-    public void testLayerPrefs() throws Exception {
+    void testLayerPrefs() throws Exception {
         final GpxData data = parseGpxData(TestUtils.getTestDataRoot() + "tracks/tracks-layerprefs.gpx");
         Map<String, String> e = new HashMap<>();
         e.put("colormode.velocity.tune", "10");
@@ -92,9 +93,10 @@ public class GpxReaderTest {
      * Tests invalid data.
      * @throws Exception always SAXException
      */
-    @Test(expected = SAXException.class)
-    public void testException() throws Exception {
-        new GpxReader(new ByteArrayInputStream("--foo--bar--".getBytes(StandardCharsets.UTF_8))).parse(true);
+    @Test
+    void testException() throws Exception {
+        assertThrows(SAXException.class,
+                () -> new GpxReader(new ByteArrayInputStream("--foo--bar--".getBytes(StandardCharsets.UTF_8))).parse(true));
     }
 
     /**
@@ -103,7 +105,7 @@ public class GpxReaderTest {
      * @throws SAXException if any XML error occurs
      */
     @Test
-    public void testTicket15634() throws IOException, SAXException {
+    void testTicket15634() throws IOException, SAXException {
         assertEquals(new Bounds(53.7229357, -7.9135019, 53.9301103, -7.59656),
                 GpxReaderTest.parseGpxData(TestUtils.getRegressionDataFile(15634, "drumlish.gpx")).getMetaBounds());
     }

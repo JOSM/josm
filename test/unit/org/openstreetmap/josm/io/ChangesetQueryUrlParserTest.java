@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlParser;
 import org.openstreetmap.josm.tools.Logging;
@@ -19,14 +19,14 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * Unit tests of {@link ChangesetQueryUrlParser} class
  */
-public class ChangesetQueryUrlParserTest {
+class ChangesetQueryUrlParserTest {
 
     /**
      * Basic unit test of {@link ChangesetQueryUrlParser#parse}
      * @throws ChangesetQueryUrlException never
      */
     @Test
-    public void testParseBasic() throws ChangesetQueryUrlException {
+    void testParseBasic() throws ChangesetQueryUrlException {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
 
         // OK
@@ -55,7 +55,7 @@ public class ChangesetQueryUrlParserTest {
      * @throws ChangesetQueryUrlException never
      */
     @Test
-    public void testUid() throws ChangesetQueryUrlException {
+    void testUid() throws ChangesetQueryUrlException {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         ChangesetQuery q;
 
@@ -73,7 +73,7 @@ public class ChangesetQueryUrlParserTest {
      * @throws ChangesetQueryUrlException never
      */
     @Test
-    public void testDisplayName() throws ChangesetQueryUrlException {
+    void testDisplayName() throws ChangesetQueryUrlException {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         ChangesetQuery q;
 
@@ -88,7 +88,7 @@ public class ChangesetQueryUrlParserTest {
      * @throws ChangesetQueryUrlException never
      */
     @Test
-    public void testOpen() throws ChangesetQueryUrlException {
+    void testOpen() throws ChangesetQueryUrlException {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         ChangesetQuery q;
 
@@ -111,7 +111,7 @@ public class ChangesetQueryUrlParserTest {
      * @throws ChangesetQueryUrlException never
      */
     @Test
-    public void testClosed() throws ChangesetQueryUrlException {
+    void testClosed() throws ChangesetQueryUrlException {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         ChangesetQuery q;
 
@@ -133,7 +133,7 @@ public class ChangesetQueryUrlParserTest {
      * Check we can't have both an uid and a display name
      */
     @Test
-    public void testUidAndDisplayName() {
+    void testUidAndDisplayName() {
         shouldFail("uid=1&display_name=abcd");
     }
 
@@ -142,7 +142,7 @@ public class ChangesetQueryUrlParserTest {
      * @throws ChangesetQueryUrlException never
      */
     @Test
-    public void testTime() throws ChangesetQueryUrlException {
+    void testTime() throws ChangesetQueryUrlException {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         ChangesetQuery q;
 
@@ -168,7 +168,7 @@ public class ChangesetQueryUrlParserTest {
      * @throws ChangesetQueryUrlException never
      */
     @Test
-    public void testBbox() throws ChangesetQueryUrlException {
+    void testBbox() throws ChangesetQueryUrlException {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         ChangesetQuery q;
 
@@ -190,7 +190,7 @@ public class ChangesetQueryUrlParserTest {
      * @throws ChangesetQueryUrlException never
      */
     @Test
-    public void testChangesetIds() throws ChangesetQueryUrlException {
+    void testChangesetIds() throws ChangesetQueryUrlException {
         ChangesetQueryUrlParser parser = new ChangesetQueryUrlParser();
         ChangesetQuery q;
 

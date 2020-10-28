@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,9 +13,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -34,12 +35,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link DeleteCommand} class.
  */
-public class DeleteCommandTest {
+class DeleteCommandTest {
 
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
     private CommandTestDataWithRelation testData;
@@ -47,7 +48,7 @@ public class DeleteCommandTest {
     /**
      * Set up the test data.
      */
-    @Before
+    @BeforeEach
     public void createTestData() {
         testData = new CommandTestDataWithRelation();
     }
@@ -56,7 +57,7 @@ public class DeleteCommandTest {
      * A simple deletion test with no references
      */
     @Test
-    public void testSimpleDelete() {
+    void testSimpleDelete() {
         Node node = testData.createNode(15);
         assertTrue(testData.layer.data.allPrimitives().contains(node));
 
@@ -71,7 +72,7 @@ public class DeleteCommandTest {
      * A delete should not delete referred objects but should should remove the reference.
      */
     @Test
-    public void testDeleteIgnoresReferences() {
+    void testDeleteIgnoresReferences() {
         assertTrue(testData.existingNode.getReferrers().contains(testData.existingRelation));
         new DeleteCommand(testData.existingRelation).executeCommand();
 
@@ -91,18 +92,18 @@ public class DeleteCommandTest {
     /**
      * A delete should delete all objects with references to the deleted one
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testDeleteFailsOnDelted() {
+    @Test
+    void testDeleteFailsOnDeleted() {
         new DeleteCommand(testData.existingRelation).executeCommand();
 
-        new DeleteCommand(testData.existingRelation).executeCommand();
+        assertThrows(IllegalArgumentException.class, () -> new DeleteCommand(testData.existingRelation).executeCommand());
     }
 
     /**
      * A delete should delete all objects with references to the deleted one
      */
     @Test
-    public void testReferredDelete() {
+    void testReferredDelete() {
         DeleteCommand.deleteWithReferences(Arrays.asList(testData.existingNode), true).executeCommand();
 
         assertTrue(testData.existingNode.isDeleted());
@@ -114,7 +115,7 @@ public class DeleteCommandTest {
      * Delete nodes that would be without reference afterwards.
      */
     @Test
-    public void testDeleteNodesInWay() {
+    void testDeleteNodesInWay() {
         testData.existingNode.removeAll();
         // That untagged node should be deleted.
         testData.existingNode2.removeAll();
@@ -151,41 +152,41 @@ public class DeleteCommandTest {
     /**
      * Test that {@link DeleteCommand} checks for non-null.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testConsistency() {
-        new DeleteCommand(Arrays.asList(testData.existingNode, testData.existingWay, null));
+    @Test
+    void testConsistency() {
+        assertThrows(IllegalArgumentException.class, () -> new DeleteCommand(Arrays.asList(testData.existingNode, testData.existingWay, null)));
     }
 
     /**
      * Test that {@link DeleteCommand} checks for the dataset
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testConsistencyDataset() {
+    @Test
+    void testConsistencyDataset() {
         testData.layer.getDataSet().removePrimitive(testData.existingNode);
-        new DeleteCommand(Arrays.asList(testData.existingNode, testData.existingWay));
+        assertThrows(IllegalArgumentException.class, () -> new DeleteCommand(Arrays.asList(testData.existingNode, testData.existingWay)));
     }
 
     /**
      * Test that {@link DeleteCommand} checks for non-empty list
      */
-    @Test(expected = NoSuchElementException.class)
-    public void testConsistencyNonEmpty() {
-        new DeleteCommand(Arrays.<OsmPrimitive>asList());
+    @Test
+    void testConsistencyNonEmpty() {
+        assertThrows(NoSuchElementException.class, () -> new DeleteCommand(Arrays.<OsmPrimitive>asList()));
     }
 
     /**
      * Test that {@link DeleteCommand} checks for non-null list
      */
-    @Test(expected = NullPointerException.class)
-    public void testConsistencyNonNull() {
-        new DeleteCommand((Collection<OsmPrimitive>) null);
+    @Test
+    void testConsistencyNonNull() {
+        assertThrows(NullPointerException.class, () -> new DeleteCommand((Collection<OsmPrimitive>) null));
     }
 
     /**
      * Test {@link DeleteCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         DeleteCommand command = new DeleteCommand(
                 Arrays.asList(testData.existingNode, testData.existingNode2, testData.existingWay));
         command.executeCommand();
@@ -210,7 +211,7 @@ public class DeleteCommandTest {
      * Way with only 1 segment
      */
     @Test
-    public void testDeleteWaySegment() {
+    void testDeleteWaySegment() {
         Way way1 = testData.createWay(100, testData.createNode(101), testData.createNode(102));
         WaySegment ws = new WaySegment(way1, 0);
         Command command = DeleteCommand.deleteWaySegment(ws);
@@ -224,7 +225,7 @@ public class DeleteCommandTest {
      * Delete end of way
      */
     @Test
-    public void testDeleteWaySegmentEndOfWay() {
+    void testDeleteWaySegmentEndOfWay() {
         Way way = testData.createWay(200, testData.createNode(201), testData.createNode(202), testData.createNode(203),
                 testData.createNode(204));
         WaySegment ws = new WaySegment(way, 2);
@@ -242,7 +243,7 @@ public class DeleteCommandTest {
      * Delete start of way
      */
     @Test
-    public void testDeleteWaySegmentStartOfWay() {
+    void testDeleteWaySegmentStartOfWay() {
         Way way = testData.createWay(100, testData.createNode(101), testData.createNode(102), testData.createNode(103),
                 testData.createNode(104));
         WaySegment ws = new WaySegment(way, 0);
@@ -260,7 +261,7 @@ public class DeleteCommandTest {
      * Delete start of way
      */
     @Test
-    public void testDeleteWaySegmentSplit() {
+    void testDeleteWaySegmentSplit() {
         Node node103 = testData.createNode(103);
         Node node104 = testData.createNode(104);
         Way way = testData.createWay(100, testData.createNode(101), testData.createNode(102), node103, node104);
@@ -284,7 +285,7 @@ public class DeleteCommandTest {
      * Delete start of way
      */
     @Test
-    public void testDeleteWaySegmentCycle() {
+    void testDeleteWaySegmentCycle() {
         Node n = testData.createNode(101);
         Way way = testData.createWay(100, n, testData.createNode(102), testData.createNode(103),
                 testData.createNode(104), n);
@@ -303,7 +304,7 @@ public class DeleteCommandTest {
      * Tests {@link DeleteCommand#getChildren()}
      */
     @Test
-    public void testGetChildren() {
+    void testGetChildren() {
         testData.existingNode.put("name", "xy");
         Collection<PseudoCommand> children = new DeleteCommand(Arrays.<OsmPrimitive>asList(testData.existingNode, testData.existingNode2))
                 .getChildren();
@@ -318,7 +319,7 @@ public class DeleteCommandTest {
      * Tests {@link DeleteCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
@@ -333,7 +334,7 @@ public class DeleteCommandTest {
      * Tests {@link DeleteCommand#getParticipatingPrimitives()}
      */
     @Test
-    public void testGetParticipatingPrimitives() {
+    void testGetParticipatingPrimitives() {
         DeleteCommand command = new DeleteCommand(Arrays.<OsmPrimitive>asList(testData.existingNode));
         assertArrayEquals(new Object[] {testData.existingNode }, command.getParticipatingPrimitives().toArray());
 
@@ -347,7 +348,7 @@ public class DeleteCommandTest {
      * Test {@link DeleteCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         Node node = testData.createNode(100);
         node.put("name", "xy");
         Way way = testData.createWay(101);
@@ -377,7 +378,7 @@ public class DeleteCommandTest {
      * Unit test of methods {@link DeleteCommand#equals} and {@link DeleteCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(DeleteCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,

@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
@@ -32,17 +32,17 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests for class {@link Filter}.
  */
-public class FilterTest {
+class FilterTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     @Test
-    public void testBasic() throws SearchParseError {
+    void testBasic() throws SearchParseError {
         DataSet ds = new DataSet();
         Node n1 = new Node(LatLon.ZERO);
         n1.put("amenity", "parking");
@@ -70,7 +70,7 @@ public class FilterTest {
     }
 
     @Test
-    public void testFilter() throws Exception {
+    void testFilter() throws Exception {
         for (int i : new int[] {1, 2, 3, 11, 12, 13, 14, 15}) {
             DataSet ds;
             try (InputStream is = Files.newInputStream(Paths.get("nodist/data/filterTests.osm"))) {
@@ -196,7 +196,7 @@ public class FilterTest {
      * Unit tests of {@link Filter.FilterPreferenceEntry} class.
      */
     @Test
-    public void testFilterPreferenceEntry() {
+    void testFilterPreferenceEntry() {
         Filter f = new Filter();
         FilterPreferenceEntry fpe = f.getPreferenceEntry();
 
@@ -242,7 +242,7 @@ public class FilterTest {
      * Unit test of methods {@link FilterPreferenceEntry#equals} and {@link FilterPreferenceEntry#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(FilterPreferenceEntry.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)

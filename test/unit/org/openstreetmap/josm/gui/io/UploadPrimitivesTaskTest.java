@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -16,12 +16,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link UploadPrimitivesTask} class.
  */
-public class UploadPrimitivesTaskTest {
+class UploadPrimitivesTaskTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -29,7 +29,7 @@ public class UploadPrimitivesTaskTest {
      * Test of {@link UploadPrimitivesTask#UploadPrimitivesTask}.
      */
     @Test
-    public void testUploadPrimitivesTask() {
+    void testUploadPrimitivesTask() {
         assertNotNull(new UploadPrimitivesTask(
                 new UploadStrategySpecification(),
                 new OsmDataLayer(new DataSet(), null, null),

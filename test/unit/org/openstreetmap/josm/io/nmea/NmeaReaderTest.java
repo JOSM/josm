@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.nmea;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,9 +16,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
@@ -36,11 +36,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link NmeaReader} class.
  */
-public class NmeaReaderTest {
+class NmeaReaderTest {
     /**
      * Set the timezone and timeout.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -49,7 +49,7 @@ public class NmeaReaderTest {
     /**
      * Forces the timezone.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         iso8601.setTimeZone(DateUtils.UTC);
     }
@@ -59,7 +59,7 @@ public class NmeaReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testReader() throws Exception {
+    void testReader() throws Exception {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         final NmeaReader in = new NmeaReader(Files.newInputStream(Paths.get("nodist/data/btnmeatrack_2016-01-25.nmea")));
         in.parse(true);
@@ -115,7 +115,7 @@ public class NmeaReaderTest {
      * Unit test of {@link NmeaReader#isSentence}.
      */
     @Test
-    public void testIsSentence() {
+    void testIsSentence() {
         assertTrue(NmeaReader.isSentence("$GPVTG", Sentence.VTG));
         assertTrue(NmeaReader.isSentence("$GAVTG", Sentence.VTG));
         assertTrue(NmeaReader.isSentence("$GNVTG", Sentence.VTG));
@@ -129,7 +129,7 @@ public class NmeaReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket1433() throws Exception {
+    void testTicket1433() throws Exception {
         compareWithReference(1433, "2008-08-14-16-04-58", 1241);
     }
 
@@ -138,7 +138,7 @@ public class NmeaReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket1853() throws Exception {
+    void testTicket1853() throws Exception {
         compareWithReference(1853, "PosData-20081216-115434", 1285);
     }
 
@@ -147,7 +147,7 @@ public class NmeaReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket2147() throws Exception {
+    void testTicket2147() throws Exception {
         compareWithReference(2147, "WG20080203171807.log", 487);
     }
 
@@ -156,7 +156,7 @@ public class NmeaReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket14924() throws Exception {
+    void testTicket14924() throws Exception {
         compareWithReference(14924, "input", 0);
     }
 
@@ -183,7 +183,7 @@ public class NmeaReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket16496() throws Exception {
+    void testTicket16496() throws Exception {
         assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(
                 readDate("$GNRMC,162859.400,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13")));
         assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(
@@ -197,7 +197,7 @@ public class NmeaReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket16554() throws Exception {
+    void testTicket16554() throws Exception {
         assertEquals(63.2420959, readSpeed(
                   "$GNRMC,141448.80,A,4659.05514,N,00130.44695,W,34.148,289.80,300718,,,D,V*26"), 1e-7);
         assertEquals(63.2430000, readSpeed(

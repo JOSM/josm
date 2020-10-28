@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -34,11 +34,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link Geometry} class.
  */
-public class GeometryTest {
+class GeometryTest {
     /**
      * Primitives need preferences and projection.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
@@ -46,7 +46,7 @@ public class GeometryTest {
      * Test of {@link Geometry#getLineLineIntersection} method.
      */
     @Test
-    public void testLineLineIntersection() {
+    void testLineLineIntersection() {
         EastNorth p1 = new EastNorth(-9477809.106349014, 1.5392960539974203E7);
         EastNorth p2 = new EastNorth(-9477813.789091509, 1.5392954297092048E7);
         EastNorth p3 = new EastNorth(-9477804.974058038, 1.539295490030348E7);
@@ -80,7 +80,7 @@ public class GeometryTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testClosedWayArea() throws Exception {
+    void testClosedWayArea() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "create_multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             Way closedWay = (Way) SubclassFilteredCollection.filter(ds.allPrimitives(),
@@ -96,7 +96,7 @@ public class GeometryTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testMultipolygonArea() throws Exception {
+    void testMultipolygonArea() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             final Relation r = ds.getRelations().iterator().next();
@@ -111,7 +111,7 @@ public class GeometryTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testAreaAndPerimeter() throws Exception {
+    void testAreaAndPerimeter() throws Exception {
         try (InputStream in = Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "create_multipolygon.osm"))) {
             DataSet ds = OsmReader.parseDataSet(in, null);
             Way closedWay = (Way) SubclassFilteredCollection.filter(ds.allPrimitives(),
@@ -126,7 +126,7 @@ public class GeometryTest {
      * Test of {@link Geometry#getNormalizedAngleInDegrees(double)} method.
      */
     @Test
-    public void testRightAngle() {
+    void testRightAngle() {
         Node n1 = new Node(1);
         Node n2 = new Node(2);
         Node n3 = new Node(3);
@@ -158,7 +158,7 @@ public class GeometryTest {
      * Test of {@link Geometry#getCentroidEN} method.
      */
     @Test
-    public void testCentroidEN() {
+    void testCentroidEN() {
         EastNorth en1 = new EastNorth(100, 200);
         EastNorth en2 = new EastNorth(150, 400);
         EastNorth en3 = new EastNorth(200, 200);
@@ -172,7 +172,7 @@ public class GeometryTest {
      * Test of {@link Geometry#polygonIntersection} method with two triangles.
      */
     @Test
-    public void testPolygonIntersectionTriangles() {
+    void testPolygonIntersectionTriangles() {
         Node node1 = new Node(new LatLon(0.0, 1.0));
         Node node2 = new Node(new LatLon(0.0, 2.0));
         Node node3 = new Node(new LatLon(5.0, 1.5));
@@ -203,7 +203,7 @@ public class GeometryTest {
      * Test of {@link Geometry#polygonIntersection} method with two V-shapes
      */
     @Test
-    public void testPolygonIntersectionVShapes() {
+    void testPolygonIntersectionVShapes() {
         Node node1 = new Node(new LatLon(1.0, 1.0));
         Node node2 = new Node(new LatLon(2.0, 2.0));
         Node node3 = new Node(new LatLon(0.9, 1.0));
@@ -233,7 +233,7 @@ public class GeometryTest {
      * See #17652. Triangle crosses outer way of multipolygon.
      */
     @Test
-    public void testIsPolygonInsideMultiPolygon() {
+    void testIsPolygonInsideMultiPolygon() {
         Node node1 = new Node(new LatLon(1.01, 1.0));
         Node node2 = new Node(new LatLon(1.01, 1.1));
         Node node3 = new Node(new LatLon(1.02, 1.05));
@@ -267,7 +267,7 @@ public class GeometryTest {
      * Test of {@link Geometry#filterInsideMultipolygon}
      */
     @Test
-    public void testFilterInsideMultiPolygon() {
+    void testFilterInsideMultiPolygon() {
         Node node1 = new Node(new LatLon(1.01, 1.0));
         Node node2 = new Node(new LatLon(1.01, 1.1));
         Node node3 = new Node(new LatLon(1.02, 1.05));
@@ -309,7 +309,7 @@ public class GeometryTest {
      * Test of {@link Geometry#getDistance} method.
      */
     @Test
-    public void testGetDistance() {
+    void testGetDistance() {
         Node node1 = new Node(new LatLon(0, 0));
         Node node2 = new Node(new LatLon(0.1, 1));
         Node node3 = new Node(new LatLon(1.1, 0.1));
@@ -360,7 +360,7 @@ public class GeometryTest {
      * Test of {@link Geometry#getClosestPrimitive} method
      */
     @Test
-    public void testGetClosestPrimitive() {
+    void testGetClosestPrimitive() {
         Node node1 = new Node(new LatLon(0, 0));
         Node node2 = new Node(new LatLon(0.1, 1));
         Node node3 = new Node(new LatLon(1.1, 0.1));
@@ -379,7 +379,7 @@ public class GeometryTest {
      * Test of {@link Geometry#getFurthestPrimitive} method
      */
     @Test
-    public void testGetFurthestPrimitive() {
+    void testGetFurthestPrimitive() {
         Node node1 = new Node(new LatLon(0, 0));
         Node node2 = new Node(new LatLon(0, 1.1));
         Node node3 = new Node(new LatLon(1, 0.1));
@@ -406,7 +406,7 @@ public class GeometryTest {
      * Test of {@link Geometry#getClosestWaySegment} method
      */
     @Test
-    public void testGetClosestWaySegment() {
+    void testGetClosestWaySegment() {
         Node node1 = new Node(new LatLon(0, 0));
         Node node2 = new Node(new LatLon(0, 1));
         Node node3 = new Node(new LatLon(0.3, 0.5));
@@ -422,7 +422,7 @@ public class GeometryTest {
      * Test of {@link Geometry#getDistanceSegmentSegment} method
      */
     @Test
-    public void testGetDistanceSegmentSegment() {
+    void testGetDistanceSegmentSegment() {
         Node node1 = new Node(new LatLon(2.0, 2.0));
         Node node2 = new Node(new LatLon(2.0, 3.0));
         Node node3 = new Node(new LatLon(2.3, 2.5));

@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
 /**
  * Unit tests of {@link NoteReader} class.
  */
-public class NoteReaderTest {
+class NoteReaderTest {
 
     /**
      * Test to read the first note of OSM database.
@@ -27,7 +27,7 @@ public class NoteReaderTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testNoteReader() throws SAXException, IOException {
+    void testNoteReader() throws SAXException, IOException {
         List<Note> list = new NoteReader(
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
             "<osm version=\"0.6\" generator=\"OpenStreetMap server\">\n"+
@@ -88,7 +88,7 @@ public class NoteReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket12393() throws Exception {
+    void testTicket12393() throws Exception {
         // CHECKSTYLE.OFF: LineLength
         new NoteReader(
             "<note id=\"233775\" lat=\"48.2411985\" lon=\"-122.3744820\" created_at=\"2014-08-31T17:13:29Z\" closed_at=\"2015-09-06T23:35:14Z\">"+

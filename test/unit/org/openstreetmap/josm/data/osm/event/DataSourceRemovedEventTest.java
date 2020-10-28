@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.event;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -20,12 +20,12 @@ import org.openstreetmap.josm.data.osm.DataSourceChangeEvent;
  * @author Taylor Smock
  */
 
-public class DataSourceRemovedEventTest {
+class DataSourceRemovedEventTest {
     /**
      * Get getting the originating data source
      */
     @Test
-    public void testGetDataEventSource() {
+    void testGetDataEventSource() {
         DataSource fakeRemove = new DataSource(new Bounds(0, 0, 0, 0), "fake-source");
         DataSet ds = new DataSet();
         assertSame(ds, new DataSourceRemovedEvent(ds, Collections.emptySet(), Stream.of(fakeRemove)).getSource());
@@ -35,7 +35,7 @@ public class DataSourceRemovedEventTest {
      * Test that no sources are added
      */
     @Test
-    public void testGetAddedSource() {
+    void testGetAddedSource() {
         DataSource fakeRemove = new DataSource(new Bounds(0, 0, 0, 0), "fake-source");
         assertTrue(
                 new DataSourceRemovedEvent(new DataSet(), Collections.emptySet(), Stream.empty()).getAdded().isEmpty());
@@ -50,7 +50,7 @@ public class DataSourceRemovedEventTest {
      * Test that the getting the removed source(s) works properly
      */
     @Test
-    public void testGetRemovedSource() {
+    void testGetRemovedSource() {
         DataSource fakeRemove = new DataSource(new Bounds(0, 0, 0, 0), "fake-source");
         assertTrue(new DataSourceRemovedEvent(new DataSet(), Collections.emptySet(), Stream.empty()).getRemoved()
                 .isEmpty());
@@ -65,7 +65,7 @@ public class DataSourceRemovedEventTest {
      * Check that the sources don't include removed data
      */
     @Test
-    public void testGetDataSources() {
+    void testGetDataSources() {
         DataSource fakeRemove = new DataSource(new Bounds(0, 0, 0, 0), "fake-source");
         DataSourceChangeEvent event = new DataSourceRemovedEvent(new DataSet(), Collections.emptySet(),
                 Stream.of(fakeRemove));
@@ -82,7 +82,7 @@ public class DataSourceRemovedEventTest {
      * Check that a string is returned with added/current/deleted
      */
     @Test
-    public void testToString() {
+    void testToString() {
         String toString = new DataSourceRemovedEvent(new DataSet(), Collections.emptySet(), Stream.empty()).toString();
         assertTrue(toString.contains("added"));
         assertTrue(toString.contains("current"));

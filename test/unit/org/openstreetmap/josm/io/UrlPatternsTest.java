@@ -1,19 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 
 /**
  * Unit tests of {@link UrlPatterns}.
  */
-public class UrlPatternsTest {
+class UrlPatternsTest {
 
     private static final List<Class<? extends Enum<?>>> patterns = Arrays.asList(
             UrlPatterns.GeoJsonUrlPattern.class,
@@ -26,7 +26,7 @@ public class UrlPatternsTest {
      * Unit test of {@link UrlPatterns} enums.
      */
     @Test
-    public void testUrlPatternEnums() {
+    void testUrlPatternEnums() {
         patterns.forEach(TestUtils::superficialEnumCodeCoverage);
     }
 
@@ -34,7 +34,7 @@ public class UrlPatternsTest {
      * Unit test of {@link UrlPatterns} syntax validity.
      */
     @Test
-    public void testUrlPatterns() {
+    void testUrlPatterns() {
         assertTrue(patterns.stream().flatMap(c -> Arrays.stream(c.getEnumConstants())).map(t -> ((UrlPattern) t).pattern())
                 .map(Pattern::compile).count() > 0);
     }

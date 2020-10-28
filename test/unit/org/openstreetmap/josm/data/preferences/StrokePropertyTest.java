@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.BasicStroke;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -17,11 +17,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Test {@link StrokeProperty}
  * @author Michael Zangl
  */
-public class StrokePropertyTest {
+class StrokePropertyTest {
     /**
      * This is a preference test
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -29,7 +29,7 @@ public class StrokePropertyTest {
      * Test {@link StrokeProperty#get()}
      */
     @Test
-    public void testGetValue() {
+    void testGetValue() {
         StrokeProperty property = new StrokeProperty("x", "1");
 
         Config.getPref().put("x", "11");
@@ -74,7 +74,7 @@ public class StrokePropertyTest {
      * Test {@link StrokeProperty#put(BasicStroke)}
      */
     @Test
-    public void testPutValue() {
+    void testPutValue() {
         StrokeProperty property = new StrokeProperty("x", new BasicStroke(12));
         BasicStroke bs = property.get();
 

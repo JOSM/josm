@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -19,7 +19,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link OsmChangesetParser} class.
  */
-public class OsmChangesetParserTest {
+class OsmChangesetParserTest {
 
     private static final String BEGIN =
         "<osm version=\"0.6\" generator=\"OpenStreetMap server\" copyright=\"OpenStreetMap and contributors\" " +
@@ -57,7 +57,7 @@ public class OsmChangesetParserTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -70,7 +70,7 @@ public class OsmChangesetParserTest {
      * @throws IllegalDataException in case of error
      */
     @Test
-    public void testParseWithoutDiscussion() throws IllegalDataException {
+    void testParseWithoutDiscussion() throws IllegalDataException {
         // http://api.openstreetmap.org/api/0.6/changeset/36749147
         Changeset cs = parse(BEGIN + END).iterator().next();
         assertEquals(2, cs.getCommentsCount());
@@ -83,7 +83,7 @@ public class OsmChangesetParserTest {
      * @throws IllegalDataException in case of error
      */
     @Test
-    public void testParseWithDiscussion() throws IllegalDataException {
+    void testParseWithDiscussion() throws IllegalDataException {
         // http://api.openstreetmap.org/api/0.6/changeset/36749147?include_discussion=true
         Changeset cs = parse(BEGIN + DISCUSSION + END).iterator().next();
         assertEquals(2, cs.getCommentsCount());

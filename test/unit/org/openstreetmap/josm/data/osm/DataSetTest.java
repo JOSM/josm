@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
@@ -26,12 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link DataSet}.
  */
-public class DataSetTest {
+class DataSetTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -39,7 +39,7 @@ public class DataSetTest {
      * Unit test of method {@link DataSet#searchRelations}.
      */
     @Test
-    public void testSearchRelations() {
+    void testSearchRelations() {
         final DataSet ds = new DataSet();
         // null bbox => empty list
         Assert.assertTrue(
@@ -71,7 +71,7 @@ public class DataSetTest {
      * Unit test for {@link DataSet#searchPrimitives}
      */
     @Test
-    public void testSearchPrimitives() {
+    void testSearchPrimitives() {
         final DataSet ds = new DataSet();
         // null bbox => empty list
         Assert.assertTrue("Empty data set should produce an empty list.", ds.searchPrimitives(null).isEmpty());
@@ -98,7 +98,7 @@ public class DataSetTest {
      * Unit test of methods {@link DataSet#addChangeSetTag} / {@link DataSet#getChangeSetTags}.
      */
     @Test
-    public void testChangesetTags() {
+    void testChangesetTags() {
         final DataSet ds = new DataSet();
         assertTrue(ds.getChangeSetTags().isEmpty());
         ds.addChangeSetTag("foo", "bar");
@@ -111,7 +111,7 @@ public class DataSetTest {
      *                    / {@link DataSet#allNonDeletedPhysicalPrimitives}.
      */
     @Test
-    public void testAllNonDeleted() {
+    void testAllNonDeleted() {
         final DataSet ds = new DataSet();
         assertTrue(ds.allNonDeletedPrimitives().isEmpty());
         assertTrue(ds.allNonDeletedCompletePrimitives().isEmpty());
@@ -141,7 +141,7 @@ public class DataSetTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14186">Bug #14186</a>.
      */
     @Test
-    public void testTicket14186() {
+    void testTicket14186() {
         final DataSet ds = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -162,7 +162,7 @@ public class DataSetTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14186">Bug #14186</a>.
      */
     @Test
-    public void testTicket19438() {
+    void testTicket19438() {
         final DataSet ds = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -183,7 +183,7 @@ public class DataSetTest {
      * @since 12069
      */
     @Test
-    public void testSelectionOrderPreserved() {
+    void testSelectionOrderPreserved() {
         final DataSet ds = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -221,7 +221,7 @@ public class DataSetTest {
      * Unit test for {@link DataSet#DataSet(DataSet)}.
      */
     @Test
-    public void testCopyConstructor() {
+    void testCopyConstructor() {
         DataSet ds = new DataSet();
         assertEqualsDataSet(ds, new DataSet(ds));
 
@@ -248,7 +248,7 @@ public class DataSetTest {
      * Unit test for {@link DataSet#mergeFrom} - Policies.
      */
     @Test
-    public void testMergePolicies() {
+    void testMergePolicies() {
         DataSet ds1 = new DataSet();
         DataSet ds2 = new DataSet();
 
@@ -292,7 +292,7 @@ public class DataSetTest {
      * Checks that enum values are defined in the correct order.
      */
     @Test
-    public void testEnumOrder() {
+    void testEnumOrder() {
         assertTrue(DownloadPolicy.BLOCKED.compareTo(DownloadPolicy.NORMAL) > 0);
         assertTrue(UploadPolicy.BLOCKED.compareTo(UploadPolicy.NORMAL) > 0);
         assertTrue(UploadPolicy.BLOCKED.compareTo(UploadPolicy.DISCOURAGED) > 0);
@@ -303,7 +303,7 @@ public class DataSetTest {
      * Checks that data source listeners get called when a data source is added
      */
     @Test
-    public void testAddDataSourceListener() {
+    void testAddDataSourceListener() {
         DataSourceListener addListener = new DataSourceListener() {
             @Override
             public void dataSourceChange(DataSourceChangeEvent event) {
@@ -321,7 +321,7 @@ public class DataSetTest {
      * Checks that data source listeners get called when a data source is removed
      */
     @Test
-    public void testRemoveDataSourceListener() {
+    void testRemoveDataSourceListener() {
         DataSourceListener removeListener = new DataSourceListener() {
             @Override
             public void dataSourceChange(DataSourceChangeEvent event) {
@@ -339,7 +339,7 @@ public class DataSetTest {
      * Checks that a read-only dataset can be cloned.
      */
     @Test
-    public void testCloneReadOnly() {
+    void testCloneReadOnly() {
         DataSet ds = new DataSet();
         Node n1 = new Node(LatLon.SOUTH_POLE);
         Node n2 = new Node(LatLon.NORTH_POLE);

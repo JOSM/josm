@@ -7,18 +7,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class UploadTextComponentValidatorTest {
+class UploadTextComponentValidatorTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -26,7 +26,7 @@ public class UploadTextComponentValidatorTest {
      * Unit test of {@link UploadTextComponentValidator.UploadCommentValidator}
      */
     @Test
-    public void testUploadCommentValidator() {
+    void testUploadCommentValidator() {
         JTextField textField = new JTextField();
         JLabel feedback = new JLabel();
         new UploadTextComponentValidator.UploadCommentValidator(textField, feedback);
@@ -41,7 +41,7 @@ public class UploadTextComponentValidatorTest {
      * Unit test of {@link UploadTextComponentValidator.UploadSourceValidator}
      */
     @Test
-    public void testUploadSourceValidator() {
+    void testUploadSourceValidator() {
         JTextField textField = new JTextField();
         JLabel feedback = new JLabel();
         new UploadTextComponentValidator.UploadSourceValidator(textField, feedback);

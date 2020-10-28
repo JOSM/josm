@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -18,17 +18,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link JosmDecimalFormatSymbolsProvider}.
  */
-public class JosmDecimalFormatSymbolsProviderTest {
+class JosmDecimalFormatSymbolsProviderTest {
 
     /**
      * Setup rule.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     @Test
-    public void testGroupingSeparator() {
+    void testGroupingSeparator() {
         System.out.println(Locale.getDefault());
         assumeTrue(Utils.getJavaVersion() >= 9);
 
@@ -46,7 +46,7 @@ public class JosmDecimalFormatSymbolsProviderTest {
      * Test {@link JosmDecimalFormatSymbolsProvider#parseDouble}.
      */
     @Test
-    public void testParseDouble() {
+    void testParseDouble() {
         final Locale defLocale = Locale.getDefault();
         try {
             Locale.setDefault(Locale.ENGLISH);

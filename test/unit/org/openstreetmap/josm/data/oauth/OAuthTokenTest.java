@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -13,13 +13,13 @@ import oauth.signpost.OAuthConsumer;
 /**
  * Unit tests for class {@link OAuthToken}.
  */
-public class OAuthTokenTest {
+class OAuthTokenTest {
 
     /**
      * Unit test of method {@link OAuthToken#createToken}.
      */
     @Test
-    public void testCreateToken() {
+    void testCreateToken() {
         OAuthConsumer defCon = OAuthParameters.createDefault().buildConsumer();
         assertNotNull(defCon);
         OAuthToken defTok = OAuthToken.createToken(defCon);
@@ -33,7 +33,7 @@ public class OAuthTokenTest {
      * Unit test of methods {@link OAuthToken#equals} and {@link OAuthToken#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(OAuthToken.class).usingGetClass().verify();
     }

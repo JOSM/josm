@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -12,12 +12,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
   * Unit tests of {@link OsmUrlToBounds} class.
 */
-public class OsmUrlToBoundsTest {
+class OsmUrlToBoundsTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -25,7 +25,7 @@ public class OsmUrlToBoundsTest {
      * Test for {@link OsmUrlToBounds#positionToBounds}.
      */
     @Test
-    public void testPositionToBounds() {
+    void testPositionToBounds() {
         Assert.assertEquals(new Bounds(51.7167359, 8.7573485, 51.720724, 8.7659315),
                 OsmUrlToBounds.positionToBounds(51.71873, 8.76164, 17));
         Assert.assertEquals(new Bounds(40.8609329, -75.7523458, 40.8633671, -75.7480542),
@@ -90,7 +90,7 @@ public class OsmUrlToBoundsTest {
      * Test URL parsing
      */
     @Test
-    public void testParse() {
+    void testParse() {
         for (ParseTestItem item : parseTestData) {
             Bounds bounds = null;
             try {
@@ -107,7 +107,7 @@ public class OsmUrlToBoundsTest {
      * Test for {@link OsmUrlToBounds#getZoom}.
      */
     @Test
-    public void testGetZoom() {
+    void testGetZoom() {
         Assert.assertEquals(4, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(0, 0, 4)));
         Assert.assertEquals(10, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(5, 5, 10)));
         Assert.assertEquals(18, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(40, 20, 18)));

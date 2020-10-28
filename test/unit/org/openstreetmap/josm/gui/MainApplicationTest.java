@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import java.awt.BorderLayout;
@@ -26,8 +26,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
@@ -57,7 +57,7 @@ public class MainApplicationTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().https().devAPI().timeout(20000);
 
@@ -132,7 +132,7 @@ public class MainApplicationTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testShowVersion() throws Exception {
+    void testShowVersion() throws Exception {
         testShow("--version", Version.getInstance().getAgentString());
     }
 
@@ -141,7 +141,7 @@ public class MainApplicationTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testShowHelp() throws Exception {
+    void testShowHelp() throws Exception {
         testShow("--help", MainApplication.getHelp().trim());
     }
 
@@ -149,7 +149,7 @@ public class MainApplicationTest {
      * Unit test of {@link DownloadParamType#paramType} method.
      */
     @Test
-    public void testParamType() {
+    void testParamType() {
         assertEquals(DownloadParamType.bounds, DownloadParamType.paramType("48.000,16.000,48.001,16.001"));
         assertEquals(DownloadParamType.fileName, DownloadParamType.paramType("data.osm"));
         assertEquals(DownloadParamType.fileUrl, DownloadParamType.paramType("file:///home/foo/data.osm"));
@@ -163,7 +163,7 @@ public class MainApplicationTest {
      * @throws PluginListParseException if an error occurs
      */
     @Test
-    public void testUpdateAndLoadPlugins() throws PluginListParseException {
+    void testUpdateAndLoadPlugins() throws PluginListParseException {
         final String old = System.getProperty("josm.plugins");
         try {
             System.setProperty("josm.plugins", "buildings_tools,log4j");
@@ -195,7 +195,7 @@ public class MainApplicationTest {
      * Unit test of {@link MainApplication#setupUIManager}.
      */
     @Test
-    public void testSetupUIManager() {
+    void testSetupUIManager() {
         assumeFalse(PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR")));
         MainApplication.setupUIManager();
         assertEquals(Config.getPref().get("laf", PlatformManager.getPlatform().getDefaultStyle()),
@@ -211,7 +211,7 @@ public class MainApplicationTest {
      * Unit test of {@link MainApplication#postConstructorProcessCmdLine} - empty case.
      */
     @Test
-    public void testPostConstructorProcessCmdLineEmpty() {
+    void testPostConstructorProcessCmdLineEmpty() {
         // Check the method accepts no arguments
         MainApplication.postConstructorProcessCmdLine(new ProgramArguments(new String[0]));
     }
@@ -244,7 +244,7 @@ public class MainApplicationTest {
      * This test assumes the DEV API contains nodes around 0,0 and GPX tracks around London
      */
     @Test
-    public void testPostConstructorProcessCmdLineBounds() {
+    void testPostConstructorProcessCmdLineBounds() {
         doTestPostConstructorProcessCmdLine(
                 "-47.20,-126.75,-47.10,-126.65",
                 "51.35,-0.4,51.60,0.2", true);
@@ -255,7 +255,7 @@ public class MainApplicationTest {
      * This test assumes the DEV API contains nodes around -47.15, -126.7 (R'lyeh) and GPX tracks around London
      */
     @Test
-    public void testPostConstructorProcessCmdLineHttpUrl() {
+    void testPostConstructorProcessCmdLineHttpUrl() {
         doTestPostConstructorProcessCmdLine(
                 "https://api06.dev.openstreetmap.org/api/0.6/map?bbox=-126.75,-47.20,-126.65,-47.10",
                 "https://master.apis.dev.openstreetmap.org/api/0.6/trackpoints?bbox=-0.4,51.35,0.2,51.6&page=0", true);
@@ -266,7 +266,7 @@ public class MainApplicationTest {
      * @throws MalformedURLException if an error occurs
      */
     @Test
-    public void testPostConstructorProcessCmdLineFileUrl() throws MalformedURLException {
+    void testPostConstructorProcessCmdLineFileUrl() throws MalformedURLException {
         doTestPostConstructorProcessCmdLine(
                 Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toUri().toURL().toExternalForm(),
                 Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toUri().toURL().toExternalForm(), false);
@@ -277,7 +277,7 @@ public class MainApplicationTest {
      * @throws MalformedURLException if an error occurs
      */
     @Test
-    public void testPostConstructorProcessCmdLineFilename() throws MalformedURLException {
+    void testPostConstructorProcessCmdLineFilename() throws MalformedURLException {
         doTestPostConstructorProcessCmdLine(
                 Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toFile().getAbsolutePath(),
                 Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toFile().getAbsolutePath(), false);
@@ -287,7 +287,7 @@ public class MainApplicationTest {
      * Unit test of {@link MainApplication#getRegisteredActionShortcut}.
      */
     @Test
-    public void testGetRegisteredActionShortcut() {
+    void testGetRegisteredActionShortcut() {
         Shortcut noKeystroke = Shortcut.registerShortcut("no", "keystroke", 0, 0);
         assertNull(noKeystroke.getKeyStroke());
         assertNull(MainApplication.getRegisteredActionShortcut(noKeystroke));
@@ -302,7 +302,7 @@ public class MainApplicationTest {
      * Unit test of {@link MainApplication#addMapFrameListener} and {@link MainApplication#removeMapFrameListener}.
      */
     @Test
-    public void testMapFrameListener() {
+    void testMapFrameListener() {
         MapFrameListener listener = (o, n) -> { };
         assertTrue(MainApplication.addMapFrameListener(listener));
         assertFalse(MainApplication.addMapFrameListener(null));
@@ -314,7 +314,7 @@ public class MainApplicationTest {
      * Unit test of {@link DownloadParamType} enum.
      */
     @Test
-    public void testEnumDownloadParamType() {
+    void testEnumDownloadParamType() {
         TestUtils.superficialEnumCodeCoverage(DownloadParamType.class);
     }
 }

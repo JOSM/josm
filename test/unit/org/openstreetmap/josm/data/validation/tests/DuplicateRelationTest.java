@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -19,12 +19,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of "Duplicate relation" validation test.
  */
-public class DuplicateRelationTest {
+class DuplicateRelationTest {
 
     /**
      * Setup test by initializing JOSM preferences and projection.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -70,7 +70,7 @@ public class DuplicateRelationTest {
      * Test of "Duplicate relation" validation test - no tags.
      */
     @Test
-    public void testDuplicateRelationNoTags() {
+    void testDuplicateRelationNoTags() {
         doTest("", "",
                 new ExpectedResult(DuplicateRelation.DUPLICATE_RELATION, true),
                 new ExpectedResult(DuplicateRelation.SAME_RELATION, false));
@@ -80,7 +80,7 @@ public class DuplicateRelationTest {
      * Test of "Duplicate relation" validation test - same tags.
      */
     @Test
-    public void testDuplicateRelationSameTags() {
+    void testDuplicateRelationSameTags() {
         doTest("type=boundary", "type=boundary",
                 new ExpectedResult(DuplicateRelation.DUPLICATE_RELATION, true),
                 new ExpectedResult(DuplicateRelation.SAME_RELATION, false));
@@ -90,7 +90,7 @@ public class DuplicateRelationTest {
      * Test of "Duplicate relation" validation test - different tags.
      */
     @Test
-    public void testDuplicateRelationDifferentTags() {
+    void testDuplicateRelationDifferentTags() {
         doTest("type=boundary", "type=multipolygon",
                 new ExpectedResult(DuplicateRelation.SAME_RELATION, false));
     }

@@ -4,11 +4,11 @@ package org.openstreetmap.josm.io;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -17,8 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -33,12 +33,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link OsmReader} class.
  */
-public class OsmReaderTest {
+class OsmReaderTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -65,7 +65,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testPostProcessors() throws Exception {
+    void testPostProcessors() throws Exception {
         PostProcessorStub registered = new PostProcessorStub();
         PostProcessorStub unregistered = new PostProcessorStub();
 
@@ -95,7 +95,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testUnknownRoot() throws Exception {
+    void testUnknownRoot() throws Exception {
         for (Options[] options : options()) {
             testUnknown("<nonosm/>", options);
         }
@@ -106,7 +106,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testUnknownMeta() throws Exception {
+    void testUnknownMeta() throws Exception {
         for (Options[] options : options()) {
             testUnknown("<osm version='0.6'><meta osm_base='2017-03-29T19:04:03Z'/></osm>", options);
         }
@@ -117,7 +117,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testUnknownNote() throws Exception {
+    void testUnknownNote() throws Exception {
         for (Options[] options : options()) {
             testUnknown("<osm version='0.6'><note>The data included in this document is from www.openstreetmap.org.</note></osm>", options);
         }
@@ -128,7 +128,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testUnknownTag() throws Exception {
+    void testUnknownTag() throws Exception {
         for (Options[] options : options()) {
             testUnknown("<osm version='0.6'><foo>bar</foo></osm>", options);
             testUnknown("<osm version='0.6'><foo><bar/></foo></osm>", options);
@@ -169,7 +169,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testInvalidUid() throws Exception {
+    void testInvalidUid() throws Exception {
         testInvalidData("<osm version='0.6'><node id='1' uid='nan'/></osm>",
                 "Illegal value for attribute 'uid'. Got 'nan'. (at line 1, column 82). 82 bytes have been read");
     }
@@ -179,7 +179,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testMissingId() throws Exception {
+    void testMissingId() throws Exception {
         testInvalidData("<osm version='0.6'><node/></osm>",
                 "Missing required attribute 'id'. (at line 1, column 65). 64 bytes have been read");
     }
@@ -189,7 +189,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testMissingRef() throws Exception {
+    void testMissingRef() throws Exception {
         testInvalidData("<osm version='0.6'><way id='1' version='1'><nd/></way></osm>",
                 "Missing mandatory attribute 'ref' on <nd> of way 1. (at line 1, column 87). 88 bytes have been read");
         testInvalidData("<osm version='0.6'><relation id='1' version='1'><member/></relation></osm>",
@@ -201,7 +201,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testIllegalRef() throws Exception {
+    void testIllegalRef() throws Exception {
         testInvalidData("<osm version='0.6'><way id='1' version='1'><nd ref='0'/></way></osm>",
                 "Illegal value of attribute 'ref' of element <nd>. Got 0. (at line 1, column 95). 96 bytes have been read");
         testInvalidData("<osm version='0.6'><way id='1' version='1'><nd ref='nan'/></way></osm>",
@@ -218,7 +218,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testMissingType() throws Exception {
+    void testMissingType() throws Exception {
         testInvalidData("<osm version='0.6'><relation id='1' version='1'><member ref='1'/></relation></osm>",
                 "Missing attribute 'type' on member 1 in relation 1. (at line 1, column 104). 109 bytes have been read");
     }
@@ -228,7 +228,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testIllegalType() throws Exception {
+    void testIllegalType() throws Exception {
         testInvalidData("<osm version='0.6'><relation id='1' version='1'><member type='foo' ref='1'/></relation></osm>",
                 "Illegal value for attribute 'type' on member 1 in relation 1. Got foo. (at line 1, column 115). 120 bytes have been read");
     }
@@ -238,7 +238,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testMissingKeyValue() throws Exception {
+    void testMissingKeyValue() throws Exception {
         testInvalidData("<osm version='0.6'><node id='1' version='1'><tag/></node></osm>",
                 "Missing key or value attribute in tag. (at line 1, column 89). 89 bytes have been read");
         testInvalidData("<osm version='0.6'><node id='1' version='1'><tag k='foo'/></node></osm>",
@@ -252,7 +252,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testMissingVersion() throws Exception {
+    void testMissingVersion() throws Exception {
         testInvalidData("<osm/>",
                 "Missing mandatory attribute 'version'. (at line 1, column 45). 44 bytes have been read");
         testInvalidData("<osm version='0.6'><node id='1'/></osm>",
@@ -264,7 +264,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testUnsupportedVersion() throws Exception {
+    void testUnsupportedVersion() throws Exception {
         testInvalidData("<osm version='0.1'/>",
                 "Unsupported version: 0.1 (at line 1, column 59). 58 bytes have been read");
     }
@@ -274,7 +274,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testIllegalVersion() throws Exception {
+    void testIllegalVersion() throws Exception {
         testInvalidData("<osm version='0.6'><node id='1' version='nan'/></osm>",
                 "Illegal value for attribute 'version' on OSM primitive with ID 1. Got nan. (at line 1, column 86). 86 bytes have been read");
     }
@@ -284,7 +284,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testIllegalChangeset() throws Exception {
+    void testIllegalChangeset() throws Exception {
         testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='nan'/></osm>",
                 "Illegal value for attribute 'changeset'. Got nan. (at line 1, column 100). 100 bytes have been read");
         testInvalidData("<osm version='0.6'><node id='1' version='1' changeset='-1'/></osm>",
@@ -296,7 +296,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testGdprChangeset() throws Exception {
+    void testGdprChangeset() throws Exception {
         String gdprChangeset = "<osm version='0.6'><node id='1' version='1' changeset='0'/></osm>";
         for (Options[] options : options()) {
             testValidData(gdprChangeset, options);
@@ -308,7 +308,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testInvalidBounds() throws Exception {
+    void testInvalidBounds() throws Exception {
         testInvalidData("<osm version='0.6'><bounds/></osm>",
                 "Missing mandatory attributes on element 'bounds'. " +
                 "Got minlon='null',minlat='null',maxlon='null',maxlat='null', origin='null'. (at line 1, column 67). 72 bytes have been read");
@@ -328,7 +328,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket14199() throws Exception {
+    void testTicket14199() throws Exception {
         try (InputStream in = TestUtils.getRegressionDataStream(14199, "emptytag.osm")) {
             Way w = OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE).getWays().iterator().next();
             assertEquals(1, w.getKeys().size());
@@ -342,7 +342,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket14754() throws Exception {
+    void testTicket14754() throws Exception {
         try (InputStream in = TestUtils.getRegressionDataStream(14754, "malformed_for_14754.osm")) {
             OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
             fail("should throw exception");
@@ -360,7 +360,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket14788() throws Exception {
+    void testTicket14788() throws Exception {
         try (InputStream in = TestUtils.getRegressionDataStream(14788, "remove_sign_test_4.osm")) {
             OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
             fail("should throw exception");
@@ -378,7 +378,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testRemark() throws Exception {
+    void testRemark() throws Exception {
         String query = "<osm version=\"0.6\" generator=\"Overpass API 0.7.55.4 3079d8ea\">\r\n" +
                 "<note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>\r\n" +
                 "<meta osm_base=\"2018-08-30T12:46:02Z\" areas=\"2018-08-30T12:40:02Z\"/>\r\n" +
@@ -395,7 +395,7 @@ public class OsmReaderTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testUnknownAttributeTags() throws Exception {
+    void testUnknownAttributeTags() throws Exception {
         String testData = "<osm version=\"0.6\" generator=\"fake generator\">"
                 + "<node id='1' version='1' visible='true' changeset='82' randomkey='randomvalue'></node>" + "</osm>";
         for (Options[] options : options()) {

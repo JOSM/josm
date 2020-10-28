@@ -1,7 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -9,8 +10,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.OrthogonalizeAction.Direction;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -31,22 +32,22 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests for class {@link OrthogonalizeAction}.
  */
-public class OrthogonalizeActionTest {
+class OrthogonalizeActionTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
-    @Test(expected = OrthogonalizeAction.InvalidUserInputException.class)
-    public void testNoSelection() throws Exception {
-        performTest("nothing selected");
+    @Test
+    void testNoSelection() throws Exception {
+        assertThrows(OrthogonalizeAction.InvalidUserInputException.class, () -> performTest("nothing selected"));
     }
 
     @Test
-    public void testClosedWay() throws Exception {
+    void testClosedWay() throws Exception {
         final DataSet ds = performTest("name=ClosedWay");
         final Way way = ds.getSelectedWays().iterator().next();
         assertEquals(new LatLon(8.5388082, 55.7297890), way.getNode(0).getCoor().getRoundedToOsmPrecision());
@@ -57,17 +58,17 @@ public class OrthogonalizeActionTest {
     }
 
     @Test
-    public void testTwoWaysFormingClosedWay() throws Exception {
+    void testTwoWaysFormingClosedWay() throws Exception {
         performTest("name=TwoWaysFormingClosedWay");
     }
 
     @Test
-    public void testTwoRingsAtOnce() throws Exception {
+    void testTwoRingsAtOnce() throws Exception {
         performTest("name=ClosedWay OR name=TwoWaysFormingClosedWay");
     }
 
     @Test
-    public void testClosedWayWithReferenceNodes() throws Exception {
+    void testClosedWayWithReferenceNodes() throws Exception {
         final DataSet ds = performTest("name=ClosedWayWithReferenceNodes");
         final Way way = ds.getSelectedWays().iterator().next();
         assertEquals(new LatLon(8.5347114, 55.7300067), way.getNode(0).getCoor().getRoundedToOsmPrecision());
@@ -78,7 +79,7 @@ public class OrthogonalizeActionTest {
     }
 
     @Test
-    public void testFourNodes() throws Exception {
+    void testFourNodes() throws Exception {
         final DataSet ds = performTest(
                 "name=NodeToRectify-01", "name=NodeToRectify-02", "name=NodeToRectify-03", "name=NodeToRectify-04");
         final List<Node> nodes = new ArrayList<>(ds.getSelectedNodes());
@@ -93,7 +94,7 @@ public class OrthogonalizeActionTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(OrthogonalizeAction.EN.class);
     }
 
@@ -121,7 +122,7 @@ public class OrthogonalizeActionTest {
      * Unit test of {@link Direction} enum.
      */
     @Test
-    public void testEnumDirection() {
+    void testEnumDirection() {
         TestUtils.superficialEnumCodeCoverage(Direction.class);
     }
 }

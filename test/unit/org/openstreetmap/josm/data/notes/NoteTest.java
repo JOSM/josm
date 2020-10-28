@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.notes;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.Date;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -19,12 +19,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests for class {@link NoteComment}.
  */
-public class NoteTest {
+class NoteTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -32,7 +32,7 @@ public class NoteTest {
      * Unit test of {@link Note#toString} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         Note note = new Note(LatLon.ZERO);
         assertEquals("Note 0: null", note.toString());
         note.addComment(new NoteComment(new Date(), null, "foo", null, true));
@@ -43,7 +43,7 @@ public class NoteTest {
      * Unit test of {@link Note#updateWith} method.
      */
     @Test
-    public void testUpdateWith() {
+    void testUpdateWith() {
         Note n1 = new Note(LatLon.ZERO);
         n1.setId(1);
         Note n2 = new Note(LatLon.ZERO);
@@ -57,7 +57,7 @@ public class NoteTest {
      * Unit test of methods {@link Note#equals} and {@link Note#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(Note.class).usingGetClass()
             .withIgnoredFields("latLon", "createdAt", "closedAt", "state", "comments")

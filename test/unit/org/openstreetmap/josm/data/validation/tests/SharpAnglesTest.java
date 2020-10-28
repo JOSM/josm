@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -13,15 +13,14 @@ import org.openstreetmap.josm.data.osm.Way;
 /**
  * JUnit Test of the Sharp Angles validation test.
  */
-
-public class SharpAnglesTest {
+class SharpAnglesTest {
     private SharpAngles angles;
 
     /**
      * Setup test.
      * @throws Exception if an error occurs
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         JOSMFixture.createUnitTestFixture().init();
         angles = new SharpAngles();
@@ -32,7 +31,7 @@ public class SharpAnglesTest {
      * Check a closed loop with no sharp angles
      */
     @Test
-    public void testClosedLoopNoSharpAngles() {
+    void testClosedLoopNoSharpAngles() {
         Way way = TestUtils.newWay("highway=residential",
                 new Node(new LatLon(0, 0)), new Node(new LatLon(0.1, 0.1)),
                 new Node(new LatLon(0.1, -0.2)), new Node(new LatLon(-0.1, -0.1)));
@@ -45,7 +44,7 @@ public class SharpAnglesTest {
      * Check a closed loop with a sharp angle
      */
     @Test
-    public void testClosedLoopSharpAngles() {
+    void testClosedLoopSharpAngles() {
         Way way = TestUtils.newWay("highway=residential",
                 new Node(new LatLon(0, 0)), new Node(new LatLon(0.1, 0.1)),
                 new Node(new LatLon(0.1, -0.2)));
@@ -59,7 +58,7 @@ public class SharpAnglesTest {
      * Check a way for multiple sharp angles
      */
     @Test
-    public void testMultipleSharpAngles() {
+    void testMultipleSharpAngles() {
         Way way = TestUtils.newWay("highway=residential",
                 new Node(new LatLon(0.005069377713748322, -0.0014832642674429382)),
                 new Node(new LatLon(0.005021097951663415, 0.0008636686205880686)),
@@ -74,7 +73,7 @@ public class SharpAnglesTest {
      * Check for no sharp angles
      */
     @Test
-    public void testNoSharpAngles() {
+    void testNoSharpAngles() {
         Way way = TestUtils.newWay("highway=residential",
                 new Node(new LatLon(0, 0)), new Node(new LatLon(0.1, 0.1)),
                 new Node(new LatLon(0.2, 0.3)), new Node(new LatLon(0.3, 0.1)));
@@ -87,7 +86,7 @@ public class SharpAnglesTest {
      * This was found during initial testing. See way 10041221 (on 20190914)
      */
     @Test
-    public void testCheckBadAnglesFromSameNodeTwice() {
+    void testCheckBadAnglesFromSameNodeTwice() {
         Way way = TestUtils.newWay("highway=service oneway=yes",
                 new Node(new LatLon(52.8903308, 8.4302322)),
                 new Node(new LatLon(52.8902468, 8.4302138)),
@@ -105,7 +104,7 @@ public class SharpAnglesTest {
      * Check that special cases are ignored
      */
     @Test
-    public void testIgnoredCases() {
+    void testIgnoredCases() {
         Way way = TestUtils.newWay("highway=residential",
                 new Node(new LatLon(0, 0)), new Node(new LatLon(0.1, 0.1)),
                 new Node(new LatLon(0, 0.01)));

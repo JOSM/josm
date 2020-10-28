@@ -1,10 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.awt.Dimension;
+import java.util.EnumSet;
+
+import javax.swing.ImageIcon;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -13,31 +21,24 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetsTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.OsmPrimitiveImageProvider.Options;
 
-import java.awt.Dimension;
-import java.util.EnumSet;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import javax.swing.ImageIcon;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link OsmPrimitiveImageProvider}
  */
-public class OsmPrimitiveImageProviderTest {
+class OsmPrimitiveImageProviderTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().mapStyles().presets();
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -46,7 +47,7 @@ public class OsmPrimitiveImageProviderTest {
      * Unit test of {@link OsmPrimitiveImageProvider#getResource}.
      */
     @Test
-    public void testGetResource() {
+    void testGetResource() {
         TaggingPresetsTest.waitForIconLoading(TaggingPresets.getTaggingPresets());
 
         final EnumSet<Options> noDefault = EnumSet.of(Options.NO_DEFAULT);
@@ -66,7 +67,7 @@ public class OsmPrimitiveImageProviderTest {
      * Unit test of {@link OsmPrimitiveImageProvider#getResource} for non-square images.
      */
     @Test
-    public void testGetResourceNonSquare() {
+    void testGetResourceNonSquare() {
         final ImageIcon bankIcon = OsmPrimitiveImageProvider
                 .getResource(OsmUtils.createPrimitive("node amenity=bank"), Options.DEFAULT)
                 .getPaddedIcon(ImageProvider.ImageSizes.LARGEICON.getImageDimension());

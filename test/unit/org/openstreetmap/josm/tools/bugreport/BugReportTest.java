@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.bugreport;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -20,11 +20,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Tests the bug report class.
  * @author Michael Zangl
  */
-public class BugReportTest {
+class BugReportTest {
     /**
      * Preferences for the report text
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -32,7 +32,7 @@ public class BugReportTest {
      * Test {@link BugReport#getReportText}
      */
     @Test
-    public void testReportText() {
+    void testReportText() {
         ReportedException e = interceptInChildMethod(new IOException("test-exception-message"));
         e.put("test-key", "test-value");
         String text = new BugReport(e).getReportText(ShowStatusReportAction.getReportHeader());
@@ -47,7 +47,7 @@ public class BugReportTest {
      * Test {@link BugReport#intercept(Throwable)}
      */
     @Test
-    public void testIntercept() {
+    void testIntercept() {
         IOException base = new IOException("test");
         ReportedException intercepted = interceptInChildMethod(base);
         assertEquals(intercepted.getCause(), base);
@@ -68,7 +68,7 @@ public class BugReportTest {
      * Test {@link BugReport#getCallingMethod(int)}
      */
     @Test
-    public void testGetCallingMethod() {
+    void testGetCallingMethod() {
         assertEquals("BugReportTest#testGetCallingMethod", BugReport.getCallingMethod(1));
         assertEquals("BugReportTest#testGetCallingMethod", testGetCallingMethod2());
         assertEquals("?", BugReport.getCallingMethod(100));

@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command.conflict;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -19,12 +19,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link DeletedStateConflictResolveCommand} class.
  */
-public class DeletedStateConflictResolveCommandTest {
+class DeletedStateConflictResolveCommandTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -32,7 +32,7 @@ public class DeletedStateConflictResolveCommandTest {
      * Unit test of methods {@link DeletedStateConflictResolveCommand#equals} and {@link DeletedStateConflictResolveCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(DeletedStateConflictResolveCommand.class).usingGetClass()
             .withPrefabValues(Conflict.class,

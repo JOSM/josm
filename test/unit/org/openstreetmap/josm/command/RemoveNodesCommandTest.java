@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -27,12 +27,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link RemoveNodesCommand} class.
  */
-public class RemoveNodesCommandTest {
+class RemoveNodesCommandTest {
 
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
     private CommandTestDataWithRelation testData;
@@ -40,7 +40,7 @@ public class RemoveNodesCommandTest {
     /**
      * Set up the test data.
      */
-    @Before
+    @BeforeEach
     public void createTestData() {
         testData = new CommandTestDataWithRelation();
     }
@@ -49,7 +49,7 @@ public class RemoveNodesCommandTest {
      * Test {@link RemoveNodesCommand#executeCommand()}
      */
     @Test
-    public void testExecute() {
+    void testExecute() {
         RemoveNodesCommand command = new RemoveNodesCommand(testData.existingWay,
                 Collections.singleton(testData.existingNode));
 
@@ -64,7 +64,7 @@ public class RemoveNodesCommandTest {
      * Test {@link RemoveNodesCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         RemoveNodesCommand command = new RemoveNodesCommand(testData.existingWay,
                 Collections.singleton(testData.existingNode));
 
@@ -86,7 +86,7 @@ public class RemoveNodesCommandTest {
      * Tests {@link RemoveNodesCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
@@ -102,7 +102,7 @@ public class RemoveNodesCommandTest {
      * Tests {@link RemoveNodesCommand#getParticipatingPrimitives()}
      */
     @Test
-    public void testGetParticipatingPrimitives() {
+    void testGetParticipatingPrimitives() {
         RemoveNodesCommand command = new RemoveNodesCommand(testData.existingWay,
                 Collections.singleton(testData.existingNode));
         command.executeCommand();
@@ -113,7 +113,7 @@ public class RemoveNodesCommandTest {
      * Test {@link RemoveNodesCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         assertTrue(new RemoveNodesCommand(testData.existingWay, Collections.singleton(testData.existingNode))
                 .getDescriptionText().matches("Removed nodes from .*"));
     }
@@ -122,7 +122,7 @@ public class RemoveNodesCommandTest {
      * Unit test of methods {@link RemoveNodesCommand#equals} and {@link RemoveNodesCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(RemoveNodesCommand.class).usingGetClass()
             .withPrefabValues(Way.class,

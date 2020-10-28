@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -14,9 +14,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -45,12 +45,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link OsmDataLayer} class.
  */
-public class OsmDataLayerTest {
+class OsmDataLayerTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().main();
 
@@ -60,7 +60,7 @@ public class OsmDataLayerTest {
     /**
      * Setup tests
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         ds = new DataSet();
         layer = new OsmDataLayer(ds, "", null);
@@ -71,7 +71,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#setRecentRelation} and {@link OsmDataLayer#getRecentRelations}.
      */
     @Test
-    public void testRecentRelation() {
+    void testRecentRelation() {
         int n = OsmDataLayer.PROPERTY_RECENT_RELATIONS_NUMBER.get();
         assertTrue(n > 0);
         for (int i = 0; i < 2*n; i++) {
@@ -92,7 +92,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#getInfoComponent}.
      */
     @Test
-    public void testGetInfoComponent() {
+    void testGetInfoComponent() {
         assertNotNull(layer.getInfoComponent());
 
         layer.setUploadDiscouraged(true);
@@ -129,7 +129,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#addLayerStateChangeListener}.
      */
     @Test
-    public void testLayerStateChangeListenerNull() {
+    void testLayerStateChangeListenerNull() {
         layer.addLayerStateChangeListener(null);
     }
 
@@ -137,7 +137,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#getIcon}.
      */
     @Test
-    public void testGetIcon() {
+    void testGetIcon() {
         assertNotNull(layer.getIcon());
         layer.setUploadDiscouraged(true);
         assertNotNull(layer.getIcon());
@@ -147,7 +147,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#paint}.
      */
     @Test
-    public void testPaint() {
+    void testPaint() {
         fillDataSet(ds);
         assertNotNull(MainApplication.getMap());
         layer.paint(TestUtils.newGraphics(), MainApplication.getMap().mapView, new Bounds(LatLon.ZERO));
@@ -157,7 +157,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#getToolTipText}.
      */
     @Test
-    public void testGetToolTipText() {
+    void testGetToolTipText() {
         assertEquals("<html>0 nodes<br>0 ways<br>0 relations</html>", new OsmDataLayer(ds, "", null).getToolTipText());
         fillDataSet(ds);
         assertEquals("<html>1 node<br>1 way<br>1 relation</html>", new OsmDataLayer(ds, "", null).getToolTipText());
@@ -168,7 +168,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#mergeFrom}.
      */
     @Test
-    public void testMergeFrom() {
+    void testMergeFrom() {
         fillDataSet(ds);
         OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "", null);
         MainApplication.getLayerManager().addLayer(layer2);
@@ -185,7 +185,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#cleanupAfterUpload}.
      */
     @Test
-    public void testCleanupAfterUpload() {
+    void testCleanupAfterUpload() {
         fillDataSet(ds);
         assertEquals(6, layer.data.allPrimitives().size());
         layer.cleanupAfterUpload(ds.allPrimitives());
@@ -196,7 +196,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#getMenuEntries}.
      */
     @Test
-    public void testGetMenuEntries() {
+    void testGetMenuEntries() {
         ExpertToggleAction.getInstance().setExpert(true);
         assertEquals(17, layer.getMenuEntries().length);
 
@@ -209,7 +209,7 @@ public class OsmDataLayerTest {
      * @throws IllegalDataException never
      */
     @Test
-    public void testToGpxData() throws IllegalDataException {
+    void testToGpxData() throws IllegalDataException {
         ds.mergeFrom(OsmReader.parseDataSet(new ByteArrayInputStream((
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
                 "<osm version='0.6' upload='false' generator='JOSM'>\n" +
@@ -263,7 +263,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#containsPoint}.
      */
     @Test
-    public void testContainsPoint() {
+    void testContainsPoint() {
         fillDataSet(ds);
         assertTrue(layer.containsPoint(LatLon.ZERO));
     }
@@ -272,7 +272,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#isModified}.
      */
     @Test
-    public void testIsModified() {
+    void testIsModified() {
         assertFalse(layer.isModified());
         fillDataSet(ds);
         assertTrue(layer.isModified());
@@ -282,7 +282,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#projectionChanged}.
      */
     @Test
-    public void testProjectionChanged() {
+    void testProjectionChanged() {
         layer.projectionChanged(null, null);
     }
 
@@ -290,7 +290,7 @@ public class OsmDataLayerTest {
      * Unit test of {@link OsmDataLayer#checkSaveConditions}.
      */
     @Test
-    public void testCheckSaveConditions() {
+    void testCheckSaveConditions() {
         TestUtils.assumeWorkingJMockit();
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker(
             Collections.singletonMap("The document contains no data.", "Cancel")
@@ -310,7 +310,7 @@ public class OsmDataLayerTest {
      * Checks that unnamed layer number increases
      */
     @Test
-    public void testLayerNameIncreases() {
+    void testLayerNameIncreases() {
         final OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), OsmDataLayer.createLayerName(147), null);
         final OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
         assertEquals("Data Layer 147", layer1.getName());
@@ -321,7 +321,7 @@ public class OsmDataLayerTest {
      * Checks that named layer got no number
      */
     @Test
-    public void testLayerUnnumberedName() {
+    void testLayerUnnumberedName() {
         final OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Data Layer ", null);
         assertEquals("Data Layer ", layer.getName());
     }
@@ -330,7 +330,7 @@ public class OsmDataLayerTest {
      * Non-regression test for ticket #13985
      */
     @Test
-    public void testLayerNameDoesFinish() {
+    void testLayerNameDoesFinish() {
         final OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Data Layer from GeoJSON: foo.geojson", null);
         assertEquals("Data Layer from GeoJSON: foo.geojson", layer.getName());
     }
@@ -339,7 +339,7 @@ public class OsmDataLayerTest {
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/17065">#17065</a>.
      */
     @Test
-    public void testTicket17065() {
+    void testTicket17065() {
         ClipboardUtils.clear();
         Logging.clearLastErrorAndWarnings();
         new OsmDataLayer(new DataSet(), null, null).destroy();

@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -27,12 +27,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of {@link TagChecker}.
  */
-public class TagCheckerTest {
+class TagCheckerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rule = new JOSMTestRules().presets();
 
@@ -54,7 +54,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testMisspelledKey1() throws IOException {
+    void testMisspelledKey1() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node Name=Main"));
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
@@ -67,7 +67,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testMisspelledKey2() throws IOException {
+    void testMisspelledKey2() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node landuse;=forest"));
         assertEquals(1, errors.size());
         assertEquals("Misspelled property key", errors.get(0).getMessage());
@@ -80,7 +80,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testMisspelledKeyButAlternativeInUse() throws IOException {
+    void testMisspelledKeyButAlternativeInUse() throws IOException {
         // ticket 12329
         final List<TestError> errors = test(OsmUtils.createPrimitive("node amenity=fuel brand=bah Brand=foo"));
         assertEquals(1, errors.size());
@@ -96,7 +96,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testUpperCaseIgnoredKey() throws IOException {
+    void testUpperCaseIgnoredKey() throws IOException {
         // ticket 17468
         final List<TestError> errors = test(OsmUtils.createPrimitive("node wheelchair:Description=bla"));
         assertEquals(1, errors.size());
@@ -112,7 +112,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testUpperCaseInKeyIgnoredTag() throws IOException {
+    void testUpperCaseInKeyIgnoredTag() throws IOException {
         // ticket 17468
         final List<TestError> errors = test(OsmUtils.createPrimitive("node land_Area=administrative"));
         assertEquals(1, errors.size());
@@ -127,7 +127,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testTranslatedNameKey() throws IOException {
+    void testTranslatedNameKey() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node namez=Baz"));
         assertEquals(1, errors.size());
         assertEquals("Presets do not contain property key", errors.get(0).getMessage());
@@ -141,7 +141,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testMisspelledTag() throws IOException {
+    void testMisspelledTag() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node landuse=forrest"));
         assertEquals(1, errors.size());
         assertEquals("Unknown property value", errors.get(0).getMessage());
@@ -155,7 +155,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testMisspelledTag2() throws IOException {
+    void testMisspelledTag2() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=servics"));
         assertEquals(1, errors.size());
         assertEquals("Unknown property value", errors.get(0).getMessage());
@@ -171,7 +171,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testMisspelledTag3() throws IOException {
+    void testMisspelledTag3() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=residentail"));
         assertEquals(1, errors.size());
         assertEquals("Unknown property value", errors.get(0).getMessage());
@@ -186,7 +186,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testShortValNotInPreset2() throws IOException {
+    void testShortValNotInPreset2() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node shop=abs"));
         assertEquals(1, errors.size());
         assertEquals("Presets do not contain property value", errors.get(0).getMessage());
@@ -200,13 +200,13 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testIgnoredTagsNotInPresets() throws IOException {
+    void testIgnoredTagsNotInPresets() throws IOException {
         new TagChecker().initialize();
         List<String> errors = TagChecker.getIgnoredTags().stream()
                 .filter(tag -> TagChecker.isTagInPresets(tag.getKey(), tag.getValue()))
                 .map(Tag::toString)
                 .collect(Collectors.toList());
-        assertTrue(errors.toString(), errors.isEmpty());
+        assertTrue(errors.isEmpty(), errors::toString);
     }
 
     /**
@@ -214,7 +214,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testTooShortToFix() throws IOException {
+    void testTooShortToFix() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node surface=u"));
         assertEquals(1, errors.size());
         assertEquals("Presets do not contain property value", errors.get(0).getMessage());
@@ -228,7 +228,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testValueDifferentCase() throws IOException {
+    void testValueDifferentCase() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node highway=Residential"));
         assertEquals(1, errors.size());
         assertEquals("Unknown property value", errors.get(0).getMessage());
@@ -243,7 +243,7 @@ public class TagCheckerTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testRegression17246() throws IOException {
+    void testRegression17246() throws IOException {
         final List<TestError> errors = test(OsmUtils.createPrimitive("node access=privat"));
         assertEquals(1, errors.size());
         assertEquals("Unknown property value", errors.get(0).getMessage());
@@ -273,7 +273,7 @@ public class TagCheckerTest {
      *            / {@link TagChecker#removeUnwantedNonPrintingControlCharacters}
      */
     @Test
-    public void testContainsRemoveUnwantedNonprintingControlCharacters() {
+    void testContainsRemoveUnwantedNonprintingControlCharacters() {
         // Check empty string is handled
         doTestUnwantedNonprintingControlCharacters("", Assert::assertFalse, "");
         // Check 65 ASCII control characters are removed, except new lines
@@ -310,7 +310,7 @@ public class TagCheckerTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17667">Bug #17667</a>.
      */
     @Test
-    public void testTicket17667() {
+    void testTicket17667() {
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Bus 118: Berlin, Rathaus Zehlendorf => Potsdam, Drewitz Stern-Center"));
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Καρδίτσα → Λάρισα"));
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("traffic_sign", "FI:871[← Lippuautomaatti]"));
@@ -323,7 +323,7 @@ public class TagCheckerTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18322">Bug #18322</a>.
      */
     @Test
-    public void testTicket18322() {
+    void testTicket18322() {
         assertTrue(TagChecker.containsUnusualUnicodeCharacter("name", "D36ᴬ"));
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("ref", "D36ᴬ"));
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("old_ref", "D36ᴬ"));
@@ -336,7 +336,7 @@ public class TagCheckerTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18449">Bug #18449</a>.
      */
     @Test
-    public void testTicket18449() {
+    void testTicket18449() {
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Hökumət Evi"));
     }
 
@@ -344,7 +344,7 @@ public class TagCheckerTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18740">Bug #18740</a>.
      */
     @Test
-    public void testTicket18740() {
+    void testTicket18740() {
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:ak", "Frɛnkyeman"));
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:bm", "Esipaɲi"));
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:oym", "Wɨlapaleya Ɨtu"));
@@ -355,20 +355,21 @@ public class TagCheckerTest {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testObjectTypeNotSupportedByPreset() throws IOException {
+    void testObjectTypeNotSupportedByPreset() throws IOException {
         List<TestError> errors = test(OsmUtils.createPrimitive("relation waterway=river"));
         assertEquals(1, errors.size());
         assertEquals(TagChecker.INVALID_PRESETS_TYPE, errors.get(0).getCode());
         errors = test(OsmUtils.createPrimitive("relation type=waterway waterway=river"));
-        assertTrue(errors.toString(), errors.isEmpty());
+        assertTrue(errors.isEmpty(), errors::toString);
     }
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19519">Bug #19519</a>.
+     * @throws IOException ignored
      */
     @Test
-    @Ignore("broken, see #19519")
-    public void testTicket19519() throws IOException {
+    @Disabled("broken, see #19519")
+    void testTicket19519() throws IOException {
         List<TestError> errors = test(OsmUtils.createPrimitive("node amenity=restaurant cuisine=bavarian;beef_bowl"));
         assertEquals(0, errors.size());
     }

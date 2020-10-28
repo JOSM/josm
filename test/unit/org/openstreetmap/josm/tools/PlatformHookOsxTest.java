@@ -1,31 +1,31 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Unit tests of {@link PlatformHookOsx} class.
  */
-public class PlatformHookOsxTest {
+class PlatformHookOsxTest {
 
     static PlatformHookOsx hook;
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
         hook = new PlatformHookOsx();
@@ -35,7 +35,7 @@ public class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#startupHook}
      */
     @Test
-    public void testStartupHook() {
+    void testStartupHook() {
         hook.startupHook((a, b, c, d) -> System.out.println("callback"));
     }
 
@@ -43,7 +43,7 @@ public class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#afterPrefStartupHook}
      */
     @Test
-    public void testAfterPrefStartupHook() {
+    void testAfterPrefStartupHook() {
         hook.afterPrefStartupHook();
     }
 
@@ -52,8 +52,8 @@ public class PlatformHookOsxTest {
      * @throws IOException if an error occurs
      */
     @Test
-    public void testOpenUrl() throws IOException {
-        Assume.assumeTrue(PlatformManager.isPlatformOsx());
+    void testOpenUrl() throws IOException {
+        assumeTrue(PlatformManager.isPlatformOsx());
         hook.openUrl(Config.getUrls().getJOSMWebsite());
     }
 
@@ -61,7 +61,7 @@ public class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#getDefaultCacheDirectory}
      */
     @Test
-    public void testGetDefaultCacheDirectory() {
+    void testGetDefaultCacheDirectory() {
         File cache = hook.getDefaultCacheDirectory();
         assertNotNull(cache);
         if (PlatformManager.isPlatformOsx()) {
@@ -73,7 +73,7 @@ public class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#getDefaultPrefDirectory}
      */
     @Test
-    public void testGetDefaultPrefDirectory() {
+    void testGetDefaultPrefDirectory() {
         File cache = hook.getDefaultPrefDirectory();
         assertNotNull(cache);
         if (PlatformManager.isPlatformOsx()) {
@@ -85,7 +85,7 @@ public class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#getDefaultStyle}
      */
     @Test
-    public void testGetDefaultStyle() {
+    void testGetDefaultStyle() {
         assertEquals("com.apple.laf.AquaLookAndFeel", hook.getDefaultStyle());
     }
 
@@ -93,7 +93,7 @@ public class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#getOSDescription}
      */
     @Test
-    public void testGetOSDescription() {
+    void testGetOSDescription() {
         String os = hook.getOSDescription();
         if (PlatformManager.isPlatformOsx()) {
             assertTrue(os.contains("Mac"));
@@ -106,7 +106,7 @@ public class PlatformHookOsxTest {
      * Test method for {@code PlatformHookOsx#initSystemShortcuts}
      */
     @Test
-    public void testInitSystemShortcuts() {
+    void testInitSystemShortcuts() {
         hook.initSystemShortcuts();
     }
 }

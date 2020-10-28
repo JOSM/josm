@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.validation.tests.Addresses;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -17,12 +17,12 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests for class {@link OsmValidator}.
  */
-public class OsmValidatorTest {
+class OsmValidatorTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
@@ -30,7 +30,7 @@ public class OsmValidatorTest {
      * Setup test.
      * @throws Exception if an error occurs
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         OsmValidator.clearIgnoredErrors();
     }
@@ -40,7 +40,7 @@ public class OsmValidatorTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(OsmValidator.class);
     }
 
@@ -48,7 +48,7 @@ public class OsmValidatorTest {
      * Test that {@link OsmValidator#cleanupIgnoredErrors()} really removes entry with element IDs when group is ignored
      */
     @Test
-    public void testCleanupIgnoredErrors1() {
+    void testCleanupIgnoredErrors1() {
         OsmValidator.addIgnoredError("1351:n_2449148994:w_236955234", "Way end node near other way");
         OsmValidator.addIgnoredError("1351:n_6871910559:w_733713588", "Way end node near other way");
         OsmValidator.addIgnoredError("1351");
@@ -63,7 +63,7 @@ public class OsmValidatorTest {
      * {@link OsmValidator#cleanupIgnoredErrors()} must not remove entry 1201 when 120 is before it.
      */
     @Test
-    public void testCleanupIgnoredErrorsTicket17837() {
+    void testCleanupIgnoredErrorsTicket17837() {
         OsmValidator.addIgnoredError("120");
         OsmValidator.addIgnoredError("3000");
         OsmValidator.addIgnoredError("1201"); // starts with 120, but has different code
@@ -76,7 +76,7 @@ public class OsmValidatorTest {
      * {@link OsmValidator#cleanupIgnoredErrors()} must not combine primitives.
      */
     @Test
-    public void testCleanupIgnoredErrorsTicket18223() {
+    void testCleanupIgnoredErrorsTicket18223() {
         OsmValidator.addIgnoredError("1351:n_2449148994:w_236955234", "Way end node near other way");
         OsmValidator.addIgnoredError("1351:n_6871910559:w_733713588", "Way end node near other way");
         OsmValidator.cleanupIgnoredErrors();
@@ -89,7 +89,7 @@ public class OsmValidatorTest {
      * Test that tests are really removed, and that core tests cannot be removed
      */
     @Test
-    public void testRemoveTests() {
+    void testRemoveTests() {
         org.openstreetmap.josm.data.validation.Test test = new org.openstreetmap.josm.data.validation.Test("test") {
         };
         assertNotEquals(org.openstreetmap.josm.data.validation.Test.class, test.getClass());

@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -17,12 +17,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link TransformNodesCommand} class.
  */
-public class TransformNodesCommandTest {
+class TransformNodesCommandTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -30,7 +30,7 @@ public class TransformNodesCommandTest {
      * Unit test of methods {@link TransformNodesCommand#equals} and {@link TransformNodesCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(TransformNodesCommand.class).usingGetClass()
             .withPrefabValues(LatLon.class,

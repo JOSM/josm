@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -13,12 +13,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ReferringRelationsBrowser} class.
  */
-public class ReferringRelationsBrowserTest {
+class ReferringRelationsBrowserTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -26,7 +26,7 @@ public class ReferringRelationsBrowserTest {
      * Unit test of {@link ReferringRelationsBrowser#ReferringRelationsBrowser}.
      */
     @Test
-    public void testReferringRelationsBrowser() {
+    void testReferringRelationsBrowser() {
         DataSet ds = new DataSet();
         Relation r = new Relation();
         ds.addPrimitive(r);

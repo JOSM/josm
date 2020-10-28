@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -26,7 +26,7 @@ public class LatLonTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
@@ -51,7 +51,7 @@ public class LatLonTest {
      * Test of {@link LatLon#roundToOsmPrecision}
      */
     @Test
-    public void testRoundToOsmPrecision() {
+    void testRoundToOsmPrecision() {
 
         for (double value : SAMPLE_VALUES) {
             assertEquals(LatLon.roundToOsmPrecision(value), value, 0);
@@ -109,7 +109,7 @@ public class LatLonTest {
      * Test {@link LatLon#toIntervalLat}
      */
     @Test
-    public void testToIntervalLat() {
+    void testToIntervalLat() {
         assertEquals(-90.0, LatLon.toIntervalLat(-90.0), 0);
         assertEquals(0.0, LatLon.toIntervalLat(0.0), 0);
         assertEquals(90.0, LatLon.toIntervalLat(90.0), 0);
@@ -122,7 +122,7 @@ public class LatLonTest {
      * Test of {@link LatLon#toIntervalLon}
      */
     @Test
-    public void testToIntervalLon() {
+    void testToIntervalLon() {
         assertEquals(-180.0, LatLon.toIntervalLon(-180.0), 0);
         assertEquals(0.0, LatLon.toIntervalLon(0.0), 0);
         assertEquals(180.0, LatLon.toIntervalLon(180.0), 0);
@@ -147,7 +147,7 @@ public class LatLonTest {
      * Unit test of methods {@link LatLon#equals} and {@link LatLon#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(LatLon.class).usingGetClass()
             .withPrefabValues(DecimalFormat.class, new DecimalFormat("00.0"), new DecimalFormat("00.000"))
@@ -158,7 +158,7 @@ public class LatLonTest {
      * Unit test of {@link LatLon#LatLon(LatLon)}.
      */
     @Test
-    public void testCopyConstructor() {
+    void testCopyConstructor() {
         assertEquals(LatLon.NORTH_POLE, new LatLon(LatLon.NORTH_POLE));
         assertEquals(LatLon.SOUTH_POLE, new LatLon(LatLon.SOUTH_POLE));
         assertEquals(new LatLon(1, 2), new LatLon(new LatLon(1, 2)));
@@ -168,7 +168,7 @@ public class LatLonTest {
      * Test of {@link LatLon#bearing}
      */
     @Test
-    public void testBearing() {
+    void testBearing() {
         LatLon c = new LatLon(47.000000, 19.000000);
         LatLon e = new LatLon(47.000000, 19.000001);
         LatLon n = new LatLon(47.000001, 19.000000);
@@ -182,7 +182,7 @@ public class LatLonTest {
      * Test of {@link LatLon#distance}
      */
     @Test
-    public void testDistance() {
+    void testDistance() {
         assertEquals(0.0, LatLon.ZERO.distance(LatLon.ZERO), 0);
         assertEquals(90.0, LatLon.ZERO.distance(LatLon.NORTH_POLE), 0);
         assertEquals(180.0, LatLon.SOUTH_POLE.distance(LatLon.NORTH_POLE), 0);
@@ -192,7 +192,7 @@ public class LatLonTest {
      * Test of {@link LatLon#distanceSq}
      */
     @Test
-    public void testDistanceSq() {
+    void testDistanceSq() {
         assertEquals(0.0, LatLon.ZERO.distanceSq(LatLon.ZERO), 0);
         assertEquals(90d*90d, LatLon.ZERO.distanceSq(LatLon.NORTH_POLE), 0);
         assertEquals(180d*180d, LatLon.SOUTH_POLE.distanceSq(LatLon.NORTH_POLE), 0);
@@ -202,7 +202,7 @@ public class LatLonTest {
      * Test {@link LatLon#interpolate(LatLon, double)}
      */
     @Test
-    public void testInterpolate() {
+    void testInterpolate() {
         LatLon ll1 = new LatLon(0, 0);
         LatLon ll2 = new LatLon(30, 60);
         LatLon ll3 = new LatLon(-70, -40);
@@ -224,7 +224,7 @@ public class LatLonTest {
      */
     @Test
     @Deprecated
-    public void testIsOutSideWorld() {
+    void testIsOutSideWorld() {
         assertFalse(LatLon.ZERO.isOutSideWorld());
         assertTrue(LatLon.NORTH_POLE.isOutSideWorld());
         assertTrue(LatLon.SOUTH_POLE.isOutSideWorld());
@@ -236,7 +236,7 @@ public class LatLonTest {
      * Test {@link LatLon#isValid}
      */
     @Test
-    public void testIsValid() {
+    void testIsValid() {
         assertTrue(LatLon.ZERO.isValid());
         assertTrue(LatLon.NORTH_POLE.isValid());
         assertTrue(LatLon.SOUTH_POLE.isValid());
@@ -251,7 +251,7 @@ public class LatLonTest {
      * Test {@link LatLon#isWithin}
      */
     @Test
-    public void testIsWithin() {
+    void testIsWithin() {
         assertTrue(LatLon.ZERO.isWithin(new Bounds(LatLon.ZERO)));
         assertFalse(LatLon.ZERO.isWithin(new Bounds(LatLon.NORTH_POLE)));
     }
@@ -260,7 +260,7 @@ public class LatLonTest {
      * Test {@link LatLon#getCenter(LatLon)}
      */
     @Test
-    public void testGetCenter() {
+    void testGetCenter() {
         LatLon ll1 = new LatLon(0, 0);
         LatLon ll2 = new LatLon(30, 60);
         LatLon ll3 = new LatLon(-70, -40);

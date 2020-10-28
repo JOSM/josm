@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.gpx;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -27,12 +27,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link GpxDrawHelper} class.
  */
-public class GpxDrawHelperTest {
+class GpxDrawHelperTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -43,7 +43,7 @@ public class GpxDrawHelperTest {
      * @throws SAXException if any SAX error occurs
      */
     @Test
-    public void testTicket12312() throws FileNotFoundException, IOException, SAXException {
+    void testTicket12312() throws FileNotFoundException, IOException, SAXException {
         final Map<String, String> prefs = new HashMap<String, String>() {{
             put("colormode.dynamic-range", "true");
             put("colormode", Integer.toString(ColorMode.VELOCITY.toIndex()));
@@ -59,7 +59,7 @@ public class GpxDrawHelperTest {
      * @throws SAXException if any SAX error occurs
      */
     @Test
-    public void testNone() throws IOException, SAXException {
+    void testNone() throws IOException, SAXException {
         final List<String> colors = calculateColors("nodist/data/2094047.gpx", Collections.emptyMap(), 10);
         assertEquals("[#000000, #000000, #000000, #000000, #000000, #000000, #000000, #000000, #000000, #000000]", colors.toString());
     }
@@ -71,7 +71,7 @@ public class GpxDrawHelperTest {
      * @throws SAXException if any SAX error occurs
      */
     @Test
-    public void testVelocity() throws IOException, SAXException {
+    void testVelocity() throws IOException, SAXException {
         final Map<String, String> prefs = Collections.singletonMap("colormode", Integer.toString(ColorMode.VELOCITY.toIndex()));
         final List<String> colors = calculateColors("nodist/data/2094047.gpx", prefs, 10);
         assertEquals("[#000000, #FFAD00, #FFA800, #FFA800, #FF9E00, #FF9400, #FF7000, #FF7000, #FF8000, #FF9400]", colors.toString());
@@ -84,7 +84,7 @@ public class GpxDrawHelperTest {
      * @throws SAXException if any SAX error occurs
      */
     @Test
-    public void testVelocityDynamic() throws IOException, SAXException {
+    void testVelocityDynamic() throws IOException, SAXException {
         final Map<String, String> prefs = new HashMap<String, String>() {{
             put("colormode.dynamic-range", "true");
             put("colormode", Integer.toString(ColorMode.VELOCITY.toIndex()));
@@ -100,7 +100,7 @@ public class GpxDrawHelperTest {
      * @throws SAXException if any SAX error occurs
      */
     @Test
-    public void testDirection() throws IOException, SAXException {
+    void testDirection() throws IOException, SAXException {
         final Map<String, String> prefs = Collections.singletonMap("colormode", Integer.toString(ColorMode.DIRECTION.toIndex()));
         final List<String> colors = calculateColors("nodist/data/2094047.gpx", prefs, 10);
         assertEquals("[#000000, #EAEC25, #EDEA26, #EDE525, #ECD322, #EBB81D, #E85A0D, #E73708, #E84D0B, #EA8A15]", colors.toString());
@@ -113,7 +113,7 @@ public class GpxDrawHelperTest {
      * @throws SAXException if any SAX error occurs
      */
     @Test
-    public void testTime() throws IOException, SAXException {
+    void testTime() throws IOException, SAXException {
         final Map<String, String> prefs = Collections.singletonMap("colormode", Integer.toString(ColorMode.TIME.toIndex()));
         final List<String> colors = calculateColors("nodist/data/2094047.gpx", prefs, 10);
         assertEquals("[#000000, #FF0000, #FF0000, #FF0500, #FF0500, #FF0A00, #FF0A00, #FF1F00, #FF2E00, #FF3300]", colors.toString());

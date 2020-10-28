@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.util.Arrays;
@@ -16,8 +16,8 @@ import java.util.function.Supplier;
 
 import javax.swing.JOptionPane;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.io.UploadDialog.UploadAction;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
@@ -30,21 +30,18 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link UploadDialog} class.
  */
-public class UploadDialogTest {
+class UploadDialogTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     private static class MockUploadDialog extends JOptionPane implements IUploadDialog {
         private final String source;
         private final String comment;
-
-        public int handleMissingCommentCalls;
-        public int handleMissingSourceCalls;
 
         MockUploadDialog(final String comment, final String source) {
             this.source = source;
@@ -63,12 +60,10 @@ public class UploadDialogTest {
 
         @Override
         public void handleMissingSource() {
-            this.handleMissingSourceCalls += 1;
         }
 
         @Override
         public void handleMissingComment() {
-            this.handleMissingCommentCalls += 1;
         }
 
         @Override
@@ -106,7 +101,7 @@ public class UploadDialogTest {
      * Test of {@link UploadDialog.CancelAction} class.
      */
     @Test
-    public void testCancelAction() {
+    void testCancelAction() {
         if (GraphicsEnvironment.isHeadless()) {
             TestUtils.assumeWorkingJMockit();
             new WindowMocker();
@@ -119,7 +114,7 @@ public class UploadDialogTest {
      * Test of {@link UploadDialog.UploadAction#isUploadCommentTooShort} method.
      */
     @Test
-    public void testIsUploadCommentTooShort() {
+    void testIsUploadCommentTooShort() {
         assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort(""));
         assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort("test"));
         assertTrue(UploadDialog.UploadAction.isUploadCommentTooShort("测试"));
@@ -146,7 +141,7 @@ public class UploadDialogTest {
      * Test of {@link UploadDialog#getLastChangesetCommentFromHistory} method.
      */
     @Test
-    public void testGetLastChangesetCommentFromHistory() {
+    void testGetLastChangesetCommentFromHistory() {
         doTestGetLastChangesetTagFromHistory(
                 BasicUploadSettingsPanel.HISTORY_KEY,
                 UploadDialog::getLastChangesetCommentFromHistory,
@@ -157,7 +152,7 @@ public class UploadDialogTest {
      * Test of {@link UploadDialog#getLastChangesetSourceFromHistory} method.
      */
     @Test
-    public void testGetLastChangesetSourceFromHistory() {
+    void testGetLastChangesetSourceFromHistory() {
         doTestGetLastChangesetTagFromHistory(
                 BasicUploadSettingsPanel.SOURCE_HISTORY_KEY,
                 UploadDialog::getLastChangesetSourceFromHistory,
@@ -195,7 +190,7 @@ public class UploadDialogTest {
      * Test of {@link UploadDialog.UploadAction#validateUploadTag} method.
      */
     @Test
-    public void testValidateUploadTag() {
+    void testValidateUploadTag() {
         doTestValidateUploadTag("upload.comment");
         doTestValidateUploadTag("upload.source");
     }

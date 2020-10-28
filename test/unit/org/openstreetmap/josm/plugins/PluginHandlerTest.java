@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,8 +16,8 @@ import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferenceTest;
@@ -34,12 +34,12 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Unit tests of {@link PluginHandler} class.
  */
-public class PluginHandlerTest {
+class PluginHandlerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -47,7 +47,7 @@ public class PluginHandlerTest {
      * Unit test of methods {@link DeprecatedPlugin#equals} and {@link DeprecatedPlugin#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(DeprecatedPlugin.class).usingGetClass().verify();
     }
@@ -56,7 +56,7 @@ public class PluginHandlerTest {
      * Unit test of {@link PluginHandler#buildListOfPluginsToLoad}.
      */
     @Test
-    public void testBuildListOfPluginsToLoad() {
+    void testBuildListOfPluginsToLoad() {
         TestUtils.assumeWorkingJMockit();
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
                 PluginHandler.UNMAINTAINED_PLUGINS.stream().collect(
@@ -99,7 +99,7 @@ public class PluginHandlerTest {
      * Unit test of {@link PluginHandler#filterDeprecatedPlugins}.
      */
     @Test
-    public void testFilterDeprecatedPlugins() {
+    void testFilterDeprecatedPlugins() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
             Collections.singletonMap(
@@ -124,7 +124,7 @@ public class PluginHandlerTest {
      * Unit test of {@link PluginHandler#filterUnmaintainedPlugins}.
      */
     @Test
-    public void testFilterUnmaintainedPlugins() {
+    void testFilterUnmaintainedPlugins() {
         TestUtils.assumeWorkingJMockit();
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(
             Collections.singletonMap(
@@ -151,7 +151,7 @@ public class PluginHandlerTest {
      * @throws PluginException if an error occurs
      */
     @Test
-    public void testPluginInformationAction() throws PluginException {
+    void testPluginInformationAction() throws PluginException {
         TestUtils.assumeWorkingJMockit();
         final String expectedText = "Ant-Version: Apache Ant 1.9.6\n" +
             "Author: Don-vip\n" +

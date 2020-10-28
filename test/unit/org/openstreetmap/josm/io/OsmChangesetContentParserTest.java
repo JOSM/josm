@@ -1,18 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationType;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -30,12 +30,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link OsmChangesetContentParser}.
  */
-public class OsmChangesetContentParserTest {
+class OsmChangesetContentParserTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -53,7 +53,7 @@ public class OsmChangesetContentParserTest {
      */
     @Test
     @SuppressFBWarnings(value = "NP_NULL_PARAM_DEREF_NONVIRTUAL")
-    public void test_Constructor() {
+    void test_Constructor() {
 
         // should be OK
         new OsmChangesetContentParser(new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)));
@@ -72,7 +72,7 @@ public class OsmChangesetContentParserTest {
      * @throws XmlParsingException never
      */
     @Test
-    public void test_parse_arguments() throws XmlParsingException {
+    void test_parse_arguments() throws XmlParsingException {
         OsmChangesetContentParser parser;
 
         String doc = "<osmChange version=\"0.6\" generator=\"OpenStreetMap server\"></osmChange>";
@@ -95,7 +95,7 @@ public class OsmChangesetContentParserTest {
      * @throws XmlParsingException never
      */
     @Test
-    public void test_OK_OneCreatedNode() throws XmlParsingException {
+    void test_OK_OneCreatedNode() throws XmlParsingException {
         OsmChangesetContentParser parser;
 
         String doc =
@@ -125,7 +125,7 @@ public class OsmChangesetContentParserTest {
      * @throws XmlParsingException never
      */
     @Test
-    public void test_OK_OneUpdatedNode() throws XmlParsingException {
+    void test_OK_OneUpdatedNode() throws XmlParsingException {
         OsmChangesetContentParser parser;
 
         String doc =
@@ -155,7 +155,7 @@ public class OsmChangesetContentParserTest {
      * @throws XmlParsingException never
      */
     @Test
-    public void test_OK_OneDeletedNode() throws XmlParsingException {
+    void test_OK_OneDeletedNode() throws XmlParsingException {
         OsmChangesetContentParser parser;
 
         String doc =
@@ -185,7 +185,7 @@ public class OsmChangesetContentParserTest {
      * @throws XmlParsingException never
      */
     @Test
-    public void test_OK_ComplexTestCase() throws XmlParsingException {
+    void test_OK_ComplexTestCase() throws XmlParsingException {
         OsmChangesetContentParser parser;
 
         String doc =

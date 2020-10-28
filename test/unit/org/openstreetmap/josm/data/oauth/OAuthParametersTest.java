@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.oauth;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -18,12 +18,12 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Unit tests for class {@link OAuthParameters}.
  */
-public class OAuthParametersTest {
+class OAuthParametersTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -32,7 +32,7 @@ public class OAuthParametersTest {
      */
     @Test
     @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
-    public void testCreateDefault() {
+    void testCreateDefault() {
         OAuthParameters def = OAuthParameters.createDefault();
         assertNotNull(def);
         assertEquals(def, OAuthParameters.createDefault(Config.getUrls().getDefaultOsmApiUrl()));
@@ -49,7 +49,7 @@ public class OAuthParametersTest {
      * Unit test of methods {@link OAuthParameters#equals} and {@link OAuthParameters#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(OAuthParameters.class).usingGetClass().verify();
     }

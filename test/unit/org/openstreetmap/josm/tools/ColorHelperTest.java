@@ -1,23 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.awt.Color;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for class {@link ColorHelper}.
  */
-public class ColorHelperTest {
+class ColorHelperTest {
 
     /**
      * Unit test of method {@link ColorHelper#html2color}.
      */
     @Test
-    public void testHtml2color() {
+    void testHtml2color() {
         assertNull(ColorHelper.html2color(""));
         assertNull(ColorHelper.html2color("xyz"));
         assertEquals(Color.CYAN, ColorHelper.html2color("0ff"));
@@ -32,7 +32,7 @@ public class ColorHelperTest {
      * Unit test of method {@link ColorHelper#color2html}.
      */
     @Test
-    public void testColor2html() {
+    void testColor2html() {
         assertNull(ColorHelper.color2html(null));
         assertEquals("#FF0000", ColorHelper.color2html(Color.RED));
         assertEquals("#00FFFF", ColorHelper.color2html(Color.CYAN));
@@ -45,7 +45,7 @@ public class ColorHelperTest {
      * Unit test of method {@link ColorHelper#getForegroundColor}.
      */
     @Test
-    public void testGetForegroundColor() {
+    void testGetForegroundColor() {
         assertNull(ColorHelper.getForegroundColor(null));
         assertEquals(Color.WHITE, ColorHelper.getForegroundColor(Color.BLACK));
         assertEquals(Color.WHITE, ColorHelper.getForegroundColor(Color.DARK_GRAY));
@@ -58,7 +58,7 @@ public class ColorHelperTest {
      * Test of {@link ColorHelper#float2int}
      */
     @Test
-    public void testColorFloat2int() {
+    void testColorFloat2int() {
         assertNull(ColorHelper.float2int(null));
         assertEquals(255, (int) ColorHelper.float2int(-1.0f));
         assertEquals(0, (int) ColorHelper.float2int(-0.0f));
@@ -73,7 +73,7 @@ public class ColorHelperTest {
      * Test of {@link ColorHelper#int2float}
      */
     @Test
-    public void testColorInt2float() {
+    void testColorInt2float() {
         assertNull(ColorHelper.int2float(null));
         assertEquals(1.0f, ColorHelper.int2float(-1), 1e-3);
         assertEquals(0.0f, ColorHelper.int2float(0), 1e-3);
@@ -88,7 +88,7 @@ public class ColorHelperTest {
      * Test of {@link ColorHelper#alphaMultiply}
      */
     @Test
-    public void testAlphaMultiply() {
+    void testAlphaMultiply() {
         final Color color = new Color(0x12345678, true);
         assertEquals(new Color(0x12345678, true), ColorHelper.alphaMultiply(color, 1f));
         assertEquals(new Color(0x24345678, true), ColorHelper.alphaMultiply(color, 2f));
@@ -98,7 +98,7 @@ public class ColorHelperTest {
      * Test of {@link ColorHelper#complement}
      */
     @Test
-    public void testComplement() {
+    void testComplement() {
         assertEquals(Color.cyan, ColorHelper.complement(Color.red));
         assertEquals(Color.red, ColorHelper.complement(Color.cyan));
         assertEquals(Color.magenta, ColorHelper.complement(Color.green));

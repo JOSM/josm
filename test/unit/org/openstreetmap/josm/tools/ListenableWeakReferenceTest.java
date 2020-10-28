@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -18,11 +18,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Michael Zangl
  * @since 12181
  */
-public class ListenableWeakReferenceTest {
+class ListenableWeakReferenceTest {
     /**
      * Default test rules.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
     private Object object;
@@ -33,7 +33,7 @@ public class ListenableWeakReferenceTest {
      * @throws InterruptedException never
      */
     @Test
-    public void testOnDereference() throws InterruptedException {
+    void testOnDereference() throws InterruptedException {
         object = new Object();
         called = false;
         ListenableWeakReference<Object> weak = new ListenableWeakReference<>(object, () -> called = true);

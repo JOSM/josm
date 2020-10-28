@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,10 +14,10 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore.TrustedCertificateEntry;
 import java.util.stream.Collectors;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -31,7 +31,7 @@ import mockit.MockUp;
 /**
  * Unit tests for Remote Control
  */
-public class RemoteControlTest {
+class RemoteControlTest {
 
     private String httpBase;
 
@@ -45,7 +45,7 @@ public class RemoteControlTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().https().assertionsInEDT();
 
@@ -53,7 +53,7 @@ public class RemoteControlTest {
      * Starts Remote control before testing requests.
      * @throws GeneralSecurityException if a security error occurs
      */
-    @Before
+    @BeforeEach
     public void setUp() throws GeneralSecurityException {
         if (PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR"))) {
             // appveyor doesn't like us tinkering with the root keystore, so mock this out
@@ -68,7 +68,7 @@ public class RemoteControlTest {
     /**
      * Stops Remote control after testing requests.
      */
-    @After
+    @AfterEach
     public void tearDown() {
         RemoteControl.stop();
     }
@@ -78,7 +78,7 @@ public class RemoteControlTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testHttpListOfCommands() throws Exception {
+    void testHttpListOfCommands() throws Exception {
         testListOfCommands(httpBase);
     }
 

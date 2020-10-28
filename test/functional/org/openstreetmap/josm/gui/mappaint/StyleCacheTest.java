@@ -1,7 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,12 +12,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.IdentityHashMap;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -35,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Test {@link StyleCache}.
  */
-public class StyleCacheTest {
+class StyleCacheTest {
 
     private static final int IMG_WIDTH = 1400;
     private static final int IMG_HEIGHT = 1050;
@@ -49,7 +50,7 @@ public class StyleCacheTest {
     /**
      * The test rules used for this test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection().mapStyles().timeout(60000);
 
@@ -57,7 +58,7 @@ public class StyleCacheTest {
      * Load the test data that is required.
      * @throws Exception If an error occurred during load.
      */
-    @BeforeClass
+    @BeforeAll
     public static void load() throws Exception {
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
@@ -74,7 +75,7 @@ public class StyleCacheTest {
      * <p>
      * Since we are running junit in non-forked mode, we don't know when this test will not be referenced any more.
      */
-    @AfterClass
+    @AfterAll
     public static void unload() {
         g = null;
         img = null;
@@ -86,7 +87,7 @@ public class StyleCacheTest {
     /**
      * Create the temporary graphics
      */
-    @Before
+    @BeforeEach
     public void loadGraphicComponents() {
         g = (Graphics2D) img.getGraphics();
         g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
@@ -109,7 +110,7 @@ public class StyleCacheTest {
      * this test.
      */
     @Test
-    public void testStyleCacheInternPool() {
+    void testStyleCacheInternPool() {
         MapPaintStyles.getStyles().clearCached();
         StyleCache.clearStyleCachePool();
         Bounds bounds = new Bounds(53.56, 13.25, 53.57, 13.26);
@@ -129,7 +130,7 @@ public class StyleCacheTest {
                         System.err.println(s.url + " active:" + s.active);
                     }
                 }
-                assertEquals("intern pool size", internPoolSize.intValue(), newInternPoolSize);
+                assertEquals(internPoolSize.intValue(), newInternPoolSize, "intern pool size");
             }
         }
     }
@@ -143,7 +144,7 @@ public class StyleCacheTest {
      * the instances using {@code A == B} identity.
      */
     @Test
-    public void testStyleCacheInternPool2() {
+    void testStyleCacheInternPool2() {
         StyleCache.clearStyleCachePool();
         Bounds bounds = new Bounds(53.56, 13.25, 53.57, 13.26);
         Rendering visitor = new StyledMapRenderer(g, nc, false);
@@ -158,7 +159,7 @@ public class StyleCacheTest {
                 noPrimitives++;
                 Pair<StyleElementList, Range> p = osm.getCachedStyle().getWithRange(nc.getDist100Pixel(), false);
                 StyleElementList sel = p.a;
-                Assert.assertNotNull(sel);
+                assertNotNull(sel);
                 Integer k = counter.get(sel);
                 if (k == null) {
                     k = 0;
@@ -167,11 +168,9 @@ public class StyleCacheTest {
             }
         }
         int EXPECTED_NO_PRIMITIVES = 4294; // needs to be updated if data file or bbox changes
-        Assert.assertEquals(
-                "The number of rendered primitives should be " + EXPECTED_NO_PRIMITIVES,
-                EXPECTED_NO_PRIMITIVES, noPrimitives);
-        Assert.assertTrue(
-                "Too many StyleElementList instances, they should be shared using the StyleCache",
-                counter.size() < 100);
+        assertEquals(EXPECTED_NO_PRIMITIVES, noPrimitives,
+                "The number of rendered primitives should be " + EXPECTED_NO_PRIMITIVES);
+        assertTrue(counter.size() < 100,
+                "Too many StyleElementList instances, they should be shared using the StyleCache");
     }
 }

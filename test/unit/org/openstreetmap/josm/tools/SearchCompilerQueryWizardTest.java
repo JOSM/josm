@@ -1,11 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -13,11 +14,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link SearchCompilerQueryWizard} class.
  */
-public class SearchCompilerQueryWizardTest {
+class SearchCompilerQueryWizardTest {
     /**
      * Base test environment is enough
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().i18n("de");
 
@@ -40,7 +41,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code key=value}.
      */
     @Test
-    public void testKeyValue() {
+    void testKeyValue() {
         assertQueryEquals("  nwr[\"amenity\"=\"drinking_water\"];\n", "amenity=drinking_water");
         assertQueryEquals("  nwr[\"amenity\"];\n", "amenity=*");
     }
@@ -49,7 +50,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code key!=value} and {@code key<>value}.
      */
     @Test
-    public void testKeyNotValue() {
+    void testKeyNotValue() {
         assertQueryEquals("  nwr[\"amenity\"!=\"drinking_water\"];\n", "-amenity=drinking_water");
         assertQueryEquals("  nwr[!\"amenity\"];\n", "-amenity=*");
     }
@@ -58,7 +59,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code key~value} and similar.
      */
     @Test
-    public void testKeyLikeValue() {
+    void testKeyLikeValue() {
         assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~bar");
         assertQueryEquals("  nwr[\"foo\"~\"bar\"];\n", "foo~/bar/");
         // case insensitive
@@ -72,7 +73,7 @@ public class SearchCompilerQueryWizardTest {
      * Test OSM boolean true/false.
      */
     @Test
-    public void testOsmBoolean() {
+    void testOsmBoolean() {
         assertQueryEquals("  nwr[\"highway\"][\"oneway\"~\"true|yes|1|on\"];\n", "highway=* AND oneway?");
         assertQueryEquals("  nwr[\"highway\"][\"oneway\"~\"false|no|0|off\"];\n", "highway=* AND -oneway?");
     }
@@ -81,7 +82,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code foo=bar and baz=42}.
      */
     @Test
-    public void testBooleanAnd() {
+    void testBooleanAnd() {
         assertQueryEquals("  nwr[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n", "foo=bar and baz=42");
         assertQueryEquals("  nwr[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n", "foo=bar && baz=42");
         assertQueryEquals("  nwr[\"foo\"=\"bar\"][\"baz\"=\"42\"];\n", "foo=bar & baz=42");
@@ -91,7 +92,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code foo=bar or baz=42}.
      */
     @Test
-    public void testBooleanOr() {
+    void testBooleanOr() {
         assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n  nwr[\"baz\"=\"42\"];\n", "foo=bar or baz=42");
         assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n  nwr[\"baz\"=\"42\"];\n", "foo=bar | baz=42");
     }
@@ -100,7 +101,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code (foo=* or bar=*) and (asd=* or fasd=*)}.
      */
     @Test
-    public void testBoolean() {
+    void testBoolean() {
         assertQueryEquals("" +
                 "  nwr[\"foo\"][\"baz1\"];\n" +
                 "  nwr[\"foo\"][\"baz2\"];\n" +
@@ -117,7 +118,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code foo=bar and (type:node or type:way)}.
      */
     @Test
-    public void testType() {
+    void testType() {
         assertQueryEquals("  node[\"foo\"=\"bar\"];\n  way[\"foo\"=\"bar\"];\n", "foo=bar and (type:node or type:way)");
     }
 
@@ -125,7 +126,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code user:foo or uid:42}.
      */
     @Test
-    public void testUser() {
+    void testUser() {
         assertQueryEquals("  nwr(user:\"foo\");\n  nwr(uid:42);\n", "user:foo or user:42");
     }
 
@@ -133,7 +134,7 @@ public class SearchCompilerQueryWizardTest {
      * Test {@code foo=bar and (type:node or type:way)}.
      */
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         assertQueryEquals("  way[\"foo\"~\"^$\"];\n", "foo=\"\" and type:way");
     }
 
@@ -141,7 +142,7 @@ public class SearchCompilerQueryWizardTest {
      * Test geocodeArea.
      */
     @Test
-    public void testInArea() {
+    void testInArea() {
         String query = constructQuery("foo=bar | foo=baz in Innsbruck");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
@@ -178,7 +179,7 @@ public class SearchCompilerQueryWizardTest {
      * Test geocodeArea.
      */
     @Test
-    public void testAroundArea() {
+    void testAroundArea() {
         final String query = constructQuery("foo=bar | foo=baz around \"Sankt Sigmund im Sellrain\"");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
@@ -195,7 +196,7 @@ public class SearchCompilerQueryWizardTest {
      * Test global query.
      */
     @Test
-    public void testGlobal() {
+    void testGlobal() {
         final String query = constructQuery("foo=bar global");
         assertEquals("" +
                 "[out:xml][timeout:90];\n" +
@@ -210,7 +211,7 @@ public class SearchCompilerQueryWizardTest {
      * Test "in bbox" query.
      */
     @Test
-    public void testInBbox() {
+    void testInBbox() {
         assertQueryEquals("  nwr[\"foo\"=\"bar\"];\n", "foo=bar IN BBOX");
     }
 
@@ -218,24 +219,24 @@ public class SearchCompilerQueryWizardTest {
      * Test building an Overpass query based on a preset name.
      */
     @Test
-    @Ignore("preset handling not implemented")
-    public void testPreset() {
+    @Disabled("preset handling not implemented")
+    void testPreset() {
         assertQueryEquals("  nwr[\"amenity\"=\"hospital\"];\n", "Hospital");
     }
 
     /**
      * Test erroneous value.
      */
-    @Test(expected = UncheckedParseException.class)
-    public void testErroneous() {
-        constructQuery("-(foo or bar)");
+    @Test
+    void testErroneous() {
+        assertThrows(UncheckedParseException.class, () -> constructQuery("-(foo or bar)"));
     }
 
     /**
      * Test for ticket <a href="https://josm.openstreetmap.de/ticket/19151>#19151</a>
      */
     @Test
-    public void testTicket19151() {
+    void testTicket19151() {
         assertQueryEquals("  relation[\"type\"=\"multipolygon\"][!\"landuse\"][!\"area:highway\"];\n",
                 "type:relation and type=multipolygon and -landuse=* and -\"area:highway\"=*");
     }

@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command.conflict;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -27,21 +27,21 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link CoordinateConflictResolveCommand} class.
  */
-public class CoordinateConflictResolveCommandTest {
+class CoordinateConflictResolveCommandTest {
 
     private CommandTestData testData;
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         testData = new CommandTestData();
     }
@@ -54,7 +54,7 @@ public class CoordinateConflictResolveCommandTest {
      * Unit test of {@code CoordinateConflictResolveCommand#executeCommand} and {@code CoordinateConflictResolveCommand#undoCommand} methods.
      */
     @Test
-    public void testExecuteKeepMineUndoCommand() {
+    void testExecuteKeepMineUndoCommand() {
         Conflict<Node> conflict = createConflict();
         CoordinateConflictResolveCommand cmd = new CoordinateConflictResolveCommand(conflict, MergeDecisionType.KEEP_MINE);
         assertTrue(cmd.executeCommand());
@@ -67,7 +67,7 @@ public class CoordinateConflictResolveCommandTest {
      * Unit test of {@code CoordinateConflictResolveCommand#executeCommand} and {@code CoordinateConflictResolveCommand#undoCommand} methods.
      */
     @Test
-    public void testExecuteKeepTheirUndoCommand() {
+    void testExecuteKeepTheirUndoCommand() {
         Conflict<Node> conflict = createConflict();
         CoordinateConflictResolveCommand cmd = new CoordinateConflictResolveCommand(conflict, MergeDecisionType.KEEP_THEIR);
         assertTrue(cmd.executeCommand());
@@ -80,7 +80,7 @@ public class CoordinateConflictResolveCommandTest {
      * Unit test of {@code CoordinateConflictResolveCommand#getDescriptionIcon} method.
      */
     @Test
-    public void testGetDescriptionIcon() {
+    void testGetDescriptionIcon() {
         Conflict<Node> conflict = createConflict();
         assertNotNull(new CoordinateConflictResolveCommand(conflict, null).getDescriptionIcon());
     }
@@ -89,7 +89,7 @@ public class CoordinateConflictResolveCommandTest {
      * Unit test of methods {@link CoordinateConflictResolveCommand#equals} and {@link CoordinateConflictResolveCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(CoordinateConflictResolveCommand.class).usingGetClass()
             .withPrefabValues(Conflict.class,

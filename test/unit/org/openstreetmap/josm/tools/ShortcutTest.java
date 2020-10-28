@@ -1,26 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.KeyStroke;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
 /**
  * Unit tests of {@link Shortcut} class.
  */
-public class ShortcutTest {
+class ShortcutTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -29,7 +29,7 @@ public class ShortcutTest {
      * Test method for {@code Shortcut#makeTooltip}
      */
     @Test
-    public void testMakeTooltip() {
+    void testMakeTooltip() {
         final String tooltip = Shortcut.makeTooltip("Foo Bar", KeyStroke.getKeyStroke(KeyEvent.VK_J, InputEvent.SHIFT_DOWN_MASK));
         if (Platform.determinePlatform() == Platform.OSX) {
             assertEquals("Foo Bar (⇧+J)", tooltip);

@@ -21,14 +21,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.validation.routines.DomainValidator.ArrayType;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -37,14 +37,14 @@ import org.openstreetmap.josm.tools.Logging;
  *
  * @version $Revision: 1741724 $
  */
-public class DomainValidatorTest {
+class DomainValidatorTest {
 
     private DomainValidator validator;
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         validator = DomainValidator.getInstance();
         DomainValidator.clearTLDOverrides(); // N.B. this clears the inUse flag, allowing overrides
@@ -54,7 +54,7 @@ public class DomainValidatorTest {
      * Test valid domains.
      */
     @Test
-    public void testValidDomains() {
+    void testValidDomains() {
         assertTrue("apache.org should validate", validator.isValid("apache.org"));
         assertTrue("www.google.com should validate", validator.isValid("www.google.com"));
 
@@ -74,7 +74,7 @@ public class DomainValidatorTest {
      * Test invalid domains.
      */
     @Test
-    public void testInvalidDomains() {
+    void testInvalidDomains() {
         assertFalse("bare TLD .org shouldn't validate", validator.isValid(".org"));
         assertFalse("domain name with spaces shouldn't validate", validator.isValid(" apache.org "));
         assertFalse("domain name containing spaces shouldn't validate", validator.isValid("apa che.org"));
@@ -93,7 +93,7 @@ public class DomainValidatorTest {
      * Test top-level domains.
      */
     @Test
-    public void testTopLevelDomains() {
+    void testTopLevelDomains() {
         // infrastructure TLDs
         assertTrue(".arpa should validate as iTLD", validator.isValidInfrastructureTld(".arpa"));
         assertFalse(".com shouldn't validate as iTLD", validator.isValidInfrastructureTld(".com"));
@@ -120,7 +120,7 @@ public class DomainValidatorTest {
      * Test "allow local" parameter.
      */
     @Test
-    public void testAllowLocal() {
+    void testAllowLocal() {
        DomainValidator noLocal = DomainValidator.getInstance(false);
        DomainValidator allowLocal = DomainValidator.getInstance(true);
 
@@ -146,7 +146,7 @@ public class DomainValidatorTest {
      * Test IDN.
      */
     @Test
-    public void testIDN() {
+    void testIDN() {
        assertTrue("b\u00fccher.ch in IDN should validate", validator.isValid("www.xn--bcher-kva.ch"));
     }
 
@@ -154,7 +154,7 @@ public class DomainValidatorTest {
      * Test IDN with Java >= 6.
      */
     @Test
-    public void testIDNJava6OrLater() {
+    void testIDNJava6OrLater() {
         String version = System.getProperty("java.version");
         if (version.compareTo("1.6") < 0) {
             System.out.println("Cannot run Unicode IDN tests");
@@ -170,7 +170,7 @@ public class DomainValidatorTest {
      * RFC2396: domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
      */
     @Test
-    public void testRFC2396domainlabel() { // use fixed valid TLD
+    void testRFC2396domainlabel() { // use fixed valid TLD
         assertTrue("a.ch should validate", validator.isValid("a.ch"));
         assertTrue("9.ch should validate", validator.isValid("9.ch"));
         assertTrue("az.ch should validate", validator.isValid("az.ch"));
@@ -184,7 +184,7 @@ public class DomainValidatorTest {
      * RFC2396 toplabel = alpha | alpha *( alphanum | "-" ) alphanum
      */
     @Test
-    public void testRFC2396toplabel() {
+    void testRFC2396toplabel() {
         // These tests use non-existent TLDs so currently need to use a package protected method
         assertTrue("a.c (alpha) should validate", validator.isValidDomainSyntax("a.c"));
         assertTrue("a.cc (alpha alpha) should validate", validator.isValidDomainSyntax("a.cc"));
@@ -202,7 +202,7 @@ public class DomainValidatorTest {
      * rfc1123
      */
     @Test
-    public void testDomainNoDots() {
+    void testDomainNoDots() {
         assertTrue("a (alpha) should validate", validator.isValidDomainSyntax("a"));
         assertTrue("9 (alphanum) should validate", validator.isValidDomainSyntax("9"));
         assertTrue("c-z (alpha - alpha) should validate", validator.isValidDomainSyntax("c-z"));
@@ -216,7 +216,7 @@ public class DomainValidatorTest {
      * Non-regression test for VALIDATOR-297
      */
     @Test
-    public void testValidator297() {
+    void testValidator297() {
         assertTrue("xn--d1abbgf6aiiy.xn--p1ai should validate", validator.isValid("xn--d1abbgf6aiiy.xn--p1ai")); // This uses a valid TLD
      }
 
@@ -225,7 +225,7 @@ public class DomainValidatorTest {
      * labels are a max of 63 chars and domains 253
      */
     @Test
-    public void testValidator306() {
+    void testValidator306() {
         final String longString = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz0123456789A";
         assertEquals(63, longString.length()); // 26 * 2 + 11
 
@@ -250,7 +250,7 @@ public class DomainValidatorTest {
      *  Tests show that method incorrectly trims a trailing "." character
      */
     @Test
-    public void testUnicodeToASCII() {
+    void testUnicodeToASCII() {
         String[] asciidots = {
                 "",
                 ",",
@@ -288,7 +288,7 @@ public class DomainValidatorTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void test_INFRASTRUCTURE_TLDS_sortedAndLowerCase() throws Exception {
+    void test_INFRASTRUCTURE_TLDS_sortedAndLowerCase() throws Exception {
         final boolean sorted = isSortedLowerCase("INFRASTRUCTURE_TLDS");
         assertTrue(sorted);
     }
@@ -298,7 +298,7 @@ public class DomainValidatorTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void test_COUNTRY_CODE_TLDS_sortedAndLowerCase() throws Exception {
+    void test_COUNTRY_CODE_TLDS_sortedAndLowerCase() throws Exception {
         final boolean sorted = isSortedLowerCase("COUNTRY_CODE_TLDS");
         assertTrue(sorted);
     }
@@ -308,7 +308,7 @@ public class DomainValidatorTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void test_GENERIC_TLDS_sortedAndLowerCase() throws Exception {
+    void test_GENERIC_TLDS_sortedAndLowerCase() throws Exception {
         final boolean sorted = isSortedLowerCase("GENERIC_TLDS");
         assertTrue(sorted);
     }
@@ -318,7 +318,7 @@ public class DomainValidatorTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void test_LOCAL_TLDS_sortedAndLowerCase() throws Exception {
+    void test_LOCAL_TLDS_sortedAndLowerCase() throws Exception {
         final boolean sorted = isSortedLowerCase("LOCAL_TLDS");
         assertTrue(sorted);
     }
@@ -327,7 +327,7 @@ public class DomainValidatorTest {
      * Test enum visibility
      */
     @Test
-    public void testEnumIsPublic() {
+    void testEnumIsPublic() {
         assertTrue(Modifier.isPublic(DomainValidator.ArrayType.class.getModifiers()));
     }
 
@@ -335,7 +335,7 @@ public class DomainValidatorTest {
      * Test update base arrays
      */
     @Test
-    public void testUpdateBaseArrays() {
+    void testUpdateBaseArrays() {
         try {
             DomainValidator.updateTLDOverride(ArrayType.COUNTRY_CODE_RO, new String[]{"com"});
             fail("Expected IllegalArgumentException");
@@ -370,7 +370,7 @@ public class DomainValidatorTest {
      * Test get array.
      */
     @Test
-    public void testGetArray() {
+    void testGetArray() {
         assertNotNull(DomainValidator.getTLDEntries(ArrayType.COUNTRY_CODE_MINUS));
         assertNotNull(DomainValidator.getTLDEntries(ArrayType.COUNTRY_CODE_PLUS));
         assertNotNull(DomainValidator.getTLDEntries(ArrayType.GENERIC_MINUS));
@@ -385,7 +385,7 @@ public class DomainValidatorTest {
      * Test update country code.
      */
     @Test
-    public void testUpdateCountryCode() {
+    void testUpdateCountryCode() {
         assertFalse(validator.isValidCountryCodeTld("com")); // cannot be valid
         DomainValidator.updateTLDOverride(ArrayType.COUNTRY_CODE_PLUS, new String[]{"com"});
         assertTrue(validator.isValidCountryCodeTld("com")); // it is now!
@@ -403,7 +403,7 @@ public class DomainValidatorTest {
      * Test update generic.
      */
     @Test
-    public void testUpdateGeneric() {
+    void testUpdateGeneric() {
         assertFalse(validator.isValidGenericTld("ch")); // cannot be valid
         DomainValidator.updateTLDOverride(ArrayType.GENERIC_PLUS, new String[]{"ch"});
         assertTrue(validator.isValidGenericTld("ch")); // it is now!
@@ -421,7 +421,7 @@ public class DomainValidatorTest {
      * Test cannot update.
      */
     @Test
-    public void testCannotUpdate() {
+    void testCannotUpdate() {
         DomainValidator.updateTLDOverride(ArrayType.GENERIC_PLUS, new String[]{"ch"}); // OK
         DomainValidator dv = DomainValidator.getInstance();
         assertNotNull(dv);
@@ -483,7 +483,7 @@ public class DomainValidatorTest {
      * Unit test of {@link DomainValidator#getValidatorName}.
      */
     @Test
-    public void testValidatorName() {
+    void testValidatorName() {
         assertNull(DomainValidator.getInstance().getValidatorName());
     }
 }

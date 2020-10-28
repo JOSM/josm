@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.datatransfer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.awt.GraphicsEnvironment;
@@ -16,8 +16,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -27,7 +27,7 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
  * Basic tests for the clipboard utils class.
  * @author Michael Zangl
  */
-public class ClipboardUtilsTest {
+class ClipboardUtilsTest {
     private static final class ThrowIllegalStateClipboard extends Clipboard {
         private int failingAccesses = 3;
 
@@ -69,7 +69,7 @@ public class ClipboardUtilsTest {
     /**
      * No dependencies
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -77,7 +77,7 @@ public class ClipboardUtilsTest {
      * Test {@link ClipboardUtils#getClipboard()}
      */
     @Test
-    public void testGetClipboard() {
+    void testGetClipboard() {
         Clipboard c = ClipboardUtils.getClipboard();
         assertNotNull(c);
         assertSame(c, ClipboardUtils.getClipboard());
@@ -87,7 +87,7 @@ public class ClipboardUtilsTest {
      * Test {@link ClipboardUtils#copyString(String)} and {@link ClipboardUtils#getClipboardStringContent()}
      */
     @Test
-    public void testCopyPasteString() {
+    void testCopyPasteString() {
         ClipboardUtils.copyString("");
         assertEquals("", ClipboardUtils.getClipboardStringContent());
         ClipboardUtils.copyString("xxx\nx");
@@ -101,7 +101,7 @@ public class ClipboardUtilsTest {
      * Test that {@link ClipboardUtils#getClipboardContent(Clipboard)} handles illegal state exceptions
      */
     @Test
-    public void testGetContentIllegalState() {
+    void testGetContentIllegalState() {
         ThrowIllegalStateClipboard throwingClipboard = new ThrowIllegalStateClipboard("test");
 
         throwingClipboard.setContents(new StringSelection(""), null);
@@ -117,7 +117,7 @@ public class ClipboardUtilsTest {
      * Test that {@link ClipboardUtils#getSystemSelection()} works in headless mode.
      */
     @Test
-    public void testSystemSelectionDoesNotFail() {
+    void testSystemSelectionDoesNotFail() {
         assumeTrue(GraphicsEnvironment.isHeadless());
         assertNull(ClipboardUtils.getSystemSelection());
     }
@@ -127,7 +127,7 @@ public class ClipboardUtilsTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(ClipboardUtils.class);
     }
 }

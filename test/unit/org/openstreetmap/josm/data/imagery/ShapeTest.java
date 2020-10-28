@@ -1,22 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for class {@link Shape}.
  */
-public class ShapeTest {
+class ShapeTest {
 
     /**
      * Tests string conversion
      */
     @Test
-    public void test() {
+    void test() {
         Shape shape = new Shape();
         shape.addPoint("47.1", "11.1");
         shape.addPoint("47.2", "11.2");

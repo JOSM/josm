@@ -1,25 +1,25 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 
 /**
  * Unit tests for class {@link Version}.
  */
-public class VersionTest {
+class VersionTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -28,20 +28,20 @@ public class VersionTest {
      * Unit test of {@link Version#getAgentString}
      */
     @Test
-    public void testGetAgentString() {
+    void testGetAgentString() {
         Version version = new Version();
         version.initFromRevisionInfo(null);
         String v = version.getAgentString(false);
-        assertTrue(v, v.matches("JOSM/1\\.5 \\(UNKNOWN en\\)"));
+        assertTrue(v.matches("JOSM/1\\.5 \\(UNKNOWN en\\)"), v);
         v = version.getAgentString(true);
-        assertTrue(v, v.matches("JOSM/1\\.5 \\(UNKNOWN en\\).*"));
+        assertTrue(v.matches("JOSM/1\\.5 \\(UNKNOWN en\\).*"), v);
     }
 
     /**
      * Unit test of {@link Version#initFromRevisionInfo} - null case.
      */
     @Test
-    public void testInitFromRevisionInfoNull() {
+    void testInitFromRevisionInfoNull() {
         Version v = new Version();
         v.initFromRevisionInfo(null);
         assertEquals(Version.JOSM_UNKNOWN_VERSION, v.getVersion());
@@ -51,7 +51,7 @@ public class VersionTest {
      * Unit test of {@link Version#initFromRevisionInfo} - local build.
      */
     @Test
-    public void testInitFromRevisionInfoLocal() {
+    void testInitFromRevisionInfoLocal() {
         Version v = new Version();
         v.initFromRevisionInfo(new ByteArrayInputStream(("\n" +
             "Revision: 11885\n" +

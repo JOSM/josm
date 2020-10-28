@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -20,7 +20,7 @@ public class TMSLayerTest {
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection();
 
@@ -62,7 +62,7 @@ public class TMSLayerTest {
      * Unit test of {@link TMSLayer#TMSLayer}.
      */
     @Test
-    public void testTMSLayer() {
+    void testTMSLayer() {
         test(ImageryType.TMS, createTmsLayer());
         test(ImageryType.BING, createBingLayer());
         test(ImageryType.SCANEX, createScanexLayer());

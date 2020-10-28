@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.session;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -12,8 +12,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -32,12 +32,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for Session reading.
  */
-public class SessionReaderTest {
+class SessionReaderTest {
 
     /**
      * Setup tests.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
@@ -59,7 +59,7 @@ public class SessionReaderTest {
      * @throws IllegalDataException is the test file is considered as invalid
      */
     @Test
-    public void testReadEmpty() throws IOException, IllegalDataException {
+    void testReadEmpty() throws IOException, IllegalDataException {
         assertTrue(testRead("empty.jos").isEmpty());
         assertTrue(testRead("empty.joz").isEmpty());
     }
@@ -70,7 +70,7 @@ public class SessionReaderTest {
      * @throws IllegalDataException is the test file is considered as invalid
      */
     @Test
-    public void testReadOsm() throws IOException, IllegalDataException {
+    void testReadOsm() throws IOException, IllegalDataException {
         for (String file : new String[]{"osm.jos", "osm.joz"}) {
             List<Layer> layers = testRead(file);
             assertEquals(layers.size(), 1);
@@ -86,7 +86,7 @@ public class SessionReaderTest {
      * @throws IllegalDataException is the test file is considered as invalid
      */
     @Test
-    public void testReadGpx() throws IOException, IllegalDataException {
+    void testReadGpx() throws IOException, IllegalDataException {
         for (String file : new String[]{"gpx.jos", "gpx.joz", "nmea.jos"}) {
             List<Layer> layers = testRead(file);
             assertEquals(layers.size(), 1);
@@ -102,7 +102,7 @@ public class SessionReaderTest {
      * @throws IllegalDataException is the test file is considered as invalid
      */
     @Test
-    public void testReadGpxAndMarker() throws IOException, IllegalDataException {
+    void testReadGpxAndMarker() throws IOException, IllegalDataException {
         List<Layer> layers = testRead("gpx_markers.joz");
         assertEquals(layers.size(), 2);
         GpxLayer gpx = null;
@@ -126,7 +126,7 @@ public class SessionReaderTest {
      * @throws IllegalDataException is the test file is considered as invalid
      */
     @Test
-    public void testReadImage() throws IOException, IllegalDataException {
+    void testReadImage() throws IOException, IllegalDataException {
         final List<Layer> layers = testRead("bing.jos");
         assertEquals(layers.size(), 1);
         assertTrue(layers.get(0) instanceof ImageryLayer);
@@ -143,7 +143,7 @@ public class SessionReaderTest {
      * @throws IllegalDataException is the test file is considered as invalid
      */
     @Test
-    public void testReadNotes() throws IOException, IllegalDataException {
+    void testReadNotes() throws IOException, IllegalDataException {
         if (MainApplication.isDisplayingMapView()) {
             for (NoteLayer nl : MainApplication.getLayerManager().getLayersOfType(NoteLayer.class)) {
                 MainApplication.getLayerManager().removeLayer(nl);
@@ -162,7 +162,7 @@ public class SessionReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket17701() throws Exception {
+    void testTicket17701() throws Exception {
         try (InputStream in = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<josm-session version=\"0.1\">\n" +
                 "    <layers active=\"1\">\n" +

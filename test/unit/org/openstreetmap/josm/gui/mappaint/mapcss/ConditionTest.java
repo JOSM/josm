@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -23,11 +23,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This test universally tests all {@link Condition}s.
  * @author Michael Zangl
  */
-public class ConditionTest {
+class ConditionTest {
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
     private OsmPrimitive node0;
@@ -39,7 +39,7 @@ public class ConditionTest {
     /**
      * Set up some useful test data.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         node0 = OsmUtils.createPrimitive("n");
         node1 = OsmUtils.createPrimitive("n k1=v1 k2=v1 f1=0.2 r1=ababx c1=xya one=a;b");
@@ -52,7 +52,7 @@ public class ConditionTest {
      * Test {@link Op#EQ}.
      */
     @Test
-    public void testKeyValueEq() {
+    void testKeyValueEq() {
         Condition op = ConditionFactory.createKeyValueCondition("k1", "v1", Op.EQ, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
@@ -70,7 +70,7 @@ public class ConditionTest {
      * Test {@link Op#EQ} and interpetation as key
      */
     @Test
-    public void testKeyValueEqAsKey() {
+    void testKeyValueEqAsKey() {
         Condition op = ConditionFactory.createKeyValueCondition("k1", "k2", Op.EQ, Context.PRIMITIVE, true);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
@@ -86,7 +86,7 @@ public class ConditionTest {
      * Test {@link Op#NEQ}
      */
     @Test
-    public void testKeyValueNeq() {
+    void testKeyValueNeq() {
         Condition op = ConditionFactory.createKeyValueCondition("k1", "v1", Op.NEQ, Context.PRIMITIVE, false);
         assertTrue(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
@@ -99,7 +99,7 @@ public class ConditionTest {
      * Test {@link Op#GREATER_OR_EQUAL}
      */
     @Test
-    public void testKeyValueGreatherEq() {
+    void testKeyValueGreatherEq() {
         Condition op = ConditionFactory.createKeyValueCondition("f1", "0.2", Op.GREATER_OR_EQUAL, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
@@ -112,7 +112,7 @@ public class ConditionTest {
      * Test {@link Op#GREATER}
      */
     @Test
-    public void testKeyValueGreather() {
+    void testKeyValueGreather() {
         Condition op = ConditionFactory.createKeyValueCondition("f1", "0.2", Op.GREATER, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
@@ -125,7 +125,7 @@ public class ConditionTest {
      * Test {@link Op#LESS_OR_EQUAL}
      */
     @Test
-    public void testKeyValueLessEq() {
+    void testKeyValueLessEq() {
         Condition op = ConditionFactory.createKeyValueCondition("f1", "0.2", Op.LESS_OR_EQUAL, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
@@ -138,7 +138,7 @@ public class ConditionTest {
      * Test {@link Op#LESS}
      */
     @Test
-    public void testKeyValueLess() {
+    void testKeyValueLess() {
         Condition op = ConditionFactory.createKeyValueCondition("f1", "0.2", Op.LESS, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
@@ -151,7 +151,7 @@ public class ConditionTest {
      * Test {@link Op#REGEX}
      */
     @Test
-    public void testKeyValueRegex() {
+    void testKeyValueRegex() {
         Condition op = ConditionFactory.createKeyValueCondition("r1", "(ab){2}", Op.REGEX, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
@@ -164,7 +164,7 @@ public class ConditionTest {
      * Test {@link Op#NREGEX}
      */
     @Test
-    public void testKeyValueNregex() {
+    void testKeyValueNregex() {
         Condition op = ConditionFactory.createKeyValueCondition("r1", "(ab){2}", Op.NREGEX, Context.PRIMITIVE, false);
         assertTrue(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
@@ -177,7 +177,7 @@ public class ConditionTest {
      * Test {@link Op#ONE_OF}
      */
     @Test
-    public void testKeyValueOneOf() {
+    void testKeyValueOneOf() {
         Condition op = ConditionFactory.createKeyValueCondition("one", "a", Op.ONE_OF, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
@@ -190,7 +190,7 @@ public class ConditionTest {
      * Test {@link Op#BEGINS_WITH}
      */
     @Test
-    public void testKeyValueBeginsWith() {
+    void testKeyValueBeginsWith() {
         Condition op = ConditionFactory.createKeyValueCondition("c1", "xy", Op.BEGINS_WITH, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
@@ -203,7 +203,7 @@ public class ConditionTest {
      * Test {@link Op#ENDS_WITH}
      */
     @Test
-    public void testKeyValueEndsWith() {
+    void testKeyValueEndsWith() {
         Condition op = ConditionFactory.createKeyValueCondition("c1", "xy", Op.ENDS_WITH, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));
@@ -216,7 +216,7 @@ public class ConditionTest {
      * Test {@link Op#CONTAINS}
      */
     @Test
-    public void testKeyValueContains() {
+    void testKeyValueContains() {
         Condition op = ConditionFactory.createKeyValueCondition("c1", "xy", Op.CONTAINS, Context.PRIMITIVE, false);
         assertFalse(op.applies(genEnv(node0)));
         assertTrue(op.applies(genEnv(node1)));
@@ -229,7 +229,7 @@ public class ConditionTest {
      * Test of {@link ConditionFactory#createRegexpKeyRegexpValueCondition(String, String, Op)}
      */
     @Test
-    public void testRegexpKeyValueRegexpCondition() {
+    void testRegexpKeyValueRegexpCondition() {
         Condition op = ConditionFactory.createRegexpKeyRegexpValueCondition("^k", "\\da", Op.REGEX);
         assertFalse(op.applies(genEnv(node0)));
         assertFalse(op.applies(genEnv(node1)));

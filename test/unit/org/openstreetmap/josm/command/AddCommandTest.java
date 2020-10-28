@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -26,12 +26,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link AddCommand} class.
  */
-public class AddCommandTest {
+class AddCommandTest {
 
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
 
@@ -39,7 +39,7 @@ public class AddCommandTest {
      * Test if the add command is executed correctly and sets the modified flag.
      */
     @Test
-    public void testAdd() {
+    void testAdd() {
         DataSet ds = new DataSet();
         assertArrayEquals(new Object[0], ds.allPrimitives().toArray());
 
@@ -55,7 +55,7 @@ public class AddCommandTest {
      * Tests if the add command respects the data set.
      */
     @Test
-    public void testAddToLayer() {
+    void testAddToLayer() {
         DataSet ds1 = new DataSet();
         DataSet ds2 = new DataSet();
 
@@ -70,7 +70,7 @@ public class AddCommandTest {
      * Test {@link AddCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         Node osm = new Node(LatLon.ZERO);
         DataSet ds = new DataSet(osm);
 
@@ -85,7 +85,7 @@ public class AddCommandTest {
      * Test {@link AddCommand#getParticipatingPrimitives()}
      */
     @Test
-    public void testParticipatingPrimitives() {
+    void testParticipatingPrimitives() {
         Node osm = new Node(LatLon.ZERO);
 
         assertArrayEquals(new Object[] {osm}, new AddCommand(new DataSet(), osm).getParticipatingPrimitives().toArray());
@@ -95,7 +95,7 @@ public class AddCommandTest {
      * Tests {@link AddCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         Node osm = new Node(LatLon.ZERO);
 
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
@@ -111,7 +111,7 @@ public class AddCommandTest {
      * Test {@link AddCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         Node node = new Node(LatLon.ZERO);
         node.put("name", "xy");
         Way way = new Way();
@@ -130,7 +130,7 @@ public class AddCommandTest {
      * Unit test of methods {@link AddCommand#equals} and {@link AddCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(AddCommand.class).usingGetClass()
             .withPrefabValues(OsmPrimitive.class,

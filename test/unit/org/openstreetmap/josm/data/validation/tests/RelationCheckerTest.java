@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.data.osm.OsmUtils.createPrimitive;
 
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -22,11 +22,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link RelationChecker} class.
  */
-public class RelationCheckerTest {
+class RelationCheckerTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rule = new JOSMTestRules().presets();
 
@@ -47,7 +47,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testUnknownType() {
+    void testUnknownType() {
         Relation r = createRelation("type=foobar");
         r.addMember(new RelationMember("", new Way()));
         List<TestError> errors = testRelation(r);
@@ -57,14 +57,14 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         List<TestError> errors = testRelation(createRelation("type=multipolygon"));
         assertEquals(1, errors.size());
         assertEquals("Relation is empty", errors.get(0).getMessage());
     }
 
     @Test
-    public void testNormal() {
+    void testNormal() {
         Relation r = createRelation("type=multipolygon");
         r.addMember(new RelationMember("outer", new Way()));
         r.addMember(new RelationMember("inner", new Way()));
@@ -72,7 +72,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testOuter2() {
+    void testOuter2() {
         Relation r = createRelation("type=multipolygon");
         r.addMember(new RelationMember("outer", new Way()));
         r.addMember(new RelationMember("outer2", new Way()));
@@ -83,7 +83,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testRestrictionViaMissing() {
+    void testRestrictionViaMissing() {
         Relation r = createRelation("type=restriction");
         r.addMember(new RelationMember("from", new Way()));
         r.addMember(new RelationMember("to", new Way()));
@@ -94,7 +94,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testRestrictionViaRelation() {
+    void testRestrictionViaRelation() {
         Relation r = createRelation("type=restriction");
         r.addMember(new RelationMember("from", new Way()));
         r.addMember(new RelationMember("to", new Way()));
@@ -107,7 +107,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testRestrictionTwoFrom() {
+    void testRestrictionTwoFrom() {
         Relation r = createRelation("type=restriction");
         r.addMember(new RelationMember("from", new Way()));
         r.addMember(new RelationMember("from", new Way()));
@@ -120,7 +120,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testRestrictionEmpty() {
+    void testRestrictionEmpty() {
         Relation r = createRelation("type=restriction");
         r.addMember(new RelationMember("from", new Way()));
         r.addMember(new RelationMember("to", new Way()));
@@ -133,7 +133,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testPowerMemberExpression() {
+    void testPowerMemberExpression() {
         Relation r = createRelation("type=route route=power");
         r.addMember(new RelationMember("", new Way()));
 
@@ -144,7 +144,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testBuildingMemberExpression() {
+    void testBuildingMemberExpression() {
         Relation r = createRelation("type=building");
         r.addMember(new RelationMember("outline", new Way()));
         r.addMember(new RelationMember("part", new Way()));
@@ -160,7 +160,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testHikingRouteMembers() {
+    void testHikingRouteMembers() {
         Relation r = createRelation("type=route route=hiking");
         r.addMember(new RelationMember("", OsmUtils.createPrimitive("way highway=path")));
         r.addMember(new RelationMember("route", OsmUtils.createPrimitive("way highway=path"))); // fails
@@ -175,7 +175,7 @@ public class RelationCheckerTest {
     }
 
     @Test
-    public void testRouteMemberExpression() {
+    void testRouteMemberExpression() {
         Relation r = createRelation("type=route route=tram public_transport:version=2");
         r.addMember(new RelationMember("", createPrimitive("way railway=tram")));
         r.addMember(new RelationMember("stop", createPrimitive("node public_transport=stop_position tram=yes")));

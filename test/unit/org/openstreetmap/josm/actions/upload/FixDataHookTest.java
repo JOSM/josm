@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.upload;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.APIDataSet;
@@ -26,12 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link FixDataHook}.
  */
-public class FixDataHookTest {
+class FixDataHookTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main();
 
@@ -39,7 +39,7 @@ public class FixDataHookTest {
      * Test of {@link FixDataHook#checkUpload} method.
      */
     @Test
-    public void testCheckUpload() {
+    void testCheckUpload() {
         // Empty data set
         UndoRedoHandler.getInstance().clean();
         new FixDataHook().checkUpload(new APIDataSet());
@@ -84,7 +84,7 @@ public class FixDataHookTest {
         assertNotNull(prims);
         assertEquals(9, prims.size());
         for (OsmPrimitive o : Arrays.asList(w1, w2, w3, w4, w5, w6, w7, r1, r2)) {
-            assertTrue(o.toString(), prims.contains(o));
+            assertTrue(prims.contains(o), o.toString());
         }
         Collection<PseudoCommand> cmds = seq.getChildren();
         assertNotNull(cmds);

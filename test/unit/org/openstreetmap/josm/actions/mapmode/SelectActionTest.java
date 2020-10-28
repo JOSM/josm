@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.mapmode;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -11,8 +11,8 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.mapmode.SelectAction.Mode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction.SelectActionCursor;
@@ -33,7 +33,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link SelectAction}.
  */
-public class SelectActionTest {
+class SelectActionTest {
 
     boolean nodesMerged;
 
@@ -48,8 +48,7 @@ public class SelectActionTest {
         @Override
         public void mergeNodes(OsmDataLayer layer, Collection<Node> nodes,
                                Node targetLocationNode) {
-            assertSame(String.format("Should merge two nodes, %d found", nodes.size()),
-                       nodes.size(), 2);
+            assertSame(2, nodes.size(), String.format("Should merge two nodes, %d found", nodes.size()));
             nodesMerged = true;
         }
     }
@@ -57,7 +56,7 @@ public class SelectActionTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().main();
 
@@ -69,7 +68,7 @@ public class SelectActionTest {
      */
     @Test
     @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
-    public void testTicket10748() throws ReflectiveOperationException {
+    void testTicket10748() throws ReflectiveOperationException {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
@@ -124,13 +123,11 @@ public class SelectActionTest {
             action.mouseReleased(event);
 
             // As result of test, we must find a 2 nodes way, from EN(0, 0) to EN(100, 0)
-            assertTrue("Nodes are not merged", nodesMerged);
-            assertSame(String.format("Expect exactly one way, found %d%n", dataSet.getWays().size()),
-                       dataSet.getWays().size(), 1);
+            assertTrue(nodesMerged, "Nodes are not merged");
+            assertSame(1, dataSet.getWays().size(), String.format("Expect exactly one way, found %d%n", dataSet.getWays().size()));
             Way rw = dataSet.getWays().iterator().next();
-            assertFalse("Way shouldn't be deleted\n", rw.isDeleted());
-            assertSame(String.format("Way shouldn't have 2 nodes, %d found%n", w.getNodesCount()),
-                       rw.getNodesCount(), 2);
+            assertFalse(rw.isDeleted(), "Way shouldn't be deleted\n");
+            assertSame(2, rw.getNodesCount(), String.format("Way shouldn't have 2 nodes, %d found%n", w.getNodesCount()));
             Node r1 = rw.firstNode();
             Node r2 = rw.lastNode();
             if (r1.getEastNorth().east() > r2.getEastNorth().east()) {
@@ -138,10 +135,10 @@ public class SelectActionTest {
                 r1 = r2;
                 r2 = tmp;
             }
-            assertSame(String.format("East should be 0, found %f%n", r1.getEastNorth().east()),
-                       Double.compare(r1.getEastNorth().east(), 0), 0);
-            assertSame(String.format("East should be 100, found %f%n", r2.getEastNorth().east()),
-                       Double.compare(r2.getEastNorth().east(), 100), 0);
+            assertSame(0, Double.compare(r1.getEastNorth().east(), 0),
+                    String.format("East should be 0, found %f%n", r1.getEastNorth().east()));
+            assertSame(0, Double.compare(r2.getEastNorth().east(), 100),
+                    String.format("East should be 100, found %f%n", r2.getEastNorth().east()));
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             MainApplication.getLayerManager().removeLayer(layer);
@@ -152,7 +149,7 @@ public class SelectActionTest {
      * Unit test of {@link Mode} enum.
      */
     @Test
-    public void testEnumMode() {
+    void testEnumMode() {
         TestUtils.superficialEnumCodeCoverage(Mode.class);
     }
 
@@ -160,7 +157,7 @@ public class SelectActionTest {
      * Unit test of {@link SelectActionCursor} enum.
      */
     @Test
-    public void testEnumSelectActionCursor() {
+    void testEnumSelectActionCursor() {
         TestUtils.superficialEnumCodeCoverage(SelectActionCursor.class);
     }
 }

@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.bbox;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.bbox.SizeButton.AccessibleSizeButton;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -16,12 +16,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link SizeButton} class.
  */
-public class SizeButtonTest {
+class SizeButtonTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -29,7 +29,7 @@ public class SizeButtonTest {
      * Unit test of {@link SizeButton#SizeButton}.
      */
     @Test
-    public void testSizeButton() {
+    void testSizeButton() {
         SizeButton sb = new SizeButton(new SlippyMapBBoxChooser());
         sb.paint(TestUtils.newGraphics());
         AccessibleSizeButton asb = (AccessibleSizeButton) sb.getAccessibleContext();

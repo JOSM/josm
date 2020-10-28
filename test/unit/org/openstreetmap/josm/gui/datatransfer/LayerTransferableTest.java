@@ -1,17 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.datatransfer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.datatransfer.LayerTransferable.Data;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest;
@@ -23,7 +24,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
  * @author Michael Zangl
  * @since 10605
  */
-public class LayerTransferableTest {
+class LayerTransferableTest {
     private TestLayer layer1;
     private TestLayer layer2;
     private MainLayerManager manager;
@@ -31,7 +32,7 @@ public class LayerTransferableTest {
     /**
      * Set up test data
      */
-    @Before
+    @BeforeEach
     public void createTestData() {
         layer1 = new LayerManagerTest.TestLayer();
         layer2 = new LayerManagerTest.TestLayer();
@@ -44,7 +45,7 @@ public class LayerTransferableTest {
      * Test {@link LayerTransferable.Data}
      */
     @Test
-    public void testLayerData() {
+    void testLayerData() {
         Data data = new Data(manager, Arrays.<Layer>asList(layer1, layer2));
 
         // need to be identity
@@ -58,7 +59,7 @@ public class LayerTransferableTest {
      * and {@link LayerTransferable#getTransferDataFlavors()}
      */
     @Test
-    public void testSupportedDataFlavor() {
+    void testSupportedDataFlavor() {
         LayerTransferable transferable = new LayerTransferable(manager, Arrays.<Layer>asList(layer1, layer2));
 
         assertFalse(transferable.isDataFlavorSupported(DataFlavor.imageFlavor));
@@ -74,7 +75,7 @@ public class LayerTransferableTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testTransferData() throws Exception {
+    void testTransferData() throws Exception {
         LayerTransferable transferable = new LayerTransferable(manager, Arrays.<Layer>asList(layer1, layer2));
 
         Object object = transferable.getTransferData(LayerTransferable.LAYER_DATA);
@@ -87,12 +88,11 @@ public class LayerTransferableTest {
 
     /**
      * Test {@link LayerTransferable#getTransferData(DataFlavor)} for unsupported {@link DataFlavor}
-     * @throws Exception if any error occurs
      */
-    @Test(expected = UnsupportedFlavorException.class)
-    public void testTransferDataUnsupported() throws Exception {
+    @Test
+    void testTransferDataUnsupported() {
         LayerTransferable transferable = new LayerTransferable(manager, Arrays.<Layer>asList(layer1, layer2));
 
-        transferable.getTransferData(DataFlavor.imageFlavor);
+        assertThrows(UnsupportedFlavorException.class, () -> transferable.getTransferData(DataFlavor.imageFlavor));
     }
 }

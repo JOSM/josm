@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.properties;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -13,12 +13,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link PropertiesMerger} class.
  */
-public class PropertiesMergerTest {
+class PropertiesMergerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -26,7 +26,7 @@ public class PropertiesMergerTest {
      * Unit test of {@link PropertiesMerger#PropertiesMerger}.
      */
     @Test
-    public void testPropertiesMerger() {
+    void testPropertiesMerger() {
         PropertiesMerger merger = new PropertiesMerger();
         assertNotNull(TestUtils.getComponentByName(merger, "button.keepmycoordinates"));
         assertNotNull(TestUtils.getComponentByName(merger, "button.keeptheircoordinates"));

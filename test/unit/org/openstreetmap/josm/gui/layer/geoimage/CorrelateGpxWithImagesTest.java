@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.geoimage;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTimeOffset;
 import org.openstreetmap.josm.data.gpx.GpxTimezone;
@@ -22,19 +22,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link CorrelateGpxWithImages} class.
  */
-public class CorrelateGpxWithImagesTest {
+class CorrelateGpxWithImagesTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         DateUtilsTest.setTimeZone(DateUtils.UTC);
     }
@@ -44,7 +44,7 @@ public class CorrelateGpxWithImagesTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testAutoGuess() throws Exception {
+    void testAutoGuess() throws Exception {
         final GpxData gpx = GpxReaderTest.parseGpxData("nodist/data/2094047.gpx");
         final ImageEntry i0 = new ImageEntry();
         i0.setExifTime(DateUtils.fromString("2016:01:03 11:59:54")); // 4 sec before start of GPX

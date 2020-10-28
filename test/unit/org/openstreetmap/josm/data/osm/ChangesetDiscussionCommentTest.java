@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -14,12 +14,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link ChangesetDiscussionComment}.
  */
-public class ChangesetDiscussionCommentTest {
+class ChangesetDiscussionCommentTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -27,7 +27,7 @@ public class ChangesetDiscussionCommentTest {
      * Unit test of {@link ChangesetDiscussionComment} constructor.
      */
     @Test
-    public void testChangesetDiscussionComment() {
+    void testChangesetDiscussionComment() {
         Date d = new Date(1000);
         User foo = User.createOsmUser(1, "foo");
         ChangesetDiscussionComment cdc = new ChangesetDiscussionComment(d, foo);
@@ -40,7 +40,7 @@ public class ChangesetDiscussionCommentTest {
      * Unit test of methods {@link ChangesetDiscussionComment#setText} / {@link ChangesetDiscussionComment#getText}.
      */
     @Test
-    public void testText() {
+    void testText() {
         ChangesetDiscussionComment cdc = new ChangesetDiscussionComment(new Date(), null);
         cdc.setText("foo");
         assertEquals("foo", cdc.getText());

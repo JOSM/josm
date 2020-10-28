@@ -1,21 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link TagModel} class.
  */
-public class TagModelTest {
+class TagModelTest {
 
     /**
      * Unit test of {@link TagModel#TagModel} - single value.
      */
     @Test
-    public void testTagModelSingleValue() {
+    void testTagModelSingleValue() {
         TagModel tm = new TagModel();
         assertEquals("", tm.getName());
         assertEquals("", tm.getValue());
@@ -42,7 +42,7 @@ public class TagModelTest {
      * Unit test of {@link TagModel#TagModel} - multiple values.
      */
     @Test
-    public void testTagModelMultipleValues() {
+    void testTagModelMultipleValues() {
         TagModel tm = new TagModel("key2", "val2");
         assertEquals("key2", tm.getName());
         assertEquals("val2", tm.getValue());

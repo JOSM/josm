@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.SplitWayCommand.Strategy;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -35,12 +35,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link SplitWayCommand}.
  */
-public final class SplitWayCommandTest {
+final class SplitWayCommandTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
 
@@ -48,7 +48,7 @@ public final class SplitWayCommandTest {
      * Unit test of {@link SplitWayCommand#findVias}.
      */
     @Test
-    public void testFindVias() {
+    void testFindVias() {
         // empty relation
         assertTrue(SplitWayCommand.findVias(new Relation(), null).isEmpty());
         // restriction relation without via member
@@ -80,7 +80,7 @@ public final class SplitWayCommandTest {
      * Unit tests of route relations.
      */
     @Test
-    public void testRouteRelation() {
+    void testRouteRelation() {
         doTestRouteRelation(false, 0);
         doTestRouteRelation(false, 1);
         doTestRouteRelation(false, 2);
@@ -148,7 +148,7 @@ public final class SplitWayCommandTest {
     }
 
     @Test
-    public void testOneMemberOrderedRelationShowsWarningTest() {
+    void testOneMemberOrderedRelationShowsWarningTest() {
         final DataSet dataSet = new DataSet();
 
         // Positive IDs to mark that these ways are incomplete (i.e., no nodes loaded).
@@ -187,7 +187,7 @@ public final class SplitWayCommandTest {
     }
 
     @Test
-    public void testDoIncompleteMembersOrderedRelationCorrectOrderTest() {
+    void testDoIncompleteMembersOrderedRelationCorrectOrderTest() {
         for (int i = 0; i < 2; i++) {
             // All these permutations should result in a split that keeps the new parts in order.
             doIncompleteMembersOrderedRelationCorrectOrderTest(false, false, i);
@@ -243,7 +243,8 @@ public final class SplitWayCommandTest {
     }
 
     static void assertFirstLastNodeIs(Way way, Node node) {
-        assertTrue("First/last node of " + way + " should be " + node, node.equals(way.firstNode()) || node.equals(way.lastNode()));
+        assertTrue(node.equals(way.firstNode()) || node.equals(way.lastNode()),
+                "First/last node of " + way + " should be " + node);
     }
 
     static void assertConnectedAtEnds(Way one, Way two) {
@@ -252,8 +253,8 @@ public final class SplitWayCommandTest {
         Node first2 = two.firstNode();
         Node last2 = two.lastNode();
 
-        assertTrue("Ways expected to be connected at their ends.",
-                first1 == first2 || first1 == last2 || last1 == first2 || last1 == last2);
+        assertTrue(first1 == first2 || first1 == last2 || last1 == first2 || last1 == last2,
+                "Ways expected to be connected at their ends.");
     }
 
     /**
@@ -262,7 +263,7 @@ public final class SplitWayCommandTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket18596() throws IOException, IllegalDataException {
+    void testTicket18596() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18596, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
 
@@ -279,7 +280,7 @@ public final class SplitWayCommandTest {
 
             Relation relation = (Relation) ds.getPrimitiveById(8888, OsmPrimitiveType.RELATION);
 
-            assertEquals(relation.getMembersCount(), 8);
+            assertEquals(8, relation.getMembersCount());
 
             // Before the patch introduced in #18596, these asserts would fail. The two parts of
             // way '5' would be in the wrong order, breaking the boundary relation in this test.
@@ -298,7 +299,7 @@ public final class SplitWayCommandTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket17400() throws IOException, IllegalDataException {
+    void testTicket17400() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(17400, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
 
@@ -322,7 +323,7 @@ public final class SplitWayCommandTest {
             Relation relation = (Relation) ds.getPrimitiveById(2873422, OsmPrimitiveType.RELATION);
 
             // One more than the original 161.
-            assertEquals(relation.getMembersCount(), 162);
+            assertEquals(162, relation.getMembersCount());
 
             // Before the patch introduced in #18596, these asserts would fail. The new parts of
             // the Hauptstraße would be in the wrong order, breaking the bus route relation.
@@ -346,7 +347,7 @@ public final class SplitWayCommandTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket18863() throws IOException, IllegalDataException {
+    void testTicket18863() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18863, "data.osm.bz2")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
 
@@ -374,7 +375,7 @@ public final class SplitWayCommandTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket19432() throws IOException, IllegalDataException {
+    void testTicket19432() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(19432, "josm_split_way_exception_example.osm.bz2")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
 

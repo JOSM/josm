@@ -1,22 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.validator;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 
 /**
  * Unit tests of {@link ValidatorPreference} class.
  */
-public class ValidatorPreferenceTest {
+class ValidatorPreferenceTest {
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeforeClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -25,7 +25,7 @@ public class ValidatorPreferenceTest {
      * Unit test of {@link ValidatorPreference#ValidatorPreference}.
      */
     @Test
-    public void testValidatorPreference() {
+    void testValidatorPreference() {
         assertNotNull(new ValidatorPreference.Factory().createPreferenceSetting());
     }
 
@@ -33,7 +33,7 @@ public class ValidatorPreferenceTest {
      * Unit test of {@link ValidatorPreference#addGui}.
      */
     @Test
-    public void testAddGui() {
+    void testAddGui() {
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new ValidatorPreference.Factory(), null);
     }
 }

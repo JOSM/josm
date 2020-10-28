@@ -3,8 +3,8 @@ package org.openstreetmap.josm.data.gpx;
 
 import java.io.File;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -15,12 +15,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link GpxImageEntry} class.
  */
-public class GpxImageEntryTest {
+class GpxImageEntryTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -28,7 +28,7 @@ public class GpxImageEntryTest {
      * Unit test of methods {@link GpxImageEntry#equals} and {@link GpxImageEntry#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(GpxImageEntry.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)

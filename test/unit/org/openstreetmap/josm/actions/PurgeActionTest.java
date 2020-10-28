@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
@@ -24,12 +24,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link PurgeAction}.
  */
-public class PurgeActionTest {
+class PurgeActionTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main();
 
@@ -40,7 +40,7 @@ public class PurgeActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testCopyStringWayRelation() throws FileNotFoundException, IOException, IllegalDataException {
+    void testCopyStringWayRelation() throws FileNotFoundException, IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(12038, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             OsmDataLayer layer = new OsmDataLayer(ds, null, null);

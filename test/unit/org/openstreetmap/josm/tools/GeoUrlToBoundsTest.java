@@ -4,19 +4,20 @@ package org.openstreetmap.josm.tools;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link GeoUrlToBoundsTest} class.
  */
-public class GeoUrlToBoundsTest {
+class GeoUrlToBoundsTest {
 
     /**
      * Tests parsing Geo URLs with the zoom specified.
      */
     @Test
-    public void testParse() {
+    void testParse() {
         assertThat(
                 GeoUrlToBounds.parse("geo:12.34,56.78?z=9"),
                 is(OsmUrlToBounds.positionToBounds(12.34, 56.78, 9))
@@ -27,7 +28,7 @@ public class GeoUrlToBoundsTest {
      * Tests parsing Geo URLs without the zoom parameter.
      */
     @Test
-    public void testParseWithoutZoom() {
+    void testParseWithoutZoom() {
         assertThat(
                 GeoUrlToBounds.parse("geo:12.34,56.78"),
                 is(OsmUrlToBounds.positionToBounds(12.34, 56.78, 18))
@@ -42,7 +43,7 @@ public class GeoUrlToBoundsTest {
      * Tests parsing Geo URLs with a CRS and/or uncertainty.
      */
     @Test
-    public void testParseCrsUncertainty() {
+    void testParseCrsUncertainty() {
         assertThat(
                 GeoUrlToBounds.parse("geo:60.00000,17.000000;crs=wgs84"),
                 is(OsmUrlToBounds.positionToBounds(60.0, 17.0, 18))
@@ -61,7 +62,7 @@ public class GeoUrlToBoundsTest {
      * Tests parsing invalid Geo URL.
      */
     @Test
-    public void testInvalid() {
+    void testInvalid() {
         assertThat(GeoUrlToBounds.parse("geo:foo"), nullValue());
         assertThat(GeoUrlToBounds.parse("geo:foo,bar"), nullValue());
     }
@@ -69,8 +70,8 @@ public class GeoUrlToBoundsTest {
     /**
      * Tests parsing null.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testNull() {
-        GeoUrlToBounds.parse(null);
+    @Test
+    void testNull() {
+        assertThrows(IllegalArgumentException.class, () -> GeoUrlToBounds.parse(null));
     }
 }

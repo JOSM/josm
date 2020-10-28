@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.layer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.InputStream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -21,11 +21,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link DuplicateAction} class.
  */
-public class DuplicateActionTest {
+class DuplicateActionTest {
     /**
      * TMS layer needs prefs. Platform for LayerListDialog shortcuts.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -34,7 +34,7 @@ public class DuplicateActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket4539() throws Exception {
+    void testTicket4539() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(4539, "josm_error_#4539.osm.zip")) {
             OsmDataLayer layer = new OsmDataLayer(OsmReader.parseDataSet(is, null), null, null);
             OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();

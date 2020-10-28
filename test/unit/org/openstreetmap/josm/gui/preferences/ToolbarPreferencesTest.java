@@ -11,7 +11,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.ActionParameter.StringActionParameter;
 import org.openstreetmap.josm.actions.ParameterizedAction;
@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 /**
  * Unit tests of {@link ToolbarPreferences} class.
  */
-public class ToolbarPreferencesTest {
+class ToolbarPreferencesTest {
 
     private static class TestAction extends AbstractAction implements ParameterizedAction {
 
@@ -57,7 +57,7 @@ public class ToolbarPreferencesTest {
     }
 
     @Test
-    public void testCase1() {
+    void testCase1() {
         Map<String, Action> actions = new HashMap<>();
         actions.put("action", new TestAction());
         ActionParser parser = new ActionParser(actions);

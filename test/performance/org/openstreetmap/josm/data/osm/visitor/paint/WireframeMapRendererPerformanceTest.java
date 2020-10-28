@@ -1,20 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
  * Performance test of {@code WireframeMapRenderer}.
  */
-public class WireframeMapRendererPerformanceTest extends AbstractMapRendererPerformanceTestParent {
+class WireframeMapRendererPerformanceTest extends AbstractMapRendererPerformanceTestParent {
 
-    @BeforeClass
+    @BeforeAll
     public static void load() throws Exception {
         AbstractMapRendererPerformanceTestParent.load();
     }
 
-    @AfterClass
+    @AfterAll
     public static void clean() throws Exception {
         AbstractMapRendererPerformanceTestParent.clean();
     }

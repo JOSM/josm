@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io.importexport;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -20,12 +20,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link JpgImporter} class.
  */
-public class JpgImporterTest {
+class JpgImporterTest {
 
     /**
      * Setup test
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -34,7 +34,7 @@ public class JpgImporterTest {
      * @throws IOException if an error occurs
      */
     @Test
-    public void testTicket14868() throws IOException {
+    void testTicket14868() throws IOException {
         List<File> files = new ArrayList<>();
         JpgImporter.addRecursiveFiles(files, new HashSet<>(), Arrays.asList(
                 new File("foo.jpg"), new File("foo.jpeg")

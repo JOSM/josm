@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.tags;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
@@ -21,12 +21,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link TagMergeModel} class.
  */
 @SuppressWarnings("unchecked")
-public class TagMergeModelTest {
+class TagMergeModelTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -39,7 +39,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testAddPropertyChangeListener() throws ReflectiveOperationException {
+    void testAddPropertyChangeListener() throws ReflectiveOperationException {
         TagMergeModel model = new TagMergeModel();
         PropertyChangeListener listener = evt -> {
         };
@@ -52,7 +52,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testRemovePropertyChangeListener() throws ReflectiveOperationException {
+    void testRemovePropertyChangeListener() throws ReflectiveOperationException {
         TagMergeModel model = new TagMergeModel();
         PropertyChangeListener listener = evt -> {
         };
@@ -65,7 +65,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testPopulateNoConflichts() throws ReflectiveOperationException {
+    void testPopulateNoConflichts() throws ReflectiveOperationException {
         Node my = new Node(1);
         Node their = new Node(1);
         TagMergeModel model = new TagMergeModel();
@@ -77,7 +77,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testPopulateNoConflicts1() throws ReflectiveOperationException {
+    void testPopulateNoConflicts1() throws ReflectiveOperationException {
         Node my = new Node(1);
         my.put("key", "value");
         Node their = new Node(1);
@@ -91,7 +91,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testPopulateMissingKeyMine() throws ReflectiveOperationException {
+    void testPopulateMissingKeyMine() throws ReflectiveOperationException {
         Node my = new Node(1);
         Node their = new Node(1);
         their.put("key", "value");
@@ -109,7 +109,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testPopulateMissingKeyTheir() throws ReflectiveOperationException {
+    void testPopulateMissingKeyTheir() throws ReflectiveOperationException {
         Node my = new Node(1);
         my.put("key", "value");
         Node their = new Node(1);
@@ -127,7 +127,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testPopulateConflictingValues() throws ReflectiveOperationException {
+    void testPopulateConflictingValues() throws ReflectiveOperationException {
         Node my = new Node(1);
         my.put("key", "myvalue");
         Node their = new Node(1);
@@ -146,7 +146,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testAddItem() throws ReflectiveOperationException {
+    void testAddItem() throws ReflectiveOperationException {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         TagMergeModel model = new TagMergeModel();
         model.addItem(item);
@@ -162,7 +162,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testDecide() throws ReflectiveOperationException {
+    void testDecide() throws ReflectiveOperationException {
         TagMergeItem item = new TagMergeItem("key", "myvalue", "theirvalue");
         TagMergeModel model = new TagMergeModel();
         model.addItem(item);
@@ -186,7 +186,7 @@ public class TagMergeModelTest {
     }
 
     @Test
-    public void testDecideMultiple() throws ReflectiveOperationException {
+    void testDecideMultiple() throws ReflectiveOperationException {
 
         TagMergeModel model = new TagMergeModel();
         for (int i = 0; i < 10; i++) {

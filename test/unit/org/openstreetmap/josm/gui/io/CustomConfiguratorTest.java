@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +12,8 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
@@ -26,12 +26,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link CustomConfigurator}.
  */
-public class CustomConfiguratorTest {
+class CustomConfiguratorTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -40,7 +40,7 @@ public class CustomConfiguratorTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testExportPreferencesKeysToFile() throws IOException {
+    void testExportPreferencesKeysToFile() throws IOException {
         File tmp = File.createTempFile("josm.testExportPreferencesKeysToFile.lorem_ipsum", ".xml");
 
         Config.getPref().putList("lorem_ipsum", Arrays.asList(
@@ -57,7 +57,7 @@ public class CustomConfiguratorTest {
         String xml = String.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
         assertTrue(xml.contains("<preferences operation=\"replace\">"));
         for (String entry : Config.getPref().getList("lorem_ipsum")) {
-            assertTrue(entry + "\nnot found in:\n" + xml, xml.contains(entry));
+            assertTrue(xml.contains(entry), entry + "\nnot found in:\n" + xml);
         }
 
         Config.getPref().putList("test", Arrays.asList("11111111", "2222222", "333333333"));
@@ -65,7 +65,7 @@ public class CustomConfiguratorTest {
         xml = String.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
         assertTrue(xml.contains("<preferences operation=\"append\">"));
         for (String entry : Config.getPref().getList("test")) {
-            assertTrue(entry + "\nnot found in:\n" + xml, xml.contains(entry));
+            assertTrue(xml.contains(entry), entry + "\nnot found in:\n" + xml);
         }
 
         Utils.deleteFile(tmp);
@@ -76,13 +76,13 @@ public class CustomConfiguratorTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testReadXML() throws IOException {
+    void testReadXML() throws IOException {
         // Test 1 - read(dir, file) + append
         Config.getPref().putList("test", Collections.<String>emptyList());
         assertTrue(Config.getPref().getList("test").isEmpty());
         CustomConfigurator.readXML(TestUtils.getTestDataRoot() + "customconfigurator", "append.xml");
         String log = PreferencesUtils.getLog();
-        assertFalse(log, log.contains("Error"));
+        assertFalse(log.contains("Error"), log);
         assertEquals(Arrays.asList("11111111", "2222222", "JOSM"), Config.getPref().getList("test"));
 
         // Test 2 - read(file, pref) + replace
@@ -93,7 +93,7 @@ public class CustomConfiguratorTest {
         assertEquals(1, pref.getList("lorem_ipsum").size());
         CustomConfigurator.readXML(new File(TestUtils.getTestDataRoot() + "customconfigurator", "replace.xml"), pref);
         log = PreferencesUtils.getLog();
-        assertFalse(log, log.contains("Error"));
+        assertFalse(log.contains("Error"), log);
         assertEquals(9, pref.getList("lorem_ipsum").size());
     }
 }

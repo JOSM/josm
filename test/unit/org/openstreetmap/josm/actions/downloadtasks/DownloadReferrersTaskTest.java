@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -19,12 +19,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link DownloadReferrersTask}.
  */
-public class DownloadReferrersTaskTest {
+class DownloadReferrersTaskTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -32,7 +32,7 @@ public class DownloadReferrersTaskTest {
      * Unit test of {@code DownloadReferrersTask#DownloadReferrersTask}.
      */
     @Test
-    public void testDownloadReferrersTask() {
+    void testDownloadReferrersTask() {
         DataSet ds = new DataSet();
         Node n1 = (Node) OsmPrimitiveType.NODE.newInstance(-1, true);
         n1.setCoor(LatLon.ZERO);

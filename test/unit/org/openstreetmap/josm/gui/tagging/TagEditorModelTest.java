@@ -1,20 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link TagEditorModel} class.
  */
-public class TagEditorModelTest {
+class TagEditorModelTest {
 
     /**
      * Unit test of {@link TagEditorModel#TagEditorModel}.
      */
     @Test
-    public void testTagEditorModel() {
+    void testTagEditorModel() {
         TagEditorModel tem = new TagEditorModel();
         tem.add(null, null);
         assertEquals(1, tem.getRowCount());

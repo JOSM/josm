@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -10,14 +10,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.xml.sax.InputSource;
 
 /**
  * Unit tests of {@link Capabilities} class.
  */
-public class CapabilitiesTest {
+class CapabilitiesTest {
 
     /**
      * Unit test of {@link Capabilities}
@@ -25,7 +25,7 @@ public class CapabilitiesTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testCapabilities() throws Exception {
+    void testCapabilities() throws Exception {
         final Path path = Paths.get(TestUtils.getTestDataRoot(), "__files/api/0.6/capabilities");
         final Capabilities capabilities;
         try (InputStream inputStream = Files.newInputStream(path)) {

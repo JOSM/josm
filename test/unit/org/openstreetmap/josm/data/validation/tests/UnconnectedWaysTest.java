@@ -11,8 +11,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -25,7 +25,7 @@ import org.openstreetmap.josm.io.OsmReader;
 /**
  * Unit tests of {@code UnconnectedWays} class.
  */
-public class UnconnectedWaysTest {
+class UnconnectedWaysTest {
 
     private UnconnectedWays bib;
 
@@ -33,7 +33,7 @@ public class UnconnectedWaysTest {
      * Setup test.
      * @throws Exception if the test cannot be initialized
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         bib = new UnconnectedWays.UnconnectedHighways();
         JOSMFixture.createUnitTestFixture().init();
@@ -47,7 +47,7 @@ public class UnconnectedWaysTest {
      * @throws FileNotFoundException if the data file cannot be found
      */
     @Test
-    public void testTicket6313() throws IOException, IllegalDataException, FileNotFoundException {
+    void testTicket6313() throws IOException, IllegalDataException, FileNotFoundException {
         try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/UnconnectedWaysTest.osm"))) {
             final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));
@@ -66,7 +66,7 @@ public class UnconnectedWaysTest {
      * @throws FileNotFoundException if the data file cannot be found
      */
     @Test
-    public void testTicket18051() throws IOException, IllegalDataException, FileNotFoundException {
+    void testTicket18051() throws IOException, IllegalDataException, FileNotFoundException {
         try (InputStream fis = TestUtils.getRegressionDataStream(18051, "modified-ways.osm.bz2")) {
             final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));
@@ -86,7 +86,7 @@ public class UnconnectedWaysTest {
      * @throws FileNotFoundException if the data file cannot be found
      */
     @Test
-    public void testTicket18106() throws IOException, IllegalDataException, FileNotFoundException {
+    void testTicket18106() throws IOException, IllegalDataException, FileNotFoundException {
         try (InputStream fis = TestUtils.getRegressionDataStream(18106, "uncon3.osm")) {
             final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));
@@ -106,7 +106,7 @@ public class UnconnectedWaysTest {
      * @throws FileNotFoundException if the data file cannot be found
      */
     @Test
-    public void testTicket18137() throws IOException, IllegalDataException, FileNotFoundException {
+    void testTicket18137() throws IOException, IllegalDataException, FileNotFoundException {
         try (InputStream fis = TestUtils.getRegressionDataStream(18137, "18137_npe.osm")) {
             final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));
@@ -126,7 +126,7 @@ public class UnconnectedWaysTest {
      * @throws FileNotFoundException if the data file cannot be found
      */
     @Test
-    public void testTicket19568() throws IOException, IllegalDataException, FileNotFoundException {
+    void testTicket19568() throws IOException, IllegalDataException, FileNotFoundException {
         try (InputStream fis = TestUtils.getRegressionDataStream(19568, "data.osm")) {
             final DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(ds, null, null));

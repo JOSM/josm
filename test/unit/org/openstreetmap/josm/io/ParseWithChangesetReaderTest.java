@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -24,12 +24,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Additional unit tests for {@link OsmReader}.
  */
-public class ParseWithChangesetReaderTest {
+class ParseWithChangesetReaderTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -53,7 +53,7 @@ public class ParseWithChangesetReaderTest {
      * @throws Exception never
      */
     @Test
-    public void test_1() throws Exception {
+    void test_1() throws Exception {
         String doc =
             "<osm version=\"0.6\">\n" +
             "<node id=\"-1\" lat=\"0.0\" lon=\"0.0\" changeset=\"1\">\n" +
@@ -72,7 +72,7 @@ public class ParseWithChangesetReaderTest {
      * @throws Exception never
      */
     @Test
-    public void test_11() throws Exception {
+    void test_11() throws Exception {
         String doc =
         "<osm version=\"0.6\">\n" +
         "<node id=\"-1\" lat=\"0.0\" lon=\"0.0\" changeset=\"0\">\n" +
@@ -91,7 +91,7 @@ public class ParseWithChangesetReaderTest {
      * @throws Exception never
      */
     @Test
-    public void test_12() throws Exception {
+    void test_12() throws Exception {
         String doc =
         "<osm version=\"0.6\">\n" +
         "<node id=\"-1\" lat=\"0.0\" lon=\"0.0\" changeset=\"-1\">\n" +
@@ -110,7 +110,7 @@ public class ParseWithChangesetReaderTest {
      * @throws Exception never
      */
     @Test
-    public void test_13() throws Exception {
+    void test_13() throws Exception {
         String doc =
         "<osm version=\"0.6\">\n" +
         "<node id=\"-1\" lat=\"0.0\" lon=\"0.0\" changeset=\"aaa\">\n" +
@@ -130,7 +130,7 @@ public class ParseWithChangesetReaderTest {
      * @throws Exception never
      */
     @Test
-    public void test_14() throws Exception {
+    void test_14() throws Exception {
         String doc =
         "<osm version=\"0.6\">\n" +
         "<node id=\"-1\" lat=\"0.0\" lon=\"0.0\" >\n" +
@@ -151,7 +151,7 @@ public class ParseWithChangesetReaderTest {
      * @throws Exception never
      */
     @Test
-    public void test_2() throws Exception {
+    void test_2() throws Exception {
         String doc =
         "<osm version=\"0.6\">\n" +
         "<node id=\"1\" lat=\"0.0\" lon=\"0.0\" version=\"1\"/>\n" +
@@ -170,7 +170,7 @@ public class ParseWithChangesetReaderTest {
      * @throws Exception never
      */
     @Test
-    public void test_3() throws Exception {
+    void test_3() throws Exception {
         String doc =
         "<osm version=\"0.6\">\n" +
         "<node id=\"1\" lat=\"0.0\" lon=\"0.0\" version=\"1\" changeset=\"4\"/>\n" +
@@ -189,7 +189,7 @@ public class ParseWithChangesetReaderTest {
      * @throws IOException never
      */
     @Test
-    public void test_4() throws IOException {
+    void test_4() throws IOException {
         String doc =
         "<osm version=\"0.6\">\n" +
         "<node id=\"1\" lat=\"0.0\" lon=\"0.0\" version=\"1\" changeset=\"-1\"/>\n" +
@@ -204,7 +204,7 @@ public class ParseWithChangesetReaderTest {
      * @throws IOException never
      */
     @Test
-    public void test_5() throws IOException {
+    void test_5() throws IOException {
         String doc =
         "<osm version=\"0.6\">\n" +
         "<node id=\"1\" lat=\"0.0\" lon=\"0.0\" version=\"1\" changeset=\"1.0\"/>\n" +
@@ -219,7 +219,7 @@ public class ParseWithChangesetReaderTest {
      * @throws IOException never
      */
     @Test
-    public void test_6() throws IOException {
+    void test_6() throws IOException {
         String doc =
             "<osm version=\"0.6\">\n" +
             "<node id=\"1\" lat=\"0.0\" lon=\"0.0\" version=\"1\" changeset=\"abc\"/>\n" +

@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation.actions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -23,12 +23,12 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  * Test for {@link PasteMembersAction}
  * @author Michael Zangl
  */
-public class PasteMembersActionTest extends AbstractRelationEditorActionTest {
+class PasteMembersActionTest extends AbstractRelationEditorActionTest {
     /**
      * Test {@link PasteMembersAction#isEnabled()}
      */
     @Test
-    public void testEnabledState() {
+    void testEnabledState() {
         copyString();
 
         PasteMembersAction action = new PasteMembersAction(relationEditorAccess);
@@ -64,7 +64,7 @@ public class PasteMembersActionTest extends AbstractRelationEditorActionTest {
      * Test that pasting produces the result required
      */
     @Test
-    public void testActionWrongClipboard() {
+    void testActionWrongClipboard() {
         copyString();
         PasteMembersAction action = new PasteMembersAction(relationEditorAccess);
         action.actionPerformed(null);
@@ -78,7 +78,7 @@ public class PasteMembersActionTest extends AbstractRelationEditorActionTest {
      * Test that pasting produces the result required
      */
     @Test
-    public void testActionForMembers() {
+    void testActionForMembers() {
         Node testNode = new Node(10);
         layer.data.addPrimitive(testNode);
         copyMember(testNode);
@@ -96,7 +96,7 @@ public class PasteMembersActionTest extends AbstractRelationEditorActionTest {
      * Test that pasting primitvies produces the result required
      */
     @Test
-    public void testActionForPrimitives() {
+    void testActionForPrimitives() {
         Node testNode = new Node(10);
         layer.data.addPrimitive(testNode);
         copyNode(testNode);

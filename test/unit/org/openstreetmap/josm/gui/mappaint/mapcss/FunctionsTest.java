@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.data.osm.OsmPrimitiveType.NODE;
 
 import java.util.Collections;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -24,12 +24,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link Functions}.
  */
-public class FunctionsTest {
+class FunctionsTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -59,7 +59,7 @@ public class FunctionsTest {
      * Unit test of {@link Functions#osm_user_name}.
      */
     @Test
-    public void testOsmUserName() {
+    void testOsmUserName() {
         assertEquals("<anonymous>", Functions.osm_user_name(new EnvBuilder(NODE).setUser(User.getAnonymous()).build()));
     }
 
@@ -67,7 +67,7 @@ public class FunctionsTest {
      * Unit test of {@link Functions#osm_user_id}.
      */
     @Test
-    public void testOsmUserId() {
+    void testOsmUserId() {
         assertEquals(-1, Functions.osm_user_id(new EnvBuilder(NODE).setUser(User.getAnonymous()).build()));
     }
 
@@ -75,7 +75,7 @@ public class FunctionsTest {
      * Unit test of {@link Functions#osm_version}.
      */
     @Test
-    public void testOsmVersion() {
+    void testOsmVersion() {
         assertEquals(0, Functions.osm_version(new EnvBuilder(NODE).build()));
     }
 
@@ -83,7 +83,7 @@ public class FunctionsTest {
      * Unit test of {@link Functions#osm_changeset_id}.
      */
     @Test
-    public void testOsmChangesetId() {
+    void testOsmChangesetId() {
         assertEquals(0, Functions.osm_changeset_id(new EnvBuilder(NODE).build()));
     }
 
@@ -91,7 +91,7 @@ public class FunctionsTest {
      * Unit test of {@link Functions#osm_timestamp}.
      */
     @Test
-    public void testOsmTimestamp() {
+    void testOsmTimestamp() {
         assertEquals(0, Functions.osm_timestamp(new EnvBuilder(NODE).build()));
     }
 
@@ -99,7 +99,7 @@ public class FunctionsTest {
      * Unit test of {@code Functions#to_xxx}
      */
     @Test
-    public void testParseFunctions() {
+    void testParseFunctions() {
         assertTrue(Functions.to_boolean("true"));
         assertEquals(1, Functions.to_byte("1"));
         assertEquals(1, Functions.to_short("1"));
@@ -113,7 +113,7 @@ public class FunctionsTest {
      * Unit test of {@link Functions#JOSM_pref}
      */
     @Test
-    public void testPref() {
+    void testPref() {
         String key = "Functions.JOSM_pref";
         Config.getPref().put(key, null);
         assertEquals("foobar", Functions.JOSM_pref(null, key, "foobar"));
@@ -134,7 +134,7 @@ public class FunctionsTest {
      * Unit test of {@link Functions#JOSM_pref}, color handling
      */
     @Test
-    public void testPrefColor() {
+    void testPrefColor() {
         String key = "Functions.JOSM_pref";
         String colorKey = NamedColorProperty.NAMED_COLOR_PREFIX + NamedColorProperty.COLOR_CATEGORY_MAPPAINT + ".unknown." + key;
         Config.getPref().put(colorKey, null);

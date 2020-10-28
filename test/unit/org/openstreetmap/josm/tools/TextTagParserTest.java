@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -19,11 +19,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link TextTagParser} class.
  */
-public class TextTagParserTest {
+class TextTagParserTest {
     /**
      * Some of this depends on preferences.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -31,7 +31,7 @@ public class TextTagParserTest {
      * Test of {@link TextTagParser#unescape} method.
      */
     @Test
-    public void testUnescape() {
+    void testUnescape() {
         String s, s1;
         s = "\"2 3 4\"";
         s1 = "2 3 4";
@@ -54,7 +54,7 @@ public class TextTagParserTest {
      * Test of {@link TextTagParser#readTagsFromText} method with tabs and new lines.
      */
     @Test
-    public void testTNformat() {
+    void testTNformat() {
         String txt = "   a  \t  1   \n\n\n  b\t2 \n c \t the value with \"quotes\"";
         Map<String, String> correctTags = new HashMap<String, String>() { {
             put("a", "1"); put("b", "2"); put("c", "the value with \"quotes\"");
@@ -67,7 +67,7 @@ public class TextTagParserTest {
      * Test of {@link TextTagParser#readTagsFromText} method with quotes.
      */
     @Test
-    public void testEQformat() {
+    void testEQformat() {
         String txt = "key1=value key2=\"long value\" tag3=\"hotel \\\"Quote\\\"\"";
         Map<String, String> correctTags = new HashMap<String, String>() { {
             put("key1", "value"); put("key2", "long value");
@@ -81,7 +81,7 @@ public class TextTagParserTest {
      * Test of {@link TextTagParser#readTagsFromText} method with JSON.
      */
     @Test
-    public void testJSONformat() {
+    void testJSONformat() {
         String txt;
         Map<String, String> tags, correctTags;
         txt = "{ \"a\":\"1\", \"b\":\"2 3 4\" }";
@@ -104,7 +104,7 @@ public class TextTagParserTest {
      * Test of {@link TextTagParser#readTagsFromText} method with free format.
      */
     @Test
-    public void testFreeformat() {
+    void testFreeformat() {
         String txt = "a 1 b=2 c=\"hello === \\\"\\\"world\"";
         Map<String, String> correctTags = new HashMap<String, String>() { {
             put("a", "1"); put("b", "2"); put("c", "hello === \"\"world");
@@ -117,7 +117,7 @@ public class TextTagParserTest {
      * Test of {@link TextTagParser#readTagsFromText} method (error detection).
      */
     @Test
-    public void testErrorDetect() {
+    void testErrorDetect() {
         String txt = "a=2 b=3 4";
         Map<String, String> tags = TextTagParser.readTagsFromText(txt);
         assertEquals(Collections.EMPTY_MAP, tags);
@@ -127,7 +127,7 @@ public class TextTagParserTest {
      * Test of {@link TextTagParser#readTagsFromText} method with tabs.
      */
     @Test
-    public void testTab() {
+    void testTab() {
         assertEquals(Collections.singletonMap("shop", "jewelry"), TextTagParser.readTagsFromText("shop\tjewelry"));
         assertEquals(Collections.singletonMap("shop", "jewelry"), TextTagParser.readTagsFromText("!shop\tjewelry"));
         assertEquals(Collections.singletonMap("shop", "jewelry"), TextTagParser.readTagsFromText("!!!shop\tjewelry"));
@@ -138,7 +138,7 @@ public class TextTagParserTest {
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/16104">#16104</a>
      */
     @Test
-    public void testTicket16104() {
+    void testTicket16104() {
         Map<String, String> expected = new HashMap<>();
         expected.put("boundary", "national_park");
         expected.put("name", "Raet nasjonalpark");
@@ -169,7 +169,7 @@ public class TextTagParserTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/8384#comment:58">ticket:8384#comment:58</a>
      */
     @Test
-    public void testTicket8384Comment58() {
+    void testTicket8384Comment58() {
         Map<String, String> expected = new HashMap<>();
         expected.put("name", "Main street");
         expected.put("url", "https://example.com/?id=1");
@@ -180,7 +180,7 @@ public class TextTagParserTest {
      * Tests that the tags ordering is stable.
      */
     @Test
-    public void testStableOrder() {
+    void testStableOrder() {
         List<String> expected = Arrays.asList("foo4", "foo3", "foo2", "foo1");
         ArrayList<String> actual = new ArrayList<>(TextTagParser.readTagsByRegexp(
                 "foo4=bar4 foo3=bar3 foo2=bar2 foo1=bar1", " ", "(.*?)=(.*?)", true).keySet());

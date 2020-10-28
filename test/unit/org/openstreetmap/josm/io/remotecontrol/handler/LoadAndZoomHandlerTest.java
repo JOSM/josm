@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -15,11 +15,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link LoadAndZoomHandler} class.
  */
-public class LoadAndZoomHandlerTest {
+class LoadAndZoomHandlerTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -35,7 +35,7 @@ public class LoadAndZoomHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestNoParam() throws Exception {
+    void testBadRequestNoParam() throws Exception {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler(null).handle());
         assertEquals("NumberFormatException (empty String)", e.getMessage());
     }
@@ -45,7 +45,7 @@ public class LoadAndZoomHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestInvalidUrl() throws Exception {
+    void testBadRequestInvalidUrl() throws Exception {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("invalid_url").handle());
         assertEquals("The following keys are mandatory, but have not been provided: bottom, top, left, right", e.getMessage());
     }
@@ -55,7 +55,7 @@ public class LoadAndZoomHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testBadRequestIncompleteUrl() throws Exception {
+    void testBadRequestIncompleteUrl() throws Exception {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost").handle());
         assertEquals("The following keys are mandatory, but have not been provided: bottom, top, left, right", e.getMessage());
     }
@@ -65,7 +65,7 @@ public class LoadAndZoomHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testNominalRequest() throws Exception {
+    void testNominalRequest() throws Exception {
         assertDoesNotThrow(() -> newHandler("https://localhost?bottom=0&top=0&left=1&right=1").handle());
     }
 }

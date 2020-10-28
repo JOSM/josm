@@ -1,21 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.Timeout;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.PerformanceTestUtils.PerformanceTestTimer;
 import org.openstreetmap.josm.data.osm.OsmDataGenerator.KeyValueDataGenerator;
@@ -27,7 +28,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This test measures the performance of {@link OsmPrimitive#get(String)} and related.
  * @author Michael Zangl
  */
-public class KeyValuePerformanceTest {
+@Timeout(value = 15*60, unit = TimeUnit.SECONDS)
+class KeyValuePerformanceTest {
     private static final int PUT_RUNS = 10000;
     private static final int GET_RUNS = 100000;
     private static final int TEST_STRING_COUNT = 10000;
@@ -37,16 +39,9 @@ public class KeyValuePerformanceTest {
     private Random random;
 
     /**
-     * Global timeout applied to all test methods.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public Timeout globalTimeout = Timeout.seconds(15*60);
-
-    /**
      * Prepare the test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
@@ -55,7 +50,7 @@ public class KeyValuePerformanceTest {
      */
     @Test
     @SuppressFBWarnings(value = "DM_STRING_CTOR", justification = "test Strings that are interned and those that are not")
-    public void testMeasureStringEqualsIntern() {
+    void testMeasureStringEqualsIntern() {
         String str1Interned = "string1";
         String str1InternedB = "string1";
         String str1 = new String(str1Interned);
@@ -133,7 +128,7 @@ public class KeyValuePerformanceTest {
      * Measure the speed of {@link OsmPrimitive#put(String, String)}
      */
     @Test
-    public void testKeyValuePut() {
+    void testKeyValuePut() {
         for (double tagNodeRatio : TAG_NODE_RATIOS) {
             int nodeCount = (int) (PUT_RUNS / tagNodeRatio);
             KeyValueDataGenerator generator = OsmDataGenerator.getKeyValue(nodeCount, 0);
@@ -157,7 +152,7 @@ public class KeyValuePerformanceTest {
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-    public void testKeyValueGet() {
+    void testKeyValueGet() {
         for (double tagNodeRatio : TAG_NODE_RATIOS) {
             KeyValueDataGenerator generator = OsmDataGenerator.getKeyValue(tagNodeRatio);
             generator.generateDataSet();
@@ -178,7 +173,7 @@ public class KeyValuePerformanceTest {
      * Measure the speed of {@link OsmPrimitive#getKeys()}
      */
     @Test
-    public void testKeyValueGetKeys() {
+    void testKeyValueGetKeys() {
         for (double tagNodeRatio : TAG_NODE_RATIOS) {
             KeyValueDataGenerator generator = OsmDataGenerator.getKeyValue(tagNodeRatio);
             generator.generateDataSet();
@@ -201,7 +196,7 @@ public class KeyValuePerformanceTest {
      */
     @Test
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-    public void testKeyValueGetKeysGet() {
+    void testKeyValueGetKeysGet() {
         for (double tagNodeRatio : TAG_NODE_RATIOS) {
             KeyValueDataGenerator generator = OsmDataGenerator.getKeyValue(tagNodeRatio);
             generator.generateDataSet();

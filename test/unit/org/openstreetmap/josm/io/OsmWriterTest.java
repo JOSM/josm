@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -27,13 +27,13 @@ import org.openstreetmap.josm.data.osm.User;
 /**
  * Unit tests of {@link OsmWriter} class.
  */
-public class OsmWriterTest {
+class OsmWriterTest {
 
     /**
      * Unit test of {@link OsmWriter#byIdComparator}.
      */
     @Test
-    public void testByIdComparator() {
+    void testByIdComparator() {
 
         final List<NodeData> ids = new ArrayList<>();
         for (Long id : Arrays.asList(12L, Long.MIN_VALUE, 65L, -12L, 2L, 0L, -3L, -20L, Long.MAX_VALUE)) {
@@ -55,7 +55,7 @@ public class OsmWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testHeader() throws IOException {
+    void testHeader() throws IOException {
         doTestHeader(null, null,
                 "<osm version='0.6' generator='JOSM'>");
         doTestHeader(DownloadPolicy.NORMAL, UploadPolicy.NORMAL,
@@ -81,7 +81,7 @@ public class OsmWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testWriteLock() throws IOException {
+    void testWriteLock() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (PrintWriter out = new PrintWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8));
              OsmWriter writer = OsmWriterFactory.createOsmWriter(out, true, OsmWriter.DEFAULT_API_VERSION)) {
@@ -100,7 +100,7 @@ public class OsmWriterTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testChangeset() throws IOException {
+    void testChangeset() throws IOException {
         Changeset cs = new Changeset();
         cs.setUser(User.getAnonymous());
         cs.setId(38038262);

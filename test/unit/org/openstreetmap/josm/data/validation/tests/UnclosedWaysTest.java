@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -25,12 +25,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of unclosed ways validation test.
  */
-public class UnclosedWaysTest {
+class UnclosedWaysTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().mapStyles().presets();
 
@@ -51,7 +51,7 @@ public class UnclosedWaysTest {
      * @throws Exception if an exception occurs
      */
     @Test
-    public void testTicket10469() throws Exception {
+    void testTicket10469() throws Exception {
         UnclosedWays uwTest = new UnclosedWays();
         uwTest.initialize();
         uwTest.startTest(null);
@@ -83,7 +83,7 @@ public class UnclosedWaysTest {
      * @throws Exception if an exception occurs
      */
     @Test
-    public void testWayInMultiPolygon() throws Exception {
+    void testWayInMultiPolygon() throws Exception {
         UnclosedWays uwTest = new UnclosedWays();
         uwTest.initialize();
         uwTest.startTest(null);
@@ -107,7 +107,7 @@ public class UnclosedWaysTest {
      * @throws Exception if an exception occurs
      */
     @Test
-    public void testWayInBoundary() throws Exception {
+    void testWayInBoundary() throws Exception {
         UnclosedWays uwTest = new UnclosedWays();
         uwTest.initialize();
         uwTest.startTest(null);
@@ -131,7 +131,7 @@ public class UnclosedWaysTest {
      * @throws Exception if an exception occurs
      */
     @Test
-    public void testAmenity() throws Exception {
+    void testAmenity() throws Exception {
         UnclosedWays uwTest = new UnclosedWays();
         uwTest.initialize();
         uwTest.startTest(null);

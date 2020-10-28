@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,11 +24,10 @@ import java.util.Random;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
@@ -42,28 +42,28 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Unit tests of {@link MultiFetchServerObjectReader}.
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
-public class MultiFetchServerObjectReaderTest {
+class MultiFetchServerObjectReaderTest {
     private static final Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Global timeout applied to all test methods.
      */
-    @Rule
+    @RegisterExtension
     public Timeout globalTimeout = Timeout.seconds(60);
 
     /**
@@ -160,7 +160,7 @@ public class MultiFetchServerObjectReaderTest {
      * Setup test.
      * @throws Exception if an error occurs
      */
-    @BeforeClass
+    @BeforeAll
     public static void init() throws Exception {
         if (!TestUtils.areCredentialsProvided()) {
             logger.severe("OSM DEV API credentials not provided. Please define them with -Dosm.username and -Dosm.password");
@@ -214,7 +214,7 @@ public class MultiFetchServerObjectReaderTest {
      * @throws IllegalDataException if an error was found while parsing the OSM data
      * @throws FileNotFoundException if the dataset file cannot be found
      */
-    @Before
+    @BeforeEach
     public void setUp() throws IOException, IllegalDataException, FileNotFoundException {
         if (!TestUtils.areCredentialsProvided()) {
             return;
@@ -232,8 +232,8 @@ public class MultiFetchServerObjectReaderTest {
      * @throws OsmTransferException if an error occurs
      */
     @Test
-    public void testMultiGet10Nodes() throws OsmTransferException {
-        Assume.assumeTrue(TestUtils.areCredentialsProvided());
+    void testMultiGet10Nodes() throws OsmTransferException {
+        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 10; i++) {
@@ -254,8 +254,8 @@ public class MultiFetchServerObjectReaderTest {
      * @throws OsmTransferException if an error occurs
      */
     @Test
-    public void testMultiGet10Ways() throws OsmTransferException {
-        Assume.assumeTrue(TestUtils.areCredentialsProvided());
+    void testMultiGet10Ways() throws OsmTransferException {
+        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Way> ways = new ArrayList<>(ds.getWays());
         for (int i = 0; i < 10; i++) {
@@ -277,8 +277,8 @@ public class MultiFetchServerObjectReaderTest {
      * @throws OsmTransferException if an error occurs
      */
     @Test
-    public void testMultiGet10Relations() throws OsmTransferException {
-        Assume.assumeTrue(TestUtils.areCredentialsProvided());
+    void testMultiGet10Relations() throws OsmTransferException {
+        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Relation> relations = new ArrayList<>(ds.getRelations());
         for (int i = 0; i < 10; i++) {
@@ -300,8 +300,8 @@ public class MultiFetchServerObjectReaderTest {
      * @throws OsmTransferException if an error occurs
      */
     @Test
-    public void testMultiGet800Nodes() throws OsmTransferException {
-        Assume.assumeTrue(TestUtils.areCredentialsProvided());
+    void testMultiGet800Nodes() throws OsmTransferException {
+        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 812; i++) {
@@ -322,8 +322,8 @@ public class MultiFetchServerObjectReaderTest {
      * @throws OsmTransferException if an error occurs
      */
     @Test
-    public void testMultiGetWithNonExistingNode() throws OsmTransferException {
-        Assume.assumeTrue(TestUtils.areCredentialsProvided());
+    void testMultiGetWithNonExistingNode() throws OsmTransferException {
+        assumeTrue(TestUtils.areCredentialsProvided());
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         ArrayList<Node> nodes = new ArrayList<>(ds.getNodes());
         for (int i = 0; i < 10; i++) {
@@ -347,7 +347,7 @@ public class MultiFetchServerObjectReaderTest {
      * Test {@link MultiFetchServerObjectReader#buildRequestString}
      */
     @Test
-    public void testBuildRequestString() {
+    void testBuildRequestString() {
         String requestString = new MultiFetchServerObjectReader()
                 .buildRequestString(OsmPrimitiveType.WAY, new TreeSet<>(Arrays.asList(130L, 123L, 126L)));
         assertEquals("ways?ways=123,126,130", requestString);

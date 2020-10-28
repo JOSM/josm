@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.event;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -24,7 +24,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Michael Zangl
  * @since 12048
  */
-public class SelectionEventManagerTest {
+class SelectionEventManagerTest {
     private final class SelectionListener implements DataSelectionListener {
         private Collection<? extends OsmPrimitive> newSelection;
         private final String name;
@@ -41,7 +41,7 @@ public class SelectionEventManagerTest {
 
     /**
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -49,7 +49,7 @@ public class SelectionEventManagerTest {
      * Tests that events in the active layer are propagated.
      */
     @Test
-    public void testEventPropagation() {
+    void testEventPropagation() {
         // automatically adds the layers
         CommandTestDataWithRelation testData1 = new CommandTestDataWithRelation();
         CommandTestDataWithRelation testData2 = new CommandTestDataWithRelation();
@@ -98,7 +98,7 @@ public class SelectionEventManagerTest {
         // sync
         GuiHelper.runInEDTAndWait(() -> { });
         for (SelectionListener listener : listeners) {
-            assertEquals(listener.name, should, listener.newSelection);
+            assertEquals(should, listener.newSelection, listener.name);
             listener.newSelection = null;
         }
     }

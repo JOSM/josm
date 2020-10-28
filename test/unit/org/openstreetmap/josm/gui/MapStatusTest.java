@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -12,12 +12,12 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Test {@link MapStatus}
  */
-public class MapStatusTest {
+class MapStatusTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -25,7 +25,7 @@ public class MapStatusTest {
      * Unit test of methods {@link MapStatus.StatusTextHistory#equals} and {@link MapStatus.StatusTextHistory#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(MapStatus.StatusTextHistory.class)
             .withIgnoredFields("text").verify();

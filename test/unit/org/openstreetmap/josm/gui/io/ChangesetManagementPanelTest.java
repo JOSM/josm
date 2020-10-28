@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -12,12 +12,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ChangesetManagementPanel} class.
  */
-public class ChangesetManagementPanelTest {
+class ChangesetManagementPanelTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -25,7 +25,7 @@ public class ChangesetManagementPanelTest {
      * Test of {@link ChangesetManagementPanel#ChangesetManagementPanel}.
      */
     @Test
-    public void testChangesetManagementPanel() {
+    void testChangesetManagementPanel() {
         assertNotNull(new ChangesetManagementPanel(new ChangesetCommentModel()));
     }
 }

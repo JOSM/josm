@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -21,12 +21,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests for class {@link GpxTrack}.
  */
-public class GpxTrackTest {
+class GpxTrackTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -34,7 +34,7 @@ public class GpxTrackTest {
      * Tests weather the track can read and write colors.
      */
     @Test
-    public void testColors() {
+    void testColors() {
         GpxTrack trk = new GpxTrack(new ArrayList<IGpxTrackSegment>(), new HashMap<>());
         GpxExtensionCollection ext = trk.getExtensions();
         ext.add("gpxd", "color", "#FF0000");
@@ -60,7 +60,7 @@ public class GpxTrackTest {
      * Unit test of methods {@link GpxTrack#equals} and {@link GpxTrack#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         GpxExtensionCollection col = new GpxExtensionCollection();
         col.add("josm", "from-server", "true");

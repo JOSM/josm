@@ -3,8 +3,8 @@ package org.openstreetmap.josm.command;
 
 import java.util.Arrays;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -29,7 +29,7 @@ public class CommandTest {
     /**
      * We need prefs for nodes / data sets.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
 
@@ -37,7 +37,7 @@ public class CommandTest {
      * Unit test of methods {@link Command#equals} and {@link Command#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(Command.class).usingGetClass()
             .withPrefabValues(DataSet.class,

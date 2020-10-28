@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -28,19 +28,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link MarkerLayer} class.
  */
-public class MarkerLayerTest {
+class MarkerLayerTest {
 
     /**
      * For creating layers
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().preferences().projection();
 
     /**
      * Setup tests
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         Config.getPref().putBoolean("marker.traceaudio", true);
     }
@@ -49,7 +49,7 @@ public class MarkerLayerTest {
      * Unit test of {@link MarkerLayer#MarkerLayer}.
      */
     @Test
-    public void testMarkerLayer() {
+    void testMarkerLayer() {
         MarkerLayer layer = new MarkerLayer(new GpxData(), "foo", null, null);
         MainApplication.getLayerManager().addLayer(layer);
 
@@ -82,7 +82,7 @@ public class MarkerLayerTest {
      * Unit test of {@code Main.map.mapView.playHeadMarker}.
      */
     @Test
-    public void testPlayHeadMarker() {
+    void testPlayHeadMarker() {
         try {
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
             MapFrame map = MainApplication.getMap();

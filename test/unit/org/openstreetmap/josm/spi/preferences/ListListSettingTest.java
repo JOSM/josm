@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.spi.preferences;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -12,11 +12,11 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Test {@link ListListSetting}.
  */
-public class ListListSettingTest {
+class ListListSettingTest {
     /**
      * This is a preference test
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -24,7 +24,7 @@ public class ListListSettingTest {
      * Unit test of methods {@link ListListSetting#equals} and {@link ListListSetting#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ListListSetting.class).usingGetClass()
             .withIgnoredFields("isNew", "time")

@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.validator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,8 +12,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -25,12 +25,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ValidatorTreePanel} class.
  */
-public class ValidatorTreePanelTest {
+class ValidatorTreePanelTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -38,7 +38,7 @@ public class ValidatorTreePanelTest {
      * Unit test of {@link ValidatorTreePanel#ValidatorTreePanel}.
      */
     @Test
-    public void testValidatorTreePanel() {
+    void testValidatorTreePanel() {
         assertNotNull(new ValidatorTreePanel());
 
         ValidatorTreePanel vtp = new ValidatorTreePanel(new ArrayList<>(Arrays.asList(

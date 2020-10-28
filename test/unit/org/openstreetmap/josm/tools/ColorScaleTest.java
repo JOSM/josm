@@ -1,23 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.awt.Color;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for class {@link ColorScale}.
  */
-public class ColorScaleTest {
+class ColorScaleTest {
 
     /**
      * Test method for {@link ColorScale#createHSBScale(int)}.
      */
     @Test
-    public void testHSBScale() {
+    void testHSBScale() {
         final ColorScale scale = ColorScale.createHSBScale(256);
         assertEquals(new Color(255, 0, 0), scale.getColor(0));
         assertEquals(new Color(0, 255, 143), scale.getColor(128));

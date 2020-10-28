@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -12,8 +12,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -24,12 +24,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link PostDownloadHandler}.
  */
-public class PostDownloadHandlerTest {
+class PostDownloadHandlerTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -123,43 +123,44 @@ public class PostDownloadHandlerTest {
      * Unit test of {@code PostDownloadHandler#run} - error case: future throws exception.
      */
     @Test
-    public void testRunExceptionFuture() {
+    void testRunExceptionFuture() {
         Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(null, newFuture("testRunExceptionFuture")).run();
-        assertTrue(Logging.getLastErrorAndWarnings().toString(),
+        assertTrue(
                 Logging.getLastErrorAndWarnings().stream()
-                        .anyMatch(e -> e.endsWith("E: java.util.concurrent.ExecutionException: testRunExceptionFuture")));
+                        .anyMatch(e -> e.endsWith("E: java.util.concurrent.ExecutionException: testRunExceptionFuture")),
+                        Logging.getLastErrorAndWarnings().toString());
     }
 
     /**
      * Unit test of {@code PostDownloadHandler#run} - nominal case: no errors.
      */
     @Test
-    public void testRunNoError() {
+    void testRunNoError() {
         Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(newTask(Collections.emptyList()), newFuture(null)).run();
-        assertTrue(Logging.getLastErrorAndWarnings().toString(), Logging.getLastErrorAndWarnings().isEmpty());
+        assertTrue(Logging.getLastErrorAndWarnings().isEmpty(), Logging.getLastErrorAndWarnings().toString());
     }
 
     /**
      * Unit test of {@code PostDownloadHandler#run} - nominal case: only one error.
      */
     @Test
-    public void testRunOneError() {
+    void testRunOneError() {
         Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(newTask(Collections.singletonList(new Object())), newFuture(null)).run();
-        assertTrue(Logging.getLastErrorAndWarnings().toString(), Logging.getLastErrorAndWarnings().isEmpty());
+        assertTrue(Logging.getLastErrorAndWarnings().isEmpty(), Logging.getLastErrorAndWarnings().toString());
     }
 
     /**
      * Unit test of {@code PostDownloadHandler#run} - nominal case: multiple errors.
      */
     @Test
-    public void testRunMultipleErrors() {
+    void testRunMultipleErrors() {
         Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(newTask(Arrays.asList("foo", new Exception("bar"), new Object())), newFuture(null)).run();
-        assertTrue(Logging.getLastErrorAndWarnings().toString(),
+        assertTrue(
                 Logging.getLastErrorAndWarnings().stream()
-                        .anyMatch(e -> e.endsWith("E: java.lang.Exception: bar")));
+                        .anyMatch(e -> e.endsWith("E: java.lang.Exception: bar")), Logging.getLastErrorAndWarnings().toString());
     }
 }

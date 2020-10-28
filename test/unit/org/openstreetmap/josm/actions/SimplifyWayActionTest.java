@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -36,7 +36,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link SimplifyWayAction}.
  */
-public final class SimplifyWayActionTest {
+final class SimplifyWayActionTest {
 
     /** Class under test. */
     private static SimplifyWayAction action;
@@ -44,14 +44,14 @@ public final class SimplifyWayActionTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main();
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         if (action == null) {
             action = MainApplication.getMenu().simplifyWay;
@@ -68,7 +68,7 @@ public final class SimplifyWayActionTest {
      * @throws Exception in case of error
      */
     @Test
-    public void testSimplify() throws Exception {
+    void testSimplify() throws Exception {
         DataSet DsSimplify = getDs("tracks");
         DataSet DsExpected = getDs("tracks-simplify15");
         SimplifyWayAction.simplifyWays(new ArrayList<>(DsSimplify.getWays()), 15);
@@ -90,7 +90,7 @@ public final class SimplifyWayActionTest {
      * Tests that also the first node may be simplified, see #13094.
      */
     @Test
-    public void testSimplifyFirstNode() {
+    void testSimplifyFirstNode() {
         final DataSet ds = new DataSet();
         final Node n1 = new Node(new LatLon(47.26269614984, 11.34044231149));
         final Node n2 = new Node(new LatLon(47.26274590831, 11.34053120859));

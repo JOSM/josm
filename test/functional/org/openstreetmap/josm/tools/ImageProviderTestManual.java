@@ -10,9 +10,9 @@ import java.awt.event.MouseListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -20,21 +20,22 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ImageProvider} class for manual execution.
  */
-public class ImageProviderTestManual {
+class ImageProviderTestManual {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Test getting a cursor
+     * @throws InterruptedException in case of thread interruption
      */
-    @Ignore("manual execution only, as the look of the cursor cannot be checked automatedly")
+    @Disabled("manual execution only, as the look of the cursor cannot be checked automatedly")
     @Test
-    public void testGetCursor() throws InterruptedException {
+    void testGetCursor() throws InterruptedException {
         JFrame frame = new JFrame();
         frame.setSize(500, 500);
         frame.setLayout(new GridLayout(2, 2));

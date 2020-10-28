@@ -5,7 +5,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-public class TagMergerTestFT extends JFrame {
+class TagMergerTestFT extends JFrame {
 
     private TagMerger tagMerger;
 
@@ -18,7 +18,7 @@ public class TagMergerTestFT extends JFrame {
     /**
      * Constructs a new {@code TagMergerTest}.
      */
-    public TagMergerTestFT() {
+    TagMergerTestFT() {
         build();
         tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", "theirvalue"));
         tagMerger.getModel().addItem(new TagMergeItem("key", "myvalue", null));

@@ -1,15 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -20,7 +21,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  * Tests {@link MainLayerManager}.
  * @author Michael Zangl
  */
-public class MainLayerManagerTest extends LayerManagerTest {
+class MainLayerManagerTest extends LayerManagerTest {
 
     private MainLayerManager layerManagerWithActive;
 
@@ -53,19 +54,19 @@ public class MainLayerManagerTest extends LayerManagerTest {
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         JOSMFixture.createUnitTestFixture().init();
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() {
         layerManager = layerManagerWithActive = new MainLayerManager();
     }
 
     @Test
-    public void testAddLayerSetsActiveLayer() {
+    void testAddLayerSetsActiveLayer() {
         TestLayer layer1 = new TestLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
         TestLayer layer3 = new TestLayer();
@@ -83,7 +84,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
     }
 
     @Test
-    public void testRemoveLayerUnsetsActiveLayer() {
+    void testRemoveLayerUnsetsActiveLayer() {
         TestLayer layer1 = new TestLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
         TestLayer layer3 = new TestLayer();
@@ -113,7 +114,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
      * {@link MainLayerManager#addAndFireActiveLayerChangeListener(ActiveLayerChangeListener)}
      */
     @Test
-    public void testAddActiveLayerChangeListener() {
+    void testAddActiveLayerChangeListener() {
         TestLayer layer1 = new TestLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
         layerManagerWithActive.addLayer(layer1);
@@ -140,18 +141,18 @@ public class MainLayerManagerTest extends LayerManagerTest {
     /**
      * Test if {@link MainLayerManager#addActiveLayerChangeListener(ActiveLayerChangeListener)} prevents listener from being added twice.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddActiveLayerChangeListenerTwice() {
+    @Test
+    void testAddActiveLayerChangeListenerTwice() {
         CapturingActiveLayerChangeListener listener = new CapturingActiveLayerChangeListener();
         layerManagerWithActive.addActiveLayerChangeListener(listener);
-        layerManagerWithActive.addActiveLayerChangeListener(listener);
+        assertThrows(IllegalArgumentException.class, () -> layerManagerWithActive.addActiveLayerChangeListener(listener));
     }
 
     /**
      * Test if {@link MainLayerManager#removeActiveLayerChangeListener(ActiveLayerChangeListener)} works.
      */
     @Test
-    public void testRemoveActiveLayerChangeListener() {
+    void testRemoveActiveLayerChangeListener() {
         TestLayer layer1 = new TestLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
         layerManagerWithActive.addLayer(layer1);
@@ -168,9 +169,10 @@ public class MainLayerManagerTest extends LayerManagerTest {
     /**
      * Test if {@link MainLayerManager#removeActiveLayerChangeListener(ActiveLayerChangeListener)} checks if listener is in list.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testRemoveActiveLayerChangeListenerNotInList() {
-        layerManagerWithActive.removeActiveLayerChangeListener(new CapturingActiveLayerChangeListener());
+    @Test
+    void testRemoveActiveLayerChangeListenerNotInList() {
+        assertThrows(IllegalArgumentException.class,
+                () -> layerManagerWithActive.removeActiveLayerChangeListener(new CapturingActiveLayerChangeListener()));
     }
 
     /**
@@ -179,7 +181,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
      * Edit and active layer getters are also tested in {@link #testAddLayerSetsActiveLayer()}
      */
     @Test
-    public void testSetGetActiveLayer() {
+    void testSetGetActiveLayer() {
         TestLayer layer1 = new TestLayer();
         TestLayer layer2 = new TestLayer();
         layerManagerWithActive.addLayer(layer1);
@@ -196,7 +198,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
      * Tests {@link MainLayerManager#getEditDataSet()}
      */
     @Test
-    public void testGetEditDataSet() {
+    void testGetEditDataSet() {
         assertNull(layerManagerWithActive.getEditDataSet());
         TestLayer layer0 = new TestLayer();
         layerManagerWithActive.addLayer(layer0);
@@ -218,7 +220,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
      * Tests {@link MainLayerManager#getVisibleLayersInZOrder()}
      */
     @Test
-    public void testGetVisibleLayersInZOrder() {
+    void testGetVisibleLayersInZOrder() {
         AbstractTestOsmLayer layer1 = new AbstractTestOsmLayer();
         AbstractTestOsmLayer layer2 = new AbstractTestOsmLayer();
         TestLayer layer3 = new TestLayer();

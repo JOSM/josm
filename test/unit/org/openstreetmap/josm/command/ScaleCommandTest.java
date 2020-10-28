@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -28,12 +28,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link ScaleCommand} class.
  */
-public class ScaleCommandTest {
+class ScaleCommandTest {
 
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
     private CommandTestData testData;
@@ -41,7 +41,7 @@ public class ScaleCommandTest {
     /**
      * Set up the test data.
      */
-    @Before
+    @BeforeEach
     public void createTestData() {
         testData = new CommandTestData();
     }
@@ -50,7 +50,7 @@ public class ScaleCommandTest {
      * Test a simple 2.5 scale. Tests {@link ScaleCommand#executeCommand()}
      */
     @Test
-    public void testScale() {
+    void testScale() {
         // pivot needs to be at 0,0
         Node n1 = new Node(new EastNorth(10, 10));
         Node n2 = new Node(new EastNorth(-1, 0));
@@ -70,7 +70,7 @@ public class ScaleCommandTest {
      * Test {@link ScaleCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         Node n1 = new Node(new EastNorth(10, 10));
         Node n2 = new Node(new EastNorth(-1, 0));
         Node n3 = new Node(new EastNorth(-9, -10));
@@ -95,7 +95,7 @@ public class ScaleCommandTest {
      * Tests {@link ScaleCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
@@ -112,7 +112,7 @@ public class ScaleCommandTest {
      * Tests {@link ScaleCommand#getParticipatingPrimitives()}
      */
     @Test
-    public void testGetParticipatingPrimitives() {
+    void testGetParticipatingPrimitives() {
         ScaleCommand command = new ScaleCommand(Arrays.asList(testData.existingNode), new EastNorth(0, 0));
         command.executeCommand();
         assertArrayEquals(new Object[] {testData.existingNode }, command.getParticipatingPrimitives().toArray());
@@ -122,7 +122,7 @@ public class ScaleCommandTest {
      * Test {@link ScaleCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         assertEquals("Scale 1 node",
                 new ScaleCommand(Arrays.asList(testData.existingNode), new EastNorth(0, 0))
                         .getDescriptionText());
@@ -135,7 +135,7 @@ public class ScaleCommandTest {
      * Unit test of methods {@link ScaleCommand#equals} and {@link ScaleCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ScaleCommand.class).usingGetClass()
             .withPrefabValues(LatLon.class,

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.correction.TagCorrection;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -23,12 +23,12 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests of {@link ReverseWayTagCorrector} class.
  */
-public class ReverseWayTagCorrectorTest {
+class ReverseWayTagCorrectorTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -37,7 +37,7 @@ public class ReverseWayTagCorrectorTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(ReverseWayTagCorrector.TagSwitcher.class);
     }
 
@@ -45,7 +45,7 @@ public class ReverseWayTagCorrectorTest {
      * Test of {@link ReverseWayTagCorrector.TagSwitcher#apply} method.
      */
     @Test
-    public void testTagSwitch() {
+    void testTagSwitch() {
         // oneway
         assertSwitch(new Tag("oneway", "yes"), new Tag("oneway", "-1"));
         assertSwitch(new Tag("oneway", "true"), new Tag("oneway", "-1"));
@@ -120,7 +120,7 @@ public class ReverseWayTagCorrectorTest {
      * Test tag correction on way nodes
      */
     @Test
-    public void testSwitchingWayNodes() {
+    void testSwitchingWayNodes() {
         final Map<OsmPrimitive, List<TagCorrection>> tagCorrections = getTagCorrectionsForWay("direction=forward");
         Assert.assertEquals(1, tagCorrections.size());
         Assert.assertEquals(Collections.singletonList(new TagCorrection("direction", "forward", "direction", "backward")),
@@ -131,7 +131,7 @@ public class ReverseWayTagCorrectorTest {
      * Test tag correction on way nodes are not applied for absolute values such as compass cardinal directions
      */
     @Test
-    public void testNotSwitchingWayNodes() {
+    void testNotSwitchingWayNodes() {
         Assert.assertEquals(0, getTagCorrectionsForWay("direction=SSW").size());
         Assert.assertEquals(0, getTagCorrectionsForWay("direction=145").size());
     }

@@ -1,18 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -33,12 +33,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link AddPrimitivesCommand} class.
  */
-public class AddPrimitivesCommandTest {
+class AddPrimitivesCommandTest {
 
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
 
@@ -46,7 +46,7 @@ public class AddPrimitivesCommandTest {
      * Test if the add command is executed correctly and does not set the modified flag.
      */
     @Test
-    public void testAdd() {
+    void testAdd() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
@@ -60,7 +60,7 @@ public class AddPrimitivesCommandTest {
      * Test if the add command sets the selection.
      */
     @Test
-    public void testAddSetSelection() {
+    void testAddSetSelection() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
@@ -76,7 +76,7 @@ public class AddPrimitivesCommandTest {
      * Tests if the add command respects the data set.
      */
     @Test
-    public void testAddToLayer() {
+    void testAddToLayer() {
         DataSet ds1 = new DataSet();
         DataSet ds2 = new DataSet();
 
@@ -94,7 +94,7 @@ public class AddPrimitivesCommandTest {
      * Tests if the add command ignores existing data
      */
     @Test
-    public void testAddIgnoresExisting() {
+    void testAddIgnoresExisting() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
@@ -113,7 +113,7 @@ public class AddPrimitivesCommandTest {
      * Test {@link AddPrimitivesCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
@@ -137,7 +137,7 @@ public class AddPrimitivesCommandTest {
      * Test {@link AddPrimitivesCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
@@ -171,7 +171,7 @@ public class AddPrimitivesCommandTest {
      * data ignored by by the add command because they where already existing.
      */
     @Test
-    public void testUndoIgnoresExisting() {
+    void testUndoIgnoresExisting() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
@@ -207,7 +207,7 @@ public class AddPrimitivesCommandTest {
      * Simulates regression in #14620
      */
     @Test
-    public void testUndoIgnoresExistingAsDeleted() {
+    void testUndoIgnoresExistingAsDeleted() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
@@ -242,7 +242,7 @@ public class AddPrimitivesCommandTest {
      * data ignored by by the add command because they where already existing.
      */
     @Test
-    public void testUndoIgnoresExistingSameUniqueIdDifferentType() {
+    void testUndoIgnoresExistingSameUniqueIdDifferentType() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = new ArrayList<>(createTestData());
@@ -287,7 +287,7 @@ public class AddPrimitivesCommandTest {
      * Test {@link AddCommand#getParticipatingPrimitives()}
      */
     @Test
-    public void testParticipatingPrimitives() {
+    void testParticipatingPrimitives() {
         DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
@@ -307,7 +307,7 @@ public class AddPrimitivesCommandTest {
      * Tests {@link AddPrimitivesCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
@@ -363,7 +363,7 @@ public class AddPrimitivesCommandTest {
      * Unit test of methods {@link AddPrimitivesCommand#equals} and {@link AddPrimitivesCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(AddPrimitivesCommand.class).usingGetClass()
             .withPrefabValues(DataSet.class,

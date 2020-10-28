@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
-public class NodeListMergerTestFT extends JFrame {
+class NodeListMergerTestFT extends JFrame {
 
     private NodeListMerger nodeListMerger;
 
@@ -61,7 +61,7 @@ public class NodeListMergerTestFT extends JFrame {
     /**
      * Constructs a new {@code NodeListMergerTest}.
      */
-    public NodeListMergerTestFT() {
+    NodeListMergerTestFT() {
         build();
         populate();
     }

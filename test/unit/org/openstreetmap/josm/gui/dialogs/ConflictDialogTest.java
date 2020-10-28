@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -25,12 +25,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ConflictDialog} class.
  */
-public class ConflictDialogTest {
+class ConflictDialogTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection();
 
@@ -38,7 +38,7 @@ public class ConflictDialogTest {
      * Unit test of {@link ConflictDialog#ConflictDialog}.
      */
     @Test
-    public void testConflictDialog() {
+    void testConflictDialog() {
         assertNotNull(new ConflictDialog());
     }
 
@@ -46,7 +46,7 @@ public class ConflictDialogTest {
      * Unit test of {@link ConflictDialog#getColor} method.
      */
     @Test
-    public void testGetColor() {
+    void testGetColor() {
         assertEquals(Color.gray, ConflictDialog.getColor());
     }
 
@@ -54,7 +54,7 @@ public class ConflictDialogTest {
      * Unit tests of {@link ConflictPainter} class.
      */
     @Test
-    public void testConflictPainter() {
+    void testConflictPainter() {
         MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
         ConflictPainter cp = new ConflictPainter(MainApplication.getMap().mapView,
                 new BufferedImage(800, 600, BufferedImage.TYPE_3BYTE_BGR).createGraphics());

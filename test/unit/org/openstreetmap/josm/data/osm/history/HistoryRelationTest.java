@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
@@ -21,12 +21,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link HistoryRelation}.
  */
-public class HistoryRelationTest {
+class HistoryRelationTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -45,7 +45,7 @@ public class HistoryRelationTest {
      * Unit test for {@link HistoryRelation#HistoryRelation}.
      */
     @Test
-    public void testHistoryRelation() {
+    void testHistoryRelation() {
         Date d = new Date();
         HistoryRelation rel = create(d);
 
@@ -62,7 +62,7 @@ public class HistoryRelationTest {
      * Unit test for {@link HistoryRelation#getType}.
      */
     @Test
-    public void testGetType() {
+    void testGetType() {
         assertEquals(OsmPrimitiveType.RELATION, create(new Date()).getType());
     }
 
@@ -70,7 +70,7 @@ public class HistoryRelationTest {
      * Unit test for {@link HistoryRelation#getDisplayName}.
      */
     @Test
-    public void testGetDisplayName() {
+    void testGetDisplayName() {
         HistoryNameFormatter hnf = DefaultNameFormatter.getInstance();
         HistoryRelation rel0 = create(new Date()); // 0 member
         HistoryRelation rel1 = create(new Date()); // 1 member

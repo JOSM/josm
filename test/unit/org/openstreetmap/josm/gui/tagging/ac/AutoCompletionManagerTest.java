@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.ac;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -16,12 +16,12 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Unit tests of {@link AutoCompletionManager} class.
  */
-public class AutoCompletionManagerTest {
+class AutoCompletionManagerTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -29,7 +29,7 @@ public class AutoCompletionManagerTest {
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/17064">#17064</a>.
      */
     @Test
-    public void testTicket17064() {
+    void testTicket17064() {
         DataSet ds = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(ds, "testTicket17064", null);
         MainApplication.getLayerManager().addLayer(layer);
@@ -41,7 +41,7 @@ public class AutoCompletionManagerTest {
      * Unit test of methods {@link UserInputTag#equals} and {@link UserInputTag#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(UserInputTag.class).usingGetClass()
             .verify();

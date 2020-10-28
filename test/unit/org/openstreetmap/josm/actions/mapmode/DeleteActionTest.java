@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.mapmode;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction.DeleteMode;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -19,12 +19,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link DeleteAction}.
  */
-public class DeleteActionTest {
+class DeleteActionTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection();
 
@@ -32,7 +32,7 @@ public class DeleteActionTest {
      * Unit test of {@link DeleteAction#enterMode} and {@link DeleteAction#exitMode}.
      */
     @Test
-    public void testMode() {
+    void testMode() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
             MainApplication.getLayerManager().addLayer(layer);
@@ -51,7 +51,7 @@ public class DeleteActionTest {
      * Unit test of {@link DeleteMode} enum.
      */
     @Test
-    public void testEnumDeleteMode() {
+    void testEnumDeleteMode() {
         TestUtils.superficialEnumCodeCoverage(DeleteMode.class);
     }
 }

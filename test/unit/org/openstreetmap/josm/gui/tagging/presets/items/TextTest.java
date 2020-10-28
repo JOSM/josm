@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 
 import javax.swing.JPanel;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -18,12 +18,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link Text} class.
  */
-public class TextTest {
+class TextTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main();
 
@@ -31,7 +31,7 @@ public class TextTest {
      * Unit test for {@link Text#addToPanel}.
      */
     @Test
-    public void testAddToPanel() {
+    void testAddToPanel() {
         JPanel p = new JPanel();
         assertEquals(0, p.getComponentCount());
         assertTrue(new Text().addToPanel(p, Collections.<OsmPrimitive>emptyList(), false));

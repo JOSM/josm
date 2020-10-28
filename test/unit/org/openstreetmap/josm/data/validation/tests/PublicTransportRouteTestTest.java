@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -20,14 +20,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of "Public Transport Route" validation test.
  */
-public class PublicTransportRouteTestTest {
+class PublicTransportRouteTestTest {
 
     final PublicTransportRouteTest test = new PublicTransportRouteTest();
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules();
 
@@ -35,7 +35,7 @@ public class PublicTransportRouteTestTest {
      * Performs various tests.
      */
     @Test
-    public void testVarious() {
+    void testVarious() {
         final List<Node> nodes = Arrays.asList(new Node(), new Node(), new Node(), new Node(), new Node(), new Node());
         final Way w1 = TestUtils.newWay("", nodes.get(0), nodes.get(1));
         final Way w2 = TestUtils.newWay("", nodes.get(1), nodes.get(2));

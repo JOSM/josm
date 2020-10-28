@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -12,12 +12,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link NoteLayer} class.
  */
-public class NoteLayerTest {
+class NoteLayerTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -25,7 +25,7 @@ public class NoteLayerTest {
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/13208">#13208</a>.
      */
     @Test
-    public void testTicket13208() {
+    void testTicket13208() {
         assertEquals("0 notes", new NoteLayer().getToolTipText());
     }
 
@@ -33,7 +33,7 @@ public class NoteLayerTest {
      * Unit test of {@link NoteLayer#insertLineBreaks}.
      */
     @Test
-    public void testInsertLineBreaks() {
+    void testInsertLineBreaks() {
         // empty string
         assertEquals("", NoteLayer.insertLineBreaks(""));
         // CHECKSTYLE.OFF: LineLength
@@ -60,7 +60,7 @@ public class NoteLayerTest {
      * Unit test of {@link NoteLayer#replaceLinks}.
      */
     @Test
-    public void testReplaceLinks() {
+    void testReplaceLinks() {
         // empty string
         assertEquals("", NoteLayer.replaceLinks(""));
         // no link

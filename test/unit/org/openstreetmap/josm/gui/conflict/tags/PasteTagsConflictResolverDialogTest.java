@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.tags;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.awt.Insets;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog.StatisticsInfo;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog.StatisticsInfoTable;
@@ -21,12 +21,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link PasteTagsConflictResolverDialog} class.
  */
-public class PasteTagsConflictResolverDialogTest {
+class PasteTagsConflictResolverDialogTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -34,7 +34,7 @@ public class PasteTagsConflictResolverDialogTest {
      * Unit test of {@link PasteTagsConflictResolverDialog#PANE_TITLES}.
      */
     @Test
-    public void testPaneTitles() {
+    void testPaneTitles() {
         assertNotNull(PasteTagsConflictResolverDialog.PANE_TITLES);
         assertNotNull(PasteTagsConflictResolverDialog.PANE_TITLES.get(OsmPrimitiveType.NODE));
         assertNotNull(PasteTagsConflictResolverDialog.PANE_TITLES.get(OsmPrimitiveType.WAY));
@@ -45,7 +45,7 @@ public class PasteTagsConflictResolverDialogTest {
      * Unit test of {@link PasteTagsConflictResolverDialog.StatisticsInfoTable} class.
      */
     @Test
-    public void testStatisticsInfoTable() {
+    void testStatisticsInfoTable() {
         StatisticsInfo info = new StatisticsInfo();
         StatisticsTableModel model = new StatisticsTableModel();
         assertFalse(model.isCellEditable(0, 0));

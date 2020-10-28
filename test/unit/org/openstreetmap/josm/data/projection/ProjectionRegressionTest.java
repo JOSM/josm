@@ -18,8 +18,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.Utils;
  * So when this test fails, first check if the change is intended. Then update the regression
  * test data, by running the main method of this class and commit the new data file.
  */
-public class ProjectionRegressionTest {
+class ProjectionRegressionTest {
 
     private static final String PROJECTION_DATA_FILE = "nodist/data/projection/projection-regression-test-data";
 
@@ -135,7 +135,7 @@ public class ProjectionRegressionTest {
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         JOSMFixture.createUnitTestFixture().init();
     }
@@ -145,7 +145,7 @@ public class ProjectionRegressionTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testNonRegression() throws IOException {
+    void testNonRegression() throws IOException {
         List<TestData> allData = readData();
         Set<String> dataCodes = allData.stream().map(data -> data.code).collect(Collectors.toSet());
 

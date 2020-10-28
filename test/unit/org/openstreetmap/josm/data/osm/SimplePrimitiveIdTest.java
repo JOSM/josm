@@ -1,20 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link SimplePrimitiveId} class.
  */
-public class SimplePrimitiveIdTest {
+class SimplePrimitiveIdTest {
 
     /**
      * Unit test of {@link SimplePrimitiveId#fromString} for nodes.
      */
     @Test
-    public void testFromStringNode() {
+    void testFromStringNode() {
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.NODE), SimplePrimitiveId.fromString("node/123"));
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.NODE), SimplePrimitiveId.fromString("n123"));
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.NODE), SimplePrimitiveId.fromString("node123"));
@@ -25,7 +26,7 @@ public class SimplePrimitiveIdTest {
      * Unit test of {@link SimplePrimitiveId#fromString} for ways.
      */
     @Test
-    public void testFromStringWay() {
+    void testFromStringWay() {
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.WAY), SimplePrimitiveId.fromString("way/123"));
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.WAY), SimplePrimitiveId.fromString("w123"));
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.WAY), SimplePrimitiveId.fromString("way123"));
@@ -36,7 +37,7 @@ public class SimplePrimitiveIdTest {
      * Unit test of {@link SimplePrimitiveId#fromString} for relations.
      */
     @Test
-    public void testFromStringRelation() {
+    void testFromStringRelation() {
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.RELATION), SimplePrimitiveId.fromString("relation/123"));
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.RELATION), SimplePrimitiveId.fromString("r123"));
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.RELATION), SimplePrimitiveId.fromString("rel123"));
@@ -46,16 +47,16 @@ public class SimplePrimitiveIdTest {
     /**
      * Unit test of {@link SimplePrimitiveId#fromString} for invalid input.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testFromStringBad() {
-        SimplePrimitiveId.fromString("foobar");
+    @Test
+    void testFromStringBad() {
+        assertThrows(IllegalArgumentException.class, () -> SimplePrimitiveId.fromString("foobar"));
     }
 
     /**
      * Unit test of {@link SimplePrimitiveId#fuzzyParse}.
      */
     @Test
-    public void testFuzzyParse() {
+    void testFuzzyParse() {
         assertEquals("[relation 123]",
                 SimplePrimitiveId.fuzzyParse("foo relation/123 bar").toString());
         assertEquals("[relation 123, way 345, node 789]",
@@ -67,7 +68,7 @@ public class SimplePrimitiveIdTest {
     }
 
     @Test
-    public void testFromCopyAction() {
+    void testFromCopyAction() {
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.NODE), SimplePrimitiveId.fromString("node 123"));
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.WAY), SimplePrimitiveId.fromString("way 123"));
         assertEquals(new SimplePrimitiveId(123, OsmPrimitiveType.RELATION), SimplePrimitiveId.fromString("relation 123"));
@@ -77,7 +78,7 @@ public class SimplePrimitiveIdTest {
      * Unit test of {@link SimplePrimitiveId#multipleFromString}.
      */
     @Test
-    public void testMultipleFromString() {
+    void testMultipleFromString() {
         assertEquals("[node 234]", SimplePrimitiveId.multipleFromString("node/234").toString());
         assertEquals("[node 234]", SimplePrimitiveId.multipleFromString("node/234-234").toString());
         assertEquals("[]", SimplePrimitiveId.multipleFromString("node/2-1").toString());
@@ -100,8 +101,8 @@ public class SimplePrimitiveIdTest {
     /**
      * Unit test of {@link SimplePrimitiveId#multipleFromString} for invalid data.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testMultipleFromStringBad() {
-        SimplePrimitiveId.multipleFromString("foo node123 bar");
+    @Test
+    void testMultipleFromStringBad() {
+        assertThrows(IllegalArgumentException.class, () -> SimplePrimitiveId.multipleFromString("foo node123 bar"));
     }
 }

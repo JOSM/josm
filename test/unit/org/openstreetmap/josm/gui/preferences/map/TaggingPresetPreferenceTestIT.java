@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -40,7 +40,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Integration tests of {@link TaggingPresetPreference} class.
  */
 @RunWith(Parameterized.class)
-public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
+class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
 
     /**
      * Setup rule
@@ -53,7 +53,7 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
      * Setup test
      * @throws IOException in case of I/O error
      */
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException {
         errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(TaggingPresetPreferenceTestIT.class));
         // Double traditional timeouts to avoid random problems
@@ -80,7 +80,7 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
      * @param url URL
      * @param source source entry to test
      */
-    public TaggingPresetPreferenceTestIT(String displayName, String url, ExtendedSourceEntry source) {
+    TaggingPresetPreferenceTestIT(String displayName, String url, ExtendedSourceEntry source) {
         super(source);
     }
 
@@ -89,7 +89,7 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
      * @throws Exception in case of error
      */
     @Test
-    public void testPresetsValidity() throws Exception {
+    void testPresetsValidity() throws Exception {
         assumeFalse(isIgnoredSubstring(source.url));
         Set<String> errors = new HashSet<>();
         try {
@@ -105,7 +105,7 @@ public class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTe
         } catch (SAXException | IllegalArgumentException e) {
             handleException(e, errors);
         }
-        assertTrue(errors.toString(), errors.isEmpty());
+        assertTrue(errors.isEmpty(), errors::toString);
         assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
     }
 

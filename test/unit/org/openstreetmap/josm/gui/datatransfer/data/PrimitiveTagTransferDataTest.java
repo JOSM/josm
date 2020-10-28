@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.datatransfer.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -25,11 +25,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Test {@link PrimitiveTagTransferData}
  * @author Michael Zangl
  */
-public class PrimitiveTagTransferDataTest {
+class PrimitiveTagTransferDataTest {
     /**
      * Prefs only required because of the dependencies of OSM primitives.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -41,7 +41,7 @@ public class PrimitiveTagTransferDataTest {
      * Test method for {@link PrimitiveTagTransferData#PrimitiveTagTransferData(PrimitiveTransferData)}.
      */
     @Test
-    public void testPrimitiveTagTransferDataPrimitiveTransferData() {
+    void testPrimitiveTagTransferDataPrimitiveTransferData() {
         PrimitiveTagTransferData data = new PrimitiveTagTransferData(PrimitiveTransferData.getData(Arrays.asList(new Node(), new Node())));
         assertEquals(2, data.getSourcePrimitiveCount(OsmPrimitiveType.NODE));
         assertEquals(0, data.getSourcePrimitiveCount(OsmPrimitiveType.WAY));
@@ -52,7 +52,7 @@ public class PrimitiveTagTransferDataTest {
      * Test method for {@link PrimitiveTagTransferData#isHeterogeneousSource()}.
      */
     @Test
-    public void testIsHeterogeneousSource() {
+    void testIsHeterogeneousSource() {
         // 0 item
         assertFalse(isHeterogeneousSource());
         // 1 item
@@ -73,7 +73,7 @@ public class PrimitiveTagTransferDataTest {
      * Test method for {@link PrimitiveTagTransferData#getForPrimitives(OsmPrimitiveType)}.
      */
     @Test
-    public void testGetForPrimitives() {
+    void testGetForPrimitives() {
         PrimitiveTagTransferData data = createTestData();
         TagCollection forNode = data.getForPrimitives(OsmPrimitiveType.NODE);
         assertEquals(1, forNode.getKeys().size());
@@ -99,7 +99,7 @@ public class PrimitiveTagTransferDataTest {
      * Test method for {@link PrimitiveTagTransferData#getSourcePrimitiveCount(OsmPrimitiveType)}.
      */
     @Test
-    public void testGetSourcePrimitiveCount() {
+    void testGetSourcePrimitiveCount() {
         PrimitiveTagTransferData data = createTestData();
         assertEquals(2, data.getSourcePrimitiveCount(OsmPrimitiveType.NODE));
         assertEquals(1, data.getSourcePrimitiveCount(OsmPrimitiveType.WAY));
@@ -110,7 +110,7 @@ public class PrimitiveTagTransferDataTest {
      * Test method for {@link PrimitiveTagTransferData#getStatistics()}.
      */
     @Test
-    public void testGetStatistics() {
+    void testGetStatistics() {
         PrimitiveTagTransferData data = createTestData();
         Map<OsmPrimitiveType, Integer> stats = data.getStatistics();
         assertEquals(2, (int) stats.get(OsmPrimitiveType.NODE));

@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Arrays;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -20,7 +20,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link UnJoinNodeWayAction}.
  */
-public final class UnJoinNodeWayActionTest {
+final class UnJoinNodeWayActionTest {
 
     /**
      * Prepare the class for the test. The notification system must be disabled.
@@ -39,7 +39,7 @@ public final class UnJoinNodeWayActionTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -50,7 +50,7 @@ public final class UnJoinNodeWayActionTest {
      * see #10396
      */
     @Test
-    public void testTicket10396() {
+    void testTicket10396() {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
@@ -82,6 +82,6 @@ public final class UnJoinNodeWayActionTest {
         }
 
         // Ensures node n2 remove from w
-        assertFalse("Node n2 wasn't removed from way w.", w.containsNode(n2));
+        assertFalse(w.containsNode(n2), "Node n2 wasn't removed from way w.");
     }
 }

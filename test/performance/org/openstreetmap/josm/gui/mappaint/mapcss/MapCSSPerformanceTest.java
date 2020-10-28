@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -28,7 +28,7 @@ import org.openstreetmap.josm.io.OsmReader;
  * against a test data set using a test style.
  *
  */
-public class MapCSSPerformanceTest {
+class MapCSSPerformanceTest {
 
     /* ------------------------ configuration section  ---------------------------- */
     /**
@@ -55,7 +55,7 @@ public class MapCSSPerformanceTest {
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void createJOSMFixture() {
         JOSMFixture.createPerformanceTestFixture().init(true);
     }

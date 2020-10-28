@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -16,12 +16,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * JUnit Test of "Name mismatch" validation test.
  */
-public class NameMismatchTest {
+class NameMismatchTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -35,7 +35,7 @@ public class NameMismatchTest {
      * Test "A name is missing, even though name:* exists."
      */
     @Test
-    public void testCase0() {
+    void testCase0() {
         final List<TestError> errors = test("node name:de=Europa");
         assertEquals(1, errors.size());
         assertEquals("A name is missing, even though name:* exists.", errors.get(0).getMessage());
@@ -45,7 +45,7 @@ public class NameMismatchTest {
      * Test "Missing name:*={0}. Add tag with correct language key."
      */
     @Test
-    public void testCase1() {
+    void testCase1() {
         final List<TestError> errors = test("node name=Europe name:de=Europa");
         assertEquals(1, errors.size());
         assertEquals("Missing name:*=Europe. Add tag with correct language key.", errors.get(0).getDescription());
@@ -55,7 +55,7 @@ public class NameMismatchTest {
      * Test no error
      */
     @Test
-    public void testCase2() {
+    void testCase2() {
         final List<TestError> errors = test("node name=Europe name:de=Europa name:en=Europe");
         assertEquals(0, errors.size());
     }
@@ -64,7 +64,7 @@ public class NameMismatchTest {
      * Various other tests
      */
     @Test
-    public void testCase3() {
+    void testCase3() {
         List<TestError> errors;
         errors = test("node \"name\"=\"Italia - Italien - Italy\"");
         assertEquals(0, errors.size());
@@ -81,7 +81,7 @@ public class NameMismatchTest {
      * Test that {@code name:etymology:wikidata} does not count.
      */
     @Test
-    public void testEtymologyWikidata() {
+    void testEtymologyWikidata() {
         final List<TestError> errors = test("node name=Foo name:etymology:wikidata=Bar");
         assertEquals(0, errors.size());
     }

@@ -1,11 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +21,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -30,11 +31,11 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests of {@link Utils} class.
  */
-public class UtilsTest {
+class UtilsTest {
     /**
      * Use default, basic test rules.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules();
 
@@ -43,7 +44,7 @@ public class UtilsTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(Utils.class);
     }
 
@@ -51,7 +52,7 @@ public class UtilsTest {
      * Test of {@link Utils#strip} method.
      */
     @Test
-    public void testStrip() {
+    void testStrip() {
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         final String someWhite =
             "\u00A0"+ // SPACE_SEPARATOR
@@ -106,7 +107,7 @@ public class UtilsTest {
      * Test of {@link Utils#isStripEmpty} method.
      */
     @Test
-    public void testIsStripEmpty() {
+    void testIsStripEmpty() {
         assertTrue(Utils.isStripEmpty(null));
         assertTrue(Utils.isStripEmpty(""));
         assertTrue(Utils.isStripEmpty(" "));
@@ -122,7 +123,7 @@ public class UtilsTest {
      * Test of {@link Utils#toHexString} method.
      */
     @Test
-    public void testToHexString() {
+    void testToHexString() {
         assertEquals("", Utils.toHexString(null));
         assertEquals("", Utils.toHexString(new byte[0]));
         assertEquals("01", Utils.toHexString(new byte[]{0x1}));
@@ -136,7 +137,7 @@ public class UtilsTest {
      * Test of {@link Utils#getPositionListString} method.
      */
     @Test
-    public void testPositionListString() {
+    void testPositionListString() {
         assertEquals("1", Utils.getPositionListString(Arrays.asList(1)));
         assertEquals("1-2", Utils.getPositionListString(Arrays.asList(1, 2)));
         assertEquals("1-3", Utils.getPositionListString(Arrays.asList(1, 2, 3)));
@@ -149,7 +150,7 @@ public class UtilsTest {
      * Test of {@link Utils#getDurationString} method.
      */
     @Test
-    public void testDurationString() {
+    void testDurationString() {
         I18n.set("en");
         assertEquals("0 ms", Utils.getDurationString(0));
         assertEquals("123 ms", Utils.getDurationString(123));
@@ -168,16 +169,16 @@ public class UtilsTest {
     /**
      * Test of {@link Utils#getDurationString} method.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testDurationStringNegative() {
-        Utils.getDurationString(-1);
+    @Test
+    void testDurationStringNegative() {
+        assertThrows(IllegalArgumentException.class, () -> Utils.getDurationString(-1));
     }
 
     /**
      * Test of {@link Utils#escapeReservedCharactersHTML} method.
      */
     @Test
-    public void testEscapeReservedCharactersHTML() {
+    void testEscapeReservedCharactersHTML() {
         assertEquals("foo -&gt; bar -&gt; '&amp;'", Utils.escapeReservedCharactersHTML("foo -> bar -> '&'"));
     }
 
@@ -185,7 +186,7 @@ public class UtilsTest {
      * Test of {@link Utils#shortenString} method.
      */
     @Test
-    public void testShortenString() {
+    void testShortenString() {
         assertNull(Utils.shortenString(null, 3));
         assertEquals("...", Utils.shortenString("123456789", 3));
         assertEquals("1...", Utils.shortenString("123456789", 4));
@@ -199,16 +200,16 @@ public class UtilsTest {
     /**
      * Test of {@link Utils#shortenString} method.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testShortenStringTooShort() {
-        Utils.shortenString("123456789", 2);
+    @Test
+    void testShortenStringTooShort() {
+        assertThrows(IllegalArgumentException.class, () -> Utils.shortenString("123456789", 2));
     }
 
     /**
      * Test of {@link Utils#restrictStringLines} method.
      */
     @Test
-    public void testRestrictStringLines() {
+    void testRestrictStringLines() {
         assertNull(Utils.restrictStringLines(null, 2));
         assertEquals("1\n...", Utils.restrictStringLines("1\n2\n3", 2));
         assertEquals("1\n2\n3", Utils.restrictStringLines("1\n2\n3", 3));
@@ -219,7 +220,7 @@ public class UtilsTest {
      * Test of {@link Utils#limit} method.
      */
     @Test
-    public void testLimit() {
+    void testLimit() {
         assertNull(Utils.limit(null, 2, "..."));
         assertEquals(Arrays.asList("1", "..."), Utils.limit(Arrays.asList("1", "2", "3"), 2, "..."));
         assertEquals(Arrays.asList("1", "2", "3"), Utils.limit(Arrays.asList("1", "2", "3"), 3, "..."));
@@ -230,7 +231,7 @@ public class UtilsTest {
      * Test of {@link Utils#getSizeString} method.
      */
     @Test
-    public void testSizeString() {
+    void testSizeString() {
         assertEquals("0 B", Utils.getSizeString(0, Locale.ENGLISH));
         assertEquals("123 B", Utils.getSizeString(123, Locale.ENGLISH));
         assertEquals("1023 B", Utils.getSizeString(1023, Locale.ENGLISH));
@@ -250,16 +251,16 @@ public class UtilsTest {
     /**
      * Test of {@link Utils#getSizeString} method.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testSizeStringNegative() {
-        Utils.getSizeString(-1, Locale.ENGLISH);
+    @Test
+    void testSizeStringNegative() {
+        assertThrows(IllegalArgumentException.class, () -> Utils.getSizeString(-1, Locale.ENGLISH));
     }
 
     /**
      * Test {@link Utils#joinAsHtmlUnorderedList(Iterable)}
      */
     @Test
-    public void testJoinAsHtmlUnorderedList() {
+    void testJoinAsHtmlUnorderedList() {
         List<? extends Object> items = Arrays.asList("1", Integer.valueOf(2));
         assertEquals("<ul><li>1</li><li>2</li></ul>", Utils.joinAsHtmlUnorderedList(items));
         assertEquals("<ul></ul>", Utils.joinAsHtmlUnorderedList(Collections.emptyList()));
@@ -269,7 +270,7 @@ public class UtilsTest {
      * Test {@link Utils#getJavaVersion}
      */
     @Test
-    public void testGetJavaVersion() {
+    void testGetJavaVersion() {
         String javaVersion = System.getProperty("java.version");
         try {
             System.setProperty("java.version", "1.8.0_72-ea");
@@ -301,7 +302,7 @@ public class UtilsTest {
      * Test {@link Utils#getJavaUpdate}
      */
     @Test
-    public void testGetJavaUpdate() {
+    void testGetJavaUpdate() {
         String javaVersion = System.getProperty("java.version");
         try {
             System.setProperty("java.version", "1.8.0");
@@ -330,7 +331,7 @@ public class UtilsTest {
      * Test {@link Utils#getJavaBuild}
      */
     @Test
-    public void testGetJavaBuild() {
+    void testGetJavaBuild() {
         String javaVersion = System.getProperty("java.runtime.version");
         try {
             System.setProperty("java.runtime.version", "1.8.0_131-b11");
@@ -362,15 +363,15 @@ public class UtilsTest {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testNullStreamForReadBytesFromStream() throws IOException {
-        assertEquals("Empty on null stream", 0, Utils.readBytesFromStream(null).length);
+    void testNullStreamForReadBytesFromStream() throws IOException {
+        assertEquals(0, Utils.readBytesFromStream(null).length, "Empty on null stream");
     }
 
     /**
      * Test of {@link Utils#getLevenshteinDistance} method.
      */
     @Test
-    public void testLevenshteinDistance() {
+    void testLevenshteinDistance() {
         assertEquals(0, Utils.getLevenshteinDistance("foo", "foo"));
         assertEquals(3, Utils.getLevenshteinDistance("foo", "bar"));
         assertEquals(1, Utils.getLevenshteinDistance("bar", "baz"));
@@ -383,7 +384,7 @@ public class UtilsTest {
      * Test of {@link Utils#isSimilar} method.
      */
     @Test
-    public void testIsSimilar() {
+    void testIsSimilar() {
         assertFalse(Utils.isSimilar("foo", "foo"));
         assertFalse(Utils.isSimilar("foo", "bar"));
         assertTrue(Utils.isSimilar("bar", "baz"));
@@ -395,7 +396,7 @@ public class UtilsTest {
      * Test of {@link Utils#stripHtml(String)}
      */
     @Test
-    public void testStripHtml() {
+    void testStripHtml() {
         assertEquals("Hoogte 55 m", Utils.stripHtml(
                 "<table width=\"100%\"><tr>" +
                         "<td align=\"left\" valign=\"center\"><small><b>Hoogte</b></small></td>" +
@@ -406,7 +407,7 @@ public class UtilsTest {
      * Test of {@link Utils#firstNonNull}
      */
     @Test
-    public void testFirstNonNull() {
+    void testFirstNonNull() {
         assertNull(Utils.firstNonNull());
         assertNull(Utils.firstNonNull(null, null));
         assertEquals("foo", Utils.firstNonNull(null, "foo", null));
@@ -416,7 +417,7 @@ public class UtilsTest {
      * Test of {@link Utils#getMatches}
      */
     @Test
-    public void testGetMatches() {
+    void testGetMatches() {
         final Pattern pattern = Pattern.compile("(foo)x(bar)y(baz)");
         assertNull(Utils.getMatches(pattern.matcher("")));
         assertEquals(Arrays.asList("fooxbarybaz", "foo", "bar", "baz"), Utils.getMatches(pattern.matcher("fooxbarybaz")));
@@ -426,39 +427,39 @@ public class UtilsTest {
      * Test of {@link Utils#encodeUrl}
      */
     @Test
-    public void testEncodeUrl() {
+    void testEncodeUrl() {
         assertEquals("%C3%A4%C3%B6%C3%BC%C3%9F", Utils.encodeUrl("äöüß"));
     }
 
     /**
      * Test of {@link Utils#encodeUrl}
      */
-    @Test(expected = NullPointerException.class)
-    public void testEncodeUrlNull() {
-        Utils.encodeUrl(null);
+    @Test
+    void testEncodeUrlNull() {
+        assertThrows(NullPointerException.class, () -> Utils.encodeUrl(null));
     }
 
     /**
      * Test of {@link Utils#decodeUrl}
      */
     @Test
-    public void testDecodeUrl() {
+    void testDecodeUrl() {
         assertEquals("äöüß", Utils.decodeUrl("%C3%A4%C3%B6%C3%BC%C3%9F"));
     }
 
     /**
      * Test of {@link Utils#decodeUrl}
      */
-    @Test(expected = NullPointerException.class)
-    public void testDecodeUrlNull() {
-        Utils.decodeUrl(null);
+    @Test
+    void testDecodeUrlNull() {
+        assertThrows(NullPointerException.class, () -> Utils.decodeUrl(null));
     }
 
     /**
      * Test of {@link Utils#clamp}
      */
     @Test
-    public void testClamp() {
+    void testClamp() {
         assertEquals(3, Utils.clamp(2, 3, 5));
         assertEquals(3, Utils.clamp(3, 3, 5));
         assertEquals(4, Utils.clamp(4, 3, 5));
@@ -474,24 +475,24 @@ public class UtilsTest {
     /**
      * Test of {@link Utils#clamp}
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testClampIAE1() {
-        Utils.clamp(0, 5, 4);
+    @Test
+    void testClampIAE1() {
+        assertThrows(IllegalArgumentException.class, () -> Utils.clamp(0, 5, 4));
     }
 
     /**
      * Test of {@link Utils#clamp}
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testClampIAE2() {
-        Utils.clamp(0., 5., 4.);
+    @Test
+    void testClampIAE2() {
+        assertThrows(IllegalArgumentException.class, () -> Utils.clamp(0., 5., 4.));
     }
 
     /**
      * Test of {@link Utils#hasExtension}
      */
     @Test
-    public void testHasExtension() {
+    void testHasExtension() {
         assertFalse(Utils.hasExtension("JOSM.txt"));
         assertFalse(Utils.hasExtension("JOSM.txt", "jpg"));
         assertFalse(Utils.hasExtension("JOSM.txt", ".jpg", ".txt"));
@@ -503,7 +504,7 @@ public class UtilsTest {
      * Test of {@link Utils#toUnmodifiableList}
      */
     @Test
-    public void testToUnmodifiableList() {
+    void testToUnmodifiableList() {
         assertSame(Collections.emptyList(), Utils.toUnmodifiableList(null));
         assertSame(Collections.emptyList(), Utils.toUnmodifiableList(Collections.emptyList()));
         assertSame(Collections.emptyList(), Utils.toUnmodifiableList(new ArrayList<>()));
@@ -517,7 +518,7 @@ public class UtilsTest {
      * Test of {@link Utils#toUnmodifiableMap}
      */
     @Test
-    public void testToUnmodifiableMap() {
+    void testToUnmodifiableMap() {
         assertSame(Collections.emptyMap(), Utils.toUnmodifiableMap(null));
         assertSame(Collections.emptyMap(), Utils.toUnmodifiableMap(Collections.emptyMap()));
         assertSame(Collections.emptyMap(), Utils.toUnmodifiableMap(new HashMap<>()));
@@ -537,7 +538,7 @@ public class UtilsTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testExecOutput() throws Exception {
+    void testExecOutput() throws Exception {
         final String output = Utils.execOutput(Arrays.asList("echo", "Hello", "World"));
         assertEquals("Hello World", output);
     }

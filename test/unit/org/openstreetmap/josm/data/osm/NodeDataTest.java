@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,12 +11,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class NodeDataTest {
+class NodeDataTest {
 
     @SuppressFBWarnings(value = "OBJECT_DESERIALIZATION")
     private static NodeData serializeUnserialize(NodeData data) throws IOException, ClassNotFoundException {
@@ -30,7 +30,7 @@ public class NodeDataTest {
     }
 
     @Test
-    public void testSerializationForDragAndDrop() throws Exception {
+    void testSerializationForDragAndDrop() throws Exception {
         final NodeData data = new NodeData();
         data.setCoor(new LatLon(31.14, 15.9));
         data.setId(314);
@@ -45,7 +45,7 @@ public class NodeDataTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTicket13395() throws Exception {
+    void testTicket13395() throws Exception {
         Node n = new Node(1925320646, 1);
         n.setCoor(null);
         assertNull(n.getCoor());

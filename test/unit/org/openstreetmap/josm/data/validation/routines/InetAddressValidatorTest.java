@@ -14,29 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.openstreetmap.josm.data.validation.routines;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for InetAddressValidator.
  *
  * @version $Revision: 1741724 $
  */
-public class InetAddressValidatorTest {
+class InetAddressValidatorTest {
 
     private InetAddressValidator validator;
 
     /**
      * Setup
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         validator = new InetAddressValidator();
     }
@@ -45,7 +44,7 @@ public class InetAddressValidatorTest {
      * Test IPs that point to real, well-known hosts (without actually looking them up).
      */
     @Test
-    public void testInetAddressesFromTheWild() {
+    void testInetAddressesFromTheWild() {
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         assertTrue("www.apache.org IP should be valid",   validator.isValid("140.211.11.130"));
         assertTrue("www.l.google.com IP should be valid", validator.isValid("72.14.253.103"));
@@ -58,7 +57,7 @@ public class InetAddressValidatorTest {
      * Non-regression test for VALIDATOR-335
      */
     @Test
-    public void testVALIDATOR_335() {
+    void testVALIDATOR_335() {
         assertTrue("2001:0438:FFFE:0000:0000:0000:0000:0A35 should be valid",
                 validator.isValid("2001:0438:FFFE:0000:0000:0000:0000:0A35"));
     }
@@ -67,7 +66,7 @@ public class InetAddressValidatorTest {
      * Test valid and invalid IPs from each address class.
      */
     @Test
-    public void testInetAddressesByClass() {
+    void testInetAddressesByClass() {
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         assertTrue("class A IP should be valid",            validator.isValid("24.25.231.12"));
         assertFalse("illegal class A IP should be invalid", validator.isValid("2.41.32.324"));
@@ -90,7 +89,7 @@ public class InetAddressValidatorTest {
      * Test reserved IPs.
      */
     @Test
-    public void testReservedInetAddresses() {
+    void testReservedInetAddresses() {
         assertTrue("localhost IP should be valid", validator.isValid("127.0.0.1"));
         assertTrue("broadcast IP should be valid", validator.isValid("255.255.255.255"));
     }
@@ -99,7 +98,7 @@ public class InetAddressValidatorTest {
      * Test obviously broken IPs.
      */
     @Test
-    public void testBrokenInetAddresses() {
+    void testBrokenInetAddresses() {
         // CHECKSTYLE.OFF: SingleSpaceSeparator
         assertFalse("IP with characters should be invalid",     validator.isValid("124.14.32.abc"));
         assertFalse("IP with leading zeroes should be invalid", validator.isValid("124.14.32.01"));
@@ -118,7 +117,7 @@ public class InetAddressValidatorTest {
      * <a href="http://download.dartware.com/thirdparty/test-ipv6-regex.pl">Perl script</a>.</p>
      */
     @Test
-    public void testIPv6() {
+    void testIPv6() {
         // The original Perl script contained a lot of duplicate tests.
         // I removed the duplicates I noticed, but there may be more.
         assertFalse("IPV6 empty string should be invalid", validator.isValidInet6Address("")); // empty string
@@ -626,7 +625,7 @@ public class InetAddressValidatorTest {
      * Unit test of {@link InetAddressValidator#getValidatorName}.
      */
     @Test
-    public void testValidatorName() {
+    void testValidatorName() {
         assertNull(new InetAddressValidator().getValidatorName());
     }
 }

@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -15,7 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Test {@link Tag2Link}
  */
-public class Tag2LinkTest {
+class Tag2LinkTest {
 
     List<String> links = new ArrayList<>();
 
@@ -30,7 +30,7 @@ public class Tag2LinkTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -38,7 +38,7 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#initialize()}.
      */
     @Test
-    public void testInitialize() {
+    void testInitialize() {
         Tag2Link.initialize();
         Assert.assertTrue("obtains at least 40 rules", Tag2Link.wikidataRules.size() > 40);
     }
@@ -47,7 +47,7 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
-    public void testName() {
+    void testName() {
         Tag2Link.getLinksForTag("name", "foobar", this::addLink);
         checkLinks("Search on duckduckgo.com // https://duckduckgo.com/?q=foobar",
                 "Search on google.com // https://www.google.com/search?q=foobar");
@@ -57,7 +57,7 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
-    public void testWebsite() {
+    void testWebsite() {
         Tag2Link.getLinksForTag("website", "http://www.openstreetmap.org/", this::addLink);
         checkLinks("Open openstreetmap.org // http://www.openstreetmap.org/");
         links.clear();
@@ -72,7 +72,7 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
-    public void testWikipedia() {
+    void testWikipedia() {
         Tag2Link.getLinksForTag("wikipedia", "de:Wohnhausgruppe Herderstraße", this::addLink);
         checkLinks("View Wikipedia article // https://de.wikipedia.org/wiki/Wohnhausgruppe_Herderstraße");
         links.clear();
@@ -84,7 +84,7 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
-    public void testImageCommonsImage() {
+    void testImageCommonsImage() {
         Tag2Link.getLinksForTag("image", "File:Witten Brücke Gasstraße.jpg", this::addLink);
         checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Witten Brücke Gasstraße.jpg");
         links.clear();
@@ -98,7 +98,7 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
-    public void testImageCommonsCategory() {
+    void testImageCommonsCategory() {
         Tag2Link.getLinksForTag("image", "category:JOSM", this::addLink);
         checkLinks("View category on Wikimedia Commons // https://commons.wikimedia.org/wiki/category:JOSM");
     }
@@ -107,7 +107,7 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
-    public void testBrandWikidata() {
+    void testBrandWikidata() {
         Tag2Link.getLinksForTag("brand:wikidata", "Q259340", this::addLink);
         checkLinks("View Wikidata item // https://www.wikidata.org/wiki/Q259340");
     }
@@ -116,7 +116,7 @@ public class Tag2LinkTest {
      * Unit test of function {@link Tag2Link#getLinksForTag}.
      */
     @Test
-    public void testArchipelagoWikidata() {
+    void testArchipelagoWikidata() {
         Tag2Link.getLinksForTag("archipelago:wikidata", "Q756987;Q756988", this::addLink);
         checkLinks("View Wikidata item // https://www.wikidata.org/wiki/Q756987",
                 "View Wikidata item // https://www.wikidata.org/wiki/Q756988");

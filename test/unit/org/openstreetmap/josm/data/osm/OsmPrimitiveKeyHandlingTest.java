@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -16,12 +16,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Some unit test cases for basic tag management on {@link OsmPrimitive}. Uses
  * {@link Node} for the tests, {@link OsmPrimitive} is abstract.
  */
-public class OsmPrimitiveKeyHandlingTest {
+class OsmPrimitiveKeyHandlingTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -29,7 +29,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * test query and get methods on a node withouth keys
      */
     @Test
-    public void testEmptyNode() {
+    void testEmptyNode() {
         Node n = new Node();
         testKeysSize(n, 0);
         testGetKey(n, "nosuchkey", null);
@@ -43,7 +43,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Adds a tag to an empty node and test the query and get methods.
      */
     @Test
-    public void testPut() {
+    void testPut() {
         Node n = new Node();
         n.put("akey", "avalue");
         testKeysSize(n, 1);
@@ -55,7 +55,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Adds two tags to an empty node and test the query and get methods.
      */
     @Test
-    public void testPut2() {
+    void testPut2() {
         Node n = new Node();
         n.put("key.1", "value.1");
         n.put("key.2", "value.2");
@@ -73,7 +73,7 @@ public class OsmPrimitiveKeyHandlingTest {
      */
     @Test
     @SuppressFBWarnings(value = "DM_STRING_CTOR", justification = "test that equals is used and not ==")
-    public void testRemove() {
+    void testRemove() {
         Node n = new Node();
         n.put("key.1", "value.1");
         n.put(new String("key.2"), new String("value.2")); // Test that equals is used and not ==
@@ -105,7 +105,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Removes all tags from a node.
      */
     @Test
-    public void testRemoveAll() {
+    void testRemoveAll() {
         Node n = new Node();
 
         n.put("key.1", "value.1");
@@ -120,7 +120,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * in different orders.
      */
     @Test
-    public void testHasEqualSemanticAttributes() {
+    void testHasEqualSemanticAttributes() {
         Node n1 = new Node(1);
         n1.setCoor(LatLon.ZERO);
         n1.put("key.1", "value.1");
@@ -138,7 +138,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Test hasEqualSemanticAttributes on two nodes with different tags.
      */
     @Test
-    public void testHasEqualSemanticAttributes2() {
+    void testHasEqualSemanticAttributes2() {
         Node n1 = new Node(1);
         n1.setCoor(LatLon.ZERO);
         n1.put("key.1", "value.1");

@@ -20,12 +20,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 import java.util.regex.PatternSyntaxException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @version $Revision: 1741724 $
  * @since Validator 1.4
  */
-public class RegexValidatorTest {
+class RegexValidatorTest {
 
     private static final String REGEX = "^([abc]*)(?:\\-)([DEF]*)(?:\\-)([123]*)$";
 
@@ -54,7 +54,7 @@ public class RegexValidatorTest {
      * Test instance methods with single regular expression.
      */
     @Test
-    public void testSingle() {
+    void testSingle() {
         RegexValidator sensitive   = new RegexValidator(REGEX);
         RegexValidator insensitive = new RegexValidator(REGEX, false);
 
@@ -83,7 +83,7 @@ public class RegexValidatorTest {
      * Test with multiple regular expressions (case sensitive).
      */
     @Test
-    public void testMultipleSensitive() {
+    void testMultipleSensitive() {
 
         // ------------ Set up Sensitive Validators
         RegexValidator multiple = new RegexValidator(MULTIPLE_REGEX);
@@ -125,7 +125,7 @@ public class RegexValidatorTest {
      * Test with multiple regular expressions (case in-sensitive).
      */
     @Test
-    public void testMultipleInsensitive() {
+    void testMultipleInsensitive() {
 
         // ------------ Set up In-sensitive Validators
         RegexValidator multiple = new RegexValidator(MULTIPLE_REGEX, false);
@@ -167,7 +167,7 @@ public class RegexValidatorTest {
      * Test Null value
      */
     @Test
-    public void testNullValue() {
+    void testNullValue() {
         RegexValidator validator = new RegexValidator(REGEX);
         assertFalse("Instance isValid()", validator.isValid(null));
         assertNull("Instance validate()", validator.validate(null));
@@ -180,7 +180,7 @@ public class RegexValidatorTest {
      * Test exceptions
      */
     @Test
-    public void testMissingRegex() {
+    void testMissingRegex() {
 
         // Single Regular Expression - null
         try {
@@ -237,7 +237,7 @@ public class RegexValidatorTest {
      * Test exceptions
      */
     @Test
-    public void testExceptions() {
+    void testExceptions() {
         String invalidRegex = "^([abCD12]*$";
         try {
             new RegexValidator(invalidRegex);
@@ -251,7 +251,7 @@ public class RegexValidatorTest {
      * Test toString() method
      */
     @Test
-    public void testToString() {
+    void testToString() {
         RegexValidator single = new RegexValidator(REGEX);
         assertEquals("Single", "RegexValidator{" + REGEX + "}", single.toString());
 
@@ -263,7 +263,7 @@ public class RegexValidatorTest {
      * Unit test of {@link RegexValidator#getValidatorName}.
      */
     @Test
-    public void testValidatorName() {
+    void testValidatorName() {
         assertNull(new RegexValidator(".*").getValidatorName());
     }
 

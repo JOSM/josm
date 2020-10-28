@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -31,12 +31,12 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 /**
  * Unit tests for class {@link CombineWayAction}.
  */
-public class CombineWayActionTest {
+class CombineWayActionTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -46,7 +46,7 @@ public class CombineWayActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket11957() throws IOException, IllegalDataException {
+    void testTicket11957() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(11957, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             List<Node> path = CombineWayAction.tryJoin(ds.getWays());
@@ -67,7 +67,7 @@ public class CombineWayActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket18385() throws IOException, IllegalDataException {
+    void testTicket18385() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18385, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             List<Node> path = CombineWayAction.tryJoin(ds.getWays());
@@ -81,7 +81,7 @@ public class CombineWayActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket18387() throws IOException, IllegalDataException {
+    void testTicket18387() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18387, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ArrayList<Way> selection = new ArrayList<>(ds.getWays());
@@ -103,7 +103,7 @@ public class CombineWayActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket18367() throws IOException, IllegalDataException {
+    void testTicket18367() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18367, "nocombine.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ArrayList<Way> selection = new ArrayList<>(ds.getWays());
@@ -124,7 +124,7 @@ public class CombineWayActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testTicket18367NeedsSplit() throws IOException, IllegalDataException {
+    void testTicket18367NeedsSplit() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18367, "split-and-reverse.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ArrayList<Way> selection = new ArrayList<>(ds.getWays());
@@ -148,7 +148,7 @@ public class CombineWayActionTest {
      * @throws IllegalDataException if OSM parsing fails
      */
     @Test
-    public void testDetectReversedWays() throws IOException, IllegalDataException {
+    void testDetectReversedWays() throws IOException, IllegalDataException {
         try (InputStream is = TestUtils.getRegressionDataStream(18367, "silent-revert.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             ArrayList<Way> selection = new ArrayList<>(ds.getWays());
@@ -174,7 +174,7 @@ public class CombineWayActionTest {
      * Unit test of methods {@link NodePair#equals} and {@link NodePair#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(NodePair.class).usingGetClass()
             .withPrefabValues(Node.class, new Node(1), new Node(2))

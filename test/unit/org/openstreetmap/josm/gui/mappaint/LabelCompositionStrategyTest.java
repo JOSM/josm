@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
@@ -21,12 +21,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link LabelCompositionStrategy}.
  */
-public class LabelCompositionStrategyTest {
+class LabelCompositionStrategyTest {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -34,7 +34,7 @@ public class LabelCompositionStrategyTest {
      * Test {@link StaticLabelCompositionStrategy}.
      */
     @Test
-    public void testCreateStaticLabelCompositionStrategy() {
+    void testCreateStaticLabelCompositionStrategy() {
         Node n = new Node();
 
         LabelCompositionStrategy strat = new StaticLabelCompositionStrategy(null);
@@ -48,7 +48,7 @@ public class LabelCompositionStrategyTest {
      * Test {@link TagLookupCompositionStrategy}.
      */
     @Test
-    public void testCreateTagLookupCompositionStrategy() {
+    void testCreateTagLookupCompositionStrategy() {
         Node n = new Node();
         n.put("my-tag", "my-value");
 
@@ -66,7 +66,7 @@ public class LabelCompositionStrategyTest {
      * Test {@link DeriveLabelFromNameTagsCompositionStrategy}.
      */
     @Test
-    public void testCreateDeriveLabelFromNameTagsCompositionStrategy() {
+    void testCreateDeriveLabelFromNameTagsCompositionStrategy() {
         DeriveLabelFromNameTagsCompositionStrategy strat = new DeriveLabelFromNameTagsCompositionStrategy();
         strat.setNameTags(null);
         assertEquals(Collections.emptyList(), strat.getNameTags());

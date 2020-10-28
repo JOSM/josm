@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.proj;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -12,11 +12,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Tests for {@link Mercator}.
  */
-public class MercatorTest {
+class MercatorTest {
     /**
      * Setup rule.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -24,7 +24,7 @@ public class MercatorTest {
      * Test {@link Mercator#lonIsLinearToEast}
      */
     @Test
-    public void testLonIsLinearToEast() {
+    void testLonIsLinearToEast() {
         assertTrue(new Mercator().lonIsLinearToEast());
     }
 }

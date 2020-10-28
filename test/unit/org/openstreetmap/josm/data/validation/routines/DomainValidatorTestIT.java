@@ -46,8 +46,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -58,12 +58,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @version $Revision: 1723861 $
  */
-public class DomainValidatorTestIT {
+class DomainValidatorTestIT {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().https();
 
@@ -74,7 +74,7 @@ public class DomainValidatorTestIT {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testIanaTldList() throws Exception {
+    void testIanaTldList() throws Exception {
         // Check the arrays first as this affects later checks
         // Doing this here makes it easier when updating the lists
         boolean OK = true;

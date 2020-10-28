@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.spi.lifecycle;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -13,12 +13,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link Lifecycle} class.
  */
-public class LifecycleTest {
+class LifecycleTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().https().devAPI().main().projection();
 
@@ -43,7 +43,7 @@ public class LifecycleTest {
      * Unit test of {@link Lifecycle#setInitStatusListener}.
      */
     @Test
-    public void testSetInitStatusListener() {
+    void testSetInitStatusListener() {
         InitStatusListenerStub listener = new InitStatusListenerStub();
         Lifecycle.setInitStatusListener(listener);
         assertFalse(listener.updated);

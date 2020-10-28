@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.tags;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import javax.swing.JTable;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -20,12 +20,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link MultiValueCellRenderer} class.
  */
-public class MultiValueCellRendererTest {
+class MultiValueCellRendererTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -33,7 +33,7 @@ public class MultiValueCellRendererTest {
      * Unit test of {@link MultiValueCellRenderer#MultiValueCellRenderer}.
      */
     @Test
-    public void testMultiValueCellRenderer() {
+    void testMultiValueCellRenderer() {
         TagConflictResolverModel model = new TagConflictResolverModel();
         TagCollection tags = new TagCollection(Arrays.asList(new Tag("oneway", "yes"), new Tag("oneway", "no")));
         model.populate(tags, Collections.singleton("oneway"));

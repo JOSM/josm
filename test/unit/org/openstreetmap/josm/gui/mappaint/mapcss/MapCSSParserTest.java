@@ -1,11 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context.PRIMITIVE;
 
 import java.awt.Color;
@@ -14,8 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -45,7 +46,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link MapCSSParser}.
  */
-public class MapCSSParserTest {
+class MapCSSParserTest {
 
     protected static Environment getEnvironment(String key, String value) {
         return new Environment(OsmUtils.createPrimitive("way " + key + "=" + value));
@@ -58,12 +59,12 @@ public class MapCSSParserTest {
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
     @Test
-    public void testDeclarations() throws Exception {
+    void testDeclarations() throws Exception {
         getParser("{ opacity: 0.5; color: rgb(1.0, 0.0, 0.0); }").declaration();
         getParser("{ set tag=value; }").declaration(); //set a tag
         getParser("{ set tag; }").declaration(); // set a tag to 'yes'
@@ -72,7 +73,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testClassCondition() throws Exception {
+    void testClassCondition() throws Exception {
         List<Condition> conditions = ((Selector.GeneralSelector) getParser("way[name=X].highway:closed").selector()).conds;
         assertTrue(conditions.get(0) instanceof SimpleKeyValueCondition);
         assertTrue(conditions.get(0).applies(getEnvironment("name", "X")));
@@ -82,7 +83,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testPseudoClassCondition() throws Exception {
+    void testPseudoClassCondition() throws Exception {
         Condition c1 = ((Selector.GeneralSelector) getParser("way!:area-style").selector()).conds.get(0);
         Condition c2 = ((Selector.GeneralSelector) getParser("way!:areaStyle").selector()).conds.get(0);
         Condition c3 = ((Selector.GeneralSelector) getParser("way!:area_style").selector()).conds.get(0);
@@ -92,7 +93,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testClassMatching() throws Exception {
+    void testClassMatching() throws Exception {
         MapCSSStyleSource css = new MapCSSStyleSource(
                 "way[highway=footway] { set .path; color: #FF6644; width: 2; }\n" +
                 "way[highway=path]    { set path; color: brown; width: 2; }\n" +
@@ -116,7 +117,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testEqualCondition() throws Exception {
+    void testEqualCondition() throws Exception {
         Condition condition = getParser("[surface=paved]").condition(PRIMITIVE);
         assertTrue(condition instanceof SimpleKeyValueCondition);
         assertEquals("surface", ((SimpleKeyValueCondition) condition).k);
@@ -126,7 +127,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testNotEqualCondition() throws Exception {
+    void testNotEqualCondition() throws Exception {
         KeyValueCondition condition = (KeyValueCondition) getParser("[surface!=paved]").condition(PRIMITIVE);
         assertEquals(Op.NEQ, condition.op);
         assertFalse(condition.applies(getEnvironment("surface", "paved")));
@@ -134,7 +135,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testRegexCondition() throws Exception {
+    void testRegexCondition() throws Exception {
         KeyValueCondition condition = (KeyValueCondition) getParser("[surface=~/paved|unpaved/]").condition(PRIMITIVE);
         assertEquals(Op.REGEX, condition.op);
         assertTrue(condition.applies(getEnvironment("surface", "unpaved")));
@@ -142,7 +143,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testRegexConditionParenthesis() throws Exception {
+    void testRegexConditionParenthesis() throws Exception {
         KeyValueCondition condition = (KeyValueCondition) getParser("[name =~ /^\\(foo\\)/]").condition(PRIMITIVE);
         assertTrue(condition.applies(getEnvironment("name", "(foo)")));
         assertFalse(condition.applies(getEnvironment("name", "foo")));
@@ -150,7 +151,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testNegatedRegexCondition() throws Exception {
+    void testNegatedRegexCondition() throws Exception {
         KeyValueCondition condition = (KeyValueCondition) getParser("[surface!~/paved|unpaved/]").condition(PRIMITIVE);
         assertEquals(Op.NREGEX, condition.op);
         assertFalse(condition.applies(getEnvironment("surface", "unpaved")));
@@ -158,7 +159,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testBeginsEndsWithCondition() throws Exception {
+    void testBeginsEndsWithCondition() throws Exception {
         KeyValueCondition condition = (KeyValueCondition) getParser("[foo ^= bar]").condition(PRIMITIVE);
         assertEquals(Op.BEGINS_WITH, condition.op);
         assertTrue(condition.applies(getEnvironment("foo", "bar123")));
@@ -172,7 +173,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testOneOfCondition() throws Exception {
+    void testOneOfCondition() throws Exception {
         Condition condition = getParser("[vending~=stamps]").condition(PRIMITIVE);
         assertTrue(condition.applies(getEnvironment("vending", "stamps")));
         assertTrue(condition.applies(getEnvironment("vending", "bar;stamps;foo")));
@@ -181,7 +182,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testStandardKeyCondition() throws Exception {
+    void testStandardKeyCondition() throws Exception {
         KeyCondition c1 = (KeyCondition) getParser("[ highway ]").condition(PRIMITIVE);
         assertEquals(KeyMatchType.EQ, c1.matchType);
         assertTrue(c1.applies(getEnvironment("highway", "unclassified")));
@@ -193,7 +194,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testYesNoKeyCondition() throws Exception {
+    void testYesNoKeyCondition() throws Exception {
         KeyCondition c1 = (KeyCondition) getParser("[oneway?]").condition(PRIMITIVE);
         KeyCondition c2 = (KeyCondition) getParser("[oneway?!]").condition(PRIMITIVE);
         KeyCondition c3 = (KeyCondition) getParser("[!oneway?]").condition(PRIMITIVE);
@@ -216,7 +217,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testRegexKeyCondition() throws Exception {
+    void testRegexKeyCondition() throws Exception {
         KeyCondition c1 = (KeyCondition) getParser("[/.*:(backward|forward)$/]").condition(PRIMITIVE);
         assertEquals(KeyMatchType.REGEX, c1.matchType);
         assertFalse(c1.applies(getEnvironment("lanes", "3")));
@@ -226,7 +227,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testRegexKeyValueRegexpCondition() throws Exception {
+    void testRegexKeyValueRegexpCondition() throws Exception {
         RegexpKeyValueRegexpCondition c1 = (RegexpKeyValueRegexpCondition) getParser("[/^name/=~/Test/]").condition(PRIMITIVE);
         assertEquals("^name", c1.keyPattern.pattern());
         assertEquals("Test", c1.pattern.pattern());
@@ -235,7 +236,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testNRegexKeyConditionSelector() throws Exception {
+    void testNRegexKeyConditionSelector() throws Exception {
         Selector s1 = getParser("*[sport][tourism != hotel]").selector();
         assertTrue(s1.matches(new Environment(OsmUtils.createPrimitive("node sport=foobar"))));
         assertFalse(s1.matches(new Environment(OsmUtils.createPrimitive("node sport=foobar tourism=hotel"))));
@@ -246,7 +247,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testKeyKeyCondition() throws Exception {
+    void testKeyKeyCondition() throws Exception {
         KeyValueCondition c1 = (KeyValueCondition) getParser("[foo = *bar]").condition(PRIMITIVE);
         Way w1 = new Way();
         w1.put("foo", "123");
@@ -269,7 +270,7 @@ public class MapCSSParserTest {
      * @throws Exception if there is an assert error (or another error)
      */
     @Test
-    public void testTagRegex() throws Exception {
+    void testTagRegex() throws Exception {
         DataSet ds = new DataSet();
         Way way1 = TestUtils.newWay("old_ref=A1 ref=A2", new Node(new LatLon(1, 1)), new Node(new LatLon(2, 2)));
         for (Node node : way1.getNodes()) {
@@ -299,7 +300,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testParentTag() throws Exception {
+    void testParentTag() throws Exception {
         Selector c1 = getParser("way[foo] > node[tag(\"foo\")=parent_tag(\"foo\")] {}").child_selector();
         DataSet ds = new DataSet();
         Way w1 = new Way();
@@ -329,7 +330,7 @@ public class MapCSSParserTest {
      * Test case for {@link Functions#trim_list}
      */
     @Test
-    public void testTrimList() {
+    void testTrimList() {
         List<String> trimmed = Functions.trim_list(Arrays.asList(" A1 ", "A2", " A3", "A4 ", ""));
         assertEquals(4, trimmed.size());
         assertEquals("A1", trimmed.get(0));
@@ -339,7 +340,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testTicket8568() throws Exception {
+    void testTicket8568() throws Exception {
         MapCSSStyleSource sheet = new MapCSSStyleSource(
                 "way { width: 5; }\n" +
                 "way[keyA], way[keyB] { width: eval(prop(width)+10); }");
@@ -356,7 +357,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testTicket8071() throws Exception {
+    void testTicket8071() throws Exception {
         MapCSSStyleSource sheet = new MapCSSStyleSource(
                 "*[rcn_ref], *[name] {text: concat(tag(rcn_ref), \" \", tag(name)); }");
         sheet.loadStyleSource();
@@ -376,7 +377,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testColorNameTicket9191() throws Exception {
+    void testColorNameTicket9191() throws Exception {
         Environment e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         getParser("{color: testcolour1#88DD22}").declaration().instructions.get(0).execute(e);
         Color expected = new Color(0x88DD22);
@@ -384,7 +385,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testColorNameTicket9191Alpha() throws Exception {
+    void testColorNameTicket9191Alpha() throws Exception {
         Environment e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         getParser("{color: testcolour2#12345678}").declaration().instructions.get(0).execute(e);
         Color expected = new Color(0x12, 0x34, 0x56, 0x78);
@@ -392,19 +393,19 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testColorParsing() throws Exception {
+    void testColorParsing() throws Exception {
         assertEquals(new Color(0x12, 0x34, 0x56, 0x78), ColorHelper.html2color("#12345678"));
     }
 
     @Test
-    public void testChildSelectorGreaterThanSignIsOptional() throws Exception {
+    void testChildSelectorGreaterThanSignIsOptional() throws Exception {
         assertEquals(
                 getParser("relation[type=route] way[highway]").child_selector().toString(),
                 getParser("relation[type=route] > way[highway]").child_selector().toString());
     }
 
     @Test
-    public void testSiblingSelector() throws Exception {
+    void testSiblingSelector() throws Exception {
         ChildOrParentSelector s1 = (Selector.ChildOrParentSelector) getParser(
                 "*[a?][parent_tag(\"highway\")=\"unclassified\"] + *[b?]").child_selector();
         DataSet ds = new DataSet();
@@ -430,7 +431,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testParentTags() throws Exception {
+    void testParentTags() throws Exception {
         DataSet ds = new DataSet();
         Node n = new Node(new LatLon(1, 2));
         n.put("foo", "bar");
@@ -457,7 +458,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testSort() throws Exception {
+    void testSort() throws Exception {
         assertEquals(Arrays.asList(new String[] {"alpha", "beta"}), Functions.sort("beta", "alpha"));
         Way way1 = TestUtils.newWay("highway=residential name=Alpha alt_name=Beta ref=\"A9;A8\"", new Node(new LatLon(0.001, 0.001)),
                 new Node(new LatLon(0.002, 0.002)));
@@ -479,7 +480,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testUniqueValues() throws Exception {
+    void testUniqueValues() throws Exception {
         assertEquals(Arrays.asList(new String[] {"alpha", "beta"}),
                 Functions.uniq("alpha", "alpha", "alpha", "beta"));
         assertEquals(Arrays.asList(new String[] {"one", "two", "three"}),
@@ -487,7 +488,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testCountRoles() throws Exception {
+    void testCountRoles() throws Exception {
         DataSet ds = new DataSet();
         Way way1 = TestUtils.newWay("highway=residential name=1",
                 new Node(new LatLon(0, 0)), new Node((new LatLon(0.001, 0.001))));
@@ -537,7 +538,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testSiblingSelectorInterpolation() throws Exception {
+    void testSiblingSelectorInterpolation() throws Exception {
         ChildOrParentSelector s1 = (Selector.ChildOrParentSelector) getParser(
                 "*[tag(\"addr:housenumber\") > child_tag(\"addr:housenumber\")][regexp_test(\"even|odd\", parent_tag(\"addr:interpolation\"))]" +
                         " + *[addr:housenumber]").child_selector();
@@ -567,7 +568,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testInvalidBaseSelector() throws Exception {
+    void testInvalidBaseSelector() throws Exception {
         MapCSSStyleSource css = new MapCSSStyleSource("invalid_base[key=value] {}");
         css.loadStyleSource();
         assertFalse(css.getErrors().isEmpty());
@@ -575,7 +576,7 @@ public class MapCSSParserTest {
     }
 
     @Test
-    public void testMinMaxFunctions() throws Exception {
+    void testMinMaxFunctions() throws Exception {
         MapCSSStyleSource sheet = new MapCSSStyleSource("* {" +
                 "min_value: min(tag(x), tag(y), tag(z)); " +
                 "max_value: max(tag(x), tag(y), tag(z)); " +
@@ -599,7 +600,7 @@ public class MapCSSParserTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testTicket12549() throws ParseException {
+    void testTicket12549() throws ParseException {
         Condition condition = getParser("[name =~ /^(?i)(?u)fóo$/]").condition(PRIMITIVE);
         assertTrue(condition.applies(getEnvironment("name", "fóo")));
         assertTrue(condition.applies(getEnvironment("name", "fÓo")));
@@ -614,7 +615,7 @@ public class MapCSSParserTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/17053">Bug #17053</a>.
      */
     @Test
-    public void testTicket17053() {
+    void testTicket17053() {
         MapCSSStyleSource sheet = new MapCSSStyleSource(
             "way {\n" +
             "    placement_offset: eval(\n" +
@@ -624,7 +625,7 @@ public class MapCSSParserTest {
             "       );\n" +
             "}");
         sheet.loadStyleSource();
-        assertTrue(sheet.getErrors().toString(), sheet.getErrors().isEmpty());
+        assertTrue(sheet.getErrors().isEmpty(), sheet.getErrors()::toString);
     }
 
     /**
@@ -632,7 +633,7 @@ public class MapCSSParserTest {
      * @throws ParseException if a parsing error occurs
      */
     @Test
-    public void testZoom() throws ParseException {
+    void testZoom() throws ParseException {
         assertNotNull(getParser("|z12").zoom());
         assertNotNull(getParser("|z12-").zoom());
         assertNotNull(getParser("|z-12").zoom());
@@ -641,18 +642,17 @@ public class MapCSSParserTest {
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/18759">Bug #18759</a>.
-     * @throws ParseException if a parsing error occurs
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testZoomIAE() throws ParseException {
-        assertNotNull(getParser("|z16-15").zoom());
+    @Test
+    void testZoomIAE() {
+        assertThrows(IllegalArgumentException.class, () -> getParser("|z16-15").zoom());
     }
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/16183">Bug #16183</a>.
      */
     @Test
-    public void testTicket16183() {
+    void testTicket16183() {
         MapCSSStyleSource sheet = new MapCSSStyleSource(
                 "area:closed:areaStyle ⧉ area:closed:areaStyle {throwOther: \"xxx\";}");
         sheet.loadStyleSource();
@@ -665,7 +665,7 @@ public class MapCSSParserTest {
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19685">Bug #19685</a>.
      */
     @Test
-    public void testTicket19685() {
+    void testTicket19685() {
         MapCSSStyleSource sheet = new MapCSSStyleSource("node:connection:foobar {}");
         sheet.loadStyleSource();
         assertEquals(1, sheet.getErrors().size());

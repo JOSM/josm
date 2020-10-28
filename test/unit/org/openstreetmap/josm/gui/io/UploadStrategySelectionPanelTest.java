@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.io.UploadStrategy;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -14,12 +14,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link UploadStrategySelectionPanel} class.
  */
-public class UploadStrategySelectionPanelTest {
+class UploadStrategySelectionPanelTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().devAPI();
 
@@ -27,7 +27,7 @@ public class UploadStrategySelectionPanelTest {
      * Test of {@link UploadStrategySelectionPanel#UploadStrategySelectionPanel}.
      */
     @Test
-    public void testUploadStrategySelectionPanel() {
+    void testUploadStrategySelectionPanel() {
         UploadStrategySelectionPanel p = new UploadStrategySelectionPanel();
         p.setNumUploadedObjects(Integer.MAX_VALUE);
         p.rememberUserInput();
@@ -40,7 +40,7 @@ public class UploadStrategySelectionPanelTest {
      *       / {@link UploadStrategySelectionPanel#getUploadStrategySpecification}.
      */
     @Test
-    public void testUploadStrategySpecification() {
+    void testUploadStrategySpecification() {
         UploadStrategySelectionPanel p = new UploadStrategySelectionPanel();
 
         UploadStrategySpecification def = new UploadStrategySpecification();

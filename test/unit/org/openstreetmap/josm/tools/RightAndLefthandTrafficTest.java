@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -14,11 +14,11 @@ import net.trajano.commons.testing.UtilityClassTestUtil;
 /**
  * Unit tests of {@link RightAndLefthandTraffic} class.
  */
-public class RightAndLefthandTrafficTest {
+class RightAndLefthandTrafficTest {
     /**
      * Test rules.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules().projection().territories();
 
@@ -27,7 +27,7 @@ public class RightAndLefthandTrafficTest {
      * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
+    void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(RightAndLefthandTraffic.class);
     }
 
@@ -35,7 +35,7 @@ public class RightAndLefthandTrafficTest {
      * Test of {@link RightAndLefthandTraffic#isRightHandTraffic} method.
      */
     @Test
-    public void testIsRightHandTraffic() {
+    void testIsRightHandTraffic() {
         check(true, "Paris", 48.8567, 2.3508);
         check(true, "Berlin", 52.5167, 13.383);
         check(true, "New York", 40.7127, -74.0059);

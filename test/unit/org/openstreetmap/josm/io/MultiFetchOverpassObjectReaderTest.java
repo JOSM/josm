@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -19,12 +19,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link MultiFetchOverpassObjectReader}.
  */
-public class MultiFetchOverpassObjectReaderTest {
+class MultiFetchOverpassObjectReaderTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -32,7 +32,7 @@ public class MultiFetchOverpassObjectReaderTest {
      * Test {@link MultiFetchOverpassObjectReader#buildRequestString}
      */
     @Test
-    public void testBuildRequestNodesString() {
+    void testBuildRequestNodesString() {
         List<OsmPrimitive> objects = Arrays.asList(new Node(123), new Node(126), new Node(130));
         String requestString;
         // nodes without parents
@@ -60,7 +60,7 @@ public class MultiFetchOverpassObjectReaderTest {
      * Test {@link MultiFetchOverpassObjectReader#buildRequestString}
      */
     @Test
-    public void testBuildRequestWaysString() {
+    void testBuildRequestWaysString() {
         List<OsmPrimitive> objects = Arrays.asList(new Way(123), new Way(126), new Way(130));
         String requestString;
         // ways without parents (always with nodes)
@@ -85,7 +85,7 @@ public class MultiFetchOverpassObjectReaderTest {
      * Test {@link MultiFetchOverpassObjectReader#buildRequestString}
      */
     @Test
-    public void testBuildRequestRelationsString() {
+    void testBuildRequestRelationsString() {
         List<OsmPrimitive> objects = Arrays.asList(new Relation(123), new Relation(126), new Relation(130));
         String requestString;
         // objects without parents or children
@@ -111,7 +111,7 @@ public class MultiFetchOverpassObjectReaderTest {
      * Test {@link MultiFetchOverpassObjectReader#buildRequestString}
      */
     @Test
-    public void testBuildComplexString() {
+    void testBuildComplexString() {
         List<OsmPrimitive> objects = Arrays.asList(new Relation(123), new Relation(126), new Relation(130), new Way(88), new Way(99),
                 new Node(1));
         // all request strings should start with the same list of objects

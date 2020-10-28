@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -9,9 +9,9 @@ import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -20,11 +20,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Test {@link MultiLineFlowLayout}
  * @author Michael Zangl
  */
-public class MultiLineFlowLayoutTest {
+class MultiLineFlowLayoutTest {
     /**
      * No special rules.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -34,7 +34,7 @@ public class MultiLineFlowLayoutTest {
     /**
      * Prepare test container.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         JPanel parent = new JPanel();
         parent.setBounds(0, 0, TEST_WIDHT, 500);
@@ -47,7 +47,7 @@ public class MultiLineFlowLayoutTest {
      * Test that one line is layed out correctly
      */
     @Test
-    public void testOneLine() {
+    void testOneLine() {
         fillOneLine();
 
         container.invalidate();
@@ -64,7 +64,7 @@ public class MultiLineFlowLayoutTest {
      * Test that insets are respected
      */
     @Test
-    public void testInsets() {
+    void testInsets() {
         fillOneLine();
 
         container.setBorder(BorderFactory.createEmptyBorder(3, 0, 7, 0));
@@ -85,7 +85,7 @@ public class MultiLineFlowLayoutTest {
      * Test that gaps are respected
      */
     @Test
-    public void testGaps() {
+    void testGaps() {
         fillOneLine();
 
         container.setLayout(new MultiLineFlowLayout(FlowLayout.LEADING, 20, 10));
@@ -99,7 +99,7 @@ public class MultiLineFlowLayoutTest {
      * Test that it behaves the same as FlowLayout for one line.
      */
     @Test
-    public void testSameAsFlowLayout() {
+    void testSameAsFlowLayout() {
         fillOneLine();
         JPanel childx = new JPanel();
         childx.setPreferredSize(new Dimension(300, 100));

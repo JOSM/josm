@@ -11,8 +11,8 @@ import org.CustomMatchers;
 import org.CustomMatchers.ErrorMode;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openstreetmap.josm.data.Bounds;
@@ -25,11 +25,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Tests the method {@link RenderingCLI#determineRenderingArea(org.openstreetmap.josm.data.osm.DataSet)}.
  */
 @RunWith(Parameterized.class)
-public class RenderingCLIAreaTest {
+class RenderingCLIAreaTest {
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().territories();
 
@@ -152,14 +152,14 @@ public class RenderingCLIAreaTest {
     private final Matcher<Double> scaleMatcher;
     private final Matcher<Bounds> boundsMatcher;
 
-    public RenderingCLIAreaTest(String args, Matcher<Double> scaleMatcher, Matcher<Bounds> boundsMatcher) {
+    RenderingCLIAreaTest(String args, Matcher<Double> scaleMatcher, Matcher<Bounds> boundsMatcher) {
         this.args = args.split("\\s+", -1);
         this.scaleMatcher = scaleMatcher;
         this.boundsMatcher = boundsMatcher;
     }
 
     @Test
-    public void testDetermineRenderingArea() {
+    void testDetermineRenderingArea() {
         RenderingCLI cli = new RenderingCLI();
         cli.parseArguments(args);
         RenderingCLI.RenderingArea ra = cli.determineRenderingArea(null);

@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.remotecontrol;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -14,11 +14,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link AddTagsDialog}.
  */
-public class AddTagsDialogTest {
+class AddTagsDialogTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -26,7 +26,7 @@ public class AddTagsDialogTest {
      * Unit test of {@link AddTagsDialog#parseUrlTagsToKeyValues}
      */
     @Test
-    public void testParseUrlTagsToKeyValues() {
+    void testParseUrlTagsToKeyValues() {
         Map<String, String> strings = AddTagsDialog.parseUrlTagsToKeyValues("wikipedia:de=Residenzschloss Dresden|name:en=Dresden Castle");
         assertEquals(2, strings.size());
         assertEquals("Residenzschloss Dresden", strings.get("wikipedia:de"));

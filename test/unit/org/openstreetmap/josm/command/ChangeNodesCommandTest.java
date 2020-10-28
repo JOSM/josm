@@ -1,19 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -32,12 +33,12 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link ChangeNodesCommand} class.
  */
-public class ChangeNodesCommandTest {
+class ChangeNodesCommandTest {
 
     /**
      * We need prefs for nodes.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
     private CommandTestData testData;
@@ -45,7 +46,7 @@ public class ChangeNodesCommandTest {
     /**
      * Set up the test data.
      */
-    @Before
+    @BeforeEach
     public void createTestData() {
         testData = new CommandTestData();
     }
@@ -53,16 +54,16 @@ public class ChangeNodesCommandTest {
     /**
      * Test that empty ways are prevented.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testPreventEmptyWays() {
-        new ChangeNodesCommand(testData.existingWay, Collections.<Node>emptyList());
+    @Test
+    void testPreventEmptyWays() {
+        assertThrows(IllegalArgumentException.class, () -> new ChangeNodesCommand(testData.existingWay, Collections.<Node>emptyList()));
     }
 
     /**
      * Test {@link ChangeNodesCommand#executeCommand()}
      */
     @Test
-    public void testChange() {
+    void testChange() {
         List<Node> newNodes = testData.existingWay.getNodes();
         Collections.reverse(newNodes);
 
@@ -78,7 +79,7 @@ public class ChangeNodesCommandTest {
      * Test {@link ChangeCommand#undoCommand()}
      */
     @Test
-    public void testUndo() {
+    void testUndo() {
         List<Node> newNodes = testData.existingWay.getNodes();
         Collections.reverse(newNodes);
 
@@ -94,7 +95,7 @@ public class ChangeNodesCommandTest {
      * Tests {@link ChangeNodesCommand#fillModifiedData(java.util.Collection, java.util.Collection, java.util.Collection)}
      */
     @Test
-    public void testFillModifiedData() {
+    void testFillModifiedData() {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
@@ -109,7 +110,7 @@ public class ChangeNodesCommandTest {
      * Test {@link ChangeNodesCommand#getDescriptionText()}
      */
     @Test
-    public void testDescription() {
+    void testDescription() {
         Node node = new Node(LatLon.ZERO);
         node.put("name", "xy");
         Way way = new Way();
@@ -124,7 +125,7 @@ public class ChangeNodesCommandTest {
      * Unit test of methods {@link ChangeNodesCommand#equals} and {@link ChangeNodesCommand#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(ChangeNodesCommand.class).usingGetClass()
             .withPrefabValues(Way.class,

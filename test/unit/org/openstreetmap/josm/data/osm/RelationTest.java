@@ -1,40 +1,41 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class RelationTest {
+class RelationTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    @Test(expected = NullPointerException.class)
-    public void testCreateNewRelation() {
-        new Relation(null);
+    @Test
+    void testCreateNewRelation() {
+        assertThrows(NullPointerException.class, () -> new Relation(null));
     }
 
     @Test
-    public void testEqualSemanticsToNull() {
+    void testEqualSemanticsToNull() {
         Relation relation = new Relation();
         assertFalse(relation.hasEqualTechnicalAttributes(null));
     }
 
     @Test
-    public void testBbox() {
+    void testBbox() {
         DataSet ds = new DataSet();
 
         Node n1 = new Node(new LatLon(10, 10));
@@ -87,7 +88,7 @@ public class RelationTest {
     }
 
     @Test
-    public void testBBoxNotInDataset() {
+    void testBBoxNotInDataset() {
         Node n1 = new Node(new LatLon(10, 10));
         Node n2 = new Node(new LatLon(20, 20));
         Way w1 = new Way();
@@ -121,7 +122,7 @@ public class RelationTest {
      * @throws Exception if any error occurs
      */
     @Test
-    public void testTicket12467() throws Exception {
+    void testTicket12467() throws Exception {
         Relation r = new Relation();
         r.put("type", "boundary");
         assertTrue(r.isBoundary());
@@ -142,16 +143,16 @@ public class RelationTest {
     /**
      * Test that {@link Relation#cloneFrom} throws IAE for invalid arguments
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testCloneFromIAE() {
-        new Relation().cloneFrom(new Node());
+    @Test
+    void testCloneFromIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new Relation().cloneFrom(new Node()));
     }
 
     /**
      * Test that {@link Relation#load} throws IAE for invalid arguments
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testLoadIAE() {
-        new Relation().load(new NodeData());
+    @Test
+    void testLoadIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new Relation().load(new NodeData()));
     }
 }

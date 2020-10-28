@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.xml.sax.InputSource;
@@ -19,19 +19,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit tests of {@link XmlUtils} class.
  */
-public class XmlUtilsTest {
+class XmlUtilsTest {
 
     /**
      * Use default, basic test rules.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules();
 
@@ -39,7 +39,7 @@ public class XmlUtilsTest {
             "because 'file' access is not allowed due to restriction set by the accessExternalDTD property.";
 
     @Test
-    public void testExternalEntitiesParsingDom() throws IOException, ParserConfigurationException {
+    void testExternalEntitiesParsingDom() throws IOException, ParserConfigurationException {
         try {
             final String source = TestUtils.getTestDataRoot() + "dom_external_entity.xml";
             XmlUtils.parseSafeDOM(new FileInputStream(source));
@@ -51,7 +51,7 @@ public class XmlUtilsTest {
     }
 
     @Test
-    public void testExternalEntitiesTransformer() throws IOException {
+    void testExternalEntitiesTransformer() throws IOException {
         try {
             final String source = TestUtils.getTestDataRoot() + "dom_external_entity.xml";
             final Transformer transformer = XmlUtils.newSafeTransformerFactory().newTransformer();
@@ -64,7 +64,7 @@ public class XmlUtilsTest {
     }
 
     @Test
-    public void testExternalEntitiesSaxParser() throws IOException, ParserConfigurationException {
+    void testExternalEntitiesSaxParser() throws IOException, ParserConfigurationException {
         try {
             final String source = TestUtils.getTestDataRoot() + "dom_external_entity.xml";
             final DefaultHandler handler = new DefaultHandler();

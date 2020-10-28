@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -26,7 +26,7 @@ import org.openstreetmap.josm.io.OsmReader;
 /**
  * Utilities for validator unit tests.
  */
-public final class ValidatorTestUtils {
+final class ValidatorTestUtils {
 
     private ValidatorTestUtils() {
         // Hide default constructor for utilities classes
@@ -57,12 +57,12 @@ public final class ValidatorTestUtils {
                     Set<Integer> actualCodes = new TreeSet<>();
                     for (TestError error : errors) {
                         Integer code = error.getCode();
-                        assertTrue(name + " does not expect JOSM error code " + code + ": " + error.getDescription(),
-                                expectedCodes.contains(code));
+                        assertTrue(expectedCodes.contains(code),
+                                name + " does not expect JOSM error code " + code + ": " + error.getDescription());
                         actualCodes.add(code);
                     }
-                    assertEquals(name + " " + expectedCodes + " => " + actualCodes,
-                            expectedCodes.size(), actualCodes.size());
+                    assertEquals(expectedCodes.size(), actualCodes.size(),
+                            name + " " + expectedCodes + " => " + actualCodes);
                 } else if (t.hasKey("name") && namePredicate != null && namePredicate.test(t.getName())) {
                     fail(name + " lacks josm_error_codes tag");
                 } else if (t.hasKey("name") && t.get("name").startsWith("OK") && !errors.isEmpty()) {

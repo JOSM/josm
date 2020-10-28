@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -13,8 +14,8 @@ import java.awt.Rectangle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.util.WindowGeometry.WindowGeometryException;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -27,11 +28,11 @@ import nl.jqno.equalsverifier.Warning;
 /**
  * Unit tests of {@link WindowGeometry} class.
  */
-public class WindowGeometryTest {
+class WindowGeometryTest {
     /**
      * Some of this depends on preferences.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -39,7 +40,7 @@ public class WindowGeometryTest {
      * Test of {@link WindowGeometry#centerInWindow} method.
      */
     @Test
-    public void testCenterInWindow() {
+    void testCenterInWindow() {
         assertNotNull(WindowGeometry.centerInWindow(null, null));
         assertNotNull(WindowGeometry.centerInWindow(new JPanel(), null));
     }
@@ -48,7 +49,7 @@ public class WindowGeometryTest {
      * Test of {@link WindowGeometry#centerOnScreen} method.
      */
     @Test
-    public void testCenterOnScreen() {
+    void testCenterOnScreen() {
         Dimension dim = new Dimension(200, 100);
         assertEquals(new WindowGeometry(new Point(0, 0), dim), WindowGeometry.centerOnScreen(dim));
         assertEquals(new WindowGeometry(new Point(300, 250), dim), WindowGeometry.centerOnScreen(dim, null));
@@ -59,42 +60,38 @@ public class WindowGeometryTest {
 
     /**
      * Test of {@link WindowGeometry.WindowGeometryException} class.
-     * @throws WindowGeometryException always
      */
-    @Test(expected = WindowGeometryException.class)
-    public void testWindowGeometryException1() throws WindowGeometryException {
+    @Test
+    void testWindowGeometryException1() {
         Config.getPref().put("test", null);
-        new WindowGeometry("test");
+        assertThrows(WindowGeometryException.class, () -> new WindowGeometry("test"));
     }
 
     /**
      * Test of {@link WindowGeometry.WindowGeometryException} class.
-     * @throws WindowGeometryException always
      */
-    @Test(expected = WindowGeometryException.class)
-    public void testWindowGeometryException2() throws WindowGeometryException {
+    @Test
+    void testWindowGeometryException2() {
         Config.getPref().put("test", "");
-        new WindowGeometry("test");
+        assertThrows(WindowGeometryException.class, () -> new WindowGeometry("test"));
     }
 
     /**
      * Test of {@link WindowGeometry.WindowGeometryException} class.
-     * @throws WindowGeometryException always
      */
-    @Test(expected = WindowGeometryException.class)
-    public void testWindowGeometryException3() throws WindowGeometryException {
+    @Test
+    void testWindowGeometryException3() {
         Config.getPref().put("test", "x=not_a_number");
-        new WindowGeometry("test");
+        assertThrows(WindowGeometryException.class, () -> new WindowGeometry("test"));
     }
 
     /**
      * Test of {@link WindowGeometry.WindowGeometryException} class.
-     * @throws WindowGeometryException always
      */
-    @Test(expected = WindowGeometryException.class)
-    public void testWindowGeometryException4() throws WindowGeometryException {
+    @Test
+    void testWindowGeometryException4() {
         Config.getPref().put("test", "wrong_pattern");
-        new WindowGeometry("test");
+        assertThrows(WindowGeometryException.class, () -> new WindowGeometry("test"));
     }
 
     /**
@@ -102,7 +99,7 @@ public class WindowGeometryTest {
      * @throws WindowGeometryException never
      */
     @Test
-    public void testWindowGeometryException5() throws WindowGeometryException {
+    void testWindowGeometryException5() throws WindowGeometryException {
         Config.getPref().put("test", "x=15,y=55,width=200,height=100");
         assertNotNull(new WindowGeometry("test"));
     }
@@ -111,7 +108,7 @@ public class WindowGeometryTest {
      * Test of {@link WindowGeometry#isBugInMaximumWindowBounds} method.
      */
     @Test
-    public void testIsBugInMaximumWindowBounds() {
+    void testIsBugInMaximumWindowBounds() {
         assertFalse(WindowGeometry.isBugInMaximumWindowBounds(new Rectangle(10, 10)));
         assertTrue(WindowGeometry.isBugInMaximumWindowBounds(new Rectangle(10, 0)));
         assertTrue(WindowGeometry.isBugInMaximumWindowBounds(new Rectangle(0, 10)));
@@ -121,7 +118,7 @@ public class WindowGeometryTest {
      * Test of {@link WindowGeometry#getVirtualScreenBounds} method.
      */
     @Test
-    public void testGetVirtualScreenBounds() {
+    void testGetVirtualScreenBounds() {
         assertNotNull(WindowGeometry.getVirtualScreenBounds());
     }
 
@@ -129,7 +126,7 @@ public class WindowGeometryTest {
      * Test of {@link WindowGeometry#getMaxDimensionOnScreen} method.
      */
     @Test
-    public void testGetMaxDimensionOnScreen() {
+    void testGetMaxDimensionOnScreen() {
         assertNotNull(WindowGeometry.getMaxDimensionOnScreen(new JLabel()));
     }
 
@@ -137,7 +134,7 @@ public class WindowGeometryTest {
      * Test of {@link WindowGeometry#toString} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         assertEquals("WindowGeometry{topLeft=java.awt.Point[x=0,y=0],extent=java.awt.Dimension[width=0,height=0]}",
                 new WindowGeometry(new Rectangle()).toString());
     }
@@ -146,7 +143,7 @@ public class WindowGeometryTest {
      * Unit test of methods {@link WindowGeometry#equals} and {@link WindowGeometry#hashCode}.
      */
     @Test
-    public void testEqualsContract() {
+    void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
         EqualsVerifier.forClass(WindowGeometry.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)

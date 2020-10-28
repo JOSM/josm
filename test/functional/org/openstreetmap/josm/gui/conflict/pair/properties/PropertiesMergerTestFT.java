@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 
-public class PropertiesMergerTestFT extends JFrame {
+class PropertiesMergerTestFT extends JFrame {
 
     private PropertiesMerger merger;
 
@@ -37,7 +37,7 @@ public class PropertiesMergerTestFT extends JFrame {
     /**
      * Constructs a new {@code PropertiesMergerTest}.
      */
-    public PropertiesMergerTestFT() {
+    PropertiesMergerTestFT() {
         build();
         populate();
     }

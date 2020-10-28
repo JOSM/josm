@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -26,7 +26,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link PropertiesMergeModel}.
  */
-public class PropertiesMergeModelTest {
+class PropertiesMergeModelTest {
 
     private abstract static class TestChangeListener implements ChangeListener {
         public int numInvocations;
@@ -49,14 +49,14 @@ public class PropertiesMergeModelTest {
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         model = new PropertiesMergeModel();
     }
@@ -66,7 +66,7 @@ public class PropertiesMergeModelTest {
     }
 
     @Test
-    public void testPopulate() {
+    void testPopulate() {
         DataSet d1 = new DataSet();
         DataSet d2 = new DataSet();
         Node n1 = new Node(1);
@@ -89,7 +89,7 @@ public class PropertiesMergeModelTest {
     }
 
     @Test
-    public void testDecidingAboutCoords() {
+    void testDecidingAboutCoords() {
         DataSet d1 = new DataSet();
         DataSet d2 = new DataSet();
 

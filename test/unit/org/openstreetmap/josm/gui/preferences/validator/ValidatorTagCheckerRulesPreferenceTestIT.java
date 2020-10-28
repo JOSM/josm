@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
@@ -20,12 +20,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link ValidatorTagCheckerRulesPreference} class.
  */
-public class ValidatorTagCheckerRulesPreferenceTestIT {
+class ValidatorTagCheckerRulesPreferenceTestIT {
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().https().timeout(20_000);
 
@@ -34,7 +34,7 @@ public class ValidatorTagCheckerRulesPreferenceTestIT {
      * @throws Exception in case of error
      */
     @Test
-    public void testValidityOfAvailableRules() throws Exception {
+    void testValidityOfAvailableRules() throws Exception {
         Collection<ExtendedSourceEntry> sources = new ValidatorTagCheckerRulesPreference.TagCheckerRulesSourceEditor()
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());

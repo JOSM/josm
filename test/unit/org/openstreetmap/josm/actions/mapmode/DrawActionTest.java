@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.mapmode;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -13,8 +13,8 @@ import java.util.Collection;
 
 import javax.swing.JList;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -32,12 +32,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link DrawAction}.
  */
-public class DrawActionTest {
+class DrawActionTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().timeout(20000);
 
@@ -50,7 +50,7 @@ public class DrawActionTest {
      * @throws IllegalArgumentException see {@link Field#set} for details
      */
     @Test
-    public void testTicket12011() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+    void testTicket12011() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
         MainApplication.getLayerManager().addLayer(layer);

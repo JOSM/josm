@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Random;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -29,12 +29,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link QuadBuckets}.
  */
-public class QuadBucketsTest {
+class QuadBucketsTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
@@ -82,7 +82,7 @@ public class QuadBucketsTest {
      * @throws Exception never
      */
     @Test
-    public void testRemove() throws Exception {
+    void testRemove() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/restriction.osm"))) {
             DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
@@ -95,7 +95,7 @@ public class QuadBucketsTest {
      * @throws Exception never
      */
     @Test
-    public void testMove() throws Exception {
+    void testMove() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         try (InputStream fis = Files.newInputStream(Paths.get("nodist/data/restriction.osm"))) {
             DataSet ds = OsmReader.parseDataSet(fis, NullProgressMonitor.INSTANCE);
@@ -112,7 +112,7 @@ public class QuadBucketsTest {
      * Test handling of objects with invalid bbox
      */
     @Test
-    public void testSpecialBBox() {
+    void testSpecialBBox() {
         QuadBuckets<Node> qbNodes = new QuadBuckets<>();
         QuadBuckets<Way> qbWays = new QuadBuckets<>();
         Way w1 = new Way(1);
@@ -194,7 +194,7 @@ public class QuadBucketsTest {
      *  Add more data so that quad buckets tree has a few leaves
      */
     @Test
-    public void testSplitsWithIncompleteData() {
+    void testSplitsWithIncompleteData() {
         DataSet ds = new DataSet();
         long nodeId = 1;
         long wayId = 1;

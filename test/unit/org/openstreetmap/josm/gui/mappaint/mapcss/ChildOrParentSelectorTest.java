@@ -1,18 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -31,21 +31,21 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link ChildOrParentSelector}.
  */
-public class ChildOrParentSelectorTest {
+class ChildOrParentSelectorTest {
 
     private DataSet ds;
 
     /**
      * Setup rule
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
     /**
      * Setup test
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         ds = new DataSet();
     }
@@ -77,7 +77,7 @@ public class ChildOrParentSelectorTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void matches_1() {
         String css = "relation >[role=\"my_role\"] node {}";
         ChildOrParentSelector selector = parse(css);
@@ -91,7 +91,7 @@ public class ChildOrParentSelectorTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void matches_2() {
         String css = "relation >[\"my_role\"] node {}";
         ChildOrParentSelector selector = parse(css);
@@ -105,7 +105,7 @@ public class ChildOrParentSelectorTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void matches_3() {
         String css = "relation >[!\"my_role\"] node {}";
         ChildOrParentSelector selector = parse(css);
@@ -119,7 +119,7 @@ public class ChildOrParentSelectorTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void matches_4() {
         String css = "way < relation {}";
         ChildOrParentSelector selector = parse(css);
@@ -188,9 +188,10 @@ public class ChildOrParentSelectorTest {
 
     /**
      * Test inside/contains selectors (spatial test)
+     * @throws Exception in case of any error
      */
     @Test
-    public void testContains() throws Exception {
+    void testContains() throws Exception {
         ds = OsmReader.parseDataSet(Files.newInputStream(Paths.get("nodist/data/amenity-in-amenity.osm")), null);
         ChildOrParentSelector css = parse("node[tag(\"amenity\") = parent_tag(\"amenity\")] ∈ *[amenity] {}");
         assertFalse(css.matches(new Environment(ds.getPrimitiveById(123, OsmPrimitiveType.NODE))));

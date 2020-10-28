@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.net.URL;
@@ -13,8 +13,8 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
@@ -31,12 +31,12 @@ import mockit.MockUp;
 /**
  * Unit tests of {@link DownloadOpenChangesetsTask} class.
  */
-public class DownloadOpenChangesetsTaskTest {
+class DownloadOpenChangesetsTaskTest {
 
     /**
      * Setup tests
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().devAPI();
 
@@ -71,7 +71,7 @@ public class DownloadOpenChangesetsTaskTest {
      * Test of {@link DownloadOpenChangesetsTask} class when anonymous.
      */
     @Test
-    public void testAnonymous() {
+    void testAnonymous() {
         TestUtils.assumeWorkingJMockit();
         if (GraphicsEnvironment.isHeadless()) {
             new WindowMocker();
@@ -104,7 +104,7 @@ public class DownloadOpenChangesetsTaskTest {
      * Test of {@link DownloadOpenChangesetsTask} class when "partially identified".
      */
     @Test
-    public void testPartiallyIdentified() {
+    void testPartiallyIdentified() {
         TestUtils.assumeWorkingJMockit();
         if (GraphicsEnvironment.isHeadless()) {
             new WindowMocker();

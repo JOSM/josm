@@ -1,18 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.bugreport;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link ReportedException} class.
  * @author Michael Zangl
  * @since 10285
  */
-public class ReportedExceptionTest {
+class ReportedExceptionTest {
     private static final class CauseOverwriteException extends RuntimeException {
         private Throwable myCause;
 
@@ -30,7 +30,7 @@ public class ReportedExceptionTest {
      * Tests that {@link ReportedException#put(String, Object)} handles null values
      */
     @Test
-    public void testPutDoesHandleNull() {
+    void testPutDoesHandleNull() {
         ReportedException e = new ReportedException(new RuntimeException());
         e.startSection("test");
         Object[] a = new Object[] {
@@ -44,7 +44,7 @@ public class ReportedExceptionTest {
      * Tests that {@link ReportedException#put(String, Object)} handles exceptions during toString fine.
      */
     @Test
-    public void testPutDoesNotThrow() {
+    void testPutDoesNotThrow() {
         ReportedException e = new ReportedException(new RuntimeException());
         e.startSection("test");
         Object o = new Object() {
@@ -64,7 +64,7 @@ public class ReportedExceptionTest {
      * Tests that {@link ReportedException#isSame(ReportedException)} works as expected.
      */
     @Test
-    public void testIsSame() {
+    void testIsSame() {
         // Do not break this line! All exceptions need to be created in the same line.
         // CHECKSTYLE.OFF: LineLength
         // @formatter:off
@@ -77,7 +77,7 @@ public class ReportedExceptionTest {
             for (int j = 0; j < testExceptions.length; j++) {
                 boolean is01 = (i == 0 || i == 1) && (j == 0 || j == 1);
                 boolean is23 = (i == 2 || i == 3) && (j == 2 || j == 3);
-                assertEquals(i + ", " + j, is01 || is23 || i == j, testExceptions[i].isSame(testExceptions[j]));
+                assertEquals(is01 || is23 || i == j, testExceptions[i].isSame(testExceptions[j]), i + ", " + j);
             }
         }
     }

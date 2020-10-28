@@ -1,14 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.stream.Stream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.CustomProjection.Polarity;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -19,11 +19,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Tests for {@link CustomProjection}.
  * @author Michael Zangl
  */
-public class CustomProjectionTest {
+class CustomProjectionTest {
     /**
      * Need pref to load pref.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
@@ -32,7 +32,7 @@ public class CustomProjectionTest {
      * @throws ProjectionConfigurationException in case of error
      */
     @Test
-    public void testParseAngle() throws ProjectionConfigurationException {
+    void testParseAngle() throws ProjectionConfigurationException {
         assertEquals(0, CustomProjection.parseAngle("0", "xxx"), 1e-10);
         assertEquals(1, CustomProjection.parseAngle("1", "xxx"), 1e-10);
         assertEquals(1.1, CustomProjection.parseAngle("1.1", "xxx"), 1e-10);
@@ -85,7 +85,7 @@ public class CustomProjectionTest {
      * Test {@link CustomProjection.Polarity}.
      */
     @Test
-    public void testPolarity() {
+    void testPolarity() {
         assertEquals(LatLon.NORTH_POLE, Polarity.NORTH.getLatLon());
         assertEquals(LatLon.SOUTH_POLE, Polarity.SOUTH.getLatLon());
     }

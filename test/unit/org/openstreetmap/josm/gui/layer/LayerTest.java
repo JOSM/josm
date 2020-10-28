@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -21,11 +21,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Test of the base {@link Layer} class
  * @author Michael Zangl
  */
-public class LayerTest {
+class LayerTest {
     /**
      * We need projection
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
@@ -34,7 +34,7 @@ public class LayerTest {
     /**
      * Create test layer
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         testLayer = new LayerManagerTest.TestLayer();
     }
@@ -43,7 +43,7 @@ public class LayerTest {
      * Test of {@link Layer#isInfoResizable}
      */
     @Test
-    public void testIsInfoResizable() {
+    void testIsInfoResizable() {
         assertFalse(testLayer.isInfoResizable());
     }
 
@@ -51,7 +51,7 @@ public class LayerTest {
      * Test of {@link Layer#getAssociatedFile()} and {@link Layer#setAssociatedFile(java.io.File)}
      */
     @Test
-    public void testAssociatedFile() {
+    void testAssociatedFile() {
         assertNull(testLayer.getAssociatedFile());
 
         File file = new File("test");
@@ -63,7 +63,7 @@ public class LayerTest {
      * Test {@link Layer#getName()}
      */
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals("Test Layer", testLayer.getName());
     }
 
@@ -71,7 +71,7 @@ public class LayerTest {
      * Test {@link Layer#setName(String)}
      */
     @Test
-    public void testSetName() {
+    void testSetName() {
         testLayer.setName("Test Layer2");
         assertEquals("Test Layer2", testLayer.getName());
 
@@ -88,7 +88,7 @@ public class LayerTest {
      * Test {@link Layer#rename(String)} and {@link Layer#isRenamed()}
      */
     @Test
-    public void testRename() {
+    void testRename() {
         assertFalse(testLayer.isRenamed());
         testLayer.rename("Test Layer2");
         assertEquals("Test Layer2", testLayer.getName());
@@ -99,7 +99,7 @@ public class LayerTest {
      * Test {@link Layer#isBackgroundLayer()} and {@link Layer#setBackgroundLayer(boolean)}
      */
     @Test
-    public void testBackgroundLayer() {
+    void testBackgroundLayer() {
         assertFalse(testLayer.isBackgroundLayer());
         testLayer.setBackgroundLayer(true);
         assertTrue(testLayer.isBackgroundLayer());
@@ -109,7 +109,7 @@ public class LayerTest {
      * Test {@link Layer#isVisible()} and {@link Layer#setVisible(boolean)}
      */
     @Test
-    public void testVisible() {
+    void testVisible() {
         assertTrue(testLayer.isVisible());
         testLayer.setVisible(false);
         assertFalse(testLayer.isVisible());
@@ -121,7 +121,7 @@ public class LayerTest {
      * Test {@link Layer#toggleVisible()}
      */
     @Test
-    public void testToggleVisible() {
+    void testToggleVisible() {
         assertTrue(testLayer.isVisible());
         testLayer.toggleVisible();
         assertFalse(testLayer.isVisible());
@@ -133,7 +133,7 @@ public class LayerTest {
      * Test {@link Layer#setOpacity(double)} and {@link Layer#getOpacity()}
      */
     @Test
-    public void testOpacity() {
+    void testOpacity() {
         assertEquals(1, testLayer.getOpacity(), 1e-3);
 
         testLayer.setOpacity(0.5);
@@ -151,7 +151,7 @@ public class LayerTest {
      * Test {@link Layer#isProjectionSupported(org.openstreetmap.josm.data.projection.Projection)}
      */
     @Test
-    public void testIsProjectionSupported() {
+    void testIsProjectionSupported() {
         assertFalse(testLayer.isProjectionSupported(null));
         assertTrue(testLayer.isProjectionSupported(ProjectionRegistry.getProjection()));
     }
@@ -160,7 +160,7 @@ public class LayerTest {
      * Test {@link Layer#nameSupportedProjections()}
      */
     @Test
-    public void testNameSupportedProjections() {
+    void testNameSupportedProjections() {
         assertNotNull(testLayer.nameSupportedProjections());
     }
 
@@ -168,7 +168,7 @@ public class LayerTest {
      * Test {@link Layer#isSavable()}
      */
     @Test
-    public void testIsSavable() {
+    void testIsSavable() {
         assertFalse(testLayer.isSavable());
     }
 
@@ -176,7 +176,7 @@ public class LayerTest {
      * Test {@link Layer#checkSaveConditions()}
      */
     @Test
-    public void testCheckSaveConditions() {
+    void testCheckSaveConditions() {
         assertTrue(testLayer.checkSaveConditions());
     }
 }

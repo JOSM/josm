@@ -1,14 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -20,12 +21,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of the {@code Node} class.
  */
-public class NodeTest {
+class NodeTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
@@ -33,7 +34,7 @@ public class NodeTest {
      * Non-regression test for ticket #12060.
      */
     @Test
-    public void testTicket12060() {
+    void testTicket12060() {
         DataSet ds = new DataSet();
         ds.addDataSource(new DataSource(new Bounds(LatLon.ZERO), null));
         Node n = new Node(1, 1);
@@ -50,7 +51,7 @@ public class NodeTest {
      * Test BBox calculation with Node
      */
     @Test
-    public void testBBox() {
+    void testBBox() {
         DataSet ds = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
@@ -84,32 +85,32 @@ public class NodeTest {
     /**
      * Test that {@link Node#cloneFrom} throws IAE for invalid arguments
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testCloneFromIAE() {
-        new Node().cloneFrom(new Way());
+    @Test
+    void testCloneFromIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new Node().cloneFrom(new Way()));
     }
 
     /**
      * Test that {@link Node#mergeFrom} throws IAE for invalid arguments
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testMergeFromIAE() {
-        new Node().mergeFrom(new Way());
+    @Test
+    void testMergeFromIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new Node().mergeFrom(new Way()));
     }
 
     /**
      * Test that {@link Node#load} throws IAE for invalid arguments
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testLoadIAE() {
-        new Node().load(new WayData());
+    @Test
+    void testLoadIAE() {
+        assertThrows(IllegalArgumentException.class, () -> new Node().load(new WayData()));
     }
 
     /**
      * Test that {@link Node#isOutSideWorld} works as expected.
      */
     @Test
-    public void testOutsideWorld() {
+    void testOutsideWorld() {
         Node n = new Node(1, 1);
         n.setCoor(LatLon.ZERO);
         assertFalse(n.isOutSideWorld());
@@ -133,7 +134,7 @@ public class NodeTest {
      * Test that {@link Node#hasDirectionKeys} is not set.
      */
     @Test
-    public void testDirectional() {
+    void testDirectional() {
         assertFalse(OsmUtils.createPrimitive("node oneway=yes").hasDirectionKeys());
     }
 }

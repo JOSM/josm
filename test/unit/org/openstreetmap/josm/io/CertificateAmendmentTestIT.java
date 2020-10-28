@@ -12,9 +12,9 @@ import java.util.List;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -23,7 +23,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link CertificateAmendment} class.
  */
-public class CertificateAmendmentTestIT {
+class CertificateAmendmentTestIT {
 
     /**
      * Setup rule
@@ -38,7 +38,7 @@ public class CertificateAmendmentTestIT {
      * Setup test
      * @throws IOException in case of I/O error
      */
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws IOException {
         errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(CertificateAmendmentTestIT.class));
     }
@@ -48,7 +48,7 @@ public class CertificateAmendmentTestIT {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testDefault() throws IOException {
+    void testDefault() throws IOException {
         // something that is not embedded
         connect("https://www.bing.com", true);
     }
@@ -58,7 +58,7 @@ public class CertificateAmendmentTestIT {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testLetsEncrypt() throws IOException {
+    void testLetsEncrypt() throws IOException {
         // signed by letsencrypt's own ISRG root
         connect("https://valid-isrgrootx1.letsencrypt.org", true);
         // signed by letsencrypt's cross-sign CA
@@ -72,7 +72,7 @@ public class CertificateAmendmentTestIT {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testOverpass() throws IOException {
+    void testOverpass() throws IOException {
         connect("https://overpass-api.de", true);
     }
 
@@ -81,7 +81,7 @@ public class CertificateAmendmentTestIT {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testDutchGovernment() throws IOException {
+    void testDutchGovernment() throws IOException {
         connect("https://geodata.nationaalgeoregister.nl", true);
     }
 
@@ -90,7 +90,7 @@ public class CertificateAmendmentTestIT {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testTaiwanGovernment() throws IOException {
+    void testTaiwanGovernment() throws IOException {
         connect("https://grca.nat.gov.tw", true);
     }
 

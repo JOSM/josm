@@ -1,17 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -27,19 +27,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link GpxImageCorrelation} class.
  */
-public class GpxImageCorrelationTest {
+class GpxImageCorrelationTest {
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Setup test.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         DateUtilsTest.setTimeZone(DateUtils.UTC);
     }
@@ -49,7 +49,7 @@ public class GpxImageCorrelationTest {
      * @throws Exception if the track cannot be parsed
      */
     @Test
-    public void testMatchGpxTrack() throws Exception {
+    void testMatchGpxTrack() throws Exception {
         IPreferences s = Config.getPref();
         final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + "tracks/tracks.gpx");
         assertEquals(5, gpx.tracks.size());
@@ -273,7 +273,7 @@ public class GpxImageCorrelationTest {
      * Unit test of {@link GpxImageCorrelation#getElevation}
      */
     @Test
-    public void testGetElevation() {
+    void testGetElevation() {
         assertNull(GpxImageCorrelation.getElevation(null));
         WayPoint wp = new WayPoint(LatLon.ZERO);
         assertNull(GpxImageCorrelation.getElevation(wp));
