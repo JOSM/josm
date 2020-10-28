@@ -603,7 +603,7 @@ class SearchCompilerTest {
         // load presets
         TaggingPresets.readFromPreferences();
 
-        assertThrows(IllegalArgumentException.class, () -> SearchCompiler.compile(settings));
+        assertThrows(SearchParseError.class, () -> SearchCompiler.compile(settings));
     }
 
     /**

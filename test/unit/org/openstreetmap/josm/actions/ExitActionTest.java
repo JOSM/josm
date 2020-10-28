@@ -3,6 +3,8 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.GraphicsEnvironment;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -85,12 +87,14 @@ final class ExitActionTest {
                 jcsCacheManagerShutdownCalled[0] = true;
             }
         };
-        new MockUp<SaveLayersDialog>() {
-            @Mock
-            private void closeDialog(Invocation invocation) {
-                saveLayersDialogCloseDialogCalled[0] = true;
-            }
-        };
+        if (!GraphicsEnvironment.isHeadless()) {
+            new MockUp<SaveLayersDialog>() {
+                @Mock
+                private void closeDialog(Invocation invocation) {
+                    saveLayersDialogCloseDialogCalled[0] = true;
+                }
+            };
+        }
 
         // No layer
 
@@ -104,7 +108,9 @@ final class ExitActionTest {
             assertTrue(imageProviderShutdownCalledNowFalse[0]);
             assertTrue(imageProviderShutdownCalledNowTrue[0]);
             assertTrue(jcsCacheManagerShutdownCalled[0]);
-            assertTrue(saveLayersDialogCloseDialogCalled[0]);
+            if (!GraphicsEnvironment.isHeadless()) {
+                assertTrue(saveLayersDialogCloseDialogCalled[0]);
+            }
         }
     }
 }
