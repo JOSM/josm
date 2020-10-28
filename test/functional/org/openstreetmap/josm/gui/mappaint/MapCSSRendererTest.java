@@ -27,12 +27,9 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -54,7 +51,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * This test uses the data and reference files stored in the test data directory {@value #TEST_DATA_BASE}
  * @author Michael Zangl
  */
-@RunWith(Parameterized.class)
 public class MapCSSRendererTest {
     private static final String TEST_DATA_BASE = "/renderer/";
     /**
@@ -70,8 +66,6 @@ public class MapCSSRendererTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().projection();
 
-    private final TestConfig testConfig;
-
     // development flag - set to true in order to update all reference images
     private static final boolean UPDATE_ALL = false;
 
@@ -80,7 +74,6 @@ public class MapCSSRendererTest {
      *
      * @return The parameters.
      */
-    @Parameters(name = "{1}")
     public static Collection<Object[]> runs() {
         return Stream.of(
                 /** Tests for StyledMapRenderer#drawNodeSymbol */
@@ -168,20 +161,16 @@ public class MapCSSRendererTest {
     }
 
     /**
+     * Run the test using {@code testConfig}
      * @param testConfig The config to use for this test.
      * @param ignored The name to print it nicely
+     * @throws Exception if an error occurs
      */
-    public MapCSSRendererTest(TestConfig testConfig, String ignored) {
-        this.testConfig = testConfig;
-    }
-
-    /**
-     * This test only runs on OpenJDK.
-     * It is ignored for other Java versions since they differ slightly in their rendering engine.
-     * @since 11691
-     */
-    @BeforeEach
-    public void forOpenJDK() {
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("runs")
+    void testRender(TestConfig testConfig, String ignored) throws Exception {
+        // This test only runs on OpenJDK.
+        // It is ignored for other Java versions since they differ slightly in their rendering engine.
         String javaHome = System.getProperty("java.home");
         assumeTrue(javaHome != null && javaHome.toLowerCase(Locale.ENGLISH).contains("openjdk"), "Test requires openJDK");
 
@@ -189,14 +178,7 @@ public class MapCSSRendererTest {
         for (String font : testConfig.fonts) {
             assumeTrue(fonts.contains(font), "Test requires font: " + font);
         }
-    }
 
-    /**
-     * Run the test using {@link #testConfig}
-     * @throws Exception if an error occurs
-     */
-    @Test
-    void testRender() throws Exception {
         // Force reset of preferences
         StyledMapRenderer.PREFERENCE_ANTIALIASING_USE.put(true);
         StyledMapRenderer.PREFERENCE_TEXT_ANTIALIASING.put("gasp");

@@ -3,15 +3,17 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ImageProvider;
+
+import com.ginsberg.junit.exit.ExpectSystemExitWithStatus;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Invocation;
@@ -31,24 +33,19 @@ final class ExitActionTest {
     public JOSMTestRules test = new JOSMTestRules().main();
 
     /**
-     * System.exit rule
-     */
-    @RegisterExtension
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
-
-    /**
      * Unit test of {@link ExitAction#actionPerformed}
      */
     @Test
+    @ExpectSystemExitWithStatus(0)
     void testActionPerformed() {
         TestUtils.assumeWorkingJMockit();
-        exit.expectSystemExitWithStatus(0);
 
         boolean[] workerShutdownCalled = {false};
         boolean[] workerShutdownNowCalled = {false};
         boolean[] imageProviderShutdownCalledNowFalse = {false};
         boolean[] imageProviderShutdownCalledNowTrue = {false};
         boolean[] jcsCacheManagerShutdownCalled = {false};
+        boolean[] saveLayersDialogCloseDialogCalled = {false};
 
         // critically we don't proceed into the actual implementation in any of these mock methods -
         // that would be quite annoying for tests following this one which were expecting to use any
@@ -88,6 +85,12 @@ final class ExitActionTest {
                 jcsCacheManagerShutdownCalled[0] = true;
             }
         };
+        new MockUp<SaveLayersDialog>() {
+            @Mock
+            private void closeDialog(Invocation invocation) {
+                saveLayersDialogCloseDialogCalled[0] = true;
+            }
+        };
 
         // No layer
 
@@ -101,6 +104,7 @@ final class ExitActionTest {
             assertTrue(imageProviderShutdownCalledNowFalse[0]);
             assertTrue(imageProviderShutdownCalledNowTrue[0]);
             assertTrue(jcsCacheManagerShutdownCalled[0]);
+            assertTrue(saveLayersDialogCloseDialogCalled[0]);
         }
     }
 }

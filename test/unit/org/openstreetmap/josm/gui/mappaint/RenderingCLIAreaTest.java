@@ -11,10 +11,9 @@ import org.CustomMatchers;
 import org.CustomMatchers.ErrorMode;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -24,7 +23,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Tests the method {@link RenderingCLI#determineRenderingArea(org.openstreetmap.josm.data.osm.DataSet)}.
  */
-@RunWith(Parameterized.class)
 class RenderingCLIAreaTest {
     /**
      * Setup rule
@@ -33,7 +31,6 @@ class RenderingCLIAreaTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection().territories();
 
-    @Parameterized.Parameters
     public static Collection<Object[]> runs() {
         Collection<Object[]> runs = new ArrayList<>();
 
@@ -148,20 +145,11 @@ class RenderingCLIAreaTest {
         return ll.lon() + "," + ll.lat();
     }
 
-    private final String[] args;
-    private final Matcher<Double> scaleMatcher;
-    private final Matcher<Bounds> boundsMatcher;
-
-    RenderingCLIAreaTest(String args, Matcher<Double> scaleMatcher, Matcher<Bounds> boundsMatcher) {
-        this.args = args.split("\\s+", -1);
-        this.scaleMatcher = scaleMatcher;
-        this.boundsMatcher = boundsMatcher;
-    }
-
-    @Test
-    void testDetermineRenderingArea() {
+    @ParameterizedTest
+    @MethodSource("runs")
+    void testDetermineRenderingArea(String args, Matcher<Double> scaleMatcher, Matcher<Bounds> boundsMatcher) {
         RenderingCLI cli = new RenderingCLI();
-        cli.parseArguments(args);
+        cli.parseArguments(args.split("\\s+", -1));
         RenderingCLI.RenderingArea ra = cli.determineRenderingArea(null);
         assertThat(ra.scale, scaleMatcher);
         assertThat(ra.bounds, boundsMatcher);

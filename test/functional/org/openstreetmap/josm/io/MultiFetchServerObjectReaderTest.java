@@ -22,13 +22,14 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -50,6 +51,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Unit tests of {@link MultiFetchServerObjectReader}.
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
+@Timeout(value = 60, unit = TimeUnit.SECONDS)
 class MultiFetchServerObjectReaderTest {
     private static final Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
 
@@ -59,12 +61,6 @@ class MultiFetchServerObjectReaderTest {
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
-
-    /**
-     * Global timeout applied to all test methods.
-     */
-    @RegisterExtension
-    public Timeout globalTimeout = Timeout.seconds(60);
 
     /**
      * builds a large data set to be used later for testing MULTI FETCH on the server
