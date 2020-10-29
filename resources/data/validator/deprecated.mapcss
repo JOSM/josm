@@ -1845,6 +1845,14 @@ way[/^is_in:.*$/] {
   set power_tower_type_warning;
   group: tr("deprecated tagging");
 }
+*[tower:type=transition] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "location:transition=yes";
+  fixAdd: "location:transition=yes";
+  fixRemove: "tower:type";
+  set power_tower_type_warning;
+  group: tr("deprecated tagging");
+}
 *[tower:type=transposing] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "line_management=transpose";
@@ -1909,6 +1917,14 @@ node[pole:type=termination] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "line_management=termination";
   fixAdd: "line_management=termination";
+  fixRemove: "pole:type";
+  set power_pole_type_warning;
+  group: tr("deprecated tagging");
+}
+node[pole:type=transition] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "location:transition=yes";
+  fixAdd: "location:transition=yes";
   fixRemove: "pole:type";
   set power_pole_type_warning;
   group: tr("deprecated tagging");
