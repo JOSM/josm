@@ -1,16 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -39,7 +39,7 @@ class JosmDecimalFormatSymbolsProviderTest {
     }
 
     private void checkGroupingSymbol(Locale locale) {
-        assertEquals(locale.toString(), "123\u202F456", DecimalFormat.getInstance(locale).format(123_456));
+        assertEquals("123\u202F456", DecimalFormat.getInstance(locale).format(123_456), locale.toString());
     }
 
     /**
