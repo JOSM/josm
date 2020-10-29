@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
@@ -167,14 +167,20 @@ class DataSetTest {
         Node n1 = new Node(1);
         Node n2 = new Node(2);
         Node n3 = new Node(3);
+        Node n4 = new Node(4);
         Way w1 = new Way(1);
-        w1.setNodes(Arrays.asList(n1, n2, n3, n1));
+        w1.setNodes(Arrays.asList(n1, n2, n3, n4, n1));
+        w1.setIncomplete(false);
+        assertEquals(5, w1.getNodesCount());
+        assertTrue(w1.isClosed());
         ds.addPrimitive(n1);
         ds.addPrimitive(n2);
         ds.addPrimitive(n3);
+        ds.addPrimitive(n4);
         ds.addPrimitive(w1);
         ds.unlinkNodeFromWays(n1);
-        assertEquals(2, w1.getRealNodesCount());
+        assertTrue(w1.isClosed());
+        assertEquals(4, w1.getNodesCount());
     }
 
     /**

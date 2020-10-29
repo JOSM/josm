@@ -791,8 +791,14 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
         return update(() -> {
             Set<Way> result = new HashSet<>();
             for (Way way : node.getParentWays()) {
-                List<Node> wayNodes = way.getNodes();
-                if (wayNodes.removeIf(node::equals)) {
+                List<Node> wayNodes;
+                if (!way.isIncomplete()) {
+                    wayNodes = way.calculateRemoveNodes(Collections.singleton(node));
+                } else {
+                    wayNodes = way.getNodes();
+                    wayNodes.removeIf(node::equals);
+                }
+                if (wayNodes.size() < way.getNodesCount()) {
                     if (wayNodes.size() < 2) {
                         deleteWay(way);
                     } else {
