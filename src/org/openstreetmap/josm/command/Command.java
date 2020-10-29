@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Classes implementing Command modify a dataset in a specific way. A command is
@@ -154,7 +153,7 @@ public abstract class Command implements PseudoCommand {
         for (OsmPrimitive osm : all) {
             osm.accept(visitor);
         }
-        cloneMap = Utils.toUnmodifiableMap(visitor.orig);
+        cloneMap = visitor.orig;
         return true;
     }
 
