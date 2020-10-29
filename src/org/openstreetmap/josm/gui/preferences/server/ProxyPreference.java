@@ -35,7 +35,7 @@ public final class ProxyPreference extends DefaultTabPreferenceSetting {
     private ProxyPreferencesPanel pnlProxyPreferences;
 
     private ProxyPreference() {
-        super(null, tr("Proxy"), tr("Configure whether to use a proxy server"));
+        super(/* ICON(preferences/) */ "proxy", tr("Proxy"), tr("Configure whether to use a proxy server"));
     }
 
     @Override

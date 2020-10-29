@@ -145,7 +145,7 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
     }
 
     private TaggingPresetPreference() {
-        super(null, tr("Tagging Presets"), tr("Tagging Presets"));
+        super("dialogs/propertiesdialog", tr("Tagging Presets"), tr("Tagging Presets"));
     }
 
     private static final List<SourceProvider> presetSourceProviders = new ArrayList<>();

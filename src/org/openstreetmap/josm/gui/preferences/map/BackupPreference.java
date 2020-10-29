@@ -46,7 +46,7 @@ public class BackupPreference extends DefaultTabPreferenceSetting {
     private final JosmTextField backupPerLayer = new JosmTextField(8);
 
     BackupPreference() {
-        super(null, tr("File backup"), tr("Configure whether to create backup files"));
+        super(/* ICON(preferences/) */ "backup", tr("File backup"), tr("Configure whether to create backup files"));
     }
 
     @Override

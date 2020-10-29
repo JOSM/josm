@@ -71,12 +71,10 @@
        id="5">
       <stop
          id="M"
-         stop-color="#bed855"
          style="stop-color:#5589d8;stop-opacity:1" />
       <stop
          id="N"
          offset="1"
-         stop-color="#8bb300"
          style="stop-color:#0048b3;stop-opacity:1" />
     </linearGradient>
     <radialGradient
