@@ -30,7 +30,7 @@ jobs:
             os: macos-latest
           - java: 11
             os: macos-latest
-          - java: 15
+          - java: 16-ea
             os: macos-latest
           - headless: "false"
             os: macos-latest
