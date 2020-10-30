@@ -33,6 +33,7 @@
 *["building:use"      =~ /^(;.*|.*;;.*|.*;)$/],
 *[traffic_sign        =~ /^(;.*|.*;;.*|.*;)$/],
 *[voltage             =~ /^(;.*|.*;;.*|.*;)$/],
+*[sport               =~ /^(;.*|.*;;.*|.*;)$/],
 *[cuisine             =~ /^(;.*|.*;;.*|.*;)$/] {
 	throwWarning: tr("empty value in semicolon-separated ''{0}''", "{0.key}");
 	assertMatch: "node ref=;A1";

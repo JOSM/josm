@@ -214,7 +214,7 @@
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
     </chunk>
     <chunk id="sport">
-        <combo key="sport" text="Sport" values="10pin,9pin,american_football,archery,athletics,australian_football,baseball,basketball,beachvolleyball,billiards,boules,bowls,canadian_football,canoe,chess,climbing,cricket,croquet,curling,cycling,dog_racing,equestrian,field_hockey,fitness,gaelic_games,golf,gymnastics,handball,horse_racing,ice_hockey,ice_skating,karting,model_aerodrome,motocross,motor,multi,pelota,racquet,rc_car,roller_skating,rowing,rugby_league,rugby_union,running,safety_training,scuba_diving,shooting,skateboard,soccer,surfing,swimming,table_tennis,tennis,volleyball" values_context="sport" />
+        <multiselect key="sport" text="Sport" values="10pin;9pin;american_football;archery;athletics;australian_football;baseball;basketball;beachvolleyball;billiards;boules;bowls;canadian_football;canoe;chess;climbing;cricket;croquet;curling;cycling;dog_racing;equestrian;field_hockey;fitness;gaelic_games;golf;gymnastics;handball;horse_racing;ice_hockey;ice_skating;karting;model_aerodrome;motocross;motor;multi;pelota;racquet;rc_car;roller_skating;rowing;rugby_league;rugby_union;running;safety_training;scuba_diving;shooting;skateboard;soccer;surfing;swimming;table_tennis;tennis;volleyball" values_context="sport" />
     </chunk>
     <chunk id="highway_access">
         <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,customers,agricultural,forestry,no" values_sort="false" />
@@ -2097,7 +2097,7 @@
                 <reference ref="oh_wheelchair" />
                 <reference ref="POI_access" />
                 <combo key="surface" text="Surface" values="gravel,pebblestone,sand" />
-                <combo key="sport" text="Sport" values="swimming,surfing" />
+                <multiselect key="sport" text="Sport" values="swimming;surfing" rows="3"/>
                 <combo key="nudism" text="Nudism" values="yes,no,obligatory,designated,customary,permissive" />
             </optional>
         </item> <!-- Beach -->
@@ -4833,7 +4833,7 @@
             <space />
             <key key="leisure" value="track" />
             <text key="name" text="Name" />
-            <combo key="sport" text="Sport" values="athletics,cycling,dog_racing,equestrian,horse_racing,running,roller_skating,ice_skating" values_context="sport" />
+            <multiselect key="sport" text="Sport" values="athletics;cycling;dog_racing;equestrian;horse_racing;running;roller_skating;ice_skating" values_context="sport" />
             <reference ref="sport_surface" />
             <check key="area" text="Area" />
         </item> <!-- Racetrack -->
