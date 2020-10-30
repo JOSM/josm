@@ -1,5 +1,5 @@
-/* see #9757, #10869 - Better handling of semicolon in values
-*/
+/* #9757, #10869, #18266 */
+*["telecom:medium" =~ /.+;(.+)?/],
 *["addr:street" =~ /.+;(.+)?/],
 *[highway =~ /.+;(.+)?/],
 *[lanes =~ /.+;(.+)?/],
