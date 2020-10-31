@@ -20,9 +20,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -48,7 +48,7 @@ public class PluginHandlerTestIT {
     /**
      * Setup test.
      */
-    @ClassRule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public static JOSMTestRules test = new JOSMTestRules().main().projection().preferences().https()
             .timeout(10 * 60 * 1000);

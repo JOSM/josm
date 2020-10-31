@@ -9,11 +9,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -25,7 +24,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruct
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.ParallelParameterized;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -33,13 +31,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link MapPaintPreference} class.
  */
-@RunWith(ParallelParameterized.class)
 class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
 
     /**
      * Setup rule
      */
-    @ClassRule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public static JOSMTestRules test = new JOSMTestRules().https().timeout(15000*60).parameters();
 
@@ -57,29 +54,22 @@ class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
      * @return list of map paint styles to test
      * @throws Exception if an error occurs
      */
-    @Parameters(name = "{0} - {1}")
     public static List<Object[]> data() throws Exception {
         ImageProvider.clearCache();
         return getTestParameters(new MapPaintPreference.MapPaintSourceEditor().loadAndGetAvailableSources());
     }
 
     /**
-     * Constructs a new {@code MapPaintPreferenceTestIT}
+     * Test that map paint style is valid.
      * @param displayName displayed name
      * @param url URL
      * @param source source entry to test
-     */
-    MapPaintPreferenceTestIT(String displayName, String url, ExtendedSourceEntry source) {
-        super(source);
-    }
-
-    /**
-     * Test that map paint style is valid.
      * @throws Exception in case of error
      */
-    @Test
-    void testStyleValidity() throws Exception {
-        assumeFalse(isIgnoredSubstring(source.url));
+    @ParameterizedTest(name = "{0} - {1}")
+    @MethodSource("data")
+    void testStyleValidity(String displayName, String url, ExtendedSourceEntry source) throws Exception {
+        assumeFalse(isIgnoredSubstring(source, source.url));
         StyleSource style = MapPaintStyles.addStyle(source);
         if (style instanceof MapCSSStyleSource) {
             // Force loading of all icons to detect missing ones
@@ -99,12 +89,13 @@ class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
             }
         }
 
+        List<String> ignoredErrors = new ArrayList<>();
         List<Throwable> errors = new ArrayList<>(style.getErrors());
-        errors.stream().map(Throwable::getMessage).filter(this::isIgnoredSubstring).forEach(ignoredErrors::add);
+        errors.stream().map(Throwable::getMessage).filter(s -> isIgnoredSubstring(source, s)).forEach(ignoredErrors::add);
         errors.removeIf(e -> ignoredErrors.contains(e.getMessage()));
 
         List<String> warnings = new ArrayList<>(style.getWarnings());
-        warnings.stream().filter(this::isIgnoredSubstring).forEach(ignoredErrors::add);
+        warnings.stream().filter(s -> isIgnoredSubstring(source, s)).forEach(ignoredErrors::add);
         warnings.removeAll(ignoredErrors);
 
         assertTrue(errors.isEmpty() && warnings.isEmpty(), errors.toString() + '\n' + warnings.toString());

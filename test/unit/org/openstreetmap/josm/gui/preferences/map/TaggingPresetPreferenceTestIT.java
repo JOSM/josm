@@ -8,18 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.junit.ClassRule;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
@@ -39,13 +38,12 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link TaggingPresetPreference} class.
  */
-@RunWith(Parameterized.class)
 class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
 
     /**
      * Setup rule
      */
-    @ClassRule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public static JOSMTestRules test = new JOSMTestRules().https().timeout(10000*120).parameters();
 
@@ -68,48 +66,43 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
      * @return list of tagging presets to test
      * @throws Exception if an error occurs
      */
-    @Parameters(name = "{0} - {1}")
     public static List<Object[]> data() throws Exception {
         ImageProvider.clearCache();
         return getTestParameters(new TaggingPresetPreference.TaggingPresetSourceEditor().loadAndGetAvailableSources());
     }
 
     /**
-     * Constructs a new {@code TaggingPresetPreferenceTestIT}
+     * Test that tagging presets are valid.
      * @param displayName displayed name
      * @param url URL
      * @param source source entry to test
-     */
-    TaggingPresetPreferenceTestIT(String displayName, String url, ExtendedSourceEntry source) {
-        super(source);
-    }
-
-    /**
-     * Test that tagging presets are valid.
      * @throws Exception in case of error
      */
-    @Test
-    void testPresetsValidity() throws Exception {
-        assumeFalse(isIgnoredSubstring(source.url));
+    @ParameterizedTest(name = "{0} - {1}")
+    @MethodSource("data")
+    void testPresetsValidity(String displayName, String url, ExtendedSourceEntry source) throws Exception {
+        assumeFalse(isIgnoredSubstring(source, source.url));
+        List<String> ignoredErrors = new ArrayList<>();
         Set<String> errors = new HashSet<>();
         try {
-            testPresets(errors, source);
+            testPresets(errors, source, ignoredErrors);
         } catch (IOException e) {
             try {
                 Logging.warn(e);
                 // try again in case of temporary network error
-                testPresets(errors, source);
+                testPresets(errors, source, ignoredErrors);
             } catch (SAXException | IOException e1) {
-                handleException(e1, errors);
+                handleException(source, e1, errors, ignoredErrors);
             }
         } catch (SAXException | IllegalArgumentException e) {
-            handleException(e, errors);
+            handleException(source, e, errors, ignoredErrors);
         }
         assertTrue(errors.isEmpty(), errors::toString);
         assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
     }
 
-    private void testPresets(Set<String> messages, ExtendedSourceEntry source) throws SAXException, IOException {
+    private void testPresets(Set<String> messages, ExtendedSourceEntry source, List<String> ignoredErrors)
+            throws SAXException, IOException {
         Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, true);
         assertFalse(presets.isEmpty());
         TaggingPresetsTest.waitForIconLoading(presets);
@@ -119,9 +112,10 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
                 Response cr = HttpClient.create(new URL(u)).setMaxRedirects(-1).connect();
                 final int code = cr.getResponseCode();
                 if (HttpClient.isRedirect(code)) {
-                    addOrIgnoreError(messages, "Found HTTP redirection for " + u + " -> " + code + " -> " + cr.getHeaderField("Location"));
+                    addOrIgnoreError(source, messages,
+                            "Found HTTP redirection for " + u + " -> " + code + " -> " + cr.getHeaderField("Location"), ignoredErrors);
                 } else if (code >= 400) {
-                    addOrIgnoreError(messages, "Found HTTP error for " + u + " -> " + code);
+                    addOrIgnoreError(source, messages, "Found HTTP error for " + u + " -> " + code, ignoredErrors);
                 }
             } catch (IOException e) {
                 Logging.error(e);
@@ -132,7 +126,7 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
         for (String message : errorsAndWarnings) {
             if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX)) {
                 error = true;
-                addOrIgnoreError(messages, message);
+                addOrIgnoreError(source, messages, message, ignoredErrors);
             }
         }
         if (error) {
@@ -140,8 +134,8 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
         }
     }
 
-    void addOrIgnoreError(Set<String> messages, String message) {
-        if (isIgnoredSubstring(message)) {
+    void addOrIgnoreError(ExtendedSourceEntry source, Set<String> messages, String message, List<String> ignoredErrors) {
+        if (isIgnoredSubstring(source, message)) {
             ignoredErrors.add(message);
         } else {
             messages.add(message);

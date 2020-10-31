@@ -19,14 +19,6 @@ abstract class AbstractExtendedSourceEntryTestCase {
 
     protected static final List<String> errorsToIgnore = new ArrayList<>();
 
-    /** Entry to test */
-    protected final ExtendedSourceEntry source;
-    protected final List<String> ignoredErrors = new ArrayList<>();
-
-    protected AbstractExtendedSourceEntryTestCase(ExtendedSourceEntry source) {
-        this.source = source;
-    }
-
     protected static List<Object[]> getTestParameters(Collection<ExtendedSourceEntry> entries) throws Exception {
         return entries.stream().map(x -> new Object[] {x.getDisplayName(), cleanUrl(x.url), x}).collect(Collectors.toList());
     }
@@ -47,17 +39,17 @@ abstract class AbstractExtendedSourceEntryTestCase {
         return url;
     }
 
-    protected final void handleException(Exception e, Set<String> errors) {
+    protected final void handleException(ExtendedSourceEntry source, Exception e, Set<String> errors, List<String> ignoredErrors) {
         e.printStackTrace();
         String s = source.url + " => " + e.toString();
-        if (isIgnoredSubstring(s)) {
+        if (isIgnoredSubstring(source, s)) {
             ignoredErrors.add(s);
         } else {
             errors.add(s);
         }
     }
 
-    protected boolean isIgnoredSubstring(String substring) {
+    protected boolean isIgnoredSubstring(ExtendedSourceEntry source, String substring) {
         return errorsToIgnore.parallelStream().anyMatch(x -> substring.contains(x) || source.url.contains(x));
     }
 }
