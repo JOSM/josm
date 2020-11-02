@@ -3079,6 +3079,7 @@
         <item name="Holding Position" icon="presets/transport/airport/holding_position.svg" type="node" preset_name_label="true">
             <link wiki="Tag:aeroway=holding_position" />
             <key key="aeroway" value="holding_position" />
+            <combo key="holding_position:type" text="Type" values="ILS,intermediate,runway" values_context="aeroway holding_position" />
             <optional>
                 <text key="ref" text="Reference" />
             </optional>
