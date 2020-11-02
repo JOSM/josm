@@ -81,7 +81,7 @@ echo "Signing App Bundle…"
 #     app/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib \
 #     app/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
 
-# codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" app/JOSM.app
+codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" app/JOSM.app/Contents/app/josm-custom.jar
 
 # codesign -vvv app/JOSM.app
 
