@@ -346,6 +346,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 }
             } catch (InterruptedException | ExecutionException e) {
                 Logging.error(e);
+                if (e.getCause() instanceof OsmTransferException)
+                    throw (OsmTransferException) e.getCause();
             }
         }
         exec.shutdown();
