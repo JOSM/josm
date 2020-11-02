@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.correction.RoleCorrection;
@@ -24,7 +25,6 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Logging;
@@ -173,16 +173,12 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     /**
      * Tests whether way can be reversed without semantic change, i.e., whether tags have to be changed.
      * Looks for keys like oneway, oneway:bicycle, cycleway:right:oneway, left/right.
+     * Also tests the nodes, e.g. a highway=stop with direction, see #20013.
      * @param way way to test
      * @return false if tags should be changed to keep semantic, true otherwise.
      */
     public static boolean isReversible(Way way) {
-        for (Tag tag : TagCollection.from(way)) {
-            if (!tag.equals(TagSwitcher.apply(tag))) {
-                return false;
-            }
-        }
-        return true;
+        return getTagCorrectionsMap(way).isEmpty();
     }
 
     /**
@@ -192,13 +188,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
      * @see #isReversible(Way)
      */
     public static List<Way> irreversibleWays(List<Way> ways) {
-        List<Way> newWays = new ArrayList<>(ways);
-        for (Way way : ways) {
-            if (isReversible(way)) {
-                newWays.remove(way);
-            }
-        }
-        return newWays;
+        return ways.stream().filter(w -> !isReversible(w)).collect(Collectors.toList());
     }
 
     /**

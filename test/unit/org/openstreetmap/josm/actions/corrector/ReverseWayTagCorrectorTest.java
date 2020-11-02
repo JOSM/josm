@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.correction.TagCorrection;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -107,12 +107,17 @@ class ReverseWayTagCorrectorTest {
         Assert.assertEquals(newTag, ReverseWayTagCorrector.TagSwitcher.apply(oldTag));
     }
 
-    private Map<OsmPrimitive, List<TagCorrection>> getTagCorrectionsForWay(String middleNodeTags) {
+    private Way buildWayWithMiddleNode(String middleNodeTags) {
         final OsmPrimitive n1 = OsmUtils.createPrimitive("node");
         final OsmPrimitive n2 = OsmUtils.createPrimitive("node " + middleNodeTags);
         final OsmPrimitive n3 = OsmUtils.createPrimitive("node");
         final Way w = new Way();
         Stream.of(n1, n2, n3).map(Node.class::cast).forEach(w::addNode);
+        return w;
+    }
+
+    private Map<OsmPrimitive, List<TagCorrection>> getTagCorrectionsForWay(String middleNodeTags) {
+        Way w = buildWayWithMiddleNode(middleNodeTags);
         return ReverseWayTagCorrector.getTagCorrectionsMap(w);
     }
 
@@ -135,4 +140,21 @@ class ReverseWayTagCorrectorTest {
         Assert.assertEquals(0, getTagCorrectionsForWay("direction=SSW").size());
         Assert.assertEquals(0, getTagCorrectionsForWay("direction=145").size());
     }
+
+    /**
+     * Tests that IsReversible() also works for nodes. See #20013
+     */
+    @Test
+    void testIsReversible() {
+        Way w0 = buildWayWithMiddleNode("highway=stop");
+        Assert.assertTrue(ReverseWayTagCorrector.isReversible(w0));
+        Way w1 = buildWayWithMiddleNode("direction=forward");
+        Assert.assertFalse(ReverseWayTagCorrector.isReversible(w1));
+        Assert.assertEquals(3, w1.getNodesCount());
+        w1.getNodes().forEach(n -> n.setKeys(null));
+        Assert.assertTrue(ReverseWayTagCorrector.isReversible(w1));
+        w1.put("oneway", "yes");
+        Assert.assertFalse(ReverseWayTagCorrector.isReversible(w1));
+    }
+
 }
