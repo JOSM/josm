@@ -15,6 +15,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.ListCellRenderer;
 import javax.swing.LookAndFeel;
@@ -127,6 +128,12 @@ public class LafPreference extends DefaultTabPreferenceSetting {
         panel = new VerticallyScrollablePanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
+        // First the most important setting "Look and Feel" that changes the most
+        panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
+        panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        panel.add(lafCombo, GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 10, 0, 10));
+
         // Show splash screen on startup
         showSplashScreen.setToolTipText(tr("Show splash screen at startup"));
         showSplashScreen.setSelected(Config.getPref().getBoolean("draw.splashscreen", true));
@@ -210,9 +217,6 @@ public class LafPreference extends DefaultTabPreferenceSetting {
         panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(spinZoomRatio, GBC.eol());
 
-        panel.add(new JLabel(tr("Look and Feel")), GBC.std().insets(20, 0, 0, 0));
-        panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
-        panel.add(lafCombo, GBC.eol().fill(GBC.HORIZONTAL));
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
 
         createPreferenceTabWithScrollPane(gui, panel);
