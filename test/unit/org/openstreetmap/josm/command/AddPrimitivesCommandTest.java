@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -284,7 +284,7 @@ class AddPrimitivesCommandTest {
     }
 
     /**
-     * Test {@link AddCommand#getParticipatingPrimitives()}
+     * Test {@link AddPrimitivesCommand#getParticipatingPrimitives()}
      */
     @Test
     void testParticipatingPrimitives() {
