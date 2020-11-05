@@ -316,6 +316,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
     @Override
     public void exitMode() {
         super.exitMode();
+
         MapFrame map = MainApplication.getMap();
         map.mapView.removeMouseListener(this);
         map.mapView.removeMouseMotionListener(this);
@@ -331,6 +332,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         DataSet ds = getLayerManager().getEditDataSet();
         if (ds != null) {
             ds.getSelected().forEach(x -> updatePreservedFlag(x, false));
+            map.statusLine.setDist(ds.getSelectedWays());
         }
 
         removeHighlighting(null);
