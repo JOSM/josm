@@ -962,7 +962,7 @@ public class SyncEditorLayerIndex {
                 }
             } catch (IllegalArgumentException err) {
                 String desc = getDescription(e);
-                myprintln("* Invalid data in ELI geometry for "+desc+": "+err.getMessage());
+                myprintln("+++ ELI shape contains invalid data for "+desc+": "+err.getMessage());
             }
             if (s == null || !josmUrls.containsKey(url)) {
                 continue;
