@@ -92,7 +92,7 @@ public class UrlLabel extends JLabel implements MouseListener {
 
     protected final void refresh() {
         if (url != null && !url.isEmpty()) {
-            refresh("<html><a href=\""+url+"\">"+description+"</a></html>",
+            refresh("<html><a color=\"" + JosmEditorPane.getLinkColor() + "\" href=\"" + url + "\">" + description + "</a></html>",
                     Cursor.getPredefinedCursor(Cursor.HAND_CURSOR),
                     String.format("<html>%s<br/>%s</html>", url, tr("Right click = copy to clipboard")));
         } else {
