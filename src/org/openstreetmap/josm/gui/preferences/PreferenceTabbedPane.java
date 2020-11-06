@@ -32,6 +32,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -72,7 +74,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
@@ -514,7 +515,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     }
 
     private void insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, final Component component, int position) {
-        if (PlatformManager.isPlatformOsx()) {
+        LookAndFeel currentLAF = UIManager.getLookAndFeel();
+        if ("com.apple.laf.AquaLookAndFeel".equals(currentLAF.getClass().getName())) {
             // macOS / AquaLookAndFeel does not support horizontal tabs, see https://josm.openstreetmap.de/ticket/7548#comment:80
             insertTab(null, icon, component, tps.getTooltip(), position);
         } else {
