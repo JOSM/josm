@@ -15,6 +15,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.ListCellRenderer;
@@ -29,10 +30,12 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapMover;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
-import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
@@ -45,7 +48,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 /**
  * Look-and-feel preferences.
  */
-public class LafPreference extends DefaultTabPreferenceSetting {
+public class LafPreference implements SubPreferenceSetting {
 
     /**
      * Look-and-feel property.
@@ -71,10 +74,6 @@ public class LafPreference extends DefaultTabPreferenceSetting {
         public PreferenceSetting createPreferenceSetting() {
             return new LafPreference();
         }
-    }
-
-    LafPreference() {
-        super(/* ICON(preferences/) */ "display", tr("Look and Feel"), tr("Change the Look and Feel of the program"));
     }
 
     /**
@@ -217,9 +216,9 @@ public class LafPreference extends DefaultTabPreferenceSetting {
         panel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         panel.add(spinZoomRatio, GBC.eol());
 
-        panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
-
-        createPreferenceTabWithScrollPane(gui, panel);
+        JScrollPane scrollpane = panel.getVerticalScrollPane();
+        scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        gui.getDisplayPreference().addSubTab(this, tr("Look and Feel"), scrollpane);
     }
 
     @Override
@@ -245,6 +244,11 @@ public class LafPreference extends DefaultTabPreferenceSetting {
     @Override
     public boolean isExpert() {
         return false;
+    }
+
+    @Override
+    public TabPreferenceSetting getTabPreferenceSetting(final PreferenceTabbedPane gui) {
+        return gui.getDisplayPreference();
     }
 
 }
