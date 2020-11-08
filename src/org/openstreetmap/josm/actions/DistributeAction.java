@@ -190,7 +190,7 @@ public final class DistributeAction extends JosmAction {
      * @param nodes Selected nodes
      * @return true in this case
      */
-    private static Boolean checkDistributeNodes(Collection<Way> ways, Collection<Node> nodes) {
+    private static boolean checkDistributeNodes(Collection<Way> ways, Collection<Node> nodes) {
         return ways.isEmpty() && nodes.size() >= 3;
     }
 
