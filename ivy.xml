@@ -49,7 +49,7 @@
         <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.6">
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
         </dependency>
-        <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49"/>
+        <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49.a"/>
         <!-- test->default -->
         <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.1.4"/>
         <dependency conf="test->default" org="com.ginsberg" name="junit5-system-exit" rev="1.0.0"/>
