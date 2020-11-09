@@ -328,7 +328,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     }
 
     private void selectTabBy(Predicate<TabPreferenceSetting> predicate) {
-        indexOfTab(predicate).ifPresent(this::setSelectedIndex);
+        setSelectedIndex(indexOfTab(predicate).orElse(0));
     }
 
     /**
