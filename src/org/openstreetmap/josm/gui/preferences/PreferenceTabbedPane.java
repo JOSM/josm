@@ -560,13 +560,11 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                 Logging.debug("{0}: hiding empty {1}", getClass().getSimpleName(), tps);
             });
         }
+        int index = -1;
         if (sel != null) {
-            int index = indexOfComponent(sel);
-            if (index > -1) {
-                setSelectedIndex(index);
-            }
+            index = indexOfComponent(sel);
         }
-        setSelectedIndex(-1);
+        setSelectedIndex(index);
     }
 
     @Override
