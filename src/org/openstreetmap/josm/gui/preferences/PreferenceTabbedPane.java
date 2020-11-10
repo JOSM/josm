@@ -527,7 +527,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
 
     private void addGUITabs(boolean clear) {
         boolean expert = ExpertToggleAction.isExpert();
-        Component sel = getSelectedComponent();
         if (clear) {
             removeAll();
         }
@@ -560,16 +559,18 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                 Logging.debug("{0}: hiding empty {1}", getClass().getSimpleName(), tps);
             });
         }
-        int index = -1;
-        if (sel != null) {
-            index = indexOfComponent(sel);
-        }
-        setSelectedIndex(index);
+        setSelectedIndex(-1);
     }
 
     @Override
     public void expertChanged(boolean isExpert) {
+        Component sel = getSelectedComponent();
         addGUITabs(true);
+        int index = -1;
+        if (sel != null) {
+            index = indexOfComponent(sel);
+        }
+        setSelectedIndex(Math.max(index, 0));
     }
 
     /**

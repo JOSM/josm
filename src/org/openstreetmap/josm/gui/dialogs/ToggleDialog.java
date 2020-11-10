@@ -581,11 +581,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 pref.setBorder(BorderFactory.createEmptyBorder());
                 pref.addActionListener(e -> {
                     final PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
-                    if (TabPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
-                        p.selectPreferencesTabByClass((Class<? extends TabPreferenceSetting>) preferenceClass);
-                    } else if (SubPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
-                        p.selectSubPreferencesTabByClass((Class<? extends SubPreferenceSetting>) preferenceClass);
-                    }
+                    SwingUtilities.invokeLater(() -> {
+                        if (TabPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
+                            p.selectPreferencesTabByClass((Class<? extends TabPreferenceSetting>) preferenceClass);
+                        } else if (SubPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
+                            p.selectSubPreferencesTabByClass((Class<? extends SubPreferenceSetting>) preferenceClass);
+                        }
+                    });
                     p.setVisible(true);
                 });
                 add(pref);

@@ -51,6 +51,7 @@ import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.MenuElement;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -512,7 +513,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
-                p.selectPreferencesTabByName("toolbar");
+                SwingUtilities.invokeLater(() -> p.selectPreferencesTabByName("toolbar"));
                 p.setVisible(true);
             }
         });
@@ -522,7 +523,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             public void actionPerformed(ActionEvent e) {
                 final PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
                 p.getTabbedPane().getShortcutPreference().setDefaultFilter(act.getDisplayName());
-                p.selectPreferencesTabByName("shortcuts");
+                SwingUtilities.invokeLater(() -> p.selectPreferencesTabByName("shortcuts"));
                 p.setVisible(true);
                 // refresh toolbar to try using changed shortcuts without restart
                 MainApplication.getToolbar().refreshToolbarControl();
