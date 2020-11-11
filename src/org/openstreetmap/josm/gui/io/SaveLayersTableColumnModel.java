@@ -89,13 +89,11 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
 
     protected void build() {
         // column 0 - layer name, save path editor
-        LayerNameAndFilePathTableCell lnfpRenderer = new LayerNameAndFilePathTableCell();
-        LayerNameAndFilePathTableCell lnfpEditor = new LayerNameAndFilePathTableCell();
         TableColumn col = new TableColumn(0); // keep in sync with SaveLayersModel#columnFilename
         col.setHeaderValue(tr("Layer Name and File Path"));
         col.setResizable(true);
-        col.setCellRenderer(lnfpRenderer);
-        col.setCellEditor(lnfpEditor);
+        col.setCellRenderer(new LayerNameAndFilePathTableCell());
+        col.setCellEditor(new LayerNameAndFilePathTableCell());
         col.setPreferredWidth(324);
         addColumn(col);
 
@@ -108,12 +106,11 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
         addColumn(col);
 
         // column 2- actions to take
-        ActionFlagsTableCell aftc = new ActionFlagsTableCell();
         col = new TableColumn(2); // keep in sync with SaveLayersModel#columnActions
         col.setHeaderValue(tr("Actions To Take"));
         col.setResizable(true);
-        col.setCellRenderer(aftc);
-        col.setCellEditor(aftc);
+        col.setCellRenderer(new ActionFlagsTableCell());
+        col.setCellEditor(new ActionFlagsTableCell());
         col.setPreferredWidth(100);
 
         addColumn(col);

@@ -34,6 +34,10 @@ import org.openstreetmap.josm.tools.GBC;
  * <br>col.setCellRenderer(aftc);
  * <br>col.setCellEditor(aftc);
  * </code>
+ *
+ * Note: Do not use the same object both as <code>TableCellRenderer</code> and
+ * <code>TableCellEditor</code> - this can mess up the current editor component
+ * by subsequent calls to the renderer (#19995 and #12462).
  */
 class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
     private final JCheckBox[] checkBoxes = new JCheckBox[2];
