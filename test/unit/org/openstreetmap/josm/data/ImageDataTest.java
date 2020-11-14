@@ -8,7 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -19,17 +21,21 @@ import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import mockit.Expectations;
 import mockit.Mock;
 import mockit.MockUp;
-import mockit.Mocked;
-import mockit.Verifications;
 
 /**
  * Unit tests for class {@link ImageData}.
  */
 class ImageDataTest {
 
+    private static ImageEntry newImageEntry(String file, Date exifTime) {
+        ImageEntry entry = new ImageEntry(new File(file));
+        entry.setExifTime(exifTime);
+        return entry;
+    }
+
     private static List<ImageEntry> getOneImage() {
         ArrayList<ImageEntry> list = new ArrayList<>();
-        list.add(new ImageEntry(new File("test")));
+        list.add(newImageEntry("test", null));
         return list;
     }
 
@@ -57,14 +63,15 @@ class ImageDataTest {
     }
 
     @Test
-    void testSortData(@Mocked Collections ignore) {
-        List<ImageEntry> list = getOneImage();
+    void testSortData() {
+        ImageEntry entry1 = newImageEntry("test1", new Date(1_000_000));
+        ImageEntry entry2 = newImageEntry("test2", new Date(2_000_000));
 
-        new ImageData(list);
+        ArrayList<ImageEntry> list = new ArrayList<>();
+        list.add(entry2);
+        list.add(entry1);
 
-        new Verifications() {{
-            Collections.sort(list);
-        }};
+        assertEquals(Arrays.asList(entry1, entry2), new ImageData(list).getImages());
     }
 
     @Test
