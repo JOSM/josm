@@ -54,7 +54,9 @@ echo "Building and signin app"
     jpackage -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/macosx/JOSM.icns --type app-image --dest app \
-    --java-options "-Xmx8192m" --app-version $1 \
+    --java-options "-Xmx8192m" \
+     --java-options "-Dapple.awt.application.appearance=system" \
+    --app-version $1 \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "https://josm.openstreetmap.de" \
     --mac-sign \
@@ -72,18 +74,6 @@ echo "Building and signin app"
     --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
 
 echo "Building done."
-
-echo "Signing App Bundle…"
-
-# codesign -vvv --timestamp --options runtime --deep --force --sign "$SIGNING_KEY_NAME" \
-#     app/JOSM.app/Contents/MacOS/JOSM \
-#     app/JOSM.app/Contents/runtime/Contents/Home/lib/*.jar \
-#     app/JOSM.app/Contents/runtime/Contents/Home/lib/*.dylib \
-#     app/JOSM.app/Contents/runtime/Contents/MacOS/libjli.dylib
-
-codesign -vvv --timestamp --entitlements native/macosx/josm.entitlements --options runtime --force --sign "$SIGNING_KEY_NAME" app/JOSM.app/Contents/app/josm-custom.jar
-
-# codesign -vvv app/JOSM.app
 
 echo "Preparing for notarization"
 ditto -c -k --zlibCompressionLevel 9 --keepParent app/JOSM.app app/JOSM.zip
