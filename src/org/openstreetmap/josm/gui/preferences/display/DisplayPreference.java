@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences.display;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import javax.swing.JTabbedPane;
 
@@ -29,7 +30,7 @@ public final class DisplayPreference extends DefaultTabPreferenceSetting {
     }
 
     private DisplayPreference() {
-        super(/* ICON(preferences/) */ "display", tr("Display"),
+        super(/* ICON(preferences/) */ "display", trc("gui", "Display"),
                 tr("Various settings that influence the visual representation of the whole program."), false, new JTabbedPane());
     }
 
