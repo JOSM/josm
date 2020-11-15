@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -32,7 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.LookAndFeel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -222,7 +224,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         private void buildPanel() {
             setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             JPanel headerPanel = new JPanel(new BorderLayout());
-            add(headerPanel, GBC.eop().fill(GBC.HORIZONTAL));
+            add(headerPanel, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
 
             JLabel label = new JLabel("<html>" +
                     "<b>" + preferenceSetting.getTitle() + "</b><br>" +
@@ -473,11 +475,14 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
      * file, otherwise no change of the file happens.
      */
     public PreferenceTabbedPane() {
-        super(JTabbedPane.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
+        super(SwingConstants.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
         super.addMouseWheelListener(new WheelListener(this));
         ExpertToggleAction.addExpertModeChangeListener(this);
     }
 
+    /**
+     * Constructs GUI.
+     */
     public void buildGui() {
         Collection<PreferenceSettingFactory> factories = new ArrayList<>(SETTINGS_FACTORIES);
         factories.addAll(PluginHandler.getPreferenceSetting());
@@ -495,34 +500,34 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         super.getModel().addChangeListener(this);
     }
 
-    private void addGUITabsForSetting(Icon icon, TabPreferenceSetting tps) {
+    private void addGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int maxWidth) {
         for (PreferenceTab tab : tabs) {
             if (tab.getTabPreferenceSetting().equals(tps)) {
-                insertGUITabsForSetting(icon, tps, tab.getComponent(), getTabCount());
+                insertGUITabsForSetting(icon, tps, tab.getComponent(), getTabCount(), maxWidth);
             }
         }
     }
 
-    private int insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int index) {
+    private int insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int index, int maxWidth) {
         int position = index;
         for (PreferenceTab tab : tabs) {
             if (tab.getTabPreferenceSetting().equals(tps)) {
-                insertGUITabsForSetting(icon, tps, tab.getComponent(), position);
+                insertGUITabsForSetting(icon, tps, tab.getComponent(), position, maxWidth);
                 position++;
             }
         }
         return position - 1;
     }
 
-    private void insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, final Component component, int position) {
-        LookAndFeel currentLAF = UIManager.getLookAndFeel();
-        if ("com.apple.laf.AquaLookAndFeel".equals(currentLAF.getClass().getName())) {
-            // macOS / AquaLookAndFeel does not support horizontal tabs, see https://josm.openstreetmap.de/ticket/7548#comment:80
-            insertTab(null, icon, component, tps.getTooltip(), position);
-        } else {
-            String title = "<html><div style='width:150px'>" + tps.getTitle();
-            insertTab(title, icon, component, tps.getTooltip(), position);
-        }
+    private void insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, final Component component, int position, int maxWidth) {
+        // macOS / AquaLookAndFeel does not support horizontal tabs, see https://josm.openstreetmap.de/ticket/7548#comment:80
+        String title = "Aqua".equals(UIManager.getLookAndFeel().getID()) ? null : htmlTabTitle(tps.getTitle(), maxWidth);
+        insertTab(title, icon, component, tps.getTooltip(), position);
+    }
+
+    private String htmlTabTitle(String title, int maxWidth) {
+        // Width is set to force left alignment, see https://stackoverflow.com/a/33781096/2257172
+        return "<html><div style='padding-left:5px; width:" + maxWidth + "px'>" + title + "</div></html>";
     }
 
     private void addGUITabs(boolean clear) {
@@ -530,6 +535,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         if (clear) {
             removeAll();
         }
+        // Compute max tab length in pixels
+        int maxWidth = computeMaxTabWidth();
         // Inspect each tab setting
         for (PreferenceSetting setting : settings) {
             if (setting instanceof TabPreferenceSetting) {
@@ -538,10 +545,10 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                     ImageIcon icon = tps.getIcon(ImageProvider.ImageSizes.LARGEICON);
                     if (settingsInitialized.contains(tps)) {
                         // If it has been initialized, add corresponding tab(s)
-                        addGUITabsForSetting(icon, tps);
+                        addGUITabsForSetting(icon, tps, maxWidth);
                     } else {
                         // If it has not been initialized, create an empty tab with only icon and tooltip
-                        insertGUITabsForSetting(icon, tps, new PreferencePanel(tps), getTabCount());
+                        insertGUITabsForSetting(icon, tps, new PreferencePanel(tps), getTabCount(), maxWidth);
                     }
                 }
             } else if (!(setting instanceof SubPreferenceSetting)) {
@@ -560,6 +567,12 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
             });
         }
         setSelectedIndex(-1);
+    }
+
+    private int computeMaxTabWidth() {
+        FontMetrics fm = getFontMetrics(getFont());
+        return settings.stream().filter(x -> x instanceof TabPreferenceSetting)
+                .mapToInt(x -> fm.stringWidth(((TabPreferenceSetting) x).getTitle())).max().orElse(120);
     }
 
     @Override
@@ -664,7 +677,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
                     }
                     Icon icon = getIconAt(index);
                     remove(index);
-                    if (index <= insertGUITabsForSetting(icon, preferenceSettings, index)) {
+                    if (index <= insertGUITabsForSetting(icon, preferenceSettings, index, computeMaxTabWidth())) {
                         setSelectedIndex(index);
                     }
                 } catch (SecurityException ex) {
