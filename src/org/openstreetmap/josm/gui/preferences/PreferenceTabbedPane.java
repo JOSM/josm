@@ -574,8 +574,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
 
     private int computeMaxTabWidth() {
         FontMetrics fm = getFontMetrics(getFont());
-        return settings.stream().filter(x -> x instanceof TabPreferenceSetting)
-                .mapToInt(x -> fm.stringWidth(((TabPreferenceSetting) x).getTitle())).max().orElse(120);
+        return settings.stream().filter(x -> x instanceof TabPreferenceSetting).map(x -> ((TabPreferenceSetting) x).getTitle())
+                .filter(Objects::nonNull).mapToInt(fm::stringWidth).max().orElse(120);
     }
 
     @Override
