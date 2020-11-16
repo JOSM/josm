@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.display;
 
+import static java.awt.GridBagConstraints.BOTH;
+import static java.awt.GridBagConstraints.HORIZONTAL;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
@@ -47,7 +49,7 @@ import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
-import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.ExtensibleTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -58,8 +60,8 @@ import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Color preferences.
@@ -67,7 +69,7 @@ import org.openstreetmap.josm.tools.I18n;
  * GUI preference to let the user customize named colors.
  * @see NamedColorProperty
  */
-public class ColorPreference extends DefaultTabPreferenceSetting implements ListSelectionListener, TableModelListener {
+public class ColorPreference extends ExtensibleTabPreferenceSetting implements ListSelectionListener, TableModelListener {
 
     /**
      * Factory used to create a new {@code ColorPreference}.
@@ -369,19 +371,20 @@ public class ColorPreference extends DefaultTabPreferenceSetting implements List
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        panel.add(colorFilter, GBC.eol().fill(GBC.HORIZONTAL));
+        panel.add(colorFilter, GBC.eol().fill(HORIZONTAL));
         JScrollPane scrollpane = new JScrollPane(colors);
         scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        panel.add(scrollpane, GBC.eol().fill(GBC.BOTH));
+        panel.add(scrollpane, GBC.eol().fill(BOTH));
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        panel.add(buttonPanel, GBC.eol().insets(5, 0, 5, 5).fill(GBC.HORIZONTAL));
-        buttonPanel.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
+        panel.add(buttonPanel, GBC.eol().insets(5, 0, 5, 5).fill(HORIZONTAL));
+        buttonPanel.add(Box.createHorizontalGlue(), GBC.std().fill(HORIZONTAL));
         buttonPanel.add(colorEdit, GBC.std().insets(0, 5, 0, 0));
         buttonPanel.add(defaultSet, GBC.std().insets(5, 5, 5, 0));
         buttonPanel.add(defaultAll, GBC.std().insets(0, 5, 0, 0));
         buttonPanel.add(remove, GBC.std().insets(0, 5, 0, 0));
 
-        createPreferenceTabWithScrollPane(gui, panel);
+        getTabPane().addTab(tr("Colors"), panel);
+        super.addGui(gui);
     }
 
     @SuppressWarnings({"PMD.UnusedFormalParameter", "UnusedVariable"})

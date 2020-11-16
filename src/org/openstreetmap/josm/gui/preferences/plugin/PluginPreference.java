@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.plugin;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -49,11 +50,10 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.ExtensibleTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
-import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
@@ -70,7 +70,7 @@ import org.openstreetmap.josm.tools.Logging;
  * Preference settings for plugins.
  * @since 168
  */
-public final class PluginPreference extends DefaultTabPreferenceSetting {
+public final class PluginPreference extends ExtensibleTabPreferenceSetting {
 
     /**
      * Factory used to create a new {@code PluginPreference}.
@@ -93,7 +93,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
     private boolean pluginPreferencesActivated;
 
     private PluginPreference() {
-        super(/* ICON(preferences/) */ "plugin", tr("Plugins"), tr("Configure available plugins."), false, new JTabbedPane());
+        super(/* ICON(preferences/) */ "plugin", tr("Plugins"), tr("Configure available plugins."), false);
     }
 
     /**
@@ -246,23 +246,13 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         return pnl;
     }
 
-    private JTabbedPane buildContentPane() {
+    @Override
+    public void addGui(final PreferenceTabbedPane gui) {
         JTabbedPane pane = getTabPane();
         pnlPluginUpdatePolicy = new PluginUpdatePolicyPanel();
         pane.addTab(tr("Plugins"), buildPluginListPanel());
         pane.addTab(tr("Plugin update policy"), pnlPluginUpdatePolicy);
-        return pane;
-    }
-
-    @Override
-    public void addGui(final PreferenceTabbedPane gui) {
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.weightx = 1.0;
-        gc.weighty = 1.0;
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.BOTH;
-        PreferencePanel plugins = gui.createPreferenceTab(this);
-        plugins.add(buildContentPane(), gc);
+        super.addGui(gui);
         readLocalPluginInformation();
         pluginPreferencesActivated = true;
     }
@@ -584,7 +574,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                         model.addElement(s);
                     }
                 }
-            }), GBC.eol().fill(GBC.HORIZONTAL));
+            }), GBC.eol().fill(HORIZONTAL));
             buttons.add(new JButton(new AbstractAction(tr("Edit")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -610,7 +600,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                         model.setElementAt(s, list.getSelectedIndex());
                     }
                 }
-            }), GBC.eol().fill(GBC.HORIZONTAL));
+            }), GBC.eol().fill(HORIZONTAL));
             buttons.add(new JButton(new AbstractAction(tr("Delete")) {
                 @Override
                 public void actionPerformed(ActionEvent event) {
@@ -625,7 +615,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     }
                     model.removeElement(list.getSelectedValue());
                 }
-            }), GBC.eol().fill(GBC.HORIZONTAL));
+            }), GBC.eol().fill(HORIZONTAL));
             add(buttons, GBC.eol());
         }
 

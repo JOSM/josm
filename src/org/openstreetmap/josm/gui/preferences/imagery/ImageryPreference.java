@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.imagery;
 
+import static java.awt.GridBagConstraints.BOTH;
+import static java.awt.GridBagConstraints.HORIZONTAL;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
@@ -8,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -35,7 +36,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
+import org.openstreetmap.josm.gui.preferences.ExtensibleTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -49,7 +50,7 @@ import org.openstreetmap.josm.tools.Logging;
  * Imagery preferences, including imagery providers, settings and offsets.
  * @since 3715
  */
-public final class ImageryPreference extends DefaultTabPreferenceSetting {
+public final class ImageryPreference extends ExtensibleTabPreferenceSetting {
 
     private ImageryProvidersPanel imageryProviders;
     private ImageryLayerInfo layerInfo;
@@ -71,8 +72,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
     private ImageryPreference() {
         super(/* ICON(preferences/) */ "imagery", tr("Imagery"),
-                tr("Modify list of imagery layers displayed in the Imagery menu"),
-                false, new JTabbedPane());
+                tr("Modify list of imagery layers displayed in the Imagery menu"), false);
     }
 
     private static void addSettingsSection(final JPanel p, String name, JPanel section) {
@@ -84,7 +84,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
         lbl.setLabelFor(section);
         p.add(lbl, GBC.std());
-        p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 0));
+        p.add(new JSeparator(), GBC.eol().fill(HORIZONTAL).insets(5, 0, 0, 0));
         p.add(section, gbc.insets(20, 5, 0, 10));
     }
 
@@ -93,18 +93,15 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         addSettingsSection(p, tr("Common Settings"), commonSettings);
-        addSettingsSection(p, tr("WMS Settings"), wmsSettings,
-                GBC.eol().fill(GBC.HORIZONTAL));
-        addSettingsSection(p, tr("TMS Settings"), tmsSettings,
-                GBC.eol().fill(GBC.HORIZONTAL));
+        addSettingsSection(p, tr("WMS Settings"), wmsSettings, GBC.eol().fill(HORIZONTAL));
+        addSettingsSection(p, tr("TMS Settings"), tmsSettings, GBC.eol().fill(HORIZONTAL));
 
-        p.add(new JPanel(), GBC.eol().fill(GBC.BOTH));
+        p.add(new JPanel(), GBC.eol().fill(BOTH));
         return GuiHelper.setDefaultIncrement(new JScrollPane(p));
     }
 
     @Override
-    public void addGui(final PreferenceTabbedPane gui) {
-        JPanel p = gui.createPreferenceTab(this);
+    public void addGui(PreferenceTabbedPane gui) {
         JTabbedPane pane = getTabPane();
         layerInfo = new ImageryLayerInfo(ImageryLayerInfo.instance);
         imageryProviders = new ImageryProvidersPanel(gui, layerInfo);
@@ -113,7 +110,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         pane.addTab(tr("Offset bookmarks"), new OffsetBookmarksPanel(gui));
         pane.addTab(tr("Cache"), cacheSettingsPanel);
         loadSettings();
-        p.add(pane, GBC.std().fill(GBC.BOTH));
+        super.addGui(gui);
     }
 
     /**
@@ -201,7 +198,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             };
             TableHelper.setFont(list, getClass());
             JScrollPane scroll = new JScrollPane(list);
-            add(scroll, GBC.eol().fill(GridBagConstraints.BOTH));
+            add(scroll, GBC.eol().fill(BOTH));
             scroll.setPreferredSize(new Dimension(200, 200));
 
             TableColumnModel mod = list.getColumnModel();
