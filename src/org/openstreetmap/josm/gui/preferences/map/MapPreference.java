@@ -10,7 +10,9 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 
 /**
  * Map preferences, including map paint styles, tagging presets and autosave sub-preferences.
+ * @deprecated to remove beginning of 2021
  */
+@Deprecated
 public final class MapPreference extends ExtensibleTabPreferenceSetting {
 
     /**

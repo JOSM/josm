@@ -84,6 +84,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  *
  * @author imi
  */
+@SuppressWarnings("deprecation")
 public final class PreferenceTabbedPane extends JTabbedPane implements ExpertModeChangeListener, ChangeListener {
 
     private final class PluginDownloadAfterTask implements Runnable {
@@ -392,7 +393,9 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     /**
      * Returns the {@code MapPreference} object.
      * @return the {@code MapPreference} object.
+     * @deprecated to remove beginning of 2021
      */
+    @Deprecated
     public MapPreference getMapPreference() {
         return getSetting(MapPreference.class);
     }
