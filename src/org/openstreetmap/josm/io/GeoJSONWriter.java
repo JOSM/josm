@@ -120,7 +120,7 @@ public class GeoJSONWriter {
             geomObj.add("type", "Point");
             LatLon ll = n.getCoor();
             if (ll != null) {
-                geomObj.add("coordinates", getCoorArray(null, n.getCoor()));
+                geomObj.add("coordinates", getCoorArray(null, ll));
             }
         }
 
@@ -153,9 +153,12 @@ public class GeoJSONWriter {
                 final Pair<List<JoinedPolygon>, List<JoinedPolygon>> mp = MultipolygonBuilder.joinWays(r);
                 final JsonArrayBuilder polygon = Json.createArrayBuilder();
                 Stream.concat(mp.a.stream(), mp.b.stream())
-                        .map(p -> getCoorsArray(p.getNodes())
-                                // since first node is not duplicated as last node
-                                .add(getCoorArray(null, p.getNodes().get(0).getCoor())))
+                        .map(p -> {
+                            JsonArrayBuilder array = getCoorsArray(p.getNodes());
+                            LatLon ll = p.getNodes().get(0).getCoor();
+                            // since first node is not duplicated as last node
+                            return ll != null ? array.add(getCoorArray(null, ll)) : array;
+                            })
                         .forEach(polygon::add);
                 geomObj.add("type", "MultiPolygon");
                 final JsonArrayBuilder multiPolygon = Json.createArrayBuilder().add(polygon);
