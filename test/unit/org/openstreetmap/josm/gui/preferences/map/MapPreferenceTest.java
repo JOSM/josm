@@ -10,7 +10,9 @@ import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 
 /**
  * Unit tests of {@link MapPreference} class.
+ * @deprecated to remove beginning of 2021
  */
+@Deprecated
 class MapPreferenceTest {
 
     /**
