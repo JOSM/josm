@@ -325,7 +325,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             Component c = super.prepareRenderer(renderer, row, col);
             if (c instanceof JComponent) {
                 JComponent jc = (JComponent) c;
-                jc.setToolTipText(String.valueOf(getValueAt(row, col)));
+                Object value = getValueAt(row, col);
+                jc.setToolTipText(col == 2 ? Arrays.toString((Date[]) value) : String.valueOf(value));
                 if (content.length > row
                         && content[row].length > 5
                         && content[row][5] instanceof IGpxTrack) {
