@@ -34,6 +34,15 @@ public final class AnimationExtensionManager {
         return currentExtension;
     }
 
+    /**
+     * Determines if an extension other than {@link NoExtension} is enabled.
+     * @return {@code true} if an extension other than {@code NoExtension} is enabled.
+     * @since 17322
+     */
+    public static boolean isExtensionEnabled() {
+        return !(getExtension() instanceof NoExtension);
+    }
+
     private static boolean isChristmas() {
         Calendar c = new GregorianCalendar();
         c.setTime(new Date());

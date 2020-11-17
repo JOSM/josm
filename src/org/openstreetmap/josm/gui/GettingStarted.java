@@ -154,13 +154,17 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
 
     @Override
     public void addNotify() {
-        timer.start();
+        if (AnimationExtensionManager.isExtensionEnabled()) {
+            timer.start();
+        }
         super.addNotify();
     }
 
     @Override
     public void removeNotify() {
-        timer.stop();
+        if (timer.isRunning()) {
+            timer.stop();
+        }
         super.removeNotify();
     }
 
