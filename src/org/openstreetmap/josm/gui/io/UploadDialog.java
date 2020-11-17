@@ -297,7 +297,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         // obtain from previous input
         if (!keepSourceComment) {
             tags.put("source", getLastChangesetSourceFromHistory());
-            tags.put("comment", getLastChangesetCommentFromHistory());
+            tags.put("comment", getCommentWithDataSetHashTag(getLastChangesetCommentFromHistory(), dataSet));
         }
 
         // obtain from dataset
@@ -329,12 +329,34 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         // ignore source/comment to keep current values from models ?
         if (keepSourceComment) {
             tags.put("source", changesetSourceModel.getComment());
-            tags.put("comment", changesetCommentModel.getComment());
+            tags.put("comment", getCommentWithDataSetHashTag(changesetCommentModel.getComment(), dataSet));
         }
 
         pnlTagSettings.initFromTags(tags);
         pnlTagSettings.tableChanged(null);
         pnlBasicUploadSettings.discardAllUndoableEdits();
+    }
+
+    /**
+     * Returns the given comment with appended hashtags from dataset changeset tags, if not already present.
+     * @param comment changeset comment
+     * @param dataSet optional dataset, which can contain hashtags in its changeset tags
+     * @return comment with dataset changesets tags, if any, not duplicated
+     */
+    private static String getCommentWithDataSetHashTag(String comment, DataSet dataSet) {
+        String result = comment;
+        if (dataSet != null) {
+            String hashtags = dataSet.getChangeSetTags().get("hashtags");
+            if (hashtags != null) {
+                for (String hashtag : hashtags.split(";")) {
+                    String sanitizedHashtag = hashtag.startsWith("#") ? hashtag : "#" + hashtag;
+                    if (!result.contains(sanitizedHashtag)) {
+                        result = result + " " + sanitizedHashtag;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override

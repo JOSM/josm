@@ -143,4 +143,9 @@ public class TagModel {
     public int getValueCount() {
         return values.size();
     }
+
+    @Override
+    public String toString() {
+        return name + "=" + values;
+    }
 }
