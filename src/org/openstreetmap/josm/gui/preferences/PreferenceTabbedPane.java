@@ -71,7 +71,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -212,13 +211,16 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         Component getComponent();
     }
 
+    /**
+     * Panel used for preference settings.
+     * @since 4968
+     */
     public static final class PreferencePanel extends JPanel implements PreferenceTab {
         private final transient TabPreferenceSetting preferenceSetting;
 
         private PreferencePanel(TabPreferenceSetting preferenceSetting) {
             super(new GridBagLayout());
-            CheckParameterUtil.ensureParameterNotNull(preferenceSetting);
-            this.preferenceSetting = preferenceSetting;
+            this.preferenceSetting = Objects.requireNonNull(preferenceSetting, "preferenceSetting");
             buildPanel();
         }
 
@@ -248,16 +250,16 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         }
     }
 
+    /**
+     * Scroll pane used for large {@link PreferencePanel}s.
+     * @since 4968
+     */
     public static final class PreferenceScrollPane extends JScrollPane implements PreferenceTab {
         private final transient TabPreferenceSetting preferenceSetting;
 
-        private PreferenceScrollPane(Component view, TabPreferenceSetting preferenceSetting) {
-            super(view);
-            this.preferenceSetting = preferenceSetting;
-        }
-
         private PreferenceScrollPane(PreferencePanel preferencePanel) {
-            this(preferencePanel.getComponent(), preferencePanel.getTabPreferenceSetting());
+            super(preferencePanel.getComponent());
+            this.preferenceSetting = preferencePanel.getTabPreferenceSetting();
             GuiHelper.setDefaultIncrement(this);
         }
 
@@ -311,15 +313,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
      * @return The created panel ready to add other controls.
      */
     public PreferencePanel createPreferenceTab(TabPreferenceSetting caller, boolean inScrollPane) {
-        CheckParameterUtil.ensureParameterNotNull(caller, "caller");
-        PreferencePanel p = new PreferencePanel(caller);
-
-        PreferenceTab tab = p;
-        if (inScrollPane) {
-            PreferenceScrollPane sp = new PreferenceScrollPane(p);
-            tab = sp;
-        }
-        tabs.add(tab);
+        PreferencePanel p = new PreferencePanel(Objects.requireNonNull(caller, "caller"));
+        tabs.add(inScrollPane ? new PreferenceScrollPane(p) : p);
         return p;
     }
 

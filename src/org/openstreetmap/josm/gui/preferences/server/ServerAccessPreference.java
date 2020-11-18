@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.server;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.beans.PropertyChangeListener;
 
@@ -52,16 +53,20 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
         pnlApiUrlPreferences.addPropertyChangeListener(listener);
     }
 
+    private static GBC eopFilledHorizontal() {
+        return GBC.eop().fill(GridBagConstraints.HORIZONTAL);
+    }
+
     @Override
     public void addGui(PreferenceTabbedPane gui) {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.add(pnlApiUrlPreferences, GBC.eop().fill(GBC.HORIZONTAL));
-        panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
-        panel.add(pnlAuthPreferences, GBC.eop().fill(GBC.HORIZONTAL));
-        panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
-        panel.add(pnlFeaturesPreferences, GBC.eop().fill(GBC.HORIZONTAL));
-        panel.add(new JSeparator(), GBC.eop().fill(GBC.HORIZONTAL));
-        panel.add(pnlOverpassPreferences, GBC.eop().fill(GBC.HORIZONTAL));
+        panel.add(pnlApiUrlPreferences, eopFilledHorizontal());
+        panel.add(new JSeparator(), eopFilledHorizontal());
+        panel.add(pnlAuthPreferences, eopFilledHorizontal());
+        panel.add(new JSeparator(), eopFilledHorizontal());
+        panel.add(pnlFeaturesPreferences, eopFilledHorizontal());
+        panel.add(new JSeparator(), eopFilledHorizontal());
+        panel.add(pnlOverpassPreferences, eopFilledHorizontal());
 
         pnlApiUrlPreferences.initFromPreferences();
         pnlAuthPreferences.initFromPreferences();
@@ -71,7 +76,7 @@ public final class ServerAccessPreference extends DefaultTabPreferenceSetting {
 
         HelpUtil.setHelpContext(panel, HelpUtil.ht("/Preferences/Connection"));
         panel.add(Box.createVerticalGlue(), GBC.eol().fill());
-        gui.createPreferenceTab(this).add(panel, GBC.eol().fill());
+        createPreferenceTabWithScrollPane(gui, panel);
     }
 
     /**
