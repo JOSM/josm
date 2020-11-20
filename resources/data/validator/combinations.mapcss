@@ -189,7 +189,6 @@ way[power=cable                ][!voltage],
 
 /* {0.key} without {1.key} or {2.tag} */
 way[bridge:structure           ][!bridge][man_made!=bridge],
-*[smoothness                   ][!highway][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking)$/],
 *[segregated                   ][!highway][railway!=crossing] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
   group: tr("missing tag");
@@ -215,7 +214,13 @@ way[usage=penstock][waterway!=pressurised] {
   group: tr("missing tag");
 }
 
-/* {0.key} without {1.key}, {2.tag} or {3.tag} */
+/* {0.key} without {1.key}, {2.tag}, {3.tag} or {4.key} */
+*[smoothness][!highway][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking)$/][barrier!=kerb][!kerb] {
+  throwWarning: tr("{0} without {1}, {2}, {3} or {4}", "{0.key}", "{1.key}", "{2.tag}", "{3.tag}", "{4.key}");
+  group: tr("missing tag");
+}
+
+/* {0.key} without {1.key}, {2.tag}, {3.tag} or {4.tag} */
 *[intermittent                 ][!waterway][natural!~/^(water|spring)$/][landuse!~/^(basin|reservoir)$/][ford!=yes],
 *[boat                         ][!waterway][natural!=water             ][landuse!~/^(basin|reservoir)$/][ford!=yes] {
   throwWarning: tr("{0} without {1}, {2}, {3} or {4}", "{0.key}", "{1.key}", "{2.tag}", "{3.tag}", "{4.tag}");
