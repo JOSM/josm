@@ -227,7 +227,7 @@ public class DuplicateRelation extends Test {
     @Override
     public void visit(Relation r) {
         if (!r.isUsable() || r.hasIncompleteMembers() || "tmc".equals(r.get("type")) || "TMC".equals(r.get("type"))
-                || r.getMembers().isEmpty())
+               || "destination_sign".equals(r.get("type")) || r.getMembers().isEmpty())
             return;
         List<RelationMember> rMembers = r.getMembers();
         Map<String, String> rkeys = r.getKeys();
