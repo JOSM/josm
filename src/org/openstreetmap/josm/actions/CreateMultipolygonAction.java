@@ -133,7 +133,6 @@ public class CreateMultipolygonAction extends JosmAction {
                         MainApplication.getLayerManager().getEditDataSet().clearSelection(relation);
                         RelationEditor editor = RelationEditor
                                 .getEditor(MainApplication.getLayerManager().getEditLayer(), relation, null);
-                        editor.setModal(true);
                         editor.setVisible(true);
                     } else {
                         MainApplication.getLayerManager().getEditLayer().setRecentRelation(relation);
