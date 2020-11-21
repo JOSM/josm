@@ -538,6 +538,15 @@ public class SyncEditorLayerIndex {
         myprintln("*** Loaded "+josmEntries.size()+" entries (JOSM). ***");
     }
 
+    // catch reordered arguments and switches to WMS version 1.3.0
+    String unifyWMS(String url) {
+        String x[] = url.replaceAll("(?i)VERSION=[0-9.]+", "VERSION=x").replaceAll("(?i)SRS=", "CRS=").split("\\?");
+        String a[] = x[1].split("&");
+        Arrays.sort(a);
+        url = x[0]+"?"+String.join("&",a);
+        return url;
+    }
+
     void checkInOneButNotTheOther() {
         List<String> le = new LinkedList<>(eliUrls.keySet());
         List<String> lj = new LinkedList<>(josmUrls.keySet());
@@ -569,7 +578,11 @@ public class SyncEditorLayerIndex {
                         String idj = getId(j);
 
                         if (ide.equals(idj) && Objects.equals(getType(j), getType(e))) {
-                            myprintln("* URL for id "+idj+" differs ("+urle+"): "+getDescription(j));
+                            if(getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
+                              myprintln("# WMS-URL for id "+idj+" modified: "+getDescription(j));
+                            } else {
+                              myprintln("* URL for id "+idj+" differs ("+urle+"): "+getDescription(j));
+                            }
                             le.remove(urle);
                             lj.remove(urlj);
                             // replace key for this entry with JOSM URL
