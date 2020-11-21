@@ -579,9 +579,9 @@ public class SyncEditorLayerIndex {
 
                         if (ide.equals(idj) && Objects.equals(getType(j), getType(e))) {
                             if(getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
-                              myprintln("# WMS-URL for id "+idj+" modified: "+getDescription(j));
+                                myprintln("# WMS-URL for id "+idj+" modified: "+getDescription(j));
                             } else {
-                              myprintln("* URL for id "+idj+" differs ("+urle+"): "+getDescription(j));
+                                myprintln("* URL for id "+idj+" differs ("+urle+"): "+getDescription(j));
                             }
                             le.remove(urle);
                             lj.remove(urlj);
@@ -589,6 +589,24 @@ public class SyncEditorLayerIndex {
                             eliUrls.remove(urle);
                             eliUrls.put(urlj, e);
                             break;
+                        }
+                        Collection<String> old = ((ImageryInfo)j).getOldIds();
+                        if(old != null) {
+                            for (String oidj : old) {
+                                if (ide.equals(oidj) && Objects.equals(getType(j), getType(e))) {
+                                    if(getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
+                                        myprintln("# WMS-URL for oldid "+idj+" modified: "+getDescription(j));
+                                    } else {
+                                        myprintln("* URL for oldid "+idj+" differs ("+urle+"): "+getDescription(j));
+                                    }
+                                    le.remove(urle);
+                                    lj.remove(urlj);
+                                    // replace key for this entry with JOSM URL
+                                    eliUrls.remove(urle);
+                                    eliUrls.put(urlj, e);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
