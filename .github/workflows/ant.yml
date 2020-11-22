@@ -44,8 +44,8 @@ jobs:
           wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
           wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
           cd ~
-          tar xzf ~/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
-          cp -a ~/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          tar zxvf ~/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
+          cp ~/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
         run: ${{ env.ANT_HOME }}/bin/ant -version
       - name: Set revision env variable
