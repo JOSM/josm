@@ -39,11 +39,12 @@ jobs:
           java-version: '15'
       - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
         run: |
-          pwd
           mkdir -p ~/work/josm/josm/build-tools-cache/
           cd ~/work/josm/josm/build-tools-cache/
-          curl -o ${{ env.ANT_HOME }}-bin.tar.gz -z ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          curl -o $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar -z junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          if [ ! -f ${{ env.ANT_HOME }}-bin.tar.gz ]; then
+            curl -o ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+            curl -o $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          fi
           cd ~/work/josm/josm/
           tar zxf ~/work/josm/josm/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
           cp ~/work/josm/josm/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
