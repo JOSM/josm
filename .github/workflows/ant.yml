@@ -15,35 +15,52 @@ defaults:
 
 jobs:
   createrelease:
-    name: Create Release
     runs-on: ubuntu-latest
     env:
       LANG: en_US.UTF-8
-    outputs: 
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      josm_revision: ${{ steps.create_revision.outputs.josm_revision }}
-      josm_prerelease: ${{ steps.create_revision.outputs.josm_prerelease }}
+    strategy:
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 64
-      - name: Set revision env variable
-        id: create_revision
-        # grab josm revision from last git-svn-id
+          fetch-depth: 32
+      - name: Cache
+        uses: actions/cache@v2.0.0
+        with:
+          path:  |
+            ~/.ivy2/cache/
+            ~/work/josm/josm/tools/
+            ~/build-tools-cache/
+          key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
+      - name: Setup java
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
         run: |
-          josm_revision="$(git log -1 --grep 'git-svn-id: https://josm.openstreetmap.de/svn/trunk@' --pretty=format:%B | tail -1 | sed -n 's%git-svn-id: https://josm.openstreetmap.de/svn/trunk@\([0-9]*\) [-0-9a-f]*%\1%p')"
-          if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
+          mkdir -p ~/build-tools-cache/
+          cd ~/build-tools-cache/
+          wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          cd ~
+          tar xzf ~/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
+          cp -a ~/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+      - name: Print ant version, expecting ${{ env.ANT_HOME }}
+        run: ${{ env.ANT_HOME }}/bin/ant -version
+      - name: Set revision env variable
+        run: |
+          ant create-revision
+          josm_revision=`awk '/Revision/{print $2}' resources/REVISION`
+          if [[ "$josm_revision" == `curl --silent https://josm.openstreetmap.de/tested` ]]; then
+            sed -i .bak '/Is-Local-Build/d' resources/REVISION
             echo "josm_prerelease=false" >> $GITHUB_ENV
-            echo "::set-output name=josm_prerelease::false"
             echo "josm_release=$josm_revision-tested" >> $GITHUB_ENV
           else
             echo "josm_prerelease=true" >> $GITHUB_ENV
-            echo "::set-output name=josm_prerelease::true"
             echo "josm_release=$josm_revision" >> $GITHUB_ENV
           fi
           echo "josm_revision=$josm_revision" >> $GITHUB_ENV
-          echo "::set-output name=josm_revision::$josm_revision"
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -73,6 +90,8 @@ jobs:
             os: macos-latest
           - java: 11
             os: macos-latest
+          - java: 16-ea
+            os: macos-latest
           - headless: "false"
             os: macos-latest
           - headless: "false"
@@ -82,14 +101,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 64
+          fetch-depth: 32
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
           path:  |
             ~/.ivy2/cache/
             ~/work/josm/josm/tools/
-            build-tools-cache/
+            ~/build-tools-cache/
           key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
       - name: Setup java
         uses: actions/setup-java@v1.4.3
@@ -97,54 +116,16 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
         run: |
-          mkdir -p build-tools-cache/
-          cd build-tools-cache/
-          if [ ! -f ${{ env.ANT_HOME }}-bin.tar.gz ]; then
-            curl -o ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          fi
-          if [ ! -f junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ]; then
-            curl -o junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
-          fi
-          cd ..
-          tar zxf build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
-          cp build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          mkdir -p ~/build-tools-cache/
+          cd ~/build-tools-cache/
+          wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          cd ~
+          tar xzf ~/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
+          cp -a ~/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
         run: ${{ env.ANT_HOME }}/bin/ant -version
-      - name: Optimise images
-        if: ${{ runner.os == 'macos' && always() }}
-        run: |
-          brew cask install imageoptim
-          defaults write net.pornel.ImageOptim SvgoEnabled 1
-          defaults write net.pornel.ImageOptim PngCrush2Enabled 1
-          defaults write net.pornel.ImageOptim PngOutEnabled 1
-          /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
-      - name: Set Is-Local-Build
-        if: ${{ ! env.josm_prerelease }}
-        run: |
-          ant create-revision
-          sed -i.bak '/Is-Local-Build/d' resources/REVISION
-      - name: Build with Ant
-        # Disables errorprone for Java 16
-        # See https://github.com/google/error-prone/issues/1872
-        run: |
-          if [[ "x${{ matrix.java }}x" =~ x1[6-9](-ea)?x ]]; then
-            ${{ env.ANT_HOME }}/bin/ant -DnoErrorProne dist
-          else
-            ${{ env.ANT_HOME }}/bin/ant dist
-          fi
-      - name: Upload jar
-        if: ${{ always() && matrix.headless }}
-        id: upload-jar
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: dist/josm-custom.jar
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
-          asset_content_type: application/java-archive
-      - name: Test with Ant, headless ${{ matrix.headless }}
-        if: ${{ needs.createrelease.outputs.josm_prerelease }}
+      - name: Build with Ant, headless ${{ matrix.headless }}
         run: |
           ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
           if [ "${{ matrix.headless }}" == "true" ]; then
@@ -159,8 +140,16 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
+          name: Ant reports for JOSM ${{ env.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
           path: test/report/*.txt
+      - name: Optimise images
+        if: ${{ runner.os == 'macos' && always() }}
+        run: |
+          brew cask install imageoptim
+          defaults write net.pornel.ImageOptim SvgoEnabled 1
+          defaults write net.pornel.ImageOptim PngCrush2Enabled 1
+          defaults write net.pornel.ImageOptim PngOutEnabled 1
+          /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
         env:
@@ -168,7 +157,8 @@ jobs:
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
         run: |
-          ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
+          $ANT_HOME/bin/ant -DnoErrorProne dist
+          ./native/macosx/macos-jpackage.sh ${{ env.josm_revision }}
       - name: Upload app
         if: ${{ runner.os == 'macos' && always() }}
         id: upload-app
@@ -176,7 +166,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: app/JOSM.zip
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.zip
           asset_content_type: application/zip
+      - name: Upload jar
+        if: ${{ always() }}
+        id: upload-jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: dist/josm-custom.jar
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ env.josm_revision }}.jar
+          asset_content_type: application/java-archive
