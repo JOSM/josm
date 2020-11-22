@@ -63,14 +63,15 @@ jobs:
           if [[ "$josm_revision" == `curl --silent https://josm.openstreetmap.de/tested` ]]; then
             sed -i '/Is-Local-Build/d' resources/REVISION
             echo "josm_prerelease=false" >> $GITHUB_ENV
+            echo "::set-output name=josm_prerelease::false"
             echo "josm_release=$josm_revision-tested" >> $GITHUB_ENV
           else
             echo "josm_prerelease=true" >> $GITHUB_ENV
+            echo "::set-output name=josm_prerelease::true
             echo "josm_release=$josm_revision" >> $GITHUB_ENV
           fi
           echo "josm_revision=$josm_revision" >> $GITHUB_ENV
           echo "::set-output name=josm_revision::$josm_revision"
-          echo "::set-output name=josm_prerelease::$josm_prerelease"
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -137,10 +138,29 @@ jobs:
           cp build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
         run: ${{ env.ANT_HOME }}/bin/ant -version
+      - name: Optimise images
+        if: ${{ runner.os == 'macos' && always() }}
+        run: |
+          brew cask install imageoptim
+          defaults write net.pornel.ImageOptim SvgoEnabled 1
+          defaults write net.pornel.ImageOptim PngCrush2Enabled 1
+          defaults write net.pornel.ImageOptim PngOutEnabled 1
+          /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
       - name: Build with Ant
         run: |
-          ${{ env.ANT_HOME }}/bin/ant dist
-      - name: Build with Ant, headless ${{ matrix.headless }}
+          ${{ env.ANT_HOME }}/bin/ant -DnoErrorProne dist
+      - name: Upload jar
+        if: ${{ always() && matrix.headless }}
+        id: upload-jar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
+          asset_path: dist/josm-custom.jar
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+          asset_content_type: application/java-archive
+      - name: Test with Ant, headless ${{ matrix.headless }}
         if: ${{ needs.createrelease.outputs.josm_prerelease }}
         run: |
           ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
@@ -165,7 +185,6 @@ jobs:
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
         run: |
-          $ANT_HOME/bin/ant -DnoErrorProne dist
           ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
       - name: Upload app
         if: ${{ runner.os == 'macos' && always() }}
@@ -178,14 +197,3 @@ jobs:
           asset_path: app/JOSM.zip
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.zip
           asset_content_type: application/zip
-      - name: Upload jar
-        if: ${{ always() }}
-        id: upload-jar
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: dist/josm-custom.jar
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
-          asset_content_type: application/java-archive
