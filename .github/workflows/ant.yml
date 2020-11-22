@@ -14,7 +14,67 @@ defaults:
     shell: bash
 
 jobs:
+  createrelease:
+    runs-on: ubuntu-latest
+    env:
+      LANG: en_US.UTF-8
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 32
+      - name: Cache
+        uses: actions/cache@v2.0.0
+        with:
+          path:  |
+            ~/.ivy2/cache/
+            ~/work/josm/josm/tools/
+            ~/build-tools-cache/
+          key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
+      - name: Setup java
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
+        run: |
+          mkdir -p ~/build-tools-cache/
+          cd ~/build-tools-cache/
+          wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          cd ~
+          tar xzf ~/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
+          cp -a ~/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+      - name: Print ant version, expecting ${{ env.ANT_HOME }}
+        run: ${{ env.ANT_HOME }}/bin/ant -version
+      - name: Set revision env variable
+        run: |
+          ant create-revision
+          josm_revision=`awk '/Revision/{print $2}' resources/REVISION`
+          if [[ "$josm_revision" == `curl --silent https://josm.openstreetmap.de/tested` ]]; then
+            sed -i .bak '/Is-Local-Build/d' resources/REVISION
+            echo "josm_prerelease=false" >> $GITHUB_ENV
+            echo "josm_release=$josm_revision-tested" >> $GITHUB_ENV
+          else
+            echo "josm_prerelease=true" >> $GITHUB_ENV
+            echo "josm_release=$josm_revision" >> $GITHUB_ENV
+          fi
+          echo "josm_revision=$josm_revision" >> $GITHUB_ENV
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.josm_release }}
+          release_name: JOSM.app release ${{ env.josm_release }}
+          body: |
+            JOSM.app release ${{ env.josm_release }}
+          draft: false
+          prerelease: ${{ env.josm_prerelease }}
   build:
+    needs: createrelease
     runs-on: ${{ matrix.os }}
     env:
       LANG: en_US.UTF-8
@@ -41,36 +101,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 128
+          fetch-depth: 32
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
           path:  |
             ~/.ivy2/cache/
             ~/work/josm/josm/tools/
+            ~/build-tools-cache/
           key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
       - name: Setup java
         uses: actions/setup-java@v1.4.3
         with:
           java-version: ${{ matrix.java }}
       - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
-        # Todo: cache ant and junit, saves 12 seconds.
         run: |
-          curl -s https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz | tar -xz
-          curl -o ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar  "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar"
+          mkdir -p ~/build-tools-cache/
+          cd ~/build-tools-cache/
+          wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          cd ~
+          tar xzf ~/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
+          cp -a ~/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
         run: ${{ env.ANT_HOME }}/bin/ant -version
-      - name: Set revision env variable
-        run: |
-          ant create-revision
-          josm_revision=`awk '/Revision/{print $2}' resources/REVISION`
-          if [[ "$josm_revision" == `curl --silent https://josm.openstreetmap.de/tested` ]]; then
-            sed -i .bak '/Is-Local-Build/d' resources/REVISION
-            echo "josm_prerelease=false" >> $GITHUB_ENV
-          else
-            echo "josm_prerelease=true" >> $GITHUB_ENV
-          fi
-          echo "josm_revision=$josm_revision" >> $GITHUB_ENV
       - name: Build with Ant, headless ${{ matrix.headless }}
         run: |
           ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
@@ -105,19 +159,6 @@ jobs:
         run: |
           $ANT_HOME/bin/ant -DnoErrorProne dist
           ./native/macosx/macos-jpackage.sh ${{ env.josm_revision }}
-      - name: Create macOS release
-        if: ${{ runner.os == 'macos' && always() }}
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ env.josm_revision }}
-          release_name: JOSM.app release ${{ env.josm_revision }}
-          body: |
-            JOSM.app release ${{ env.josm_revision }}
-          draft: false
-          prerelease: ${{ env.josm_prerelease }}
       - name: Upload app
         if: ${{ runner.os == 'macos' && always() }}
         id: upload-app
@@ -130,7 +171,7 @@ jobs:
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.zip
           asset_content_type: application/zip
       - name: Upload jar
-        if: ${{ runner.os == 'macos' && always() }}
+        if: ${{ always() }}
         id: upload-jar
         uses: actions/upload-release-asset@v1
         env:
@@ -138,5 +179,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: dist/josm-custom.jar
-          asset_name: josm-latest.jar
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ env.josm_revision }}.jar
           asset_content_type: application/java-archive
