@@ -15,11 +15,12 @@ defaults:
 
 jobs:
   createrelease:
+    name: Create Release
     runs-on: ubuntu-latest
     env:
       LANG: en_US.UTF-8
     outputs: 
-      upload_url: ${{ steps.createrelease.outputs.upload_url }} 
+      upload_url: ${{ steps.create_release.outputs.upload_url }} 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -44,8 +45,8 @@ jobs:
           if [ ! -f ${{ env.ANT_HOME }}-bin.tar.gz ]; then
             curl -o ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
           fi
-          if [ ! -f $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ]; then
-            curl -o $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          if [ ! -f junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ]; then
+            curl -o junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
           fi
           cd ..
           tar zxf build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
@@ -123,8 +124,8 @@ jobs:
           if [ ! -f ${{ env.ANT_HOME }}-bin.tar.gz ]; then
             curl -o ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
           fi
-          if [ ! -f $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ]; then
-            curl -o $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          if [ ! -f junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ]; then
+            curl -o junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
           fi
           cd ..
           tar zxf build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
@@ -183,7 +184,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
           asset_path: dist/josm-custom.jar
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ env.josm_revision }}.jar
           asset_content_type: application/java-archive
