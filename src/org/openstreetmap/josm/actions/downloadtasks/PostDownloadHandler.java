@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -21,7 +20,6 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -125,23 +123,12 @@ public class PostDownloadHandler implements Runnable {
 
         // multiple error object? prepare a HTML list
         //
-        if (!errors.isEmpty()) {
-            final Collection<String> items = new ArrayList<>();
-            for (Object error : errors) {
-                if (error instanceof String) {
-                    items.add((String) error);
-                } else if (error instanceof Exception) {
-                    items.add(ExceptionUtil.explainException((Exception) error));
-                }
-            }
-
-            if (!GraphicsEnvironment.isHeadless()) {
-                SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
-                        MainApplication.getMainFrame(),
-                        "<html>"+Utils.joinAsHtmlUnorderedList(items)+"</html>",
-                        tr("Errors during download"),
-                        JOptionPane.ERROR_MESSAGE));
-            }
+        if (!errors.isEmpty() && !GraphicsEnvironment.isHeadless()) {
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                    MainApplication.getMainFrame(),
+                    "<html>"+Utils.joinAsHtmlUnorderedList(task.getErrorMessages())+"</html>",
+                    tr("Errors during download"),
+                    JOptionPane.ERROR_MESSAGE));
         }
     }
 }

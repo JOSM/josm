@@ -24,7 +24,9 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
@@ -42,6 +44,8 @@ public abstract class RequestHandler {
     public static final BooleanProperty GLOBAL_CONFIRMATION = new BooleanProperty("remotecontrol.always-confirm", false);
     /** preference to determine if remote control loads data in a new layer */
     public static final BooleanProperty LOAD_IN_NEW_LAYER = new BooleanProperty("remotecontrol.new-layer", false);
+    /** preference to define OSM download timeout in seconds */
+    public static final IntegerProperty OSM_DOWNLOAD_TIMEOUT = new IntegerProperty("remotecontrol.osm.download.timeout", 5*60);
 
     protected static final Pattern SPLITTER_COMMA = Pattern.compile(",\\s*");
     protected static final Pattern SPLITTER_SEMIC = Pattern.compile(";\\s*");
@@ -415,9 +419,33 @@ public abstract class RequestHandler {
 
         /**
          * Constructs a new {@code RequestHandlerErrorException}.
+         * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+         * @since 17330
+         */
+        public RequestHandlerErrorException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructs a new {@code RequestHandlerErrorException}.
          * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
          */
         public RequestHandlerErrorException(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    /**
+     * Error raised for OSM API errors.
+     * @since 17330
+     */
+    public static class RequestHandlerOsmApiException extends RequestHandlerErrorException {
+
+        /**
+         * Constructs a new {@code RequestHandlerOsmApiException}.
+         * @param cause the cause (which is saved for later retrieval by the {@link #getCause()} method).
+         */
+        public RequestHandlerOsmApiException(OsmApiException cause) {
             super(cause);
         }
     }

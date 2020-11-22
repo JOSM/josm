@@ -8,7 +8,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.EventQueue;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -34,7 +33,6 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -246,24 +244,15 @@ public class DownloadTaskList {
                     return;
                 }
             }
-            Set<Object> errors = tasks.stream().flatMap(t -> t.getErrorObjects().stream()).collect(Collectors.toSet());
+            Set<String> errors = tasks.stream().flatMap(t -> t.getErrorMessages().stream()).collect(Collectors.toSet());
             if (!errors.isEmpty()) {
-                final Collection<String> items = new ArrayList<>();
-                for (Object error : errors) {
-                    if (error instanceof String) {
-                        items.add((String) error);
-                    } else if (error instanceof Exception) {
-                        items.add(ExceptionUtil.explainException((Exception) error));
-                    }
-                }
-
                 GuiHelper.runInEDT(() -> {
-                    if (items.size() == 1 && PostDownloadHandler.isNoDataErrorMessage(items.iterator().next())) {
-                        new Notification(items.iterator().next()).setIcon(JOptionPane.WARNING_MESSAGE).show();
+                    if (errors.size() == 1 && PostDownloadHandler.isNoDataErrorMessage(errors.iterator().next())) {
+                        new Notification(errors.iterator().next()).setIcon(JOptionPane.WARNING_MESSAGE).show();
                     } else {
                         JOptionPane.showMessageDialog(MainApplication.getMainFrame(), "<html>"
                                 + tr("The following errors occurred during mass download: {0}",
-                                        Utils.joinAsHtmlUnorderedList(items)) + "</html>",
+                                        Utils.joinAsHtmlUnorderedList(errors)) + "</html>",
                                 tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
                         return;
                     }

@@ -42,6 +42,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerErrorException;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerForbiddenException;
+import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerOsmApiException;
 import org.openstreetmap.josm.io.remotecontrol.handler.VersionHandler;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -184,19 +185,19 @@ public class RequestProcessor extends Thread {
 
             String get = in.readLine();
             if (get == null) {
-                sendError(out);
+                sendInternalError(out, null);
                 return;
             }
             Logging.info("RemoteControl received: " + get);
 
             StringTokenizer st = new StringTokenizer(get);
             if (!st.hasMoreTokens()) {
-                sendError(out);
+                sendInternalError(out, null);
                 return;
             }
             String method = st.nextToken();
             if (!st.hasMoreTokens()) {
-                sendError(out);
+                sendInternalError(out, null);
                 return;
             }
             String url = st.nextToken();
@@ -251,13 +252,7 @@ public class RequestProcessor extends Thread {
                 String websiteDoc = HelpUtil.getWikiBaseHelpUrl() +"/Help/Preferences/RemoteControl";
                 String help = "No command specified! The following commands are available:<ul>" + usage
                         + "</ul>" + "See <a href=\""+websiteDoc+"\">"+websiteDoc+"</a> for complete documentation.";
-                sendHeader(out, "400 Bad Request", "text/html", true);
-                out.write(String.format(
-                        RESPONSE_TEMPLATE,
-                        "<title>Bad Request</title>",
-                        "<h1>HTTP Error 400: Bad Request</h1>" +
-                        "<p>" + help + "</p>"));
-                out.flush();
+                sendBadRequest(out, help);
             } else {
                 // create handler object
                 RequestHandler handler = handlerClass.getConstructor().newInstance();
@@ -272,9 +267,12 @@ public class RequestProcessor extends Thread {
                     out.write("\r\n");
                     out.write(handler.getContent());
                     out.flush();
+                } catch (RequestHandlerOsmApiException ex) {
+                    Logging.debug(ex);
+                    sendBadGateway(out, ex.getMessage());
                 } catch (RequestHandlerErrorException ex) {
                     Logging.debug(ex);
-                    sendError(out);
+                    sendInternalError(out, ex.getMessage());
                 } catch (RequestHandlerBadRequestException ex) {
                     Logging.debug(ex);
                     sendBadRequest(out, ex.getMessage());
@@ -288,7 +286,7 @@ public class RequestProcessor extends Thread {
         } catch (ReflectiveOperationException e) {
             Logging.error(e);
             try {
-                sendError(out);
+                sendInternalError(out, e.getMessage());
             } catch (IOException e1) {
                 Logging.warn(e1);
             }
@@ -301,22 +299,29 @@ public class RequestProcessor extends Thread {
         }
     }
 
+    private static void sendError(Writer out, int errorCode, String errorName, String help) throws IOException {
+        sendHeader(out, errorCode + " " + errorName, "text/html", true);
+        out.write(String.format(
+                RESPONSE_TEMPLATE,
+                "<title>" + errorName + "</title>",
+                "<h1>HTTP Error " + errorCode + ": " + errorName + "</h1>" +
+                (help == null ? "" : "<p>"+Utils.escapeReservedCharactersHTML(help) + "</p>")
+        ));
+        out.flush();
+    }
+
     /**
-     * Sends a 500 error: server error
+     * Sends a 500 error: internal server error
      *
      * @param out
      *            The writer where the error is written
+     * @param help
+     *            Optional HTML help content to display, can be null
      * @throws IOException
      *             If the error can not be written
      */
-    private static void sendError(Writer out) throws IOException {
-        sendHeader(out, "500 Internal Server Error", "text/html", true);
-        out.write(String.format(
-                RESPONSE_TEMPLATE,
-                "<title>Internal Error</title>",
-                "<h1>HTTP Error 500: Internal Server Error</h1>"
-        ));
-        out.flush();
+    private static void sendInternalError(Writer out, String help) throws IOException {
+        sendError(out, 500, "Internal Server Error", help);
     }
 
     /**
@@ -328,13 +333,21 @@ public class RequestProcessor extends Thread {
      *             If the error can not be written
      */
     private static void sendNotImplemented(Writer out) throws IOException {
-        sendHeader(out, "501 Not Implemented", "text/html", true);
-        out.write(String.format(
-                RESPONSE_TEMPLATE,
-                "<title>Not Implemented</title>",
-                "<h1>HTTP Error 501: Not Implemented</h1>"
-        ));
-        out.flush();
+        sendError(out, 501, "Not Implemented", null);
+    }
+
+    /**
+     * Sends a 502 error: bad gateway
+     *
+     * @param out
+     *            The writer where the error is written
+     * @param help
+     *            Optional HTML help content to display, can be null
+     * @throws IOException
+     *             If the error can not be written
+     */
+    private static void sendBadGateway(Writer out, String help) throws IOException {
+        sendError(out, 502, "Bad Gateway", help);
     }
 
     /**
@@ -348,14 +361,7 @@ public class RequestProcessor extends Thread {
      *             If the error can not be written
      */
     private static void sendForbidden(Writer out, String help) throws IOException {
-        sendHeader(out, "403 Forbidden", "text/html", true);
-        out.write(String.format(
-                RESPONSE_TEMPLATE,
-                "<title>Forbidden</title>",
-                "<h1>HTTP Error 403: Forbidden</h1>" +
-                (help == null ? "" : "<p>"+Utils.escapeReservedCharactersHTML(help) + "</p>")
-        ));
-        out.flush();
+        sendError(out, 403, "Forbidden", help);
     }
 
     /**
@@ -366,14 +372,7 @@ public class RequestProcessor extends Thread {
      * @throws IOException If the error can not be written
      */
     private static void sendBadRequest(Writer out, String help) throws IOException {
-        sendHeader(out, "400 Bad Request", "text/html", true);
-        out.write(String.format(
-                RESPONSE_TEMPLATE,
-                "<title>Bad Request</title>",
-                "<h1>HTTP Error 400: Bad Request</h1>" +
-                (help == null ? "" : ("<p>" + Utils.escapeReservedCharactersHTML(help) + "</p>"))
-        ));
-        out.flush();
+        sendError(out, 400, "Bad Request", help);
     }
 
     /**

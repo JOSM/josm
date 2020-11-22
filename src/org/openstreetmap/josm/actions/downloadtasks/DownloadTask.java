@@ -3,11 +3,14 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.ExceptionUtil;
 
 /**
  * Interface defining a general download task used to download geographic data (OSM data, GPX tracks, etc.) for a given URL or geographic area.
@@ -113,6 +116,24 @@ public interface DownloadTask {
      * @return the list of error objects
      */
     List<Object> getErrorObjects();
+
+    /**
+     * Replies the error messages of the task. Empty list, if no error messages are available.
+     *
+     * @return the list of error messages
+     * @since 17330
+     */
+    default List<String> getErrorMessages() {
+        return getErrorObjects().stream().map(o -> {
+            if (o instanceof String) {
+                return (String) o;
+            } else if (o instanceof Exception) {
+                return ExceptionUtil.explainException((Exception) o).replace("<html>", "").replace("</html>", "");
+            } else {
+                return (String) null;
+            }
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+    }
 
     /**
      * Cancels the asynchronous download task.

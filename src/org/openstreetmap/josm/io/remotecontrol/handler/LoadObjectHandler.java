@@ -102,5 +102,8 @@ public class LoadObjectHandler extends RequestHandler {
                 }
             }
         }
+        if (ps.isEmpty()) {
+            throw new RequestHandlerBadRequestException(tr("No valid object identifier has been provided"));
+        }
     }
 }
