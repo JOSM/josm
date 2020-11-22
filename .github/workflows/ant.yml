@@ -31,7 +31,7 @@ jobs:
           path:  |
             ~/.ivy2/cache/
             ~/work/josm/josm/tools/
-            ~/build-tools-cache/
+            ~/work/josm/josm/build-tools-cache/
           key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
       - name: Setup java
         uses: actions/setup-java@v1.4.3
@@ -39,13 +39,14 @@ jobs:
           java-version: '15'
       - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
         run: |
-          mkdir -p ~/build-tools-cache/
-          cd ~/build-tools-cache/
+          pwd
+          mkdir -p ~/work/josm/josm/build-tools-cache/
+          cd ~/work/josm/josm/build-tools-cache/
           wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
           wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
-          cd ~
-          tar zxvf ~/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
-          cp ~/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          cd ~/work/josm/josm/
+          tar zxf ~/work/josm/josm/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
+          cp ~/work/josm/josm/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
         run: ${{ env.ANT_HOME }}/bin/ant -version
       - name: Set revision env variable
@@ -106,7 +107,7 @@ jobs:
           path:  |
             ~/.ivy2/cache/
             ~/work/josm/josm/tools/
-            ~/build-tools-cache/
+            ~/work/josm/josm/build-tools-cache/
           key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
       - name: Setup java
         uses: actions/setup-java@v1.4.3
@@ -114,13 +115,15 @@ jobs:
           java-version: ${{ matrix.java }}
       - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
         run: |
-          mkdir -p ~/build-tools-cache/
-          cd ~/build-tools-cache/
+          pwd
+          mkdir -p ~/work/josm/josm/build-tools-cache/
+          cd ~/work/josm/josm/build-tools-cache/
           wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
           wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
-          cd ~
-          tar xzf ~/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
-          cp -a ~/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          cd ~/work/josm/josm/
+          tar zxf ~/work/josm/josm/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
+          cp ~/work/josm/josm/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          cp -a ~/work/josm/josm/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
       - name: Print ant version, expecting ${{ env.ANT_HOME }}
         run: ${{ env.ANT_HOME }}/bin/ant -version
       - name: Build with Ant, headless ${{ matrix.headless }}
