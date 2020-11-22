@@ -58,7 +58,7 @@ jobs:
           ant create-revision
           josm_revision=`awk '/Revision/{print $2}' resources/REVISION`
           if [[ "$josm_revision" == `curl --silent https://josm.openstreetmap.de/tested` ]]; then
-            sed -i .bak '/Is-Local-Build/d' resources/REVISION
+            sed -i '/Is-Local-Build/d' resources/REVISION
             echo "josm_prerelease=false" >> $GITHUB_ENV
             echo "josm_release=$josm_revision-tested" >> $GITHUB_ENV
           else
