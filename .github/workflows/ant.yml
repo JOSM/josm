@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       LANG: en_US.UTF-8
-    strategy:
-      fail-fast: false
+    outputs: 
+      upload_url: ${{ steps.createrelease.outputs.upload_url }} 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -42,8 +42,8 @@ jobs:
           pwd
           mkdir -p ~/work/josm/josm/build-tools-cache/
           cd ~/work/josm/josm/build-tools-cache/
-          wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          curl -o ${{ env.ANT_HOME }}-bin.tar.gz -z ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          curl -o $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar -z junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
           cd ~/work/josm/josm/
           tar zxf ~/work/josm/josm/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
           cp ~/work/josm/josm/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
@@ -118,8 +118,8 @@ jobs:
           pwd
           mkdir -p ~/work/josm/josm/build-tools-cache/
           cd ~/work/josm/josm/build-tools-cache/
-          wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          curl -o ${{ env.ANT_HOME }}-bin.tar.gz -z ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          curl -o $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar -z junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
           cd ~/work/josm/josm/
           tar zxf ~/work/josm/josm/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
           cp ~/work/josm/josm/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
