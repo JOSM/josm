@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       LANG: en_US.UTF-8
-    strategy:
-      fail-fast: false
+    outputs: 
+      upload_url: ${{ steps.createrelease.outputs.upload_url }} 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -42,8 +42,8 @@ jobs:
           pwd
           mkdir -p ~/work/josm/josm/build-tools-cache/
           cd ~/work/josm/josm/build-tools-cache/
-          wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          curl -o ${{ env.ANT_HOME }}-bin.tar.gz -z ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          curl -o $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar -z junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
           cd ~/work/josm/josm/
           tar zxf ~/work/josm/josm/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
           cp ~/work/josm/josm/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
@@ -91,8 +91,6 @@ jobs:
             os: macos-latest
           - java: 11
             os: macos-latest
-          - java: 16-ea
-            os: macos-latest
           - headless: "false"
             os: macos-latest
           - headless: "false"
@@ -120,8 +118,8 @@ jobs:
           pwd
           mkdir -p ~/work/josm/josm/build-tools-cache/
           cd ~/work/josm/josm/build-tools-cache/
-          wget -N https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          wget -N https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          curl -o ${{ env.ANT_HOME }}-bin.tar.gz -z ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          curl -o $junit-platform-console-standalone-${{ env.junit_platform_version }}.jar -z junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
           cd ~/work/josm/josm/
           tar zxf ~/work/josm/josm/build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
           cp ~/work/josm/josm/build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
@@ -169,7 +167,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing its ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
           asset_path: app/JOSM.zip
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.zip
           asset_content_type: application/zip
