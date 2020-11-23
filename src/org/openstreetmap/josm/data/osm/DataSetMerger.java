@@ -301,29 +301,36 @@ public class DataSetMerger {
             // target.version > source.version => keep target version
             return true;
 
-        if (target.isIncomplete() && !source.isIncomplete()) {
-            // target is incomplete, source completes it
-            // => merge source into target
-            //
-            target.mergeFrom(source);
-            objectsWithChildrenToMerge.add(source.getPrimitiveId());
-        } else if (!target.isIncomplete() && source.isIncomplete()) {
-            // target is complete and source is incomplete
-            // => keep target, it has more information already
-            //
-        } else if (target.isIncomplete() && source.isIncomplete()) {
-            // target and source are incomplete. Doesn't matter which one to
-            // take. We take target.
-            //
-        } else if (!target.isModified() && !source.isModified() && target.isVisible() != source.isVisible()
-                && target.getVersion() == source.getVersion()) {
+        boolean mergeFromSource = false;
+        boolean haveSameVersion = target.getVersion() == source.getVersion();
+
+        if (haveSameVersion && !target.isModified() && !source.isModified()
+                && target.isVisible() != source.isVisible()) {
             // Same version, but different "visible" attribute and neither of them are modified.
             // It indicates a serious problem in datasets.
             // For example, datasets can be fetched from different OSM servers or badly hand-modified.
             // We shouldn't merge that datasets.
             throw new DataIntegrityProblemException(tr("Conflict in ''visible'' attribute for object of type {0} with id {1}",
                     target.getType(), target.getId()));
-        } else if (target.isDeleted() && !source.isDeleted() && target.getVersion() == source.getVersion()) {
+        }
+
+        if (!target.isModified() && source.isDeleted()) {
+            // target not modified and source is deleted
+            // So mark it to be deleted. See #20091
+            //
+            objectsToDelete.add(target);
+        } else if (source.isIncomplete()) {
+            // source is incomplete. Nothing to do.
+            //
+        } else if (target.isIncomplete()) {
+            // target is incomplete, source completes it
+            // => merge source into target
+            //
+            mergeFromSource = true;
+        } else if (target.isDeleted() && source.isDeleted() && !haveSameVersion) {
+            // both deleted. Source is newer. Take source. See #19783
+            mergeFromSource = true;
+        } else if (target.isDeleted() && !source.isDeleted() && haveSameVersion) {
             // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
             // but, if source is modified, there is a conflict
@@ -339,27 +346,15 @@ public class DataSetMerger {
                     break;
                 }
             }
-        } else if (!target.isModified() && source.isDeleted()) {
-            // target not modified. We can assume that source is the most recent version,
-            // so mark it to be deleted.
-            //
-            objectsToDelete.add(target);
         } else if (!target.isModified() && source.isModified()) {
             // target not modified. We can assume that source is the most recent version.
             // clone it into target.
-            target.mergeFrom(source);
-            objectsWithChildrenToMerge.add(source.getPrimitiveId());
-        } else if (!target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
-            // both not modified. Merge nevertheless.
+            mergeFromSource = true;
+        } else if (!target.isModified() && !source.isModified()) {
+            // both not modified. Merge nevertheless, even if versions are the same
             // This helps when updating "empty" relations, see #4295
-            target.mergeFrom(source);
-            objectsWithChildrenToMerge.add(source.getPrimitiveId());
-        } else if (!target.isModified() && !source.isModified() && target.getVersion() < source.getVersion()) {
-            // my not modified but other is newer. clone other onto mine.
-            //
-            target.mergeFrom(source);
-            objectsWithChildrenToMerge.add(source.getPrimitiveId());
-        } else if (target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
+            mergeFromSource = true;
+        } else if (target.isModified() && !source.isModified() && haveSameVersion) {
             // target is same as source but target is modified
             // => keep target and reset modified flag if target and source are semantically equal
             if (target.hasEqualSemanticAttributes(source, false)) {
@@ -367,7 +362,7 @@ public class DataSetMerger {
             }
         } else if (source.isDeleted() != target.isDeleted()) {
             // target is modified and deleted state differs.
-            // this have to be resolved manually.
+            // this has to be resolved manually.
             //
             addConflict(target, source);
         } else if (!target.hasEqualSemanticAttributes(source)) {
@@ -380,6 +375,9 @@ public class DataSetMerger {
             // technical attributes like timestamp or user information. Semantic
             // attributes should already be equal if we get here.
             //
+            mergeFromSource = true;
+        }
+        if (mergeFromSource) {
             target.mergeFrom(source);
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
         }
