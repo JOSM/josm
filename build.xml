@@ -15,7 +15,7 @@
          xmlns:jacoco="antlib:org.jacoco.ant"
          xmlns:unless="ant:unless"
 >
-    <target name="init-ivy">
+    <target name="init-ivy" description="Initialize dependency management system Apache Ivy">
         <property name="ivy.version" value="2.5.0"/>
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="lib.dir"   location="${base.dir}/lib"/>
@@ -30,7 +30,7 @@
         />
         <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar.file}"/>
     </target>
-    <target name="init-properties">
+    <target name="init-properties" description="Initialize properties for the build">
         <property environment="env"/>
         <!-- Load properties in a target and not at top level, so this build file can be
         imported from an IDE ant file (Netbeans) without messing up IDE properties.
@@ -99,10 +99,8 @@
             <isset property="isJava9"/>
         </condition>
     </target>
-    <!--
-      ** Initializes the REVISION.XML file from SVN information
-    -->
-    <target name="init-svn-revision-xml" if="svn.present" depends="init-properties">
+    <target name="init-svn-revision-xml" if="svn.present" depends="init-properties"
+            description="Initialize the REVISION.XML file from SVN information">
         <exec append="false" output="${base.dir}/REVISION.XML" executable="svn" dir="${base.dir}" resultproperty="svn.info.result">
             <env key="LANG" value="C"/>
             <arg value="info"/>
@@ -110,10 +108,8 @@
             <arg value="."/>
         </exec>
     </target>
-    <!--
-      ** Initializes the REVISION.XML file from git information
-    -->
-    <target name="init-git-revision-xml" if="git.present" depends="init-properties">
+    <target name="init-git-revision-xml" if="git.present" depends="init-properties"
+            description="Initialize the REVISION.XML file from git information">
         <exec append="false" output="${base.dir}/REVISION.XML" executable="git" dir="${base.dir}">
             <arg value="log"/>
             <arg value="-1"/>
@@ -130,10 +126,8 @@
                        match=".*git-svn-id: [^@]*@([0-9]+).*(\d{4}-\d{2}-\d{2}.\d{2}\:\d{2}\:\d{2}\s*[+-]\d{2}:?\d{2})\s*$"
                        replace="&lt;info&gt;&lt;entry&gt;&lt;commit revision=&quot;\1&quot;&gt;&lt;date&gt;\2&lt;/date&gt;&lt;/commit&gt;&lt;/entry&gt;&lt;/info&gt;"/>
     </target>
-    <!--
-      ** Creates the REVISION file to be included in the distribution
-    -->
-    <target name="create-revision" depends="init-properties,init-svn-revision-xml,init-git-revision-xml">
+    <target name="create-revision" depends="init-properties,init-svn-revision-xml,init-git-revision-xml"
+            description="Create the REVISION file to be included in the distribution based on the latest SVN/Git commit">
         <xmlproperty file="${base.dir}/REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
         <delete file="${base.dir}/REVISION.XML"/>
         <tstamp>
@@ -149,18 +143,14 @@ Is-Local-Build: true
 Build-Date: ${build.tstamp}
 </echo>
     </target>
-    <!--
-      ** Check internal XML files against their XSD
-    -->
-    <target name="check-schemas" unless="check-schemas.notRequired" depends="init-properties">
+    <target name="check-schemas" unless="check-schemas.notRequired" depends="init-properties"
+            description="Check internal XML files against their XSD">
         <schemavalidate file="${resources.dir}/data/defaultpresets.xml" >
             <schema namespace="http://josm.openstreetmap.de/tagging-preset-1.0" file="${resources.dir}/data/tagging-preset.xsd" />
         </schemavalidate>
     </target>
-    <!--
-      ** Main target that builds JOSM and checks XML against schemas
-    -->
-    <target name="dist" depends="compile,extract-libraries,epsg,copy-resources,check-schemas">
+    <target name="dist" depends="compile,extract-libraries,epsg,copy-resources,check-schemas"
+            description="Main target that builds JOSM and checks XML against schemas">
         <echo>Revision ${version.entry.commit.revision}</echo>
         <copy file="CONTRIBUTION" todir="${build.dir}"/>
         <copy file="README" todir="${build.dir}"/>
@@ -243,7 +233,7 @@ Build-Date: ${build.tstamp}
             <arg value="${dist.jar}"/>
         </exec>
     </target>
-    <target name="javacc" depends="init" unless="javacc.notRequired">
+    <target name="javacc" depends="init" unless="javacc.notRequired" description="Compile the MapCSS compiler">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <java classname="javacc" fork="true" failonerror="true">
@@ -257,7 +247,7 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </java>
     </target>
-    <target name="compile-cots" depends="init" description="Compiles third-party dependencies not retrieved with Ivy">
+    <target name="compile-cots" depends="init" description="Compile third-party dependencies not retrieved with Ivy">
         <!-- COTS -->
         <javac srcdir="${src.dir}" includes="com/kitfox/**" excludes="**/package-info.java" nowarn="on" encoding="iso-8859-1"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false">
@@ -268,7 +258,7 @@ Build-Date: ${build.tstamp}
             </classpath>
         </javac>
     </target>
-    <target name="compile" depends="init,javacc,compile-cots" unless="compile.notRequired" description="Compiles JOSM">
+    <target name="compile" depends="init,javacc,compile-cots" unless="compile.notRequired" description="Compile JOSM">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone.classpath" conf="errorprone"/>
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac"/>
         <!-- JOSM -->
@@ -311,7 +301,7 @@ Build-Date: ${build.tstamp}
             <fileset dir="${resources.dir}"/>
         </copy>
     </target>
-    <target name="init" depends="init-properties,resolve">
+    <target name="init" depends="init-properties,resolve" description="Initialize the build">
         <uptodate property="javacc.notRequired" targetfile="${mapcss.dir}/parsergen/MapCSSParser.java" >
             <srcfiles dir="${mapcss.dir}" includes="MapCSSParser.jj"/>
         </uptodate>
@@ -322,7 +312,7 @@ Build-Date: ${build.tstamp}
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${dist.dir}"/>
     </target>
-    <target name="javadoc" depends="init">
+    <target name="javadoc" depends="init" description="Generate API documentation from JOSM source files">
         <javadoc destdir="javadoc"
                 sourcepath="${src.dir}"
                 classpathref="compile.path"
@@ -348,7 +338,7 @@ Build-Date: ${build.tstamp}
             <arg value="javafx.graphics/com.sun.javafx.application=ALL-UNNAMED" if:set="isJava9" unless:set="noJavaFX" />
         </javadoc>
     </target>
-    <target name="clean" depends="init-properties">
+    <target name="clean" depends="init-properties" description="Delete all build files">
         <delete dir="${build.dir}"/>
         <delete dir="${proj-build.dir}"/>
         <delete dir="${script-build.dir}"/>
@@ -368,7 +358,7 @@ Build-Date: ${build.tstamp}
             <replace file="${test.dir}/config/@{testfamily}-josm.home/preferences.xml" encoding="UTF-8" token="@OSM_PASSWORD@" value="${osm.password}"/>
         </sequential>
     </macrodef>
-    <target name="test-init" depends="init">
+    <target name="test-init" depends="init" description="Initialize the tests">
         <mkdir dir="${test.dir}/build"/>
         <mkdir dir="${test.dir}/build/unit"/>
         <mkdir dir="${test.dir}/build/functional"/>
@@ -387,7 +377,7 @@ Build-Date: ${build.tstamp}
         <ivy:retrieve log="download-only" pattern="${tools.dir}/[conf].[ext]" conf="jacocoant"/>
         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="${tools.dir}/jacocoant.jar" />
     </target>
-    <target name="test-clean" depends="init-properties">
+    <target name="test-clean" depends="init-properties" description="Delete all built test files">
         <delete dir="${test.dir}/build"/>
         <delete dir="${test.dir}/report"/>
         <delete file="${test.dir}/jacoco.exec" />
@@ -412,7 +402,7 @@ Build-Date: ${build.tstamp}
             </javac>
         </sequential>
     </macrodef>
-    <target name="test-compile" depends="test-init,compile,extract-libraries,epsg,copy-resources" description="Compiles all tests">
+    <target name="test-compile" depends="test-init,compile,extract-libraries,epsg,copy-resources" description="Compile all tests">
         <call-javac testfamily="unit">
             <cp-elements>
                 <path refid="test.classpath"/>
@@ -557,7 +547,7 @@ Build-Date: ${build.tstamp}
             <csv destfile="${test.dir}/report/jacoco.csv"/>
         </jacoco:report>
     </target>
-    <target name="dist-optimized" depends="dist" unless="isJava13">
+    <target name="dist-optimized" depends="dist" unless="isJava13" description="Build an optimized JOSM distribution file">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="proguard.classpath" conf="proguard"/>
         <taskdef resource="proguard/ant/task.properties" classpathref="proguard.classpath"/>
         <proguard>
@@ -788,7 +778,7 @@ Build-Date: ${build.tstamp}
         </as:check-signature>
     </target>
 
-    <target name="script-compile" depends="test-compile" description="Compiles all scripts">
+    <target name="script-compile" depends="test-compile" description="Compile all scripts">
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="*.java"
                destdir="${script-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
                includeantruntime="false" encoding="UTF-8">
@@ -823,13 +813,13 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
 
-    <target name="taginfo" depends="script-compile">
+    <target name="taginfo" depends="script-compile" description="Generate project files Taginfo">
         <_taginfo type="mappaint" output="taginfo_style.json"/>
         <_taginfo type="presets" output="taginfo_presets.json"/>
         <_taginfo type="external_presets" output="taginfo_external_presets.json"/>
     </target>
 
-    <target name="imageryindex" depends="script-compile">
+    <target name="imageryindex" depends="script-compile"  description="Check editor imagery difference">
         <echo message="Checking editor imagery difference"/>
         <java classname="SyncEditorLayerIndex" failonerror="true" fork="false">
             <classpath>
@@ -845,7 +835,7 @@ Build-Date: ${build.tstamp}
         </java>
     </target>
 
-    <target name="imageryindexdownload">
+    <target name="imageryindexdownload" description="Download and check editor imagery">
         <exec append="false" executable="wget" failifexecutionfails="true">
             <arg value="https://josm.openstreetmap.de/maps"/>
             <arg value="-O"/>
@@ -867,7 +857,7 @@ Build-Date: ${build.tstamp}
         <antcall target="imageryindex"/>
     </target>
 
-    <target name="checkstyle-compile" depends="init">
+    <target name="checkstyle-compile" depends="init" description="Compile Checkstyle rules">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="checkstyle.classpath" conf="checkstyle"/>
         <mkdir dir="${checkstyle-build.dir}"/>
         <javac sourcepath="" srcdir="${checkstyle.dir}/src" failonerror="true"
@@ -876,7 +866,7 @@ Build-Date: ${build.tstamp}
             encoding="UTF-8" classpathref="checkstyle.classpath">
         </javac>
     </target>
-    <target name="checkstyle-changed" depends="checkstyle-compile">
+    <target name="checkstyle-changed" depends="checkstyle-compile" description="Run Checkstyle on SVN/Git-changed source files">
         <exec append="false" osfamily="unix" executable="bash" failifexecutionfails="true">
             <arg value="-c"/>
             <arg value="(git ls-files src test --modified 2>/dev/null || svn status -q --ignore-externals src test) | grep -o '\(src\|test\)/.*' | xargs java -cp '${toString:checkstyle.classpath}:${checkstyle-build.dir}' com.puppycrawl.tools.checkstyle.Main -c ${checkstyle.dir}/josm_checks.xml | sed -e 's:\([^ ]*\) [^:]*/\([^:/]*.java\:[^:]*\):(\2)\1:'"/>
@@ -886,7 +876,7 @@ Build-Date: ${build.tstamp}
             <arg value="svn status -q --ignore-externals src test | ForEach-Object {java -cp '${toString:checkstyle.classpath};${checkstyle-build.dir}' com.puppycrawl.tools.checkstyle.Main -c ${checkstyle.dir}/josm_checks.xml $_.split(' ')[7]}"/>
         </exec>
     </target>
-    <target name="checkstyle" depends="checkstyle-compile">
+    <target name="checkstyle" depends="checkstyle-compile" description="Run Checkstyle on the source files">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties">
             <classpath refid="checkstyle.classpath"/>
             <classpath path="${checkstyle-build.dir}"/>
@@ -901,7 +891,7 @@ Build-Date: ${build.tstamp}
         </checkstyle>
     </target>
 
-    <target name="spotbugs" depends="dist">
+    <target name="spotbugs" depends="dist" description="Run SpotBugs on the source files">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="spotbugs.classpath" conf="spotbugs"/>
         <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="spotbugs.classpath"/>
         <spotbugs output="xml"
@@ -917,7 +907,7 @@ Build-Date: ${build.tstamp}
         </spotbugs>
     </target>
 
-    <target name="pmd" depends="init">
+    <target name="pmd" depends="init" description="Run PMD on the source files">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="pmd.classpath" conf="pmd"/>
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
         <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
@@ -935,17 +925,15 @@ Build-Date: ${build.tstamp}
         </pmd>
     </target>
 
-    <target name="run" depends="dist">
+    <target name="run" depends="dist" description="Run JOSM">
         <java jar="${dist.jar}" fork="true">
             <arg value="--set=expert=true"/>
             <arg value="--set=iso.dates=true"/>
             <jvmarg value="-Djosm.home=/tmp/.josm/"/>
         </java>
     </target>
-    <!--
-      ** Compile build script for generating projection list.
-    -->
-    <target name="epsg-compile" depends="init">
+    <target name="epsg-compile" depends="init"
+            description="Compile build script for generating projection list">
         <property name="proj-classpath" location="${build.dir}"/>
         <mkdir dir="${proj-build.dir}"/>
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true" includes="BuildProjectionDefinitions.java"
@@ -954,10 +942,8 @@ Build-Date: ${build.tstamp}
             encoding="UTF-8" classpath="${proj-classpath}">
         </javac>
     </target>
-    <!--
-      ** generate projection list.
-    -->
-    <target name="epsg" unless="epsg.notRequired" depends="epsg-compile">
+    <target name="epsg" unless="epsg.notRequired" depends="epsg-compile"
+            description="Generate projection list">
         <touch file="${epsg.output}" mkdirs="true"/>
         <java classname="BuildProjectionDefinitions" failonerror="true" fork="true">
             <sysproperty key="java.awt.headless" value="true"/>
@@ -969,10 +955,8 @@ Build-Date: ${build.tstamp}
             <arg value="${base.dir}"/>
         </java>
     </target>
-    <!--
-      ** update projection test files after an update of projection definitions
-    -->
-    <target name="update-proj-files" depends="test-compile">
+    <target name="update-proj-files" depends="test-compile"
+            description="Update projection test files after an update of projection definitions">
         <java classname="org.openstreetmap.josm.data.projection.ProjectionRefTest" failonerror="true" fork="true">
             <classpath>
                 <path refid="test.classpath"/>
@@ -986,10 +970,7 @@ Build-Date: ${build.tstamp}
             </classpath>
         </java>
     </target>
-    <!--
-      ** generate jdeps dependency graph
-    -->
-    <target name="jdeps" depends="compile">
+    <target name="jdeps" depends="compile" description="Generate jdeps dependency graph">
         <delete dir="${modules.dir}"/>
         <mkdir dir="${modules.dir}"/>
         <!-- JOSM only -->
@@ -1044,7 +1025,7 @@ Build-Date: ${build.tstamp}
         <ivy:cachefileset log="download-only" setid="runtime.fileset" conf="runtime"/>
         <ivy:cachepath log="download-only" pathid="test.path" conf="test"/>
     </target>
-    <target name="extract-libraries" depends="resolve" description="extract libraries to build dir">
+    <target name="extract-libraries" depends="resolve" description="Extract libraries to build dir">
         <unzip dest="${build.dir}">
             <fileset refid="runtime.fileset"/>
             <patternset>
@@ -1116,7 +1097,7 @@ Build-Date: ${build.tstamp}
             </patternset>
         </unzip>
     </target>
-    <target name="sources" description="Generates jar file of JOSM source files and its dependencies" depends="init,epsg,resolve">
+    <target name="sources" description="Generate jar file of JOSM source files and its dependencies" depends="init,epsg,resolve">
         <ivy:cachefileset log="download-only" setid="sources.fileset" conf="sources"/>
         <jar destfile="${dist-sources.jar}" level="${clevel}">
             <zipgroupfileset refid="sources.fileset"/>
@@ -1129,7 +1110,7 @@ Build-Date: ${build.tstamp}
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[type].[ext]" conf="compile,runtime,sources,test"/>
         <ivy:retrieve pattern="${lib.dir}/tools/[artifact]-[type].[ext]" conf="javacc,checkstyle,pmd,spotbugs,errorprone" file="${tools.ivy}"/>
     </target>
-    <target name="ivy-report" description="Generates Ivy reports of dependency resolving" depends="resolve">
+    <target name="ivy-report" description="Generate Ivy reports of dependency resolving" depends="resolve">
         <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>
     </target>
     <target name="ivy-checkdepsupdate" description="Display dependency updates on the console" depends="resolve">
