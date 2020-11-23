@@ -134,7 +134,6 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener {
      * constructor
      */
     public ConflictResolver() {
-        resolvedCompletely = false;
         build();
         loadIcons();
     }
@@ -239,6 +238,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener {
         setMy(conflict.getMy());
         setTheir(conflict.getTheir());
         this.conflict = conflict;
+        this.resolvedCompletely = false;
         propertiesMerger.populate(conflict);
 
         tabbedPane.setEnabledAt(0, true);

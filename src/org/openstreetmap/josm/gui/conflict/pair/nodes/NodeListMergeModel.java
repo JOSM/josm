@@ -56,7 +56,7 @@ public class NodeListMergeModel extends AbstractListMergeModel<Node, WayNodesCon
     public WayNodesConflictResolverCommand buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
         if (!isFrozen())
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command."));
-        return new WayNodesConflictResolverCommand(conflict, getMergedEntries());
+        return new WayNodesConflictResolverCommand(conflict, new ArrayList<>(getMergedEntries()));
     }
 
     @Override

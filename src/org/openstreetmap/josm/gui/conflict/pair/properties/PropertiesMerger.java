@@ -463,7 +463,7 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
 
     @Override
     public void decideRemaining(MergeDecisionType decision) {
-        if (!model.isDecidedCoord()) {
+        if (!model.isDecidedDeletedState()) {
             model.decideDeletedStateConflict(decision);
         }
         if (!model.isDecidedCoord()) {

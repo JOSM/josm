@@ -184,7 +184,7 @@ public class TagMergeModel extends DefaultTableModel {
     }
 
     public TagConflictResolveCommand buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
-        return new TagConflictResolveCommand(conflict, tagMergeItems);
+        return new TagConflictResolveCommand(conflict, new ArrayList<>(tagMergeItems));
     }
 
     public boolean isResolvedCompletely() {

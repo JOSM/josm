@@ -517,22 +517,12 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                     if (c != null) {
                         resolver.populate(c);
                         resolver.decideRemaining(type);
-                        Command cmd = resolver.buildResolveCommand();
-                        cmd.executeCommand(); // execute now, see #6529
-                        commands.add(cmd);
+                        commands.add(resolver.buildResolveCommand());
                     }
                 }
             }
-            UndoRedoHandler.getInstance().add(new ResolveConflictsCommand(name, commands), false);
+            UndoRedoHandler.getInstance().add(new SequenceCommand(name, commands));
             refreshView();
-        }
-    }
-
-    private static class ResolveConflictsCommand extends SequenceCommand {
-        // just  a wrapper for already executed commands
-        ResolveConflictsCommand(String name, Collection<Command> sequenz) {
-            super(name, sequenz, true);
-            setSequenceComplete(true);
         }
     }
 
