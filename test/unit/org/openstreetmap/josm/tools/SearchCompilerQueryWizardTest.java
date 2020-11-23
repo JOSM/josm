@@ -23,7 +23,7 @@ class SearchCompilerQueryWizardTest {
     public JOSMTestRules test = new JOSMTestRules().i18n("de");
 
     private static String constructQuery(String s) {
-        return SearchCompilerQueryWizard.getInstance().constructQuery(s);
+        return SearchCompilerQueryWizard.constructQuery(s);
     }
 
     private void assertQueryEquals(String expectedQueryPart, String input) {
@@ -239,5 +239,16 @@ class SearchCompilerQueryWizardTest {
     void testTicket19151() {
         assertQueryEquals("  relation[\"type\"=\"multipolygon\"][!\"landuse\"][!\"area:highway\"];\n",
                 "type:relation and type=multipolygon and -landuse=* and -\"area:highway\"=*");
+    }
+
+    /**
+     * Test for ticket <a href="https://josm.openstreetmap.de/ticket/20037>#20037</a>
+     */
+    @Test
+    void testTicket20037() {
+        assertQueryEquals(
+                "  node[~\"^.*$\"~\"forward\"];\n" +
+                "  node[~\"^.*$\"~\"backward\"];\n",
+                "type:node AND (*=forward OR *=backward)");
     }
 }

@@ -58,7 +58,7 @@ public class OverpassDownloadReaderTest {
     }
 
     private String getExpandedQuery(String search) {
-        final String query = SearchCompilerQueryWizard.getInstance().constructQuery(search);
+        final String query = SearchCompilerQueryWizard.constructQuery(search);
         final String request = new OverpassDownloadReader(new Bounds(1, 2, 3, 4), null, query)
                 .getRequestForBbox(1, 2, 3, 4)
                 .substring("interpreter?data=".length());

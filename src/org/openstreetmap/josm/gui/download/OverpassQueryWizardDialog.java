@@ -90,7 +90,7 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
      */
     private Optional<String> tryParseSearchTerm(String searchTerm) {
         try {
-            return Optional.of(SearchCompilerQueryWizard.getInstance().constructQuery(searchTerm));
+            return Optional.of(SearchCompilerQueryWizard.constructQuery(searchTerm));
         } catch (UncheckedParseException | IllegalStateException ex) {
             Logging.error(ex);
             JOptionPane.showMessageDialog(
