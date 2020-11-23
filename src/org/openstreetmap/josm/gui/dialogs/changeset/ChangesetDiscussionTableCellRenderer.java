@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 
 /**
- * The cell renderer for the changeset dicussion table
+ * The cell renderer for the changeset discussion table
  * @since 7715
  */
 public class ChangesetDiscussionTableCellRenderer extends AbstractCellRenderer {

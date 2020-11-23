@@ -123,7 +123,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
 
     /**
      * Constructs a new {@code MapMover}.
-     * @param navComp the navigatable component
+     * @param navComp the navigable component
      * @since 11713
      */
     public MapMover(NavigatableComponent navComp) {

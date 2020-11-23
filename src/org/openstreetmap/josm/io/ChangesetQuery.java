@@ -235,7 +235,7 @@ public class ChangesetQuery {
      * Replies a query which is restricted to a bounding box.
      *
      * @param min the min lat/lon coordinates of the bounding box. Must not be null.
-     * @param max the max lat/lon coordiantes of the bounding box. Must not be null.
+     * @param max the max lat/lon coordinates of the bounding box. Must not be null.
      *
      * @return the restricted changeset query
      * @throws IllegalArgumentException if min is null
@@ -277,7 +277,7 @@ public class ChangesetQuery {
 
     /**
      * Restricts the result to changesets which have been closed after <code>closedAfter</code> and which
-     * habe been created before <code>createdBefore</code>. Both dates are expressed relative to the current
+     * have been created before <code>createdBefore</code>. Both dates are expressed relative to the current
      * time zone.
      *
      * @param closedAfter only reply changesets closed after this date. Must not be null.

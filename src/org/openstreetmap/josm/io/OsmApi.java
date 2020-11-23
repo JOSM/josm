@@ -71,7 +71,7 @@ public class OsmApi extends OsmConnection {
     public static final int MAX_DOWNLOAD_THREADS = 2;
 
     /**
-     * Defines whether all OSM API requests should be signed with an OAuth token (user-based bandwith limit instead of IP-based one)
+     * Defines whether all OSM API requests should be signed with an OAuth token (user-based bandwidth limit instead of IP-based one)
      */
     public static final BooleanProperty USE_OAUTH_FOR_ALL_REQUESTS = new BooleanProperty("oauth.use-for-all-requests", true);
 

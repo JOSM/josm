@@ -37,7 +37,7 @@
 package com.kitfox.svg;
 
 /**
- * A convienience singleton for allowing all classes to access a common SVG universe.
+ * A convenient singleton for allowing all classes to access a common SVG universe.
  *
  * @author kitfox
  */

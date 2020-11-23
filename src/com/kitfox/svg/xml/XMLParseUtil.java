@@ -167,8 +167,8 @@ public class XMLParseUtil
     /**
      * Scans an input string for double values.  For each value found, places
      * in a list.  This method regards any characters not part of a floating
-     * point value to be seperators.  Thus this will parse whitespace seperated,
-     * comma seperated, and many other separation schemes correctly.
+     * point value to be separators.  Thus this will parse whitespace separated,
+     * comma separated, and many other separation schemes correctly.
      */
     public synchronized static double[] parseDoubleList(String list)
     {

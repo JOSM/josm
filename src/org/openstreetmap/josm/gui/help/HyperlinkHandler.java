@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
- * Handles cliks on hyperlinks inside {@link HelpBrowser}.
+ * Handles clicks on hyperlinks inside {@link HelpBrowser}.
  * @since 14807
  */
 public class HyperlinkHandler implements HyperlinkListener {

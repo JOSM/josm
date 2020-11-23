@@ -50,7 +50,7 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
     /**
      * Constructs a new {@code ComputeStyleListWorker}.
      * @param circum distance on the map in meters that 100 screen pixels represent
-     * @param nc navigatable component
+     * @param nc navigable component
      * @param input the primitives to process
      * @param output the list of styles to which styles will be added
      * @param directExecutionTaskSize the threshold deciding whether to subdivide the tasks
@@ -64,7 +64,7 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
     /**
      * Constructs a new {@code ComputeStyleListWorker}.
      * @param circum distance on the map in meters that 100 screen pixels represent
-     * @param nc navigatable component
+     * @param nc navigable component
      * @param input the primitives to process
      * @param output the list of styles to which styles will be added
      * @param directExecutionTaskSize the threshold deciding whether to subdivide the tasks

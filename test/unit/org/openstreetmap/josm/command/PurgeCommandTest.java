@@ -110,7 +110,7 @@ class PurgeCommandTest {
         PurgeCommand command = new PurgeCommand(testData.layer.getDataSet(), Arrays.<OsmPrimitive>asList(testData.existingNode),
                 Arrays.<OsmPrimitive>asList(testData.existingRelation));
         command.fillModifiedData(modified, deleted, added);
-        // intentianally empty (?)
+        // intentionally empty (?)
         assertArrayEquals(new Object[] {}, modified.toArray());
         assertArrayEquals(new Object[] {}, deleted.toArray());
         assertArrayEquals(new Object[] {}, added.toArray());

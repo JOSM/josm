@@ -20,7 +20,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
 /**
- * This is an asynchronous task for downloading a collection of changests from the OSM server.
+ * This is an asynchronous task for downloading a collection of changesets from the OSM server.
  *
  * The  task only downloads the changeset properties without the changeset content. It
  * updates the global {@link ChangesetCache}.

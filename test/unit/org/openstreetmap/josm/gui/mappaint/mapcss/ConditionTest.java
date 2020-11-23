@@ -67,7 +67,7 @@ class ConditionTest {
     }
 
     /**
-     * Test {@link Op#EQ} and interpetation as key
+     * Test {@link Op#EQ} and interpretation as key
      */
     @Test
     void testKeyValueEqAsKey() {

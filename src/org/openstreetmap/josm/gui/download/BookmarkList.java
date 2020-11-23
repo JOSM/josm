@@ -87,7 +87,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         }
 
         /**
-         * Constructs a new unamed {@code Bookmark} for the given area.
+         * Constructs a new unnamed {@code Bookmark} for the given area.
          * @param area The bookmark area
          */
         public Bookmark(Bounds area) {

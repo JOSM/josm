@@ -62,7 +62,8 @@ public interface DownloadSourceSizingPolicy {
     /**
      * The height of this component is given by a preference entry.
      * <p>
-     * Mind that using a preferred component size is not possible in this case, since the preference entry needs to have a onstant default value.
+     * Mind that using a preferred component size is not possible in this case,
+     * since the preference entry needs to have a constant default value.
      */
     class AdjustableDownloadSizePolicy implements DownloadSourceSizingPolicy {
 

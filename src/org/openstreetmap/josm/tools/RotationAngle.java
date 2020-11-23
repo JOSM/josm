@@ -134,7 +134,7 @@ public interface RotationAngle {
     }
 
     /**
-     * Converts an angle diven in cardinal directions to radians.
+     * Converts an angle given in cardinal directions to radians.
      * The following values are supported: {@code n}, {@code north}, {@code ne}, {@code northeast},
      * {@code e}, {@code east}, {@code se}, {@code southeast}, {@code s}, {@code south},
      * {@code sw}, {@code southwest}, {@code w}, {@code west}, {@code nw}, {@code northwest}.

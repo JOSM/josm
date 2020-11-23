@@ -88,7 +88,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
 
     protected abstract JScrollPane buildTheirElementsTable();
 
-    protected JScrollPane embeddInScrollPane(JTable table) {
+    protected JScrollPane embedInScrollPane(JTable table) {
         JScrollPane pane = new JScrollPane(table);
         if (adjustmentSynchronizer == null) {
             adjustmentSynchronizer = new AdjustmentSynchronizer();

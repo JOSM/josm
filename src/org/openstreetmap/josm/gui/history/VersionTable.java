@@ -330,7 +330,7 @@ public class VersionTable extends JTable implements ChangeListener, Destroyable 
 
         /**
          * Constructs a new {@code AlignedRenderer}.
-         * @param hAlignment Horizontal alignement. One of the following constants defined in SwingConstants:
+         * @param hAlignment Horizontal alignment. One of the following constants defined in SwingConstants:
          *        LEFT, CENTER (the default for image-only labels), RIGHT, LEADING (the default for text-only labels) or TRAILING
          */
         public AlignedRenderer(int hAlignment) {

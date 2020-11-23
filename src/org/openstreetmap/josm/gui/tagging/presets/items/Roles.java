@@ -68,7 +68,7 @@ public class Roles extends TaggingPresetItem {
         }
 
         /**
-         * Sets wether this role is required at least once in the relation.
+         * Sets whether this role is required at least once in the relation.
          * @param str "required" or "optional"
          * @throws SAXException if str is neither "required" or "optional"
          */
@@ -80,7 +80,7 @@ public class Roles extends TaggingPresetItem {
         }
 
         /**
-         * Sets wether the role name is a regular expression.
+         * Sets whether the role name is a regular expression.
          * @param str "true" or "false"
          * @throws SAXException if str is neither "true" or "false"
          */

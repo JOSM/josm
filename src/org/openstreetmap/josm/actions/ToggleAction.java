@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * Abtract class for Toggle Actions.
+ * Abstract class for Toggle Actions.
  * @since 6220
  */
 public abstract class ToggleAction extends JosmAction {
@@ -115,11 +115,12 @@ public abstract class ToggleAction extends JosmAction {
     }
 
     /**
-     * Toggles the selcted action state, if needed according to the ActionEvent that trigerred the action.
-     * This method will do nothing if the action event comes from a Swing component supporting the SELECTED_KEY property because
-     * the component already set the selected state.
-     * This method needs to be called especially if the action is associated with a keyboard shortcut to ensure correct selected state.
-     * @param e ActionEvent that trigerred the action
+     * Toggles the selected action state, if needed according to the ActionEvent that triggered the action.
+     * This method will do nothing if the action event comes from a Swing component
+     * supporting the SELECTED_KEY property because the component already set the selected state.
+     * This method needs to be called especially if the action is associated with a keyboard
+     * shortcut to ensure correct selected state.
+     * @param e ActionEvent that triggered the action
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/javax/swing/Action.html">Interface Action</a>
      */
     protected final void toggleSelectedState(ActionEvent e) {

@@ -88,7 +88,7 @@ class JavaSoundPlayer implements SoundPlayer {
                     long skippedBytes = audioInputStream.skip(bytesToSkip);
                     bytesToSkip -= skippedBytes;
                     if (skippedBytes == 0) {
-                        // Avoid inifinite loop
+                        // Avoid infinite loop
                         Logging.warn("Unable to skip bytes from audio input stream");
                         bytesToSkip = 0;
                     }

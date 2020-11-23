@@ -144,7 +144,7 @@ public final class PrimitiveTransferData implements Serializable {
     }
 
     /**
-     * Tests wheter this set contains any primitives that have invalid data.
+     * Tests whether this set contains any primitives that have invalid data.
      * @return <code>true</code> if invalid data is contained in this set.
      */
     public boolean hasIncompleteData() {

@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * This class allows to add DatasetListener to currently active dataset. If active
  * layer is changed, listeners are automatically registered at new active dataset
- * (it's no longer necessary to register for layer events and reregister every time
+ * (it's no longer necessary to register for layer events and re-register every time
  * new layer is selected)
  *
  * Events in EDT are supported, see {@link #addDatasetListener(DataSetListener, FireMode)}

@@ -238,8 +238,8 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
 
     void writeLatLon(LatLon ll) {
         if (ll != null) {
-            out.print(" lat='"+LatLon.cDdHighPecisionFormatter.format(ll.lat())+
-                     "' lon='"+LatLon.cDdHighPecisionFormatter.format(ll.lon())+'\'');
+            out.print(" lat='"+LatLon.cDdHighPrecisionFormatter.format(ll.lat())+
+                     "' lon='"+LatLon.cDdHighPrecisionFormatter.format(ll.lon())+'\'');
         }
     }
 

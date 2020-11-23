@@ -200,7 +200,7 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
     /**
      * Replies the OSM id of this primitive.
      * By default, returns the same value as {@link #getId}.
-     * Can be overidden by primitive implementations handling an internal id different from the OSM one.
+     * Can be overridden by primitive implementations handling an internal id different from the OSM one.
      *
      * @return the OSM id of this primitive.
      * @since 13924

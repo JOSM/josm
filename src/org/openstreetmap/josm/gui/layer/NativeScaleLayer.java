@@ -191,7 +191,7 @@ public interface NativeScaleLayer {
         /**
          * Get new scale for zoom in/out with a ratio at a number of times.
          * Used by mousewheel zoom where wheel can step more than one between events.
-         * @param scale previois scale
+         * @param scale previous scale
          * @param ratio user defined zoom ratio
          * @param times number of times to zoom
          * @return new {@link Scale} object from {@link ScaleList} or outside

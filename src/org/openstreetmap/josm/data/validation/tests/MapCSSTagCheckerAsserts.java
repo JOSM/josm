@@ -145,7 +145,7 @@ final class MapCSSTagCheckerAsserts {
     /**
      * Returns the set of tagchecks on which this check depends on.
      * @param check the tagcheck
-     * @param schecks the collection of tagcheks to search in
+     * @param schecks the collection of tagchecks to search in
      * @return the set of tagchecks on which this check depends on
      * @since 7881
      */

@@ -10,7 +10,7 @@ package org.openstreetmap.josm.gui;
 public interface MapFrameListener {
 
     /**
-     * Called after Main.mapFrame is initalized. (After the first data is loaded).
+     * Called after Main.mapFrame is initialized. (After the first data is loaded).
      * You can use this callback to tweak the newFrame to your needs, as example install
      * an alternative Painter.
      * @param oldFrame The old MapFrame

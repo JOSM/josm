@@ -146,7 +146,7 @@ public class ElemStyles implements PreferenceChangedListener {
      * Uses the cache, if possible, and saves the results to the cache.
      * @param osm OSM primitive
      * @param scale scale
-     * @param nc navigatable component
+     * @param nc navigable component
      * @return pair containing style list and range
      * @since 13810 (signature)
      */
@@ -238,7 +238,7 @@ public class ElemStyles implements PreferenceChangedListener {
      *
      * @param osm OSM primitive
      * @param scale scale
-     * @param nc navigatable component
+     * @param nc navigable component
      * @return pair containing style list and range
      */
     private Pair<StyleElementList, Range> getImpl(IPrimitive osm, double scale, NavigatableComponent nc) {

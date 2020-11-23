@@ -93,7 +93,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
      * Possible Overpass API output format, with the {@code [out:<directive>]} statement.
      * @since 11916
      */
-    public enum OverpassOutpoutFormat {
+    public enum OverpassOutputFormat {
         /** Default output format: plain OSM XML */
         OSM_XML("xml"),
         /** OSM JSON format (not GeoJson) */
@@ -109,7 +109,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
         private final String directive;
 
-        OverpassOutpoutFormat(String directive) {
+        OverpassOutputFormat(String directive) {
             this.directive = directive;
         }
 
@@ -122,13 +122,13 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         }
 
         /**
-         * Returns the {@code OverpassOutpoutFormat} matching the given directive.
+         * Returns the {@code OverpassOutputFormat} matching the given directive.
          * @param directive directive used in {@code [out:<directive>]} statement
-         * @return {@code OverpassOutpoutFormat} matching the given directive
+         * @return {@code OverpassOutputFormat} matching the given directive
          * @throws IllegalArgumentException in case of invalid directive
          */
-        static OverpassOutpoutFormat from(String directive) {
-            for (OverpassOutpoutFormat oof : values()) {
+        static OverpassOutputFormat from(String directive) {
+            for (OverpassOutputFormat oof : values()) {
                 if (oof.directive.equals(directive)) {
                     return oof;
                 }
@@ -139,7 +139,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
     static final Pattern OUTPUT_FORMAT_STATEMENT = Pattern.compile(".*\\[out:([a-z]{3,})\\].*", Pattern.DOTALL);
 
-    static final Map<OverpassOutpoutFormat, Class<? extends AbstractReader>> outputFormatReaders = new ConcurrentHashMap<>();
+    static final Map<OverpassOutputFormat, Class<? extends AbstractReader>> outputFormatReaders = new ConcurrentHashMap<>();
 
     final String overpassServer;
     final String overpassQuery;
@@ -164,14 +164,14 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
      * @param readerClass OSM reader class
      * @return the previous value associated with {@code format}, or {@code null} if there was no mapping
      */
-    public static final Class<? extends AbstractReader> registerOverpassOutpoutFormatReader(
-            OverpassOutpoutFormat format, Class<? extends AbstractReader> readerClass) {
+    public static final Class<? extends AbstractReader> registerOverpassOutputFormatReader(
+            OverpassOutputFormat format, Class<? extends AbstractReader> readerClass) {
         return outputFormatReaders.put(Objects.requireNonNull(format), Objects.requireNonNull(readerClass));
     }
 
     static {
-        registerOverpassOutpoutFormatReader(OverpassOutpoutFormat.OSM_XML, OverpassOsmReader.class);
-        registerOverpassOutpoutFormatReader(OverpassOutpoutFormat.OSM_JSON, OverpassOsmJsonReader.class);
+        registerOverpassOutputFormatReader(OverpassOutputFormat.OSM_XML, OverpassOsmReader.class);
+        registerOverpassOutputFormatReader(OverpassOutputFormat.OSM_JSON, OverpassOsmJsonReader.class);
     }
 
     @Override
@@ -368,7 +368,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         AbstractReader reader = null;
         Matcher m = OUTPUT_FORMAT_STATEMENT.matcher(overpassQuery);
         if (m.matches()) {
-            Class<? extends AbstractReader> readerClass = outputFormatReaders.get(OverpassOutpoutFormat.from(m.group(1)));
+            Class<? extends AbstractReader> readerClass = outputFormatReaders.get(OverpassOutputFormat.from(m.group(1)));
             if (readerClass != null) {
                 try {
                     reader = readerClass.getDeclaredConstructor().newInstance();

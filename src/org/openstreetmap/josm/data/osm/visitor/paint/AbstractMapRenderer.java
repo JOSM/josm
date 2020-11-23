@@ -52,9 +52,9 @@ public abstract class AbstractMapRenderer implements Rendering {
     /** Color Preference for nodes */
     protected Color nodeColor;
 
-    /** Color Preference for hightlighted objects */
+    /** Color Preference for highlighted objects */
     protected Color highlightColor;
-    /** Preference: size of virtual nodes (0 displayes display) */
+    /** Preference: size of virtual nodes (0 displays display) */
     protected int virtualNodeSize;
     /** Preference: minimum space (displayed way length) to display virtual nodes */
     protected int virtualNodeSpace;

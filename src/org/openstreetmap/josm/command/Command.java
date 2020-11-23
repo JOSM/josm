@@ -239,7 +239,7 @@ public abstract class Command implements PseudoCommand {
     /**
      * Ensures that all primitives that are participating in this command belong to the affected data set.
      *
-     * Commands may use this in their update methods to check the consitency of the primitives they operate on.
+     * Commands may use this in their update methods to check the consistency of the primitives they operate on.
      * @throws AssertionError if no {@link DataSet} is set or if any primitive does not belong to that dataset.
      */
     protected void ensurePrimitivesAreInDataset() {

@@ -50,8 +50,8 @@ public class NoteWriter extends XmlWriter {
             LatLon ll = note.getLatLon();
             out.print("  <note ");
             out.print("id=\"" + note.getId() + "\" ");
-            out.print("lat=\"" + LatLon.cDdHighPecisionFormatter.format(ll.lat()) + "\" ");
-            out.print("lon=\"" + LatLon.cDdHighPecisionFormatter.format(ll.lon()) + "\" ");
+            out.print("lat=\"" + LatLon.cDdHighPrecisionFormatter.format(ll.lat()) + "\" ");
+            out.print("lon=\"" + LatLon.cDdHighPrecisionFormatter.format(ll.lon()) + "\" ");
             out.print("created_at=\"" + DateUtils.fromDate(note.getCreatedAt()) + "\" ");
             if (note.getClosedAt() != null) {
                 out.print("closed_at=\"" + DateUtils.fromDate(note.getClosedAt()) + "\" ");

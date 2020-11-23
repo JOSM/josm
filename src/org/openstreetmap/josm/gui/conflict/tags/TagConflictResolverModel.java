@@ -201,7 +201,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
     }
 
     /**
-     * Gets the number of reamining conflicts.
+     * Gets the number of remaining conflicts.
      * @return The number
      */
     public int getNumConflicts() {

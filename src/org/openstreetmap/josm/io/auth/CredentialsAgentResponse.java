@@ -59,8 +59,8 @@ public class CredentialsAgentResponse {
     }
 
     /**
-     * Sets the cancelation status (authentication request canceled by user)
-     * @param canceled the cancelation status (authentication request canceled by user)
+     * Sets the cancellation status (authentication request canceled by user)
+     * @param canceled the cancellation status (authentication request canceled by user)
      */
     public void setCanceled(boolean canceled) {
         this.canceled = canceled;

@@ -189,7 +189,8 @@ public class LayerManager {
     }
 
     /**
-     * This is the list of layers we manage. The list is unmodifyable. That way, read access does not need to be synchronized.
+     * This is the list of layers we manage. The list is unmodifiable. That way, read access does
+     * not need to be synchronized.
      *
      * It is only changed in the EDT.
      * @see LayerManager#updateLayers(Consumer)

@@ -57,7 +57,7 @@ public class LineElement extends StyleElement {
      */
     public float realWidth;
     /**
-     * A flag indicating if the direction arrwos should be painted. Should not be accessed directly
+     * A flag indicating if the direction arrows should be painted. Should not be accessed directly
      */
     public boolean wayDirectionArrows;
 

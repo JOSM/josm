@@ -48,7 +48,7 @@ public class Tokenizer {
 
     public enum TokenType { CONDITION_START, VARIABLE_START, CONTEXT_SWITCH_START, END, PIPE, APOSTROPHE, TEXT, EOF }
 
-    private final Set<Character> specialCharaters = new HashSet<>(Arrays.asList('$', '?', '{', '}', '|', '\'', '!'));
+    private final Set<Character> specialCharacters = new HashSet<>(Arrays.asList('$', '?', '{', '}', '|', '\'', '!'));
 
     private final String template;
 
@@ -113,7 +113,7 @@ public class Tokenizer {
             getChar();
             return new Token(TokenType.APOSTROPHE, position);
         default:
-            while (c != -1 && !specialCharaters.contains((char) c)) {
+            while (c != -1 && !specialCharacters.contains((char) c)) {
                 if (c == '\\') {
                     getChar();
                     if (c == 'n') {

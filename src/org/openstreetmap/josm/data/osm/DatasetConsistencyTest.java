@@ -68,7 +68,7 @@ public class DatasetConsistencyTest {
     }
 
     /**
-     * Checks for womplete ways with incomplete nodes.
+     * Checks for complete ways with incomplete nodes.
      */
     public void checkCompleteWaysWithIncompleteNodes() {
         final Stopwatch stopwatch = Stopwatch.createStarted();

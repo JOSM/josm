@@ -37,7 +37,7 @@ public abstract class AbstractDatasetChangedEvent {
          */
         RELATION_MEMBERS_CHANGED,
         /**
-         * The tags of a primitve have changed
+         * The tags of a primitive have changed
          */
         TAGS_CHANGED,
         /**

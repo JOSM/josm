@@ -36,7 +36,7 @@ public class ScaleCommand extends TransformNodesCommand {
      * Computation of pivot point is done by the same rules that are used in
      * the "align nodes in circle" action.
      * @param objects objects to fetch nodes from
-     * @param currentEN cuurent eats/north
+     * @param currentEN current east/north
      */
     public ScaleCommand(Collection<? extends OsmPrimitive> objects, EastNorth currentEN) {
         super(objects);

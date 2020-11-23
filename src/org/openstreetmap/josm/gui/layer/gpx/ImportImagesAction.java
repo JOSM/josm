@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * An aciton that imports images along a GPX path
+ * An action that imports images along a GPX path
  */
 public class ImportImagesAction extends AbstractAction {
     private final transient GpxLayer layer;

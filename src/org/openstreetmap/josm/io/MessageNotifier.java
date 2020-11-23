@@ -89,7 +89,7 @@ public final class MessageNotifier {
                     }
                 }
             } catch (OsmApiException e) {
-                // We want to explicitely display message to user in some cases like when he has been blocked (#17722)
+                // We want to explicitly display message to user in some cases like when he has been blocked (#17722)
                 ExceptionDialogUtil.explainOsmTransferException(e);
             } catch (OsmTransferException e) {
                 // But not message for random network or API issues (like in #17929)

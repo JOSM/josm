@@ -143,7 +143,7 @@ class ChangesetCacheTest {
     }
 
     @Test
-    void testFireingEventsAddAChangeset() {
+    void testFiringEventsAddAChangeset() {
         TestListener listener = new TestListener() {
             @Override
             void test() {
@@ -162,7 +162,7 @@ class ChangesetCacheTest {
     }
 
     @Test
-    void testFireingEventsUpdateChangeset() {
+    void testFiringEventsUpdateChangeset() {
         // Waiter listener to ensure the second listener does not receive the first event
         TestListener waiter = new TestListener() {
             @Override
@@ -194,7 +194,7 @@ class ChangesetCacheTest {
     }
 
     @Test
-    void testFireingEventsRemoveChangeset() {
+    void testFiringEventsRemoveChangeset() {
         // Waiter listener to ensure the second listener does not receive the first event
         TestListener waiter = new TestListener() {
             @Override

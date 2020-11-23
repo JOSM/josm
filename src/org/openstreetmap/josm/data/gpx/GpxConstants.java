@@ -135,7 +135,7 @@ public interface GpxConstants {
     String PT_ELE = "ele";
 
     /** Creation/modification timestamp for the point.
-     *  Date and time in are in Univeral Coordinated Time (UTC), not local time!
+     *  Date and time in are in Coordinated Universal Time (UTC), not local time!
      *  Conforms to ISO 8601 specification for date/time representation.
      *  Fractional seconds are allowed for millisecond timing in tracklogs. */
     String PT_TIME = "time";

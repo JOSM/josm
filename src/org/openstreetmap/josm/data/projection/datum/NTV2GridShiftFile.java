@@ -47,7 +47,7 @@ import org.openstreetmap.josm.tools.Logging;
  * (accuracy data is optional) into heap based Java arrays. This is the
  * highest performance option, and is useful for large volume transformations.
  * Non-file data sources (eg using an SQL Blob) are also supported through
- * InputStream. The RandonAccessFile option has a much smaller memory
+ * InputStream. The RandomAccessFile option has a much smaller memory
  * footprint as only the Sub Grid headers are stored in memory, but
  * transformation is slower because the file must be read a number of
  * times for each transformation.

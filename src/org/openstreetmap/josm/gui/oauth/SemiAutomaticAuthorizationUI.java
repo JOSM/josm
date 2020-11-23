@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
- * This is the UI for running a semic-automic authorisation procedure.
+ * This is the UI for running a semi-automatic authorisation procedure.
  *
  * In contrast to the fully-automatic procedure the user is dispatched to an
  * external browser for login and authorisation.

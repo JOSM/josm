@@ -127,7 +127,7 @@ public class History {
     }
 
     /**
-     * Returns a new partial copy of this history, betwwen the given version numbers
+     * Returns a new partial copy of this history, between the given version numbers
      * @param fromVersion the starting version number
      * @param untilVersion the ending version number
      * @return a new partial copy of this history, between the given version numbers

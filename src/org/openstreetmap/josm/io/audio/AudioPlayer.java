@@ -170,7 +170,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
      * Plays a WAV audio file from a specified position at variable speed.
      * @param url The resource to play, which must be a WAV file or stream
      * @param seconds The number of seconds into the audio to start playing
-     * @param speed Rate at which audio playes (1.0 = real time, &gt; 1 is faster)
+     * @param speed Rate at which audio plays (1.0 = real time, &gt; 1 is faster)
      * @throws InterruptedException thread interrupted
      * @throws IOException audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
@@ -183,7 +183,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
     /**
      * Pauses the currently playing audio stream. Does nothing if nothing playing.
      * @throws InterruptedException thread interrupted
-     * @throws IOException audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws IOException audio fault exception, e.g. can't open stream, unhandleable audio format
      */
     public static void pause() throws InterruptedException, IOException {
         AudioPlayer instance = AudioPlayer.getInstance();

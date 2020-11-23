@@ -79,7 +79,7 @@ import org.openstreetmap.josm.tools.Utils;
  *       has {@code "rectified_grid_angle"} parameter.</li>
  *
  *   <li>{@code Hotine_Oblique_Mercator} (EPSG code 9812)<br>
- *       grid coordinates begin at the interseciton of the central line and aposphere equator,
+ *       grid coordinates begin at the intersection of the central line and aposphere equator,
  *       has {@code "rectified_grid_angle"} parameter.</li>
  *   <li>{@code Hotine_Oblique_Mercator_Azimuth_Natural_Origin} (ESRI)<br>
  *       grid coordinates begin at the interseciton of the central line and aposphere equator.</li>

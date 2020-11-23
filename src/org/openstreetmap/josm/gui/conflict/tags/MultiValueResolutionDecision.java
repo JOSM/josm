@@ -120,7 +120,7 @@ public class MultiValueResolutionDecision {
     /**
      * sets a new value for this
      *
-     * @param value the new vlaue
+     * @param value the new value
      */
     public void setNew(String value) {
         this.value = Optional.ofNullable(value).orElse("");

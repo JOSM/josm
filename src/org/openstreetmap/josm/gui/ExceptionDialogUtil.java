@@ -29,7 +29,6 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
  * This utility class provides static methods which explain various exceptions to the user.
- *
  */
 public final class ExceptionDialogUtil {
 
@@ -368,7 +367,7 @@ public final class ExceptionDialogUtil {
      *
      * @param e the exception
      */
-    public static void explainNestedUnkonwnHostException(OsmTransferException e) {
+    public static void explainNestedUnknownHostException(OsmTransferException e) {
         showErrorDialog(
                 ExceptionUtil.explainNestedUnknownHostException(e),
                 tr("Unknown host"),
@@ -391,7 +390,7 @@ public final class ExceptionDialogUtil {
             return;
         }
         if (ExceptionUtil.getNestedException(e, UnknownHostException.class) != null) {
-            explainNestedUnkonwnHostException(e);
+            explainNestedUnknownHostException(e);
             return;
         }
         if (ExceptionUtil.getNestedException(e, IOException.class) != null) {
@@ -423,40 +422,41 @@ public final class ExceptionDialogUtil {
 
         if (e instanceof OsmApiException) {
             OsmApiException oae = (OsmApiException) e;
-            switch(oae.getResponseCode()) {
-            case HttpURLConnection.HTTP_PRECON_FAILED:
-                explainPreconditionFailed(oae);
-                return;
-            case HttpURLConnection.HTTP_GONE:
-                explainGoneForUnknownPrimitive(oae);
-                return;
-            case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                explainInternalServerError(oae);
-                return;
-            case HttpURLConnection.HTTP_BAD_REQUEST:
-                explainBadRequest(oae);
-                return;
-            case HttpURLConnection.HTTP_NOT_FOUND:
-                explainNotFound(oae);
-                return;
-            case HttpURLConnection.HTTP_CONFLICT:
-                explainConflict(oae);
-                return;
-            case HttpURLConnection.HTTP_UNAUTHORIZED:
-                explainAuthenticationFailed(oae);
-                return;
-            case HttpURLConnection.HTTP_FORBIDDEN:
-                explainAuthorizationFailed(oae);
-                return;
-            case HttpURLConnection.HTTP_CLIENT_TIMEOUT:
-                explainClientTimeout(oae);
-                return;
-            case 509: case 429:
-                explainBandwidthLimitExceeded(oae);
-                return;
-            default:
-                explainGenericHttpException(oae);
-                return;
+            switch (oae.getResponseCode()) {
+                case HttpURLConnection.HTTP_PRECON_FAILED:
+                    explainPreconditionFailed(oae);
+                    return;
+                case HttpURLConnection.HTTP_GONE:
+                    explainGoneForUnknownPrimitive(oae);
+                    return;
+                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                    explainInternalServerError(oae);
+                    return;
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    explainBadRequest(oae);
+                    return;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                    explainNotFound(oae);
+                    return;
+                case HttpURLConnection.HTTP_CONFLICT:
+                    explainConflict(oae);
+                    return;
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    explainAuthenticationFailed(oae);
+                    return;
+                case HttpURLConnection.HTTP_FORBIDDEN:
+                    explainAuthorizationFailed(oae);
+                    return;
+                case HttpURLConnection.HTTP_CLIENT_TIMEOUT:
+                    explainClientTimeout(oae);
+                    return;
+                case 509:
+                case 429:
+                    explainBandwidthLimitExceeded(oae);
+                    return;
+                default:
+                    explainGenericHttpException(oae);
+                    return;
             }
         }
         explainGeneric(e);

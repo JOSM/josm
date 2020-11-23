@@ -35,7 +35,7 @@ public final class StreamUtils {
     }
 
     /**
-     * Creqates a stream iterating the list in reversed order
+     * Creates a stream iterating the list in reversed order
      * @param list the list to iterate over
      * @param <T> the type of elements in the list
      * @return a stream iterating the list in reversed order

@@ -162,9 +162,9 @@ public class PluginPreferencesModel extends ChangeNotifier {
     }
 
     /**
-     * Replies the list of plugin informations to display.
+     * Replies the list of plugin information to display.
      *
-     * @return the list of plugin informations to display
+     * @return the list of plugin information to display
      */
     public List<PluginInformation> getDisplayedPlugins() {
         return displayedPlugins;

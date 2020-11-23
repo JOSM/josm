@@ -24,7 +24,7 @@ public interface Stylable {
     /**
      * Clears the cached style.
      * This should not be called from outside. Fixing the UI to add relevant
-     * get/set functions calling this implicitely is preferred, so we can have
+     * get/set functions calling this implicitly is preferred, so we can have
      * transparent cache handling in the future.
      */
     default void clearCachedStyle() {

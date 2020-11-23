@@ -713,7 +713,7 @@ public final class MapViewState implements Serializable {
 
         /**
          * Gets the real bounds that enclose this rectangle.
-         * This is computed respecting that the borders of this rectangle may not be a straignt line in latlon coordinates.
+         * This is computed respecting that the borders of this rectangle may not be a straight line in latlon coordinates.
          * @return The bounds.
          * @since 10458
          */

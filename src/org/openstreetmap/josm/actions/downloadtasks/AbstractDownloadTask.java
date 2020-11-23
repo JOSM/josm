@@ -118,7 +118,7 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
     /**
      * Determines if the given URL is accepted by {@link #getPatterns}.
      * Can be overridden for more complex checking logic.
-     * @param url URL to donwload
+     * @param url URL to download
      * @return {@code true} if this URL is accepted
      */
     public boolean acceptsUrl(String url) {

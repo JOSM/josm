@@ -34,7 +34,7 @@ public final class RelationEditorHooks {
      * Adds actions to the selection action toolbar
      * @param group The group to add
      */
-    public static void addActionsToSelectio(IRelationEditorActionGroup group) {
+    public static void addActionsToSelection(IRelationEditorActionGroup group) {
         selectionActions.add(group);
     }
 

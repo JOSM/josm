@@ -297,8 +297,8 @@ class ProjectionRefTest {
             InputStream stderr = process.getErrorStream();
             try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin, StandardCharsets.UTF_8))) {
                 String s = String.format("%s %s%n",
-                        LatLon.cDdHighPecisionFormatter.format(ll.lon()),
-                        LatLon.cDdHighPecisionFormatter.format(ll.lat()));
+                        LatLon.cDdHighPrecisionFormatter.format(ll.lon()),
+                        LatLon.cDdHighPrecisionFormatter.format(ll.lat()));
                 if (debug) {
                     System.out.println("\n" + String.join(" ", args) + "\n" + s);
                 }

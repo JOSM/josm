@@ -72,7 +72,7 @@ public abstract class AbstractPasteAction extends JosmAction implements FlavorLi
         // default to paste in center of map (pasted via menu or cursor not in MapView)
         MapView mapView = MainApplication.getMap().mapView;
         EastNorth mPosition = mapView.getCenter();
-        // We previously checked for modifier to know if the action has been trigerred via shortcut or via menu
+        // We previously checked for modifier to know if the action has been triggered via shortcut or via menu
         // But this does not work if the shortcut is changed to a single key (see #9055)
         // Observed behaviour: getActionCommand() returns Action.NAME when triggered via menu, but shortcut text when triggered with it
         if (e != null && !getValue(NAME).equals(e.getActionCommand())) {

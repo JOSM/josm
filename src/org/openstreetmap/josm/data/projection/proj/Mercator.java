@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.Utils;
  * <em>loxodrome</em> lines, i.e. a ship following this line would keep a constant azimuth on its
  * compass.
  * <p>
- * This implementation handles both the 1 and 2 stardard parallel cases.
+ * This implementation handles both the 1 and 2 standard parallel cases.
  * For 1 SP (EPSG code 9804), the line of contact is the equator.
  * For 2 SP (EPSG code 9805) lines of contact are symmetrical
  * about the equator.

@@ -27,7 +27,7 @@ public class Symbol {
      */
     public final Color strokeColor;
     /**
-     * The color to fill the interiour of the shape.
+     * The color to fill the interior of the shape.
      */
     public final Color fillColor;
 
@@ -37,7 +37,7 @@ public class Symbol {
      * @param size The overall size of the symbol, both width and height are the same
      * @param stroke The stroke to use for the outline
      * @param strokeColor The color to draw the stroke with
-     * @param fillColor The color to fill the interiour of the shape.
+     * @param fillColor The color to fill the interior of the shape.
      */
     public Symbol(SymbolShape symbol, int size, Stroke stroke, Color strokeColor, Color fillColor) {
         if (stroke != null && strokeColor == null)

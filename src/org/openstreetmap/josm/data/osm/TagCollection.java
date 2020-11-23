@@ -161,7 +161,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
     }
 
     /**
-     * Creates a clone of the tag collection <code>other</code>. Creats an empty
+     * Creates a clone of the tag collection <code>other</code>. Creates an empty
      * tag collection if <code>other</code> is null.
      *
      * @param other the other collection
@@ -735,7 +735,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
     }
 
     /**
-     * Get a stram for the given key.
+     * Get a stream for the given key.
      * @param key The key
      * @return The stream. An empty stream if key is <code>null</code>
      */

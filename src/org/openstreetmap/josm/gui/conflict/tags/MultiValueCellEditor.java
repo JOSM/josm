@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.Logging;
  * to remove the tag.
  *
  * The editor responds intercepts some keys and interprets them as navigation keys. It
- * forwards navigation events to {@link NavigationListener}s registred with this editor.
+ * forwards navigation events to {@link NavigationListener}s registered with this editor.
  * You should register the parent table using this editor as {@link NavigationListener}.
  *
  * {@link KeyEvent#VK_ENTER} and {@link KeyEvent#VK_TAB} trigger a {@link NavigationListener#gotoNextDecision()}.

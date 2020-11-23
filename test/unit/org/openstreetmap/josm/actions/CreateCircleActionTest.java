@@ -54,7 +54,7 @@ final class CreateCircleActionTest {
         dataSet.addPrimitive(n2);
         dataSet.addPrimitive(n3);
 
-        Way w = new Way(); // Way is Clockwize
+        Way w = new Way(); // Way is clockwise
         w.setNodes(Arrays.asList(new Node[] {n1, n2, n3}));
         dataSet.addPrimitive(w);
 

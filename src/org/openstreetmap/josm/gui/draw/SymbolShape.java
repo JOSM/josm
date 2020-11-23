@@ -24,7 +24,7 @@ public enum SymbolShape {
      */
     CIRCLE("circle", 1, 0),
     /**
-     * A triangle with sides of equal lengh
+     * A triangle with sides of equal length
      */
     TRIANGLE("triangle", 3, Math.PI / 2),
     /**

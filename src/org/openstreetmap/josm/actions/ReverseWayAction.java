@@ -66,7 +66,7 @@ public final class ReverseWayAction extends JosmAction {
 
         /**
          * Gets the commands that will be required to do a full way reversal including changing the tags
-         * @return The comamnds
+         * @return The commands
          */
         public Collection<Command> getCommands() {
             List<Command> c = new ArrayList<>();

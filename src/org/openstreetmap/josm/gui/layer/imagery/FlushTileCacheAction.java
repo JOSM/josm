@@ -38,12 +38,12 @@ public class FlushTileCacheAction extends AbstractAction {
 
             @Override
             protected void finish() {
-                // empty - flush is instaneus
+                // empty - flush is instantaneous
             }
 
             @Override
             protected void cancel() {
-                // empty - flush is instaneus
+                // empty - flush is instantaneous
             }
         }.run();
     }

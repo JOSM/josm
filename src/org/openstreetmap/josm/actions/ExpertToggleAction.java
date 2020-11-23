@@ -52,7 +52,7 @@ public class ExpertToggleAction extends ToggleAction {
     }
 
     /**
-     * Register a expert mode change listener, and optionnally fires it.
+     * Register a expert mode change listener, and optionally fires it.
      * @param listener the listener. Ignored if null.
      * @param fireWhenAdding if true, the listener will be fired immediately after added
      */

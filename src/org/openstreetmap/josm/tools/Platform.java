@@ -10,7 +10,7 @@ import java.util.Locale;
 public enum Platform {
 
     /**
-     * Unik-like platform. This is the default when the platform cannot be identified.
+     * Unix-like platform. This is the default when the platform cannot be identified.
      */
     UNIXOID {
         @Override

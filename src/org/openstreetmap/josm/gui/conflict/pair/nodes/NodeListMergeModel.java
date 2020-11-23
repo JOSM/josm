@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.conflict.pair.AbstractListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 
 /**
- * The model for merging two lists of way nodess
+ * The model for merging two lists of way nodes
  * @since 1622
  */
 public class NodeListMergeModel extends AbstractListMergeModel<Node, WayNodesConflictResolverCommand> {

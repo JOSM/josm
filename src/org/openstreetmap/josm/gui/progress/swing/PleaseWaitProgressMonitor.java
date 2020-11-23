@@ -215,7 +215,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     };
 
     /**
-     * See if this task is canceleable
+     * See if this task is cancelable
      * @return <code>true</code> if it can be canceled
      */
     public final boolean isCancelable() {

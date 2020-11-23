@@ -213,7 +213,7 @@ public final class KeyboardUtils {
                 result.add(';');
                 break;
             case "hu":
-                // Hungary, https://en.wikipedia.org/wiki/QWERTZ#Hungary
+                // Hungarian, https://en.wikipedia.org/wiki/QWERTZ#Hungary
                 result.add('0');
                 break;
             case "bs": // Bosnian

@@ -54,20 +54,20 @@ public class StyleAttribute implements Serializable
 
     static final Pattern patternUrl = Pattern.compile("\\s*url\\((.*)\\)\\s*");
     static final Matcher matchFpNumUnits = Pattern.compile("\\s*([-+]?((\\d*\\.\\d+)|(\\d+))([-+]?[eE]\\d+)?)\\s*(px|cm|mm|in|pc|pt|em|ex)\\s*").matcher("");
-    
+
     String name;
     String stringValue;
 
-    boolean colorCompatable = false;
-    boolean urlCompatable = false;
+    boolean colorCompatible = false;
+    boolean urlCompatible = false;
 
     /** Creates a new instance of StyleAttribute */
     public StyleAttribute()
     {
         this(null, null);
     }
-    
-    public StyleAttribute(String name) 
+
+    public StyleAttribute(String name)
     {
         this(name, null);
     }
@@ -238,9 +238,9 @@ public class StyleAttribute implements Serializable
     {
         return getURIValue(null);
     }
-    
+
     /**
-     * Parse this sytle attribute as a URL and return it in URI form resolved
+     * Parse this style attribute as a URL and return it in URI form resolved
      * against the passed base.
      *
      * @param base - URI to resolve against.  If null, will return value without

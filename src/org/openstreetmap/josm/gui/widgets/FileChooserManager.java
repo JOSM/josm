@@ -330,18 +330,22 @@ public class FileChooserManager {
 
     /**
      * Opens the {@code AbstractFileChooser} that has been created.
-     * @return the {@code AbstractFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
+     * @return the {@code AbstractFileChooser} if the user effectively chooses a file or directory.
+     * {@code null} if the user cancelled the dialog.
      */
     public final AbstractFileChooser openFileChooser() {
         return openFileChooser(null);
     }
 
     /**
-     * Opens the {@code AbstractFileChooser} that has been created and waits for the user to choose a file/directory, or cancel the dialog.<br>
-     * When the user choses a file or directory, the {@code lastDirProperty} is updated to the chosen directory path.
+     * Opens the {@code AbstractFileChooser} that has been created and waits for the user to choose a file/directory,
+     * or cancel the dialog.<br>
+     * When the user chooses a file or directory, the {@code lastDirProperty} is updated to the chosen directory path.
      *
-     * @param parent The Component used as the parent of the AbstractFileChooser. If null, uses {@code MainApplication.getMainFrame()}.
-     * @return the {@code AbstractFileChooser} if the user effectively choses a file or directory. {@code null} if the user cancelled the dialog.
+     * @param parent The Component used as the parent of the AbstractFileChooser. If null,
+     *               uses {@code MainApplication.getMainFrame()}.
+     * @return the {@code AbstractFileChooser} if the user effectively chooses
+     * a file or directory.{@code null} if the user cancelled the dialog.
      */
     public AbstractFileChooser openFileChooser(Component parent) {
         if (fc == null)

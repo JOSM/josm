@@ -70,7 +70,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * It either displays
  * <ul>
  *   <li>the list of changesets the currently selected objects are assigned to</li>
- *   <li>the list of changesets objects in the current data layer are assigend to</li>
+ *   <li>the list of changesets objects in the current data layer are assigned to</li>
  * </ul>
  *
  * The dialog offers actions to download and to close changesets. It can also launch an external

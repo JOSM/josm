@@ -59,7 +59,7 @@ public class MergeSourceBuildingVisitor implements OsmPrimitiveVisitor {
     }
 
     /**
-     * Remebers a node in the "hull"
+     * Remembers a node in the "hull"
      *
      * @param n the node
      */

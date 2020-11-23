@@ -59,7 +59,7 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
                     conflict.getMy().getId(),
                     (int) Math.max(myVersion, theirVersion)
             );
-            // update visiblity state
+            // update visibility state
             if (theirVersion >= myVersion) {
                 conflict.getMy().setVisible(conflict.getTheir().isVisible());
             }

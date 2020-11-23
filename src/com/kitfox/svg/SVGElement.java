@@ -87,7 +87,7 @@ abstract public class SVGElement implements Serializable
      */
     protected String cssClass = null;
     /**
-     * Styles defined for this elemnt via the <b>style</b> attribute.
+     * Styles defined for this element via the <b>style</b> attribute.
      */
     private Map<String, String> inlineStyles = Collections.emptyMap();
     /**
@@ -114,7 +114,7 @@ abstract public class SVGElement implements Serializable
     /**
      * This element may override the URI we resolve against with an xml:base
      * attribute. If so, a copy is placed here. Otherwise, we defer to our
-     * parent for the reolution base
+     * parent for the resolution base
      */
     protected URI xmlBase = null;
     /**

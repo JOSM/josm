@@ -181,7 +181,7 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
     }
 
     /**
-     * Sets a listener to be invoked on ssingle click
+     * Sets a listener to be invoked on single click
      * @param clickListener The click listener
      */
     public void setClickListener(ActionListener clickListener) {

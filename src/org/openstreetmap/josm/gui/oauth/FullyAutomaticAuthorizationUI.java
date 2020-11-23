@@ -83,7 +83,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Builds the panel for entering the username and password
      *
-     * @return constructed panel for the creditentials
+     * @return constructed panel for the credentials
      */
     protected VerticallyScrollablePanel buildUserNamePasswordPanel() {
         VerticallyScrollablePanel pnl = new VerticallyScrollablePanel(new GridBagLayout());

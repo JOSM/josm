@@ -430,7 +430,7 @@ public class TagInfoExtract {
              * Create image file from StyleElement.
              * @param element style element
              * @param type object type
-             * @param nc navigatable component
+             * @param nc navigable component
              *
              * @return the URL
              */

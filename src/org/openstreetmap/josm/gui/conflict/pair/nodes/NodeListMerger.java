@@ -31,7 +31,7 @@ public class NodeListMerger extends AbstractListMerger<Node, WayNodesConflictRes
                 model.getMyTableModel(),
                 model.getMySelectionModel()
         );
-        return embeddInScrollPane(myEntriesTable);
+        return embedInScrollPane(myEntriesTable);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class NodeListMerger extends AbstractListMerger<Node, WayNodesConflictRes
                 model.getMergedTableModel(),
                 model.getMergedSelectionModel()
         );
-        return embeddInScrollPane(mergedEntriesTable);
+        return embedInScrollPane(mergedEntriesTable);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class NodeListMerger extends AbstractListMerger<Node, WayNodesConflictRes
                 model.getTheirTableModel(),
                 model.getTheirSelectionModel()
         );
-        return embeddInScrollPane(theirEntriesTable);
+        return embedInScrollPane(theirEntriesTable);
     }
 
     @Override

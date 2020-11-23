@@ -227,7 +227,7 @@ public class ChangesetCacheManager extends JFrame {
      * Builds the table with actions which can be applied to the currently visible changesets
      * in the changeset table.
      *
-     * @return changset actions panel
+     * @return changeset actions panel
      */
     protected JPanel buildChangesetTableActionPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
@@ -716,7 +716,7 @@ public class ChangesetCacheManager extends JFrame {
     }
 
     /**
-     * Selects the changesets  in <code>changests</code>, provided the
+     * Selects the changesets  in <code>changesets</code>, provided the
      * respective changesets are already present in the local changeset cache.
      *
      * @param changesets the collection of changesets. If {@code null}, the

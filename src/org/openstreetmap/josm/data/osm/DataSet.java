@@ -886,7 +886,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * Can be called before bigger changes on dataset. Events are disabled until {@link #endUpdate()}.
      * {@link DataSetListener#dataChanged(DataChangedEvent event)} event is triggered after end of changes
      * <br>
-     * Typical usecase should look like this:
+     * Typical use case should look like this:
      * <pre>
      * ds.beginUpdate();
      * try {
@@ -905,7 +905,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     /**
      * Must be called after a previous call to {@link #beginUpdate()} to fire change events.
      * <br>
-     * Typical usecase should look like this:
+     * Typical use case should look like this:
      * <pre>
      * ds.beginUpdate();
      * try {
@@ -1148,7 +1148,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                     DataSourceRemovedEvent clearEvent = new DataSourceRemovedEvent(
                             this, new LinkedHashSet<>(from.dataSources), from.dataSources.stream());
                     if (from.dataSources.stream().filter(dataSource -> !dataSources.contains(dataSource))
-                            .map(dataSources::add).filter(Boolean.TRUE::equals).count() > 0) {
+                            .anyMatch(dataSources::add)) {
                         cachedDataSourceArea = null;
                         cachedDataSourceBounds = null;
                     }
@@ -1183,7 +1183,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     }
 
     /* --------------------------------------------------------------------------------- */
-    /* interface ProjectionChangeListner                                                 */
+    /* interface ProjectionChangeListener                                                */
     /* --------------------------------------------------------------------------------- */
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {

@@ -104,7 +104,7 @@ public class AutoCompletionList extends AbstractTableModel {
     }
 
     /**
-     * adds a colleciton of {@link AutoCompletionItem} to this list. An item is only
+     * adds a collection of {@link AutoCompletionItem} to this list. An item is only
      * added it is not null and if it does not exist in the list yet.
      *
      * @param collection auto completion collection; must not be null

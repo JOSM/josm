@@ -123,7 +123,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      */
     private int initialMoveDelay = 200;
     /**
-     * The minimal shift of mouse (in pixels) befire something counts as move
+     * The minimal shift of mouse (in pixels) before something counts as move
      */
     private int initialMoveThreshold = 1;
 

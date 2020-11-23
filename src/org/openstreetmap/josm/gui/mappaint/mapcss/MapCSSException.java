@@ -13,10 +13,10 @@ public class MapCSSException extends RuntimeException {
 
     /**
      * Constructs a new {@code MapCSSException} with an explicit error message.
-     * @param specialmessage error message
+     * @param specialMessage error message
      */
-    public MapCSSException(String specialmessage) {
-        super(specialmessage);
+    public MapCSSException(String specialMessage) {
+        super(specialMessage);
     }
 
     /**

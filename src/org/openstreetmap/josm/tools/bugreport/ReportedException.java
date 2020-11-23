@@ -41,7 +41,7 @@ public class ReportedException extends RuntimeException {
     private static final long serialVersionUID = 737333873766201033L;
 
     /**
-     * We capture all stack traces on exception creation. This allows us to trace synchonization problems better.
+     * We capture all stack traces on exception creation. This allows us to trace synchronization problems better.
      * We cannot be really sure what happened but we at least see which threads
      */
     private final transient Map<Thread, StackTraceElement[]> allStackTraces = new HashMap<>();
@@ -61,7 +61,7 @@ public class ReportedException extends RuntimeException {
     /**
      * Constructs a new {@code ReportedException}.
      * @param exception the cause (which is saved for later retrieval by the {@link #getCause()} method)
-     * @param caughtOnThread thread where the exception was caugth
+     * @param caughtOnThread thread where the exception was caught
      * @since 14380
      */
     public ReportedException(Throwable exception, Thread caughtOnThread) {
@@ -276,7 +276,7 @@ public class ReportedException extends RuntimeException {
     }
 
     /**
-     * Check if this is caused by an out of memory situaition
+     * Check if this is caused by an out of memory situation
      * @return <code>true</code> if it is.
      * @since 10819
      */

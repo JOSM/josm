@@ -6,7 +6,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 
 /**
- * The conflict resolver receives the result of a {@link ConflictDialog}. It should then apply the resulution the user selected.
+ * The conflict resolver receives the result of a {@link ConflictDialog}.
+ * It should then apply the resolution the user selected.
  */
 public interface IConflictResolver {
 

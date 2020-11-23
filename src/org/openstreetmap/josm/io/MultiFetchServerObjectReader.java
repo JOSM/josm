@@ -408,7 +408,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
     }
 
     /**
-     * Workaround for difference in Oerpass API.
+     * Workaround for difference in Overpass API.
      * As of now (version 7.55) Overpass api doesn't return invisible objects.
      * Check if we have objects which do not appear in the dataset and fetch them from OSM instead.
      * @param ds the dataset

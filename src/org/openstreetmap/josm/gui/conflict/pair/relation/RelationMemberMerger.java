@@ -31,7 +31,7 @@ public class RelationMemberMerger extends AbstractListMerger<RelationMember, Rel
                 model.getMyTableModel(),
                 model.getMySelectionModel()
         );
-        return embeddInScrollPane(myEntriesTable);
+        return embedInScrollPane(myEntriesTable);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class RelationMemberMerger extends AbstractListMerger<RelationMember, Rel
                 model.getMergedSelectionModel()
         );
         mergedEntriesTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        return embeddInScrollPane(mergedEntriesTable);
+        return embedInScrollPane(mergedEntriesTable);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class RelationMemberMerger extends AbstractListMerger<RelationMember, Rel
                 model.getTheirTableModel(),
                 model.getTheirSelectionModel()
         );
-        return embeddInScrollPane(theirEntriesTable);
+        return embedInScrollPane(theirEntriesTable);
     }
 
     @Override

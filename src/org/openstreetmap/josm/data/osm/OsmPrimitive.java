@@ -37,8 +37,8 @@ import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
  * It can be created, deleted and uploaded to the OSM-Server.
  *
  * Although OsmPrimitive is designed as a base class, it is not to be meant to subclass
- * it by any other than from the package {@link org.openstreetmap.josm.data.osm}. The available primitives are a fixed set that are given
- * by the server environment and not an extendible data stuff.
+ * it by any other than from the package {@link org.openstreetmap.josm.data.osm}. The available primitives are a fixed
+ * set that are given by the server environment and not an extendable data stuff.
  *
  * @author imi
  */

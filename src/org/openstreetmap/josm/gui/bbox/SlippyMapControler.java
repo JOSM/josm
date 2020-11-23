@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.PlatformManager;
  *
  * @author Tim Haussmann
  */
-public class SlippyMapControler extends MouseAdapter {
+public class SlippyMapController extends MouseAdapter {
 
     /** A Timer for smoothly moving the map area */
     private static final Timer TIMER = new Timer(true);
@@ -60,11 +60,11 @@ public class SlippyMapControler extends MouseAdapter {
     private boolean isSelecting;
 
     /**
-     * Constructs a new {@code SlippyMapControler}.
-     * @param navComp navigatable component
+     * Constructs a new {@code SlippyMapController}.
+     * @param navComp navigable component
      * @param contentPane content pane
      */
-    public SlippyMapControler(SlippyMapBBoxChooser navComp, JPanel contentPane) {
+    public SlippyMapController(SlippyMapBBoxChooser navComp, JPanel contentPane) {
         iSlippyMapChooser = navComp;
         iSlippyMapChooser.addMouseListener(this);
         iSlippyMapChooser.addMouseMotionListener(this);

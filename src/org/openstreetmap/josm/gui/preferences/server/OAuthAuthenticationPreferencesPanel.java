@@ -73,7 +73,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         JPanel pnl = new JPanel(new GridBagLayout());
 
         cbUseForAllRequests.setText(tr("Use OAuth for all requests to {0}", OsmApi.getOsmApi().getServerUrl()));
-        cbUseForAllRequests.setToolTipText(tr("For user-based bandwith limit instead of IP-based one"));
+        cbUseForAllRequests.setToolTipText(tr("For user-based bandwidth limit instead of IP-based one"));
         pnl.add(cbUseForAllRequests, GBC.eol().fill(GBC.HORIZONTAL));
 
         pnl.add(cbShowAdvancedParameters, GBC.eol().fill(GBC.HORIZONTAL));

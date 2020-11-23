@@ -35,7 +35,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     /** indicates whether we use OAuth as authentication scheme */
     private final JRadioButton rbOAuth = new JRadioButton();
     /** the panel which contains the authentication parameters for the respective authentication scheme */
-    private final JPanel pnlAuthenticationParameteters = new JPanel(new BorderLayout());
+    private final JPanel pnlAuthenticationParameters = new JPanel(new BorderLayout());
     /** the panel for the basic authentication parameters */
     private BasicAuthenticationPreferencesPanel pnlBasicAuthPreferences;
     /** the panel for the OAuth authentication parameters */
@@ -90,14 +90,14 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        add(pnlAuthenticationParameteters, gc);
+        add(pnlAuthenticationParameters, gc);
 
         //-- the two panels for authentication parameters
         pnlBasicAuthPreferences = new BasicAuthenticationPreferencesPanel();
         pnlOAuthPreferences = new OAuthAuthenticationPreferencesPanel();
 
         rbBasicAuthentication.setSelected(true);
-        pnlAuthenticationParameteters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
+        pnlAuthenticationParameters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
     }
 
     /**
@@ -150,12 +150,12 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (rbBasicAuthentication.isSelected()) {
-                pnlAuthenticationParameteters.removeAll();
-                pnlAuthenticationParameteters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
+                pnlAuthenticationParameters.removeAll();
+                pnlAuthenticationParameters.add(pnlBasicAuthPreferences, BorderLayout.CENTER);
                 pnlBasicAuthPreferences.revalidate();
             } else {
-                pnlAuthenticationParameteters.removeAll();
-                pnlAuthenticationParameteters.add(pnlOAuthPreferences, BorderLayout.CENTER);
+                pnlAuthenticationParameters.removeAll();
+                pnlAuthenticationParameters.add(pnlOAuthPreferences, BorderLayout.CENTER);
                 pnlOAuthPreferences.revalidate();
             }
             repaint();

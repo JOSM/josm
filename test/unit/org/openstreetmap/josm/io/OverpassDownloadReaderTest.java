@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.io.OverpassDownloadReader.OverpassOutpoutFormat;
+import org.openstreetmap.josm.io.OverpassDownloadReader.OverpassOutputFormat;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.SearchCompilerQueryWizard;
 import org.openstreetmap.josm.tools.Utils;
@@ -156,7 +156,7 @@ public class OverpassDownloadReaderTest {
      */
     @Test
     public void testOutputFormatStatement() {
-        for (OverpassOutpoutFormat oof : OverpassOutpoutFormat.values()) {
+        for (OverpassOutputFormat oof : OverpassOutputFormat.values()) {
             Matcher m = OverpassDownloadReader.OUTPUT_FORMAT_STATEMENT.matcher("[out:"+oof.getDirective()+"]");
             assertTrue(m.matches());
             assertEquals(oof.getDirective(), m.group(1));

@@ -142,7 +142,7 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
 
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
 
-        new SlippyMapControler(this, this);
+        new SlippyMapController(this, this);
     }
 
     private static LinkedHashMap<String, TileSource> getAllTileSources() {
@@ -246,7 +246,7 @@ public class SlippyMapBBoxChooser extends JosmMapViewer implements BBoxChooser, 
     }
 
     /**
-     * Handles a {@link SlippyMapControler#mouseMoved} event
+     * Handles a {@link SlippyMapController#mouseMoved} event
      * @param point The point in the view
      */
     public void handleMouseMoved(Point point) {
