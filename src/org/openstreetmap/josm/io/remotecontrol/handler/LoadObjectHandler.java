@@ -5,6 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -66,7 +69,11 @@ public class LoadObjectHandler extends RequestHandler {
             final boolean referrers = Boolean.parseBoolean(args.get("referrers"));
             final DownloadPrimitivesWithReferrersTask task = new DownloadPrimitivesWithReferrersTask(
                     newLayer, ps, referrers, relationMembers, args.get("layer_name"), null);
-            MainApplication.worker.submit(task);
+            try {
+                MainApplication.worker.submit(task).get(OSM_DOWNLOAD_TIMEOUT.get(), TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                Logging.error(e);
+            }
             MainApplication.worker.submit(() -> {
                 final List<PrimitiveId> downloaded = task.getDownloadedId();
                 final DataSet ds = MainApplication.getLayerManager().getEditDataSet();

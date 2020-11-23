@@ -233,7 +233,9 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
                 return null;
         }
         List<PrimitiveId> downloaded = new ArrayList<>(ids);
-        downloaded.removeAll(missingPrimitives);
+        if (missingPrimitives != null) {
+            downloaded.removeAll(missingPrimitives);
+        }
         return downloaded;
     }
 

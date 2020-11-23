@@ -123,10 +123,11 @@ public class PostDownloadHandler implements Runnable {
 
         // multiple error object? prepare a HTML list
         //
-        if (!errors.isEmpty() && !GraphicsEnvironment.isHeadless()) {
+        final Collection<String> items = task.getErrorMessages();
+        if (!items.isEmpty() && !GraphicsEnvironment.isHeadless()) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                     MainApplication.getMainFrame(),
-                    "<html>"+Utils.joinAsHtmlUnorderedList(task.getErrorMessages())+"</html>",
+                    "<html>"+Utils.joinAsHtmlUnorderedList(items)+"</html>",
                     tr("Errors during download"),
                     JOptionPane.ERROR_MESSAGE));
         }

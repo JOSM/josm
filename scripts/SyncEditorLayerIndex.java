@@ -540,10 +540,10 @@ public class SyncEditorLayerIndex {
 
     // catch reordered arguments and switches to WMS version 1.3.0
     String unifyWMS(String url) {
-        String x[] = url.replaceAll("(?i)VERSION=[0-9.]+", "VERSION=x").replaceAll("(?i)SRS=", "CRS=").split("\\?");
-        String a[] = x[1].split("&");
+        String[] x = url.replaceAll("(?i)VERSION=[0-9.]+", "VERSION=x").replaceAll("(?i)SRS=", "CRS=").split("\\?");
+        String[] a = x[1].split("&");
         Arrays.sort(a);
-        url = x[0]+"?"+String.join("&",a);
+        url = x[0]+"?"+String.join("&", a);
         return url;
     }
 
@@ -578,7 +578,7 @@ public class SyncEditorLayerIndex {
                         String idj = getId(j);
 
                         if (ide.equals(idj) && Objects.equals(getType(j), getType(e))) {
-                            if(getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
+                            if (getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
                                 myprintln("# WMS-URL for id "+idj+" modified: "+getDescription(j));
                             } else {
                                 myprintln("* URL for id "+idj+" differs ("+urle+"): "+getDescription(j));
@@ -590,11 +590,11 @@ public class SyncEditorLayerIndex {
                             eliUrls.put(urlj, e);
                             break;
                         }
-                        Collection<String> old = ((ImageryInfo)j).getOldIds();
-                        if(old != null) {
+                        Collection<String> old = j.getOldIds();
+                        if (old != null) {
                             for (String oidj : old) {
                                 if (ide.equals(oidj) && Objects.equals(getType(j), getType(e))) {
-                                    if(getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
+                                    if (getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
                                         myprintln("# WMS-URL for oldid "+idj+" modified: "+getDescription(j));
                                     } else {
                                         myprintln("* URL for oldid "+idj+" differs ("+urle+"): "+getDescription(j));

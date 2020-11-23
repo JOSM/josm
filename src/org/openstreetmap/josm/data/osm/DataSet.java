@@ -764,11 +764,10 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
     private OsmPrimitive getPrimitiveByIdChecked(PrimitiveId primitiveId) {
         OsmPrimitive result = getPrimitiveById(primitiveId);
         if (result == null && primitiveId != null) {
-            Logging.warn(tr(
+            Logging.error(new IllegalStateException(tr(
                     "JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
                             + "at {2}. This is not a critical error, it should be safe to continue in your work.",
-                    primitiveId.getType(), Long.toString(primitiveId.getUniqueId()), Config.getUrls().getJOSMWebsite()));
-            Logging.error(new Exception());
+                    primitiveId.getType(), Long.toString(primitiveId.getUniqueId()), Config.getUrls().getJOSMWebsite())));
         }
 
         return result;

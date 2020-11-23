@@ -170,7 +170,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.fill = HORIZONTAL;
         gc.weightx = 0.0;
         gc.insets = new Insets(0, 0, 0, 3);
         pnl.add(GBC.glue(0, 0));

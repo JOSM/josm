@@ -479,7 +479,7 @@ public final class TestUtils {
     }
 
     /**
-     * Return WireMock server serving files under ticker directory
+     * Return WireMock server serving files under ticket directory
      * @param ticketId Ticket numeric identifier
      * @return WireMock HTTP server on dynamic port
      */
@@ -492,12 +492,13 @@ public final class TestUtils {
     }
 
     /**
-     * Return WireMock server serving files under ticker directory
+     * Return WireMock server
      * @return WireMock HTTP server on dynamic port
      */
     public static WireMockServer getWireMockServer() {
             return new WireMockServer(
                     WireMockConfiguration.options()
+                        .withRootDirectory("test/data")
                         .dynamicPort()
                     );
     }
