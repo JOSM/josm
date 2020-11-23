@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
@@ -11,8 +12,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -154,5 +155,22 @@ class CreateMultipolygonActionTest {
             MainApplication.getLayerManager().removeLayer(layer);
         }
 
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20110">Bug #20110</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20110() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(20110, "data.osm"), null);
+        assertEquals(1, ds.getRelations().size());
+        Relation mp = ds.getRelations().iterator().next();
+        assertEquals("wetland", mp.get("natural"));
+        long numCoastlineWays = ds.getWays().stream().filter(w -> "coastline".equals(w.get("natural"))).count();
+        Relation modMp = createMultipolygon(ds.getWays(), "type:way", mp, false);
+        assertNotNull(modMp);
+        assertEquals("wetland", modMp.get("natural"));
+        assertEquals(numCoastlineWays, ds.getWays().stream().filter(w -> "coastline".equals(w.get("natural"))).count());
     }
 }
