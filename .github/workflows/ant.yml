@@ -27,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 64
+          fetch-depth: 128
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
@@ -59,8 +59,8 @@ jobs:
         id: create_revision
         run: |
           ant create-revision
-          josm_revision=`awk '/Revision/{print $2}' resources/REVISION`
-          if [[ "$josm_revision" == `curl --silent https://josm.openstreetmap.de/tested` ]]; then
+          josm_revision="$(awk '/Revision/{print $2}' resources/REVISION)"
+          if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
             sed -i '/Is-Local-Build/d' resources/REVISION
             echo "josm_prerelease=false" >> $GITHUB_ENV
             echo "::set-output name=josm_prerelease::false"
