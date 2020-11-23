@@ -491,7 +491,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
             // Make 'wmsplugin cache' search for e.g. 'cache.wmsplugin'
             final String prefKeyLower = prefKey.toLowerCase(Locale.ENGLISH);
             final String prefValueLower = prefValue.toLowerCase(Locale.ENGLISH);
-            final boolean canHas = Pattern.compile("\\s+").splitAsStream(txtFilter.getText())
+            String filter = txtFilter.getText(); // see #19825
+            final boolean canHas = filter.isEmpty() || Pattern.compile("\\s+").splitAsStream(filter)
                     .map(bit -> bit.toLowerCase(Locale.ENGLISH))
                     .anyMatch(bit -> {
                         switch (bit) {
