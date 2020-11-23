@@ -8,11 +8,14 @@ import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.Dimension;
 import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,89 +81,72 @@ public final class ShowStatusReportAction extends JosmAction {
      * @return The report header (software and system info)
      */
     public static String getReportHeader() {
-        StringBuilder text = new StringBuilder(256);
+        StringWriter stringWriter = new StringWriter(256);
+        PrintWriter text = new PrintWriter(stringWriter);
         String runtimeVersion = getSystemProperty("java.runtime.version");
-        text.append(Version.getInstance().getReleaseAttributes())
-            .append("\nIdentification: ").append(Version.getInstance().getAgentString());
+        text.println(Version.getInstance().getReleaseAttributes());
+        text.format("Identification: %s%n", Version.getInstance().getAgentString());
         String buildNumber = PlatformManager.getPlatform().getOSBuildNumber();
         if (!buildNumber.isEmpty()) {
-            text.append("\nOS Build number: ").append(buildNumber);
+            text.format("OS Build number: %s%n", buildNumber);
         }
-        text.append("\nMemory Usage: ")
-            .append(Runtime.getRuntime().totalMemory()/1024/1024)
-            .append(" MB / ")
-            .append(Runtime.getRuntime().maxMemory()/1024/1024)
-            .append(" MB (")
-            .append(Runtime.getRuntime().freeMemory()/1024/1024)
-            .append(" MB allocated, but free)\nJava version: ")
-            .append(runtimeVersion != null ? runtimeVersion : getSystemProperty("java.version")).append(", ")
-            .append(getSystemProperty("java.vendor")).append(", ")
-            .append(getSystemProperty("java.vm.name"))
-            .append("\nLook and Feel: ")
-            .append(Optional.ofNullable(UIManager.getLookAndFeel()).map(laf -> laf.getClass().getName()).orElse("null"))
-            .append("\nScreen: ");
+        text.format("Memory Usage: %d MB / %d MB (%d MB allocated, but free)%n",
+                Runtime.getRuntime().totalMemory() / 1024 / 1024,
+                Runtime.getRuntime().maxMemory() / 1024 / 1024,
+                Runtime.getRuntime().freeMemory() / 1024 / 1024);
+        text.format("Java version: %s, %s, %s%n",
+                runtimeVersion != null ? runtimeVersion : getSystemProperty("java.version"),
+                getSystemProperty("java.vendor"),
+                getSystemProperty("java.vm.name"));
+        text.format("Look and Feel: %s%n",
+                Optional.ofNullable(UIManager.getLookAndFeel()).map(laf -> laf.getClass().getName()).orElse("null"));
         if (!GraphicsEnvironment.isHeadless()) {
-            text.append(Arrays.stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()).map(gd -> {
-                        StringBuilder b = new StringBuilder(gd.getIDstring());
-                        DisplayMode dm = gd.getDisplayMode();
-                        if (dm != null) {
-                            // Java 11: use DisplayMode#toString
-                            b.append(' ').append(dm.getWidth()).append('x').append(dm.getHeight());
-                            AffineTransform transform = gd.getDefaultConfiguration().getDefaultTransform();
-                            b.append(" (scaling ").append(transform.getScaleX()).append('x').append(transform.getScaleY()).append(')');
-                        }
-                        return b.toString();
-                    }).collect(Collectors.joining(", ")));
+            text.append("Screen:");
+            for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+                text.append(" ").append(gd.getIDstring());
+                DisplayMode dm = gd.getDisplayMode();
+                if (dm != null) {
+                    AffineTransform transform = gd.getDefaultConfiguration().getDefaultTransform();
+                    // Java 11: use DisplayMode#toString
+                    text.format(" %d\u00D7%d (scaling %.2f\u00D7%.2f)",
+                            dm.getWidth(), dm.getHeight(), transform.getScaleX(), transform.getScaleY());
+                }
+            }
+            text.println();
         }
-        Dimension maxScreenSize = GuiHelper.getMaximumScreenSize();
-        text.append("\nMaximum Screen Size: ")
-            .append((int) maxScreenSize.getWidth()).append('x')
-            .append((int) maxScreenSize.getHeight()).append('\n');
+        text.format("Maximum Screen Size: %s%n", toString(GuiHelper.getMaximumScreenSize()));
         if (!GraphicsEnvironment.isHeadless()) {
             Dimension bestCursorSize16 = Toolkit.getDefaultToolkit().getBestCursorSize(16, 16);
             Dimension bestCursorSize32 = Toolkit.getDefaultToolkit().getBestCursorSize(32, 32);
-            text.append("Best cursor sizes: 16x16 -> ")
-                    .append(bestCursorSize16.width).append('x').append(bestCursorSize16.height)
-                    .append(", 32x32 -> ")
-                    .append(bestCursorSize32.width).append('x').append(bestCursorSize32.height)
-                    .append('\n');
+            text.format("Best cursor sizes: %s→%s, %s→%s%n",
+                    toString(new Dimension(16, 16)), toString(bestCursorSize16),
+                    toString(new Dimension(32, 32)), toString(bestCursorSize32));
         }
 
         if (PlatformManager.isPlatformUnixoid()) {
             PlatformHookUnixoid platform = (PlatformHookUnixoid) PlatformManager.getPlatform();
             // Add desktop environment
-            platform.getDesktopEnvironment().ifPresent(desktop -> text
-                    .append("Desktop environment: ")
-                    .append(desktop)
-                    .append('\n'));
+            platform.getDesktopEnvironment().ifPresent(desktop -> text.format("Desktop environment: %s%n", desktop));
             // Add Java package details
             String packageDetails = platform.getJavaPackageDetails();
             if (packageDetails != null) {
-                text.append("Java package: ")
-                    .append(packageDetails)
-                    .append('\n');
+                text.format("Java package: %s%n", packageDetails);
             }
             // Add WebStart package details if run from JNLP
             if (Utils.isRunningJavaWebStart()) {
                 String webStartDetails = platform.getWebStartPackageDetails();
                 if (webStartDetails != null) {
-                    text.append("WebStart package: ")
-                        .append(webStartDetails)
-                        .append('\n');
+                    text.format("WebStart package: %s%n", webStartDetails);
                 }
             }
             // Add Gnome Atk wrapper details if found
             String atkWrapperDetails = platform.getAtkWrapperPackageDetails();
             if (atkWrapperDetails != null) {
-                text.append("Java ATK Wrapper package: ")
-                    .append(atkWrapperDetails)
-                    .append('\n');
+                text.format("Java ATK Wrapper package: %s%n", atkWrapperDetails);
             }
             String lang = System.getenv("LANG");
             if (lang != null) {
-                text.append("Environment variable LANG: ")
-                    .append(lang)
-                    .append('\n');
+                text.format("Environment variable LANG: %s%n", lang);
             }
             // Add dependencies details if found
             for (String p : new String[] {
@@ -175,7 +161,7 @@ public final class ShowStatusReportAction extends JosmAction {
             }) {
                 String details = PlatformHookUnixoid.getPackageDetails(p);
                 if (details != null) {
-                    text.append(p).append(": ").append(details).append('\n');
+                    text.format("%s: %s%n", p, details);
                 }
             }
         }
@@ -205,25 +191,27 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
             if (!vmArguments.isEmpty()) {
-                text.append("VM arguments: ").append(vmArguments.toString().replace("\\\\", "\\")).append('\n');
+                text.format("VM arguments: %s%n", vmArguments.toString().replace("\\\\", "\\"));
             }
         } catch (SecurityException e) {
             Logging.trace(e);
         }
         List<String> commandLineArgs = MainApplication.getCommandLineArgs();
         if (!commandLineArgs.isEmpty()) {
-            text.append("Program arguments: ").append(Arrays.toString(paramCleanup(commandLineArgs).toArray())).append('\n');
+            text.format("Program arguments: %s%n", Arrays.toString(paramCleanup(commandLineArgs).toArray()));
         }
         DataSet dataset = MainApplication.getLayerManager().getActiveDataSet();
         if (dataset != null) {
             String result = DatasetConsistencyTest.runTests(dataset);
             if (result.isEmpty()) {
-                text.append("Dataset consistency test: No problems found\n");
+                text.println("Dataset consistency test: No problems found");
             } else {
-                text.append("\nDataset consistency test:\n").append(result).append('\n');
+                text.println();
+                text.println("Dataset consistency test:");
+                text.println(result);
             }
         }
-        text.append('\n');
+        text.println();
         appendCollection(text, "Plugins", Utils.transform(PluginHandler.getBugReportInformation(), i -> "+ " + i));
         appendCollection(text, "Tagging presets", getCustomUrls(PresetPrefHelper.INSTANCE));
         appendCollection(text, "Map paint styles", getCustomUrls(MapPaintPrefHelper.INSTANCE));
@@ -232,10 +220,15 @@ public final class ShowStatusReportAction extends JosmAction {
 
         String osmApi = OsmApi.getOsmApi().getServerUrl();
         if (!Config.getUrls().getDefaultOsmApiUrl().equals(osmApi.trim())) {
-            text.append("OSM API: ").append(osmApi).append("\n\n");
+            text.format("OSM API: %s%n", osmApi);
         }
 
-        return text.toString();
+        text.println();
+        return stringWriter.toString();
+    }
+
+    private static String toString(Dimension dimension) {
+        return dimension.width + "\u00D7" + dimension.height;
     }
 
     private static Collection<String> getCustomUrls(SourcePrefHelper helper) {
@@ -293,7 +286,7 @@ public final class ShowStatusReportAction extends JosmAction {
         return target == null ? str : str.replace(target, replacement);
     }
 
-    private static void appendCollection(StringBuilder text, String label, Collection<String> col) {
+    private static void appendCollection(PrintWriter text, String label, Collection<String> col) {
         if (!col.isEmpty()) {
             text.append(col.stream().map(o -> paramCleanup(o) + '\n')
                     .collect(Collectors.joining("", label + ":\n", "\n")));
