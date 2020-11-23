@@ -348,7 +348,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         if (dataSet != null) {
             String hashtags = dataSet.getChangeSetTags().get("hashtags");
             if (hashtags != null) {
-                for (String hashtag : hashtags.split(";")) {
+                for (String hashtag : hashtags.split(";", -1)) {
                     String sanitizedHashtag = hashtag.startsWith("#") ? hashtag : "#" + hashtag;
                     if (!result.contains(sanitizedHashtag)) {
                         result = result + " " + sanitizedHashtag;
