@@ -27,6 +27,11 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 public class OsmLinkPaster extends AbstractOsmDataPaster {
 
     static final class NoWarnOpenLocationAction extends OpenLocationAction {
+
+        NoWarnOpenLocationAction() {
+            super(null);
+        }
+
         @Override
         protected void warnNoSuitableTasks(String url) {
             // ignore this.
