@@ -39,8 +39,8 @@ public class DirectionNodes extends Test {
         if (!n.isUsable() || !n.isTagged())
             return;
         for (Entry<String, String> tag : n.getKeys().entrySet()) {
-            if (("forward".equals(tag.getValue()) || "backward".equals(tag.getValue())
-                    && ("direction".equals(tag.getKey()) || tag.getKey().endsWith(":direction")))) {
+            if (("forward".equals(tag.getValue()) || "backward".equals(tag.getValue()))
+                    && ("direction".equals(tag.getKey()) || tag.getKey().endsWith(":direction"))) {
                 checkParents(n, tag.toString());
             }
         }
