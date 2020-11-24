@@ -1063,7 +1063,7 @@ class DataSetMergerTest {
      * Way without referrers deleted in source
      */
     @Test
-    void testDeletedWayNoReferrers () {
+    void testDeletedWayNoReferrers() {
 
         // -- source dataset
 
@@ -1076,7 +1076,7 @@ class DataSetMergerTest {
         n2.setVisible(true);
         their.addPrimitive(n1);
         their.addPrimitive(n2);
-        Way w1 = new Way(1,1);
+        Way w1 = new Way(1, 1);
         their.addPrimitive(w1);
         w1.addNode(n1);
         w1.addNode(n2);
@@ -1146,7 +1146,7 @@ class DataSetMergerTest {
         n2.setVisible(true);
         their.addPrimitive(n1);
         their.addPrimitive(n2);
-        Way w1 = new Way(1,1);
+        Way w1 = new Way(1, 1);
         their.addPrimitive(w1);
         w1.addNode(n1);
         w1.addNode(n2);
