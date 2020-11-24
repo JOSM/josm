@@ -56,10 +56,8 @@ public final class UndoRedoHandler {
      */
     public static UndoRedoHandler getInstance() {
         OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-        if (editLayer != null) {
-            if (editLayer == MainApplication.getLayerManager().getActiveLayer()) {
-                return InstanceHolder.map.computeIfAbsent(editLayer.data, k -> new UndoRedoHandler());
-            }
+        if (editLayer != null && editLayer == MainApplication.getLayerManager().getActiveLayer()) {
+            return InstanceHolder.map.computeIfAbsent(editLayer.data, k -> new UndoRedoHandler());
         }
         return InstanceHolder.NO_DATA_SET_INSTANCE;
     }
