@@ -820,7 +820,6 @@ public final class DomainValidator extends AbstractValidator {
         "jaguar", // jaguar Jaguar Land Rover Ltd
         "java", // java Oracle Corporation
         "jcb", // jcb JCB Co., Ltd.
-        "jcp", // jcp JCP Media, Inc.
         "jeep", // jeep FCA US LLC.
         "jetzt", // jetzt New TLD Company AB
         "jewelry", // jewelry Wild Bloom, LLC
