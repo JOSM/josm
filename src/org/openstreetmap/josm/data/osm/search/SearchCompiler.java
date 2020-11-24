@@ -2007,7 +2007,7 @@ public class SearchCompiler {
         Match m = Optional.ofNullable(parseExpression()).orElse(Always.INSTANCE);
         if (!tokenizer.readIfEqual(Token.EOF))
             throw new SearchParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
-        Logging.debug("Parsed search expression is {0}", m);
+        Logging.trace("Parsed search expression is {0}", m);
         return m;
     }
 
