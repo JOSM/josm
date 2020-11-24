@@ -3,13 +3,17 @@ package org.openstreetmap.josm.data;
 
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -40,7 +44,9 @@ public final class UndoRedoHandler {
     private final LinkedList<CommandQueuePreciseListener> preciseListenerCommands = new LinkedList<>();
 
     private static class InstanceHolder {
-        static final UndoRedoHandler INSTANCE = new UndoRedoHandler();
+        static final UndoRedoHandler NO_DATA_SET_INSTANCE = new UndoRedoHandler();
+        static final Map<DataSet, UndoRedoHandler> map = new HashMap<>();
+
     }
 
     /**
@@ -49,7 +55,13 @@ public final class UndoRedoHandler {
      * @since 14134
      */
     public static UndoRedoHandler getInstance() {
-        return InstanceHolder.INSTANCE;
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
+        if (editLayer != null) {
+            if (editLayer == MainApplication.getLayerManager().getActiveLayer()) {
+                return InstanceHolder.map.computeIfAbsent(editLayer.data, k -> new UndoRedoHandler());
+            }
+        }
+        return InstanceHolder.NO_DATA_SET_INSTANCE;
     }
 
     /**
@@ -432,6 +444,12 @@ public final class UndoRedoHandler {
         for (final CommandQueueListener l : listenerCommands) {
             l.commandChanged(commands.size(), redoCommands.size());
         }
+        if (getInstance() != InstanceHolder.NO_DATA_SET_INSTANCE) {
+            for (final CommandQueueListener l : InstanceHolder.NO_DATA_SET_INSTANCE.listenerCommands) {
+                l.commandChanged(commands.size(), redoCommands.size());
+            }
+
+        }
     }
 
     private void fireEvent(CommandQueueEvent e) {
@@ -456,10 +474,9 @@ public final class UndoRedoHandler {
     public synchronized void clean(DataSet dataSet) {
         if (dataSet == null)
             return;
-        boolean changed = false;
-        changed |= commands.removeIf(c -> c.getAffectedDataSet() == dataSet);
-        changed |= redoCommands.removeIf(c -> c.getAffectedDataSet() == dataSet);
-        if (changed) {
+        if (InstanceHolder.map.remove(dataSet) != null) {
+            redoCommands.clear();
+            commands.clear();
             fireEvent(new CommandQueueCleanedEvent(this, dataSet));
             fireCommandsChanged();
         }
