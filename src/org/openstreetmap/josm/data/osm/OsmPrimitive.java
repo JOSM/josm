@@ -1117,13 +1117,16 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * @since 6491
      */
     public final boolean hasAreaTags() {
-        return hasKey("landuse", "amenity", "building", "building:part")
+        return hasKey("building", "landuse", "amenity", "shop", "building:part", "boundary", "historic", "place")
                 || hasTag("area", OsmUtils.TRUE_VALUE)
                 || hasTag("waterway", "riverbank")
+                || hasTag("highway", "rest_area", "services", "platform")
+                || hasTag("railway", "platform")
                 || hasTagDifferent("leisure", "picnic_table", "slipway", "firepit")
                 || hasTag("natural", "water", "wood", "scrub", "wetland", "grassland", "heath", "rock", "bare_rock",
                                      "sand", "beach", "scree", "bay", "glacier", "shingle", "fell", "reef", "stone",
-                                     "mud", "landslide", "sinkhole", "crevasse", "desert");
+                                     "mud", "landslide", "sinkhole", "crevasse", "desert")
+                || hasTag("aeroway", "aerodrome");
     }
 
     /**

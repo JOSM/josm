@@ -105,7 +105,7 @@ public class TestError implements Comparable<TestError> {
         /**
          * Sets the error message.
          *
-         * @param message The the message of this error group
+         * @param message The message of this error group
          * @param marktrDescription The {@linkplain I18n#marktr prepared for i18n} description of this error
          * @param args The description arguments to be applied in {@link I18n#tr(String, Object...)}
          * @return {@code this}
