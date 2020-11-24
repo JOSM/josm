@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.ConditionalKeys;
 import org.openstreetmap.josm.data.validation.tests.ConnectivityRelations;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
+import org.openstreetmap.josm.data.validation.tests.DirectionNodes;
 import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
 import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
@@ -151,6 +152,7 @@ public final class OsmValidator {
         RightAngleBuildingTest.class, // 3700 .. 3799
         SharpAngles.class, // 3800 .. 3899
         ConnectivityRelations.class, // 3900 .. 3999
+        DirectionNodes.class, // 4000-4099
     };
 
     /**
