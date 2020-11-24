@@ -127,6 +127,9 @@ public abstract class CrossingWays extends Test {
             if (isSubwayOrTramOrRazed(w2)) {
                 return true;
             }
+            if (w1.hasKey(RAILWAY) && w2.hasKey(RAILWAY) && w1.hasTag(RAILWAY, "yard") != w2.hasTag(RAILWAY, "yard")) {
+                return true; // see #20089
+            }
             if (isCoastline(w1) != isCoastline(w2)) {
                 return true;
             }
