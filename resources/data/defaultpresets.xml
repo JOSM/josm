@@ -1262,8 +1262,7 @@
             <link wiki="Tag:highway=services" />
             <key key="highway" value="services" />
             <optional>
-                <text key="name" text="Name" />
-                <text key="operator" text="Operator" />
+                <reference ref="name_operator" />
                 <check key="toilets" text="Toilets" />
             </optional>
         </item> <!-- Services -->
@@ -2011,8 +2010,7 @@
             <key key="usage" value="penstock" />
             <combo key="location" text="Location" values="overground,underground" values_context="pipeline" />
             <optional>
-                <text key="name" text="Name" />
-                <text key="operator" text="Operator" />
+                <reference ref="name_operator" />
                 <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
                 <text key="pressure" text="Pressure (bar)" />
                 <combo key="material" text="Material" values="metal,steel" />
@@ -2360,20 +2358,17 @@
             <link wiki="Tag:railway=switch" />
             <key key="railway" value="switch" />
             <combo key="railway:switch" text="Type" values="abt,default,double_slip,single_slip,three_way,wye" />
-            <text key="ref" text="Reference" />
-            <text key="operator" text="Operator" />
+            <reference ref="ref_operator" />
         </item> <!-- Railway Switch -->
         <item name="Railway crossing" icon="presets/transport/railway/railway_crossing.svg" type="node" preset_name_label="true">
             <link wiki="Tag:railway=railway_crossing" />
             <key key="railway" value="railway_crossing" />
-            <text key="ref" text="Reference" />
-            <text key="operator" text="Operator" />
+            <reference ref="ref_operator" />
         </item> <!-- Railway crossing -->
         <item name="Railway Signal" icon="presets/transport/railway/signal.svg" type="node" preset_name_label="true">
             <link wiki="Tag:railway=signal" />
             <key key="railway" value="signal" />
-            <text key="ref" text="Reference" />
-            <text key="operator" text="Operator" />
+            <reference ref="ref_operator" />
         </item> <!-- Railway Signal -->
         <item name="Railway milestone" icon="presets/transport/railway/milestone.svg" type="node" preset_name_label="true">
             <link wiki="Tag:railway=milestone" />
@@ -2560,8 +2555,7 @@
             <key key="amenity" value="fuel" />
             <combo key="brand" text="Brand" values="Agip,Aral,Avia,BP,Chevron,Citgo,Eni,Esso,Exxon,Gulf,Mobil,OMV,Petro-Canada,Pioneer,Q8,Repsol,Shell,Socar,Statoil,Sunoco,Tamoil,Texaco,Total,Independent" values_searchable="true" />
             <optional>
-                <text key="name" text="Name" />
-                <text key="operator" text="Operator" />
+                <reference ref="name_operator" />
                 <reference ref="oh_wheelchair" />
                 <combo key="shop" text="With shop" values="yes,convenience,kiosk,no" />
                 <space />
@@ -4335,16 +4329,14 @@
             <link wiki="Tag:emergency=fire_extinguisher" />
             <space />
             <key key="emergency" value="fire_extinguisher" />
-            <text key="ref" text="Reference" />
-            <text key="operator" text="Operator" />
+            <reference ref="ref_operator" />
             <check key="indoor" text="Indoor" />
         </item> <!-- Fire Extinguisher -->
         <item name="Fire Hose" icon="presets/emergency/fire_hose.svg" type="node" preset_name_label="true">
             <link wiki="Tag:emergency=fire_hose" />
             <space />
             <key key="emergency" value="fire_hose" />
-            <text key="ref" text="Reference" />
-            <text key="operator" text="Operator" />
+            <reference ref="ref_operator" />
         </item> <!-- Fire Hose -->
         <item name="Fire Hydrant" icon="presets/service/fire_hydrant.svg" type="node" preset_name_label="true">
             <link wiki="Tag:emergency=fire_hydrant" />
@@ -4426,14 +4418,12 @@
         <item name="Emergency Phone" icon="presets/vehicle/emergency_phone.svg" type="node" preset_name_label="true">
             <link wiki="Tag:emergency=phone" />
             <key key="emergency" value="phone" />
-            <text key="ref" text="Reference" />
-            <text key="operator" text="Operator" />
+            <reference ref="ref_operator" />
         </item> <!-- Emergency Phone -->
         <item name="Siren" icon="presets/emergency/siren.svg" type="node" preset_name_label="true">
             <link wiki="Tag:emergency=siren" />
             <key key="emergency" value="siren" />
-            <text key="ref" text="Reference" />
-            <text key="operator" text="Operator" />
+            <reference ref="ref_operator" />
             <space />
             <combo key="siren:type" text="Type" values="pneumatic,electronic,mechanical" />
             <multiselect key="siren:purpose" text="Purpose" values="tornado;fire;air_raid;civil_defense" rows="5" values_searchable="true" />
@@ -5411,10 +5401,7 @@
             <link wiki="Key:police" />
             <space />
             <combo key="police" text="Type" values="barracks,car_pound,checkpoint,detention,naval_base,offices,range,storage,training_area,yes" values_context="police" match="keyvalue!" values_searchable="true" />
-            <optional>
-                <text key="name" text="Name" />
-                <text key="operator" text="Operator" />
-            </optional>
+            <reference ref="optional_name_operator" />
             <reference ref="link_contact_address" />
         </item> <!-- Non-public police facility -->
         <item name="Flagpole" icon="presets/misc/flag.svg" type="node" preset_name_label="true">
@@ -5638,8 +5625,7 @@
             <combo key="surveillance:zone" text="Zone" values="town,parking,traffic,shop,bank,building" />
             <text key="operator" text="Operator" />
             <optional>
-                <text key="name" text="Name" />
-                <text key="ref" text="Reference" />
+                <reference ref="name_ref" />
             </optional>
             <space />
             <label text="Camera" />
@@ -6216,8 +6202,7 @@
             <optional>
                 <combo key="line_attachment" text="Line attachment" values="anchor,pin,pulley,suspension" values_context="power" />
                 <combo key="line_management" text="Line management" values="branch,cross,split,straight,termination,transition,transpose" values_context="Line management" />
-                <text key="ref" text="Reference" />
-                <text key="operator" text="Operator" />
+                <reference ref="ref_operator" />
             </optional>
         </item> <!-- Terminal -->
         <item name="Power Portal" icon="presets/power/portal.svg" type="node,way" preset_name_label="true">
@@ -6288,8 +6273,7 @@
             <space />
             <key key="power" value="catenary_mast" />
             <optional>
-                <text key="ref" text="Reference" />
-                <text key="operator" text="Operator" />
+                <reference ref="ref_operator" />
             </optional>
         </item> <!-- Catenary mast -->
         <item name="Insulator" icon="presets/power/insulator.svg" type="node,way" preset_name_label="true">
