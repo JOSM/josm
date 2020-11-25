@@ -215,4 +215,18 @@ class GeoJSONReaderTest {
         }
     }
 
+    /**
+     * Tests error reporting for an invalid FeatureCollection
+     * @throws Exception in case of error
+     */
+    @Test
+    void testInvalidFeatureCollection() throws Exception {
+        String featureCollection = "{\"type\": \"FeatureCollection\", \"features\": {}}";
+        try (InputStream in = new ByteArrayInputStream(featureCollection.getBytes(StandardCharsets.UTF_8))) {
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                    () -> new GeoJSONReader().doParseDataSet(in, null));
+            assertEquals("features must be ARRAY, but is OBJECT", exception.getMessage());
+        }
+    }
+
 }

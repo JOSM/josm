@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -84,6 +85,8 @@ public class GeoJSONReader extends AbstractReader {
         switch (Optional.ofNullable(object.getJsonString(TYPE))
                 .orElseThrow(() -> new IllegalDataException("No type")).getString()) {
             case "FeatureCollection":
+                JsonValue.ValueType valueType = object.get(FEATURES).getValueType();
+                CheckParameterUtil.ensureThat(valueType == JsonValue.ValueType.ARRAY, "features must be ARRAY, but is " + valueType);
                 parseFeatureCollection(object.getJsonArray(FEATURES));
                 break;
             case "Feature":
