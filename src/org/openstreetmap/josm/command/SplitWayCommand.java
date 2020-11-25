@@ -16,7 +16,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +89,7 @@ public class SplitWayCommand extends SequenceCommand {
      * @param commandList The sequence of commands that should be executed.
      * @param newSelection The new list of selected primitives ids (which is saved for later retrieval with {@link #getNewSelection})
      * @param originalWay The original way being split (which is saved for later retrieval with {@link #getOriginalWay})
-     * @param newWays The resulting new ways (which is saved for later retrieval with {@link #getNewWays})
+     * @param newWays The resulting new ways (which is saved for later retrieval with {@link #getOriginalWay})
      */
     public SplitWayCommand(String name, Collection<Command> commandList,
             List<? extends PrimitiveId> newSelection, Way originalWay, List<Way> newWays) {
@@ -402,29 +401,20 @@ public class SplitWayCommand extends SequenceCommand {
                     downloadMissingMembers(incompleteMembers);
                 } catch (OsmTransferException e) {
                     ExceptionDialogUtil.explainException(e);
-                    analysis.cleanup();
                     return Optional.empty();
                 }
                 // If missing relation members were downloaded, perform the analysis again to find the relation
                 // member order for all relations.
-                analysis.cleanup();
                 analysis = analyseSplit(way, wayToKeep, newWays);
-                break;
+                return Optional.of(splitBasedOnAnalyses(way, newWays, newSelection, analysis, indexOfWayToKeep));
             case GO_AHEAD_WITHOUT_DOWNLOADS:
                 // Proceed with the split with the information we have.
                 // This can mean that there are no missing members we want, or that the user chooses to continue
                 // the split without downloading them.
-                break;
+                return Optional.of(splitBasedOnAnalyses(way, newWays, newSelection, analysis, indexOfWayToKeep));
             case USER_ABORTED:
             default:
                 return Optional.empty();
-        }
-        try {
-            return Optional.of(splitBasedOnAnalyses(way, newWays, newSelection, analysis, indexOfWayToKeep));
-        } finally {
-            // see #19885
-            wayToKeep.setNodes(null);
-            analysis.cleanup();
         }
     }
 
@@ -474,7 +464,7 @@ public class SplitWayCommand extends SequenceCommand {
                         warnings.add(WarningType.GENERIC);
                     }
                     if (c == null) {
-                        c = new Relation(r); // #19885: will be removed later
+                        c = new Relation(r);
                     }
 
                     if (insert) {
@@ -561,6 +551,10 @@ public class SplitWayCommand extends SequenceCommand {
                     }
                 }
             }
+
+            if (c != null) {
+                commandList.add(new ChangeCommand(r.getDataSet(), r, c));
+            }
         }
         changedWay.setNodes(null); // see #19885
         return new Analysis(relationAnalyses, commandList, warnings, numberOfRelations);
@@ -580,16 +574,6 @@ public class SplitWayCommand extends SequenceCommand {
             commands = commandList;
             warningTypes = warnings;
             this.numberOfRelations = numberOfRelations;
-        }
-
-        /**
-         * Unlink temporary copies of relations. See #19885
-         */
-        void cleanup() {
-            for (RelationAnalysis ra : relationAnalyses) {
-                if (ra.relation.getDataSet() == null)
-                    ra.relation.setMembers(null);
-            }
         }
 
         List<RelationAnalysis> getRelationAnalyses() {
@@ -703,7 +687,6 @@ public class SplitWayCommand extends SequenceCommand {
             newSelection.addAll(newWays);
         }
 
-        Set<Relation> modifiedRelations = new LinkedHashSet<>();
         // Perform the split.
         for (RelationAnalysis relationAnalysis : analysis.getRelationAnalyses()) {
             RelationMember rm = relationAnalysis.getRelationMember();
@@ -745,13 +728,6 @@ public class SplitWayCommand extends SequenceCommand {
                     relation.addMember(j, em);
                 }
             }
-            modifiedRelations.add(relation);
-        }
-        for (Relation r : modifiedRelations) {
-            DataSet ds = way.getDataSet();
-            Relation orig = (Relation) ds.getPrimitiveById(r);
-            analysis.getCommands().add(new ChangeMembersCommand(orig, new ArrayList<>(r.getMembers())));
-            r.setMembers(null); // see #19885
         }
 
         EnumSet<WarningType> warnings = analysis.getWarningTypes();
