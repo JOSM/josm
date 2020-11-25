@@ -193,7 +193,8 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     }
 
     /**
-     * Constructs an identical clone of the argument.
+     * Constructs an identical clone of the argument and links members to it.
+     * See #19885 for possible memory leaks.
      * @param clone The relation to clone
      * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
      * If {@code false}, does nothing
@@ -209,7 +210,8 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     }
 
     /**
-     * Constructs an identical clone of the argument.
+     * Constructs an identical clone of the argument and links members to it.
+     * See #19885 for possible memory leaks.
      * @param clone The relation to clone
      * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
      * If {@code false}, does nothing
@@ -219,7 +221,8 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     }
 
     /**
-     * Create an identical clone of the argument (including the id)
+     * Create an identical clone of the argument (including the id) and links members to it.
+     * See #19885 for possible memory leaks.
      * @param clone The relation to clone, including its id
      */
     public Relation(Relation clone) {

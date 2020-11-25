@@ -30,11 +30,12 @@ import org.openstreetmap.josm.tools.Utils;
 public final class Way extends OsmPrimitive implements IWay<Node> {
 
     static final UniqueIdGenerator idGenerator = new UniqueIdGenerator();
+    private static final Node[] EMPTY_NODES = new Node[0];
 
     /**
      * All way nodes in this way
      */
-    private Node[] nodes = new Node[0];
+    private Node[] nodes = EMPTY_NODES;
     private BBox bbox;
 
     @Override
@@ -52,10 +53,10 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
                 node.clearCachedStyle();
             }
 
-            if (nodes == null) {
-                this.nodes = new Node[0];
+            if (nodes == null || nodes.isEmpty()) {
+                this.nodes = EMPTY_NODES;
             } else {
-                this.nodes = nodes.toArray(new Node[0]);
+                this.nodes = nodes.toArray(EMPTY_NODES);
             }
             for (Node node: this.nodes) {
                 node.addReferrer(this);
@@ -195,6 +196,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
 
     /**
      * Constructs a new {@code Way} from an existing {@code Way}.
+     * This  adds links from all way nodes to the clone. See #19885 for possible memory leaks.
      * @param original The original {@code Way} to be identically cloned. Must not be null
      * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
      * If {@code false}, does nothing
@@ -211,6 +213,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
 
     /**
      * Constructs a new {@code Way} from an existing {@code Way}.
+     * This  adds links from all way nodes to the clone. See #19885 for possible memory leaks.
      * @param original The original {@code Way} to be identically cloned. Must not be null
      * @param clearMetadata If {@code true}, clears the OSM id and other metadata as defined by {@link #clearOsmMetadata}.
      * If {@code false}, does nothing
@@ -222,6 +225,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
 
     /**
      * Constructs a new {@code Way} from an existing {@code Way} (including its id).
+     * This  adds links from all way nodes to the clone. See #19885 for possible memory leaks.
      * @param original The original {@code Way} to be identically cloned. Must not be null
      * @since 86
      */
