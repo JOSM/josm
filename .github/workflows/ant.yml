@@ -67,7 +67,7 @@ jobs:
             echo "josm_release=$josm_revision-tested" >> $GITHUB_ENV
           else
             echo "josm_prerelease=true" >> $GITHUB_ENV
-            echo "::set-output name=josm_prerelease::true
+            echo "::set-output name=josm_prerelease::true"
             echo "josm_release=$josm_revision" >> $GITHUB_ENV
           fi
           echo "josm_revision=$josm_revision" >> $GITHUB_ENV
