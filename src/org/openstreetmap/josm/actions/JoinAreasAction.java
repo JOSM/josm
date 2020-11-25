@@ -25,8 +25,9 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.ReverseWayAction.ReverseWayResult;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.ChangeNodesCommand;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -1633,12 +1634,10 @@ public class JoinAreasAction extends JosmAction {
                     continue;
                 }
 
-                Relation newRel = new Relation(r);
-                List<RelationMember> members = newRel.getMembers();
+                List<RelationMember> members = r.getMembers();
                 members.remove(rm);
-                newRel.setMembers(members);
 
-                cmds.add(new ChangeCommand(r, newRel));
+                cmds.add(new ChangeMembersCommand(r, members));
                 RelationRole saverel = new RelationRole(r, rm.getRole());
                 if (!result.contains(saverel)) {
                     result.add(saverel);
@@ -1673,26 +1672,24 @@ public class JoinAreasAction extends JosmAction {
                 continue;
             }
             // Add it back!
-            Relation newRel = new Relation(r.rel);
-            newRel.addMember(new RelationMember(r.role, outer));
-            cmds.add(new ChangeCommand(r.rel, newRel));
+            List<RelationMember> modifiedMembers = new ArrayList<>(r.rel.getMembers());
+            modifiedMembers.add(new RelationMember(r.role, outer));
+            cmds.add(new ChangeMembersCommand(r.rel, modifiedMembers));
         }
 
-        Relation newRel;
-        RelationRole soleOuter;
         switch (multiouters.size()) {
         case 0:
             return;
         case 1:
             // Found only one to be part of a multipolygon relation, so just add it back as well
-            soleOuter = multiouters.get(0);
-            newRel = new Relation(soleOuter.rel);
-            newRel.addMember(new RelationMember(soleOuter.role, outer));
-            cmds.add(new ChangeCommand(ds, soleOuter.rel, newRel));
+            RelationRole soleOuter = multiouters.get(0);
+            List<RelationMember> modifiedMembers = new ArrayList<>(soleOuter.rel.getMembers());
+            modifiedMembers.add(new RelationMember(soleOuter.role, outer));
+            cmds.add(new ChangeMembersCommand(ds, soleOuter.rel, modifiedMembers));
             return;
         default:
             // Create a new relation with all previous members and (Way)outer as outer.
-            newRel = new Relation();
+            Relation newRel = new Relation();
             for (RelationRole r : multiouters) {
                 // Add members
                 for (RelationMember rm : r.rel.getMembers()) {
@@ -1717,11 +1714,11 @@ public class JoinAreasAction extends JosmAction {
      * @param ways The List of Ways to remove all tags from
      */
     private void stripTags(Collection<Way> ways) {
-        for (Way w : ways) {
-            final Way wayWithoutTags = new Way(w);
-            wayWithoutTags.removeAll();
-            cmds.add(new ChangeCommand(w, wayWithoutTags));
-        }
+        Map<String, String> tagsToRemove = new HashMap<>();
+        ways.stream().flatMap(w -> w.keySet().stream()).forEach(k -> tagsToRemove.put(k, null));
+        if (tagsToRemove.isEmpty())
+            return;
+        cmds.add(new ChangePropertyCommand(new ArrayList<>(ways), tagsToRemove));
         /* I18N: current action printed in status display */
         commitCommands(marktr("Remove tags from inner ways"));
     }

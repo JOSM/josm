@@ -48,7 +48,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
@@ -938,27 +938,26 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         try {
             final Collection<TaggingPreset> presets = TaggingPresets.getMatchingPresets(
                     EnumSet.of(TaggingPresetType.forPrimitive(orig)), orig.getKeys(), false);
-            Relation relation = new Relation(orig);
+            Relation target = new Relation(orig);
             boolean modified = false;
             for (OsmPrimitive p : primitivesToAdd) {
                 if (p instanceof Relation) {
-                    List<Relation> loop = RelationChecker.checkAddMember(relation, (Relation) p);
+                    List<Relation> loop = RelationChecker.checkAddMember(target, (Relation) p);
                     if (!loop.isEmpty() && loop.get(0).equals(loop.get(loop.size() - 1))) {
                         warnOfCircularReferences(p, loop);
                         continue;
                     }
-                } else if (MemberTableModel.hasMembersReferringTo(relation.getMembers(), Collections.singleton(p))
+                } else if (MemberTableModel.hasMembersReferringTo(target.getMembers(), Collections.singleton(p))
                         && !confirmAddingPrimitive(p)) {
                     continue;
                 }
                 final Set<String> roles = findSuggestedRoles(presets, p);
-                relation.addMember(new RelationMember(roles.size() == 1 ? roles.iterator().next() : "", p));
+                target.addMember(new RelationMember(roles.size() == 1 ? roles.iterator().next() : "", p));
                 modified = true;
             }
-            if (!modified) {
-                relation.setMembers(null); // see #19885
-            }
-            return modified ? new ChangeCommand(orig, relation) : null;
+            List<RelationMember> members = new ArrayList<>(target.getMembers());
+            target.setMembers(null); // see #19885
+            return modified ? new ChangeMembersCommand(orig, members) : null;
         } catch (AddAbortException ign) {
             Logging.trace(ign);
             return null;

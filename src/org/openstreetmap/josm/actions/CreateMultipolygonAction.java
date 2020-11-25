@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.command.AddCommand;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -115,6 +115,10 @@ public class CreateMultipolygonAction extends JosmAction {
 
             // to avoid EDT violations
             SwingUtilities.invokeLater(() -> {
+                if (multipolygonRelation != null) {
+                    // rather ugly: update generated a ChangeMembersCommand with a copy of the member list, so clear the list now
+                    commandAndRelation.b.setMembers(null); // #see 19885
+                }
                 UndoRedoHandler.getInstance().add(command);
                 final Relation relation = (Relation) MainApplication.getLayerManager().getEditDataSet()
                         .getPrimitiveById(commandAndRelation.b);
@@ -228,7 +232,8 @@ public class CreateMultipolygonAction extends JosmAction {
      * Returns a {@link Pair} of the old multipolygon {@link Relation} (or null) and the newly created/modified multipolygon {@link Relation}.
      * @param selectedWays selected ways
      * @param selectedMultipolygonRelation selected multipolygon relation
-     * @return pair of old and new multipolygon relation if a difference was found, else the pair contains the old relation twice
+     * @return null if ways don't build a valid multipolygon, pair of old and new multipolygon relation if a difference was found,
+     * else the pair contains the old relation twice
      */
     public static Pair<Relation, Relation> updateMultipolygonRelation(Collection<Way> selectedWays, Relation selectedMultipolygonRelation) {
 
@@ -243,6 +248,7 @@ public class CreateMultipolygonAction extends JosmAction {
             return mergeRelationsMembers(selectedMultipolygonRelation, calculated);
         }
         showErrors(mpTest.getErrors());
+        calculated.setMembers(null); // see #19885
         return null; //could not make multipolygon.
     }
 
@@ -279,6 +285,7 @@ public class CreateMultipolygonAction extends JosmAction {
             GuiHelper.runInEDT(() -> new Notification(msg).setIcon(JOptionPane.WARNING_MESSAGE).show());
         }
         foundDiff |= merged.addAll(calculated.getMembers());
+        calculated.setMembers(null); // see #19885
         if (!foundDiff) {
             return Pair.create(old, old); // unchanged
         }
@@ -342,7 +349,7 @@ public class CreateMultipolygonAction extends JosmAction {
             commandName = getName(false);
         } else {
             if (!unchanged) {
-                list.add(new ChangeCommand(existingRelation, relation));
+                list.add(new ChangeMembersCommand(existingRelation, new ArrayList<>(relation.getMembers())));
             }
             if (list.isEmpty()) {
                 if (unchanged) {
@@ -389,9 +396,10 @@ public class CreateMultipolygonAction extends JosmAction {
     private static final List<String> DEFAULT_LINEAR_TAGS = Arrays.asList("barrier", "fence_type", "source");
 
     /**
-     * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary
+     * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary.
      * Function was extended in reltoolbox plugin by Zverikk and copied back to the core
-     * @param relation the multipolygon style relation to process
+     * @param relation the multipolygon style relation to process. If it is new, the tags might be
+     * modified, else the list of commands will contain a command to modify its tags
      * @return a list of commands to execute
      */
     public static List<Command> removeTagsFromWaysIfNeeded(Relation relation) {
@@ -471,17 +479,18 @@ public class CreateMultipolygonAction extends JosmAction {
             }
         }
 
-        if (moveTags) {
+        values.remove("area");
+        if (moveTags && !values.isEmpty()) {
             // add those tag values to the relation
             boolean fixed = false;
-            Relation r2 = new Relation(relation);
+            Map<String, String> tagsToAdd = new HashMap<>();
             for (Entry<String, String> entry : values.entrySet()) {
                 String key = entry.getKey();
-                if (!r2.hasKey(key) && !"area".equals(key)) {
+                if (!relation.hasKey(key)) {
                     if (relation.isNew())
                         relation.put(key, entry.getValue());
                     else
-                        r2.put(key, entry.getValue());
+                        tagsToAdd.put(key, entry.getValue());
                     fixed = true;
                 }
             }
@@ -490,9 +499,7 @@ public class CreateMultipolygonAction extends JosmAction {
                 if (ds == null) {
                     ds = MainApplication.getLayerManager().getEditDataSet();
                 }
-                commands.add(new ChangeCommand(ds, relation, r2));
-            } else {
-                r2.setMembers(null); // see #19885
+                commands.add(new ChangePropertyCommand(ds, Collections.singleton(relation), tagsToAdd));
             }
         }
 

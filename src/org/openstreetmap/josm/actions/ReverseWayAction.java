@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.corrector.ReverseWayNoTagCorrector;
 import org.openstreetmap.josm.actions.corrector.ReverseWayTagCorrector;
-import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -40,28 +40,17 @@ public final class ReverseWayAction extends JosmAction {
      * The resulting way after reversing it and the commands to get there.
      */
     public static class ReverseWayResult {
-        private final Way newWay;
         private final Collection<Command> tagCorrectionCommands;
         private final Command reverseCommand;
 
         /**
          * Create a new {@link ReverseWayResult}
-         * @param newWay The new way primitive
          * @param tagCorrectionCommands The commands to correct the tags
          * @param reverseCommand The command to reverse the way
          */
-        public ReverseWayResult(Way newWay, Collection<Command> tagCorrectionCommands, Command reverseCommand) {
-            this.newWay = newWay;
+        public ReverseWayResult(Collection<Command> tagCorrectionCommands, Command reverseCommand) {
             this.tagCorrectionCommands = tagCorrectionCommands;
             this.reverseCommand = reverseCommand;
-        }
-
-        /**
-         * Gets the new way object
-         * @return The new, reversed way
-         */
-        public Way getNewWay() {
-            return newWay;
         }
 
         /**
@@ -149,16 +138,14 @@ public final class ReverseWayAction extends JosmAction {
      */
     public static ReverseWayResult reverseWay(Way w) throws UserCancelException {
         ReverseWayNoTagCorrector.checkAndConfirmReverseWay(w);
-        Way wnew = new Way(w);
-        List<Node> nodesCopy = wnew.getNodes();
+        List<Node> nodesCopy = w.getNodes();
         Collections.reverse(nodesCopy);
-        wnew.setNodes(nodesCopy);
 
         Collection<Command> corrCmds = Collections.<Command>emptyList();
         if (Config.getPref().getBoolean("tag-correction.reverse-way", true)) {
-            corrCmds = new ReverseWayTagCorrector().execute(w, wnew);
+            corrCmds = new ReverseWayTagCorrector().execute(w, w);
         }
-        return new ReverseWayResult(wnew, corrCmds, new ChangeCommand(w, wnew));
+        return new ReverseWayResult(corrCmds, new ChangeNodesCommand(w, new ArrayList<>(nodesCopy)));
     }
 
     @Override

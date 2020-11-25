@@ -117,15 +117,19 @@ public class MultipolygonBuilder {
     public String makeFromWays(Collection<Way> ways) {
         MultipolygonTest mpTest = new MultipolygonTest();
         Relation calculated = mpTest.makeFromWays(ways);
-        if (!mpTest.getErrors().isEmpty()) {
-            return mpTest.getErrors().iterator().next().getMessage();
+        try {
+            if (!mpTest.getErrors().isEmpty()) {
+                return mpTest.getErrors().iterator().next().getMessage();
+            }
+            Pair<List<JoinedPolygon>, List<JoinedPolygon>> outerInner = joinWays(calculated);
+            this.outerWays.clear();
+            this.innerWays.clear();
+            this.outerWays.addAll(outerInner.a);
+            this.innerWays.addAll(outerInner.b);
+            return null;
+        } finally {
+            calculated.setMembers(null); // see #19885
         }
-        Pair<List<JoinedPolygon>, List<JoinedPolygon>> outerInner = joinWays(calculated);
-        this.outerWays.clear();
-        this.innerWays.clear();
-        this.outerWays.addAll(outerInner.a);
-        this.innerWays.addAll(outerInner.b);
-        return null;
     }
 
     /**

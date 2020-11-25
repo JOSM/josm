@@ -13,6 +13,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract relation editor.
@@ -70,7 +71,8 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
      * This method is guaranteed to return a working RelationEditor.
      *
      * @param layer the data layer the relation is a member of
-     * @param r the relation to be edited
+     * @param r the relation to be edited. If the relation doesn't belong to a {@code DataSet}
+     * callers MUST NOT use the relation after calling this method.
      * @param selectedMembers a collection of relation members which shall be selected when the editor is first launched
      * @return an instance of RelationEditor suitable for editing that kind of relation
      */
@@ -79,6 +81,14 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
             return RelationDialogManager.getRelationDialogManager().getEditorForRelation(layer, r);
         else {
             RelationEditor editor = new GenericRelationEditor(layer, r, selectedMembers);
+            if (r != null && r.getDataSet() == null) {
+                // see #19885: We have to assume that the relation was only created as container for tags and members
+                // the editor has created its own copy by now.
+                // Since the members point to the container we unlink them here.
+                Logging.debug("Member list is reset for relation  {0}", r.getUniqueId());
+                r.setMembers(null);
+            }
+
             RelationDialogManager.getRelationDialogManager().positionOnScreen(editor);
             RelationDialogManager.getRelationDialogManager().register(layer, r, editor);
             return editor;

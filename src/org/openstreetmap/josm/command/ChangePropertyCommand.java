@@ -7,9 +7,11 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -72,7 +75,7 @@ public class ChangePropertyCommand extends Command {
      *
      * @param ds The target data set. Must not be {@code null}
      * @param objects the objects to modify. Must not be empty
-     * @param tags the tags to set
+     * @param tags the tags to set. Caller must make sure that the tas are not changed once the command was executed.
      * @since 12726
      */
     public ChangePropertyCommand(DataSet ds, Collection<? extends OsmPrimitive> objects, Map<String, String> tags) {
@@ -85,7 +88,7 @@ public class ChangePropertyCommand extends Command {
      * Creates a command to change multiple tags of multiple objects
      *
      * @param objects the objects to modify. Must not be empty, and objects must belong to a data set
-     * @param tags the tags to set
+     * @param tags the tags to set. Caller must make sure that the tas are not changed once the command was executed.
      * @throws NullPointerException if objects is null or contain null item
      * @throws NoSuchElementException if objects is empty
      */
@@ -285,5 +288,36 @@ public class ChangePropertyCommand extends Command {
         ChangePropertyCommand that = (ChangePropertyCommand) obj;
         return Objects.equals(objects, that.objects) &&
                 Objects.equals(tags, that.tags);
+    }
+
+    /**
+     * Calculate the {@link ChangePropertyCommand} that is needed to change the tags in source to be equal to those in target.
+     * @param source the source primitive
+     * @param target the target primitive
+     * @return null if no changes are needed, else a {@link ChangePropertyCommand}
+     * @since 17357
+     */
+    public static Command build(OsmPrimitive source, Tagged target) {
+        Map<String, String> changedTags = new HashMap<>();
+        // find tags which have to be changed or removed
+        for (Entry<String, String> tag : source.getKeys().entrySet()) {
+            String key = tag.getKey();
+            String val = target.get(key);
+            if (!tag.getValue().equals(val))
+                changedTags.put(key, val); // null or a different value
+        }
+        // find tags which exist only in target, they have to be added
+        for (Entry<String, String> tag : target.getKeys().entrySet()) {
+            String key = tag.getKey();
+            if (!source.hasTag(key))
+                changedTags.put(key, tag.getValue());
+        }
+        if (changedTags.isEmpty())
+            return null;
+        if (changedTags.size() == 1) {
+            Entry<String, String> tag = changedTags.entrySet().iterator().next();
+            return new ChangePropertyCommand(Collections.singleton(source), tag.getKey(), tag.getValue());
+        }
+        return new ChangePropertyCommand(Collections.singleton(source), new HashMap<>(changedTags));
     }
 }

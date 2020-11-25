@@ -4,12 +4,17 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeMembersCommand;
+import org.openstreetmap.josm.command.ChangePropertyCommand;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.conflict.ConflictAddCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -85,9 +90,17 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         Relation editedRelation = new Relation(originRelation);
         tagEditorModel.applyToPrimitive(editedRelation);
         getMemberTableModel().applyToRelation(editedRelation);
-        if (!editedRelation.hasEqualSemanticAttributes(originRelation, false)) {
+        List<Command> cmds = new ArrayList<>();
+        if (originRelation.getKeys().equals(editedRelation.getKeys())) {
+            cmds.add(new ChangeMembersCommand(originRelation, editedRelation.getMembers()));
+        }
+        Command cmdProps = ChangePropertyCommand.build(originRelation, editedRelation);
+        if (cmdProps != null)
+            cmds.add(cmdProps);
+        if (cmds.size() >= 2) {
             UndoRedoHandler.getInstance().add(new ChangeCommand(originRelation, editedRelation));
-        } else {
+        } else if (!cmds.isEmpty()) {
+            UndoRedoHandler.getInstance().add(cmds.get(0));
             editedRelation.setMembers(null); // see #19885
         }
     }

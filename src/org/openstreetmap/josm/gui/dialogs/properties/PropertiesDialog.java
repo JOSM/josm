@@ -1153,12 +1153,11 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             if (ed.showDialog().getValue() != 1)
                 return;
 
-            Relation copy = new Relation(cur);
+            List<RelationMember> members = cur.getMembers();
             for (OsmPrimitive primitive: OsmDataManager.getInstance().getInProgressSelection()) {
-                copy.removeMembersFor(primitive);
+                members.removeIf(rm -> rm.getMember() == primitive);
             }
-            UndoRedoHandler.getInstance().add(new ChangeMembersCommand(cur, copy.getMembers()));
-            copy.setMembers(null); // see #19885
+            UndoRedoHandler.getInstance().add(new ChangeMembersCommand(cur, members));
 
             tagTable.clearSelection();
             if (nextRelation != null) {
