@@ -98,7 +98,11 @@ class MapPaintPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
         warnings.stream().filter(s -> isIgnoredSubstring(source, s)).forEach(ignoredErrors::add);
         warnings.removeAll(ignoredErrors);
 
-        assertTrue(errors.isEmpty() && warnings.isEmpty(), errors.toString() + '\n' + warnings.toString());
+        // #16567 - Shouldn't be necessary to print displayName if Ant worked properly
+        // See https://josm.openstreetmap.de/ticket/16567#comment:53
+        // See https://bz.apache.org/bugzilla/show_bug.cgi?id=64564
+        // See https://github.com/apache/ant/pull/121
+        assertTrue(errors.isEmpty() && warnings.isEmpty(), displayName + " => " + errors + '\n' + warnings);
         assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
     }
 }

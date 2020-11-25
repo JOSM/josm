@@ -97,7 +97,11 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
         } catch (SAXException | IllegalArgumentException e) {
             handleException(source, e, errors, ignoredErrors);
         }
-        assertTrue(errors.isEmpty(), errors::toString);
+        // #16567 - Shouldn't be necessary to print displayName if Ant worked properly
+        // See https://josm.openstreetmap.de/ticket/16567#comment:53
+        // See https://bz.apache.org/bugzilla/show_bug.cgi?id=64564
+        // See https://github.com/apache/ant/pull/121
+        assertTrue(errors.isEmpty(), displayName + " => " + errors);
         assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
     }
 

@@ -383,8 +383,12 @@ public class ImageryPreferenceTestIT {
         throw new IllegalArgumentException("Unable to find a valid WMS layer");
     }
 
-    private static String format(Map<String, Map<ImageryInfo, List<String>>> map) {
-        return map.toString().replaceAll("\\}, ", "\n\\}, ").replaceAll(", ImageryInfo\\{", "\n      ,ImageryInfo\\{");
+    private static String format(String id, Map<String, Map<ImageryInfo, List<String>>> map) {
+        // #16567 - Shouldn't be necessary to print id if Ant worked properly
+        // See https://josm.openstreetmap.de/ticket/16567#comment:53
+        // See https://bz.apache.org/bugzilla/show_bug.cgi?id=64564
+        // See https://github.com/apache/ant/pull/121
+        return id + " => " + map.toString().replaceAll("\\}, ", "\n\\}, ").replaceAll(", ImageryInfo\\{", "\n      ,ImageryInfo\\{");
     }
 
     /**
@@ -397,8 +401,8 @@ public class ImageryPreferenceTestIT {
     @MethodSource("data")
     void testImageryEntryValidity(String id, ImageryInfo info) {
         checkEntry(info);
-        assertTrue(errors.isEmpty(), format(errors));
+        assertTrue(errors.isEmpty(), format(id, errors));
         assertFalse(workingURLs.isEmpty());
-        assumeTrue(ignoredErrors.isEmpty(), format(ignoredErrors));
+        assumeTrue(ignoredErrors.isEmpty(), format(id, ignoredErrors));
     }
 }
