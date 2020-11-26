@@ -953,7 +953,7 @@ public class ImageProvider {
                     if (path == null) {
                         continue;
                     }
-                    ir = getIfAvailableLocalURL(path, type);
+                    ir = getIfAvailableLocalURL(subdir + name, path, type);
                     if (ir != null) {
                         cache.put(cacheName, ir);
                         return ir;
@@ -983,7 +983,7 @@ public class ImageProvider {
                     URI uri = getSvgUniverse().loadSVG(is, Utils.fileToURL(cf.getFile()).toString());
                     svg = getSvgUniverse().getDiagram(uri);
                 }
-                return svg == null ? null : new ImageResource(svg);
+                return svg == null ? null : new ImageResource(url, svg);
             case OTHER:
                 BufferedImage img = null;
                 try {
@@ -991,7 +991,7 @@ public class ImageProvider {
                 } catch (IOException | UnsatisfiedLinkError e) {
                     Logging.log(Logging.LEVEL_WARN, "Exception while reading HTTP image:", e);
                 }
-                return img == null ? null : new ImageResource(img);
+                return img == null ? null : new ImageResource(url, img);
             default:
                 throw new AssertionError("Unsupported type: " + type);
             }
@@ -1040,7 +1040,7 @@ public class ImageProvider {
                     Logging.warn("Unable to process svg: "+s);
                     return null;
                 }
-                return new ImageResource(svg);
+                return new ImageResource(url, svg);
             } else {
                 try {
                     // See #10479: for PNG files, always enforce transparency to be sure tNRS chunk is used even not in paletted mode
@@ -1049,7 +1049,7 @@ public class ImageProvider {
                     // hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/dc4322602480/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
                     // CHECKSTYLE.ON: LineLength
                     Image img = read(new ByteArrayInputStream(bytes), false, true);
-                    return img == null ? null : new ImageResource(img);
+                    return img == null ? null : new ImageResource(url, img);
                 } catch (IOException | UnsatisfiedLinkError e) {
                     Logging.log(Logging.LEVEL_WARN, "Exception while reading image:", e);
                 }
@@ -1124,7 +1124,7 @@ public class ImageProvider {
                             URI uri = getSvgUniverse().loadSVG(is, entryName);
                             svg = getSvgUniverse().getDiagram(uri);
                         }
-                        return svg == null ? null : new ImageResource(svg);
+                        return svg == null ? null : new ImageResource(fullName, svg);
                     case OTHER:
                         while (size > 0) {
                             int l = is.read(buf, offs, size);
@@ -1137,7 +1137,7 @@ public class ImageProvider {
                         } catch (IOException | UnsatisfiedLinkError e) {
                             Logging.warn(e);
                         }
-                        return img == null ? null : new ImageResource(img);
+                        return img == null ? null : new ImageResource(fullName, img);
                     default:
                         throw new AssertionError("Unknown ImageType: "+type);
                     }
@@ -1156,31 +1156,32 @@ public class ImageProvider {
      * @param type data type of the image
      * @return the requested image or null if the request failed
      */
-    private static ImageResource getIfAvailableLocalURL(URL path, ImageType type) {
+    private static ImageResource getIfAvailableLocalURL(String cacheKey, URL path, ImageType type) {
         switch (type) {
         case SVG:
-            SVGDiagram svg = null;
-            synchronized (getSvgUniverse()) {
-                try {
-                    URI uri = null;
+            return new ImageResource(cacheKey, () -> {
+                synchronized (getSvgUniverse()) {
                     try {
-                        uri = getSvgUniverse().loadSVG(path);
-                    } catch (InvalidPathException e) {
-                        Logging.error("Cannot open {0}: {1}", path, e.getMessage());
-                        Logging.trace(e);
-                    }
-                    if (uri == null && "jar".equals(path.getProtocol())) {
-                        URL betterPath = Utils.betterJarUrl(path);
-                        if (betterPath != null) {
-                            uri = getSvgUniverse().loadSVG(betterPath);
+                        URI uri = null;
+                        try {
+                            uri = getSvgUniverse().loadSVG(path);
+                        } catch (InvalidPathException e) {
+                            Logging.error("Cannot open {0}: {1}", path, e.getMessage());
+                            Logging.trace(e);
                         }
+                        if (uri == null && "jar".equals(path.getProtocol())) {
+                            URL betterPath = Utils.betterJarUrl(path);
+                            if (betterPath != null) {
+                                uri = getSvgUniverse().loadSVG(betterPath);
+                            }
+                        }
+                        return getSvgUniverse().getDiagram(uri);
+                    } catch (SecurityException | IOException e) {
+                        Logging.log(Logging.LEVEL_WARN, "Unable to read SVG", e);
                     }
-                    svg = getSvgUniverse().getDiagram(uri);
-                } catch (SecurityException | IOException e) {
-                    Logging.log(Logging.LEVEL_WARN, "Unable to read SVG", e);
                 }
-            }
-            return svg == null ? null : new ImageResource(svg);
+                return null;
+            });
         case OTHER:
             BufferedImage img = null;
             try {
@@ -1195,7 +1196,7 @@ public class ImageProvider {
                 Logging.log(Logging.LEVEL_WARN, "Unable to read image", e);
                 Logging.debug(e);
             }
-            return img == null ? null : new ImageResource(img);
+            return img == null ? null : new ImageResource(path.toString(), img);
         default:
             throw new AssertionError();
         }
@@ -1393,7 +1394,7 @@ public class ImageProvider {
      * @since 6172
      */
     public static Image createBoundedImage(Image img, int maxSize) {
-        return new ImageResource(img).getImageIconBounded(new Dimension(maxSize, maxSize)).getImage();
+        return new ImageResource(img.toString(), img).getImageIconBounded(new Dimension(maxSize, maxSize)).getImage();
     }
 
     /**
@@ -1930,6 +1931,14 @@ public class ImageProvider {
      */
     public static ImageIcon createBlankIcon(ImageSizes size) {
         return new ImageIcon(new BufferedImage(size.getAdjustedWidth(), size.getAdjustedHeight(), BufferedImage.TYPE_INT_ARGB));
+    }
+
+    /**
+     * Prints statistics concerning the image loading caches.
+     */
+    public static void printStatistics() {
+        Logging.info(getSvgUniverse().statistics());
+        Logging.info(ImageResource.statistics());
     }
 
     @Override

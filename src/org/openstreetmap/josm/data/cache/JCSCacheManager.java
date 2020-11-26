@@ -30,6 +30,7 @@ import org.apache.commons.jcs3.utils.serialization.StandardSerializer;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -44,6 +45,12 @@ public final class JCSCacheManager {
     private static final long maxObjectTTL = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
     public static final BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
+
+    /**
+     * The preference key {@code jcs.cache.use_image_resource_cache} controls the caching mechanism used for {@link ImageResource}.
+     * If set to {@code true}, a combined memory/disk is used. Otherwise, an in-memory-cache is used.
+     */
+    public static final BooleanProperty USE_IMAGE_RESOURCE_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_image_resource_cache", false);
 
     private static final AuxiliaryCacheFactory DISK_CACHE_FACTORY =
             USE_BLOCK_CACHE.get() ? new BlockDiskCacheFactory() : new IndexedDiskCacheFactory();
@@ -170,13 +177,19 @@ public final class JCSCacheManager {
      * @param cachePath         path to disk cache. if null, no disk cache will be created
      * @return cache access object
      */
-    @SuppressWarnings("unchecked")
     public static <K, V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects, String cachePath) {
+        return getCache(cacheName, maxMemoryObjects, maxDiskObjects, cachePath, USE_BLOCK_CACHE.get() ? 4096 : 0);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <K, V> CacheAccess<K, V> getCache(String cacheName, int maxMemoryObjects, int maxDiskObjects,
+                                                     String cachePath, int blockSizeBytes) {
         CacheAccess<K, V> cacheAccess = JCS.getInstance(cacheName, getCacheAttributes(maxMemoryObjects));
         CompositeCache<K, V> cc = cacheAccess.getCacheControl();
 
         if (cachePath != null && cacheDirLock != null) {
-            IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath, cacheName);
+            IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath, cacheName, blockSizeBytes);
+            Logging.debug("Setting up cache: {0}", diskAttributes);
             try {
                 if (cc.getAuxCaches().length == 0) {
                     cc.setAuxCaches(new AuxiliaryCache[]{DISK_CACHE_FACTORY.createCache(
@@ -192,18 +205,34 @@ public final class JCSCacheManager {
     }
 
     /**
+     * Returns a cache for {@link ImageResource}
+     * @param <K> key type
+     * @param <V> value type
+     * @return cache access object
+     */
+    public static <K, V> CacheAccess<K, V> getImageResourceCache() {
+        if (!USE_IMAGE_RESOURCE_CACHE.get()) {
+            return getCache("images", 16 * 1024, 0, null);
+        }
+        String cachePath = new File(Config.getDirs().getCacheDirectory(true), "images").getAbsolutePath();
+        Logging.warn("Using experimental disk cache {0} for ImageResource", cachePath);
+        return getCache("images", 16 * 1024, 512 * 1024, cachePath, 1024);
+    }
+
+    /**
      * Close all files to ensure, that all indexes and data are properly written
      */
     public static void shutdown() {
         JCS.shutdown();
     }
 
-    private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath, String cacheName) {
+    private static IDiskCacheAttributes getDiskCacheAttributes(int maxDiskObjects, String cachePath, String cacheName, int blockSizeBytes) {
         IDiskCacheAttributes ret;
-        removeStaleFiles(cachePath + File.separator + cacheName, USE_BLOCK_CACHE.get() ? "_INDEX_v2" : "_BLOCK_v2");
-        String newCacheName = cacheName + (USE_BLOCK_CACHE.get() ? "_BLOCK_v2" : "_INDEX_v2");
+        boolean isBlockDiskCache = blockSizeBytes > 0;
+        removeStaleFiles(cachePath + File.separator + cacheName, isBlockDiskCache ? "_INDEX_v2" : "_BLOCK_v2");
+        String newCacheName = cacheName + (isBlockDiskCache ? "_BLOCK_v2" : "_INDEX_v2");
 
-        if (USE_BLOCK_CACHE.get()) {
+        if (isBlockDiskCache) {
             BlockDiskCacheAttributes blockAttr = new BlockDiskCacheAttributes();
             /*
              * BlockDiskCache never optimizes the file, so when file size is reduced, it will never be truncated to desired size.
@@ -217,7 +246,7 @@ public final class JCSCacheManager {
             } else {
                 blockAttr.setMaxKeySize(maxDiskObjects);
             }
-            blockAttr.setBlockSizeBytes(4096); // use 4k blocks
+            blockAttr.setBlockSizeBytes(blockSizeBytes);
             ret = blockAttr;
         } else {
             IndexedDiskCacheAttributes indexAttr = new IndexedDiskCacheAttributes();

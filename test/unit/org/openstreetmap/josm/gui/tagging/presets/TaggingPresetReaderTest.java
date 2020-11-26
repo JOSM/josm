@@ -89,9 +89,10 @@ class TaggingPresetReaderTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    void testReadDefaulPresets() throws SAXException, IOException {
+    void testReadDefaultPresets() throws SAXException, IOException {
         String presetfile = "resource://data/defaultpresets.xml";
         final Collection<TaggingPreset> presets = TaggingPresetReader.readAll(presetfile, true);
         Assert.assertTrue("Default presets are empty", presets.size() > 0);
+        TaggingPresetsTest.waitForIconLoading(presets);
     }
 }
