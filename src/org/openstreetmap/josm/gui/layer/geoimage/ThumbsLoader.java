@@ -8,13 +8,11 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
@@ -164,10 +162,9 @@ public class ThumbsLoader implements Runnable {
         }
 
         if (!cacheOff && cache != null) {
-            try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-                ImageIO.write(scaledBI, "png", output);
-                cache.put(cacheIdent, new BufferedImageCacheEntry(output.toByteArray()));
-            } catch (IOException e) {
+            try {
+                cache.put(cacheIdent, BufferedImageCacheEntry.pngEncoded(scaledBI));
+            } catch (UncheckedIOException e) {
                 Logging.warn("Failed to save geoimage thumb to cache");
                 Logging.warn(e);
             }

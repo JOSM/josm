@@ -3,7 +3,9 @@ package org.openstreetmap.josm.data.cache;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import javax.imageio.ImageIO;
 
@@ -27,6 +29,21 @@ public class BufferedImageCacheEntry extends CacheEntry {
      */
     public BufferedImageCacheEntry(byte[] content) {
         super(content);
+    }
+
+    /**
+     * Encodes the given image as PNG and returns a cache entry
+     * @param img the image
+     * @return a cache entry for the PNG encoded image
+     * @throws UncheckedIOException if an I/O error occurs
+     */
+    public static BufferedImageCacheEntry pngEncoded(BufferedImage img) {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            ImageIO.write(img, "png", output);
+            return new BufferedImageCacheEntry(output.toByteArray());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /**
