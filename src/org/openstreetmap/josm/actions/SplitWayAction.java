@@ -222,6 +222,9 @@ public class SplitWayAction extends JosmAction {
             } else {
                 setHighlightedWaySegments(Collections.emptyList());
                 DISPLAY_COUNT.decrementAndGet();
+                if (getValue() != 1) {
+                    newWays.forEach(w -> w.setNodes(null)); // see 19885
+                }
             }
         }
 
@@ -303,6 +306,9 @@ public class SplitWayAction extends JosmAction {
                 way.getDataSet().setSelected(newSel);
             }
         });
+        if (!splitWayCommand.isPresent()) {
+            newWays.forEach(w -> w.setNodes(null)); // see 19885
+        }
     }
 
     @Override

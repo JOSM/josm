@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -89,7 +90,7 @@ public class SplitWayCommand extends SequenceCommand {
      * @param commandList The sequence of commands that should be executed.
      * @param newSelection The new list of selected primitives ids (which is saved for later retrieval with {@link #getNewSelection})
      * @param originalWay The original way being split (which is saved for later retrieval with {@link #getOriginalWay})
-     * @param newWays The resulting new ways (which is saved for later retrieval with {@link #getOriginalWay})
+     * @param newWays The resulting new ways (which is saved for later retrieval with {@link #getNewWays})
      */
     public SplitWayCommand(String name, Collection<Command> commandList,
             List<? extends PrimitiveId> newSelection, Way originalWay, List<Way> newWays) {
@@ -395,7 +396,8 @@ public class SplitWayCommand extends SequenceCommand {
             }
         }
 
-        switch (missingMemberStrategy) {
+        try {
+            switch (missingMemberStrategy) {
             case GO_AHEAD_WITH_DOWNLOADS:
                 try {
                     downloadMissingMembers(incompleteMembers);
@@ -405,16 +407,23 @@ public class SplitWayCommand extends SequenceCommand {
                 }
                 // If missing relation members were downloaded, perform the analysis again to find the relation
                 // member order for all relations.
+                analysis.cleanup();
                 analysis = analyseSplit(way, wayToKeep, newWays);
-                return Optional.of(splitBasedOnAnalyses(way, newWays, newSelection, analysis, indexOfWayToKeep));
+                break;
             case GO_AHEAD_WITHOUT_DOWNLOADS:
                 // Proceed with the split with the information we have.
                 // This can mean that there are no missing members we want, or that the user chooses to continue
                 // the split without downloading them.
-                return Optional.of(splitBasedOnAnalyses(way, newWays, newSelection, analysis, indexOfWayToKeep));
+                break;
             case USER_ABORTED:
             default:
                 return Optional.empty();
+            }
+            return Optional.of(splitBasedOnAnalyses(way, newWays, newSelection, analysis, indexOfWayToKeep));
+        } finally {
+            // see #19885
+            wayToKeep.setNodes(null);
+            analysis.cleanup();
         }
     }
 
@@ -442,7 +451,7 @@ public class SplitWayCommand extends SequenceCommand {
                 continue;
             }
 
-            numberOfRelations++;
+            boolean isSimpleCase = true;
 
             Relation c = null;
             String type = Optional.ofNullable(r.get("type")).orElse("");
@@ -548,12 +557,18 @@ public class SplitWayCommand extends SequenceCommand {
                             missingWays = Collections.emptySet();
                         }
                         relationAnalyses.add(new RelationAnalysis(c, rm, direction, missingWays));
+                        isSimpleCase = false;
                     }
                 }
             }
-
-            if (c != null) {
-                commandList.add(new ChangeCommand(r.getDataSet(), r, c));
+            if (!isSimpleCase)
+                numberOfRelations++;
+            if (c != null && isSimpleCase) {
+                if (!r.getMembers().equals(c.getMembers())) {
+                    commandList.add(new ChangeMembersCommand(r, new ArrayList<>(c.getMembers())));
+                    numberOfRelations++;
+                }
+                c.setMembers(null); // see #19885
             }
         }
         changedWay.setNodes(null); // see #19885
@@ -574,6 +589,16 @@ public class SplitWayCommand extends SequenceCommand {
             commands = commandList;
             warningTypes = warnings;
             this.numberOfRelations = numberOfRelations;
+        }
+
+        /**
+         * Unlink temporary copies of relations. See #19885
+         */
+        void cleanup() {
+            for (RelationAnalysis ra : relationAnalyses) {
+                if (ra.relation.getDataSet() == null)
+                    ra.relation.setMembers(null);
+            }
         }
 
         List<RelationAnalysis> getRelationAnalyses() {
@@ -728,6 +753,14 @@ public class SplitWayCommand extends SequenceCommand {
                     relation.addMember(j, em);
                 }
             }
+        }
+
+        // add one command for each complex case with relations
+        final DataSet ds = way.getDataSet();
+        for (Relation r : analysis.getRelationAnalyses().stream().map(RelationAnalysis::getRelation).collect(Collectors.toSet())) {
+            Relation orig = (Relation) ds.getPrimitiveById(r);
+            analysis.getCommands().add(new ChangeMembersCommand(orig, new ArrayList<>(r.getMembers())));
+            r.setMembers(null); // see #19885
         }
 
         EnumSet<WarningType> warnings = analysis.getWarningTypes();
