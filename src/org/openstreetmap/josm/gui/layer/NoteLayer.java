@@ -275,7 +275,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             if (v != null) {
                 v.setSize(maxWidth, 0);
                 int w = (int) Math.ceil(v.getPreferredSpan(View.X_AXIS));
-                int h = (int) Math.ceil(v.getPreferredSpan(View.Y_AXIS)) + 10;
+                int h = (int) Math.ceil(v.getPreferredSpan(View.Y_AXIS)) + 20; // see #18372 and #15550
                 pane.setPreferredSize(new Dimension(w, h));
             }
         }
