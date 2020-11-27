@@ -31,7 +31,7 @@ public class DirectionNodes extends Test {
      * Construct a new {@code DirectionNodes} object
      */
     public DirectionNodes() {
-        super(tr("Direction nodes"), tr("Check for nodes which have a 'forward' or 'backward' direction"));
+        super(tr("Direction nodes"), tr("Check for nodes which have a ''forward'' or ''backward'' direction"));
     }
 
     @Override
