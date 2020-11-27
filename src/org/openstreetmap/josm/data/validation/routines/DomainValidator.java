@@ -1197,7 +1197,6 @@ public final class DomainValidator extends AbstractValidator {
         "shouji", // shouji QIHOO 360 TECHNOLOGY CO. LTD.
         "show", // show Snow Beach, LLC
         "showtime", // showtime CBS Domains Inc.
-        "shriram", // shriram Shriram Capital Ltd.
         "silk", // silk Amazon Registry Service, Inc.
         "sina", // sina Sina Corporation
         "singles", // singles Fern Madison, LLC
