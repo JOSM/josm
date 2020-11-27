@@ -152,8 +152,6 @@ public class MainInitialization implements InitializationSequence {
                 MainApplication.toolbar.refreshToolbarControl();
                 MainApplication.toolbar.control.updateUI();
                 MainApplication.contentPanePrivate.updateUI();
-                // image provider statistics
-                ImageProvider.printStatistics();
             }))
         );
     }

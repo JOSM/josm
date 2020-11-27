@@ -692,9 +692,4 @@ public class SVGUniverse implements Serializable
     {
         this.imageDataInlineOnly = imageDataInlineOnly;
     }
-
-    public String statistics() {
-        return String.format("%s has loaded %d SVG images", this, loadedDocs.size());
-    }
-
 }

@@ -4,12 +4,9 @@ package org.openstreetmap.josm.tools;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -17,10 +14,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
-
-import org.apache.commons.jcs3.access.behavior.ICacheAccess;
-import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
-import org.openstreetmap.josm.data.cache.JCSCacheManager;
 
 import com.kitfox.svg.SVGDiagram;
 
@@ -35,20 +28,13 @@ import com.kitfox.svg.SVGDiagram;
 public class ImageResource {
 
     /**
-     * Caches the image data for resized versions of the same image.
-     * Depending on {@link JCSCacheManager#USE_IMAGE_RESOURCE_CACHE}, a combined memory/disk, or an in-memory-cache is used.
+     * Caches the image data for resized versions of the same image. The key is obtained using {@link ImageResizeMode#cacheKey(Dimension)}.
      */
-    private static final ICacheAccess<String, BufferedImageCacheEntry> imgCache = JCSCacheManager.getImageResourceCache();
-
-    private final String cacheKey;
+    private final Map<Integer, BufferedImage> imgCache = new ConcurrentHashMap<>(4);
     /**
      * SVG diagram information in case of SVG vector image.
      */
     private SVGDiagram svg;
-    /**
-     * Supplier for SVG diagram information in case of possibly cached SVG vector image.
-     */
-    private Supplier<SVGDiagram> svgSupplier;
     /**
      * Use this dimension to request original file dimension.
      */
@@ -68,27 +54,20 @@ public class ImageResource {
 
     /**
      * Constructs a new {@code ImageResource} from an image.
-     * @param cacheKey the caching identifier of the image
      * @param img the image
      */
-    public ImageResource(String cacheKey, Image img) {
-        this.cacheKey = Objects.requireNonNull(cacheKey);
-        this.baseImage = Objects.requireNonNull(img);
+    public ImageResource(Image img) {
+        CheckParameterUtil.ensureParameterNotNull(img);
+        baseImage = img;
     }
 
     /**
      * Constructs a new {@code ImageResource} from SVG data.
-     * @param cacheKey the caching identifier of the image
      * @param svg SVG data
      */
-    public ImageResource(String cacheKey, SVGDiagram svg) {
-        this.cacheKey = Objects.requireNonNull(cacheKey);
-        this.svg = Objects.requireNonNull(svg);
-    }
-
-    public ImageResource(String cacheKey, Supplier<SVGDiagram> svgSupplier) {
-        this.cacheKey = Objects.requireNonNull(cacheKey);
-        this.svgSupplier = Objects.requireNonNull(svgSupplier);
+    public ImageResource(SVGDiagram svg) {
+        CheckParameterUtil.ensureParameterNotNull(svg);
+        this.svg = svg;
     }
 
     /**
@@ -98,9 +77,7 @@ public class ImageResource {
      * @since 8095
      */
     public ImageResource(ImageResource res, List<ImageOverlay> overlayInfo) {
-        this.cacheKey = res.cacheKey;
         this.svg = res.svg;
-        this.svgSupplier = res.svgSupplier;
         this.baseImage = res.baseImage;
         this.overlayInfo = overlayInfo;
     }
@@ -181,19 +158,6 @@ public class ImageResource {
         return getImageIconAlreadyScaled(GuiSizesHelper.getDimensionDpiAdjusted(dim), multiResolution, false, resizeMode);
     }
 
-    private BufferedImage getImageFromCache(String cacheKey) {
-        try {
-            BufferedImageCacheEntry image = imgCache.get(cacheKey);
-            if (image == null || image.getImage() == null) {
-                return null;
-            }
-            Logging.trace("{0} is in cache :-)", cacheKey);
-            return image.getImage();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
     /**
      * Get an ImageIcon object for the image of this resource. A potential UI scaling is assumed
      * to be already taken care of, so dim is already scaled accordingly.
@@ -216,15 +180,9 @@ public class ImageResource {
         } else if (resizeMode == null) {
             resizeMode = ImageResizeMode.BOUNDED;
         }
-        final String cacheKey = String.format(Locale.ROOT, "%s--%s--%d--%d",
-                this.cacheKey, resizeMode.name(), dim.width, dim.height);
-        BufferedImage img = getImageFromCache(cacheKey);
+        final int cacheKey = resizeMode.cacheKey(dim);
+        BufferedImage img = imgCache.get(cacheKey);
         if (img == null) {
-            if (svgSupplier != null) {
-                svg = svgSupplier.get();
-                Logging.trace("{0} is not in cache :-(", cacheKey);
-                svgSupplier = null;
-            }
             if (svg != null) {
                 img = ImageProvider.createImageFromSvg(svg, dim, resizeMode);
                 if (img == null) {
@@ -252,12 +210,7 @@ public class ImageResource {
                 img = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
                 disabledIcon.paintIcon(new JPanel(), img.getGraphics(), 0, 0);
             }
-            if (img == null) {
-                return null;
-            }
-            BufferedImageCacheEntry cacheEntry = BufferedImageCacheEntry.pngEncoded(img);
-            Logging.trace("Storing {0} ({1} bytes) in cache...", cacheKey, cacheEntry.getContent().length);
-            imgCache.put(cacheKey, cacheEntry);
+            imgCache.put(cacheKey, img);
         }
 
         if (!multiResolution)
@@ -295,10 +248,6 @@ public class ImageResource {
      */
     public ImageIcon getPaddedIcon(Dimension iconSize) {
         return getImageIcon(iconSize, true, ImageResizeMode.PADDED);
-    }
-
-    static String statistics() {
-        return String.format("ImageResource cache: [%s]", imgCache.getStatistics());
     }
 
     @Override
