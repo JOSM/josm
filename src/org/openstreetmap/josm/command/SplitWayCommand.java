@@ -435,9 +435,8 @@ public class SplitWayCommand extends SequenceCommand {
                 Arrays.asList("outer", "inner", "forward", "backward", "north", "south", "east", "west"));
 
         // Change the original way
-        final Way changedWay = new Way(way);
-        changedWay.setNodes(wayToKeep.getNodes());
-        commandList.add(new ChangeNodesCommand(way, changedWay.getNodes()));
+        final List<Node> changedWayNodes = wayToKeep.getNodes();
+        commandList.add(new ChangeNodesCommand(way, changedWayNodes));
         for (Way wayToAdd : newWays) {
             commandList.add(new AddCommand(way.getDataSet(), wayToAdd));
         }
@@ -464,7 +463,7 @@ public class SplitWayCommand extends SequenceCommand {
                 if (rm.getMember() == way) {
                     boolean insert = true;
                     if (relationSpecialTypes.containsKey(type) && "restriction".equals(relationSpecialTypes.get(type))) {
-                        RelationInformation rValue = treatAsRestriction(r, rm, c, newWays, way, changedWay);
+                        RelationInformation rValue = treatAsRestriction(r, rm, c, newWays, way, changedWayNodes);
                         if (rValue.warnme) warnings.add(WarningType.GENERIC);
                         insert = rValue.insert;
                         c = rValue.relation;
@@ -569,7 +568,6 @@ public class SplitWayCommand extends SequenceCommand {
                 c.setMembers(null); // see #19885
             }
         }
-        changedWay.setNodes(null); // see #19885
         return new Analysis(relationAnalyses, commandList, warnings, numberOfRelations);
     }
 
@@ -784,7 +782,7 @@ public class SplitWayCommand extends SequenceCommand {
 
     private static RelationInformation treatAsRestriction(Relation r,
             RelationMember rm, Relation c, Collection<Way> newWays, Way way,
-            Way changedWay) {
+            List<Node> changedWayNodes) {
         RelationInformation relationInformation = new RelationInformation();
         /* this code assumes the restriction is correct. No real error checking done */
         String role = rm.getRole();
@@ -801,7 +799,7 @@ public class SplitWayCommand extends SequenceCommand {
             }
             Way res = null;
             for (Node n : nodes) {
-                if (changedWay.isFirstLastNode(n)) {
+                if (changedWayNodes.get(0) == n || changedWayNodes.get(changedWayNodes.size() - 1) == n) {
                     res = way;
                 }
             }
