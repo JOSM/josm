@@ -451,6 +451,7 @@ public class SplitWayCommand extends SequenceCommand {
                 continue;
             }
 
+            numberOfRelations++;
             boolean isSimpleCase = true;
 
             Relation c = null;
@@ -561,12 +562,9 @@ public class SplitWayCommand extends SequenceCommand {
                     }
                 }
             }
-            if (!isSimpleCase)
-                numberOfRelations++;
             if (c != null && isSimpleCase) {
                 if (!r.getMembers().equals(c.getMembers())) {
                     commandList.add(new ChangeMembersCommand(r, new ArrayList<>(c.getMembers())));
-                    numberOfRelations++;
                 }
                 c.setMembers(null); // see #19885
             }
