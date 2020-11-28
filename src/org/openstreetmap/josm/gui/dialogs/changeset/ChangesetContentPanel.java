@@ -125,6 +125,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         HistoryInfoAction historyAction = MainApplication.getMenu().historyinfo;
         tblContent.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(historyAction.getShortcut().getKeyStroke(), "historyAction");
         tblContent.getActionMap().put("historyAction", historyAction);
+        tblContent.getTableHeader().setReorderingAllowed(false);
         pnl.add(new JScrollPane(tblContent), BorderLayout.CENTER);
         return pnl;
     }

@@ -279,6 +279,7 @@ public class ChangesetCacheManager extends JFrame {
         // activate DEL on the table
         tblChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "removeFromCache");
         tblChangesets.getActionMap().put("removeFromCache", actRemoveFromCacheAction);
+        tblChangesets.getTableHeader().setReorderingAllowed(false);
 
         tblChangesets.setTransferHandler(new TransferHandler() {
             @Override
