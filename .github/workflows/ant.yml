@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 32
       - name: Set revision env variable
         id: create_revision
-        # revision gets grabbed from last git-svn-id
+        # grab josm revision from last git-svn-id
         run: |
           josm_revision="$(git log -1 --grep 'git-svn-id: https://josm.openstreetmap.de/svn/trunk@' --pretty=format:%B | tail -1 | sed -n 's%git-svn-id: https://josm.openstreetmap.de/svn/trunk@\([0-9]*\) [-0-9a-f]*%\1%p')"
           if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
