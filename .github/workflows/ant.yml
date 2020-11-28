@@ -28,39 +28,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 32
-      - name: Cache
-        uses: actions/cache@v2.0.0
-        with:
-          path:  |
-            ~/.ivy2/cache/
-            ~/work/josm/josm/tools/
-            build-tools-cache/
-          key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
-      - name: Setup java
-        uses: actions/setup-java@v1.4.3
-        with:
-          # We just run ant create-revision in this job. Using Java 11 LTS.
-          java-version: '11'
-      - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
-        run: |
-          mkdir -p build-tools-cache/
-          cd build-tools-cache/
-          if [ ! -f ${{ env.ANT_HOME }}-bin.tar.gz ]; then
-            curl -o ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
-          fi
-          if [ ! -f junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ]; then
-            curl -o junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
-          fi
-          cd ..
-          tar zxf build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
-          cp build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
-      - name: Print ant version, expecting ${{ env.ANT_HOME }}
-        run: ${{ env.ANT_HOME }}/bin/ant -version
       - name: Set revision env variable
         id: create_revision
+        # revision gets grabbed from last git-svn-id
         run: |
-          ant create-revision
-          josm_revision="$(awk '/Revision/{print $2}' resources/REVISION)"
+          josm_revision="$(git log -1 --grep 'git-svn-id: https://josm.openstreetmap.de/svn/trunk@' --pretty=format:%B | tail -1 | sed -n 's%git-svn-id: https://josm.openstreetmap.de/svn/trunk@\([0-9]*\) [-0-9a-f]*%\1%p')"
           if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
             sed -i '/Is-Local-Build/d' resources/REVISION
             echo "josm_prerelease=false" >> $GITHUB_ENV
