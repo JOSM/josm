@@ -120,8 +120,14 @@ jobs:
           defaults write net.pornel.ImageOptim PngOutEnabled 1
           /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
       - name: Build with Ant
+        # Disables errorprone for Java 16
+        # See https://github.com/google/error-prone/issues/1872
         run: |
-          ${{ env.ANT_HOME }}/bin/ant -DnoErrorProne dist
+          if [[ "x${{ matrix.java }}x" =~ x1[6-9](-ea)?x ]]; then
+            ${{ env.ANT_HOME }}/bin/ant -DnoErrorProne dist
+          else
+            ${{ env.ANT_HOME }}/bin/ant dist
+          fi
       - name: Upload jar
         if: ${{ always() && matrix.headless }}
         id: upload-jar
