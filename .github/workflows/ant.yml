@@ -27,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 128
+          fetch-depth: 32
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
@@ -39,7 +39,8 @@ jobs:
       - name: Setup java
         uses: actions/setup-java@v1.4.3
         with:
-          java-version: '15'
+          # We just run ant create-revision in this job. Using Java 11 LTS.
+          java-version: '11'
       - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
         run: |
           mkdir -p build-tools-cache/
