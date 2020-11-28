@@ -591,7 +591,7 @@ public final class TestUtils {
      * @return all JOSM subtypes of the given class
      */
     public static <T> Set<Class<? extends T>> getJosmSubtypes(Class<T> superClass) {
-        try (ScanResult scan = new ClassGraph().whitelistPackages("org.openstreetmap.josm").ignoreClassVisibility().scan()) {
+        try (ScanResult scan = new ClassGraph().acceptPackages("org.openstreetmap.josm").ignoreClassVisibility().scan()) {
             Function<String, ClassInfoList> lambda = superClass.isInterface() ? scan::getClassesImplementing : scan::getSubclasses;
             return lambda.apply(superClass.getName())
                     .asMap().values().stream().map(x -> x.loadClass(superClass)).collect(Collectors.toSet());
