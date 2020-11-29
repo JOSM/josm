@@ -395,4 +395,42 @@ final class SplitWayCommandTest {
             assertTrue(result.isPresent());
         }
     }
+
+    /**
+     * Non-regression test for issue #20163 (Split way corrupts relation when splitting via way)
+     *
+     * @throws IOException if any I/O error occurs
+     * @throws IllegalDataException if OSM parsing fails
+     */
+    @Test
+    void testTicket20163() throws IOException, IllegalDataException {
+        try (InputStream is = TestUtils.getRegressionDataStream(20163, "data-20163.osm")) {
+            DataSet ds = OsmReader.parseDataSet(is, null);
+
+            Way splitWay = (Way) ds.getPrimitiveById(757606841L, OsmPrimitiveType.WAY);
+            Node splitNode = splitWay.getNode(1);
+            Relation r = (Relation) ds.getPrimitiveById(10452821L, OsmPrimitiveType.RELATION);
+            assertEquals(3, r.getMembersCount());
+            assertFalse(r.getMembersFor(Collections.singleton(splitWay)).isEmpty());
+            assertEquals(1, r.getMembers().stream().filter(rm -> "via".equals(rm.getRole())).count());
+            assertEquals("via", r.getMembersFor(Collections.singleton(splitWay)).iterator().next().getRole());
+            final Optional<SplitWayCommand> result = SplitWayCommand.splitWay(
+                    splitWay,
+                    SplitWayCommand.buildSplitChunks(splitWay, Collections.singletonList(splitNode)),
+                    new ArrayList<>(),
+                    Strategy.keepLongestChunk(),
+                    // This split requires additional downloads but problem occured before the download
+                    SplitWayCommand.WhenRelationOrderUncertain.SPLIT_ANYWAY
+            );
+
+            // Should not result in aborting the split.
+            assertTrue(result.isPresent());
+            result.get().executeCommand();
+
+            assertTrue(r.isModified());
+            assertEquals(4, r.getMembersCount());
+            assertEquals(2, r.getMembers().stream().filter(rm -> "via".equals(rm.getRole())).count());
+        }
+    }
+
 }

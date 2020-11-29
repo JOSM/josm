@@ -466,17 +466,17 @@ public class SplitWayCommand extends SequenceCommand {
                         RelationInformation rValue = treatAsRestriction(r, rm, c, newWays, way, changedWayNodes);
                         if (rValue.warnme) warnings.add(WarningType.GENERIC);
                         insert = rValue.insert;
-                        c = rValue.relation;
+                        c = rValue.relation; // Value.relation is null or contains a modified copy
                     } else if (!isOrderedRelation) {
                         // Warn the user when relations that are not a route or multipolygon are modified as a result
                         // of splitting up the way, because we can't tell if this might break anything.
                         warnings.add(WarningType.GENERIC);
                     }
-                    if (c == null) {
-                        c = new Relation(r);
-                    }
 
                     if (insert) {
+                        if (c == null) {
+                            c = new Relation(r);
+                        }
                         if (rm.hasRole() && !nowarnroles.contains(rm.getRole())) {
                             warnings.add(WarningType.ROLE);
                         }
@@ -817,13 +817,12 @@ public class SplitWayCommand extends SequenceCommand {
                     }
                     c.addMember(new RelationMember(role, res));
                     c.removeMembersFor(way);
-                    relationInformation.insert = false;
                 }
-            } else {
-                relationInformation.insert = false;
             }
         } else if (!"via".equals(role)) {
             relationInformation.warnme = true;
+        } else {
+            relationInformation.insert = true;
         }
         relationInformation.relation = c;
         return relationInformation;
