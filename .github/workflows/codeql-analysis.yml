@@ -60,8 +60,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
-    #   make bootstrap
-        ant dist
+      ant dist
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
