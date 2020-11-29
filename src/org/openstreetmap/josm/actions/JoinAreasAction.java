@@ -707,8 +707,7 @@ public class JoinAreasAction extends JosmAction {
 
         //  see #9599
         if (discardedWays.stream().anyMatch(w -> !w.isNew())) {
-            for (int i = 0; i < boundaries.size(); i++) {
-                AssembledPolygon ring = boundaries.get(i);
+            for (AssembledPolygon ring : boundaries) {
                 for (int k = 0; k < ring.ways.size(); k++) {
                     WayInPolygon ringWay = ring.ways.get(k);
                     Way older = keepOlder(ringWay.way, oldestWayMap, discardedWays);

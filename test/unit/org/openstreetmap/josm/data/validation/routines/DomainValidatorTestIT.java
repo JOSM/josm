@@ -347,9 +347,9 @@ class DomainValidatorTestIT {
 
     private static boolean isInIanaList(String name, String[] array, Set<String> ianaTlds) {
         boolean ok = true;
-        for (int i = 0; i < array.length; i++) {
-            if (!ianaTlds.contains(array[i])) {
-                Logging.error(name + " contains unexpected value: " + array[i]);
+        for (String element : array) {
+            if (!ianaTlds.contains(element)) {
+                Logging.error(name + " contains unexpected value: " + element);
                 ok = false;
             }
         }

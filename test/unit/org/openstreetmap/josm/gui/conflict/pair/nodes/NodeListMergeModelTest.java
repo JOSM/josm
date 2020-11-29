@@ -75,13 +75,13 @@ class NodeListMergeModelTest {
 
     protected void ensureSelected(DefaultListSelectionModel model, Object... idx) {
         if (idx == null) return;
-        for (int i = 0; i < idx.length; i++) {
-            if (idx[i] instanceof Integer) {
-                int j = (Integer) idx[i];
+        for (Object object : idx) {
+            if (object instanceof Integer) {
+                int j = (Integer) object;
                 assertTrue(model.isSelectedIndex(j), "expected row " + j + " to be selected");
                 break;
             }
-            int[] rows = (int[]) idx[i];
+            int[] rows = (int[]) object;
             if (rows.length != 2) {
                 fail("illegal selection range. Either null or not length 2: " + Arrays.toString(rows));
             }

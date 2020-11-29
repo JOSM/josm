@@ -1509,9 +1509,9 @@ public final class Utils {
             dirStrings[i] = new DirectionString(dir, substr);
         }
         Bidi.reorderVisually(levels, 0, dirStrings, 0, levels.length);
-        for (int i = 0; i < dirStrings.length; ++i) {
-            char[] chars = dirStrings[i].str.toCharArray();
-            gvs.add(font.layoutGlyphVector(frc, chars, 0, chars.length, dirStrings[i].direction));
+        for (DirectionString dirString : dirStrings) {
+            char[] chars = dirString.str.toCharArray();
+            gvs.add(font.layoutGlyphVector(frc, chars, 0, chars.length, dirString.direction));
         }
         return gvs;
     }

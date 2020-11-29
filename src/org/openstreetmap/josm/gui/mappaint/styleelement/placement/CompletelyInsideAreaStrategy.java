@@ -39,7 +39,7 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
         // will have to do.                                    ++
         // Centroids are not optimal either, just imagine a U-shaped house.
 
-        Rectangle pb = path.getBounds();
+        final Rectangle pb = path.getBounds();
 
         // quick check to see if label box is smaller than primitive box
         if (pb.width < nb.getWidth() || pb.height < nb.getHeight()) {
@@ -55,7 +55,7 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
         final int nbw = (int) nb.getWidth();
         final int nbh = (int) nb.getHeight();
 
-        Rectangle centeredNBounds = new Rectangle(x2, y2, nbw, nbh);
+        final Rectangle centeredNBounds = new Rectangle(x2, y2, nbw, nbh);
 
         // slower check to see if label is displayed inside primitive shape
         if (path.contains(centeredNBounds)) {
@@ -84,10 +84,9 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
         };
         // Dumb algorithm to find a better placement. We could surely find a smarter one but it should
         // solve most of building issues with only few calculations (8 at most)
-        for (int i = 0; i < candidates.length; i++) {
-            centeredNBounds = candidates[i];
-            if (path.contains(centeredNBounds)) {
-                return centerOf(path.getMapViewState(), centeredNBounds);
+        for (Rectangle candidate : candidates) {
+            if (path.contains(candidate)) {
+                return centerOf(path.getMapViewState(), candidate);
             }
         }
 

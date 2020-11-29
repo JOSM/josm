@@ -276,8 +276,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     private void buildUndoTree() {
         List<Command> undoCommands = UndoRedoHandler.getInstance().getUndoCommands();
         undoRoot = new DefaultMutableTreeNode();
-        for (int i = 0; i < undoCommands.size(); ++i) {
-            undoRoot.add(getNodeForCommand(undoCommands.get(i)));
+        for (Command undoCommand : undoCommands) {
+            undoRoot.add(getNodeForCommand(undoCommand));
         }
         undoTreeModel.setRoot(undoRoot);
     }
@@ -285,8 +285,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
     private void buildRedoTree() {
         List<Command> redoCommands = UndoRedoHandler.getInstance().getRedoCommands();
         redoRoot = new DefaultMutableTreeNode();
-        for (int i = 0; i < redoCommands.size(); ++i) {
-            redoRoot.add(getNodeForCommand(redoCommands.get(i)));
+        for (Command redoCommand : redoCommands) {
+            redoRoot.add(getNodeForCommand(redoCommand));
         }
         redoTreeModel.setRoot(redoRoot);
     }
@@ -340,8 +340,8 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
         CommandListMutableTreeNode node = new CommandListMutableTreeNode(c);
         if (c.getChildren() != null) {
             List<PseudoCommand> children = new ArrayList<>(c.getChildren());
-            for (int i = 0; i < children.size(); ++i) {
-                node.add(getNodeForCommand(children.get(i)));
+            for (PseudoCommand child : children) {
+                node.add(getNodeForCommand(child));
             }
         }
         return node;

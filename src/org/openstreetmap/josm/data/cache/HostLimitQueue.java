@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.cache;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -52,8 +51,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
     }
 
     private JCSCachedTileLoaderJob<?, ?> findJob() {
-        for (Iterator<Runnable> it = iterator(); it.hasNext();) {
-            Runnable r = it.next();
+        for (Runnable r : this) {
             if (r instanceof JCSCachedTileLoaderJob) {
                 JCSCachedTileLoaderJob<?, ?> job = (JCSCachedTileLoaderJob<?, ?>) r;
                 if (tryAcquireSemaphore(job)) {

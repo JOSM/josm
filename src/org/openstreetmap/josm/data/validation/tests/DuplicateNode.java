@@ -155,7 +155,7 @@ public class DuplicateNode extends Test {
     /**
      * Returns the list of "duplicate nodes" errors for the given selection of node and parent test
      * @param parentTest The parent test of returned errors
-     * @param nodes The nodes selction to look into
+     * @param nodes The nodes selection to look into
      * @return the list of "duplicate nodes" errors
      */
     public List<TestError> buildTestErrors(Test parentTest, List<Node> nodes) {
@@ -186,8 +186,7 @@ public class DuplicateNode extends Test {
                                 boolean typed = false;
                                 Way w = (Way) sp;
                                 Map<String, String> keys = w.getKeys();
-                                for (Iterator<Entry<String, Boolean>> itt = typeMap.entrySet().iterator(); itt.hasNext();) {
-                                    Entry<String, Boolean> e = itt.next();
+                                for (Entry<String, Boolean> e : typeMap.entrySet()) {
                                     if (keys.containsKey(e.getKey())) {
                                         e.setValue(Boolean.TRUE);
                                         typed = true;

@@ -1123,8 +1123,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             OsmPrimitive nxt = first;
 
             if (cyclePrims && shift) {
-                for (Iterator<OsmPrimitive> i = cycleList.iterator(); i.hasNext();) {
-                    nxt = i.next();
+                for (OsmPrimitive osmPrimitive : cycleList) {
+                    nxt = osmPrimitive;
                     if (!nxt.isSelected()) {
                         break; // take first primitive in cycleList not in sel
                     }

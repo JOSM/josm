@@ -79,11 +79,10 @@ public class ConnectivityRelations extends Test {
         }
         final String joined = cnTag.replace("bw", Integer.toString(BW));
 
-
         final Map<Integer, Map<Integer, Boolean>> result = new HashMap<>();
         String[] lanes = joined.split("\\|", -1);
         for (int i = 0; i < lanes.length; i++) {
-            String[] lane = lanes[i].split(":", -1);
+            final String[] lane = lanes[i].split(":", -1);
             int laneNumber;
             //Ignore connections from bw, since we cannot derive a lane number from bw
             if (!"bw".equals(lane[0])) {

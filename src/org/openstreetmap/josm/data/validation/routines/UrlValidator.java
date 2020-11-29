@@ -275,8 +275,8 @@ public class UrlValidator extends AbstractValidator {
                 schemes = DEFAULT_SCHEMES;
             }
             allowedSchemes = new HashSet<>(schemes.length);
-            for (int i = 0; i < schemes.length; i++) {
-                allowedSchemes.add(schemes[i].toLowerCase(Locale.ENGLISH));
+            for (String scheme : schemes) {
+                allowedSchemes.add(scheme.toLowerCase(Locale.ENGLISH));
             }
         }
 

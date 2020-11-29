@@ -219,14 +219,14 @@ public class SimilarNamedWays extends Test {
             // build regular expression for other words (for fast match)
             StringBuilder expression = new StringBuilder();
             int maxLength = 0;
-            for (int i = 0; i < words.length; i++) {
-                if (words[i].length() > maxLength) {
-                    maxLength = words[i].length();
+            for (String word : words) {
+                if (word.length() > maxLength) {
+                    maxLength = word.length();
                 }
                 if (expression.length() > 0) {
                     expression.append('|');
                 }
-                expression.append(Pattern.quote(words[i]));
+                expression.append(Pattern.quote(word));
             }
             this.regExpr = Pattern.compile(expression.toString(), CASE_INSENSITIVE + UNICODE_CASE);
         }
@@ -242,8 +242,7 @@ public class SimilarNamedWays extends Test {
 
             // which word matches?
             String part = "";
-            for (int i = 0; i < words.length; i++) {
-                String word = words[i];
+            for (String word : words) {
                 if (start + word.length() <= name.length()) {
                     part = name.substring(start, start + word.length());
                 }

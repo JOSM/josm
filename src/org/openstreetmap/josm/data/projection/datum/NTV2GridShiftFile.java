@@ -262,8 +262,8 @@ public class NTV2GridShiftFile implements Serializable {
      */
     private static NTV2SubGrid getSubGrid(NTV2SubGrid[] topLevelSubGrid, double lon, double lat) {
         NTV2SubGrid sub = null;
-        for (int i = 0; i < topLevelSubGrid.length; i++) {
-            sub = topLevelSubGrid[i].getSubGridForCoord(lon, lat);
+        for (NTV2SubGrid topLevel : topLevelSubGrid) {
+            sub = topLevel.getSubGridForCoord(lon, lat);
             if (sub != null) {
                 break;
             }
@@ -273,30 +273,18 @@ public class NTV2GridShiftFile implements Serializable {
 
     @Override
     public String toString() {
-        return new StringBuilder(256)
-            .append("Headers  : ")
-            .append(overviewHeaderCount)
-            .append("\nSub Hdrs : ")
-            .append(subGridHeaderCount)
-            .append("\nSub Grids: ")
-            .append(subGridCount)
-            .append("\nType     : ")
-            .append(shiftType)
-            .append("\nVersion  : ")
-            .append(version)
-            .append("\nFr Ellpsd: ")
-            .append(fromEllipsoid)
-            .append("\nTo Ellpsd: ")
-            .append(toEllipsoid)
-            .append("\nFr Maj Ax: ")
-            .append(fromSemiMajorAxis)
-            .append("\nFr Min Ax: ")
-            .append(fromSemiMinorAxis)
-            .append("\nTo Maj Ax: ")
-            .append(toSemiMajorAxis)
-            .append("\nTo Min Ax: ")
-            .append(toSemiMinorAxis)
-            .toString();
+        char endl = '\n';
+        return "Headers  : " + overviewHeaderCount + endl +
+                "Sub Hdrs : " + subGridHeaderCount + endl +
+                "Sub Grids: " + subGridCount + endl +
+                "Type     : " + shiftType + endl +
+                "Version  : " + version + endl +
+                "Fr Ellpsd: " + fromEllipsoid + endl +
+                "To Ellpsd: " + toEllipsoid + endl +
+                "Fr Maj Ax: " + fromSemiMajorAxis + endl +
+                "Fr Min Ax: " + fromSemiMinorAxis + endl +
+                "To Maj Ax: " + toSemiMajorAxis + endl +
+                "To Min Ax: " + toSemiMinorAxis;
     }
 
     /**

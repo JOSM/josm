@@ -193,8 +193,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
          * Determine the panel geometry
          */
         if (action == Action.RESTORE_SAVED || action == Action.ELEMENT_SHRINKS) {
-            for (int i = 0; i < n; ++i) {
-                final ToggleDialog dlg = allDialogs.get(i);
+            for (final ToggleDialog dlg : allDialogs) {
                 if (dlg.isDialogInDefaultView()) {
                     final int ph = action == Action.RESTORE_SAVED ? dlg.getLastHeight() : dlg.getPreferredHeight();
                     final int ah = dlg.getSize().height;
@@ -250,8 +249,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
              */
             int dm = 0;        // additional space needed by the small dialogs
             int dp = 0;        // available space from the large dialogs
-            for (int i = 0; i < n; ++i) {
-                final ToggleDialog dlg = allDialogs.get(i);
+            for (final ToggleDialog dlg : allDialogs) {
                 if (dlg != triggeredBy && dlg.isDialogInDefaultView()) {
                     final int ha = dlg.getSize().height;                              // current
                     final int h0 = ha * r / sumA;                                     // proportional shrinking
@@ -265,8 +263,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
                 }
             }
             /** adjust, without changing the sum */
-            for (int i = 0; i < n; ++i) {
-                final ToggleDialog dlg = allDialogs.get(i);
+            for (final ToggleDialog dlg : allDialogs) {
                 if (dlg != triggeredBy && dlg.isDialogInDefaultView()) {
                     final int ha = dlg.getHeight();
                     final int h0 = ha * r / sumA;
@@ -275,7 +272,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
                         int hn = Math.min(ha, he);
                         dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, hn));
                     } else {
-                        int d = dp == 0 ? 0 : ((h0-he) * dm / dp);
+                        int d = dp == 0 ? 0 : ((h0 - he) * dm / dp);
                         dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, h0 - d));
                     }
                 }

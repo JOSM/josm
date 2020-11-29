@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools;
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
@@ -155,8 +154,7 @@ public class ListenerList<T> {
         for (T l : listeners) {
             eventFirerer.fire(l);
         }
-        for (Iterator<WeakListener<T>> iterator = weakListeners.iterator(); iterator.hasNext();) {
-            WeakListener<T> weakLink = iterator.next();
+        for (WeakListener<T> weakLink : weakListeners) {
             T l = weakLink.listener.get();
             if (l != null) {
                 // cleanup during add() should be enough to not cause memory leaks

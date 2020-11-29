@@ -492,12 +492,12 @@ class EmailValidatorTest {
     @Disabled("This test fails so disable it for 1.1.4 release. The real solution is to fix the email parsing")
     @Test
     void testEmailFromPerl() {
-        for (int index = 0; index < testEmailFromPerl.length; index++) {
-            String item = testEmailFromPerl[index].item;
-            if (testEmailFromPerl[index].valid) {
-                assertTrue("Should be OK: "+item, validator.isValid(item));
+        for (ResultPair resultPair : testEmailFromPerl) {
+            String item = resultPair.item;
+            if (resultPair.valid) {
+                assertTrue("Should be OK: " + item, validator.isValid(item));
             } else {
-                assertFalse("Should fail: "+item, validator.isValid(item));
+                assertFalse("Should fail: " + item, validator.isValid(item));
             }
         }
     }
