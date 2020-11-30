@@ -472,11 +472,9 @@ public final class UndoRedoHandler {
     public synchronized void clean(DataSet dataSet) {
         if (dataSet == null)
             return;
-        if (InstanceHolder.map.remove(dataSet) != null) {
-            redoCommands.clear();
-            commands.clear();
-            fireEvent(new CommandQueueCleanedEvent(this, dataSet));
-            fireCommandsChanged();
+        UndoRedoHandler old = InstanceHolder.map.remove(dataSet);
+        if (old != null) {
+            old.clean();
         }
     }
 
