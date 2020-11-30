@@ -248,6 +248,7 @@ public class ReportedException extends RuntimeException {
         for (Object e : value) {
             str.append("\n    - ");
             if (lines <= MAX_COLLECTION_ENTRIES) {
+                ++lines;
                 str.append(e);
             } else {
                 str.append("\n    ... (")
