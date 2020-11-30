@@ -653,7 +653,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         if (processed == null || processed.isEmpty())
             return;
 
-        UndoRedoHandler.getInstance().clean(data);
+        UndoRedoHandler.clean(data);
 
         // if uploaded, clean the modified flags as well
         data.cleanupDeletedPrimitives();

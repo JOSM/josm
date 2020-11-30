@@ -469,7 +469,7 @@ public final class UndoRedoHandler {
      * @param dataSet The data set that was affected.
      * @since 12718
      */
-    public synchronized void clean(DataSet dataSet) {
+    public static synchronized void clean(DataSet dataSet) {
         if (dataSet == null)
             return;
         UndoRedoHandler old = InstanceHolder.map.remove(dataSet);

@@ -120,7 +120,7 @@ public final class AsynchronousUploadPrimitivesTask extends UploadPrimitivesTask
         // Lock the data layer before upload in EDT
         GuiHelper.runInEDTAndWait(() -> {
             // Remove the commands from the undo stack
-            UndoRedoHandler.getInstance().clean(uploadDataLayer.getDataSet());
+            UndoRedoHandler.clean(uploadDataLayer.getDataSet());
             MainApplication.getLayerManager().prepareLayerForUpload(uploadDataLayer);
 
             // Repainting the Layer List dialog to update the icon of the active layer
