@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.data.validation.tests.CrossingWays.WATERWAY
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -17,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.Command;
@@ -24,7 +24,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Hash;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -161,7 +160,7 @@ public class DuplicateNode extends Test {
     public List<TestError> buildTestErrors(Test parentTest, List<Node> nodes) {
         List<TestError> errors = new ArrayList<>();
 
-        MultiMap<Map<String, String>, OsmPrimitive> mm = new MultiMap<>();
+        MultiMap<Map<String, String>, Node> mm = new MultiMap<>();
         for (Node n: nodes) {
             mm.put(n.getKeys(), n);
         }
@@ -170,89 +169,63 @@ public class DuplicateNode extends Test {
 
         // check whether we have multiple nodes at the same position with the same tag set
         for (Iterator<Map<String, String>> it = mm.keySet().iterator(); it.hasNext();) {
-            Set<OsmPrimitive> primitives = mm.get(it.next());
+            Set<Node> primitives = mm.get(it.next());
             if (primitives.size() > 1) {
 
                 for (String type: TYPES) {
                     typeMap.put(type, Boolean.FALSE);
                 }
 
-                for (OsmPrimitive p : primitives) {
-                    if (p.getType() == OsmPrimitiveType.NODE) {
-                        Node n = (Node) p;
-                        List<OsmPrimitive> lp = n.getReferrers();
-                        for (OsmPrimitive sp: lp) {
-                            if (sp.getType() == OsmPrimitiveType.WAY) {
-                                boolean typed = false;
-                                Way w = (Way) sp;
-                                Map<String, String> keys = w.getKeys();
-                                for (Entry<String, Boolean> e : typeMap.entrySet()) {
-                                    if (keys.containsKey(e.getKey())) {
-                                        e.setValue(Boolean.TRUE);
-                                        typed = true;
-                                    }
-                                }
-                                if (!typed) {
-                                    typeMap.put("none", Boolean.TRUE);
-                                }
+                for (Node n : primitives) {
+                    for (Way w: n.getParentWays()) {
+                        boolean typed = false;
+                        Map<String, String> keys = w.getKeys();
+                        for (Entry<String, Boolean> e : typeMap.entrySet()) {
+                            if (keys.containsKey(e.getKey())) {
+                                e.setValue(Boolean.TRUE);
+                                typed = true;
                             }
+                        }
+                        if (!typed) {
+                            typeMap.put("none", Boolean.TRUE);
                         }
                     }
                 }
 
                 long nbType = typeMap.entrySet().stream().filter(Entry::getValue).count();
-
+                final TestError.Builder builder;
                 if (nbType > 1) {
-                    errors.add(TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE_MIXED)
-                            .message(tr("Mixed type duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
-                } else if (typeMap.get(HIGHWAY)) {
-                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_HIGHWAY)
-                            .message(tr("Highway duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
-                } else if (typeMap.get(RAILWAY)) {
-                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_RAILWAY)
-                            .message(tr("Railway duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
-                } else if (typeMap.get(WATERWAY)) {
-                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_WATERWAY)
-                            .message(tr("Waterway duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
-                } else if (typeMap.get("boundary")) {
-                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_BOUNDARY)
-                            .message(tr("Boundary duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
-                } else if (typeMap.get("power")) {
-                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_POWER)
-                            .message(tr("Power duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
-                } else if (typeMap.get("natural")) {
-                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_NATURAL)
-                            .message(tr("Natural duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
-                } else if (typeMap.get("building")) {
-                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_BUILDING)
-                            .message(tr("Building duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
-                } else if (typeMap.get("landuse")) {
-                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_LANDUSE)
-                            .message(tr("Landuse duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
+                    builder = TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE_MIXED)
+                            .message(tr("Mixed type duplicated nodes"));
+                } else if (Boolean.TRUE.equals(typeMap.get(HIGHWAY))) {
+                    builder = TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_HIGHWAY)
+                            .message(tr("Highway duplicated nodes"));
+                } else if (Boolean.TRUE.equals(typeMap.get(RAILWAY))) {
+                    builder = TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_RAILWAY)
+                            .message(tr("Railway duplicated nodes"));
+                } else if (Boolean.TRUE.equals(typeMap.get(WATERWAY))) {
+                    builder = TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_WATERWAY)
+                            .message(tr("Waterway duplicated nodes"));
+                } else if (Boolean.TRUE.equals(typeMap.get("boundary"))) {
+                    builder = TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_BOUNDARY)
+                            .message(tr("Boundary duplicated nodes"));
+                } else if (Boolean.TRUE.equals(typeMap.get("power"))) {
+                    builder = TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_POWER)
+                            .message(tr("Power duplicated nodes"));
+                } else if (Boolean.TRUE.equals(typeMap.get("natural"))) {
+                    builder = TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_NATURAL)
+                            .message(tr("Natural duplicated nodes"));
+                } else if (Boolean.TRUE.equals(typeMap.get("building"))) {
+                    builder = TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_BUILDING)
+                            .message(tr("Building duplicated nodes"));
+                } else if (Boolean.TRUE.equals(typeMap.get("landuse"))) {
+                    builder = TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_LANDUSE)
+                            .message(tr("Landuse duplicated nodes"));
                 } else {
-                    errors.add(TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE_OTHER)
-                            .message(tr("Other duplicated nodes"))
-                            .primitives(primitives)
-                            .build());
+                    builder = TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE_OTHER)
+                            .message(tr("Other duplicated nodes"));
                 }
+                errors.add(builder.primitives(primitives).build());
                 it.remove();
             }
         }
@@ -260,7 +233,7 @@ public class DuplicateNode extends Test {
         // check whether we have multiple nodes at the same position with differing tag sets
         if (!mm.isEmpty()) {
             List<OsmPrimitive> duplicates = new ArrayList<>();
-            for (Set<OsmPrimitive> l: mm.values()) {
+            for (Set<Node> l: mm.values()) {
                 duplicates.addAll(l);
             }
             if (duplicates.size() > 1) {
@@ -277,25 +250,21 @@ public class DuplicateNode extends Test {
     @Override
     public void visit(Node n) {
         if (n.isUsable()) {
-            if (potentialDuplicates.get(n) == null) {
+            Object old = potentialDuplicates.get(n);
+            if (old == null) {
                 // in most cases there is just one node at a given position. We
                 // avoid to create an extra object and add remember the node
                 // itself at this position
                 potentialDuplicates.put(n);
-            } else if (potentialDuplicates.get(n) instanceof Node) {
+            } else if (old instanceof Node) {
                 // we have an additional node at the same position. Create an extra
                 // object to keep track of the nodes at this position.
                 //
-                Node n1 = (Node) potentialDuplicates.get(n);
-                List<Node> nodes = new ArrayList<>(2);
-                nodes.add(n1);
-                nodes.add(n);
-                potentialDuplicates.put(nodes);
-            } else if (potentialDuplicates.get(n) instanceof List<?>) {
-                // we have multiple nodes at the same position.
+                potentialDuplicates.put(Stream.of((Node) old, n).collect(Collectors.toList()));
+            } else {
+                // we have more  than two nodes at the same position.
                 //
-                List<Node> nodes = (List<Node>) potentialDuplicates.get(n);
-                nodes.add(n);
+                ((List<Node>) old).add(n);
             }
         }
     }
@@ -306,24 +275,20 @@ public class DuplicateNode extends Test {
      */
     @Override
     public Command fixError(TestError testError) {
+        if (!isFixable(testError))
+            return null;
         final Set<Node> nodes = testError.primitives(Node.class)
                 // Filter nodes that have already been deleted (see #5764 and #5773)
                 .filter(n -> !n.isDeleted())
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        // Merge only if at least 2 nodes remain
-        if (nodes.size() >= 2) {
-            // Use first existing node or first node if all nodes are new
-            Node target = nodes.stream()
-                    .filter(n -> !n.isNew())
-                    .findFirst()
-                    .orElseGet(() -> nodes.iterator().next());
+        // Use first existing node or first node if all nodes are new
+        Node target = nodes.stream()
+                .filter(n -> !n.isNew())
+                .findFirst()
+                .orElseGet(() -> nodes.iterator().next());
 
-            if (Command.checkOutlyingOrIncompleteOperation(nodes, Collections.singleton(target)) == Command.IS_OK)
-                return MergeNodesAction.mergeNodes(nodes, target);
-        }
-
-        return null; // undoRedo handling done in mergeNodes
+        return MergeNodesAction.mergeNodes(nodes, target);
     }
 
     @Override

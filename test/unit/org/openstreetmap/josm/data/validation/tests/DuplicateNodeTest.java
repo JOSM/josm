@@ -2,9 +2,13 @@
 package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -43,6 +47,21 @@ class DuplicateNodeTest {
         TestError error = TEST.getErrors().iterator().next();
         assertEquals(code, error.getCode());
         assertEquals(fixable, error.isFixable());
+        if (fixable) {
+            Command c = error.getFix();
+            assertNotNull(c);
+            c.executeCommand();
+            assertFalse(error.isFixable());
+            c.undoCommand();
+            assertTrue(error.isFixable());
+            error.getPrimitives().iterator().next().setDeleted(true);
+            if (error.getPrimitives().size() == 2) {
+                assertFalse(error.isFixable());
+            } else {
+                assertTrue(error.isFixable());
+            }
+            error.getPrimitives().iterator().next().setDeleted(false);
+        }
     }
 
     private static DataSet buildDataSet(Tag... tags) {
@@ -63,6 +82,80 @@ class DuplicateNodeTest {
             ds.addPrimitive(parent);
         }
         return ds;
+    }
+
+    /**
+     * Test of "Duplicate node" validation test - no duplicate
+     */
+    @Test
+    void testNoDuplicateNode() {
+        DataSet ds = new DataSet();
+
+        Node a = new Node(new LatLon(10.0, 5.0));
+        Node b = new Node(new LatLon(10.0, 6.0));
+        ds.addPrimitive(a);
+        ds.addPrimitive(b);
+
+        a.put("foo", "bar");
+        b.put("bar", "foo");
+
+        TEST.startTest(NullProgressMonitor.INSTANCE);
+        TEST.visit(ds.allPrimitives());
+        TEST.endTest();
+
+        assertEquals(0, TEST.getErrors().size());
+    }
+
+    /**
+     * Test of "Duplicate node" validation test - same position, with ele value
+     */
+    @Test
+    void testDuplicateNodeWithEle() {
+        DataSet ds = new DataSet();
+
+        Node a = new Node(new LatLon(10.0, 5.0));
+        Node b = new Node(new LatLon(10.0, 5.0));
+        ds.addPrimitive(a);
+        ds.addPrimitive(b);
+
+        a.put("foo", "bar");
+        b.put("bar", "foo");
+        a.put("ele", "100");
+        b.put("ele", "100");
+
+        TEST.startTest(NullProgressMonitor.INSTANCE);
+        TEST.visit(ds.allPrimitives());
+        TEST.endTest();
+
+        assertEquals(1, TEST.getErrors().size());
+
+        b.put("ele", "110");
+
+        TEST.startTest(NullProgressMonitor.INSTANCE);
+        TEST.visit(ds.allPrimitives());
+        TEST.endTest();
+
+        assertEquals(0, TEST.getErrors().size());
+    }
+
+    /**
+     * Test of "Duplicate node" validation test - three nodes
+     */
+    @Test
+    void testDuplicateNodeTriple() {
+        DataSet ds = new DataSet();
+    
+        Node a = new Node(new LatLon(10.0, 5.0));
+        Node b = new Node(new LatLon(10.0, 5.0));
+        Node c = new Node(new LatLon(10.0, 5.0));
+        ds.addPrimitive(a);
+        ds.addPrimitive(b);
+        ds.addPrimitive(c);
+    
+        performTest(DuplicateNode.DUPLICATE_NODE_OTHER, ds, true);
+        a.put("foo", "bar");
+        b.put("foo", "bar");
+        performTest(DuplicateNode.DUPLICATE_NODE_OTHER, ds, true);
     }
 
     /**
