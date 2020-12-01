@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -120,12 +121,14 @@ public class PluginHandlerTestIT {
             // ensure good plugin behavior with regards to Destroyable (i.e., they can be
             // removed and readded)
             for (int i = 0; i < 2; i++) {
-                assertFalse(PluginHandler.removePlugins(restartable));
-                assertTrue(restartable.stream().noneMatch(info -> PluginHandler.getPlugins().contains(info)));
+                assertFalse(PluginHandler.removePlugins(restartable), () -> Logging.getLastErrorAndWarnings().toString());
+                List<PluginInformation> notRemovedPlugins = restartable.stream()
+                        .filter(info -> PluginHandler.getPlugins().contains(info)).collect(Collectors.toList());
+                assertTrue(notRemovedPlugins.isEmpty(), notRemovedPlugins::toString);
                 loadPlugins(restartable);
             }
 
-            assertTrue(PluginHandler.removePlugins(loadedPlugins));
+            assertTrue(PluginHandler.removePlugins(loadedPlugins), () -> Logging.getLastErrorAndWarnings().toString());
             assertTrue(restartable.parallelStream().noneMatch(info -> PluginHandler.getPlugins().contains(info)));
         } catch (Exception | LinkageError t) {
             Throwable root = Utils.getRootCause(t);
@@ -161,10 +164,10 @@ public class PluginHandlerTestIT {
         pluginInfoDownloadTask.run();
         List<PluginInformation> plugins = pluginInfoDownloadTask.getAvailablePlugins();
         System.out.println("Original plugin list contains " + plugins.size() + " plugins");
-        assertFalse(plugins.isEmpty());
+        assertFalse(plugins.isEmpty(), plugins::toString);
         PluginInformation info = plugins.get(0);
-        assertFalse(info.getName().isEmpty());
-        assertFalse(info.getClass().getName().isEmpty());
+        assertFalse(info.getName().isEmpty(), info::toString);
+        assertFalse(info.getClass().getName().isEmpty(), info::toString);
 
         // Filter deprecated and unmaintained ones, or those not responsive enough to match our continuous integration needs
         List<String> uncooperatingPlugins = Arrays.asList("ebdirigo", "scoutsigns", "josm-config");
