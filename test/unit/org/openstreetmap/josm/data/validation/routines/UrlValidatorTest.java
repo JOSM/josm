@@ -141,8 +141,10 @@ class UrlValidatorTest {
     void testValidator202() {
         String[] schemes = {"http", "https"};
         UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.NO_FRAGMENTS);
+        // CHECKSTYLE.OFF: LineLength
         assertTrue(urlValidator.isValid(
                 "http://l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.l.org"));
+        // CHECKSTYLE.OFF: LineLength
     }
 
     /**
