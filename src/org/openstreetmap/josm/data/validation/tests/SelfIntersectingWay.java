@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.tests.CrossingWays.SelfCrossing;
 
 /**
  * Checks for self-intersecting ways.
@@ -60,5 +61,18 @@ public class SelfIntersectingWay extends Test {
                 nodes.add(n);
             }
         }
+    }
+
+    /**
+     * Check if the given way is self-intersecting
+     * @param way the way to check
+     * @return {@code true} if way contains some nodes more than once
+     * @see SelfCrossing
+     * @since 17386
+     */
+    public static boolean isSelfIntersecting(Way way) {
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(way);
+        return !test.errors.isEmpty();
     }
 }
