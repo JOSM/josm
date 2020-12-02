@@ -70,47 +70,42 @@ public class ConnectivityRelations extends Test {
      * Convert the connectivity tag into a map of values
      *
      * @param relation A relation with a {@code connectivity} tag.
-     * @return A Map in the form of {@code Map<Lane From, Map<Lane To, Optional>>} May contain nulls when errors are encountered
+     * @return A Map in the form of {@code Map<Lane From, Map<Lane To, Optional>>} May contain nulls when errors are encountered,
+     * empty collection if {@code connectivity} tag contains unusual values
      */
     public static Map<Integer, Map<Integer, Boolean>> parseConnectivityTag(Relation relation) {
-        String cnTag = relation.get(CONNECTIVITY_TAG);
-        if (cnTag == null) {
+        final String cnTag = relation.get(CONNECTIVITY_TAG);
+        if (cnTag == null || cnTag.isEmpty()) {
             return Collections.emptyMap();
         }
         final String joined = cnTag.replace("bw", Integer.toString(BW));
 
         final Map<Integer, Map<Integer, Boolean>> result = new HashMap<>();
-        String[] lanes = joined.split("\\|", -1);
-        for (int i = 0; i < lanes.length; i++) {
-            final String[] lane = lanes[i].split(":", -1);
+        String[] lanePairs = joined.split("\\|", -1);
+        for (final String lanePair : lanePairs) {
+            final String[] lane = lanePair.split(":", -1);
+            if (lane.length < 2)
+                return Collections.emptyMap();
             int laneNumber;
-            //Ignore connections from bw, since we cannot derive a lane number from bw
-            if (!"bw".equals(lane[0])) {
+            try {
                 laneNumber = Integer.parseInt(lane[0].trim());
-            } else {
-                laneNumber = BW;
+            } catch (NumberFormatException e) {
+                return Collections.emptyMap();
             }
+
             Map<Integer, Boolean> connections = new HashMap<>();
             String[] toLanes = TO_LANE_PATTERN.split(lane[1], -1);
-            for (int j = 0; j < toLanes.length; j++) {
-                String toLane = toLanes[j].trim();
+            for (String toLane : toLanes) {
                 try {
                     if (OPTIONAL_LANE_PATTERN.matcher(toLane).matches()) {
                         toLane = toLane.replace("(", "").replace(")", "").trim();
-                        if (!"bw".equals(toLane)) {
-                            connections.put(Integer.parseInt(toLane), Boolean.TRUE);
-                        } else
-                            connections.put(BW, Boolean.TRUE);
+                        connections.put(Integer.parseInt(toLane), Boolean.TRUE);
                     } else {
-                        if (!toLane.contains("bw")) {
-                            connections.put(Integer.parseInt(toLane), Boolean.FALSE);
-                        } else {
-                            connections.put(BW, Boolean.FALSE);
-                        }
+                        connections.put(Integer.parseInt(toLane), Boolean.FALSE);
                     }
                 } catch (NumberFormatException e) {
                     if (MISSING_COMMA_PATTERN.matcher(toLane).matches()) {
-                        connections.put(null, true);
+                        connections.put(null, Boolean.TRUE);
                     } else {
                         connections.put(null, null);
                     }
@@ -128,11 +123,17 @@ public class ConnectivityRelations extends Test {
                 errors.add(TestError.builder(this, Severity.WARNING, NO_CONNECTIVITY_TAG)
                         .message(tr("Connectivity relation without connectivity tag")).primitives(r).build());
             } else if (!r.hasIncompleteMembers()) {
-                boolean badRole = checkForBadRole(r);
-                boolean missingRole = checkForMissingRole(r);
-                if (!badRole && !missingRole) {
-                    Map<String, Integer> roleLanes = checkForInconsistentLanes(r);
-                    checkForImpliedConnectivity(r, roleLanes);
+                Map<Integer, Map<Integer, Boolean>> connTagLanes = parseConnectivityTag(r);
+                if (connTagLanes.isEmpty()) {
+                    errors.add(TestError.builder(this, Severity.ERROR, MALFORMED_CONNECTIVITY_TAG)
+                            .message(tr("Connectivity tag contains unusual data")).primitives(r).build());
+                } else {
+                    boolean badRole = checkForBadRole(r);
+                    boolean missingRole = checkForMissingRole(r);
+                    if (!badRole && !missingRole) {
+                        Map<String, Integer> roleLanes = checkForInconsistentLanes(r, connTagLanes);
+                        checkForImpliedConnectivity(r, roleLanes, connTagLanes);
+                    }
                 }
             }
         }
@@ -142,13 +143,17 @@ public class ConnectivityRelations extends Test {
      * Compare lane tags of members to values in the {@code connectivity} tag of the relation
      *
      * @param relation A relation with a {@code connectivity} tag.
+     * @param connTagLanes result of {@link ConnectivityRelations#parseConnectivityTag(Relation)}
      * @return A Map in the form of {@code Map<Role, Lane Count>}
      */
-    private Map<String, Integer> checkForInconsistentLanes(Relation relation) {
+    private Map<String, Integer> checkForInconsistentLanes(Relation relation, Map<Integer, Map<Integer, Boolean>> connTagLanes) {
         StringBuilder lanelessRoles = new StringBuilder();
         int lanelessRolesCount = 0;
         // Lane count from connectivity tag
-        Map<Integer, Map<Integer, Boolean>> connTagLanes = parseConnectivityTag(relation);
+        Map<String, Integer> roleLanes = new HashMap<>();
+        if (connTagLanes.isEmpty())
+            return roleLanes;
+
         // If the ways involved in the connectivity tag are assuming a standard 2-way bi-directional highway
         boolean defaultLanes = true;
         for (Entry<Integer, Map<Integer, Boolean>> thisEntry : connTagLanes.entrySet()) {
@@ -164,7 +169,6 @@ public class ConnectivityRelations extends Test {
             }
         }
         // Lane count from member tags
-        Map<String, Integer> roleLanes = new HashMap<>();
         for (RelationMember rM : relation.getMembers()) {
             // Check lanes
             if (rM.getType() == OsmPrimitiveType.WAY) {
@@ -186,23 +190,21 @@ public class ConnectivityRelations extends Test {
                         }
                     }
 
-                    if (!laneCounts.equals(Collections.emptyList())) {
+                    if (!laneCounts.isEmpty()) {
                         maxLaneCount = Collections.max(laneCounts);
                         roleLanes.put(rM.getRole(), (int) maxLaneCount);
                     } else {
-                        String addString = "'" + rM.getRole() + "'";
-                        StringBuilder sb = new StringBuilder(addString);
                         if (lanelessRoles.length() > 0) {
-                            sb.insert(0, " and ");
+                            lanelessRoles.append(" and ");
                         }
-                        lanelessRoles.append(sb.toString());
+                        lanelessRoles.append('\'').append(rM.getRole()).append('\'');
                         lanelessRolesCount++;
                     }
                 }
             }
         }
 
-        if (lanelessRoles.toString().isEmpty()) {
+        if (lanelessRoles.length() == 0) {
             boolean fromCheck = roleLanes.get(FROM) < Collections
                     .max(connTagLanes.entrySet(), Comparator.comparingInt(Map.Entry::getKey)).getKey();
             boolean toCheck = false;
@@ -242,9 +244,10 @@ public class ConnectivityRelations extends Test {
      *
      * @param relation A relation with a {@code connectivity} tag.
      * @param roleLanes The lane counts for each relation role
+     * @param connTagLanes result of {@link ConnectivityRelations#parseConnectivityTag(Relation)}
      */
-    private void checkForImpliedConnectivity(Relation relation, Map<String, Integer> roleLanes) {
-        Map<Integer, Map<Integer, Boolean>> connTagLanes = parseConnectivityTag(relation);
+    private void checkForImpliedConnectivity(Relation relation, Map<String, Integer> roleLanes,
+            Map<Integer, Map<Integer, Boolean>> connTagLanes) {
         // Don't flag connectivity as already implied when:
         // - Lane counts are different on the roads
         // - Placement tags convey the connectivity

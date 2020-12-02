@@ -4,12 +4,15 @@ package org.openstreetmap.josm.data.validation.tests;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test the ConnectivityRelations validation test
@@ -19,14 +22,16 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 class ConnectivityRelationsTest {
     private ConnectivityRelations check;
     private static final String CONNECTIVITY = "connectivity";
+
     /**
      * Setup test.
-     *
-     * @throws Exception if an error occurs
      */
+    @RegisterExtension
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules rule = new JOSMTestRules();
+
     @BeforeEach
-    public void setUp() throws Exception {
-        JOSMFixture.createUnitTestFixture().init();
+    public void setUpCheck() throws Exception {
         check = new ConnectivityRelations();
     }
 
@@ -85,4 +90,24 @@ class ConnectivityRelationsTest {
         Assert.assertEquals(++expectedFailures, check.getErrors().size());
     }
 
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/201821">Bug #20182</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20182() throws Exception {
+        Relation relation = createDefaultTestRelation();
+        check.visit(relation);
+        int expectedFailures = 0;
+
+        Assert.assertEquals(expectedFailures, check.getErrors().size());
+
+        relation.put(CONNECTIVITY, "left_turn");
+        check.visit(relation);
+        Assert.assertEquals(++expectedFailures, check.getErrors().size());
+
+        relation.put(CONNECTIVITY, "1");
+        check.visit(relation);
+        Assert.assertEquals(++expectedFailures, check.getErrors().size());
+    }
 }
