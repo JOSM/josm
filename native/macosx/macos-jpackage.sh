@@ -55,11 +55,10 @@ else
 fi
 
 echo "Building and signin app"
-    jpackage "$JPACKAGEOPTIONS" -n "JOSM" --input dist --main-jar josm-custom.jar \
+    jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/macosx/JOSM.icns --type app-image --dest app \
     --java-options "-Xmx8192m" \
-     --java-options "-Dapple.awt.application.appearance=system" \
     --app-version "$1" \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "https://josm.openstreetmap.de" \
