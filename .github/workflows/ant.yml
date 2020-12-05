@@ -122,7 +122,7 @@ jobs:
         if: ${{ ! env.josm_prerelease }}
         run: |
           ant create-revision
-          sed -i '/Is-Local-Build/d' resources/REVISION
+          sed -i.bak '/Is-Local-Build/d' resources/REVISION
       - name: Build with Ant
         # Disables errorprone for Java 16
         # See https://github.com/google/error-prone/issues/1872
