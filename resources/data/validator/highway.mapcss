@@ -8,7 +8,8 @@ way[highway=~/^(unclassified|residential|living_street|service)$/] {
   set minor_road;
 }
 
-way[highway][name =~ /(?i).* (Ave|Blvd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Dr|Drv|Esp|Espl|Hwy|Ln|Mw|Mwy|Pky|Pkwy|Pl|Rd|Qy|Qys|Sq|St|Str|Ter|Tce|Tr|Wy)[.]?$/] {
+/* r3669, #9384, #20117 */
+way[highway][name =~ /(?i).* (Ave|Blvd|Bnd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Cv|Dr|Drv|Esp|Espl|Hwy|Ln|Mw|Mwy|Pky|Pkwy|Pl|Rd|Qy|Qys|Sq|St|Str|Ter|Tce|Tr|Trl|Vw|Wy|Xing)[.]?$/] {
   throwWarning: tr("abbreviated street name");
   assertMatch: "way highway=unclassified name=\"Foo Ave\"";
   assertMatch: "way highway=unclassified name=\"Foo Ave.\"";
