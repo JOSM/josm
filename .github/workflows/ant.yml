@@ -81,6 +81,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 64
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
