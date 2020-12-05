@@ -2044,7 +2044,7 @@
             <space />
             <key key="natural" value="water" />
             <text key="name" text="Name" />
-            <combo key="water" text="Water Body" values="canal,lake,lagoon,oxbow,pond,reservoir,river,lock,wastewater" match="key" values_searchable="true" />
+            <combo key="water" text="Water Body" values="basin,canal,lake,lagoon,oxbow,pond,reservoir,river,lock,wastewater" match="key" values_searchable="true" />
             <check key="salt" text="Salt Water" disable_off="true" />
             <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
