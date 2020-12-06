@@ -1231,11 +1231,7 @@ public class MainApplication {
                 if (wasv6 && !hasv6) {
                     Logging.info(tr("Detected no useable IPv6 network, preferring IPv4 over IPv6 after next restart."));
                     Config.getPref().putBoolean("validated.ipv6", hasv6); // be sure it is stored before the restart!
-                    try {
-                        RestartAction.restartJOSM();
-                    } catch (IOException e) {
-                        Logging.error(e);
-                    }
+                    RestartAction.restartJOSM();
                 }
                 Config.getPref().putBoolean("validated.ipv6", hasv6);
             }, "IPv6-checker").start();

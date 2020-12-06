@@ -616,11 +616,7 @@ public final class PluginHandler {
                         }
                         Config.getPref().putList("plugins", new ArrayList<>(plugins));
                         // restart
-                        try {
-                            RestartAction.restartJOSM();
-                        } catch (IOException e) {
-                            Logging.error(e);
-                        }
+                        RestartAction.restartJOSM();
                     } else {
                         Logging.warn("No plugin downloaded, restart canceled");
                     }
