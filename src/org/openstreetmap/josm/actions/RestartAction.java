@@ -99,8 +99,12 @@ public class RestartAction extends JosmAction {
             return;
         }
 
-        // Initiate shutdown
-        if (isRestartSupported() && !MainApplication.exitJosm(false, 0, SaveLayersDialog.Reason.RESTART))
+        // Leave early if restart is not possible
+        if (!isRestartSupported())
+            return;
+
+        // Initiate shutdown with a chance for user to cancel
+        if (!MainApplication.exitJosm(false, 0, SaveLayersDialog.Reason.RESTART))
             return;
 
         // execute the command in a shutdown hook, to be sure that all the
