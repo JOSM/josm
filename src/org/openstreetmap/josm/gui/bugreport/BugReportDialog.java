@@ -229,8 +229,8 @@ public class BugReportDialog extends JDialog {
                     );
             return SuppressionMode.NONE;
         } else {
+            PluginDownloadTask downloadTask = PluginHandler.updateOrdisablePluginAfterException(e);
             return GuiHelper.runInEDTAndWaitAndReturn(() -> {
-                PluginDownloadTask downloadTask = PluginHandler.updateOrdisablePluginAfterException(e);
                 if (downloadTask != null) {
                     // Ask for restart to install new plugin
                     PluginPreference.notifyDownloadResults(

@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
@@ -953,14 +954,19 @@ public final class PluginHandler {
             monitor = NullProgressMonitor.INSTANCE;
         }
         try {
-            ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask(monitor);
-            try {
-                task.run();
-            } catch (RuntimeException e) { // NOPMD
-                Logging.error(e);
-                return null;
-            }
             Map<String, PluginInformation> ret = new HashMap<>();
+            ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask(monitor);
+            Future<?> future = MainApplication.worker.submit(task);
+            try {
+                future.get();
+            } catch (ExecutionException e) {
+                Logging.error(e);
+                return ret;
+            } catch (InterruptedException e) {
+                Logging.warn("InterruptedException in " + PluginHandler.class.getSimpleName()
+                        + " while loading locally available plugin information");
+                return ret;
+            }
             for (PluginInformation pi: task.getAvailablePlugins()) {
                 ret.put(pi.name, pi);
             }
@@ -1117,20 +1123,25 @@ public final class PluginHandler {
             ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
                     monitor.createSubTaskMonitor(1, false),
                     Preferences.main().getOnlinePluginSites(), displayErrMsg
-            );
-            task1.run();
-            List<PluginInformation> allPlugins = task1.getAvailablePlugins();
+                    );
+            List<PluginInformation> allPlugins = null;
+            Future<?> future = MainApplication.worker.submit(task1);
 
             try {
+                future.get();
+                allPlugins = task1.getAvailablePlugins();
                 plugins = buildListOfPluginsToLoad(parent, monitor.createSubTaskMonitor(1, false));
                 // If only some plugins have to be updated, filter the list
                 if (pluginsWanted != null && !pluginsWanted.isEmpty()) {
                     final Collection<String> pluginsWantedName = Utils.transform(pluginsWanted, piw -> piw.name);
                     plugins = SubclassFilteredCollection.filter(plugins, pi -> pluginsWantedName.contains(pi.name));
                 }
-            } catch (RuntimeException e) { // NOPMD
-                Logging.warn(tr("Failed to download plugin information list"));
+            } catch (ExecutionException e) {
+                Logging.warn(tr("Failed to download plugin information list") + ": ExecutionException");
                 Logging.error(e);
+                // don't abort in case of error, continue with downloading plugins below
+            } catch (InterruptedException e) {
+                Logging.warn(tr("Failed to download plugin information list") + ": InterruptedException");
                 // don't abort in case of error, continue with downloading plugins below
             }
 
@@ -1169,11 +1180,18 @@ public final class PluginHandler {
                         monitor.createSubTaskMonitor(1, false),
                         pluginsToDownload,
                         tr("Update plugins")
-                );
+                        );
+                future = MainApplication.worker.submit(pluginDownloadTask);
+
                 try {
-                    pluginDownloadTask.run();
-                } catch (RuntimeException e) { // NOPMD
+                    future.get();
+                } catch (ExecutionException e) {
                     Logging.error(e);
+                    alertFailedPluginUpdate(parent, pluginsToUpdate);
+                    return plugins;
+                } catch (InterruptedException e) {
+                    Logging.warn("InterruptedException in " + PluginHandler.class.getSimpleName()
+                            + " while updating plugins");
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;
                 }
