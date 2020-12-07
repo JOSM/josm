@@ -177,7 +177,7 @@ final class AlignInCircleActionTest {
             } catch (InvalidSelection e) {
                 assertFalse(selValid, "sel=" + selVal + " is not invalid?");
             } catch (Exception e) {
-                throw new AssertionFailedError("test failed: sel=" + selVal,e);
+                throw new AssertionFailedError("test failed: sel=" + selVal, e);
             }
         }
     }
