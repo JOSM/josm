@@ -36,6 +36,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class RestartAction extends JosmAction {
 
     private static final String APPLE_OSASCRIPT = "/usr/bin/osascript";
+    private static final String APPLE_APP_PATH = "/JOSM.app/Contents/";
 
     // AppleScript to restart OS X package
     private static final String RESTART_APPLE_SCRIPT =
@@ -145,8 +146,10 @@ public class RestartAction extends JosmAction {
 
     private static List<String> determineRestartCommands() {
         try {
-            // special handling for OSX .app package
-            if (PlatformManager.isPlatformOsx() && getSystemProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
+            // special handling for OSX .app package (both legacy and jpackage-based)
+            if (PlatformManager.isPlatformOsx() && (
+                    getSystemProperty("java.library.path").contains(APPLE_APP_PATH) ||
+                    getSystemProperty("java.class.path").contains(APPLE_APP_PATH))) {
                 return getAppleCommands();
             } else {
                 return getCommands();
