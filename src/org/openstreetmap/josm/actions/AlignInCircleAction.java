@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -29,6 +31,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.JoinedWay;
+import org.openstreetmap.josm.data.validation.tests.CrossingWays;
 import org.openstreetmap.josm.data.validation.tests.SelfIntersectingWay;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Geometry;
@@ -42,6 +45,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author Petr Dlouhý
  * @author Teemu Koskinen
  * @author Alain Delplanque
+ * @author Gerd Petermann
  *
  * @since 146
  */
@@ -106,7 +110,15 @@ public final class AlignInCircleAction extends JosmAction {
 
         try {
             Command cmd = buildCommand(getLayerManager().getEditDataSet());
-            UndoRedoHandler.getInstance().add(cmd);
+            if (cmd != null)
+                UndoRedoHandler.getInstance().add(cmd);
+            else {
+                new Notification(tr("nothing changed"))
+                .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                .setDuration(Notification.TIME_SHORT)
+                .show();
+
+            }
         } catch (InvalidSelection except) {
             Logging.debug(except);
             new Notification(except.getMessage())
@@ -114,7 +126,6 @@ public final class AlignInCircleAction extends JosmAction {
                 .setDuration(Notification.TIME_SHORT)
                 .show();
         }
-
     }
 
     /**
@@ -139,14 +150,14 @@ public final class AlignInCircleAction extends JosmAction {
      * Case 3: Only nodes are selected
      * --&gt; Align these nodes, all are fix
      * @param ds data set in which the command operates
-     * @return the resulting command to execute to perform action
+     * @return the resulting command to execute to perform action, or null if nothing was changed
      * @throws InvalidSelection if selection cannot be used
      * @since 17386
      *
      */
     public static Command buildCommand(DataSet ds) throws InvalidSelection {
         Collection<OsmPrimitive> sel = ds.getSelected();
-        List<Node> nodes = new LinkedList<>();
+        List<Node> selectedNodes = new LinkedList<>();
         // fixNodes: All nodes for which the angle relative to center should not be modified
         Set<Node> fixNodes = new HashSet<>();
         List<Way> ways = new LinkedList<>();
@@ -155,79 +166,86 @@ public final class AlignInCircleAction extends JosmAction {
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Node) {
-                nodes.add((Node) osm);
+                selectedNodes.add((Node) osm);
             } else if (osm instanceof Way) {
                 ways.add((Way) osm);
             }
         }
 
-        if (ways.size() == 1 && !ways.get(0).isClosed()) {
+        // nodes on selected ways
+        List<Node> onWay = new ArrayList<>();
+        if (!ways.isEmpty()) {
+            List<Node> potentialCenter = new ArrayList<>();
+            for (Node n : selectedNodes) {
+                if (ways.stream().anyMatch(w -> w.containsNode(n))) {
+                    onWay.add(n);
+                } else {
+                    potentialCenter.add(n);
+                }
+            }
+            if (potentialCenter.size() == 1) {
+                // center is given
+                center = potentialCenter.get(0).getEastNorth();
+                if (onWay.size() == 1) {
+                    radius = center.distance(onWay.get(0).getEastNorth());
+                }
+            } else if (potentialCenter.size() > 1) {
+                throw new InvalidSelection(tr("Please select only one node as center."));
+            }
+
+        }
+
+        final List<Node> nodes;
+        if (ways.isEmpty()) {
+            nodes = sortByAngle(selectedNodes);
+            fixNodes.addAll(nodes);
+        } else if (ways.size() == 1 && !ways.get(0).isClosed()) {
             // Case 1
             Way w = ways.get(0);
-            if (SelfIntersectingWay.isSelfIntersecting(w)) {
-                throw new InvalidSelection(tr("Self-intersecting way"));
-            }
-
             fixNodes.add(w.firstNode());
             fixNodes.add(w.lastNode());
-            fixNodes.addAll(nodes);
-            fixNodes.addAll(collectNodesWithExternReferrers(ways));
+            fixNodes.addAll(onWay);
             // Temporary closed way used to reorder nodes
             Way closedWay = new Way(w);
-            closedWay.addNode(w.firstNode());
-            nodes = collectNodesAnticlockwise(Collections.singletonList(closedWay));
-            closedWay.setNodes(null); // see #19885
-        } else if (!ways.isEmpty() && checkWaysArePolygon(ways)) {
-            // Case 2
-            List<Node> inside = new ArrayList<>();
-            List<Node> outside = new ArrayList<>();
-
-            for (Node n: nodes) {
-                boolean isInside = ways.stream().anyMatch(w -> w.getNodes().contains(n));
-                if (isInside)
-                    inside.add(n);
-                else
-                    outside.add(n);
+            try {
+                closedWay.addNode(w.firstNode());
+                nodes = collectNodesAnticlockwise(Collections.singletonList(closedWay));
+            } finally {
+                closedWay.setNodes(null); // see #19885
             }
-
-            if (outside.size() == 1 && inside.isEmpty()) {
-                center = outside.get(0).getEastNorth();
-            } else if (outside.size() == 1 && inside.size() == 1) {
-                center = outside.get(0).getEastNorth();
-                radius = center.distance(inside.get(0).getEastNorth());
-            } else if (inside.size() == 2 && outside.isEmpty()) {
-                // 2 nodes inside, define diameter
-                EastNorth en0 = inside.get(0).getEastNorth();
-                EastNorth en1 = inside.get(1).getEastNorth();
-                center = new EastNorth((en0.east() + en1.east()) / 2, (en0.north() + en1.north()) / 2);
+        } else if (Multipolygon.joinWays(ways).size() == 1) {
+            // Case 2:
+            if (onWay.size() == 2) {
+                // 2 way nodes define diameter
+                EastNorth en0 = onWay.get(0).getEastNorth();
+                EastNorth en1 = onWay.get(1).getEastNorth();
                 radius = en0.distance(en1) / 2;
+                if (center == null) {
+                    center = en0.getCenter(en1);
+                }
             }
-
-            fixNodes.addAll(inside);
-            fixNodes.addAll(collectNodesWithExternReferrers(ways));
+            fixNodes.addAll(onWay);
             nodes = collectNodesAnticlockwise(ways);
-            if (nodes.size() < 4) {
-                throw new InvalidSelection(tr("Not enough nodes in selected ways."));
-            }
-        } else if (ways.isEmpty() && nodes.size() > 3) {
-            // Case 3
-            fixNodes.addAll(nodes);
-            // No need to reorder nodes since all are fix
         } else {
-            if (ways.isEmpty() && nodes.size() <= 3)
-                throw new InvalidSelection(tr("Please select at least four nodes."));
             throw new InvalidSelection();
         }
+        fixNodes.addAll(collectNodesWithExternReferrers(ways));
 
         // Check if one or more nodes are outside of download area
         if (nodes.stream().anyMatch(Node::isOutsideDownloadArea))
             throw new InvalidSelection(tr("One or more nodes involved in this action is outside of the downloaded area."));
 
+
         if (center == null) {
-            // Compute the center of nodes
-            center = Geometry.getCenter(nodes);
+            if (nodes.size() < 4) {
+                throw new InvalidSelection(tr("Not enough nodes to calculate center."));
+            }
+            if (validateGeometry(nodes)) {
+                // Compute the center of nodes
+                center = Geometry.getCenter(nodes);
+            }
             if (center == null) {
-                throw new InvalidSelection(tr("Cannot determine center of selected nodes."));
+                throw new InvalidSelection(tr("Cannot determine center of circle for this geometry."));
             }
         }
 
@@ -281,8 +299,40 @@ public final class AlignInCircleAction extends JosmAction {
             i = j; // Update start point for next iteration
         }
         if (cmds.isEmpty())
-            throw new InvalidSelection(tr("nothing changed"));
+            return null;
         return new SequenceCommand(tr("Align Nodes in Circle"), cmds);
+    }
+
+    private static List<Node> sortByAngle(final List<Node> nodes) {
+        EastNorth sum = new EastNorth(0, 0);
+        for (Node n : nodes) {
+            EastNorth en = n.getEastNorth();
+            sum = sum.add(en.east(), en.north());
+        }
+        final EastNorth simpleCenter = new EastNorth(sum.east()/nodes.size(), sum.north()/nodes.size());
+
+        SortedMap<Double, List<Node>> orderedMap = new TreeMap<>();
+        for (Node n : nodes) {
+            double angle = new PolarCoor(n.getEastNorth(), simpleCenter).angle;
+            orderedMap.computeIfAbsent(angle, k-> new ArrayList<>()).add(n);
+        }
+        return orderedMap.values().stream().flatMap(List<Node>::stream).collect(Collectors.toList());
+    }
+
+    private static boolean validateGeometry(List<Node> nodes) {
+        Way test = new Way();
+        test.setNodes(nodes);
+        if (!test.isClosed()) {
+            test.addNode(test.firstNode());
+        }
+
+        try {
+            if (CrossingWays.isSelfCrossing(test))
+                return false;
+            return !SelfIntersectingWay.isSelfIntersecting(test);
+        } finally {
+            test.setNodes(null); // see #19855
+        }
     }
 
     /**
@@ -303,9 +353,9 @@ public final class AlignInCircleAction extends JosmAction {
     private static List<Node> collectNodesAnticlockwise(List<Way> ways) throws InvalidSelection {
         Collection<JoinedWay> rings = Multipolygon.joinWays(ways);
         if (rings.size() != 1)
-            throw new InvalidSelection();
+            throw new InvalidSelection(); // we should never get here
         List<Node> nodes = new ArrayList<>(rings.iterator().next().getNodes());
-        if (nodes.get(0) != nodes.get(nodes.size()-1))
+        if (nodes.get(0) != nodes.get(nodes.size() - 1))
             throw new InvalidSelection();
         if (Geometry.isClockwise(nodes))
             Collections.reverse(nodes);
@@ -323,25 +373,4 @@ public final class AlignInCircleAction extends JosmAction {
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         updateEnabledStateOnModifiableSelection(selection);
     }
-
-    /**
-     * Determines if ways can be joined into a single polygon.
-     * @param ways The ways collection to check
-     * @return true if all ways can be joined into a single polygon
-     */
-    private static boolean checkWaysArePolygon(Collection<Way> ways) {
-        if (Multipolygon.joinWays(ways).size() != 1)
-            return false;
-        // For each way, nodes strictly between first and last should't be reference by an other way
-        for (Way way: ways) {
-            for (Node node: way.getNodes()) {
-                if (way.isFirstLastNode(node)) continue;
-                if (ways.stream().filter(wayOther -> way != wayOther).anyMatch(wayOther -> node.getReferrers().contains(wayOther))) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
 }

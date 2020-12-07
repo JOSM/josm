@@ -2,8 +2,10 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,12 +15,15 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.AlignInCircleAction.InvalidSelection;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.opentest4j.AssertionFailedError;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -70,7 +75,7 @@ final class AlignInCircleActionTest {
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20041">Bug #20041</a>.
-     * Don't create move commands when no node is visibly moved
+     * Don't create move commands when no node is visibly moved.
      * @throws Exception if an error occurs
      */
     @Test
@@ -87,7 +92,7 @@ final class AlignInCircleActionTest {
         assertNotNull(roundabout);
         if (roundabout != null) {
             ds.setSelected(roundabout);
-            assertThrows(AlignInCircleAction.InvalidSelection.class, () -> AlignInCircleAction.buildCommand(ds));
+            assertNull(AlignInCircleAction.buildCommand(ds));
         }
     }
 
@@ -149,4 +154,31 @@ final class AlignInCircleActionTest {
         }
     }
 
+    /**
+     * Various cases of selections in file
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testSelectionEvaluation() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(
+                Files.newInputStream(Paths.get(TestUtils.getTestDataRoot(), "alignCircleCases.osm")), null);
+
+        for (int i = 0; i < 80; i++) {
+            final String selVal = Integer.toString(i);
+            Set<OsmPrimitive> sel = ds.allPrimitives().stream().filter(p -> p.hasTag("sel", selVal))
+                    .collect(Collectors.toSet());
+            if (sel.isEmpty())
+                continue;
+            ds.setSelected(sel);
+            boolean selValid = sel.stream().noneMatch(p -> p.hasKey("invalid-selection"));
+            try {
+                AlignInCircleAction.buildCommand(ds);
+                assertTrue(selValid, "sel=" + selVal + " is not valid?");
+            } catch (InvalidSelection e) {
+                assertFalse(selValid, "sel=" + selVal + " is not invalid?");
+            } catch (Exception e) {
+                throw new AssertionFailedError("test failed: sel=" + selVal,e);
+            }
+        }
+    }
 }

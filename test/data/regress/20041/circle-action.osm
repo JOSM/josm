@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='3353142168' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90029704945' lon='8.44321406009' />
+  <node id='3353142170' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90031807489' lon='8.44326193915' />
+  <node id='3353142171' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90030468523' lon='8.44306677855' />
+  <node id='3353142174' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90033729149' lon='8.44301884234' />
+  <node id='3353142175' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90034976283' lon='8.44329321571' />
+  <node id='3353142183' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90040118461' lon='8.44329685665' />
+  <node id='3353142184' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.9004078959' lon='8.44300955386' />
+  <node id='3353142189' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90046511808' lon='8.44319779138' />
+  <node id='3353142190' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90044790476' lon='8.44305434646' />
+  <node id='3353142192' action='modify' timestamp='2015-02-15T23:33:27Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323' lat='52.90046284581' lon='8.44309505092' />
+  <way id='-104527' action='modify' visible='true'>
+    <nd ref='3353142171' />
+    <nd ref='3353142168' />
+    <nd ref='3353142170' />
+    <nd ref='3353142175' />
+    <nd ref='3353142183' />
+    <nd ref='3353142189' />
+    <nd ref='3353142192' />
+    <nd ref='3353142190' />
+    <nd ref='3353142184' />
+    <nd ref='3353142174' />
+    <nd ref='3353142171' />
+    <tag k='barrier' v='fence' />
+  </way>
+  <way id='328483730' timestamp='2015-02-15T23:33:35Z' uid='715371' user='715371' visible='true' version='1' changeset='28875323'>
+    <nd ref='3353142174' />
+    <nd ref='3353142184' />
+    <nd ref='3353142190' />
+    <nd ref='3353142192' />
+    <nd ref='3353142189' />
+    <nd ref='3353142183' />
+    <nd ref='3353142175' />
+    <nd ref='3353142170' />
+    <nd ref='3353142168' />
+    <nd ref='3353142171' />
+    <nd ref='3353142174' />
+    <tag k='natural' v='water' />
+  </way>
+</osm>

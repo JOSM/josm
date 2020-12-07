@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -468,4 +469,17 @@ public abstract class CrossingWays extends Test {
         }
     }
 
+    /**
+     * Check if the given way is self crossing
+     * @param way the way to check
+     * @return {@code true} if one or more segments of the way are crossing
+     * @see SelfIntersectingWay
+     * @since xxx
+     */
+    public static boolean isSelfCrossing(Way way) {
+        CheckParameterUtil.ensureParameterNotNull(way, "way");
+        SelfCrossing test = new SelfCrossing();
+        test.visit(way);
+        return !test.getErrors().isEmpty();
+    }
 }
