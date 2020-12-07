@@ -946,7 +946,7 @@ public final class PluginHandler {
      * plugin lists.
      *
      * @param monitor the progress monitor. Defaults to {@link NullProgressMonitor#INSTANCE} if null.
-     * @return the list of locally available plugin information
+     * @return the list of locally available plugin information, null in case of errors
      *
      */
     private static Map<String, PluginInformation> loadLocallyAvailablePluginInformation(ProgressMonitor monitor) {
@@ -954,19 +954,19 @@ public final class PluginHandler {
             monitor = NullProgressMonitor.INSTANCE;
         }
         try {
-            Map<String, PluginInformation> ret = new HashMap<>();
             ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask(monitor);
             Future<?> future = MainApplication.worker.submit(task);
             try {
                 future.get();
             } catch (ExecutionException e) {
                 Logging.error(e);
-                return ret;
+                return null;
             } catch (InterruptedException e) {
                 Logging.warn("InterruptedException in " + PluginHandler.class.getSimpleName()
                         + " while loading locally available plugin information");
-                return ret;
+                return null;
             }
+            Map<String, PluginInformation> ret = new HashMap<>();
             for (PluginInformation pi: task.getAvailablePlugins()) {
                 ret.put(pi.name, pi);
             }
