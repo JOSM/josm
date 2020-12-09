@@ -123,7 +123,7 @@ public class ImageryPreferenceTestIT {
         ImageryLayerInfo.instance.load(false);
         return ImageryLayerInfo.instance.getDefaultLayers()
                 .stream()
-                .map(i -> Arguments.of(i.getId(), i))
+                .map(i -> Arguments.of(i.getCountryCode().isEmpty() ? i.getId() : i.getCountryCode() + '-' + i.getId(), i))
                 .collect(Collectors.toList());
     }
 
