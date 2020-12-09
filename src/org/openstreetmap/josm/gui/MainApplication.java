@@ -221,7 +221,7 @@ public class MainApplication {
         public void layerRemoving(LayerRemoveEvent e) {
             Layer layer = e.getRemovedLayer();
             if (layer instanceof OsmDataLayer) {
-                UndoRedoHandler.clean(((OsmDataLayer) layer).getDataSet());
+                UndoRedoHandler.getInstance().clean(((OsmDataLayer) layer).getDataSet());
             }
         }
 

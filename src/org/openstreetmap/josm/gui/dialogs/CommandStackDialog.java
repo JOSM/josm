@@ -50,8 +50,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
@@ -64,7 +62,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  * Dialog displaying list of all executed commands (undo/redo buffer).
  * @since 94
  */
-public class CommandStackDialog extends ToggleDialog implements CommandQueuePreciseListener, ActiveLayerChangeListener {
+public class CommandStackDialog extends ToggleDialog implements CommandQueuePreciseListener {
 
     private final DefaultTreeModel undoTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
     private final DefaultTreeModel redoTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
@@ -146,7 +144,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
 
         InputMapUtils.addEnterAction(undoTree, selectAndZoomAction);
         InputMapUtils.addEnterAction(redoTree, selectAndZoomAction);
-        MainApplication.getLayerManager().addActiveLayerChangeListener(this);
     }
 
     private static class CommandCellRenderer extends DefaultTreeCellRenderer {
@@ -554,11 +551,5 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
             add(selectAction);
             add(selectAndZoomAction);
         }
-    }
-
-    @Override
-    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        hideNotify();
-        showNotify();
     }
 }
