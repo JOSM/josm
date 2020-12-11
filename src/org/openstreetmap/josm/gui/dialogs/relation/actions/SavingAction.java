@@ -91,7 +91,7 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         tagEditorModel.applyToPrimitive(editedRelation);
         getMemberTableModel().applyToRelation(editedRelation);
         List<Command> cmds = new ArrayList<>();
-        if (originRelation.getKeys().equals(editedRelation.getKeys())) {
+        if (!originRelation.getMembers().equals(editedRelation.getMembers())) {
             cmds.add(new ChangeMembersCommand(originRelation, editedRelation.getMembers()));
         }
         Command cmdProps = ChangePropertyCommand.build(originRelation, editedRelation);
