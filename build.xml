@@ -471,6 +471,9 @@ Build-Date: ${build.tstamp}
 	                    <sysproperty key="monocle.platform" value="Headless"/>
 	                    <sysproperty key="prism.order" value="sw"/>
 	                    <sysproperty key="suppressPermanentFailure" value="${suppressPermanentFailure}"/>
+	                    <sysproperty key="junit.jupiter.execution.parallel.enabled" value="${junit.jupiter.execution.parallel.enabled}" if:set="junit.jupiter.execution.parallel.enabled"/>
+	                    <sysproperty key="junit.jupiter.execution.parallel.mode.default" value="${junit.jupiter.execution.parallel.mode.default}" if:set="junit.jupiter.execution.parallel.mode.default"/>
+	                    <sysproperty key="junit.jupiter.execution.parallel.mode.classes.default" value="${junit.jupiter.execution.parallel.mode.classes.default}" if:set="junit.jupiter.execution.parallel.mode.classes.default"/>
 	                </fork>
                     <listener type="legacy-plain" />
                     <listener type="legacy-xml" />
