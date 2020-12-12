@@ -3,11 +3,8 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
 import java.util.List;
 
-import org.openstreetmap.josm.actions.OrthogonalizeAction;
-import org.openstreetmap.josm.actions.OrthogonalizeAction.InvalidUserInputException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -15,7 +12,6 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -51,14 +47,6 @@ public class RightAngleBuildingTest extends Test {
                                                      .message(tr("Building with an almost square angle"))
                                                      .primitives(w)
                                                      .highlight(pair.b);
-                builder.fix(() -> {
-                    try {
-                        return OrthogonalizeAction.orthogonalize(Arrays.asList(w, pair.b));
-                    } catch (InvalidUserInputException e) {
-                        Logging.warn(e);
-                        return null;
-                    }
-                });
                 errors.add(builder.build());
                 return;
             }
