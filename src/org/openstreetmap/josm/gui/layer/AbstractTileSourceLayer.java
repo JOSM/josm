@@ -919,12 +919,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     public void loadAllTiles(boolean force) {
         TileSet ts = getVisibleTileSet();
-
-        // if there is more than 18 tiles on screen in any direction, do not load all tiles!
-        if (ts.tooLarge()) {
-            Logging.warn("Not downloading all tiles because there is more than 18 tiles on an axis!");
-            return;
-        }
         ts.loadAllTiles(force);
         invalidate();
     }
@@ -1290,8 +1284,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         private void loadAllTiles(boolean force) {
-            if (!getDisplaySettings().isAutoLoad() && !force)
+            if (!getDisplaySettings().isAutoLoad() && !force) {
                 return;
+            }
+            if (tooLarge()) {
+                // Too many tiles... refuse to download
+                Logging.warn("Not downloading all tiles because there is more than 18 tiles on an axis!");
+                return;
+            }
             List<Tile> allTiles = allTilesCreate();
             allTiles.sort(getTileDistanceComparator());
             for (Tile t : allTiles) {
@@ -1304,15 +1304,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          */
         private void overloadTiles() {
             int overload = 1;
+
             int minXo = Utils.clamp(minX-overload, tileSource.getTileXMin(zoom), tileSource.getTileXMax(zoom));
             int maxXo = Utils.clamp(maxX+overload, tileSource.getTileXMin(zoom), tileSource.getTileXMax(zoom));
             int minYo = Utils.clamp(minY-overload, tileSource.getTileYMin(zoom), tileSource.getTileYMax(zoom));
             int maxYo = Utils.clamp(maxY+overload, tileSource.getTileYMin(zoom), tileSource.getTileYMax(zoom));
-            for (int x = minXo; x < maxXo; ++x) {
-                for (int y = minYo; y < maxYo; ++y) {
-                    loadTile(getOrCreateTile(x, y, zoom), false);
-                }
-            }
+
+            TileSet ts = new TileSet(new TileXY(minXo, minYo), new TileXY(maxXo, maxYo), zoom);
+            ts.loadAllTiles(false);
         }
 
         private void loadAllErrorTiles(boolean force) {
@@ -1549,12 +1548,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
         TileSet ts = dts.getTileSet(zoom);
 
-        // Too many tiles... refuse to download
-        if (!ts.tooLarge()) {
-            // try to load tiles from desired zoom level, no matter what we will show (for example, tiles from previous zoom level
-            // on zoom in)
-            ts.loadAllTiles(false);
-        }
+        // try to load tiles from desired zoom level, no matter what we will show (for example, tiles from previous zoom level
+        // on zoom in)
+        ts.loadAllTiles(false);
 
         if (displayZoomLevel != zoom) {
             ts = dts.getTileSet(displayZoomLevel);
