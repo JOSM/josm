@@ -482,7 +482,6 @@ public final class DomainValidator extends AbstractValidator {
         "cbn", // cbn The Christian Broadcasting Network, Inc.
         "cbre", // cbre CBRE, Inc.
         "cbs", // cbs CBS Domains Inc.
-        "ceb", // ceb The Corporate Executive Board Company
         "center", // center Tin Mill, LLC
         "ceo", // ceo CEOTLD Pty Ltd
         "cern", // cern European Organization for Nuclear Research (&quot;CERN&quot;)
@@ -911,7 +910,6 @@ public final class DomainValidator extends AbstractValidator {
         "ltd", // ltd Over Corner, LLC
         "ltda", // ltda InterNetX Corp.
         "lundbeck", // lundbeck H. Lundbeck A/S
-        "lupin", // lupin LUPIN LIMITED
         "luxe", // luxe Top Level Domain Holdings Limited
         "luxury", // luxury Luxury Partners LLC
         "macys", // macys Macys, Inc.
