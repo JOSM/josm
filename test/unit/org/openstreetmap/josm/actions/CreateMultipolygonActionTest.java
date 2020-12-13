@@ -173,4 +173,21 @@ class CreateMultipolygonActionTest {
         assertEquals("wetland", modMp.get("natural"));
         assertEquals(numCoastlineWays, ds.getWays().stream().filter(w -> "coastline".equals(w.get("natural"))).count());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20230">Bug #20230</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20230() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(20230, "data.osm"), null);
+        assertEquals(1, ds.getRelations().size());
+        Relation mp = ds.getRelations().iterator().next();
+        Relation modMp = createMultipolygon(ds.getWays(), "type:way", mp, true);
+        assertNotNull(modMp);
+        assertEquals(1, ds.getRelations().size());
+        modMp = ds.getRelations().iterator().next();
+        assertTrue(modMp.hasTag("building", "yes"));
+        assertEquals(0, ds.getWays().stream().filter(w -> w.hasTag("building", "yes")).count());
+    }
 }

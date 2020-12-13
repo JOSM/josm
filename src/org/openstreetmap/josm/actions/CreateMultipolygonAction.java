@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.command.AddCommand;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ChangeMembersCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -111,17 +112,16 @@ public class CreateMultipolygonAction extends JosmAction {
             if (commandAndRelation == null) {
                 return;
             }
-            final Command command = commandAndRelation.a;
 
             // to avoid EDT violations
             SwingUtilities.invokeLater(() -> {
-                if (multipolygonRelation != null) {
-                    // rather ugly: update generated a ChangeMembersCommand with a copy of the member list, so clear the list now
-                    commandAndRelation.b.setMembers(null); // #see 19885
+                UndoRedoHandler.getInstance().add(commandAndRelation.a);
+                Relation calculatedRel = commandAndRelation.b;
+                if (calculatedRel.getDataSet() == null) {
+                    calculatedRel.setMembers(null); // see #19885
                 }
-                UndoRedoHandler.getInstance().add(command);
                 final Relation relation = (Relation) MainApplication.getLayerManager().getEditDataSet()
-                        .getPrimitiveById(commandAndRelation.b);
+                        .getPrimitiveById(calculatedRel);
                 if (relation == null || relation.getDataSet() == null)
                     return; // should not happen
 
@@ -349,7 +349,10 @@ public class CreateMultipolygonAction extends JosmAction {
             commandName = getName(false);
         } else {
             if (!unchanged) {
-                list.add(new ChangeMembersCommand(existingRelation, new ArrayList<>(relation.getMembers())));
+                if (relation.getKeys().equals(existingRelation.getKeys()))
+                    list.add(new ChangeMembersCommand(existingRelation, new ArrayList<>(relation.getMembers())));
+                else
+                    list.add(new ChangeCommand(existingRelation, relation));
             }
             if (list.isEmpty()) {
                 if (unchanged) {
