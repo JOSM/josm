@@ -139,7 +139,7 @@ public class UnclosedWays extends Test {
         // duplicate warnings
         new UnclosedWaysCheck(1101, "natural", marktr("natural type {0}"),
             new HashSet<>(Arrays.asList("arete", "bay", "cave", "cliff", "coastline", "earth_bank", "gorge", "gully",
-                    "peak", "ridge", "saddle", "strait", "tree", "tree_row", "valley", "volcano"))),
+                    "mountain_range", "peak", "ridge", "saddle", "strait", "tree", "tree_row", "valley", "volcano"))),
 
         new UnclosedWaysCheck(1102, "landuse", marktr("landuse type {0}")),
         new UnclosedWaysCheck(1103, "amenity", marktr("amenity type {0}"),
