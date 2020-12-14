@@ -338,9 +338,9 @@ public class CreateMultipolygonAction extends JosmAction {
         if (rr == null) {
             return null;
         }
-        boolean unchanged = rr.a == rr.b;
+        boolean changedMembers = rr.a != rr.b;
         final Relation existingRelation = rr.a;
-        final Relation relation = rr.b;
+        final Relation relation = changedMembers ? rr.b : new Relation(rr.a);
 
         final List<Command> list = removeTagsFromWaysIfNeeded(relation);
         final String commandName;
@@ -348,14 +348,16 @@ public class CreateMultipolygonAction extends JosmAction {
             list.add(new AddCommand(selectedWays.iterator().next().getDataSet(), relation));
             commandName = getName(false);
         } else {
-            if (!unchanged) {
-                if (relation.getKeys().equals(existingRelation.getKeys()))
-                    list.add(new ChangeMembersCommand(existingRelation, new ArrayList<>(relation.getMembers())));
-                else
-                    list.add(new ChangeCommand(existingRelation, relation));
+            boolean changedKeys = !relation.getKeys().equals(existingRelation.getKeys());
+            if (changedKeys && changedMembers)
+                list.add(new ChangeCommand(existingRelation, relation));
+            else if (changedMembers) {
+                list.add(new ChangeMembersCommand(existingRelation, new ArrayList<>(relation.getMembers())));
+            } else if (changedKeys) {
+                list.add(ChangePropertyCommand.build(existingRelation, relation));
             }
             if (list.isEmpty()) {
-                if (unchanged) {
+                if (!changedMembers) {
                     MultipolygonTest mpTest = new MultipolygonTest();
                     mpTest.visit(existingRelation);
                     if (!mpTest.getErrors().isEmpty()) {

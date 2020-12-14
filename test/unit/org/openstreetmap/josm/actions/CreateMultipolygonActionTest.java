@@ -190,4 +190,27 @@ class CreateMultipolygonActionTest {
         assertTrue(modMp.hasTag("building", "yes"));
         assertEquals(0, ds.getWays().stream().filter(w -> w.hasTag("building", "yes")).count());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20238">Bug #20238</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20238() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(20238, "data.osm"), null);
+        assertEquals(1, ds.getRelations().size());
+        Relation mp = ds.getRelations().iterator().next();
+        assertFalse(ds.getRelations().iterator().next().hasTag("building", "yes"));
+        assertEquals(1, ds.getWays().stream().filter(w -> w.hasTag("building", "yes")).count());
+        Pair<SequenceCommand, Relation> cmd = CreateMultipolygonAction.createMultipolygonCommand(ds.getWays(), mp);
+        assertNotNull(cmd);
+        cmd.a.executeCommand();
+        assertEquals(1, ds.getRelations().size());
+        assertTrue(ds.getRelations().iterator().next().hasTag("building", "yes"));
+        assertEquals(0, ds.getWays().stream().filter(w -> w.hasTag("building", "yes")).count());
+        cmd.a.undoCommand();
+        assertEquals(1, ds.getRelations().size());
+        assertFalse(ds.getRelations().iterator().next().hasTag("building", "yes"));
+        assertEquals(1, ds.getWays().stream().filter(w -> w.hasTag("building", "yes")).count());
+    }
 }
