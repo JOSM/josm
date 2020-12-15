@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutionException;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
+import org.openstreetmap.josm.spi.preferences.Config;
+
 
 /**
  * {@code PlatformHook} implementation for Apple macOS (formerly Mac OS X) systems.
@@ -81,7 +83,13 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             }
             // setup the dock icon. It is automatically set with application bundle and Web start but we need
             // to do it manually if run with `java -jar``
-            eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
+            try {
+                eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get(Config.getUrls().getJOSMWebsite()+"/logo-macos.png").getImage());
+            } catch (JosmRuntimeException e) {
+                // fall back to default logo
+                eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
+            }
+            
             // enable full screen
             enableOSXFullscreen(MainApplication.getMainFrame());
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
