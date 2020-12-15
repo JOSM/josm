@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.AWTError;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -1040,6 +1041,13 @@ public class MainApplication {
                 Logging.error(e);
             } catch (ExceptionInInitializerError e) {
                 Logging.log(Logging.LEVEL_ERROR, null, e);
+            }
+        } 
+        // Workaround for https://josm.openstreetmap.de/ticket/20075
+        else {
+            final String laf = UIManager.getLookAndFeel().getID();
+            if(PlatformManager.isPlatformOsx() && (laf.contains("Mac") || laf.contains("Aqua"))){
+                UIManager.put("TabbedPane.foreground", Color.BLACK);
             }
         }
     }
