@@ -83,12 +83,12 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
                 setHandlers(Desktop.class, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, Desktop.getDesktop());
             }
             // setup the dock icon. It is automatically set with application bundle and Web start but we need
-            // to do it manually if run with `java -jar``. Fall back to default icon
+            // to do it manually if run with `java -jar``. 
             eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(
                 appli, 
                 Optional.ofNullable(
                     new ImageProvider(Config.getUrls().getJOSMWebsite()+"/logo-macos.png").setOptional(true).get()
-                ).orElse(
+                ).orElse( // Fall back to default icon
                     ImageProvider.get("logo")).getImage()
             );
         
