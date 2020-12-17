@@ -158,6 +158,103 @@
   <node id='-144722' action='modify' lat='53.27885234564' lon='10.49919878435' />
   <node id='-144723' action='modify' lat='53.27823974497' lon='10.50137387831' />
   <node id='-144724' action='modify' lat='53.27870193125' lon='10.50143333846' />
+  <node id='-146142' action='modify' lat='53.27290140259' lon='10.48960591385'>
+    <tag k='josm_error_codes' v='none' />
+    <tag k='railway' v='signal' />
+    <tag k='railway:signal:direction' v='backward' />
+    <tag k='railway:signal:main' v='DE-ESO:hp' />
+  </node>
+  <node id='-146143' action='modify' lat='53.27225584935' lon='10.48380857446' />
+  <node id='-146144' action='modify' lat='53.27273403788' lon='10.48706707901' />
+  <node id='-146145' action='modify' lat='53.27243517068' lon='10.4949034826' />
+  <node id='-146335' action='modify' lat='53.27934444006' lon='10.48595759819'>
+    <tag k='josm_error_codes' v='none' />
+    <tag k='no-direction' v='forward' />
+  </node>
+  <node id='-146398' action='modify' lat='53.27714060081' lon='10.50161458004' />
+  <node id='-146399' action='modify' lat='53.27713665242' lon='10.49994200201' />
+  <node id='-146400' action='modify' lat='53.27717084787' lon='10.49766338186' />
+  <node id='-146401' action='modify' lat='53.27759064616' lon='10.50129126057' />
+  <node id='-146402' action='modify' lat='53.2771323983' lon='10.50028704473' />
+  <node id='-146403' action='modify' lat='53.27713665037' lon='10.50255933573' />
+  <node id='-146404' action='modify' lat='53.27762909533' lon='10.4986675977' />
+  <node id='-146405' action='modify' lat='53.27712844786' lon='10.50123180042' />
+  <node id='-146406' action='modify' lat='53.27739742094' lon='10.5021773809'>
+    <tag k='direction' v='backward' />
+    <tag k='highway' v='traffic_signals' />
+    <tag k='josm_error_codes' v='4000' />
+  </node>
+  <node id='-146407' action='modify' lat='53.27774106242' lon='10.50167404018' />
+  <node id='-146408' action='modify' lat='53.27774106447' lon='10.49905670647' />
+  <node id='-146409' action='modify' lat='53.27759884858' lon='10.50261879588' />
+  <node id='-146410' action='modify' lat='53.27759885064' lon='10.50000146216' />
+  <node id='-146411' action='modify' lat='53.27739742299' lon='10.49956004718'>
+    <tag k='direction' v='backward' />
+    <tag k='highway' v='traffic_signals' />
+    <tag k='josm_error_codes' v='4000' />
+  </node>
+  <node id='-146412' action='modify' lat='53.27777130906' lon='10.497722842' />
+  <node id='-146413' action='modify' lat='53.27738921849' lon='10.50084984559'>
+    <tag k='direction' v='backward' />
+    <tag k='highway' v='traffic_signals' />
+    <tag k='josm_error_codes' v='4000' />
+  </node>
+  <node id='-146414' action='modify' lat='53.27714060286' lon='10.49899724632' />
+  <node id='-146415' action='modify' lat='53.27742766784' lon='10.49822618272'>
+    <tag k='direction' v='backward' />
+    <tag k='highway' v='traffic_signals' />
+    <tag k='josm_error_codes' v='4000' />
+  </node>
+  <node id='-146416' action='modify' lat='53.27716689744' lon='10.49860813755' />
+  <node id='-146417' action='modify' lat='53.27773286002' lon='10.50034650488' />
+  <node id='-146863' action='modify' lat='53.27533459507' lon='10.49884421594' />
+  <node id='-146864' action='modify' lat='53.27532563791' lon='10.49884611594' />
+  <node id='-146865' action='modify' lat='53.27513542421' lon='10.49887991594' />
+  <node id='-146866' action='modify' lat='53.27477834581' lon='10.49896861594' />
+  <node id='-146867' action='modify' lat='53.27476979122' lon='10.49897131594'>
+    <tag k='railway' v='signal' />
+    <tag k='railway:signal:direction' v='backward' />
+    <tag k='railway:signal:minor' v='DE-ESO:sh' />
+    <tag k='railway:signal:minor:form' v='light' />
+    <tag k='railway:signal:minor:height' v='dwarf' />
+    <tag k='railway:signal:minor:states' v='DE-ESO:hp0;DE-ESO:sh1' />
+    <tag k='railway:signal:position' v='left' />
+  </node>
+  <node id='-146868' action='modify' lat='53.27460514064' lon='10.49901821594' />
+  <node id='-146869' action='modify' lat='53.27449171692' lon='10.49907481594' />
+  <node id='-146870' action='modify' lat='53.27430160388' lon='10.49919371594' />
+  <node id='-146871' action='modify' lat='53.27409035599' lon='10.49935891594'>
+    <tag k='josm_error_codes' v='4001' />
+    <tag k='railway' v='buffer_stop' />
+    <tag k='railway:signal:direction' v='forward' />
+    <tag k='railway:signal:minor' v='DE-ESO:sh0' />
+    <tag k='railway:signal:minor:form' v='sign' />
+    <tag k='railway:signal:position' v='in_track' />
+  </node>
+  <node id='-146895' action='modify' lat='53.27538354719' lon='10.49933780217' />
+  <node id='-146896' action='modify' lat='53.27537459005' lon='10.49933970217' />
+  <node id='-146897' action='modify' lat='53.27518437657' lon='10.49937350217' />
+  <node id='-146898' action='modify' lat='53.27482729857' lon='10.49946220217' />
+  <node id='-146899' action='modify' lat='53.274818744' lon='10.49946490217'>
+    <tag k='railway' v='signal' />
+    <tag k='railway:signal:direction' v='forward' />
+    <tag k='railway:signal:minor' v='DE-ESO:sh' />
+    <tag k='railway:signal:minor:form' v='light' />
+    <tag k='railway:signal:minor:height' v='dwarf' />
+    <tag k='railway:signal:minor:states' v='DE-ESO:hp0;DE-ESO:sh1' />
+    <tag k='railway:signal:position' v='right' />
+  </node>
+  <node id='-146900' action='modify' lat='53.27465409361' lon='10.49951180217' />
+  <node id='-146901' action='modify' lat='53.27454067002' lon='10.49956840217' />
+  <node id='-146902' action='modify' lat='53.27435055719' lon='10.49968730217' />
+  <node id='-146903' action='modify' lat='53.27413930954' lon='10.49985250217'>
+    <tag k='josm_error_codes' v='4001' />
+    <tag k='railway' v='buffer_stop' />
+    <tag k='railway:signal:direction' v='backward' />
+    <tag k='railway:signal:minor' v='DE-ESO:sh0' />
+    <tag k='railway:signal:minor:form' v='sign' />
+    <tag k='railway:signal:position' v='in_track' />
+  </node>
   <way id='-102854' action='modify'>
     <nd ref='-144644' />
     <nd ref='-144645' />
@@ -384,5 +481,108 @@
     <nd ref='-144708' />
     <nd ref='-144711' />
     <tag k='highway' v='footway' />
+  </way>
+  <way id='-102992' action='modify'>
+    <nd ref='-146143' />
+    <nd ref='-146144' />
+    <nd ref='-146142' />
+    <nd ref='-146145' />
+    <tag k='railway' v='rail' />
+  </way>
+  <way id='-103050' action='modify'>
+    <nd ref='-146402' />
+    <nd ref='-146413' />
+    <nd ref='-146401' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103051' action='modify'>
+    <nd ref='-146406' />
+    <nd ref='-146403' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103052' action='modify'>
+    <nd ref='-146417' />
+    <nd ref='-146413' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103053' action='modify'>
+    <nd ref='-146400' />
+    <nd ref='-146415' />
+    <nd ref='-146404' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103054' action='modify'>
+    <nd ref='-146413' />
+    <nd ref='-146405' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103055' action='modify'>
+    <nd ref='-146412' />
+    <nd ref='-146415' />
+    <nd ref='-146416' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103056' action='modify'>
+    <nd ref='-146411' />
+    <nd ref='-146410' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103057' action='modify'>
+    <nd ref='-146414' />
+    <nd ref='-146411' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103058' action='modify'>
+    <nd ref='-146398' />
+    <nd ref='-146406' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103059' action='modify'>
+    <nd ref='-146406' />
+    <nd ref='-146409' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103060' action='modify'>
+    <nd ref='-146408' />
+    <nd ref='-146411' />
+    <nd ref='-146399' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103061' action='modify'>
+    <nd ref='-146407' />
+    <nd ref='-146406' />
+    <tag k='highway' v='footway' />
+  </way>
+  <way id='-103201' action='modify'>
+    <nd ref='-146863' />
+    <nd ref='-146864' />
+    <nd ref='-146865' />
+    <nd ref='-146866' />
+    <nd ref='-146867' />
+    <nd ref='-146868' />
+    <nd ref='-146869' />
+    <nd ref='-146870' />
+    <nd ref='-146871' />
+    <tag k='gauge' v='1435' />
+    <tag k='railway' v='rail' />
+    <tag k='railway:traffic_mode' v='freight' />
+    <tag k='service' v='yard' />
+    <tag k='workrules' v='DE:EBO' />
+  </way>
+  <way id='-103210' action='modify'>
+    <nd ref='-146903' />
+    <nd ref='-146902' />
+    <nd ref='-146901' />
+    <nd ref='-146900' />
+    <nd ref='-146899' />
+    <nd ref='-146898' />
+    <nd ref='-146897' />
+    <nd ref='-146896' />
+    <nd ref='-146895' />
+    <tag k='gauge' v='1435' />
+    <tag k='railway' v='rail' />
+    <tag k='railway:traffic_mode' v='freight' />
+    <tag k='service' v='yard' />
+    <tag k='workrules' v='DE:EBO' />
   </way>
 </osm>
