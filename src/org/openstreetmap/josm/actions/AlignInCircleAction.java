@@ -113,7 +113,7 @@ public final class AlignInCircleAction extends JosmAction {
             if (cmd != null)
                 UndoRedoHandler.getInstance().add(cmd);
             else {
-                new Notification(tr("nothing changed"))
+                new Notification(tr("Nothing changed"))
                 .setIcon(JOptionPane.INFORMATION_MESSAGE)
                 .setDuration(Notification.TIME_SHORT)
                 .show();
