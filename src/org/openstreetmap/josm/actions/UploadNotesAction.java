@@ -22,6 +22,7 @@ public class UploadNotesAction extends JosmAction {
 
     /** Create a new action to upload notes */
     public UploadNotesAction() {
+        super(false);
         putValue(SHORT_DESCRIPTION, tr("Upload note changes to server"));
         putValue(NAME, tr("Upload notes"));
         new ImageProvider("upload").getResource().attachImageIcon(this, true);

@@ -97,4 +97,14 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
     public void doKeyReleased(KeyEvent e) {
         // Do nothing
     }
+
+    @Override
+    protected boolean listenToLayerChange() {
+        return false;
+    }
+
+    @Override
+    protected boolean listenToSelectionChange() {
+        return false;
+    }
 }
