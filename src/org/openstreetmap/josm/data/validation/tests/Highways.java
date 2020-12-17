@@ -45,7 +45,7 @@ public class Highways extends Test {
      * Classified highways in order of importance
      */
     // CHECKSTYLE.OFF: SingleSpaceSeparator
-    private static final List<String> CLASSIFIED_HIGHWAYS = Arrays.asList(
+    static final List<String> CLASSIFIED_HIGHWAYS = Arrays.asList(
             "motorway",  "motorway_link",
             "trunk",     "trunk_link",
             "primary",   "primary_link",
