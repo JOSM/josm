@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <osm version='0.6' upload='never' generator='JOSM'>
+  <bounds minlat='53.2707779' minlon='10.4797161' maxlat='53.2820304' maxlon='10.5029633' origin='JOSM' />
   <node id='-144644' action='modify' lat='53.27687963931' lon='10.48026196529' />
   <node id='-144645' action='modify' lat='53.27753227122' lon='10.48343889291' />
   <node id='-144646' action='modify' lat='53.27798677685' lon='10.48983172886'>
@@ -254,6 +255,18 @@
     <tag k='railway:signal:minor' v='DE-ESO:sh0' />
     <tag k='railway:signal:minor:form' v='sign' />
     <tag k='railway:signal:position' v='in_track' />
+  </node>
+  <node id='111' version='1' lat='53.2769797' lon='10.5045821'>
+    <tag k='direction' v='forward' />
+    <tag k='josm_error_codes' v='none' />
+    <tag k='name' v='Oldtown' />
+    <tag k='traffic_sign' v='city_limit' />
+  </node>
+  <node id='112' version='1' lat='53.2752042' lon='10.5009577'>
+    <tag k='direction' v='forward' />
+    <tag k='josm_error_codes' v='4002' />
+    <tag k='name' v='Oldtown 2' />
+    <tag k='traffic_sign' v='city_limit' />
   </node>
   <way id='-102854' action='modify'>
     <nd ref='-144644' />

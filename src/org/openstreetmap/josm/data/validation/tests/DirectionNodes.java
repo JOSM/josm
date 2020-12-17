@@ -91,7 +91,7 @@ public class DirectionNodes extends Test {
                 builder = TestError.builder(this, Severity.OTHER, END_NODE_CODE).message(DISPUTED_USE_MSG,
                         marktr("Node with {0} on end of way"), tag);
             }
-        } else { // ways.size() > 1
+        } else if (ways.size() > 1) {
             builder = TestError.builder(this, Severity.OTHER, MULTIPLE_WAYS_CODE).message(DISPUTED_USE_MSG,
                     marktr("Node with {0} on a connection of multiple ways"), tag);
         }
