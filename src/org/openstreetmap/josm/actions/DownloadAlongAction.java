@@ -60,7 +60,7 @@ public abstract class DownloadAlongAction extends JosmAction {
      * @param registerInToolbar register this action for the toolbar preferences?
      */
     protected DownloadAlongAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean registerInToolbar) {
-        super(name, iconName, tooltip, shortcut, registerInToolbar);
+        super(name, iconName, tooltip, shortcut, registerInToolbar, null, false);
     }
 
     protected static void addToDownload(Area a, Rectangle2D r, Collection<Rectangle2D> results, double maxArea) {
