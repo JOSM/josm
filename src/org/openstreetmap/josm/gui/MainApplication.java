@@ -1043,10 +1043,13 @@ public class MainApplication {
                 Logging.log(Logging.LEVEL_ERROR, null, e);
             }
         } 
-        // Workaround for https://josm.openstreetmap.de/ticket/20075
+        // Workaround for JDK-8251377: JTabPanel active tab is unreadable in Big Sur, see #20075
+        // os.version will return 10.16, or 11.0 depending on environment variable
+        // https://twitter.com/BriceDutheil/status/1330926649269956612
         else {
             final String laf = UIManager.getLookAndFeel().getID();
-            if(PlatformManager.isPlatformOsx() && (laf.contains("Mac") || laf.contains("Aqua"))){
+            final String macOSVersion = getSystemProperty("os.version");
+            if(PlatformManager.isPlatformOsx() && (laf.contains("Mac") || laf.contains("Aqua")) && (macOSVersion.startsWith("10.16") || macOSVersion.startsWith("11"))){
                 UIManager.put("TabbedPane.foreground", Color.BLACK);
             }
         }
