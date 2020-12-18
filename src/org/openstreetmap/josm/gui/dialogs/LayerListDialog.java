@@ -904,6 +904,10 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
             fireTableDataChanged();
             fireRefresh();
             ensureActiveSelected();
+            if (layer instanceof AbstractTileSourceLayer<?>) {
+                ((AbstractTileSourceLayer<?>) layer).getDisplaySettings().removeSettingsChangeListener(LayerListDialog.getInstance());
+            }
+
         }
 
         /**
