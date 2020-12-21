@@ -338,6 +338,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         removeHighlighting(null);
         map.keyDetector.removeKeyListener(this);
         map.keyDetector.removeModifierExListener(this);
+        lastUsedNode = null;
     }
 
     /**
