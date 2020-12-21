@@ -211,6 +211,7 @@ public class RelationListDialog extends ToggleDialog
     public void destroy() {
         recentRelationsAction.destroy();
         popupMenuHandler.setPrimitives(Collections.emptyList());
+        selectRelationAction.setPrimitives(Collections.emptyList());
         model.clear();
         super.destroy();
     }
