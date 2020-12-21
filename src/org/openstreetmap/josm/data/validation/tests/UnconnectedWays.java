@@ -394,6 +394,8 @@ public abstract class UnconnectedWays extends Test {
         middlenodes = null;
         othernodes = null;
         searchNodes = null;
+        waysToTest = null;
+        nodesToTest = null;
         dsArea = null;
         ds = null;
         super.endTest();
