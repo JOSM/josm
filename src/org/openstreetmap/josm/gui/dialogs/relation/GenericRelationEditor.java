@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -169,6 +170,9 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
      */
     private final ArrayList<FlavorListener> clipboardListeners = new ArrayList<>();
 
+    private Component selectedTabPane;
+    private JTabbedPane tabbedPane;
+
     /**
      * Creates a new relation editor for the given relation. The relation will be saved if the user
      * selects "ok" in the editor.
@@ -235,11 +239,12 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         pnl.setBorder(BorderFactory.createRaisedBevelBorder());
 
         getContentPane().setLayout(new BorderLayout());
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         tabbedPane.add(tr("Tags and Members"), pnl);
         referrerBrowser = new ReferringRelationsBrowser(getLayer(), referrerModel);
         tabbedPane.add(tr("Parent Relations"), referrerBrowser);
         tabbedPane.add(tr("Child Relations"), new ChildRelationBrowser(getLayer(), relation));
+        selectedTabPane = tabbedPane.getSelectedComponent();
         tabbedPane.addChangeListener(e -> {
             JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
             int index = sourceTabbedPane.getSelectedIndex();
@@ -247,6 +252,14 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
             if (title.equals(tr("Parent Relations"))) {
                 referrerBrowser.init();
             }
+            // see #20228
+            boolean selIsTagsAndMembers = sourceTabbedPane.getSelectedComponent() == pnl;
+            if (selectedTabPane == pnl && !selIsTagsAndMembers) {
+                unregisterMain();
+            } else if (selectedTabPane != pnl && selIsTagsAndMembers) {
+                registerMain();
+            }
+            selectedTabPane = sourceTabbedPane.getSelectedComponent();
         });
 
         IRelationEditorActionAccess actionAccess = new RelationEditorActionAccess();
@@ -312,6 +325,18 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         memberTableModel.setSelectedMembers(selectedMembers);
         HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/RelationEditor"));
         UndoRedoHandler.getInstance().addCommandQueueListener(this);
+    }
+
+    private void registerMain() {
+        selectionTableModel.register();
+        memberTableModel.register();
+        memberTable.registerListeners();
+    }
+
+    private void unregisterMain() {
+        selectionTableModel.unregister();
+        memberTableModel.unregister();
+        memberTable.unregisterListeners();
     }
 
     @Override
@@ -732,9 +757,9 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
             // make sure all registered listeners are unregistered
             //
             memberTable.stopHighlighting();
-            selectionTableModel.unregister();
-            memberTableModel.unregister();
-            memberTable.unregisterListeners();
+            if (tabbedPane != null && tr("Tags and Members").equals(tabbedPane.getTitleAt(tabbedPane.getSelectedIndex()))) {
+                unregisterMain();
+            }
             if (windowMenuItem != null) {
                 MainApplication.getMenu().windowMenu.remove(windowMenuItem);
                 windowMenuItem = null;
@@ -840,6 +865,7 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
         refreshAction.destroy();
         UndoRedoHandler.getInstance().removeCommandQueueListener(this);
         setRelation(null);
+        selectedTabPane = null;
         super.dispose();
     }
 
