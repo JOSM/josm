@@ -489,6 +489,10 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         for (PreferenceSettingFactory factory : factories) {
             if (factory != null) {
                 PreferenceSetting setting = factory.createPreferenceSetting();
+                if (setting instanceof TabPreferenceSetting && ((TabPreferenceSetting) setting).getIconName() == null) {
+                    Logging.error("Invalid setting (Icon missing): " + setting.getClass().getName());
+                    setting = null;
+                }
                 if (setting != null) {
                     settings.add(setting);
                 }
@@ -523,7 +527,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
         insertTab(title, icon, component, tps.getTooltip(), position);
     }
 
-    private String htmlTabTitle(String title, int maxWidth) {
+    private static String htmlTabTitle(String title, int maxWidth) {
         // Width is set to force left alignment, see https://stackoverflow.com/a/33781096/2257172
         return "<html><div style='padding-left:5px; width:" + maxWidth + "px'>" + title + "</div></html>";
     }
