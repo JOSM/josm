@@ -864,9 +864,9 @@ public class GenericRelationEditor extends RelationEditor implements CommandQueu
     public void dispose() {
         refreshAction.destroy();
         UndoRedoHandler.getInstance().removeCommandQueueListener(this);
+        super.dispose(); // call before setting relation to null, see #20304
         setRelation(null);
         selectedTabPane = null;
-        super.dispose();
     }
 
     /**
