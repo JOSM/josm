@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
@@ -44,7 +45,7 @@ class CreateMultipolygonActionTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences();
+    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences().mapStyles();
 
     private static Map<String, String> getRefToRoleMap(Relation relation) {
         Map<String, String> refToRole = new TreeMap<>();
@@ -213,4 +214,84 @@ class CreateMultipolygonActionTest {
         assertFalse(ds.getRelations().iterator().next().hasTag("building", "yes"));
         assertEquals(1, ds.getWays().stream().filter(w -> w.hasTag("building", "yes")).count());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20325">Bug #20325</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20325() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(20325, "data.osm"), null);
+        assertEquals(1, ds.getRelations().size());
+        Relation mp = ds.getRelations().iterator().next();
+        assertFalse(ds.getRelations().iterator().next().hasTag("landuse", "farmland"));
+        assertEquals(1, ds.getWays().stream().filter(w -> w.hasTag("landuse", "farmland")).count());
+        Pair<SequenceCommand, Relation> cmd = CreateMultipolygonAction.createMultipolygonCommand(ds.getWays(), mp);
+        assertNotNull(cmd);
+        cmd.a.executeCommand();
+        assertEquals(1, ds.getRelations().size());
+        assertTrue(ds.getRelations().iterator().next().hasTag("landuse", "farmland"));
+        assertEquals(0, ds.getWays().stream().filter(w -> w.hasTag("landuse", "farmland")).count());
+        cmd.a.undoCommand();
+        assertEquals(1, ds.getRelations().size());
+        assertFalse(ds.getRelations().iterator().next().hasTag("landuse", "farmland"));
+        assertEquals(1, ds.getWays().stream().filter(w -> w.hasTag("landuse", "farmland")).count());
+    }
+
+    /**
+     * Coverage test for <a href="https://josm.openstreetmap.de/ticket/20325">Bug #20325</a>.
+     * New relation, no update needed, no command should be produced.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20325New() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(20325, "no-change-new.osm"), null);
+        assertEquals(1, ds.getRelations().size());
+        Relation mp = ds.getRelations().iterator().next();
+        Pair<SequenceCommand, Relation> cmd = CreateMultipolygonAction.createMultipolygonCommand(ds.getWays(), mp);
+        assertNull(cmd);
+    }
+
+    /**
+     * Coverage test for <a href="https://josm.openstreetmap.de/ticket/20325">Bug #20325</a>.
+     * Old relation, no update needed, no command should be produced.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20325Old() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(20325, "no-change-old.osm"), null);
+        assertEquals(1, ds.getRelations().size());
+        Relation mp = ds.getRelations().iterator().next();
+        Pair<SequenceCommand, Relation> cmd = CreateMultipolygonAction.createMultipolygonCommand(ds.getWays(), mp);
+        assertNull(cmd);
+    }
+
+    /**
+     * Coverage test for <a href="https://josm.openstreetmap.de/ticket/20325">Bug #20325</a>.
+     * Relation cannot be updated but produces warnings. Doesn't test that a popup was shown.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20325Invalid() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(20325, "invalid-new-upldate.osm"), null);
+        assertEquals(1, ds.getRelations().size());
+        Relation mp = ds.getRelations().iterator().next();
+        Pair<SequenceCommand, Relation> cmd = CreateMultipolygonAction.createMultipolygonCommand(ds.getWays(), mp);
+        assertNull(cmd);
+    }
+
+    /**
+     * Coverage test for <a href="https://josm.openstreetmap.de/ticket/20325">Bug #20325</a>.
+     * Relation needs no updates but produces warnings. Doesn't test that a popup was shown.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    void testTicket20325NoUpdateWarning() throws Exception {
+        DataSet ds = OsmReader.parseDataSet(TestUtils.getRegressionDataStream(20325, "update-no-command-warning.osm"), null);
+        assertEquals(1, ds.getRelations().size());
+        Relation mp = ds.getRelations().iterator().next();
+        Pair<SequenceCommand, Relation> cmd = CreateMultipolygonAction.createMultipolygonCommand(ds.getWays(), mp);
+        assertNull(cmd);
+    }
+
 }

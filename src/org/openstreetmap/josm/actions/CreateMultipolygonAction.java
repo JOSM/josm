@@ -340,7 +340,7 @@ public class CreateMultipolygonAction extends JosmAction {
         }
         boolean changedMembers = rr.a != rr.b;
         final Relation existingRelation = rr.a;
-        final Relation relation = changedMembers ? rr.b : new Relation(rr.a);
+        final Relation relation = changedMembers ? rr.b : rr.a;
 
         final List<Command> list = removeTagsFromWaysIfNeeded(relation);
         final String commandName;
@@ -348,22 +348,19 @@ public class CreateMultipolygonAction extends JosmAction {
             list.add(new AddCommand(selectedWays.iterator().next().getDataSet(), relation));
             commandName = getName(false);
         } else {
-            boolean changedKeys = !relation.getKeys().equals(existingRelation.getKeys());
-            if (changedKeys && changedMembers)
-                list.add(new ChangeCommand(existingRelation, relation));
-            else if (changedMembers) {
-                list.add(new ChangeMembersCommand(existingRelation, new ArrayList<>(relation.getMembers())));
-            } else if (changedKeys) {
-                list.add(ChangePropertyCommand.build(existingRelation, relation));
+            if (changedMembers) {
+                if (!relation.getKeys().equals(existingRelation.getKeys())) {
+                    list.add(new ChangeCommand(existingRelation, relation));
+                } else {
+                    list.add(new ChangeMembersCommand(existingRelation, new ArrayList<>(relation.getMembers())));
+                }
             }
             if (list.isEmpty()) {
-                if (!changedMembers) {
-                    MultipolygonTest mpTest = new MultipolygonTest();
-                    mpTest.visit(existingRelation);
-                    if (!mpTest.getErrors().isEmpty()) {
-                        showErrors(mpTest.getErrors());
-                        return null;
-                    }
+                MultipolygonTest mpTest = new MultipolygonTest();
+                mpTest.visit(existingRelation);
+                if (!mpTest.getErrors().isEmpty()) {
+                    showErrors(mpTest.getErrors());
+                    return null;
                 }
 
                 GuiHelper.runInEDT(() -> new Notification(tr("Nothing changed")).setDuration(Notification.TIME_SHORT)
@@ -403,7 +400,7 @@ public class CreateMultipolygonAction extends JosmAction {
     /**
      * This method removes tags/value pairs from inner and outer ways and put them on relation if necessary.
      * Function was extended in reltoolbox plugin by Zverikk and copied back to the core
-     * @param relation the multipolygon style relation to process. If it is new, the tags might be
+     * @param relation the multipolygon style relation to process. If it not linked to a dataset, the tags might be
      * modified, else the list of commands will contain a command to modify its tags
      * @return a list of commands to execute
      */
@@ -487,24 +484,18 @@ public class CreateMultipolygonAction extends JosmAction {
         values.remove("area");
         if (moveTags && !values.isEmpty()) {
             // add those tag values to the relation
-            boolean fixed = false;
             Map<String, String> tagsToAdd = new HashMap<>();
             for (Entry<String, String> entry : values.entrySet()) {
                 String key = entry.getKey();
                 if (!relation.hasKey(key)) {
-                    if (relation.isNew())
+                    if (relation.getDataSet() == null)
                         relation.put(key, entry.getValue());
                     else
                         tagsToAdd.put(key, entry.getValue());
-                    fixed = true;
                 }
             }
-            if (fixed && !relation.isNew()) {
-                DataSet ds = relation.getDataSet();
-                if (ds == null) {
-                    ds = MainApplication.getLayerManager().getEditDataSet();
-                }
-                commands.add(new ChangePropertyCommand(ds, Collections.singleton(relation), tagsToAdd));
+            if (!tagsToAdd.isEmpty()) {
+                commands.add(new ChangePropertyCommand(Collections.singleton(relation), tagsToAdd));
             }
         }
 
