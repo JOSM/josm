@@ -37,14 +37,15 @@ jobs:
           if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
             echo "josm_prerelease=false" >> $GITHUB_ENV
             echo "::set-output name=josm_prerelease::false"
-            echo "josm_release_tag=$josm_revision-tested" >> $GITHUB_ENV
+            josm_release_tag=$josm_revision-tested
           else
             echo "josm_prerelease=true" >> $GITHUB_ENV
             echo "::set-output name=josm_prerelease::true"
-            echo "josm_release_tag=$josm_revision" >> $GITHUB_ENV
+            josm_release_tag=$josm_revision
           fi
           echo "josm_revision=$josm_revision" >> $GITHUB_ENV
           echo "::set-output name=josm_revision::$josm_revision"
+          echo "josm_release_tag=$josm_release_tag" >> $GITHUB_ENV
           echo "::set-output name=josm_release_tag::$josm_release_tag"
       - name: Create release
         id: create_release
