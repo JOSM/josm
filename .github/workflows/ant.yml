@@ -23,6 +23,7 @@ jobs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       josm_revision: ${{ steps.create_revision.outputs.josm_revision }}
       josm_prerelease: ${{ steps.create_revision.outputs.josm_prerelease }}
+      josm_release_tag: ${{ steps.create_revision.outputs.josm_release_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -36,24 +37,25 @@ jobs:
           if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
             echo "josm_prerelease=false" >> $GITHUB_ENV
             echo "::set-output name=josm_prerelease::false"
-            echo "josm_release=$josm_revision-tested" >> $GITHUB_ENV
+            echo "josm_release_tag=$josm_revision-tested" >> $GITHUB_ENV
           else
             echo "josm_prerelease=true" >> $GITHUB_ENV
             echo "::set-output name=josm_prerelease::true"
-            echo "josm_release=$josm_revision" >> $GITHUB_ENV
+            echo "josm_release_tag=$josm_revision" >> $GITHUB_ENV
           fi
           echo "josm_revision=$josm_revision" >> $GITHUB_ENV
           echo "::set-output name=josm_revision::$josm_revision"
+          echo "::set-output name=josm_release_tag::$josm_release_tag"
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ env.josm_release }}
-          release_name: JOSM.app release ${{ env.josm_release }}
+          tag_name: ${{ env.josm_release_tag }}
+          release_name: JOSM.app release ${{ env.josm_release_tag }}
           body: |
-            JOSM.app release ${{ env.josm_release }}
+            JOSM.app release ${{ env.josm_release_tag }}
           draft: false
           prerelease: ${{ env.josm_prerelease }}
   build:
@@ -119,7 +121,7 @@ jobs:
           defaults write net.pornel.ImageOptim PngOutEnabled 1
           /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
       - name: Set Is-Local-Build
-        if: ${{ ! env.josm_prerelease }}
+        if: ${{ ! needs.createrelease.outputs.josm_prerelease }}
         run: |
           ant create-revision
           sed -i.bak '/Is-Local-Build/d' resources/REVISION
@@ -133,18 +135,24 @@ jobs:
             ${{ env.ANT_HOME }}/bin/ant dist
           fi
       - name: Upload jar
+        # Only run on matrix.headless to avoid double jars. They should be the same jars.
+        # uses `gh release upload` to avoid https://github.com/actions/upload-release-asset/issues/69
         if: ${{ always() && matrix.headless }}
         id: upload-jar
-        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-          asset_path: dist/josm-custom.jar
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
-          asset_content_type: application/java-archive
+        # uses: actions/upload-release-asset@v1
+        # with:
+        #   upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
+        #   asset_path: dist/josm-custom.jar
+        #   asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+        #   asset_content_type: application/java-archive
+        run: |
+          cp dist/josm-custom.jar JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+          gh release upload ${{ needs.createrelease.outputs.josm_release_tag }} JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+
       - name: Test with Ant, headless ${{ matrix.headless }}
-        if: ${{ env.josm_prerelease }}
+        if: ${{ needs.createrelease.outputs.josm_prerelease }}
         run: |
           ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
           if [ "${{ matrix.headless }}" == "true" ]; then
