@@ -38,6 +38,7 @@ public class DownloadAlongWayAction extends DownloadAlongAction {
         super(tr("Download along..."), "download_along_way", tr("Download OSM data along the selected ways."),
                 Shortcut.registerShortcut("file:download_along", tr("File: {0}", tr("Download Along")),
                         KeyEvent.VK_D, Shortcut.ALT_SHIFT), true);
+        updateEnabledState();
     }
 
     @Override
