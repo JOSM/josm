@@ -166,7 +166,7 @@ jobs:
         if: always()
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: paths: 'test/report/TEST*.xml'
+          path: 'test/report/TEST*.xml'
       - name: Publish Test Report with action-junit-report
         if: always()
         uses: mikepenz/action-junit-report@v1
