@@ -48,6 +48,12 @@ class CrossingWaysTest {
         assertEquals(code, test.createMessage(TestUtils.newWay(tags1), TestUtils.newWay(tags2)).code);
     }
 
+    private static void testIgnore(boolean expected, CrossingWays test, String tags1, String tags2) {
+        // test both possible combinations
+        assertEquals(expected, test.ignoreWaySegmentCombination(TestUtils.newWay(tags1), TestUtils.newWay(tags2)));
+        assertEquals(expected, test.ignoreWaySegmentCombination(TestUtils.newWay(tags2), TestUtils.newWay(tags1)));
+    }
+
     /**
      * Unit test of {@link CrossingWays#getSegments}
      */
@@ -154,6 +160,9 @@ class CrossingWaysTest {
         testMessage(663, test, "barrier=hedge", "railway=rail");
         testMessage(664, test, "barrier=hedge", "waterway=river");
         testMessage(665, test, "barrier=hedge", "natural=water");
+
+        testIgnore(true, test, "landuse=residential", "natural=water");
+        testIgnore(false, test, "landuse=residential", "building=yes");
 
         assertFalse(test.isPrimitiveUsable(newUsableWay("amenity=restaurant")));
         assertFalse(test.isPrimitiveUsable(TestUtils.newWay("barrier=yes"))); // Unusable (0 node)

@@ -118,8 +118,10 @@ public abstract class CrossingWays extends Test {
                 return true;
             if (isBuilding(w1) && isBuilding(w2))
                 return true; // handled by mapcss tests
-            if (((isResidentialArea(w1) || w1.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY)) && isResidentialArea(w2))
-             || ((isResidentialArea(w2) || w2.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY)) && isResidentialArea(w1)))
+            if (((isResidentialArea(w1) || w1.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY) || isWaterArea(w1))
+                    && isResidentialArea(w2))
+                    || ((isResidentialArea(w2) || w2.hasKey(BARRIER, HIGHWAY, RAILWAY, WATERWAY) || isWaterArea(w2))
+                            && isResidentialArea(w1)))
                 return true;
             if (isWaterArea(w1) && isWaterArea(w2))
                 return true; // handled by mapcss tests
