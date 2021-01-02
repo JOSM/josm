@@ -163,20 +163,16 @@ public class MapViewPath extends MapPath2D {
 
     private void appendWay(Iterable<? extends ILatLon> nodes, boolean connect, boolean close) {
         boolean useMoveTo = !connect;
-        ILatLon first = null;
         for (ILatLon n : nodes) {
             if (useMoveTo) {
                 moveTo(n);
             } else {
                 lineTo(n);
             }
-            if (close && first == null) {
-                first = n;
-            }
             useMoveTo = false;
         }
-        if (first != null) {
-            lineTo(first);
+        if (close) {
+            closePath();
         }
     }
 
