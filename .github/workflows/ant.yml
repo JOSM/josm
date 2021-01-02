@@ -138,20 +138,19 @@ jobs:
       - name: Upload jar
         # Only run on matrix.headless to avoid double jars. They should be the same jars.
         # uses `gh release upload` to avoid https://github.com/actions/upload-release-asset/issues/69
-        if: ${{ always() && matrix.headless }}
+        if: ${{ always() && matrix.headless == "true" }}
         id: upload-jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # uses: actions/upload-release-asset@v1
-        # with:
-        #   upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
-        #   asset_path: dist/josm-custom.jar
-        #   asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
-        #   asset_content_type: application/java-archive
-        run: |
-          cp dist/josm-custom.jar JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
-          gh release upload ${{ needs.createrelease.outputs.josm_release_tag }} JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
-
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
+          asset_path: dist/josm-custom.jar
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+          asset_content_type: application/java-archive
+        # run: |
+        #   cp dist/josm-custom.jar JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+        #   gh release upload ${{ needs.createrelease.outputs.josm_release_tag }} JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
       - name: Test with Ant, headless ${{ matrix.headless }}
         if: ${{ needs.createrelease.outputs.josm_prerelease }}
         run: |
