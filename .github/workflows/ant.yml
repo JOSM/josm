@@ -144,7 +144,7 @@ jobs:
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
           asset_content_type: application/java-archive
       - name: Test with Ant, headless ${{ matrix.headless }}
-        if: ${{ needs.createrelease.outputs.josm_prerelease }}
+        if: ${{ env.josm_prerelease }}
         run: |
           ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
           if [ "${{ matrix.headless }}" == "true" ]; then
@@ -161,6 +161,16 @@ jobs:
         with:
           name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
           path: test/report/*.txt
+      - name: Publish Test Report with junit-report-annotations-action
+        uses: ashley-taylor/junit-report-annotations-action@1.3
+        if: always()
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Test Report with action-junit-report
+        uses: mikepenz/action-junit-report@v1
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
         env:
