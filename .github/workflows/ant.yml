@@ -27,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 128
+          fetch-depth: 256
       - name: Set revision env variable
         id: create_revision
         # grab josm revision from last git-svn-id
@@ -82,7 +82,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 128
+          fetch-depth: 256
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
