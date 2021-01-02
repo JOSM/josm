@@ -166,10 +166,12 @@ jobs:
         if: always()
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
+          path: paths: 'test/report/TEST*.xml'
       - name: Publish Test Report with action-junit-report
+        if: always()
         uses: mikepenz/action-junit-report@v1
         with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+          report_paths: 'test/report/TEST*.xml'
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
