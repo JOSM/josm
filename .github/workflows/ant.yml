@@ -138,7 +138,7 @@ jobs:
       - name: Upload jar
         # Only run on matrix.headless to avoid double jars. They should be the same jars.
         # uses `gh release upload` to avoid https://github.com/actions/upload-release-asset/issues/69
-        if: ${{ always() && matrix.headless == "true" }}
+        if: ${{ always() && matrix.headless == 'true' }}
         id: upload-jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
