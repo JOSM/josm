@@ -39,6 +39,7 @@ class ConditionalKeysTest {
      */
     @Test
     void testKeyValid() {
+        assertTrue(test.isKeyValid("dog:conditional"));
         assertTrue(test.isKeyValid("maxspeed:conditional"));
         assertTrue(test.isKeyValid("motor_vehicle:conditional"));
         assertTrue(test.isKeyValid("bicycle:conditional"));
