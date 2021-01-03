@@ -4071,7 +4071,7 @@
             <key key="amenity" value="monastery" />
             <text key="name" text="Name" />
             <reference ref="religious" />
-            <combo key="community:gender" text="Community gender" values="female,male,mixed" />
+            <combo key="community:gender" text="Community gender" values="female,male,mixed" values_context="gender" />
             <reference ref="oh_wheelchair" />
             <reference ref="wikipedia_wikidata" />
             <reference ref="link_contact_address" />
