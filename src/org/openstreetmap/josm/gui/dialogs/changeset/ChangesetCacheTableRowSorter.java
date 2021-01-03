@@ -1,7 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.changeset;
 
-import java.util.Comparator;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingInt;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsLast;
 
 import javax.swing.table.TableRowSorter;
 
@@ -19,27 +22,27 @@ class ChangesetCacheTableRowSorter extends TableRowSorter<ChangesetCacheManagerM
         super(model);
 
         // column 0 - Id
-        setComparator(0, Comparator.comparingInt(Changeset::getId));
+        setComparator(0, comparingInt(Changeset::getId));
 
         // column 1 - Upload comment
-        setComparator(1, Comparator.comparing(Changeset::getComment, AlphanumComparator.getInstance()));
+        setComparator(1, comparing(Changeset::getComment, AlphanumComparator.getInstance()));
 
         // column 2 - Open
-        setComparator(2, Comparator.comparing(Changeset::isOpen));
+        setComparator(2, comparing(Changeset::isOpen));
 
         // column 3 - User
-        setComparator(3, Comparator.comparing(Changeset::getUser, Comparator.comparing(User::getName)));
+        setComparator(3, comparing(Changeset::getUser, comparing(User::getName)));
 
         // column 4 - Created at
-        setComparator(4, Comparator.comparing(Changeset::getCreatedAt));
+        setComparator(4, comparing(Changeset::getCreatedAt));
 
         // column 5 - Closed at
-        setComparator(5, Comparator.comparing(Changeset::getClosedAt));
+        setComparator(5, comparing(Changeset::getClosedAt, nullsLast(naturalOrder())));
 
         // column 6 - Changes
-        setComparator(6, Comparator.comparingInt(Changeset::getChangesCount));
+        setComparator(6, comparingInt(Changeset::getChangesCount));
 
         // column 7 - Discussions
-        setComparator(7, Comparator.comparingInt(Changeset::getCommentsCount));
+        setComparator(7, comparingInt(Changeset::getCommentsCount));
     }
 }
