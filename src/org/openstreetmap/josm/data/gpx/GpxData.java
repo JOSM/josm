@@ -1273,4 +1273,17 @@ public class GpxData extends WithAttributes implements Data {
             return true;
         }
     }
+
+    /**
+     * Removes all gpx elements
+     * @since 17439
+     */
+    public void clear() {
+        dataSources.clear();
+        layerPrefs.clear();
+        privateRoutes.clear();
+        privateTracks.clear();
+        privateWaypoints.clear();
+        attr.clear();
+    }
 }

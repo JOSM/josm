@@ -617,4 +617,11 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
             }
         }
     }
+
+    @Override
+    public synchronized void destroy() {
+        data.clear();
+        data = null;
+        super.destroy();
+    }
 }
