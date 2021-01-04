@@ -142,7 +142,7 @@ public final class PropertiesMembershipChoiceDialog extends ExtendedDialog {
     }
 
     private static boolean isTagged(final Collection<Node> existingNodes) {
-        return existingNodes.stream().anyMatch(Node::hasKeys);
+        return existingNodes.stream().anyMatch(Node::isTagged);
     }
 
     private static boolean isUsedInRelations(final Collection<Node> existingNodes) {
