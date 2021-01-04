@@ -247,6 +247,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
     private final transient TaggingPresetHandler presetHandler = new TaggingPresetCommandHandler();
 
+    private PopupMenuLauncher popupMenuLauncher;
+
     private static final BooleanProperty PROP_AUTORESIZE_TAGS_TABLE = new BooleanProperty("propertiesdialog.autoresizeTagsTable", false);
 
     /**
@@ -418,7 +420,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             }
         });
 
-        membershipTable.addMouseListener(new PopupMenuLauncher(membershipMenu) {
+        popupMenuLauncher = new PopupMenuLauncher(membershipMenu) {
             @Override
             protected int checkTableSelection(JTable table, Point p) {
                 int row = super.checkTableSelection(table, p);
@@ -445,7 +447,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
             public void mouseExited(MouseEvent me) {
                 highlightHelper.clear();
             }
-        });
+        };
+        membershipTable.addMouseListener(popupMenuLauncher);
     }
 
     /**
@@ -613,6 +616,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
     @Override
     public void destroy() {
         destroyTaginfoNationalActions();
+        membershipTable.removeMouseListener(popupMenuLauncher);
         super.destroy();
         Config.getPref().removeKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
         Container parent = pluginHook.getParent();

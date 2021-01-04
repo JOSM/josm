@@ -168,8 +168,11 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
                     )
             ).applySafe(this);
             setCanceled(false);
-        } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
-            new WindowGeometry(this).remember(getClass().getName() + ".geometry");
+        } else {
+            if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
+                new WindowGeometry(this).remember(getClass().getName() + ".geometry");
+            }
+            model.data.clear();
         }
         super.setVisible(visible);
     }

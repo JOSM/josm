@@ -1118,6 +1118,8 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         data.removeHighlightUpdateListener(this);
         data.removeDataSetListener(dataSetListenerAdapter);
         data.removeDataSetListener(MultipolygonCache.getInstance());
+        data.clearSelection();
+        validationErrors.clear();
         removeClipboardDataFor(this);
         recentRelations.clear();
     }

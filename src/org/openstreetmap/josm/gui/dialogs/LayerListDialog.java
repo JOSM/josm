@@ -174,6 +174,10 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
      */
     private final transient MainLayerManager layerManager;
 
+    private PopupMenuHandler popupHandler;
+
+    private LayerListModelListener modelListener;
+
     /**
      * registers (shortcut to toggle right hand side toggle dialogs)+(number keys) shortcuts
      * to toggle the visibility of the first ten layers.
@@ -211,7 +215,8 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         layerList = new LayerList(model);
         TableHelper.setFont(layerList, getClass());
         layerList.setSelectionModel(selectionModel);
-        layerList.addMouseListener(new PopupMenuHandler());
+        popupHandler = new PopupMenuHandler();
+        layerList.addMouseListener(popupHandler);
         layerList.setBackground(UIManager.getColor("Button.background"));
         layerList.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         layerList.putClientProperty("JTable.autoStartsEdit", Boolean.FALSE);
@@ -273,20 +278,20 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         //
         model.populate();
         model.setSelectedLayer(layerManager.getActiveLayer());
-        model.addLayerListModelListener(
-                new LayerListModelListener() {
-                    @Override
-                    public void makeVisible(int row, Layer layer) {
-                        layerList.scrollToVisible(row, 0);
-                        layerList.repaint();
-                    }
+        modelListener = new LayerListModelListener() {
+            @Override
+            public void makeVisible(int row, Layer layer) {
+                layerList.scrollToVisible(row, 0);
+                layerList.repaint();
+            }
 
-                    @Override
-                    public void refresh() {
-                        layerList.repaint();
-                    }
-                }
-                );
+            @Override
+            public void refresh() {
+                layerList.repaint();
+            }
+        };
+
+        model.addLayerListModelListener(modelListener);
 
         // -- move up action
         MoveUpAction moveUpAction = new MoveUpAction(model);
@@ -397,11 +402,13 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         MultikeyActionsHandler.getInstance().removeAction(showHideLayerAction);
         JumpToMarkerActions.unregisterActions();
         layerList.setTransferHandler(null);
+        layerList.removeMouseListener(popupHandler);
         DISPLAY_NUMBERS.removeListener(visibilityWidthListener);
         ExpertToggleAction.removeExpertModeChangeListener(visibilityWidthListener);
         layerManager.removeLayerChangeListener(visibilityWidthListener);
         cycleLayerUpAction.destroy();
         cycleLayerDownAction.destroy();
+        model.removeLayerListModelListener(modelListener);
         super.destroy();
         instance = null;
     }

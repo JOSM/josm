@@ -190,6 +190,9 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
 
         map.keyDetector.removeModifierExListener(this);
         temporaryLayer.invalidate();
+        targetWay = null;
+        candidateNode = null;
+        candidateSegment = null;
     }
 
     @Override

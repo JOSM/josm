@@ -185,7 +185,9 @@ abstract class SavingAction extends AbstractRelationEditorAction {
     protected void hideEditor() {
         if (editorAccess.getEditor() instanceof Component) {
             ((Component) editorAccess.getEditor()).setVisible(false);
+            editorAccess.getEditor().setRelation(null);
         }
+
     }
 
     protected boolean isEditorDirty() {
