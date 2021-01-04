@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit tests of {@link GeoUrlToBoundsTest} class.
+ * Unit tests of {@link GeoUrlToBounds} class.
  */
 class GeoUrlToBoundsTest {
 
