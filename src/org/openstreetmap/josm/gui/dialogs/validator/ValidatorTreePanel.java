@@ -167,12 +167,15 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     public void buildTree(boolean expandAgain) {
         if (resetScheduled)
             return;
+        buildTreeInternal(expandAgain);
+        invalidationListeners.fireEvent(Runnable::run);
+    }
+
+    private void buildTreeInternal(boolean expandAgain) {
         final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
-        if (errors == null || errors.isEmpty()) {
-            GuiHelper.runInEDTAndWait(() -> valTreeModel.setRoot(rootNode));
-            return;
-        }
+        if (errors == null)
+            errors = new ArrayList<>();
 
         // Remember first selected tree row
         TreePath selPath = getSelectionPath();
@@ -198,7 +201,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         }
 
         Predicate<TestError> filterToUse = e -> !e.isIgnored();
-        if (!ValidatorPrefHelper.PREF_OTHER.get()) {
+        if (!Boolean.TRUE.equals(ValidatorPrefHelper.PREF_OTHER.get())) {
             filterToUse = filterToUse.and(e -> e.getSeverity() != Severity.OTHER);
         }
         if (filter != null) {
@@ -325,8 +328,6 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             setSelectionRow(selRow);
             scrollRowToVisible(selRow);
         }
-
-        invalidationListeners.fireEvent(Runnable::run);
     }
 
     private static String addSize(String msg, Collection<?> coll) {
