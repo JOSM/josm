@@ -78,15 +78,8 @@ public class ValidateUploadHook implements UploadHook {
             test.setBeforeUpload(false);
         }
 
-        if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
-            boolean allIgnored = true;
-            for (TestError error : errors) {
-                if (!error.updateIgnored()) {
-                    allIgnored = false;
-                }
-            }
-            if (allIgnored)
-                return true;
+        if (Boolean.TRUE.equals(ValidatorPrefHelper.PREF_USE_IGNORE.get())) {
+            errors.forEach(TestError::updateIgnored);
         }
 
         OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
@@ -98,7 +91,7 @@ public class ValidateUploadHook implements UploadHook {
         if (map != null) {
             map.validatorDialog.tree.setErrors(errors);
         }
-        if (errors.isEmpty())
+        if (errors.stream().allMatch(TestError::isIgnored))
             return true;
 
         return displayErrorScreen(errors);
