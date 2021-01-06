@@ -397,6 +397,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         ProjectionRegistry.removeProjectionChangeListener(layer);
         layer.removePropertyChangeListener(this);
         invalidatedListener.removeFrom(layer);
+        if(layer == getNativeScaleLayer())
+            setNativeScaleLayer(null);
         layer.destroy();
         AudioPlayer.reset();
 
