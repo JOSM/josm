@@ -43,7 +43,7 @@ way[canal                      ][!waterway],
 way[have_riverbank             ][!waterway],
 *[border_type                  ][!boundary],
 *[piste:difficulty             ][!piste:type],
-*[place                        ][!name][place!=islet][noname!=yes],
+*[place                        ][!name][place!=islet][place!=plot][noname!=yes],
 *[transformer                  ][!power],
 *[source:date                  ][!source],
 *[source:name                  ][!name][noname!=yes],
@@ -374,7 +374,7 @@ relation[type=multipolygon] >[role="inner"] way[area][eval(number_of_tags()) = 1
 }
 
 /* #9811, #11491, #12865, #14310 */
-*[place][place!=farm][/^(addr:housenumber|addr:housename|addr:flats|addr:conscriptionnumber|addr:street|addr:place|addr:city|addr:country|addr:full|addr:hamlet|addr:suburb|addr:subdistrict|addr:district|addr:province|addr:state|addr:interpolation|addr:interpolation|addr:inclusion)$/],
+*[place][place!=farm][place!=plot][/^(addr:housenumber|addr:housename|addr:flats|addr:conscriptionnumber|addr:street|addr:place|addr:city|addr:country|addr:full|addr:hamlet|addr:suburb|addr:subdistrict|addr:district|addr:province|addr:state|addr:interpolation|addr:interpolation|addr:inclusion)$/],
 /* addr:postcode is used together with place in some countries */
 *[boundary][/^addr:/],
 *[highway][/^addr:/][highway!=services][highway!=rest_area][!"addr:postcode"] {
@@ -623,7 +623,7 @@ area[golf=bunker][natural=beach] {
 relation[type=multipolygon][building] > way {
   set part_of_building_MP;
 }
-way["addr:housenumber"][!building][!"building:part"][!"demolished:building"][!note][!amenity][!leisure][!landuse][!man_made][!tourism][!barrier]!.part_of_building_MP {
+way["addr:housenumber"][!building][!"building:part"][!"demolished:building"][!note][!amenity][!leisure][!landuse][!man_made][!tourism][!barrier][place!=plot]!.part_of_building_MP {
   /* don't exclude shop because a lot of real missing bulding tag cases have a shop tag. */
   throwOther: tr("possibly missing {0} tag", "{1.key}");
   group: tr("missing tag");
