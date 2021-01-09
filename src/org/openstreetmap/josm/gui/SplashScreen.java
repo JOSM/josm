@@ -384,6 +384,8 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
     private static class SplashScreenProgressRenderer extends JPanel {
         private final JosmEditorPane lblTaskTitle = new JosmEditorPane();
+        private final JScrollPane scrollPane = new JScrollPane(lblTaskTitle,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         private final JProgressBar progressBar = new JProgressBar(JProgressBar.HORIZONTAL);
         private static final String LABEL_HTML = "<html>"
                 + "<style>ul {margin-top: 0; margin-bottom: 0; padding: 0;} li {margin: 0; padding: 0;}</style>";
@@ -393,8 +395,6 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
             JosmEditorPane.makeJLabelLike(lblTaskTitle, false);
             lblTaskTitle.setText(LABEL_HTML);
-            final JScrollPane scrollPane = new JScrollPane(lblTaskTitle,
-                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
             scrollPane.setPreferredSize(new Dimension(0, 320));
             scrollPane.setBorder(BorderFactory.createEmptyBorder());
             add(scrollPane, GBC.eol().insets(5, 5, 0, 0).fill(GridBagConstraints.HORIZONTAL));
@@ -417,6 +417,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
         public void setTasks(String tasks) {
             lblTaskTitle.setText(LABEL_HTML + tasks);
             lblTaskTitle.setCaretPosition(lblTaskTitle.getDocument().getLength());
+            scrollPane.getHorizontalScrollBar().setValue(0);
         }
     }
 }
