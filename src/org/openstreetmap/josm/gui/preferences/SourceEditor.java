@@ -1333,17 +1333,19 @@ public abstract class SourceEditor extends JPanel {
         @Override
         public Component getTableCellRendererComponent(JTable list, Object object, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(list, object, isSelected, hasFocus, row, column);
-            final ExtendedSourceEntry value = (ExtendedSourceEntry) object;
-            String s = value.toString();
-            setText(s);
-            setToolTipText(value.getTooltip());
-            if (!isSelected) {
-                final SourceEntry sourceEntry = entryByUrl.get(value.url);
-                GuiHelper.setBackgroundReadable(this, sourceEntry == null ? UIManager.getColor("Table.background") :
-                    sourceEntry.active ? SOURCE_ENTRY_ACTIVE_BACKGROUND_COLOR.get() : SOURCE_ENTRY_INACTIVE_BACKGROUND_COLOR.get());
+            if (object instanceof ExtendedSourceEntry) {
+                final ExtendedSourceEntry value = (ExtendedSourceEntry) object;
+                String s = value.toString();
+                setText(s);
+                setToolTipText(value.getTooltip());
+                if (!isSelected) {
+                    final SourceEntry sourceEntry = entryByUrl.get(value.url);
+                    GuiHelper.setBackgroundReadable(this, sourceEntry == null ? UIManager.getColor("Table.background") :
+                        sourceEntry.active ? SOURCE_ENTRY_ACTIVE_BACKGROUND_COLOR.get() : SOURCE_ENTRY_INACTIVE_BACKGROUND_COLOR.get());
+                }
+                final ImageSizes size = ImageSizes.TABLE;
+                setIcon(value.icon == null ? ImageProvider.getEmpty(size) : value.icon.getImageIconBounded(size.getImageDimension()));
             }
-            final ImageSizes size = ImageSizes.TABLE;
-            setIcon(value.icon == null ? ImageProvider.getEmpty(size) : value.icon.getImageIconBounded(size.getImageDimension()));
             return this;
         }
 
