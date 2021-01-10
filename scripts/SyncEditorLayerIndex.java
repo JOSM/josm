@@ -554,10 +554,10 @@ public class SyncEditorLayerIndex {
                         .replaceAll("(?i)WIDTH=", "WIDTH=")
                         .replaceAll("(?i)HEIGHT=", "HEIGHT=")
                         .split("\\?");
-        String[] a = x[1].split("&");
-        Arrays.sort(a);
-        url = x[0]+"?"+String.join("&", a);
-        return url;
+        return x[0] +"?" + Arrays.stream(x[1].split("&"))
+                                 .filter(s -> !s.endsWith("=")) // filter empty params
+                                 .sorted()
+                                 .collect(Collectors.joining("&"));
     }
 
     void checkInOneButNotTheOther() {
