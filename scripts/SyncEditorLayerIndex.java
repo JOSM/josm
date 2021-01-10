@@ -538,9 +538,22 @@ public class SyncEditorLayerIndex {
         myprintln("*** Loaded "+josmEntries.size()+" entries (JOSM). ***");
     }
 
-    // catch reordered arguments and switches to WMS version 1.3.0
+    // catch reordered arguments, make them uppercase, and switches to WMS version 1.3.0
     String unifyWMS(String url) {
-        String[] x = url.replaceAll("(?i)VERSION=[0-9.]+", "VERSION=x").replaceAll("(?i)SRS=", "CRS=").split("\\?");
+        String[] x = url.replaceAll("(?i)VERSION=[0-9.]+", "VERSION=x")
+                        .replaceAll("(?i)SRS=", "CRS=")
+                        .replaceAll("(?i)BBOX=", "BBOX=")
+                        .replaceAll("(?i)FORMAT=", "FORMAT=")
+                        .replaceAll("(?i)LAYERS=", "LAYERS=")
+                        .replaceAll("(?i)MAP=", "MAP=")
+                        .replaceAll("(?i)REQUEST=", "REQUEST=")
+                        .replaceAll("(?i)SERVICE=", "SERVICE=")
+                        .replaceAll("(?i)STYLES=", "STYLES=")
+                        .replaceAll("(?i)TRANSPARENT=FALSE", "TRANSPARENT=FALSE")
+                        .replaceAll("(?i)TRANSPARENT=TRUE", "TRANSPARENT=TRUE")
+                        .replaceAll("(?i)WIDTH=", "WIDTH=")
+                        .replaceAll("(?i)HEIGHT=", "HEIGHT=")
+                        .split("\\?");
         String[] a = x[1].split("&");
         Arrays.sort(a);
         url = x[0]+"?"+String.join("&", a);
@@ -551,8 +564,7 @@ public class SyncEditorLayerIndex {
         List<String> le = new LinkedList<>(eliUrls.keySet());
         List<String> lj = new LinkedList<>(josmUrls.keySet());
 
-        List<String> ke = new LinkedList<>(le);
-        for (String url : ke) {
+        for (String url : new LinkedList<>(le)) {
             if (lj.contains(url)) {
                 le.remove(url);
                 lj.remove(url);
@@ -560,7 +572,7 @@ public class SyncEditorLayerIndex {
         }
 
         if (!le.isEmpty() && !lj.isEmpty()) {
-            ke = new LinkedList<>(le);
+            List<String> ke = new LinkedList<>(le);
             for (String urle : ke) {
                 JsonObject e = eliUrls.get(urle);
                 String ide = getId(e);
@@ -572,43 +584,7 @@ public class SyncEditorLayerIndex {
                     le.remove(urle);
                     lj.remove(urlhttps);
                 } else if (isNotBlank(ide)) {
-                    List<String> kj = new LinkedList<>(lj);
-                    for (String urlj : kj) {
-                        ImageryInfo j = josmUrls.get(urlj);
-                        String idj = getId(j);
-
-                        if (ide.equals(idj) && Objects.equals(getType(j), getType(e))) {
-                            if (getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
-                                myprintln("# WMS-URL for id "+idj+" modified: "+getDescription(j));
-                            } else {
-                                myprintln("* URL for id "+idj+" differs ("+urle+"): "+getDescription(j));
-                            }
-                            le.remove(urle);
-                            lj.remove(urlj);
-                            // replace key for this entry with JOSM URL
-                            eliUrls.remove(urle);
-                            eliUrls.put(urlj, e);
-                            break;
-                        }
-                        Collection<String> old = j.getOldIds();
-                        if (old != null) {
-                            for (String oidj : old) {
-                                if (ide.equals(oidj) && Objects.equals(getType(j), getType(e))) {
-                                    if (getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
-                                        myprintln("# WMS-URL for oldid "+idj+" modified: "+getDescription(j));
-                                    } else {
-                                        myprintln("* URL for oldid "+idj+" differs ("+urle+"): "+getDescription(j));
-                                    }
-                                    le.remove(urle);
-                                    lj.remove(urlj);
-                                    // replace key for this entry with JOSM URL
-                                    eliUrls.remove(urle);
-                                    eliUrls.put(urlj, e);
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    checkUrlsEquality(ide, e, urle, le, lj);
                 }
             }
         }
@@ -627,6 +603,43 @@ public class SyncEditorLayerIndex {
                 myprintln("+  " + getDescription(josmUrls.get(l)));
             }
         }
+    }
+
+    void checkUrlsEquality(String ide, JsonObject e, String urle, List<String> le, List<String> lj) {
+        for (String urlj : new LinkedList<>(lj)) {
+            ImageryInfo j = josmUrls.get(urlj);
+            String idj = getId(j);
+
+            if (checkUrlEquality(ide, "id", idj, e, j, urle, urlj, le, lj)) {
+                return;
+            }
+            Collection<String> old = j.getOldIds();
+            if (old != null) {
+                for (String oidj : old) {
+                    if (checkUrlEquality(ide, "oldid", oidj, e, j, urle, urlj, le, lj)) {
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    boolean checkUrlEquality(
+            String ide, String idtype, String idj, JsonObject e, ImageryInfo j, String urle, String urlj, List<String> le, List<String> lj) {
+        if (ide.equals(idj) && Objects.equals(getType(j), getType(e))) {
+            if (getType(j).equals("wms") && unifyWMS(urle).equals(unifyWMS(urlj))) {
+                myprintln("# WMS-URL for "+idtype+" "+idj+" modified: "+getDescription(j));
+            } else {
+                myprintln("* URL for "+idtype+" "+idj+" differs ("+urle+"): "+getDescription(j));
+            }
+            le.remove(urle);
+            lj.remove(urlj);
+            // replace key for this entry with JOSM URL
+            eliUrls.remove(urle);
+            eliUrls.put(urlj, e);
+            return true;
+        }
+        return false;
     }
 
     void checkCommonEntries() {
