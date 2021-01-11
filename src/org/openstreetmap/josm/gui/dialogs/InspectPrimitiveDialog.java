@@ -55,7 +55,6 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class InspectPrimitiveDialog extends ExtendedDialog {
 
-    protected transient List<IPrimitive> primitives;
     private boolean mappaintTabLoaded;
     private boolean editcountTabLoaded;
 
@@ -67,14 +66,13 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
      */
     public InspectPrimitiveDialog(final Collection<? extends IPrimitive> primitives, OsmData<?, ?, ?, ?> data) {
         super(MainApplication.getMainFrame(), tr("Advanced object info"), tr("Close"));
-        this.primitives = new ArrayList<>(primitives);
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(MainApplication.getMainFrame(), new Dimension(750, 550)));
 
         setButtonIcons("ok");
         final JTabbedPane tabs = new JTabbedPane();
 
-        tabs.addTab(tr("data"), genericMonospacePanel(new JPanel(), buildDataText(data, this.primitives)));
+        tabs.addTab(tr("data"), genericMonospacePanel(new JPanel(), buildDataText(data, new ArrayList<>(primitives))));
 
         final JPanel pMapPaint = new JPanel();
         tabs.addTab(tr("map style"), pMapPaint);
