@@ -926,7 +926,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * @return true if this primitive and other are equal with respect to their semantic attributes.
      */
     public final boolean hasEqualSemanticAttributes(OsmPrimitive other) {
-        return hasEqualSemanticAttributes(other, true);
+        return hasEqualSemanticAttributes(other, false);
     }
 
     boolean hasEqualSemanticFlags(final OsmPrimitive other) {
