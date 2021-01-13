@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -26,7 +27,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * The action to activate the currently selected layer
  */
 public final class ActivateLayerAction extends AbstractAction
-implements IEnabledStateUpdating, ActiveLayerChangeListener, MultikeyShortcutAction {
+implements IEnabledStateUpdating, ActiveLayerChangeListener, MultikeyShortcutAction, Destroyable {
     private transient Layer layer;
     private final transient Shortcut multikeyShortcut;
     private final LayerListModel model;
@@ -126,6 +127,11 @@ implements IEnabledStateUpdating, ActiveLayerChangeListener, MultikeyShortcutAct
     @Override
     public MultikeyInfo getLastMultikeyAction() {
         return null; // Repeating action doesn't make much sense for activating
+    }
+
+    @Override
+    public void destroy() {
+        layer = null;
     }
 
 }

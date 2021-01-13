@@ -679,6 +679,8 @@ public final class OrthogonalizeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
+        if (MainApplication.getLayerManager().getEditLayer() == null)
+            rememberMovements.clear();
         updateEnabledStateOnCurrentSelection();
     }
 

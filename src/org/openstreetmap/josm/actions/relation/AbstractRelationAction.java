@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -24,7 +25,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 5793
  * @since 13957 (signature)
  */
-public abstract class AbstractRelationAction extends AbstractAction implements IPrimitiveAction {
+public abstract class AbstractRelationAction extends AbstractAction implements IPrimitiveAction, Destroyable {
     /** relation collection */
     protected transient Collection<IRelation<?>> relations = Collections.<IRelation<?>>emptySet();
 
@@ -70,5 +71,10 @@ public abstract class AbstractRelationAction extends AbstractAction implements I
 
     protected void setHelpId(String helpId) {
         putValue("help", helpId);
+    }
+
+    @Override
+    public void destroy() {
+        relations = null;
     }
 }

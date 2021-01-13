@@ -406,6 +406,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
         DISPLAY_NUMBERS.removeListener(visibilityWidthListener);
         ExpertToggleAction.removeExpertModeChangeListener(visibilityWidthListener);
         layerManager.removeLayerChangeListener(visibilityWidthListener);
+        activateLayerAction.destroy();
         cycleLayerUpAction.destroy();
         cycleLayerDownAction.destroy();
         model.removeLayerListModelListener(modelListener);
