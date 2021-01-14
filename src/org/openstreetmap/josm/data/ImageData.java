@@ -62,7 +62,7 @@ public class ImageData implements Data {
         } else {
             this.data = new ArrayList<>();
         }
-        this.geoImages.addAll(data);
+        this.geoImages.addAll(this.data);
         selectedImagesIndex.add(-1);
     }
 
