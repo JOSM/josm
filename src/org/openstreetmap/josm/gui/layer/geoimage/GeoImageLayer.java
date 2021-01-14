@@ -37,9 +37,9 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
-import org.openstreetmap.josm.actions.mapmode.SelectLassoAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
+import org.openstreetmap.josm.actions.mapmode.SelectLassoAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.ImageData;
@@ -561,7 +561,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 tempG.fillRect(0, 0, width, height);
                 tempG.setComposite(saveComp);
 
-                for (ImageEntry e : data.getImages()) {
+                for (ImageEntry e : data.searchImages(bounds)) {
                     paintImage(e, mv, clip, tempG);
                 }
                 for (ImageEntry img: this.data.getSelectedImages()) {
@@ -572,7 +572,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             }
             g.drawImage(offscreenBuffer, 0, 0, null);
         } else {
-            for (ImageEntry e : data.getImages()) {
+            for (ImageEntry e : data.searchImages(bounds)) {
                 if (e.getPos() == null) {
                     continue;
                 }

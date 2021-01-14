@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
+import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import org.openstreetmap.josm.tools.ListenerList;
 
@@ -41,6 +42,7 @@ public class ImageData implements Data {
     private final List<Integer> selectedImagesIndex = new ArrayList<>();
 
     private final ListenerList<ImageDataUpdateListener> listeners = ListenerList.create();
+    private final QuadBuckets<ImageEntry> geoImages = new QuadBuckets<>();
 
     /**
      * Construct a new image container without images
@@ -60,6 +62,7 @@ public class ImageData implements Data {
         } else {
             this.data = new ArrayList<>();
         }
+        this.geoImages.addAll(data);
         selectedImagesIndex.add(-1);
     }
 
@@ -85,6 +88,7 @@ public class ImageData implements Data {
      */
     public void mergeFrom(ImageData otherData) {
         data.addAll(otherData.getImages());
+        this.geoImages.addAll(otherData.getImages());
         Collections.sort(data);
 
         final ImageEntry selected = otherData.getSelectedImage();
@@ -150,6 +154,16 @@ public class ImageData implements Data {
      */
     public boolean hasNextImage() {
         return (selectedImagesIndex.size() == 1 && selectedImagesIndex.get(0) != data.size() - 1);
+    }
+
+    /**
+     * Search for images in a bounds
+     * @param bounds The bounds to search
+     * @return images in the bounds
+     * @since 17459
+     */
+    public Collection<ImageEntry> searchImages(Bounds bounds) {
+        return this.geoImages.search(bounds.toBBox());
     }
 
     /**
@@ -265,6 +279,7 @@ public class ImageData implements Data {
         }
         for (ImageEntry img: getSelectedImages()) {
             data.remove(img);
+            this.geoImages.remove(img);
         }
         if (selectedImagesIndex.get(0) >= data.size()) {
             setSelectedImageIndex(data.size() - 1);
@@ -290,6 +305,7 @@ public class ImageData implements Data {
      */
     public void removeImage(ImageEntry img) {
         data.remove(img);
+        this.geoImages.remove(img);
         notifyImageUpdate();
     }
 
@@ -300,6 +316,8 @@ public class ImageData implements Data {
      */
     public void updateImagePosition(ImageEntry img, LatLon newPos) {
         img.setPos(newPos);
+        this.geoImages.remove(img);
+        this.geoImages.add(img);
         afterImageUpdated(img);
     }
 

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.IQuadBucketType;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
@@ -12,7 +13,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  * IPrimitive captures the common functions of {@link OsmPrimitive} and {@link PrimitiveData}.
  * @since 4098
  */
-public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IPrimitive> {
+public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylable, Comparable<IPrimitive> {
 
     /**
      * Replies <code>true</code> if the object has been modified since it was loaded from
@@ -445,6 +446,7 @@ public interface IPrimitive extends Tagged, PrimitiveId, Stylable, Comparable<IP
      * @return Bounding box of the object
      * @since 13764
      */
+    @Override
     BBox getBBox();
 
     /**

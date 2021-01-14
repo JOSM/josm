@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import org.openstreetmap.josm.data.IQuadBucketType;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -28,7 +30,7 @@ import com.drew.metadata.jpeg.JpegDirectory;
  * Stores info about each image
  * @since 14205 (extracted from gui.layer.geoimage.ImageEntry)
  */
-public class GpxImageEntry implements Comparable<GpxImageEntry> {
+public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType {
     private File file;
     private Integer exifOrientation;
     private LatLon exifCoor;
@@ -538,6 +540,12 @@ public class GpxImageEntry implements Comparable<GpxImageEntry> {
     public void flagNewGpsData() {
         isNewGpsData = true;
    }
+
+    @Override
+    public BBox getBBox() {
+        // new BBox(LatLon) is null safe.
+        return new BBox(this.getExifCoor());
+    }
 
     /**
      * Remove the flag that indicates new GPS data.

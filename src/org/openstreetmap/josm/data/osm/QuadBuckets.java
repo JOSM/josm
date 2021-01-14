@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
+import org.openstreetmap.josm.data.IQuadBucketType;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
 import org.openstreetmap.josm.tools.Logging;
@@ -19,10 +20,10 @@ import org.openstreetmap.josm.tools.Logging;
  * be removed and re-added.
  *
  * This class is (no longer) thread safe.
- * @param <T> type of primitives
- * @since 2165
+ * @param <T> type of object extending {@link IQuadBucketType}.
+ * @since 2165 ({@link IPrimitive} only), xxx for {@link IQuadBucketType}
  */
-public class QuadBuckets<T extends IPrimitive> implements Collection<T> {
+public class QuadBuckets<T extends IQuadBucketType> implements Collection<T> {
     private static final boolean CONSISTENCY_TESTING = false;
     private static final byte NW_INDEX = 1;
     private static final byte NE_INDEX = 3;
@@ -35,7 +36,7 @@ public class QuadBuckets<T extends IPrimitive> implements Collection<T> {
 
     private static final int MAX_OBJECTS_PER_NODE = 48;
 
-    static class QBLevel<T extends IPrimitive> extends BBox {
+    static class QBLevel<T extends IQuadBucketType> extends BBox {
         private final byte level;
         private final byte index;
         private final long quad;
