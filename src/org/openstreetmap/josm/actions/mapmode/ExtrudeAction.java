@@ -328,6 +328,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         dualAlignCheckboxMenuItem.getAction().setEnabled(false);
         map.keyDetector.removeKeyListener(this);
         map.keyDetector.removeModifierExListener(this);
+        this.selectedNode = null;
+        this.selectedSegment = null;
         super.exitMode();
     }
 
