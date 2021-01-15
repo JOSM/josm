@@ -615,6 +615,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
     @Override
     public void destroy() {
+        membershipMenuHandler.setPrimitives(Collections.emptyList());
         destroyTaginfoNationalActions();
         membershipTable.removeMouseListener(popupMenuLauncher);
         super.destroy();
