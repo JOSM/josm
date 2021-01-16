@@ -1106,6 +1106,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             }
             store.clear();
             allPrimitives.clear();
+            conflicts.get().clear();
         });
     }
 
