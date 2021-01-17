@@ -58,19 +58,6 @@ public class GeoPropertyIndex<T> {
         return geoProp;
     }
 
-    /**
-     * Gets the index of the given coordinate. Only used internally
-     * @param ll The lat/lon coordinate
-     * @param level The scale level
-     * @return The index for that position
-     */
-    public static int index(LatLon ll, int level) {
-        long noParts = 1L << level;
-        long x = ((long) ((ll.lon() + 180.0) * noParts / 360.0)) & 1;
-        long y = ((long) ((ll.lat() + 90.0) * noParts / 180.0)) & 1;
-        return (int) (2 * x + y);
-    }
-
     protected static class GPLevel<T> {
         private final T val;
         private final int level;
@@ -117,35 +104,45 @@ public class GeoPropertyIndex<T> {
                 this.children = tmp;
             }
 
-            int idx = index(ll, level+1);
-            if (children[idx] == null) {
-            double lon1, lat1;
-                switch (idx) {
-                    case 0:
-                        lon1 = bbox.getTopLeftLon();
-                        lat1 = bbox.getBottomRightLat();
-                        break;
-                    case 1:
-                        lon1 = bbox.getTopLeftLon();
-                        lat1 = bbox.getTopLeftLat();
-                        break;
-                    case 2:
-                        lon1 = bbox.getBottomRightLon();
-                        lat1 = bbox.getBottomRightLat();
-                        break;
-                    case 3:
-                        lon1 = bbox.getBottomRightLon();
-                        lat1 = bbox.getTopLeftLat();
-                        break;
-                    default:
-                        throw new AssertionError();
+            LatLon center = bbox.getCenter();
+            for (int idx = 0; idx < 4; idx++) {
+                BBox testBBox = null;
+                if (children[idx] != null)
+                    testBBox = children[idx].bbox;
+
+                if (testBBox == null) {
+                    double lon1, lat1;
+                    switch (idx) {
+                        case 0:
+                            lon1 = bbox.getTopLeftLon();
+                            lat1 = bbox.getBottomRightLat();
+                            break;
+                        case 1:
+                            lon1 = bbox.getTopLeftLon();
+                            lat1 = bbox.getTopLeftLat();
+                            break;
+                        case 2:
+                            lon1 = bbox.getBottomRightLon();
+                            lat1 = bbox.getBottomRightLat();
+                            break;
+                        case 3:
+                            lon1 = bbox.getBottomRightLon();
+                            lat1 = bbox.getTopLeftLat();
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                    testBBox = new BBox(lon1, lat1, center.lon(), center.lat());
                 }
-                if (DEBUG) System.err.println(" - new with idx "+idx);
-                LatLon center = bbox.getCenter();
-                BBox b = new BBox(lon1, lat1, center.lon(), center.lat());
-                children[idx] = new GPLevel<>(level + 1, b, this, owner);
+                if (isInside(testBBox, ll)) {
+                    if (children[idx] == null) {
+                        if (DEBUG) System.err.println(" - new with idx "+idx);
+                        children[idx] = new GPLevel<>(level + 1, testBBox, this, owner);
+                    }
+                    return children[idx].getBounded(ll);
+                }
             }
-            return children[idx].getBounded(ll);
+            throw new AssertionError("Point "+ll+" should be inside one of the children of "+bbox);
         }
 
         /**
@@ -156,6 +153,18 @@ public class GeoPropertyIndex<T> {
          * @return true, if it is inside of the box
          */
         boolean isInside(LatLon ll) {
+            return isInside(bbox, ll);
+        }
+
+        /**
+         * Checks, if a point is inside this tile.
+         * Makes sure, that neighboring tiles do not overlap, i.e. a point exactly
+         * on the border of two tiles must be inside exactly one of the tiles.
+         * @param bbox the tile
+         * @param ll the coordinates of the point
+         * @return true, if it is inside of the box
+         */
+        boolean isInside(BBox bbox, LatLon ll) {
             return bbox.getTopLeftLon() <= ll.lon() &&
                     (ll.lon() < bbox.getBottomRightLon() || (ll.lon() == 180.0 && bbox.getBottomRightLon() == 180.0)) &&
                     bbox.getBottomRightLat() <= ll.lat() &&
