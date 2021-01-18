@@ -70,10 +70,11 @@
         <reference ref="highway_yesno_incline_oneway_lit_width" />
         <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
     </chunk>
-    <chunk id="placement">
+    <chunk id="placement_shoulder">
         <combo key="placement" text="Placement" values="left_of:1,left_of:2,left_of:3,left_of:4,left_of:5,middle_of:1,middle_of:2,middle_of:3,middle_of:4,middle_of:5,right_of:1,right_of:2,right_of:3,right_of:4,right_of:5,transition" />
         <combo key="placement:forward" text="Placement in way direction" values="left_of:1,left_of:2,left_of:3,left_of:4,left_of:5,middle_of:1,middle_of:2,middle_of:3,middle_of:4,middle_of:5,right_of:1,right_of:2,right_of:3,right_of:4,right_of:5" />
         <combo key="placement:backward" text="Placement opposed to way direction" values="left_of:1,left_of:2,left_of:3,left_of:4,left_of:5,middle_of:1,middle_of:2,middle_of:3,middle_of:4,middle_of:5,right_of:1,right_of:2,right_of:3,right_of:4,right_of:5" />
+        <combo key="shoulder" text="Shoulder" values="yes,no,left,right,both" />
     </chunk>
     <chunk id="railway_service">
         <combo key="service" text="Service type" values="yard,siding,spur,crossover" />
@@ -595,7 +596,7 @@
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Motorway -->
@@ -617,7 +618,7 @@
                     <check key="lit" text="Lit" />
                     <check key="toll" text="Toll" />
                 </checkgroup>
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Motorway Link -->
@@ -642,7 +643,7 @@
                     <check key="toll" text="Toll" />
                     <check key="motorroad" text="Motorroad" default="on" />
                 </checkgroup>
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Trunk -->
@@ -666,7 +667,7 @@
                     <check key="toll" text="Toll" />
                     <check key="motorroad" text="Motorroad" default="on" />
                 </checkgroup>
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Trunk Link -->
@@ -687,7 +688,7 @@
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Primary -->
@@ -702,7 +703,7 @@
                 <check key="motorroad" text="Motorroad" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <space />
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Primary Link -->
@@ -721,7 +722,7 @@
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Secondary -->
@@ -734,7 +735,7 @@
                 <text key="destination:ref" text="Destination reference" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <space />
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Secondary Link -->
@@ -753,7 +754,7 @@
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
                 </checkgroup>
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Tertiary -->
@@ -766,7 +767,7 @@
                 <text key="destination:ref" text="Destination reference" />
                 <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
                 <space />
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Tertiary Link -->
@@ -785,7 +786,7 @@
                     <check key="trolley_wire" text="Overhead trolley wires" />
                     <check key="passing_places" text="Passing Places" />
                 </checkgroup> 
-                <reference ref="placement" />
+                <reference ref="placement_shoulder" />
             </optional>
             <reference ref="link_road_access_restrictions" />
         </item> <!-- Unclassified -->
