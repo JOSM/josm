@@ -4098,13 +4098,6 @@
             <reference ref="link_contact_address" />
             <preset_link preset_name="Building" />
         </item> <!-- Community Centre -->
-        <item name="Embassy" icon="presets/service/embassy.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link wiki="Tag:amenity=embassy" />
-            <space />
-            <key key="amenity" value="embassy" />
-            <reference ref="name_oh_wheelchair" />
-            <reference ref="link_contact_address" />
-        </item> <!-- Embassy -->
         <item name="Courthouse" icon="presets/service/courthouse.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=courthouse" />
             <space />
@@ -7472,6 +7465,15 @@
         <reference ref="name_oh_wheelchair" />
         <reference ref="link_contact_address" />
     </item> <!-- Private company -->
+    <item name="Diplomatic" icon="presets/office/diplomatic.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
+        <link wiki="Tag:office=diplomatic" />
+        <space />
+        <key key="office" value="diplomatic" />
+        <text key="name" text="Name" />
+        <combo key="diplomatic" text="Type" values="consulate,embassy,liaison" />
+        <reference ref="oh_wheelchair" />
+        <reference ref="link_contact_address" />
+    </item> <!-- Diplomatic -->
     <item name="Educational institution" icon="presets/office/educational_institution.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link wiki="Tag:office=educational_institution" />
         <space />

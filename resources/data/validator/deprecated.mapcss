@@ -2245,4 +2245,13 @@ way[cycleway:right=none] {
   assertNoMatch: "way FIXME=foo";
 }
 
+/* #20338 */
+*[amenity=embassy] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "office=diplomatic + diplomatic=embassy";
+  group: tr("deprecated tagging");
+  fixAdd: "office=diplomatic";
+  fixChangeKey: "amenity => diplomatic";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

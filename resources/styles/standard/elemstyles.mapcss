@@ -1735,6 +1735,7 @@ area[office=advertising_agency],
 area[office=architect],
 area[office=association],
 area[office=company],
+area[office=diplomatic],
 area[office=educational_institution],
 area[office=employment_agency],
 area[office=estate_agent],
@@ -1771,6 +1772,10 @@ node[office=association] {
 }
 node[office=company] {
     icon-image: "presets/office/private_company.svg";
+    set icon_z17;
+}
+node[office=diplomatic] {
+    icon-image: "presets/office/diplomatic.svg";
     set icon_z17;
 }
 node[office=educational_institution] {
@@ -2985,16 +2990,11 @@ node[amenity=sanitary_dump_station] {
     set icon_z17;
 }
 area[amenity=townhall],
-area[amenity=embassy],
 area[amenity=community_centre] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=townhall] {
     icon-image: "presets/service/townhall.svg";
-    set icon_z17;
-}
-node[amenity=embassy] {
-    icon-image: "presets/service/embassy.svg";
     set icon_z17;
 }
 node[amenity=community_centre] {
