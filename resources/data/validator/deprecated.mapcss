@@ -669,7 +669,7 @@ area[roof:color][roof:colour]["roof:color"=*"roof:colour"] {
 
 /* #11330, #18642 */
 *[/^.$/],
-node[/^..$/],
+node[/^..$/][!kp][!pk],
 way[/^..$/][route=ferry][!to],
 way[/^..$/][route!=ferry],
 relation[/^..$/][!to] {
@@ -680,6 +680,8 @@ relation[/^..$/][!to] {
   assertNoMatch: "way to=Zuidschermer;Akersloot route=ferry";
   assertMatch: "node fo=bar";
   assertMatch: "node f=b";
+  assertNoMatch: "node kp=5"; /* already has a deprecated warning */
+  assertNoMatch: "node pk=7"; /* already has a deprecated warning */
 }
 
 /* #11439 */
@@ -724,22 +726,36 @@ relation[/^..$/][!to] {
   fixRemove: "{0.key}";
 }
 
-/* #8717 */
-*[kp][highway=milestone],
-*[kp][railway=milestone],
-*[kp][waterway=milestone] {
+/* #8717, #20326 */
+*[kp][railway!=milestone] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "distance";
   group: tr("deprecated tagging");
   fixChangeKey: "kp => distance";
 }
-*[pk][highway=milestone],
-*[pk][railway=milestone],
-*[pk][waterway=milestone] {
+*[pk][railway!=milestone] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "distance";
   group: tr("deprecated tagging");
   fixChangeKey: "pk => distance";
+}
+*[kp][railway=milestone] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "railway:position";
+  group: tr("deprecated tagging");
+  fixChangeKey: "kp => railway:position";
+}
+*[pk][railway=milestone] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "railway:position";
+  group: tr("deprecated tagging");
+  fixChangeKey: "pk => railway:position";
+}
+*[distance][railway=milestone] {
+  throwWarning: tr("{0} is deprecated for {1}", "{0.key}", "{1.tag}");
+  suggestAlternative: "railway:position";
+  group: tr("deprecated tagging");
+  fixChangeKey: "distance => railway:position";
 }
 
 *[postcode] {

@@ -2373,7 +2373,7 @@
         <item name="Railway milestone" icon="presets/transport/railway/milestone.svg" type="node" preset_name_label="true">
             <link wiki="Tag:railway=milestone" />
             <key key="railway" value="milestone" />
-            <text key="distance" text="Distance (kilometers)" />
+            <text key="railway:position" text="Position (kilometers)" />
             <text key="ref" text="Reference" />
         </item> <!-- Railway Milestone -->
     </group> <!-- Railway -->

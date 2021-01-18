@@ -149,6 +149,7 @@ public interface LabelCompositionStrategy {
             "name",
             "int_name",
             "distance",
+            "railway:position",
             "ref",
             "operator",
             "brand",
