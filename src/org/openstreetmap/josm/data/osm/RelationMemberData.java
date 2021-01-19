@@ -26,7 +26,7 @@ public class RelationMemberData implements IRelationMember<PrimitiveData>, Seria
      */
     public RelationMemberData(String role, OsmPrimitiveType type, long id) {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
-        this.role = role == null ? "" : role;
+        this.role = (role == null ? "" : role).intern();
         this.memberType = type;
         this.memberId = id;
     }

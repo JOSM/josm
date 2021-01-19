@@ -215,8 +215,16 @@ public class HistoryDataSet implements LayerChangeListener {
     public void layerRemoving(LayerRemoveEvent e) {
         if (!MainApplication.isDisplayingMapView()) return;
         if (MainApplication.getLayerManager().getLayers().isEmpty()) {
-            data.clear();
-            fireCacheCleared();
+            clear();
         }
+    }
+
+    /**
+     * Clear the history data.
+     * @since 17471
+     */
+    public void clear() {
+        data.clear();
+        fireCacheCleared();
     }
 }

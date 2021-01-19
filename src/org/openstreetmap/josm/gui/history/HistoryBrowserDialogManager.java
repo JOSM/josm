@@ -119,6 +119,9 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         if (!dialogs.isEmpty()) {
             // see #17270: set focus to last dialog
             new LinkedList<>(dialogs.values()).getLast().toFront();
+        } else {
+            // we always reload the history, so there is no need to keep it in the cache.
+            HistoryDataSet.getInstance().clear();
         }
     }
 
