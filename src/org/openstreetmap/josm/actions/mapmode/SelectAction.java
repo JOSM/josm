@@ -231,6 +231,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         map.keyDetector.removeModifierExListener(this);
         map.keyDetector.removeKeyListener(this);
         removeHighlighting();
+        virtualManager.clear();
     }
 
     @Override
