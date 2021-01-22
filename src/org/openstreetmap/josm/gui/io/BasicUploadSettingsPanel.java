@@ -163,6 +163,7 @@ public class BasicUploadSettingsPanel extends JPanel {
      */
     protected void automaticallyAddSource() {
         final String source = MainApplication.getMap().mapView.getLayerInformationForSourceTag();
+        hcbUploadSource.getModel().setSelectedItem(null); // fix #20134
         hcbUploadSource.setText(Utils.shortenString(source, Changeset.MAX_CHANGESET_TAG_LENGTH));
         changesetSourceModel.setComment(hcbUploadSource.getText()); // Fix #9965
     }
