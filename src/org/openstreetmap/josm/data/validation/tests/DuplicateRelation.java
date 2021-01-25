@@ -213,7 +213,7 @@ public class DuplicateRelation extends Test {
         relations = null;
         for (Set<OsmPrimitive> duplicated : relationsNoKeys.values()) {
             if (duplicated.size() > 1) {
-                TestError testError = TestError.builder(this, Severity.WARNING, SAME_RELATION)
+                TestError testError = TestError.builder(this, Severity.OTHER, SAME_RELATION)
                         .message(tr("Relations with same members"))
                         .primitives(duplicated)
                         .build();
