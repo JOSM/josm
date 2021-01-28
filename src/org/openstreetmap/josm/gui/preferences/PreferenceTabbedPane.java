@@ -56,7 +56,6 @@ import org.openstreetmap.josm.gui.preferences.display.LanguagePreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.BackupPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
-import org.openstreetmap.josm.gui.preferences.map.MapPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -386,16 +385,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
     }
 
     /**
-     * Returns the {@code MapPreference} object.
-     * @return the {@code MapPreference} object.
-     * @deprecated to remove beginning of 2021
-     */
-    @Deprecated
-    public MapPreference getMapPreference() {
-        return getSetting(MapPreference.class);
-    }
-
-    /**
      * Returns the {@code PluginPreference} object.
      * @return the {@code PluginPreference} object.
      */
@@ -618,7 +607,6 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
 
         SETTINGS_FACTORIES.add(new ServerAccessPreference.Factory());
         SETTINGS_FACTORIES.add(new ProxyPreference.Factory());
-        SETTINGS_FACTORIES.add(new MapPreference.Factory());
         SETTINGS_FACTORIES.add(new ProjectionPreference.Factory());
         SETTINGS_FACTORIES.add(new MapPaintPreference.Factory());
         SETTINGS_FACTORIES.add(new TaggingPresetPreference.Factory());
