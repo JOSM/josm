@@ -483,6 +483,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             || c == 0x025B || c == 0x0190 // U+025B is paired with the capital letter U+0190 in several African languages, see #18740
             || c == 0x0263 || c == 0x0194 // "ɣ/Ɣ" (U+0263/U+0194), see #18740
             || c == 0x0268 || c == 0x0197 // "ɨ/Ɨ" (U+0268/U+0197), see #18740
+            || c == 0x0269 || c == 0x0196 // "ɩ/Ɩ" (U+0269/U+0196), see #20437
             || c == 0x0272 || c == 0x019D // "ɲ/Ɲ" (U+0272/U+019D), see #18740
             || c == 0x0273 || c == 0x019E // "ŋ/Ŋ" (U+0273/U+019E), see #18740
             || (key.endsWith("ref") && 0x1D2C <= c && c <= 0x1D42); // allow uppercase superscript latin characters in *ref tags

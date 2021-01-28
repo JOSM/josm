@@ -373,4 +373,13 @@ class TagCheckerTest {
         List<TestError> errors = test(OsmUtils.createPrimitive("node amenity=restaurant cuisine=bavarian;beef_bowl"));
         assertEquals(0, errors.size());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20437">Bug #20437</a>.
+     */
+    @Test
+    void testTicket20437() {
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:kbp", "Wasɩŋtɔŋ"));
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:kbp", "Kalɩfɔrnii"));
+    }
 }
