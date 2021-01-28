@@ -103,6 +103,7 @@ node[map_type                  ][information!=map],
 *[castle_type                  ][historic!=castle],
 *[parking                      ][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/][parking!=yes][parking!=no],
 way[cutline                    ][man_made!=cutline],
+*[zoo                          ][tourism!=zoo],
 *[bunker_type                  ][military!=bunker] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
   group: tr("missing tag");
