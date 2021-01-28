@@ -29,6 +29,8 @@ import org.apache.commons.jcs3.access.CacheAccess;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -425,6 +427,7 @@ public class ImageryPreferenceTestIT {
      * @param id The id of the imagery info to show as the test name
      * @param info The imagery info to test
      */
+    @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
     void testImageryEntryValidity(String id, ImageryInfo info) {
