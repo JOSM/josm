@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,12 +39,6 @@ public class DownloadMembersAction extends AbstractRelationAction {
                 .collect(Collectors.toList());
 
         MainApplication.worker.submit(new DownloadPrimitivesTask(MainApplication.getLayerManager().getEditLayer(), members, false));
-    }
-
-    @Override
-    public void setPrimitives(Collection<? extends IPrimitive> primitives) {
-        this.relations = getRelations(primitives);
-        updateEnabledState();
     }
 
     @Override
