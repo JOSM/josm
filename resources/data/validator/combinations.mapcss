@@ -416,16 +416,16 @@ way[highway=footway][cycleway=lane] {
   group: tr("suspicious tag combination");
 }
 
-/* {0} on suspicious object, #17255, #19650, #19572, #17253, #19821, #15667, #19930 */
-way[oneway ][!highway][!railway][!aerialway][attraction!=summer_toboggan][aeroway!~/^(runway|taxiway)$/][leisure!=track][waterway !~ /^(canal|fairway|lock|river|tidal_channel)$/],
+/* {0} on suspicious object, #17255, #19650, #19572, #17253, #19821, #15667, #19930, #20435 */
+way[oneway ][!highway][!area:highway][!railway][!aerialway][attraction!=summer_toboggan][aeroway!~/^(runway|taxiway)$/][leisure!=track][waterway !~ /^(canal|fairway|lock|river|tidal_channel)$/],
 node[lanes ][!barrier][!ford][highway!=mini_roundabout][!junction][leisure!~/^(bowling_alley|slipway|swimming_pool|track)$/][!traffic_calming]!.only_one_tag,
-way[lanes  ][!barrier][!ford][!highway                ][!junction][leisure!~/^(bowling_alley|slipway|swimming_pool|track)$/][!traffic_calming]!.only_one_tag,
-*[tunnel   ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=tunnel],
-*[bridge   ][!highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=bridge][building!=bridge],
-*[psv      ][!highway][!railway][!waterway][barrier!=bollard][amenity !~ /^parking.*/],
-*[width    ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance][natural!=stone][leisure!=track],
-*[maxspeed ][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][traffic_sign:forward !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][traffic_sign:backward !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(canal|fairway|lock|river|tidal_channel)$/][!traffic_calming][aerialway!=zip_line],
-way[incline][!highway][!railway][aeroway!~/^(runway|taxiway)$/][attraction!=summer_toboggan][leisure!=slipway] {
+way[lanes  ][!barrier][!ford][!highway ][!area:highway][!junction][leisure!~/^(bowling_alley|slipway|swimming_pool|track)$/][!traffic_calming]!.only_one_tag,
+*[tunnel   ][!highway][!area:highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=tunnel],
+*[bridge   ][!highway][!area:highway][!railway][!waterway][!piste:type][public_transport!=platform][route!=ferry][man_made!=pipeline][man_made!=goods_conveyor][man_made!=wildlife_crossing][man_made!=bridge][building!=bridge],
+*[psv      ][!highway][!area:highway][!railway][!waterway][barrier!=bollard][amenity !~ /^parking.*/],
+*[width    ][!highway][!area:highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance][natural!=stone][leisure!=track],
+*[maxspeed ][!highway][!area:highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][traffic_sign:forward !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][traffic_sign:backward !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(canal|fairway|lock|river|tidal_channel)$/][!traffic_calming][aerialway!=zip_line],
+way[incline][!highway][!area:highway][!railway][aeroway!~/^(runway|taxiway)$/][attraction!=summer_toboggan][leisure!=slipway] {
   throwWarning: tr("{0} on suspicious object", "{0.key}");
   group: tr("suspicious tag combination");
 }
