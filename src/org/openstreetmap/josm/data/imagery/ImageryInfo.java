@@ -579,14 +579,14 @@ public class ImageryInfo extends
 
         // CHECKSTYLE.OFF: BooleanExpressionComplexity
         return super.equalsPref(realOther) &&
-                Objects.equals(this.bestMarked, realOther.bestMarked) &&
-                Objects.equals(this.overlay, realOther.overlay) &&
-                Objects.equals(this.isGeoreferenceValid, realOther.isGeoreferenceValid) &&
-                Objects.equals(this.defaultMaxZoom, realOther.defaultMaxZoom) &&
-                Objects.equals(this.defaultMinZoom, realOther.defaultMinZoom) &&
+                this.bestMarked == realOther.bestMarked &&
+                this.overlay == realOther.overlay &&
+                this.isGeoreferenceValid == realOther.isGeoreferenceValid &&
+                this.defaultMaxZoom == realOther.defaultMaxZoom &&
+                this.defaultMinZoom == realOther.defaultMinZoom &&
                 Objects.equals(this.serverProjections, realOther.serverProjections) &&
-                Objects.equals(this.transparent, realOther.transparent) &&
-                Objects.equals(this.minimumTileExpire, realOther.minimumTileExpire);
+                this.transparent == realOther.transparent &&
+                this.minimumTileExpire == realOther.minimumTileExpire;
         // CHECKSTYLE.ON: BooleanExpressionComplexity
     }
 

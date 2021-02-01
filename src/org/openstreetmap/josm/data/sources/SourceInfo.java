@@ -164,7 +164,7 @@ public class SourceInfo<T extends ISourceCategory<?>, U extends ISourceType<?>, 
                 Objects.equals(this.name, other.name) &&
                 Objects.equals(this.id, other.id) &&
                 Objects.equals(this.url, other.url) &&
-                Objects.equals(this.modTileFeatures, other.modTileFeatures) &&
+                this.modTileFeatures == other.modTileFeatures &&
                 Objects.equals(this.cookies, other.cookies) &&
                 Objects.equals(this.eulaAcceptanceRequired, other.eulaAcceptanceRequired) &&
                 Objects.equals(this.sourceType, other.sourceType) &&
