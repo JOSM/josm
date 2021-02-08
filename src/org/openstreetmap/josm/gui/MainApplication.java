@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
 
 import java.awt.AWTError;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -1040,6 +1041,16 @@ public class MainApplication {
                 Logging.error(e);
             } catch (ExceptionInInitializerError e) {
                 Logging.log(Logging.LEVEL_ERROR, null, e);
+            }
+        } 
+        // Workaround for JDK-8251377: JTabPanel active tab is unreadable in Big Sur, see #20075
+        // os.version will return 10.16, or 11.0 depending on environment variable
+        // https://twitter.com/BriceDutheil/status/1330926649269956612
+        else {
+            final String laf = UIManager.getLookAndFeel().getID();
+            final String macOSVersion = getSystemProperty("os.version");
+            if(PlatformManager.isPlatformOsx() && (laf.contains("Mac") || laf.contains("Aqua")) && (macOSVersion.startsWith("10.16") || macOSVersion.startsWith("11"))){
+                UIManager.put("TabbedPane.foreground", Color.BLACK);
             }
         }
     }

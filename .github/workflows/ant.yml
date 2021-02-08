@@ -23,38 +23,40 @@ jobs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       josm_revision: ${{ steps.create_revision.outputs.josm_revision }}
       josm_prerelease: ${{ steps.create_revision.outputs.josm_prerelease }}
+      josm_release_tag: ${{ steps.create_revision.outputs.josm_release_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 32
+          fetch-depth: 256
       - name: Set revision env variable
         id: create_revision
         # grab josm revision from last git-svn-id
         run: |
           josm_revision="$(git log -1 --grep 'git-svn-id: https://josm.openstreetmap.de/svn/trunk@' --pretty=format:%B | tail -1 | sed -n 's%git-svn-id: https://josm.openstreetmap.de/svn/trunk@\([0-9]*\) [-0-9a-f]*%\1%p')"
           if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
-            sed -i '/Is-Local-Build/d' resources/REVISION
             echo "josm_prerelease=false" >> $GITHUB_ENV
             echo "::set-output name=josm_prerelease::false"
-            echo "josm_release=$josm_revision-tested" >> $GITHUB_ENV
+            josm_release_tag=$josm_revision-tested
           else
             echo "josm_prerelease=true" >> $GITHUB_ENV
             echo "::set-output name=josm_prerelease::true"
-            echo "josm_release=$josm_revision" >> $GITHUB_ENV
+            josm_release_tag=$josm_revision
           fi
           echo "josm_revision=$josm_revision" >> $GITHUB_ENV
           echo "::set-output name=josm_revision::$josm_revision"
+          echo "josm_release_tag=$josm_release_tag" >> $GITHUB_ENV
+          echo "::set-output name=josm_release_tag::$josm_release_tag"
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ env.josm_release }}
-          release_name: JOSM.app release ${{ env.josm_release }}
+          tag_name: ${{ env.josm_release_tag }}
+          release_name: JOSM.app release ${{ env.josm_release_tag }}
           body: |
-            JOSM.app release ${{ env.josm_release }}
+            JOSM.app release ${{ env.josm_release_tag }}
           draft: false
           prerelease: ${{ env.josm_prerelease }}
   build:
@@ -83,7 +85,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          fetch-depth: 32
+          fetch-depth: 256
       - name: Cache
         uses: actions/cache@v2.0.0
         with:
@@ -119,6 +121,11 @@ jobs:
           defaults write net.pornel.ImageOptim PngCrush2Enabled 1
           defaults write net.pornel.ImageOptim PngOutEnabled 1
           /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
+      - name: Set Is-Local-Build
+        if: ${{ ! needs.createrelease.outputs.josm_prerelease }}
+        run: |
+          ant create-revision
+          sed -i.bak '/Is-Local-Build/d' resources/REVISION
       - name: Build with Ant
         # Disables errorprone for Java 16
         # See https://github.com/google/error-prone/issues/1872
@@ -129,16 +136,21 @@ jobs:
             ${{ env.ANT_HOME }}/bin/ant dist
           fi
       - name: Upload jar
-        if: ${{ always() && matrix.headless }}
+        # Only run on matrix.headless to avoid double jars. They should be the same jars.
+        # uses `gh release upload` to avoid https://github.com/actions/upload-release-asset/issues/69
+        if: ${{ always() && matrix.headless == 'true' }}
         id: upload-jar
-        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
           asset_path: dist/josm-custom.jar
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
           asset_content_type: application/java-archive
+        # run: |
+        #   cp dist/josm-custom.jar JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+        #   gh release upload ${{ needs.createrelease.outputs.josm_release_tag }} JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
       - name: Test with Ant, headless ${{ matrix.headless }}
         if: ${{ needs.createrelease.outputs.josm_prerelease }}
         run: |
@@ -157,6 +169,18 @@ jobs:
         with:
           name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
           path: test/report/*.txt
+      - name: Publish Test Report with junit-report-annotations-action
+        uses: ashley-taylor/junit-report-annotations-action@1.3
+        if: always()
+        with:
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+          path: 'test/report/TEST*.xml'
+      - name: Publish Test Report with action-junit-report
+        if: always()
+        uses: mikepenz/action-junit-report@v1
+        with:
+          report_paths: 'test/report/TEST*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
         env:
