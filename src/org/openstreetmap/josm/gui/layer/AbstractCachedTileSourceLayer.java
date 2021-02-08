@@ -52,8 +52,8 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
         } else {
             String key = this.getClass().getCanonicalName();
             loaderFactory = loaderFactories.get(key);
-            if (loaderFactory == null) {
-                synchronized (AbstractCachedTileSourceLayer.class) {
+            synchronized (AbstractCachedTileSourceLayer.class) {
+                if (loaderFactory == null) {
                     // check again, maybe another thread initialized factory
                     loaderFactory = loaderFactories.get(key);
                     if (loaderFactory == null) {
@@ -77,13 +77,12 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
      * @return cache used by this layer
      */
     private synchronized ICacheAccess<String, BufferedImageCacheEntry> getCache() {
-        if (cache != null) {
-            return cache;
+        if (cache == null) {
+            cache = JCSCacheManager.getCache(getCacheName(),
+                    0,
+                    getDiskCacheSize(),
+                    CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
         }
-        cache = JCSCacheManager.getCache(getCacheName(),
-                0,
-                getDiskCacheSize(),
-                CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
         return cache;
     }
 
