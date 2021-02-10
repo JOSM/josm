@@ -95,7 +95,14 @@ public class UnclosedWays extends Test {
         public final TestError getTestError(Way w, UnclosedWays test) {
             String value = w.get(key);
             if (isValueErroneous(value)) {
-                return TestError.builder(test, Severity.WARNING, code)
+                final Severity severity;
+                // see #20455: raise severity to error when we are sure that tag key must describe an area
+                if (ignore && !specialValues.isEmpty()) {
+                    severity = Severity.WARNING;
+                } else {
+                    severity = Severity.ERROR;
+                }
+                return TestError.builder(test, severity, code)
                         .message(tr("Unclosed way"), engMessage, engMessage.contains("{0}") ? new Object[]{value} : new Object[]{})
                         .primitives(w)
                         .highlight(Arrays.asList(w.firstNode(), w.lastNode()))
