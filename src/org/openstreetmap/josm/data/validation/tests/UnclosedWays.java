@@ -97,7 +97,7 @@ public class UnclosedWays extends Test {
             if (isValueErroneous(value)) {
                 final Severity severity;
                 // see #20455: raise severity to error when we are sure that tag key must describe an area
-                if (ignore && !specialValues.isEmpty()) {
+                if (ignore && !specialValues.isEmpty() || "boundary".equals(key)) {
                     severity = Severity.WARNING;
                 } else {
                     severity = Severity.ERROR;
