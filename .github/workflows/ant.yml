@@ -121,23 +121,23 @@ jobs:
           defaults write net.pornel.ImageOptim PngCrush2Enabled 1
           defaults write net.pornel.ImageOptim PngOutEnabled 1
           /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
-      - name: Set Is-Local-Build
-        if: ${{ ! needs.createrelease.outputs.josm_prerelease }}
-        run: |
-          ant create-revision
-          sed -i.bak '/Is-Local-Build/d' resources/REVISION
       - name: Build with Ant
+        # Calls ant with -Dreleasebuild=true if we're a 'tested' build
         # Disables errorprone for Java 16
         # See https://github.com/google/error-prone/issues/1872
         run: |
-          if [[ "x${{ matrix.java }}x" =~ x1[6-9](-ea)?x ]]; then
-            ${{ env.ANT_HOME }}/bin/ant -DnoErrorProne dist
+          if [ "${{ needs.createrelease.outputs.josm_prerelease }}" == "true" ]; then
+            ANT="${{ env.ANT_HOME }}/bin/ant"
           else
-            ${{ env.ANT_HOME }}/bin/ant dist
+            ANT="${{ env.ANT_HOME }}/bin/ant -Dreleasebuild=true"
+          fi
+          if [[ "x${{ matrix.java }}x" =~ x1[6-9](-ea)?x ]]; then
+            $ANT -DnoErrorProne dist
+          else
+            $ANT dist
           fi
       - name: Upload jar
         # Only run on matrix.headless to avoid double jars. They should be the same jars.
-        # uses `gh release upload` to avoid https://github.com/actions/upload-release-asset/issues/69
         if: ${{ always() && matrix.headless == 'true' }}
         id: upload-jar
         env:
@@ -148,9 +148,6 @@ jobs:
           asset_path: dist/josm-custom.jar
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
           asset_content_type: application/java-archive
-        # run: |
-        #   cp dist/josm-custom.jar JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
-        #   gh release upload ${{ needs.createrelease.outputs.josm_release_tag }} JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
       - name: Test with Ant, headless ${{ matrix.headless }}
         if: ${{ needs.createrelease.outputs.josm_prerelease }}
         run: |
