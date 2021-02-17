@@ -144,6 +144,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 public abstract class AbstractTileSourceLayer<T extends AbstractTMSTileSource> extends ImageryLayer
 implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeListener, DisplaySettingsChangeListener {
     private static final String PREFERENCE_PREFIX = "imagery.generic";
+    private static final int MAX_TILES_SPANNED = 40;
     static { // Registers all setting properties
         new TileSourceDisplaySettings();
     }
@@ -1233,7 +1234,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         private boolean tooLarge() {
-            return insane() || this.tilesSpanned() > 20;
+            return insane() || this.tilesSpanned() > MAX_TILES_SPANNED;
         }
 
         private boolean insane() {
@@ -1289,7 +1290,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
             if (tooLarge()) {
                 // Too many tiles... refuse to download
-                Logging.warn("Not downloading all tiles because there is more than 18 tiles on an axis!");
+                Logging.warn("Not downloading all tiles because there is more than {0} tiles on an axis!", MAX_TILES_SPANNED);
                 return;
             }
             List<Tile> allTiles = allTilesCreate();
