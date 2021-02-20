@@ -105,7 +105,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          * (cf. {@link MapCSSTagChecker.TagCheck#insertArguments(Selector, String, OsmPrimitive)}).
          * @param p OSM primitive
          * @param matchingSelector  matching selector
-         * @return fix command
+         * @return fix command, or {@code null} if if cannot be created
          */
         Command createCommand(OsmPrimitive p, Selector matchingSelector);
 
@@ -181,16 +181,17 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
 
         /**
-         * Creates a fixing command which executes a {@link ChangePropertyKeyCommand} on the specified keys.
+         * Creates a fixing command which executes a {@link ChangePropertyKeyCommand} on the specified keys
+         * if {@code p} does not already have {@code newKey}
          * @param oldKey old key
          * @param newKey new key
-         * @return created fix command
+         * @return created fix command, or {@code null}
          */
         static FixCommand fixChangeKey(final String oldKey, final String newKey) {
             return new FixCommand() {
                 @Override
                 public Command createCommand(OsmPrimitive p, Selector matchingSelector) {
-                    return new ChangePropertyKeyCommand(p,
+                    return p.hasKey(newKey) ? null : new ChangePropertyKeyCommand(p,
                             TagCheck.insertArguments(matchingSelector, oldKey, p),
                             TagCheck.insertArguments(matchingSelector, newKey, p));
                 }
@@ -464,11 +465,13 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final Selector matchingSelector = whichSelectorMatchesPrimitive(p);
                 Collection<Command> cmds = fixCommands.stream()
                         .map(fixCommand -> fixCommand.createCommand(p, matchingSelector))
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList());
                 if (deletion && !p.isDeleted()) {
                     cmds.add(new DeleteCommand(p));
                 }
-                return new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(p, matchingSelector)), cmds);
+                return cmds.isEmpty() ? null
+                        : new SequenceCommand(tr("Fix of {0}", getDescriptionForMatchingSelector(p, matchingSelector)), cmds);
             } catch (IllegalArgumentException e) {
                 Logging.error(e);
                 return null;
