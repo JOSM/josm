@@ -457,7 +457,7 @@ public class OsmApi extends OsmConnection {
             initialize(progressMonitor);
             String ret = "";
             try {
-                ret = sendRequest("PUT", "changeset/create", toXml(changeset), progressMonitor);
+                ret = sendPutRequest("changeset/create", toXml(changeset), progressMonitor);
                 changeset.setId(Integer.parseInt(ret.trim()));
                 changeset.setOpen(true);
             } catch (NumberFormatException e) {
@@ -492,12 +492,7 @@ public class OsmApi extends OsmConnection {
             monitor.beginTask(tr("Updating changeset..."));
             initialize(monitor);
             monitor.setCustomText(tr("Updating changeset {0}...", changeset.getId()));
-            sendRequest(
-                    "PUT",
-                    "changeset/" + changeset.getId(),
-                    toXml(changeset),
-                    monitor
-            );
+            sendPutRequest("changeset/" + changeset.getId(), toXml(changeset), monitor);
         } catch (ChangesetClosedException e) {
             e.setSource(ChangesetClosedException.Source.UPDATE_CHANGESET);
             throw e;
@@ -531,9 +526,8 @@ public class OsmApi extends OsmConnection {
         try {
             monitor.beginTask(tr("Closing changeset..."));
             initialize(monitor);
-            /* send "\r\n" instead of empty string, so we don't send zero payload - works around bugs
-               in proxy software */
-            sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", "\r\n", monitor);
+            // send "\r\n" instead of empty string, so we don't send zero payload - workaround bugs in proxy software
+            sendPutRequest("changeset/" + changeset.getId() + "/close", "\r\n", monitor);
             changeset.setOpen(false);
         } finally {
             monitor.finishTask();
@@ -570,7 +564,7 @@ public class OsmApi extends OsmConnection {
             //
             monitor.indeterminateSubTask(
                     trn("Uploading {0} object...", "Uploading {0} objects...", list.size(), list.size()));
-            String diffUploadResponse = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diffUploadRequest, monitor);
+            String diffUploadResponse = sendPostRequest("changeset/" + changeset.getId() + "/upload", diffUploadRequest, monitor);
 
             // Process the response from the server
             //
@@ -632,6 +626,16 @@ public class OsmApi extends OsmConnection {
      */
     public static String getAuthMethod() {
         return Config.getPref().get("osm-server.auth-method", "oauth");
+    }
+
+    protected final String sendPostRequest(String urlSuffix, String requestBody, ProgressMonitor monitor) throws OsmTransferException {
+        // Send a POST request that includes authentication credentials
+        return sendRequest("POST", urlSuffix, requestBody, monitor);
+    }
+
+    protected final String sendPutRequest(String urlSuffix, String requestBody, ProgressMonitor monitor) throws OsmTransferException {
+        // Send a PUT request that includes authentication credentials
+        return sendRequest("PUT", urlSuffix, requestBody, monitor);
     }
 
     protected final String sendRequest(String requestMethod, String urlSuffix, String requestBody, ProgressMonitor monitor)
@@ -819,8 +823,7 @@ public class OsmApi extends OsmConnection {
             .append("&text=")
             .append(Utils.encodeUrl(text)).toString();
 
-        String response = sendRequest("POST", noteUrl, null, monitor, true, false);
-        return parseSingleNote(response);
+        return parseSingleNote(sendPostRequest(noteUrl, null, monitor));
     }
 
     /**
@@ -837,8 +840,7 @@ public class OsmApi extends OsmConnection {
             .append("/comment?text=")
             .append(Utils.encodeUrl(comment)).toString();
 
-        String response = sendRequest("POST", noteUrl, null, monitor, true, false);
-        return parseSingleNote(response);
+        return parseSingleNote(sendPostRequest(noteUrl, null, monitor));
     }
 
     /**
@@ -859,8 +861,7 @@ public class OsmApi extends OsmConnection {
             urlBuilder.append(encodedMessage);
         }
 
-        String response = sendRequest("POST", urlBuilder.toString(), null, monitor, true, false);
-        return parseSingleNote(response);
+        return parseSingleNote(sendPostRequest(urlBuilder.toString(), null, monitor));
     }
 
     /**
@@ -881,8 +882,7 @@ public class OsmApi extends OsmConnection {
             urlBuilder.append(encodedMessage);
         }
 
-        String response = sendRequest("POST", urlBuilder.toString(), null, monitor, true, false);
-        return parseSingleNote(response);
+        return parseSingleNote(sendPostRequest(urlBuilder.toString(), null, monitor));
     }
 
     /**
