@@ -182,16 +182,15 @@ public class MapCSSTagChecker extends Test.TagTest {
 
         /**
          * Creates a fixing command which executes a {@link ChangePropertyKeyCommand} on the specified keys
-         * if {@code p} does not already have {@code newKey}
          * @param oldKey old key
          * @param newKey new key
-         * @return created fix command, or {@code null}
+         * @return created fix command
          */
         static FixCommand fixChangeKey(final String oldKey, final String newKey) {
             return new FixCommand() {
                 @Override
                 public Command createCommand(OsmPrimitive p, Selector matchingSelector) {
-                    return p.hasKey(newKey) ? null : new ChangePropertyKeyCommand(p,
+                    return new ChangePropertyKeyCommand(p,
                             TagCheck.insertArguments(matchingSelector, oldKey, p),
                             TagCheck.insertArguments(matchingSelector, newKey, p));
                 }
