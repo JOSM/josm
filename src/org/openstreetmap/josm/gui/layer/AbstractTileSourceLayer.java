@@ -638,12 +638,29 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (tileSource != null) {
             tileSize = tileSource.getTileSize();
         }
-        // as we can see part of the tile at the top and at the bottom, use Math.ceil(...) + 1 to accommodate for that
-        int visibileTiles = (int) (Math.ceil((double) height / tileSize + 1) * Math.ceil((double) width / tileSize + 1));
-        // add 10% for tiles from different zoom levels
+        /**
+         * As we can see part of the tile at the top and at the bottom, use Math.ceil(...) + 1 to accommodate for that
+         * Add another 2 tiles on each axis, as overloadTiles adds one tile in each direction that might be overloaded
+         *
+         * @see #overloadTiles()
+         */
+        int maxYtiles = (int) Math.ceil((double) height / tileSize + 1) + 2;
+        int maxXtiles = (int) Math.ceil((double) width / tileSize + 1) + 2;
+        int visibileTiles = maxXtiles * maxYtiles;
+        /**
+         * Take into account ZOOM_OFFSET to calculate real number of tiles and multiply by 8, to cover all tiles, that might be
+         * accessed when looking for tiles outside current zoom level.
+         *
+         * Currently we use otherZooms = {1, 2, -1, -2, -3, -4, -5}
+         *
+         * Check call to tryLoadFromDifferentZoom
+         * @see #tryLoadFromDifferentZoom(Graphics2D, int, List<Tile>,int)
+         * @see #drawInViewArea((Graphics2D, MapView, ProjectionBounds)
+         *
+         */
         int ret = (int) Math.ceil(
                 Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
-                * 4);
+                * 8);
         Logging.info("AbstractTileSourceLayer: estimated visible tiles: {0}, estimated cache size: {1}", visibileTiles, ret);
         return ret;
     }
@@ -1234,10 +1251,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
 
         private boolean tooLarge() {
-            return insane() || this.tilesSpanned() > MAX_TILES_SPANNED;
-        }
-
-        private boolean insane() {
             return tileCache == null || size() > tileCache.getCacheSize();
         }
 
@@ -1262,7 +1275,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * @return A stream of all positions
          */
         public Stream<TilePosition> tilePositions() {
-            if (zoom == 0 || this.insane()) {
+            if (zoom == 0 || this.tooLarge()) {
                 return Stream.empty(); // Tileset is either empty or too large
             } else {
                 return IntStream.rangeClosed(minX, maxX).mapToObj(
@@ -1598,9 +1611,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         g.setColor(Color.lightGray);
 
-        if (ts.insane()) {
-            myDrawString(g, tr("zoom in to load any tiles"), 120, 120);
-        } else if (ts.tooLarge()) {
+        if (ts.tooLarge()) {
             myDrawString(g, tr("zoom in to load more tiles"), 120, 120);
         } else if (!getDisplaySettings().isAutoZoom() && ts.tooSmall()) {
             myDrawString(g, tr("increase tiles zoom level (change resolution) to see more detail"), 120, 120);
