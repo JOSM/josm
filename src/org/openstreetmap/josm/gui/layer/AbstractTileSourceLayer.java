@@ -1569,49 +1569,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (getDisplaySettings().isAutoLoad()) {
             ts.overloadTiles();
         }
-        int[] otherZooms = {1, 2, -1, -2, -3, -4, -5};
-        for (int zoomOffset : otherZooms) {
-            if (!getDisplaySettings().isAutoZoom()) {
-                break;
-            }
-            int newzoom = displayZoomLevel + zoomOffset;
-            if (newzoom < getMinZoomLvl() || newzoom > getMaxZoomLvl()) {
-                continue;
-            }
-            if (missedTiles.isEmpty()) {
-                break;
-            }
-            List<Tile> newlyMissedTiles = new LinkedList<>();
-            for (Tile missed : missedTiles) {
-                if (zoomOffset > 0 && "no-tile".equals(missed.getValue("tile-info"))) {
-                    // Don't try to paint from higher zoom levels when tile is overzoomed
-                    newlyMissedTiles.add(missed);
-                    continue;
+        if (getDisplaySettings().isAutoZoom()) {
+            int[] otherZooms = {1, 2, -1, -2, -3, -4, -5};
+
+            for(int otherZoom: otherZooms) {
+                missedTiles = tryLoadFromDifferentZoom(g, displayZoomLevel, missedTiles, otherZoom);
+                if (missedTiles.isEmpty()) {
+                    break;
                 }
-                TileSet ts2 = new TileSet(tileSource.getCoveringTileRange(missed, newzoom));
-                // Instantiating large TileSets is expensive. If there are no loaded tiles, don't bother even trying.
-                if (ts2.allLoadedTiles().isEmpty()) {
-                    if (zoomOffset > 0) {
-                        newlyMissedTiles.add(missed);
-                        continue;
-                    } else {
-                        /*
-                         *  We have negative zoom offset. Try to load tiles from lower zoom levels, as they may be not present
-                         *  in tile cache (e.g. when user panned the map or opened layer above zoom level, for which tiles are present.
-                         *  This will ensure, that tileCache is populated with tiles from lower zoom levels so it will be possible to
-                         *  use them to paint overzoomed tiles.
-                         *  See: #14562
-                         */
-                        ts2.loadAllTiles(false);
-                    }
-                }
-                if (ts2.tooLarge()) {
-                    continue;
-                }
-                newlyMissedTiles.addAll(this.paintTileImages(g, ts2, newzoom, missed));
             }
-            missedTiles = newlyMissedTiles;
         }
+
         if (Logging.isDebugEnabled() && !missedTiles.isEmpty()) {
             Logging.debug("still missed {0} in the end", missedTiles.size());
         }
@@ -1654,6 +1622,46 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 }
             }
         }
+    }
+
+    private List<Tile> tryLoadFromDifferentZoom(Graphics2D g, int displayZoomLevel, List<Tile> missedTiles,
+            int zoomOffset) {
+
+        int newzoom = displayZoomLevel + zoomOffset;
+        if (newzoom < getMinZoomLvl() || newzoom > getMaxZoomLvl()) {
+            return missedTiles;
+        }
+
+        List<Tile> newlyMissedTiles = new LinkedList<>();
+        for (Tile missed : missedTiles) {
+            if (zoomOffset > 0 && "no-tile".equals(missed.getValue("tile-info"))) {
+                // Don't try to paint from higher zoom levels when tile is overzoomed
+                newlyMissedTiles.add(missed);
+                continue;
+            }
+            TileSet ts2 = new TileSet(tileSource.getCoveringTileRange(missed, newzoom));
+            // Instantiating large TileSets is expensive. If there are no loaded tiles, don't bother even trying.
+            if (ts2.allLoadedTiles().isEmpty()) {
+                if (zoomOffset > 0) {
+                    newlyMissedTiles.add(missed);
+                    continue;
+                } else {
+                    /*
+                     *  We have negative zoom offset. Try to load tiles from lower zoom levels, as they may be not present
+                     *  in tile cache (e.g. when user panned the map or opened layer above zoom level, for which tiles are present.
+                     *  This will ensure, that tileCache is populated with tiles from lower zoom levels so it will be possible to
+                     *  use them to paint overzoomed tiles.
+                     *  See: #14562
+                     */
+                    ts2.loadAllTiles(false);
+                }
+            }
+            if (ts2.tooLarge()) {
+                continue;
+            }
+            newlyMissedTiles.addAll(this.paintTileImages(g, ts2, newzoom, missed));
+        }
+        return newlyMissedTiles;
     }
 
     /**
@@ -1862,7 +1870,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          */
         public void cancel() {
             if (tileLoader instanceof TMSCachedTileLoader) {
-                ((TMSCachedTileLoader) tileLoader).cancelOutstandingTasks();
+                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
+                cachedTileLoader.cancelOutstandingTasks();
+                cachedTileLoader.getDownloadExecutor().shutdown();
             }
         }
 
@@ -1878,6 +1888,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 }
             } else {
                 Logging.warn("Tile loading failure: " + tile + " - " + tile.getErrorMessage());
+            }
+            if (tileLoader instanceof TMSCachedTileLoader) {
+                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
+                cachedTileLoader.cancelOutstandingTasks();
+                cachedTileLoader.getDownloadExecutor().shutdown();
             }
         }
 
@@ -1935,6 +1950,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         super.destroy();
         MapView.removeZoomChangeListener(this);
         adjustAction.destroy();
+        if (tileLoader instanceof TMSCachedTileLoader) {
+            TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
+            cachedTileLoader.getDownloadExecutor().shutdown();
+        }
     }
 
     private class TileSourcePainter extends CompatibilityModeLayerPainter {
