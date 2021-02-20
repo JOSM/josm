@@ -1883,7 +1883,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (tileLoader instanceof TMSCachedTileLoader) {
                 TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
                 cachedTileLoader.cancelOutstandingTasks();
-                cachedTileLoader.getDownloadExecutor().shutdown();
+                cachedTileLoader.shutdown();
             }
         }
 
@@ -1903,7 +1903,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (tileLoader instanceof TMSCachedTileLoader) {
                 TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
                 cachedTileLoader.cancelOutstandingTasks();
-                cachedTileLoader.getDownloadExecutor().shutdown();
+                cachedTileLoader.shutdown();
             }
         }
 
@@ -1963,7 +1963,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         adjustAction.destroy();
         if (tileLoader instanceof TMSCachedTileLoader) {
             TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
-            cachedTileLoader.getDownloadExecutor().shutdown();
+            cachedTileLoader.shutdown();
         }
     }
 

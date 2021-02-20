@@ -157,4 +157,13 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
     public ThreadPoolExecutor getDownloadExecutor() {
         return downloadExecutor;
     }
+
+    /**
+     * Shutdown the job dispatcher provided that it's not the default one
+     */
+    public void shutdown() {
+        if (!downloadExecutor.equals(DEFAULT_DOWNLOAD_JOB_DISPATCHER)) {
+            downloadExecutor.shutdown();
+        }
+    }
 }
