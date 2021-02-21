@@ -135,7 +135,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             return false; // do no try to load data from no-tile at zoom, cache empty object instead
         }
         if (isNotImage(headers, statusCode)) {
-            String message = detectErrorMessage( new String(content, StandardCharsets.UTF_8));
+            String message = detectErrorMessage(new String(content, StandardCharsets.UTF_8));
             if (message != null && !message.isEmpty()) {
                 tile.setError(message);
             }
@@ -147,7 +147,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private boolean isNotImage(Map<String, List<String>> headers, int statusCode) {
         if (statusCode == 200 && headers.containsKey("Content-Type") && !headers.get("Content-Type").isEmpty()) {
             String contentType = headers.get("Content-Type").stream().findAny().get();
-            if (contentType !=null && !contentType.startsWith("image")) {
+            if (contentType != null && !contentType.startsWith("image")) {
                 Logging.warn("Image not returned for tile: " + url + " content type was: " + contentType);
                 // not an image - do not store response in cache, so next time it will be queried again from the server
                 return true;

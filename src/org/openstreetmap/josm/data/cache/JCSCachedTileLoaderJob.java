@@ -187,8 +187,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     /**
      * Simple implementation. All errors should be cached as empty. Though some JDK (JDK8 on Windows for example)
      * doesn't return 4xx error codes, instead they do throw an FileNotFoundException or IOException
-     * @param responseCode
-     * @param headerFields
+     * @param headerFields headers sent by server
+     * @param responseCode http status code
      *
      * @return true if we should put empty object into cache, regardless of what remote resource has returned
      */

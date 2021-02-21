@@ -663,7 +663,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         int ret = (int) Math.ceil(
                 Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
                 * 8);
-        Logging.info("AbstractTileSourceLayer: estimated tiles proccessed on current zoom level: {0}, estimated cache size: {1}", visibileTiles, ret);
+        Logging.info("AbstractTileSourceLayer: estimated tiles proccessed on current zoom level: {0}, estimated cache size: {1}",
+                visibileTiles, ret);
         return ret;
     }
 
@@ -1597,7 +1598,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
              */
             int[] otherZooms = {1, 2, -1, -2, -3, -4, -5};
 
-            for(int otherZoom: otherZooms) {
+            for (int otherZoom: otherZooms) {
                 missedTiles = tryLoadFromDifferentZoom(g, displayZoomLevel, missedTiles, otherZoom);
                 if (missedTiles.isEmpty()) {
                     break;
