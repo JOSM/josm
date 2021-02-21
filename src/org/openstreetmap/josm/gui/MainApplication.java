@@ -1083,7 +1083,7 @@ public class MainApplication {
             // Try to find look and feel in plugin classloaders
             Logging.trace(e);
             Class<?> klass = null;
-            for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
+            for (ClassLoader cl : PluginHandler.getPluginClassLoaders()) {
                 try {
                     klass = cl.loadClass(laf);
                     break;
