@@ -640,31 +640,32 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
         /**
          * As we can see part of the tile at the top and at the bottom, use Math.ceil(...) + 1 to accommodate for that
-         * Add another 2 tiles on each axis, as overloadTiles adds one tile in each direction that might be overloaded
-         *
-         * @see #overloadTiles()
          */
-        int maxYtiles = (int) Math.ceil((double) height / tileSize + 1) + 2;
-        int maxXtiles = (int) Math.ceil((double) width / tileSize + 1) + 2;
+        int maxYtiles = (int) Math.ceil((double) height / tileSize + 1);
+        int maxXtiles = (int) Math.ceil((double) width / tileSize + 1);
         int visibileTiles = maxXtiles * maxYtiles;
         /**
-         * Take into account ZOOM_OFFSET to calculate real number of tiles and multiply by 8, to cover all tiles, that might be
+         * Take into account ZOOM_OFFSET to calculate real number of tiles and multiply by 7, to cover all tiles, that might be
          * accessed when looking for tiles outside current zoom level.
          *
-         * The value should be sum(2^x for x in (-5 to 2))
-         *
          * Currently we use otherZooms = {1, 2, -1, -2, -3, -4, -5}
+         *
+         * The value should be sum(2^x for x in (-5 to 2)) - 1
+         * -1 to exclude current zoom level
          *
          * Check call to tryLoadFromDifferentZoom
          * @see #tryLoadFromDifferentZoom(Graphics2D, int, List<Tile>,int)
          * @see #drawInViewArea((Graphics2D, MapView, ProjectionBounds)
          *
+         * Add +2 to maxYtiles / maxXtiles to add space in cache for extra tiles in current zoom level that are
+         * download by overloadTiles(). This is not added in computation of visibileTiles as this unnecessarily grow the cache size
+         * @see #overloadTiles()
          */
         int ret = (int) Math.ceil(
-                Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
-                * 8);
-        Logging.info("AbstractTileSourceLayer: estimated tiles proccessed on current zoom level: {0}, estimated cache size: {1}",
-                visibileTiles, ret);
+                Math.pow(2d, ZOOM_OFFSET.get()) * // use offset to decide, how many tiles are visible
+                visibileTiles * 7 + // 7 to cover tiles from other zooms as described above
+                ((maxYtiles + 2) * (maxXtiles +2))); // to add as many tiles as they will be accessed on current zoom level
+        Logging.info("AbstractTileSourceLayer: estimated visibile tiles: {0}, estimated cache size: {1}", visibileTiles, ret);
         return ret;
     }
 
