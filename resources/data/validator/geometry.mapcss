@@ -195,8 +195,10 @@ area:closed:areaStyle[landuse=reservoir]                        ⧉ area:closed:
 }
 
 /* Water area inside water area (spatial test) */
-area:closed:areaStyle[natural =~ /^(water|wetland|coastline)$/] ∈  area:closed:areaStyle.water_area,
-area:closed:areaStyle[landuse=reservoir]                        ∈  area:closed:areaStyle.water_area {
+area:closed:areaStyle[natural =~ /^(water|wetland|coastline)$/] ⊆  area:closed:areaStyle.water_area,
+area:closed:areaStyle[landuse=reservoir]                        ⊆  area:closed:areaStyle.water_area,
+area:closed:areaStyle[natural =~ /^(water|wetland|coastline)$/] ⊇  area:closed:areaStyle.water_area,
+area:closed:areaStyle[landuse=reservoir]                        ⊇  area:closed:areaStyle.water_area {
   throwWarning: tr("Water area inside water area");
 }
 
