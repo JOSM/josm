@@ -296,7 +296,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = {
-        // Taken from Version 2020102200, Last Updated Thu Oct 22 07:07:01 2020 UTC
+        // Taken from Version 2021022000, Last Updated Sat Feb 20 07:07:01 2021 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -472,7 +472,6 @@ public final class DomainValidator extends AbstractValidator {
         "cars", // cars Uniregistry, Corp.
         "casa", // casa Top Level Domain Holdings Limited
         "case", // case CNH Industrial N.V.
-        "caseih", // caseih CNH Industrial N.V.
         "cash", // cash Delta Lake, LLC
         "casino", // casino Binky Sky, LLC
         "cat", // cat Fundacio puntCAT
@@ -984,7 +983,6 @@ public final class DomainValidator extends AbstractValidator {
         "network", // network Trixy Manor, LLC
         "neustar", // neustar NeuStar, Inc.
         "new", // new Charleston Road Registry Inc.
-        "newholland", // newholland CNH Industrial N.V.
         "news", // news United TLD Holdco Ltd.
         "next", // next Next plc
         "nextdirect", // nextdirect Next plc
@@ -1395,6 +1393,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--42c2d9a", // คอม VeriSign Sarl
         "xn--45br5cyl", // ভাৰত National Internet eXchange of India
         "xn--45q11c", // 八卦 Zodiac Scorpio Limited
+        "xn--4dbrk0ce", // ישראל The Israel Internet Association (RA)
         "xn--4gbrim", // موقع Suhub Electronic Establishment
         "xn--54b7fta0cc", // বাংলা Posts and Telecommunications Division
         "xn--55qw42g", // 公益 China Organizational Name Administration Center
