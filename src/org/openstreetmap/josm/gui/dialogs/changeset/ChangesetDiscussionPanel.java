@@ -123,11 +123,12 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
             }
             try {
                 OsmApi.getOsmApi().addCommentToChangeset(current, dialog.getInputText(), null);
-            } catch (OsmTransferException e) {
+                actUpdateChangesets.actionPerformed(null);
+            } catch (OsmTransferException | IllegalArgumentException e) {
                 Logging.error(e);
                 JOptionPane.showMessageDialog(
                         MainApplication.getMainFrame(),
-                        ExceptionUtil.explainOsmTransferException(e),
+                        ExceptionUtil.explainException(e),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE);
             }

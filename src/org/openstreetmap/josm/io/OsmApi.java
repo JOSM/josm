@@ -549,8 +549,8 @@ public class OsmApi extends OsmConnection {
             throw new IllegalArgumentException(tr("Changeset must be closed in order to add a comment"));
         else if (changeset.getId() <= 0)
             throw new IllegalArgumentException(tr("Changeset ID > 0 expected. Got {0}.", changeset.getId()));
-        sendRequest("POST", "changeset/" + changeset.getId() + "/comment",
-                "text=" + Utils.encodeUrl(comment), monitor, "application/x-www-form-urlencoded", true, false);
+        sendRequest("POST", "changeset/" + changeset.getId() + "/comment?text="+ Utils.encodeUrl(comment),
+                null, monitor, "application/x-www-form-urlencoded", true, false);
     }
 
     /**
