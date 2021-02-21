@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -56,7 +55,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
     private final Set<String> serverProjections;
     private final Map<String, String> headers = new ConcurrentHashMap<>();
     private final String date;
-    private final boolean switchLatLon;
+    private final boolean belowWMS130;
 
     /**
      * Creates a tile source based on imagery info
@@ -87,14 +86,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
         // CHECKSTYLE.OFF: LineLength
         // [1] https://www.epsg-registry.org/report.htm?type=selection&entity=urn:ogc:def:crs:EPSG::4326&reportDetail=short&style=urn:uuid:report-style:default-with-code&style_name=OGP%20Default%20With%20Code&title=EPSG:4326
         // CHECKSTYLE.ON: LineLength
-        if (baseUrl.toLowerCase(Locale.US).contains("crs=epsg:4326")) {
-            switchLatLon = true;
-        } else if (baseUrl.toLowerCase(Locale.US).contains("crs=")) {
-            // assume WMS 1.3.0
-            switchLatLon = ProjectionRegistry.getProjection().switchXY();
-        } else {
-            switchLatLon = false;
-        }
+        belowWMS130 = !baseUrl.toLowerCase(Locale.US).contains("crs=");
     }
 
     @Override
@@ -132,7 +124,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
                 replacement = myProjCode.startsWith("EPSG:") ? myProjCode.substring(5) : myProjCode;
                 break;
             case "bbox":
-                replacement = getBbox(zoom, tilex, tiley, switchLatLon);
+                replacement = getBbox(zoom, tilex, tiley, !belowWMS130 && getTileProjection().switchXY());
                 break;
             case "w":
                 replacement = LATLON_FORMAT.format(w);
