@@ -134,12 +134,34 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             attributes.setNoTileAtZoom(true);
             return false; // do no try to load data from no-tile at zoom, cache empty object instead
         }
+        if (isNotImage(headers, statusCode)) {
+            String message = detectErrorMessage( new String(content, StandardCharsets.UTF_8));
+            if (message != null && !message.isEmpty()) {
+                tile.setError(message);
+            }
+            return false;
+        }
         return super.isResponseLoadable(headers, statusCode, content);
     }
 
+    private boolean isNotImage(Map<String, List<String>> headers, int statusCode) {
+        if (statusCode == 200 && headers.containsKey("Content-Type") && !headers.get("Content-Type").isEmpty()) {
+            String contentType = headers.get("Content-Type").stream().findAny().get();
+            if (contentType !=null && !contentType.startsWith("image")) {
+                Logging.warn("Image not returned for tile: " + url + " content type was: " + contentType);
+                // not an image - do not store response in cache, so next time it will be queried again from the server
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
-    protected boolean cacheAsEmpty() {
-        return isNoTileAtZoom() || super.cacheAsEmpty();
+    protected boolean cacheAsEmpty(Map<String, List<String>> headerFields, int responseCode) {
+        if (isNotImage(headerFields, responseCode)) {
+            return false;
+        }
+        return isNoTileAtZoom() || super.cacheAsEmpty(headerFields, responseCode);
     }
 
     @Override
@@ -210,6 +232,10 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     private void handleError(CacheEntryAttributes attributes) {
+        if (tile.hasError() && tile.getErrorMessage() != null) {
+            // tile has already set error message, don't overwrite it
+            return;
+        }
         if (attributes != null) {
             int httpStatusCode = attributes.getResponseCode();
             if (attributes.getErrorMessage() == null) {

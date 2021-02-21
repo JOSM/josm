@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -186,10 +187,12 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     /**
      * Simple implementation. All errors should be cached as empty. Though some JDK (JDK8 on Windows for example)
      * doesn't return 4xx error codes, instead they do throw an FileNotFoundException or IOException
+     * @param responseCode
+     * @param headerFields
      *
      * @return true if we should put empty object into cache, regardless of what remote resource has returned
      */
-    protected boolean cacheAsEmpty() {
+    protected boolean cacheAsEmpty(Map<String, List<String>> headerFields, int responseCode) {
         return attributes.getResponseCode() < 500;
     }
 
@@ -370,7 +373,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     Logging.debug("JCS - downloaded key: {0}, length: {1}, url: {2}",
                             getCacheKey(), raw.length, getUrl());
                     return true;
-                } else if (cacheAsEmpty()) {
+                } else if (cacheAsEmpty(urlConn.getHeaderFields(), urlConn.getResponseCode())) {
                     cacheData = createCacheEntry(new byte[]{});
                     cache.put(getCacheKey(), cacheData, attributes);
                     Logging.debug("JCS - Caching empty object {0}", getUrl());
@@ -385,7 +388,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             attributes.setResponseCode(404);
             attributes.setError(e);
             attributes.setException(e);
-            boolean doCache = isResponseLoadable(null, 404, null) || cacheAsEmpty();
+            boolean doCache = isResponseLoadable(null, 404, null) || cacheAsEmpty(Collections.emptyMap(), 404);
             if (doCache) {
                 cacheData = createCacheEntry(new byte[]{});
                 cache.put(getCacheKey(), cacheData, attributes);
