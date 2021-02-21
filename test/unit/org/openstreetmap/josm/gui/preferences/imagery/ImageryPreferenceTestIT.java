@@ -201,6 +201,10 @@ public class ImageryPreferenceTestIT {
             String error = checkTileUrl(info, tileSource, center, zoom);
             if (!error.isEmpty()) {
                 errors.add(error);
+                if (error.contains("This request used more time than allowed and has been forcefully stopped")) {
+                    // No need to kill both remote server and our Jenkins instance... On error of this kind is enough to see there's a problem
+                    break;
+                }
             }
         }
         return errors;
