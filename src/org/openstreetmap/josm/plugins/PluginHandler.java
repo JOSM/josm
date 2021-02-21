@@ -850,7 +850,6 @@ public final class PluginHandler {
             if (toLoad.isEmpty())
                 return;
 
-            classLoaders.clear();
             for (PluginInformation info : toLoad) {
                 PluginClassLoader cl = AccessController.doPrivileged((PrivilegedAction<PluginClassLoader>)
                     () -> new PluginClassLoader(
