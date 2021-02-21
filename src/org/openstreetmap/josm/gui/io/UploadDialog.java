@@ -19,11 +19,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -344,19 +346,20 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      * @return comment with dataset changesets tags, if any, not duplicated
      */
     private static String getCommentWithDataSetHashTag(String comment, DataSet dataSet) {
-        String result = comment;
+        StringBuilder result = new StringBuilder(comment);
         if (dataSet != null) {
             String hashtags = dataSet.getChangeSetTags().get("hashtags");
             if (hashtags != null) {
+                Set<String> sanitizedHashtags = new LinkedHashSet<>();
                 for (String hashtag : hashtags.split(";", -1)) {
-                    String sanitizedHashtag = hashtag.startsWith("#") ? hashtag : "#" + hashtag;
-                    if (!result.contains(sanitizedHashtag)) {
-                        result = result + " " + sanitizedHashtag;
-                    }
+                    sanitizedHashtags.add(hashtag.startsWith("#") ? hashtag : "#" + hashtag);
+                }
+                if (!sanitizedHashtags.isEmpty()) {
+                    result.append(' ').append(String.join(" ", sanitizedHashtags));
                 }
             }
         }
-        return result;
+        return result.toString();
     }
 
     @Override
