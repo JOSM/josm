@@ -376,7 +376,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
             if (noteData == null) { //there is no notes layer. Create one first
                 MainApplication.getLayerManager().addLayer(new NoteLayer());
             }
-            MainApplication.getMap().selectMapMode(new AddNoteAction(noteData));
+            if (noteData != null) {
+                MainApplication.getMap().selectMapMode(new AddNoteAction(noteData));
+            }
         }
     }
 
