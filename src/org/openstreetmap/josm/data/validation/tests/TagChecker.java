@@ -42,9 +42,11 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.MergeSourceBuildingVisitor;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -101,6 +103,9 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     /** tag keys that have only numerical values in the presets */
     private static final Set<String> ignoreForLevenshtein = new HashSet<>();
 
+    /** tag keys that are allowed to be the same on a multipolygon and an outer way */
+    private static final Set<String> ignoreForOuterMPSameTagCheck = new HashSet<>();
+
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPrefHelper.PREFIX + "." + TagChecker.class.getSimpleName();
 
@@ -155,6 +160,11 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
      */
     public static final String PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD = PREF_CHECK_PRESETS_TYPES + BEFORE_UPLOAD;
 
+    /**
+     * The preference key for the list of tag keys that are allowed to be the same on a multipolygon and an outer way
+     */
+    public static final String PREF_KEYS_IGNORE_OUTER_MP_SAME_TAG = PREFIX + ".ignore-keys-outer-mp-same-tag";
+
     private static final int MAX_LEVENSHTEIN_DISTANCE = 2;
 
     protected boolean includeOtherSeverity;
@@ -179,26 +189,27 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     protected JCheckBox prefCheckPresetsTypesBeforeUpload;
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
-    protected static final int EMPTY_VALUES             = 1200;
-    protected static final int INVALID_KEY              = 1201;
-    protected static final int INVALID_VALUE            = 1202;
-    protected static final int FIXME                    = 1203;
-    protected static final int INVALID_SPACE            = 1204;
-    protected static final int INVALID_KEY_SPACE        = 1205;
-    protected static final int INVALID_HTML             = 1206; /* 1207 was PAINT */
-    protected static final int LONG_VALUE               = 1208;
-    protected static final int LONG_KEY                 = 1209;
-    protected static final int LOW_CHAR_VALUE           = 1210;
-    protected static final int LOW_CHAR_KEY             = 1211;
-    protected static final int MISSPELLED_VALUE         = 1212;
-    protected static final int MISSPELLED_KEY           = 1213;
-    protected static final int MULTIPLE_SPACES          = 1214;
-    protected static final int MISSPELLED_VALUE_NO_FIX  = 1215;
-    protected static final int UNUSUAL_UNICODE_CHAR_VALUE = 1216;
-    protected static final int INVALID_PRESETS_TYPE     = 1217;
-    protected static final int MULTIPOLYGON_NO_AREA     = 1218;
-    protected static final int MULTIPOLYGON_INCOMPLETE  = 1219;
-    protected static final int MULTIPOLYGON_MAYBE_NO_AREA = 1220;
+    protected static final int EMPTY_VALUES                     = 1200;
+    protected static final int INVALID_KEY                      = 1201;
+    protected static final int INVALID_VALUE                    = 1202;
+    protected static final int FIXME                            = 1203;
+    protected static final int INVALID_SPACE                    = 1204;
+    protected static final int INVALID_KEY_SPACE                = 1205;
+    protected static final int INVALID_HTML                     = 1206; /* 1207 was PAINT */
+    protected static final int LONG_VALUE                       = 1208;
+    protected static final int LONG_KEY                         = 1209;
+    protected static final int LOW_CHAR_VALUE                   = 1210;
+    protected static final int LOW_CHAR_KEY                     = 1211;
+    protected static final int MISSPELLED_VALUE                 = 1212;
+    protected static final int MISSPELLED_KEY                   = 1213;
+    protected static final int MULTIPLE_SPACES                  = 1214;
+    protected static final int MISSPELLED_VALUE_NO_FIX          = 1215;
+    protected static final int UNUSUAL_UNICODE_CHAR_VALUE       = 1216;
+    protected static final int INVALID_PRESETS_TYPE             = 1217;
+    protected static final int MULTIPOLYGON_NO_AREA             = 1218;
+    protected static final int MULTIPOLYGON_INCOMPLETE          = 1219;
+    protected static final int MULTIPOLYGON_MAYBE_NO_AREA       = 1220;
+    protected static final int MULTIPOLYGON_SAME_TAG_ON_OUTER   = 1221;
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     protected EditableList sourcesList;
@@ -253,6 +264,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         ignoreForLevenshtein.clear();
         oftenUsedTags.clear();
         presetIndex.clear();
+        ignoreForOuterMPSameTagCheck.clear();
 
         StringBuilder errorSources = new StringBuilder();
         for (String source : Config.getPref().getList(PREF_SOURCES, DEFAULT_SOURCES)) {
@@ -636,7 +648,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         }
 
         if (p instanceof Relation && p.hasTag("type", "multipolygon")) {
-            checkMultipolygonTags(p);
+        checkMultipolygonTags(p);
         }
 
         if (checkPresetsTypes) {
@@ -677,11 +689,14 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     private static final Collection<String> NO_AREA_KEYS = Arrays.asList("name", "area", "ref", "access", "operator");
 
     private void checkMultipolygonTags(OsmPrimitive p) {
-        if (p.isAnnotated() || hasAcceptedPrimaryTagForMultipolygon(p))
-            return;
-        if (p.keySet().stream().anyMatch(k -> k.matches("^(abandoned|construction|demolished|disused|planned|razed|removed|was).*")))
+        if (p.isAnnotated() || p.keySet().stream()
+                .anyMatch(k -> k.matches("^(abandoned|construction|demolished|disused|planned|razed|removed|was).*")))
             return;
 
+        checkOuterWaysOfRelation((Relation) p);
+
+        if (hasAcceptedPrimaryTagForMultipolygon(p))
+            return;
         TestError.Builder builder = null;
         if (p.hasKey("surface")) {
             // accept often used tag surface=* as area tag
@@ -705,6 +720,42 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
                     .message(tr("Multipolygon tags"), marktr("tag describing the area might be missing"), new Object());
         }
         errors.add(builder.primitives(p).build());
+    }
+
+    /**
+     * Check if an outer way of the relation has the same tag as the relation.
+     * @param rel the relation
+     */
+    private void checkOuterWaysOfRelation(Relation rel) {
+        for (Entry<String, String> tag : rel.getInterestingTags().entrySet()) {
+            if (ignoreForOuterMPSameTagCheck.contains(tag.getKey()))
+                continue;
+
+            Set<Way> sameOuters = rel.getMembers().stream()
+                    .filter(rm -> rm.isWay() && rm.getWay().isArea() && "outer".equals(rm.getRole())
+                            && tag.getValue().equals(rm.getWay().get(tag.getKey())))
+                    .map(RelationMember::getWay).collect(Collectors.toSet());
+            if (!sameOuters.isEmpty()) {
+                List<OsmPrimitive> primitives = new ArrayList<>(sameOuters.size() + 1);
+                primitives.add(rel);
+                primitives.addAll(sameOuters);
+                Way w = new Way();
+                w.put(tag.getKey(), tag.getValue());
+                if (hasAcceptedPrimaryTagForMultipolygon(w)) {
+                    errors.add(TestError.builder(this, Severity.WARNING, MULTIPOLYGON_SAME_TAG_ON_OUTER)
+                            .message(tr("Multipolygon outer way repeats major tag of relation"),
+                                    marktr("Same tag:''{0}''=''{1}''"), tag.getKey(), tag.getValue())
+                            .primitives(primitives)
+                            .build());
+                } else {
+                    errors.add(TestError.builder(this, Severity.OTHER, MULTIPOLYGON_SAME_TAG_ON_OUTER)
+                            .message(tr("Multipolygon outer way repeats tag of relation"),
+                                    marktr("Same tag:''{0}''=''{1}''"), tag.getKey(), tag.getValue())
+                            .primitives(primitives)
+                            .build());
+                }
+            }
+        }
     }
 
     /**
@@ -1046,6 +1097,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             checkPresetsTypes = checkPresetsTypes && Config.getPref().getBoolean(PREF_CHECK_PRESETS_TYPES_BEFORE_UPLOAD, true);
         }
         deprecatedChecker = OsmValidator.getTest(MapCSSTagChecker.class);
+        ignoreForOuterMPSameTagCheck.addAll(Config.getPref().getList(PREF_KEYS_IGNORE_OUTER_MP_SAME_TAG, Collections.emptyList()));
     }
 
     @Override
