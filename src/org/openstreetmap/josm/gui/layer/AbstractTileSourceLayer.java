@@ -651,6 +651,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * Take into account ZOOM_OFFSET to calculate real number of tiles and multiply by 8, to cover all tiles, that might be
          * accessed when looking for tiles outside current zoom level.
          *
+         * The value should be sum(2^x for x in (-5 to 2))
+         *
          * Currently we use otherZooms = {1, 2, -1, -2, -3, -4, -5}
          *
          * Check call to tryLoadFromDifferentZoom
@@ -1317,6 +1319,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * Extend tile loading corridor, so that no flickering happens when panning
          */
         private void overloadTiles() {
+            /**
+             * consult calculation in estimateTileCacheSize() before changing values here.
+             *
+             *  @see #estimateTileCacheSize()
+             */
             int overload = 1;
 
             int minXo = Utils.clamp(minX-overload, tileSource.getTileXMin(zoom), tileSource.getTileXMax(zoom));
@@ -1583,6 +1590,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             ts.overloadTiles();
         }
         if (getDisplaySettings().isAutoZoom()) {
+            /**
+             * consult calculation in estimateTileCacheSize() before changing values here.
+             *
+             *  @see #estimateTileCacheSize()
+             */
             int[] otherZooms = {1, 2, -1, -2, -3, -4, -5};
 
             for(int otherZoom: otherZooms) {
