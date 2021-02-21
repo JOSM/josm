@@ -17,12 +17,13 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * A {@link TableCellRenderer} for the {@link NodeListViewer}.
- * 
+ *
  * Renders information about a node when comparing the node list of two
  * historical versions of a way.
  */
 public class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
 
+    /** Color of selected background */
     public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
 
     private final ImageIcon nodeIcon;
@@ -62,17 +63,13 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
-
         if (value == null) return this;
         TwoColumnDiff.Item item = (TwoColumnDiff.Item) value;
         GuiHelper.setBackgroundReadable(this, item.state.getColor(isSelected, hasFocus));
-        switch(column) {
-        case NodeListTableColumnModel.INDEX_COLUMN:
+        if (column == NodeListTableColumnModel.INDEX_COLUMN) {
             renderIndex((DiffTableModel) table.getModel(), row);
-            break;
-        case NodeListTableColumnModel.NODE_COLUMN:
+        } else if (column == NodeListTableColumnModel.NODE_COLUMN) {
             renderNode(item);
-            break;
         }
         return this;
     }
