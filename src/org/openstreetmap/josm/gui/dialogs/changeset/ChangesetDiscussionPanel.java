@@ -14,18 +14,25 @@ import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * The panel which displays the public discussion around a changeset in a scrollable table.
@@ -38,6 +45,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeListener {
 
     private final UpdateChangesetDiscussionAction actUpdateChangesets = new UpdateChangesetDiscussionAction();
+    private final AddChangesetCommentAction actAddChangesetComment = new AddChangesetCommentAction();
 
     private final ChangesetDiscussionTableModel model = new ChangesetDiscussionTableModel();
 
@@ -48,15 +56,23 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
     protected JPanel buildActionButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JToolBar tb = new JToolBar(JToolBar.VERTICAL);
+        JToolBar tb = new JToolBar(SwingConstants.VERTICAL);
         tb.setFloatable(false);
 
         // -- changeset discussion update
         tb.add(actUpdateChangesets);
-        actUpdateChangesets.initProperties(current);
+        // -- add a comment to changeset discussion
+        tb.add(actAddChangesetComment);
+
+        initProperties();
 
         pnl.add(tb);
         return pnl;
+    }
+
+    void initProperties() {
+        actUpdateChangesets.initProperties(current);
+        actAddChangesetComment.initProperties(current);
     }
 
     /**
@@ -81,8 +97,44 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
             MainApplication.worker.submit(new PostDownloadHandler(task, task.download()));
         }
 
-        public void initProperties(Changeset cs) {
+        void initProperties(Changeset cs) {
             setEnabled(cs != null && !NetworkManager.isOffline(OnlineResource.OSM_API));
+        }
+    }
+
+    /**
+     * Adds a discussion comment to the current changeset
+     */
+    class AddChangesetCommentAction extends AbstractAction {
+        AddChangesetCommentAction() {
+            putValue(NAME, tr("Comment"));
+            new ImageProvider("dialogs/notes", "note_comment").getResource().attachImageIcon(this);
+            putValue(SHORT_DESCRIPTION, tr("Add comment"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            if (current == null)
+                return;
+            NoteInputDialog dialog = new NoteInputDialog(MainApplication.getMainFrame(), tr("Comment on changeset"), tr("Add comment"));
+            dialog.showNoteDialog(tr("Add comment to changeset:"), ImageProvider.get("dialogs/notes", "note_comment"));
+            if (dialog.getValue() != 1) {
+                return;
+            }
+            try {
+                OsmApi.getOsmApi().addCommentToChangeset(current, dialog.getInputText(), null);
+            } catch (OsmTransferException e) {
+                Logging.error(e);
+                JOptionPane.showMessageDialog(
+                        MainApplication.getMainFrame(),
+                        ExceptionUtil.explainOsmTransferException(e),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        void initProperties(Changeset cs) {
+            setEnabled(cs != null && !cs.isOpen() && !NetworkManager.isOffline(OnlineResource.OSM_API));
         }
     }
 
@@ -100,7 +152,7 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
         } else {
             updateView(cs);
         }
-        actUpdateChangesets.initProperties(current);
+        initProperties();
         if (cs != null && cs.getDiscussion().size() < cs.getCommentsCount()) {
             actUpdateChangesets.actionPerformed(null);
         }

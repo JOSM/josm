@@ -535,6 +535,25 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
+     * Adds a comment to the discussion of a closed changeset.
+     *
+     * @param changeset the changeset where to add a comment. Must be closed. changeset.getId() &gt; 0 required.
+     * @param comment Text of the comment
+     * @param monitor the progress monitor. If null, uses {@link NullProgressMonitor#INSTANCE}
+     *
+     * @throws OsmTransferException if something goes wrong.
+     * @since 17500
+     */
+    public void addCommentToChangeset(Changeset changeset, String comment, ProgressMonitor monitor) throws OsmTransferException {
+        if (changeset.isOpen())
+            throw new IllegalArgumentException(tr("Changeset must be closed in order to add a comment"));
+        else if (changeset.getId() <= 0)
+            throw new IllegalArgumentException(tr("Changeset ID > 0 expected. Got {0}.", changeset.getId()));
+        sendRequest("POST", "changeset/" + changeset.getId() + "/comment",
+                "text=" + Utils.encodeUrl(comment), monitor, "application/x-www-form-urlencoded", true, false);
+    }
+
+    /**
      * Uploads a list of changes in "diff" form to the server.
      *
      * @param list the list of changed OSM Primitives
@@ -643,6 +662,11 @@ public class OsmApi extends OsmConnection {
         return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true, false);
     }
 
+    protected final String sendRequest(String requestMethod, String urlSuffix, String requestBody, ProgressMonitor monitor,
+            boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
+        return sendRequest(requestMethod, urlSuffix, requestBody, monitor, null, doAuthenticate, fastFail);
+    }
+
     /**
      * Generic method for sending requests to the OSM API.
      *
@@ -654,8 +678,9 @@ public class OsmApi extends OsmConnection {
      *    but including any object ids (e.g. "/way/1234/history").
      * @param requestBody the body of the HTTP request, if any.
      * @param monitor the progress monitor
-     * @param doAuthenticate  set to true, if the request sent to the server shall include authentication
-     * credentials;
+     * @param contentType Content-Type to set for PUT/POST/DELETE requests.
+     *    Can be set to {@code null}, in that case it means {@code text/xml}
+     * @param doAuthenticate  set to true, if the request sent to the server shall include authentication credentials;
      * @param fastFail true to request a short timeout
      *
      * @return the body of the HTTP response, if and only if the response code was "200 OK".
@@ -663,7 +688,7 @@ public class OsmApi extends OsmConnection {
      *    been exhausted), or rewrapping a Java exception.
      */
     protected final String sendRequest(String requestMethod, String urlSuffix, String requestBody, ProgressMonitor monitor,
-            boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
+            String contentType, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
         int retries = fastFail ? 0 : getMaxRetries();
 
         while (true) { // the retry loop
@@ -685,7 +710,7 @@ public class OsmApi extends OsmConnection {
                 }
 
                 if ("PUT".equals(requestMethod) || "POST".equals(requestMethod) || "DELETE".equals(requestMethod)) {
-                    client.setHeader("Content-Type", "text/xml");
+                    client.setHeader("Content-Type", contentType == null ? "text/xml" : contentType);
                     // It seems that certain bits of the Ruby API are very unhappy upon
                     // receipt of a PUT/POST message without a Content-length header,
                     // even if the request has no payload.
