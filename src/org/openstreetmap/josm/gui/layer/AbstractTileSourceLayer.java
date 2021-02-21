@@ -661,7 +661,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         int ret = (int) Math.ceil(
                 Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
                 * 8);
-        Logging.info("AbstractTileSourceLayer: estimated visible tiles: {0}, estimated cache size: {1}", visibileTiles, ret);
+        Logging.info("AbstractTileSourceLayer: estimated tiles proccessed on current zoom level: {0}, estimated cache size: {1}", visibileTiles, ret);
         return ret;
     }
 
@@ -1976,6 +1976,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             allocateCacheMemory();
             if (memory != null) {
                 doPaint(graphics);
+            } else {
+                Graphics g = graphics.getDefaultGraphics();
+                Color oldColor = g.getColor();
+                g.setColor(Color.BLACK);
+                g.drawString("Not enough memory to draw layer: " + getName(), 10, 120);
+                g.setColor(Color.RED);
+                g.drawString("Not enough memory to draw layer: " + getName(), 11, 121);
+                g.setColor(oldColor);
             }
         }
 
