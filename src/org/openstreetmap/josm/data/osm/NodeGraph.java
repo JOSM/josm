@@ -366,7 +366,7 @@ public class NodeGraph {
         // group by counters
         TreeMap<Integer, Set<Node>> sortedMap = new TreeMap<>(Comparator.reverseOrder());
         for (Entry<Node, Integer> e : counters.entrySet()) {
-            sortedMap.computeIfAbsent(e.getValue(), LinkedHashSet::new).add(e.getKey());
+            sortedMap.computeIfAbsent(e.getValue(), x -> new LinkedHashSet<>()).add(e.getKey());
         }
         LinkedHashSet<Node> result = new LinkedHashSet<>();
         for (Entry<Integer, Set<Node>> e : sortedMap.entrySet()) {
