@@ -268,6 +268,15 @@ Build-Date: ${build.tstamp}
             excludes="com/**,org/apache/commons/**,**/package-info.java"
             destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" encoding="UTF-8">
             <compilerarg value="-J-Xbootclasspath/p:${toString:errorprone_javac.classpath}" unless:set="isJava9"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
+            <compilerarg value="-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED" if:set="isJava16" unless:set="noErrorProne"/>
             <compilerarg line="-XDcompilePolicy=simple"/>
             <compilerarg value="-processorpath"/>
             <compilerarg pathref="errorprone.classpath"/>
