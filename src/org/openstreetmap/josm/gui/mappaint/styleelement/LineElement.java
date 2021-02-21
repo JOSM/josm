@@ -217,8 +217,8 @@ public class LineElement extends StyleElement {
         if (!super.equals(obj))
             return false;
         final LineElement other = (LineElement) obj;
-        return offset == other.offset &&
-               realWidth == other.realWidth &&
+        return Float.compare(offset, other.offset) == 0 &&
+               Float.compare(realWidth, other.realWidth) == 0 &&
                wayDirectionArrows == other.wayDirectionArrows &&
                Objects.equals(line, other.line) &&
                Objects.equals(color, other.color) &&
