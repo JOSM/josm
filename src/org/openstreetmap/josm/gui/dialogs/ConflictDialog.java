@@ -237,9 +237,9 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         if (conflictsCount > 0) {
             setTitle(trn("Conflict: {0} unresolved", "Conflicts: {0} unresolved", conflictsCount, conflictsCount) +
                     " ("+tr("Rel.:{0} / Ways:{1} / Nodes:{2}",
-                            conflicts.getRelationConflicts().size(),
-                            conflicts.getWayConflicts().size(),
-                            conflicts.getNodeConflicts().size())+')');
+                            conflicts.getNumberOfRelationConflicts(),
+                            conflicts.getNumberOfWayConflicts(),
+                            conflicts.getNumberOfNodeConflicts())+')');
         } else {
             setTitle(tr("Conflict"));
         }

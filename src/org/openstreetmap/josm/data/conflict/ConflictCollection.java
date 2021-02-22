@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -341,6 +342,37 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
      */
     public final Collection<Conflict<? extends OsmPrimitive>> getRelationConflicts() {
         return SubclassFilteredCollection.filter(conflicts, c -> c != null && c.getMy() instanceof Relation);
+    }
+
+    /**
+     * Returns the number of conflicts involving nodes.
+     * @return The number of conflicts involving nodes.
+     * @since 17524
+     */
+    public final long getNumberOfNodeConflicts() {
+        return getNumberOfConflicts(c -> c.getMy() instanceof Node);
+    }
+
+    /**
+     * Returns the number of conflicts involving nodes.
+     * @return The number of conflicts involving nodes.
+     * @since 17524
+     */
+    public final long getNumberOfWayConflicts() {
+        return getNumberOfConflicts(c -> c.getMy() instanceof Way);
+    }
+
+    /**
+     * Returns the number of conflicts involving nodes.
+     * @return The number of conflicts involving nodes.
+     * @since 17524
+     */
+    public final long getNumberOfRelationConflicts() {
+        return getNumberOfConflicts(c -> c.getMy() instanceof Relation);
+    }
+
+    private long getNumberOfConflicts(Predicate<Conflict<?>> predicate) {
+        return conflicts.isEmpty() ? 0 : conflicts.stream().filter(Objects::nonNull).filter(predicate).count();
     }
 
     @Override
