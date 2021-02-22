@@ -53,7 +53,7 @@ public class FileWatcher {
     public FileWatcher() {
         try {
             watcher = FileSystems.getDefault().newWatchService();
-            thread = new Thread((Runnable) this::processEvents, "File Watcher");
+            thread = new Thread(this::processEvents, "File Watcher");
         } catch (IOException | UnsupportedOperationException | UnsatisfiedLinkError e) {
             Logging.error(e);
         }
