@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,18 +12,18 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.security.KeyStoreException;
 import java.util.Collection;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 import mockit.Expectations;
 import mockit.Mocked;
 
@@ -170,6 +171,7 @@ class PlatformHookWindowsTest {
      */
     @Test
     void testGetInstalledFonts() {
+        assumeNotNull(FileSystems.getDefault()); // weird NPE on Jenkins
         Collection<String> fonts = hook.getInstalledFonts();
         if (PlatformManager.isPlatformWindows()) {
             assertFalse(fonts.isEmpty());
