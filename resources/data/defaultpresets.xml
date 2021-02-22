@@ -1049,6 +1049,11 @@
                 <text key="name" text="Name" />
             </optional>
         </item> <!-- Ford -->
+        <item name="Traffic Hazard" icon="presets/transport/hazard.svg" type="node,way" preset_name_label="true">
+            <link wiki="Key:hazard" />
+            <space />
+            <combo key="hazard" text="Hazard" values="animal_crossing,bump,children,curve,curves,cyclists,dangerous_junction,dip,falling_rocks,frost_heave,horse_riders,ice,landslide,loose_gravel,low_flying_aircraft,pedestrians,queues_likely,school_zone,side_winds,slippery,turn,turns" values_context="hazard" />
+        </item> <!-- Traffic Hazard -->
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/transport/way/way_unclassified.svg">
         <item name="Track" icon="presets/transport/way/track.svg" type="way,closedway" preset_name_label="true">
@@ -7808,6 +7813,15 @@
                 <text key="start_date" text="Start date" />
             </optional>
         </item> <!-- Protected Area -->
+        <item name="Hazardous Area" icon="presets/misc/boundaries.svg" type="closedway,relation" preset_name_label="true">
+            <link wiki="Tag:boundary=hazard" />
+            <space />
+            <key key="boundary" value="hazard" />
+            <combo key="hazard" text="Hazard" values="contamination,minefield,nuclear,shooting_range,unexploded_ordnance" values_context="hazard" />
+            <optional>
+                <text key="related_law" text="Related law" />
+            </optional>
+        </item> <!-- Hazardous Area -->
         <item name="Maritime" icon="presets/misc/boundaries.svg" type="way,closedway,relation" preset_name_label="true">
             <link wiki="Tag:boundary=maritime" />
             <space />

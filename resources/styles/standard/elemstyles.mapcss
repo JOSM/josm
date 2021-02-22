@@ -836,6 +836,10 @@ way[ford?]::core_ford {
     dashes: 9,9;
     dashes-offset: 9;
 }
+node[hazard] {
+    icon-image: "presets/transport/hazard.svg";
+    set icon_z17;
+}
 area[highway=platform]:closed {
     fill-color: highway_platform#c0c0c0;
 }
@@ -5084,12 +5088,14 @@ relation[boundary=administrative] > way::core_boundary,
 relation[boundary=postal_code] > way::core_boundary,
 relation[boundary=political] > way::core_boundary,
 relation[boundary=maritime] > way::core_boundary,
+relation[boundary=hazard] > way::core_boundary,
 relation[boundary=national_park] > way::core_boundary,
 way[boundary=protected_area]::core_boundary,
 way[boundary=administrative]::core_boundary,
 way[boundary=postal_code]::core_boundary,
 way[boundary=political]::core_boundary,
 way[boundary=maritime]::core_boundary,
+way[boundary=hazard]::core_boundary,
 way[boundary=national_park]::core_boundary {
     z-index: 2;
     modifier: false;
