@@ -1,18 +1,28 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.validator;
 
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
+import org.openstreetmap.josm.gui.preferences.AbstractExtendedSourceEntryTestCase;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -20,39 +30,64 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link ValidatorTagCheckerRulesPreference} class.
  */
-class ValidatorTagCheckerRulesPreferenceTestIT {
+class ValidatorTagCheckerRulesPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
 
     /**
      * Setup rule
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https().timeout(20_000);
+    static JOSMTestRules test = new JOSMTestRules().https().timeout(20_000);
 
     /**
-     * Test that available tag checker rules are valid.
+     * Setup test
+     * @throws IOException in case of I/O error
+     */
+    @BeforeAll
+    public static void beforeClass() throws IOException {
+        errorsToIgnore.addAll(TestUtils.getIgnoredErrorMessages(ValidatorTagCheckerRulesPreferenceTestIT.class));
+    }
+
+    /**
+     * Returns list of entries to test.
+     * @return list of entries to test
      * @throws Exception in case of error
      */
-    @Test
-    void testValidityOfAvailableRules() throws Exception {
-        Collection<ExtendedSourceEntry> sources = new ValidatorTagCheckerRulesPreference.TagCheckerRulesSourceEditor()
-                .loadAndGetAvailableSources();
-        assertFalse(sources.isEmpty(), sources::toString);
-        Collection<Throwable> allErrors = new ArrayList<>();
-        MapCSSTagChecker tagChecker = new MapCSSTagChecker();
-        for (ExtendedSourceEntry source : sources) {
-            System.out.print(source.url);
-            try {
-                ParseResult result = tagChecker.addMapCSS(source.url);
-                assertFalse(result.parseChecks.isEmpty(), result::toString);
-                System.out.println(result.parseErrors.isEmpty() ? " => OK" : " => KO");
-                allErrors.addAll(result.parseErrors);
-            } catch (IOException e) {
-                System.out.println(" => KO");
-                allErrors.add(e);
-                e.printStackTrace();
-            }
+    public static List<Object[]> data() throws Exception {
+        return getTestParameters(new ValidatorTagCheckerRulesPreference.TagCheckerRulesSourceEditor()
+                .loadAndGetAvailableSources());
+    }
+
+    /**
+     * Test that available tag checker rule is valid.
+     * @param displayName displayed name
+     * @param url URL
+     * @param source source entry to test
+     * @throws Exception in case of error
+     */
+    @Execution(ExecutionMode.CONCURRENT)
+    @ParameterizedTest(name = "{0} - {1}")
+    @MethodSource("data")
+    void testValidityOfAvailableRule(String displayName, String url, ExtendedSourceEntry source) throws Exception {
+        assumeFalse(isIgnoredSubstring(source, source.url));
+        List<String> ignoredErrors = new ArrayList<>();
+        Set<String> errors = new HashSet<>();
+        System.out.print(source.url);
+        try {
+            ParseResult result = new MapCSSTagChecker().addMapCSS(source.url);
+            assertFalse(result.parseChecks.isEmpty(), result::toString);
+            System.out.println(result.parseErrors.isEmpty() ? " => OK" : " => KO");
+            result.parseErrors.forEach(e -> handleException(source, e, errors, ignoredErrors));
+        } catch (IOException e) {
+            System.out.println(" => KO");
+            e.printStackTrace();
+            handleException(source, e, errors, ignoredErrors);
         }
-        assertTrue(allErrors.isEmpty(), allErrors::toString);
+        // #16567 - Shouldn't be necessary to print displayName if Ant worked properly
+        // See https://josm.openstreetmap.de/ticket/16567#comment:53
+        // See https://bz.apache.org/bugzilla/show_bug.cgi?id=64564
+        // See https://github.com/apache/ant/pull/121
+        assertTrue(errors.isEmpty(), displayName + " => " + errors);
+        assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
     }
 }

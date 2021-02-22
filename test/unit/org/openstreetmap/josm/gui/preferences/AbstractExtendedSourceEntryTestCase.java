@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences.map;
+package org.openstreetmap.josm.gui.preferences;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +11,10 @@ import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 
-abstract class AbstractExtendedSourceEntryTestCase {
+/**
+ * Super class of parameterized source entry integration tests.
+ */
+public abstract class AbstractExtendedSourceEntryTestCase {
 
     private static final Pattern RESOURCE_PATTERN = Pattern.compile("resource://(.+)");
     private static final Pattern JOSM_WIKI_PATTERN = Pattern.compile("https://josm.openstreetmap.de/josmfile\\?page=(.+)&zip=1");
@@ -39,7 +42,7 @@ abstract class AbstractExtendedSourceEntryTestCase {
         return url;
     }
 
-    protected final void handleException(ExtendedSourceEntry source, Exception e, Set<String> errors, List<String> ignoredErrors) {
+    protected final void handleException(ExtendedSourceEntry source, Throwable e, Set<String> errors, List<String> ignoredErrors) {
         e.printStackTrace();
         String s = source.url + " => " + e.toString();
         if (isIgnoredSubstring(source, s)) {
