@@ -341,12 +341,12 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
     /**
      * Returns the given comment with appended hashtags from dataset changeset tags, if not already present.
-     * @param comment changeset comment
+     * @param comment changeset comment. Can be null
      * @param dataSet optional dataset, which can contain hashtags in its changeset tags
      * @return comment with dataset changesets tags, if any, not duplicated
      */
-    private static String getCommentWithDataSetHashTag(String comment, DataSet dataSet) {
-        StringBuilder result = new StringBuilder(comment);
+    static String getCommentWithDataSetHashTag(String comment, DataSet dataSet) {
+        StringBuilder result = comment == null ? new StringBuilder() : new StringBuilder(comment);
         if (dataSet != null) {
             String hashtags = dataSet.getChangeSetTags().get("hashtags");
             if (hashtags != null) {

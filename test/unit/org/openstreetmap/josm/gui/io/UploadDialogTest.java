@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.io.UploadDialog.UploadAction;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -193,5 +194,16 @@ class UploadDialogTest {
     void testValidateUploadTag() {
         doTestValidateUploadTag("upload.comment");
         doTestValidateUploadTag("upload.source");
+    }
+
+    @Test
+    void testGetCommentWithDataSetHashTag() {
+        assertEquals("", UploadDialog.getCommentWithDataSetHashTag(null, null));
+        DataSet ds = new DataSet();
+        assertEquals("foo", UploadDialog.getCommentWithDataSetHashTag("foo", ds));
+        ds.getChangeSetTags().put("hashtags", "bar");
+        assertEquals("foo #bar", UploadDialog.getCommentWithDataSetHashTag("foo", ds));
+        ds.getChangeSetTags().put("hashtags", "bar;baz;#bar");
+        assertEquals("foo #bar #baz", UploadDialog.getCommentWithDataSetHashTag("foo", ds));
     }
 }
