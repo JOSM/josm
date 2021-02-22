@@ -114,6 +114,12 @@
             </checkgroup>
         </optional>
     </chunk>
+    <chunk id="common_advertising">
+        <text key="height" text="Height (meters)" length="7" />
+        <combo key="animated" text="Animated" values="yes,winding_posters,screen,trivision_blades,revolving,digital_messages,digital_prices,no" values_sort="false" />
+        <check key="luminous" text="Luminous" />
+        <check key="lit" text="Lit" />
+    </chunk>
     <chunk id="min_age">
         <text key="min_age" text="Minimum age" />
     </chunk>
@@ -4768,7 +4774,7 @@
             <space />
             <key key="advertising" value="column" />
             <optional>
-                <check key="lit" text="Lit" />
+                <reference ref="common_advertising" />
             </optional>
         </item> <!-- Advertising Column -->
         <item name="Billboard" icon="presets/leisure/billboard.svg" type="node,way" preset_name_label="true">
@@ -4776,9 +4782,17 @@
             <space />
             <key key="advertising" value="billboard" />
             <optional>
-                <check key="lit" text="Lit" />
+                <reference ref="common_advertising" />
             </optional>
         </item> <!-- Billboard -->
+        <item name="Poster box" icon="presets/leisure/poster_box.svg" type="node,way" preset_name_label="true">
+            <link wiki="Tag:advertising=poster_box" />
+            <space />
+            <key key="advertising" value="poster_box" />
+            <optional>
+                <reference ref="common_advertising" />
+            </optional>
+        </item> <!-- Poster box -->
     </group> <!-- Facilities -->
   </group>  <!-- Facilities -->
   <group name="Sports" icon="presets/sport/soccer.svg">

@@ -2116,7 +2116,12 @@ node[advertising=billboard] {
     icon-image: "presets/leisure/billboard.svg";
     set icon_z17;
 }
-way[advertising=billboard] {
+node[advertising=poster_box] {
+    icon-image: "presets/leisure/poster_box.svg";
+    set icon_z17;
+}
+way[advertising=billboard],
+way[advertising=poster_box] {
     width: 2;
     color: advertising#880000;
 }
