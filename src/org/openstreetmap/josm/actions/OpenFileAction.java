@@ -16,14 +16,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -37,6 +40,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.importexport.AllFormatsImporter;
 import org.openstreetmap.josm.gui.io.importexport.FileImporter;
+import org.openstreetmap.josm.gui.io.importexport.Options;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -95,7 +99,7 @@ public class OpenFileAction extends DiskAccessAction {
      * @since 11986 (return task)
      */
     public static Future<?> openFiles(List<File> fileList) {
-        return openFiles(fileList, false);
+        return openFiles(fileList, (Options[]) null);
     }
 
     /**
@@ -104,10 +108,24 @@ public class OpenFileAction extends DiskAccessAction {
      * @param recordHistory {@code true} to save filename in history (default: false)
      * @return the future task
      * @since 11986 (return task)
+     * @deprecated Since 17534, use {@link OpenFileAction#openFiles(List, Options...)} with {@link Options#RECORD_HISTORY} instead.
      */
+    @Deprecated
     public static Future<?> openFiles(List<File> fileList, boolean recordHistory) {
+        Options[] options = recordHistory ? new Options[] {Options.RECORD_HISTORY} : null;
+        return openFiles(fileList, options);
+    }
+
+    /**
+     * Open a list of files. The complete list will be passed to batch importers.
+     * @param fileList A list of files
+     * @param options The options to use
+     * @return the future task
+     * @since 17534 ({@link Options})
+     */
+    public static Future<?> openFiles(List<File> fileList, Options... options) {
         OpenFileTask task = new OpenFileTask(fileList, null);
-        task.setRecordHistory(recordHistory);
+        task.setOptions(options);
         return MainApplication.worker.submit(task);
     }
 
@@ -121,7 +139,7 @@ public class OpenFileAction extends DiskAccessAction {
         private final Set<String> failedAll = new HashSet<>();
         private final FileFilter fileFilter;
         private boolean canceled;
-        private boolean recordHistory;
+        private final EnumSet<Options> options = EnumSet.noneOf(Options.class);
 
         /**
          * Constructs a new {@code OpenFileTask}.
@@ -167,9 +185,28 @@ public class OpenFileAction extends DiskAccessAction {
         /**
          * Sets whether to save filename in history (for list of recently opened files).
          * @param recordHistory {@code true} to save filename in history (default: false)
+         * @deprecated since 17534 (use {@link #setOptions} instead).
          */
+        @Deprecated
         public void setRecordHistory(boolean recordHistory) {
-            this.recordHistory = recordHistory;
+            if (recordHistory) {
+                this.options.add(Options.RECORD_HISTORY);
+            } else {
+                this.options.remove(Options.RECORD_HISTORY);
+            }
+        }
+
+        /**
+         * Set the options for the task.
+         * @param options The options to set
+         * @see Options
+         * @since 17534
+         */
+        public void setOptions(Options[] options) {
+            this.options.clear();
+            if (options != null) {
+                Stream.of(options).filter(Objects::nonNull).forEach(this.options::add);
+            }
         }
 
         /**
@@ -177,7 +214,16 @@ public class OpenFileAction extends DiskAccessAction {
          * @return {@code true} if filename must be saved in history
          */
         public boolean isRecordHistory() {
-            return recordHistory;
+            return this.options.contains(Options.RECORD_HISTORY);
+        }
+
+        /**
+         * Get the options for this task
+         * @return A set of options
+         * @since 17534
+         */
+        public Set<Options> getOptions() {
+            return Collections.unmodifiableSet(this.options);
         }
 
         @Override
@@ -339,7 +385,7 @@ public class OpenFileAction extends DiskAccessAction {
                 }
             }
 
-            if (recordHistory) {
+            if (this.options.contains(Options.RECORD_HISTORY)) {
                 Collection<String> oldFileHistory = Config.getPref().getList("file-open.history");
                 fileHistory.addAll(oldFileHistory);
                 // remove the files which failed to load from the list
@@ -355,6 +401,7 @@ public class OpenFileAction extends DiskAccessAction {
          * @param files data files to import
          */
         public void importData(FileImporter importer, List<File> files) {
+            importer.setOptions(this.options.toArray(new Options[0]));
             if (importer.isBatchImporter()) {
                 if (canceled) return;
                 String msg = trn("Opening {0} file...", "Opening {0} files...", files.size(), files.size());
@@ -372,7 +419,7 @@ public class OpenFileAction extends DiskAccessAction {
                     }
                 }
             }
-            if (recordHistory && !importer.isBatchImporter()) {
+            if (this.options.contains(Options.RECORD_HISTORY) && !importer.isBatchImporter()) {
                 for (File f : files) {
                     try {
                         if (successfullyOpenedFiles.contains(f)) {

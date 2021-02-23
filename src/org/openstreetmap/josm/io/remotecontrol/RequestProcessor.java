@@ -162,6 +162,7 @@ public class RequestProcessor extends Thread {
             addRequestHandlerClass(LoadDataHandler.command, LoadDataHandler.class, true);
             addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
             addRequestHandlerClass(OpenFileHandler.command, OpenFileHandler.class, true);
+            PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.ALLOW_WEB_RESOURCES);
             addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
             PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.CHANGE_SELECTION);
             PermissionPrefWithDefault.addPermissionPref(PermissionPrefWithDefault.CHANGE_VIEWPORT);

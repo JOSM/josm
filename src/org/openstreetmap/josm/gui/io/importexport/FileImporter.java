@@ -5,7 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
 
@@ -35,6 +38,8 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     public final ExtensionFileFilter filter;
 
     private boolean enabled;
+
+    protected final EnumSet<Options> options = EnumSet.noneOf(Options.class);
 
     /**
      * Constructs a new {@code FileImporter} with the given extension file filter.
@@ -189,5 +194,17 @@ public abstract class FileImporter implements Comparable<FileImporter> {
      */
     public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /**
+     * Set the options for the {@code FileImporter}.
+     * @param options The options to set
+     * @since 17534
+     */
+    public final void setOptions(Options[] options) {
+        this.options.clear();
+        if (options != null) {
+            Stream.of(options).filter(Objects::nonNull).forEach(this.options::add);
+        }
     }
 }

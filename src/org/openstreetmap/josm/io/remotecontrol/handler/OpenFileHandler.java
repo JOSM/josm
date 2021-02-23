@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.EnumSet;
 
 import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.gui.io.importexport.Options;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
@@ -42,7 +44,12 @@ public class OpenFileHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
-        GuiHelper.runInEDTAndWait(() -> OpenFileAction.openFiles(Arrays.asList(new File(args.get("filename")))));
+        EnumSet<Options> options = EnumSet.noneOf(Options.class);
+        if (PermissionPrefWithDefault.ALLOW_WEB_RESOURCES.isAllowed()) {
+            options.add(Options.ALLOW_WEB_RESOURCES);
+        }
+        GuiHelper.runInEDTAndWait(() ->
+            OpenFileAction.openFiles(Arrays.asList(new File(args.get("filename"))), options.toArray(new Options[0])));
     }
 
     @Override

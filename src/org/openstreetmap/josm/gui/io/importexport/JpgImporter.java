@@ -7,14 +7,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
 
 /**
@@ -22,6 +26,11 @@ import org.openstreetmap.josm.io.IllegalDataException;
  *
  */
 public class JpgImporter extends FileImporter {
+    /** Check if the filename starts with a borked path ({@link java.io.File#File} drops consecutive {@code /} characters). */
+    private static final Pattern URL_START_BAD = Pattern.compile("^(https?:/)([^/].*)$");
+    /** Check for the beginning of a "good" url */
+    private static final Pattern URL_START_GOOD = Pattern.compile("^https?://.*$");
+
     private GpxLayer gpx;
 
     /**
@@ -73,7 +82,7 @@ public class JpgImporter extends FileImporter {
         try {
             List<File> files = new ArrayList<>();
             Set<String> visitedDirs = new HashSet<>();
-            addRecursiveFiles(files, visitedDirs, sel, progressMonitor.createSubTaskMonitor(1, true));
+            addRecursiveFiles(this.options, files, visitedDirs, sel, progressMonitor.createSubTaskMonitor(1, true));
 
             if (progressMonitor.isCanceled())
                 return;
@@ -89,6 +98,11 @@ public class JpgImporter extends FileImporter {
 
     static void addRecursiveFiles(List<File> files, Set<String> visitedDirs, List<File> sel, ProgressMonitor progressMonitor)
             throws IOException {
+        addRecursiveFiles(EnumSet.noneOf(Options.class), files, visitedDirs, sel, progressMonitor);
+    }
+
+    static void addRecursiveFiles(Set<Options> options, List<File> files, Set<String> visitedDirs, List<File> sel,
+            ProgressMonitor progressMonitor) throws IOException {
 
         if (progressMonitor.isCanceled())
             return;
@@ -100,13 +114,28 @@ public class JpgImporter extends FileImporter {
                     if (visitedDirs.add(f.getCanonicalPath())) { // Do not loop over symlinks
                         File[] dirFiles = f.listFiles(); // Can be null for some strange directories (like lost+found)
                         if (dirFiles != null) {
-                            addRecursiveFiles(files, visitedDirs, Arrays.asList(dirFiles), progressMonitor.createSubTaskMonitor(1, true));
+                            addRecursiveFiles(options, files, visitedDirs, Arrays.asList(dirFiles),
+                                    progressMonitor.createSubTaskMonitor(1, true));
                         }
                     } else {
                         progressMonitor.worked(1);
                     }
                 } else {
-                    if (FILE_FILTER.accept(f)) {
+                    /* Check if the path is a web path, and if so, ensure that it is "correct" */
+                    final String path = f.getPath();
+                    Matcher matcherBad = URL_START_BAD.matcher(path);
+                    final String realPath;
+                    if (matcherBad.matches()) {
+                        realPath = matcherBad.replaceFirst(matcherBad.group(1) + "/" + matcherBad.group(2));
+                    } else {
+                        realPath = path;
+                    }
+                    if (URL_START_GOOD.matcher(realPath).matches() && FILE_FILTER.accept(f)
+                            && options.contains(Options.ALLOW_WEB_RESOURCES)) {
+                        try (CachedFile cachedFile = new CachedFile(realPath)) {
+                            files.add(cachedFile.getFile());
+                        }
+                    } else if (FILE_FILTER.accept(f)) {
                         files.add(f);
                     }
                     progressMonitor.worked(1);
