@@ -17,8 +17,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
@@ -81,7 +79,6 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
      * @param source source entry to test
      * @throws Exception in case of error
      */
-    @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest(name = "{0} - {1}")
     @MethodSource("data")
     void testPresetsValidity(String displayName, String url, ExtendedSourceEntry source) throws Exception {
