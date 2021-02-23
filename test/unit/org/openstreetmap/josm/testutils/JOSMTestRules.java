@@ -642,7 +642,11 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
         // Get the instance before cleaning - this ensures that it is initialized.
         SelectionEventManager eventManager = SelectionEventManager.getInstance();
         MainApplication.getLayerManager().resetState();
-        eventManager.resetState();
+        try {
+            eventManager.resetState();
+        } catch (IllegalArgumentException ignored) {
+            Logging.trace(ignored);
+        }
     }
 
     /**
