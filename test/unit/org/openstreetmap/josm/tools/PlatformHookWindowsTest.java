@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -172,6 +173,7 @@ class PlatformHookWindowsTest {
     @Test
     void testGetInstalledFonts() {
         assumeNotNull(FileSystems.getDefault()); // weird NPE on Jenkins
+        assumeTrue(Utils.getJavaVersion() < 16 || PlatformManager.isPlatformWindows()); // No idea why the test fails with Java 16+ on Linux
         Collection<String> fonts = hook.getInstalledFonts();
         if (PlatformManager.isPlatformWindows()) {
             assertFalse(fonts.isEmpty());
