@@ -517,7 +517,7 @@ public class Preferences extends AbstractPreferences {
      * @throws XMLStreamException if any XML stream error occurs
      * @throws IOException if any I/O error occurs
      */
-    public void fromXML(Reader in) throws XMLStreamException, IOException {
+    public synchronized void fromXML(Reader in) throws XMLStreamException, IOException {
         PreferencesReader reader = new PreferencesReader(in, false);
         reader.parse();
         settingsMap.clear();
@@ -528,7 +528,7 @@ public class Preferences extends AbstractPreferences {
      * Initializes preferences.
      * @param reset if {@code true}, current settings file is replaced by the default one
      */
-    public void init(boolean reset) {
+    public synchronized void init(boolean reset) {
         initSuccessful = false;
         // get the preferences.
         File prefDir = dirs.getPreferencesDirectory(false);
@@ -670,7 +670,7 @@ public class Preferences extends AbstractPreferences {
     /**
      * Reset all values stored in this map to the default values. This clears the preferences.
      */
-    public final void resetToDefault() {
+    public final synchronized void resetToDefault() {
         settingsMap.clear();
     }
 
@@ -682,7 +682,7 @@ public class Preferences extends AbstractPreferences {
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     @Override
-    public boolean putSetting(final String key, Setting<?> setting) {
+    public synchronized boolean putSetting(final String key, Setting<?> setting) {
         CheckParameterUtil.ensureParameterNotNull(key);
         if (setting != null && setting.getValue() == null)
             throw new IllegalArgumentException("setting argument must not have null value");
@@ -815,7 +815,7 @@ public class Preferences extends AbstractPreferences {
      * @param nopass if password must be excluded
      * @return XML
      */
-    public String toXML(boolean nopass) {
+    public synchronized String toXML(boolean nopass) {
         return toXML(settingsMap.entrySet(), nopass, false);
     }
 
