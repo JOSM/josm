@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.imagery.WMTSTileSource.WMTSGetCapabilitiesExc
 import org.openstreetmap.josm.gui.layer.imagery.WMTSLayerSelection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Panel for adding WMTS imagery sources
@@ -60,7 +61,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
 
         getLayers.addActionListener(e -> {
             try {
-                WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(rawUrl.getText(), getCommonHeaders());
+                WMTSCapabilities capabilities = WMTSTileSource.getCapabilities(Utils.strip(rawUrl.getText()), getCommonHeaders());
                 layerTable = new WMTSLayerSelection(WMTSTileSource.groupLayersByNameAndTileMatrixSet(capabilities.getLayers()));
                 layerTable.getTable().getSelectionModel().addListSelectionListener(lsl -> {
                     if (layerTable.getSelectedLayer() != null) {

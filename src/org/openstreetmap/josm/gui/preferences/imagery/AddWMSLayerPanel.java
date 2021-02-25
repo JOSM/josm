@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * An imagery panel used to add WMS imagery sources.
@@ -82,7 +83,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
 
         getLayers.addActionListener(e -> {
             try {
-                wms = new WMSImagery(rawUrl.getText(), getCommonHeaders());
+                wms = new WMSImagery(Utils.strip(rawUrl.getText()), getCommonHeaders());
                 tree.updateTree(wms);
                 Collection<String> wmsFormats = wms.getFormats();
                 formats.setModel(new DefaultComboBoxModel<>(wmsFormats.toArray(new String[0])));
