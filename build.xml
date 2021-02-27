@@ -635,8 +635,9 @@ Build-Date: ${build.tstamp}
         <local name="dir"/>
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="animal.classpath" conf="animal"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-            <classpath path="${tools.dir}/animal-sniffer-ant-tasks.jar"/>
+            <classpath refid="animal.classpath"/>
         </typedef>
         <delete dir="${dir}" failonerror="false"/>
         <mkdir dir="${dir}"/>

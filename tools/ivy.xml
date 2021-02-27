@@ -10,6 +10,7 @@
         <conf name="spotbugs" description="Everything needed for running SpotBugs"/>
         <conf name="errorprone" description="Everything needed for running error-prone"/>
         <conf name="errorprone_javac" description="Everything needed for running javac from error-prone"/>
+        <conf name="animal" description="Everything needed for running Animal Sniffer"/>
     </configurations>
     <dependencies>
         <!-- javacc->default -->
@@ -32,5 +33,7 @@
         <dependency org="com.google.errorprone" name="error_prone_core" rev="2.5.1" conf="errorprone->default"/>
         <!-- errorprone->default -->
         <dependency org="com.google.errorprone" name="javac" rev="9+181-r4173-1" conf="errorprone_javac->default"/>
+        <!-- animal->default -->
+        <dependency org="org.codehaus.mojo" name="animal-sniffer-ant-tasks" rev="1.20" conf="animal->default"/>
     </dependencies>
 </ivy-module>
