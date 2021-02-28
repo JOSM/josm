@@ -59,6 +59,16 @@ echo "Building and signin app"
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/macosx/JOSM.icns --type app-image --dest app \
     --java-options "-Xmx8192m" \
+    --java-options "--add-exports=java.desktop/com.apple.eawt=ALL-UNNAMED" \
+    --java-options "--add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED" \
+    --java-options "--add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED" \
+    --java-options "--add-opens=java.base/java.lang=ALL-UNNAMED" \
+    --java-options "--add-opens=java.base/java.nio=ALL-UNNAMED" \
+    --java-options "--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED" \
+    --java-options "--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED" \
+    --java-options "--add-opens=java.desktop/javax.imageio.spi=ALL-UNNAMED" \
+    --java-options "--add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED" \
+    --java-options "--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED" \
     --app-version "$1" \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "https://josm.openstreetmap.de" \
