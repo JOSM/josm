@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
+import org.openstreetmap.josm.gui.io.importexport.ImageImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
@@ -68,7 +68,7 @@ public class ImportImagesAction extends AbstractAction {
             warnCantImportIntoServerLayer(layer);
             return;
         }
-        JpgImporter importer = new JpgImporter(layer);
+        ImageImporter importer = new ImageImporter(layer);
         AbstractFileChooser fc = new FileChooserManager(true, "geoimage.lastdirectory", Config.getPref().get("lastDirectory")).
                 createFileChooser(true, null, importer.filter, JFileChooser.FILES_AND_DIRECTORIES).openFileChooser();
         if (fc != null) {

@@ -1064,7 +1064,6 @@ Build-Date: ${build.tstamp}
                 <exclude name="com/drew/imaging/mp3/**"/>
                 <exclude name="com/drew/imaging/mp4/**"/>
                 <exclude name="com/drew/imaging/pcx/**"/>
-                <exclude name="com/drew/imaging/png/**"/>
                 <exclude name="com/drew/imaging/psd/**"/>
                 <exclude name="com/drew/imaging/quicktime/**"/>
                 <exclude name="com/drew/imaging/raf/**"/>
@@ -1081,7 +1080,6 @@ Build-Date: ${build.tstamp}
                 <exclude name="com/drew/metadata/mp3/**"/>
                 <exclude name="com/drew/metadata/mp4/**"/>
                 <exclude name="com/drew/metadata/pcx/**"/>
-                <exclude name="com/drew/metadata/png/**"/>
                 <exclude name="com/drew/metadata/wav/**"/>
                 <exclude name="com/drew/metadata/webp/**"/>
                 <exclude name="com/drew/tools/**"/>

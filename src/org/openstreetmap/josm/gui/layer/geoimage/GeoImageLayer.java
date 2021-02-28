@@ -55,7 +55,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
+import org.openstreetmap.josm.gui.io.importexport.ImageImporter;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
@@ -312,7 +312,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                         loadedDirectories.add(canonical);
                     }
 
-                    File[] children = f.listFiles(JpgImporter.FILE_FILTER_WITH_FOLDERS);
+                    File[] children = f.listFiles(ImageImporter.FILE_FILTER_WITH_FOLDERS);
                     if (children != null) {
                         progressMonitor.subTask(tr("Scanning directory {0}", f.getPath()));
                         addRecursiveFiles(files, Arrays.asList(children));

@@ -177,7 +177,7 @@ public final class ExifReader {
      * @since 6209
      */
     public static LatLon readLatLon(GpsDirectory dirGps) throws MetadataException {
-        if (dirGps != null) {
+        if (dirGps != null && dirGps.getTagCount() > 1) {
             double lat = readAxis(dirGps, GpsDirectory.TAG_LATITUDE, GpsDirectory.TAG_LATITUDE_REF, 'S');
             double lon = readAxis(dirGps, GpsDirectory.TAG_LONGITUDE, GpsDirectory.TAG_LONGITUDE_REF, 'W');
             return new LatLon(lat, lon);

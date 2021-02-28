@@ -13,7 +13,6 @@ import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -24,7 +23,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
@@ -243,8 +244,15 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         private boolean updateImageEntry(Image img) {
             if (!(entry.getWidth() > 0 && entry.getHeight() > 0)) {
                 synchronized (entry) {
-                    img.getWidth(this);
-                    img.getHeight(this);
+                    int width = img.getWidth(this);
+                    int height = img.getHeight(this);
+
+                    if (!(entry.getWidth() > 0 && entry.getHeight() > 0) && width > 0 && height > 0) {
+                        // dimensions not in metadata but already present in image, so observer won't be called
+                        entry.setWidth(width);
+                        entry.setHeight(height);
+                        entry.notifyAll();
+                    }
 
                     long now = System.currentTimeMillis();
                     while (!(entry.getWidth() > 0 && entry.getHeight() > 0)) {
@@ -279,82 +287,88 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
         @Override
         public void run() {
-            Image img = Toolkit.getDefaultToolkit().createImage(file.getPath());
-            if (!updateImageEntry(img))
-                return;
+            Image img;
+            try {
+                img = ImageIO.read(file);
 
-            int width = entry.getWidth();
-            int height = entry.getHeight();
+                if (!updateImageEntry(img))
+                    return;
 
-            if (mayFitMemory(((long) width)*height*4*2)) {
-                Logging.info(tr("Loading {0}", file.getPath()));
-                tracker.addImage(img, 1);
+                int width = entry.getWidth();
+                int height = entry.getHeight();
 
-                // Wait for the end of loading
-                while (!tracker.checkID(1, true)) {
+                if (mayFitMemory(((long) width)*height*4*2)) {
+                    Logging.info(tr("Loading {0}", file.getPath()));
+                    tracker.addImage(img, 1);
+
+                    // Wait for the end of loading
+                    while (!tracker.checkID(1, true)) {
+                        if (this.entry != ImageDisplay.this.entry) {
+                            // The file has changed
+                            tracker.removeImage(img);
+                            return;
+                        }
+                        try {
+                            Thread.sleep(5);
+                        } catch (InterruptedException e) {
+                            Logging.trace(e);
+                            Logging.warn("InterruptedException in {0} while loading image {1}",
+                                    getClass().getSimpleName(), file.getPath());
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                    if (tracker.isErrorID(1)) {
+                        Logging.warn("Abort loading of {0} since tracker errored with 1", file);
+                        // the tracker catches OutOfMemory conditions
+                        tracker.removeImage(img);
+                        img = null;
+                    } else {
+                        tracker.removeImage(img);
+                    }
+                } else {
+                    Logging.warn("Abort loading of {0} since it might not fit into memory", file);
+                    img = null;
+                }
+
+                synchronized (ImageDisplay.this) {
                     if (this.entry != ImageDisplay.this.entry) {
                         // The file has changed
-                        tracker.removeImage(img);
                         return;
                     }
-                    try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        Logging.trace(e);
-                        Logging.warn("InterruptedException in {0} while loading image {1}",
-                                getClass().getSimpleName(), file.getPath());
-                        Thread.currentThread().interrupt();
-                    }
-                }
-                if (tracker.isErrorID(1)) {
-                    Logging.warn("Abort loading of {0} since tracker errored with 1", file);
-                    // the tracker catches OutOfMemory conditions
-                    tracker.removeImage(img);
-                    img = null;
-                } else {
-                    tracker.removeImage(img);
-                }
-            } else {
-                Logging.warn("Abort loading of {0} since it might not fit into memory", file);
-                img = null;
-            }
 
-            synchronized (ImageDisplay.this) {
-                if (this.entry != ImageDisplay.this.entry) {
-                    // The file has changed
-                    return;
-                }
-
-                if (img != null) {
-                    boolean switchedDim = false;
-                    if (ExifReader.orientationNeedsCorrection(entry.getExifOrientation())) {
-                        if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
-                            width = img.getHeight(null);
-                            height = img.getWidth(null);
-                            switchedDim = true;
+                    if (img != null) {
+                        boolean switchedDim = false;
+                        if (ExifReader.orientationNeedsCorrection(entry.getExifOrientation())) {
+                            if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
+                                width = img.getHeight(null);
+                                height = img.getWidth(null);
+                                switchedDim = true;
+                            }
+                            final BufferedImage rot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                            final AffineTransform xform = ExifReader.getRestoreOrientationTransform(
+                                    entry.getExifOrientation(),
+                                    img.getWidth(null),
+                                    img.getHeight(null));
+                            final Graphics2D g = rot.createGraphics();
+                            g.drawImage(img, xform, null);
+                            g.dispose();
+                            img = rot;
                         }
-                        final BufferedImage rot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                        final AffineTransform xform = ExifReader.getRestoreOrientationTransform(
-                                entry.getExifOrientation(),
-                                img.getWidth(null),
-                                img.getHeight(null));
-                        final Graphics2D g = rot.createGraphics();
-                        g.drawImage(img, xform, null);
-                        g.dispose();
-                        img = rot;
+
+                        ImageDisplay.this.image = img;
+                        visibleRect = new VisRect(0, 0, width, height);
+
+                        Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
+                                file.getPath(), width, height, width*height*4/1024/1024, switchedDim);
                     }
 
-                    ImageDisplay.this.image = img;
-                    visibleRect = new VisRect(0, 0, width, height);
-
-                    Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
-                            file.getPath(), width, height, width*height*4/1024/1024, switchedDim);
+                    selectedRect = null;
+                    errorLoading = (img == null);
                 }
-
-                selectedRect = null;
-                errorLoading = (img == null);
+                ImageDisplay.this.repaint();
+            } catch (IOException ex) {
+                Logging.error(ex);
             }
-            ImageDisplay.this.repaint();
         }
     }
 

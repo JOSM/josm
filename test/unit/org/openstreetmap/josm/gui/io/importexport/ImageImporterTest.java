@@ -18,9 +18,9 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Unit tests of {@link JpgImporter} class.
+ * Unit tests of {@link ImageImporter} class.
  */
-class JpgImporterTest {
+class ImageImporterTest {
 
     /**
      * Setup test
@@ -36,7 +36,7 @@ class JpgImporterTest {
     @Test
     void testTicket14868() throws IOException {
         List<File> files = new ArrayList<>();
-        JpgImporter.addRecursiveFiles(files, new HashSet<>(), Arrays.asList(
+        ImageImporter.addRecursiveFiles(files, new HashSet<>(), Arrays.asList(
                 new File("foo.jpg"), new File("foo.jpeg")
                 ), NullProgressMonitor.INSTANCE);
         assertEquals(2, files.size());

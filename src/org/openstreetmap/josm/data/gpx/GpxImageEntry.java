@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +18,8 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
-import com.drew.lang.CompoundException;
+import com.drew.imaging.png.PngMetadataReader;
+import com.drew.imaging.tiff.TiffMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -581,24 +583,63 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             return;
         }
 
+        String fn = file.getName();
+
         try {
-            metadata = JpegMetadataReader.readMetadata(file);
-        } catch (CompoundException | IOException ex) {
-            Logging.error(ex);
-            setExifTime(null);
-            setExifCoor(null);
-            setPos(null);
-            return;
+            // try to parse metadata according to extension
+            String ext = fn.substring(fn.lastIndexOf(".") + 1).toLowerCase();
+            switch (ext) {
+            case "jpg":
+            case "jpeg":
+                metadata = JpegMetadataReader.readMetadata(file);
+                break;
+            case "tif":
+            case "tiff":
+                metadata = TiffMetadataReader.readMetadata(file);
+                break;
+            case "png":
+                metadata = PngMetadataReader.readMetadata(file);
+                break;
+            default:
+                throw new NoMetadataReaderWarning(ext);
+            }
+        } catch (Exception topException) {
+            //try other formats (e.g. JPEG file with .png extension)
+            try {
+                metadata = JpegMetadataReader.readMetadata(file);
+            } catch (Exception ex1) {
+                try {
+                    metadata = TiffMetadataReader.readMetadata(file);
+                } catch (Exception ex2) {
+                    try {
+                        metadata = PngMetadataReader.readMetadata(file);
+                    } catch (Exception ex3) {
+
+                        Logging.warn(topException);
+                        Logging.info(tr("Can''t parse metadata for file \"{0}\". Using last modified date as timestamp.", fn));
+                        setExifTime(new Date(file.lastModified()));
+                        setExifCoor(null);
+                        setPos(null);
+                        return;
+                    }
+                }
+            }
         }
 
         // Changed to silently cope with no time info in exif. One case
         // of person having time that couldn't be parsed, but valid GPS info
+        Date time = null;
         try {
-            setExifTime(ExifReader.readTime(metadata));
+            time = ExifReader.readTime(metadata);
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException ex) {
             Logging.warn(ex);
-            setExifTime(null);
         }
+
+        if (time == null) {
+            Logging.info(tr("No EXIF time in file \"{0}\". Using last modified date as timestamp.", fn));
+            time = new Date(file.lastModified()); //use lastModified time if no EXIF time present
+        }
+        setExifTime(time);
 
         final Directory dir = metadata.getFirstDirectoryOfType(JpegDirectory.class);
         final Directory dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
@@ -622,7 +663,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             Logging.debug(ex);
         }
 
-        if (dirGps == null) {
+        if (dirGps == null || dirGps.getTagCount() <= 1) {
             setExifCoor(null);
             setPos(null);
             return;
@@ -654,6 +695,12 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             ifNotNull(ExifReader.readHeadline(dirIptc), this::setIptcHeadline);
             ifNotNull(ExifReader.readKeywords(dirIptc), this::setIptcKeywords);
             ifNotNull(ExifReader.readObjectName(dirIptc), this::setIptcObjectName);
+        }
+    }
+
+    private static class NoMetadataReaderWarning extends Exception {
+        NoMetadataReaderWarning(String ext) {
+            super("No metadata reader for format *." + ext);
         }
     }
 

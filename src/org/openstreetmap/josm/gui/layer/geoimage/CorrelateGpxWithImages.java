@@ -78,7 +78,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
-import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
+import org.openstreetmap.josm.gui.io.importexport.ImageImporter;
 import org.openstreetmap.josm.gui.io.importexport.NMEAImporter;
 import org.openstreetmap.josm.gui.io.importexport.RtkLibImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -717,7 +717,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             JButton openButton = new JButton(tr("Open another photo"));
             openButton.addActionListener(ae -> {
                 AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, false, null,
-                        JpgImporter.FILE_FILTER_WITH_FOLDERS, JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
+                        ImageImporter.FILE_FILTER_WITH_FOLDERS, JFileChooser.FILES_ONLY, "geoimage.lastdirectory");
                 if (fc == null)
                     return;
                 ImageEntry entry = new ImageEntry(fc.getSelectedFile());
