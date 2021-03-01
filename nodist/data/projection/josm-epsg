@@ -74,6 +74,8 @@
 <3059> +proj=tmerc +lon_0=24 +k_0=0.9996 +x_0=500000 +y_0=-6000000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=-18,54,30,60  <>
 # Lambert Zone (Estonia)
 <3301> +proj=lcc +lat_0=57.51755393055556 +lat_1=59.333333333333336 +lat_2=58 +lon_0=24 +x_0=500000 +y_0=6375000 +ellps=GRS80 +nadgrids=null +units=m +axis=neu +bounds=21.64,56.05,28.58,61.13  <>
+# LKS94 / Lithuania TM
+<3346> +proj=tmerc +lat_0=0 +lon_0=24 +k=0.9998 +x_0=500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +axis=neu +bounds=19.03,53.89,26.84,56.46 +no_defs <>
 # Belgian Lambert 2008
 <3812> +proj=lcc +lat_0=50d47'52.134" +lat_1=49d50'0" +lat_2=51d10'0" +lon_0=4d21'33.177" +x_0=649328 +y_0=665262 +ellps=GRS80 +nadgrids=null +units=m +bounds=2.54,49.51,6.4,51.5  <>
 # WGS 84 / Pseudo-Mercator

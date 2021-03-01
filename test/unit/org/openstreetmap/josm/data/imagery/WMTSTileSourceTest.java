@@ -61,6 +61,7 @@ public class WMTSTileSourceTest {
     private final ImageryInfo testImageryOntario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
     private final ImageryInfo testImageryGeoAdminCh = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-GeoAdminCh.xml");
     private final ImageryInfo testImagery12168 = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12168-WMTSCapabilities.xml");
+    private final ImageryInfo testImageryORT2LT = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Lithuania.xml");
     private final ImageryInfo testLotsOfLayers = getImagery(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml");
     private final ImageryInfo testDuplicateTags = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-identifier.xml");
     private final ImageryInfo testMissingStyleIdentifier = getImagery(TestUtils.getTestDataRoot() +
@@ -248,6 +249,20 @@ public class WMTSTileSourceTest {
         assertEquals(
                 "http://www.ngi.be/cartoweb/1.0.0/topo/default/3857/7/1/1.png",
                 testSource.getTileUrl(0, 1, 1));
+    }
+
+    @Test
+    public void testProjectionWithENUAxis() throws IOException, WMTSGetCapabilitiesException {
+        ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3346"));
+        WMTSTileSource testSource = new WMTSTileSource(testImageryORT2LT);
+        testSource.initProjection(ProjectionRegistry.getProjection());
+        TileXY tileXY0 = testSource.latLonToTileXY(55.31083718860799, 22.172052608196587, 0);
+        double delta = 1e-10;
+        assertEquals(27.09619727782481, tileXY0.getX(), delta);
+        assertEquals(19.03524443532604, tileXY0.getY(), delta);
+        TileXY tileXY2 = testSource.latLonToTileXY(55.31083718860799, 22.172052608196587, 2);
+        assertEquals(81.28859183347444, tileXY2.getX(), delta);
+        assertEquals(57.10573330597811, tileXY2.getY(), delta);
     }
 
     @Test

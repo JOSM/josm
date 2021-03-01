@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd" version="1.0.0">
+    <Contents>
+        <Layer>
+            <ows:Title>NZT_ORT2LT_2018</ows:Title>
+            <ows:Identifier>NZT_ORT2LT_2018</ows:Identifier>
+            <ows:BoundingBox crs="urn:ogc:def:crs:EPSG::3346">
+                <ows:LowerCorner>6022999.8655913975 316000.06350012776</ows:LowerCorner>
+                <ows:UpperCorner>6211000.061383456 605999.984124969</ows:UpperCorner>
+            </ows:BoundingBox>
+            <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+                <ows:LowerCorner>21.05003442434057 54.31083718956931</ows:LowerCorner>
+                <ows:UpperCorner>25.70028436683549 56.0330467679823</ows:UpperCorner>
+            </ows:WGS84BoundingBox>
+            <Style isDefault="true">
+                <ows:Title>Default Style</ows:Title>
+                <ows:Identifier>default</ows:Identifier>
+            </Style>
+            <Format>image/png</Format>
+            <TileMatrixSetLink>
+                <TileMatrixSet>default028mm</TileMatrixSet>
+            </TileMatrixSetLink>
+            <ResourceURL format="image/png" resourceType="tile" template="https://this_is_test/tile/{TileMatrix}/{TileRow}/{TileCol}"/>
+        </Layer>
+        <TileMatrixSet>
+            <ows:Title>TileMatrix using 0.28mm</ows:Title>
+            <ows:Abstract>The tile matrix set that has scale values calculated based on the dpi defined by OGC specification (dpi assumes 0.28mm as the physical distance of a pixel).</ows:Abstract>
+            <ows:Identifier>default028mm</ows:Identifier>
+            <ows:SupportedCRS>urn:ogc:def:crs:EPSG::3346</ows:SupportedCRS>
+            <TileMatrix>
+                <ows:Identifier>0</ows:Identifier>
+                <ScaleDenominator>2834827.0982252685</ScaleDenominator>
+                <TopLeftCorner>1.00001E7 -5122000.0</TopLeftCorner>
+                <TileWidth>256</TileWidth>
+                <TileHeight>256</TileHeight>
+                <MatrixWidth>29</MatrixWidth>
+                <MatrixHeight>20</MatrixHeight>
+            </TileMatrix>
+            <TileMatrix>
+                <ows:Identifier>1</ows:Identifier>
+                <ScaleDenominator>1889884.7321501793</ScaleDenominator>
+                <TopLeftCorner>1.00001E7 -5122000.0</TopLeftCorner>
+                <TileWidth>256</TileWidth>
+                <TileHeight>256</TileHeight>
+                <MatrixWidth>43</MatrixWidth>
+                <MatrixHeight>30</MatrixHeight>
+            </TileMatrix>
+            <TileMatrix>
+                <ows:Identifier>2</ows:Identifier>
+                <ScaleDenominator>944942.3660750897</ScaleDenominator>
+                <TopLeftCorner>1.00001E7 -5122000.0</TopLeftCorner>
+                <TileWidth>256</TileWidth>
+                <TileHeight>256</TileHeight>
+                <MatrixWidth>85</MatrixWidth>
+                <MatrixHeight>59</MatrixHeight>
+            </TileMatrix>
+        </TileMatrixSet>
+    </Contents>
+    <ServiceMetadataURL xlink:href="http://www.geoportal.lt/arcgis/rest/services/NZT/ORT2LT_2018/MapServer/WMTS/1.0.0/WMTSCapabilities.xml"/>
+</Capabilities>
