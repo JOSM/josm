@@ -206,7 +206,12 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         if (getImageryName().isEmpty()) {
             return false;
         }
-        if (setDefaultLayers.isSelected() && (tree == null || tree.getSelectedLayers().isEmpty())) {
+        /*
+         * We need selection of the layers in following situations:
+         * * endpoint is not selected (and we don't care about setDefault layers as it's disabled anyway)
+         * * endpoint is selected and setDefultLayers is selected
+         */
+        if ((!endpoint.isSelected() || setDefaultLayers.isSelected()) && (tree == null || tree.getSelectedLayers().isEmpty())) {
             return false;
         }
         if (endpoint.isSelected()) {
