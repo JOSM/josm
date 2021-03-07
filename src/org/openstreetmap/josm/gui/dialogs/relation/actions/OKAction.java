@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Apply the updates and close the dialog.
@@ -28,7 +29,7 @@ public class OKAction extends SavingAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Config.getPref().put("relation.editor.generic.lastrole", tfRole.getText());
+        Config.getPref().put("relation.editor.generic.lastrole", Utils.strip(tfRole.getText()));
         editorAccess.getMemberTable().stopHighlighting();
         if (!applyChanges())
             return;

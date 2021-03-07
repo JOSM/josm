@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Cancel the updates and close the dialog
@@ -49,7 +50,7 @@ public class CancelAction extends SavingAction {
             int ret = confirmClosingByCancel();
             if (ret == 0) { //Yes, save the changes
                 //copied from OKAction.run()
-                Config.getPref().put("relation.editor.generic.lastrole", tfRole.getText());
+                Config.getPref().put("relation.editor.generic.lastrole", Utils.strip(tfRole.getText()));
                 if (!applyChanges())
                     return;
             } else if (ret == 2 || ret == JOptionPane.CLOSED_OPTION) //Cancel, continue editing
