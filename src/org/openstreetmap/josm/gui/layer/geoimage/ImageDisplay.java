@@ -242,6 +242,13 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         }
 
         private boolean updateImageEntry(Image img) {
+            if (img == null) {
+                synchronized (ImageDisplay.this) {
+                    errorLoading = true;
+                    ImageDisplay.this.repaint();
+                    return false;
+                }
+            }
             if (!(entry.getWidth() > 0 && entry.getHeight() > 0)) {
                 synchronized (entry) {
                     int width = img.getWidth(this);

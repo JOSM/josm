@@ -4,8 +4,10 @@ package org.openstreetmap.josm.data.gpx;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -18,8 +20,11 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.png.PngMetadataReader;
+import com.drew.imaging.png.PngProcessingException;
 import com.drew.imaging.tiff.TiffMetadataReader;
+import com.drew.imaging.tiff.TiffProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -587,7 +592,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
 
         try {
             // try to parse metadata according to extension
-            String ext = fn.substring(fn.lastIndexOf(".") + 1).toLowerCase();
+            String ext = fn.substring(fn.lastIndexOf('.') + 1).toLowerCase(Locale.US);
             switch (ext) {
             case "jpg":
             case "jpeg":
@@ -603,18 +608,18 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             default:
                 throw new NoMetadataReaderWarning(ext);
             }
-        } catch (Exception topException) {
+        } catch (JpegProcessingException | TiffProcessingException | PngProcessingException | IOException
+                | NoMetadataReaderWarning topException) {
             //try other formats (e.g. JPEG file with .png extension)
             try {
                 metadata = JpegMetadataReader.readMetadata(file);
-            } catch (Exception ex1) {
+            } catch (JpegProcessingException | IOException ex1) {
                 try {
                     metadata = TiffMetadataReader.readMetadata(file);
-                } catch (Exception ex2) {
+                } catch (TiffProcessingException | IOException ex2) {
                     try {
                         metadata = PngMetadataReader.readMetadata(file);
-                    } catch (Exception ex3) {
-
+                    } catch (PngProcessingException | IOException ex3) {
                         Logging.warn(topException);
                         Logging.info(tr("Can''t parse metadata for file \"{0}\". Using last modified date as timestamp.", fn));
                         setExifTime(new Date(file.lastModified()));

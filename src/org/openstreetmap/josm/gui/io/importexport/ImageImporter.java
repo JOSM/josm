@@ -7,9 +7,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -29,7 +31,8 @@ public class ImageImporter extends FileImporter {
     /**
      * The supported image file types on the current system
      */
-    public static final String[] SUPPORTED_FILE_TYPES = ImageIO.getReaderFileSuffixes();
+    public static final List<String> SUPPORTED_FILE_TYPES = Collections
+            .unmodifiableList(Arrays.stream(ImageIO.getReaderFileSuffixes()).sorted().collect(Collectors.toList()));
 
     /**
      * The default file filter
