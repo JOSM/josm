@@ -45,7 +45,7 @@ final class RelationRoleEditor {
             return;
         }
         final List<RelationMember> newMembers = relation.getMembers();
-        newMembers.replaceAll(m -> members.contains(m) ? new RelationMember(newRole, m.getMember()) : m);
+        newMembers.replaceAll(m -> members.contains(m) ? new RelationMember(Utils.strip(newRole), m.getMember()) : m);
         UndoRedoHandler.getInstance().add(new ChangeMembersCommand(relation, newMembers));
     }
 }
