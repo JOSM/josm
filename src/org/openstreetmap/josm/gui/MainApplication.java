@@ -105,6 +105,7 @@ import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
+import org.openstreetmap.josm.gui.io.importexport.Options;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
@@ -1275,7 +1276,7 @@ public class MainApplication {
             tasks.addAll(DownloadParamType.paramType(s).download(s, fileList));
         }
         if (!fileList.isEmpty()) {
-            tasks.add(OpenFileAction.openFiles(fileList, true));
+            tasks.add(OpenFileAction.openFiles(fileList, Options.RECORD_HISTORY));
         }
         for (String s : args.get(Option.DOWNLOADGPS)) {
             tasks.addAll(DownloadParamType.paramType(s).downloadGps(s));

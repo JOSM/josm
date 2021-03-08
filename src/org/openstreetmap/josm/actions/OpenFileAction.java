@@ -200,9 +200,9 @@ public class OpenFileAction extends DiskAccessAction {
          * Set the options for the task.
          * @param options The options to set
          * @see Options
-         * @since 17534
+         * @since 17556
          */
-        public void setOptions(Options[] options) {
+        public void setOptions(Options... options) {
             this.options.clear();
             if (options != null) {
                 Stream.of(options).filter(Objects::nonNull).forEach(this.options::add);
