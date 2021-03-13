@@ -454,7 +454,12 @@ public class QuadBuckets<T extends IQuadBucketType> implements Collection<T> {
 
     @Override
     public Object[] toArray() {
-        return this.toList().toArray();
+        // Don't call toList() -- in some cases, this can produce an infinite loop
+        // For example, ArrayList may call toArray to get the initial array. However, since we are
+        // creating a new ArrayList in toList with `this`, this creates an infinite recursion loop.
+        // So a `toArray` call becomes `toArray -> toList -> toArray -> toList -> toArray -> ...`
+        // For more information, see #20587.
+        return this.stream().toArray();
     }
 
     @Override
