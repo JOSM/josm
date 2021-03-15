@@ -4,8 +4,8 @@ package org.openstreetmap.josm.gui.conflict.tags;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -212,17 +212,21 @@ class TagConflictResolutionUtilTest {
         @Test
         void testResolve() {
             for (AutomaticCombine resolver: differentlyConstructed(new AutomaticCombine("random", "", true, "|", "String"))) {
-                assertEquals(resolver.resolve(newHashSet("value1", "value2")), "value1|value2");
-                assertEquals(resolver.resolve(newHashSet("3|1", "4|2|1", "6|05", "3;1")), "05|1|2|3|3;1|4|6");
+                assertEquals("value1|value2", resolver.resolve(newHashSet("value1", "value2")));
+                assertEquals("05|1|2|3|3;1|4|6", resolver.resolve(newHashSet("3|1", "4|2|1", "6|05", "3;1")));
             }
 
             for (AutomaticCombine resolver: differentlyConstructed(new AutomaticCombine("test[45].*", "", true, ";", "Integer"))) {
-                assertEquals(resolver.resolve(newHashSet("1254545;95;24", "25;24;3")), "3;24;25;95;1254545");
+                assertEquals("3;24;25;95;1254545", resolver.resolve(newHashSet("1254545;95;24", "25;24;3")));
             }
 
             for (AutomaticCombine resolver: differentlyConstructed(new AutomaticCombine("AB", "", true, ";", null))) {
                 String resolution = resolver.resolve(newHashSet("3;x;1", "4;x"));
                 assertTrue(resolution.equals("3;x;1;4") || resolution.equals("4;x;3;1"));
+            }
+
+            for (AutomaticCombine resolver: differentlyConstructed(new AutomaticCombine("foo", "", true, ";", "Integer"))) {
+                assertEquals("bar;1;2;3", resolver.resolve(newHashSet("1;2;3", "bar")));
             }
         }
     }

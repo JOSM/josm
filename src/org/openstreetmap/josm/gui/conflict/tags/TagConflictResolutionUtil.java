@@ -297,9 +297,15 @@ public final class TagConflictResolutionUtil {
         @Override
         public String resolve(Set<String> values) {
             Set<String> results = instantiateSortedSet();
-            for (String value: values) {
-                String[] parts = value.split(Pattern.quote(separator), -1);
-                results.addAll(Arrays.asList(parts));
+            String pattern = Pattern.quote(separator);
+            try {
+                for (String value: values) {
+                    results.addAll(Arrays.asList(value.split(pattern, -1)));
+                }
+            } catch (NumberFormatException e) {
+                Logging.error("Unable to parse {0} values in {1} -> {2}", sort, this, e.getMessage());
+                Logging.debug(e);
+                results = values;
             }
             return String.join(separator, results);
         }
