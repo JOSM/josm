@@ -160,7 +160,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("gpxfilter", inCore),
             new DeprecatedPlugin("tag2link", inCore),
             new DeprecatedPlugin("rapid", tr(replacedByPlugin, "MapWithAI")),
-            new DeprecatedPlugin("MovementAlert", inCore)
+            new DeprecatedPlugin("MovementAlert", inCore),
+            new DeprecatedPlugin("OpenStreetCam", tr(replacedByPlugin, "KartaView"))
         );
         Collections.sort(DEPRECATED_PLUGINS);
     }
