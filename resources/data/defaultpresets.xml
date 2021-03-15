@@ -1402,6 +1402,11 @@
                 <space />
                 <key key="traffic_calming" value="island" />
             </item> <!-- Island -->
+            <item name="Mini bumps" icon="presets/vehicle/mini_bumps.svg" type="node,way" preset_name_label="true">
+                <link wiki="Key:traffic_calming" />
+                <space />
+                <key key="traffic_calming" value="mini_bumps" />
+            </item> <!-- Mini bumps -->
         </group> <!-- Traffic Calming -->
         <item name="Passing Place" icon="presets/vehicle/passing_place.svg" type="node" preset_name_label="true">
             <link wiki="Tag:highway=passing_place" />

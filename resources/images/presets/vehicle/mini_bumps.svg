@@ -1,0 +1,16 @@
+<svg height="16" viewBox="0 0 9 16" width="9" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(0 -1036.3621)">
+        <path d="m147.89999 370.10001h6.5v14.1h-6.5z" fill="#808080" transform="matrix(1.3846053 0 0 1.1346381 -204.78305 616.43414)"/>
+        <g fill="#fff">
+            <path d="m5 1039.3653h-1v-2h1z"/>
+            <path d="m5 1042.3653h-1v-2h1z"/>
+            <path d="m5 1048.3653h-1v-2h1z"/>
+            <path d="m5 1051.3653h-1v-2h1z"/>
+        </g>
+        <g fill="#4d4d4d">
+            <path d="m.000002 1043.3652h1.973126v2h-1.973126z"/>
+            <path d="m6.018213 1043.4071h1.973126v2h-1.973126z"/>
+            <path d="m3.035107 1043.385h1.973126v2h-1.973126z"/>
+        </g>
+    </g>
+</svg>
