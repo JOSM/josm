@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
@@ -95,15 +96,24 @@ public class GeoJSONWriter {
      */
     public String write(boolean pretty) {
         StringWriter stringWriter = new StringWriter();
+        write(pretty, stringWriter);
+        return stringWriter.toString();
+    }
+
+    /**
+     * Writes OSM data as a GeoJSON string (prettified or not).
+     * @param pretty {@code true} to have pretty output, {@code false} otherwise
+     * @param writer The writer used to write results
+     */
+    public void write(boolean pretty, Writer writer) {
         Map<String, Object> config = Collections.singletonMap(JsonGenerator.PRETTY_PRINTING, pretty);
-        try (JsonWriter writer = Json.createWriterFactory(config).createWriter(stringWriter)) {
+        try (JsonWriter jsonWriter = Json.createWriterFactory(config).createWriter(writer)) {
             JsonObjectBuilder object = Json.createObjectBuilder()
                     .add("type", "FeatureCollection")
                     .add("generator", "JOSM");
             appendLayerBounds(data, object);
             appendLayerFeatures(data, object);
-            writer.writeObject(object.build());
-            return stringWriter.toString();
+            jsonWriter.writeObject(object.build());
         }
     }
 

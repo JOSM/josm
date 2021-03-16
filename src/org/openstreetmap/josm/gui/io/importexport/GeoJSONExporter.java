@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GeoJSONWriter;
@@ -34,8 +35,9 @@ public class GeoJSONExporter extends FileExporter {
     @Override
     public void exportData(File file, Layer layer) throws IOException {
         if (layer instanceof OsmDataLayer) {
+            DataSet data = ((OsmDataLayer) layer).data;
             try (Writer out = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-                out.write(new GeoJSONWriter(((OsmDataLayer) layer).data).write());
+                new GeoJSONWriter(data).write(true, out);
             }
         } else {
             throw new IllegalArgumentException(tr("Layer ''{0}'' not supported", layer.getClass().toString()));
