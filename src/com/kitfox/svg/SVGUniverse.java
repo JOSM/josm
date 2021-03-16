@@ -146,7 +146,7 @@ public class SVGUniverse implements Serializable
     {
         double oldTime = this.curTime;
         this.curTime = curTime;
-        changes.firePropertyChange("curTime", new Double(oldTime), new Double(curTime));
+        changes.firePropertyChange("curTime", oldTime, curTime);
     }
 
     /**
