@@ -110,7 +110,6 @@ public final class ImageEntry extends GpxImageEntry {
         return this.dataSet;
     }
 
-
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), thumbnail);
