@@ -218,9 +218,9 @@ public class ImageData implements Data {
     }
 
     /**
-     * Indicate that a entry has changed
+     * Indicate that an entry has changed
      * @param gpxImageEntry The entry to update
-     * @since xxx
+     * @since 17574
      */
     public void fireNodeMoved(ImageEntry gpxImageEntry) {
         this.geoImages.remove(gpxImageEntry);

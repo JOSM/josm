@@ -95,7 +95,7 @@ public final class ImageEntry extends GpxImageEntry {
     /**
      * Set the dataset for this image
      * @param imageData The dataset
-     * @since xxx
+     * @since 17574
      */
     public void setDataSet(ImageData imageData) {
         this.dataSet = imageData;
@@ -104,7 +104,7 @@ public final class ImageEntry extends GpxImageEntry {
     /**
      * Get the dataset for this image
      * @return The dataset
-     * @since xxx
+     * @since 17574
      */
     public ImageData getDataSet() {
         return this.dataSet;
