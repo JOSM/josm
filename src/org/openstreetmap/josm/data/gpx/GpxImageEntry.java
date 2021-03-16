@@ -551,7 +551,8 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     @Override
     public BBox getBBox() {
         // new BBox(LatLon) is null safe.
-        return new BBox(this.getExifCoor());
+        // Use `getPos` instead of `getExifCoor` since the image may be coorelated against a GPX track
+        return new BBox(this.getPos());
     }
 
     /**
