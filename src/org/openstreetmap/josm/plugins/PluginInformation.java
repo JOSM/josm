@@ -149,6 +149,7 @@ public class PluginInformation {
      * @throws PluginException if the plugin information can't be read from the input stream
      */
     public PluginInformation(InputStream manifestStream, String name, String url) throws PluginException {
+        this.name = name;
         try {
             Manifest manifest = new Manifest();
             manifest.read(manifestStream);

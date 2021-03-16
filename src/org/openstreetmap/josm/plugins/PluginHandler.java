@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
@@ -184,7 +185,9 @@ public final class PluginHandler {
          */
         public String getText() {
             StringBuilder b = new StringBuilder();
-            for (Entry<Object, Object> e : info.attr.entrySet()) {
+            Map<Object, Object> sorted = new TreeMap<>(Comparator.comparing(String::valueOf));
+            sorted.putAll(info.attr);
+            for (Entry<Object, Object> e : sorted.entrySet()) {
                 b.append(e.getKey());
                 b.append(": ");
                 b.append(e.getValue());
