@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Objects;
 
+import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 
 /**
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 public final class ImageEntry extends GpxImageEntry {
 
     private Image thumbnail;
+    private ImageData dataSet;
 
     /**
      * Constructs a new {@code ImageEntry}.
@@ -73,6 +75,41 @@ public final class ImageEntry extends GpxImageEntry {
             new ThumbsLoader(Collections.singleton(this)).run();
         }
     }
+
+    @Override
+    public void applyTmp() {
+        super.applyTmp();
+        if (this.dataSet != null) {
+            this.dataSet.fireNodeMoved(this);
+        }
+    }
+
+    @Override
+    public void discardTmp() {
+        super.discardTmp();
+        if (this.dataSet != null) {
+            this.dataSet.fireNodeMoved(this);
+        }
+    }
+
+    /**
+     * Set the dataset for this image
+     * @param imageData The dataset
+     * @since xxx
+     */
+    public void setDataSet(ImageData imageData) {
+        this.dataSet = imageData;
+    }
+
+    /**
+     * Get the dataset for this image
+     * @return The dataset
+     * @since xxx
+     */
+    public ImageData getDataSet() {
+        return this.dataSet;
+    }
+
 
     @Override
     public int hashCode() {

@@ -63,6 +63,7 @@ public class ImageData implements Data {
             this.data = new ArrayList<>();
         }
         this.geoImages.addAll(this.data);
+        data.forEach(image -> image.setDataSet(this));
         selectedImagesIndex.add(-1);
     }
 
@@ -214,6 +215,16 @@ public class ImageData implements Data {
             selectedImagesIndex.add(index);
             listeners.fireEvent(l -> l.selectedImageChanged(this));
         }
+    }
+
+    /**
+     * Indicate that a entry has changed
+     * @param gpxImageEntry The entry to update
+     * @since xxx
+     */
+    public void fireNodeMoved(ImageEntry gpxImageEntry) {
+        this.geoImages.remove(gpxImageEntry);
+        this.geoImages.add(gpxImageEntry);
     }
 
     /**
