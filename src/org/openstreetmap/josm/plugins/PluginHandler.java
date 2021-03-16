@@ -184,7 +184,7 @@ public final class PluginHandler {
          */
         public String getText() {
             StringBuilder b = new StringBuilder();
-            for (Entry<String, String> e : info.attr.entrySet()) {
+            for (Entry<Object, Object> e : info.attr.entrySet()) {
                 b.append(e.getKey());
                 b.append(": ");
                 b.append(e.getValue());

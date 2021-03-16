@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.jar.Attributes;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -204,7 +205,7 @@ public class MainApplicationTest {
 
     private static PluginInformation newPluginInformation(String plugin) throws PluginListParseException {
         return PluginListParser.createInfo(plugin+".jar", "https://josm.openstreetmap.de/osmsvn/applications/editors/josm/dist/"+plugin+".jar",
-                "");
+                new Attributes());
     }
 
     /**

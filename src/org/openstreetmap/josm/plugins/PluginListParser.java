@@ -4,13 +4,13 @@ package org.openstreetmap.josm.plugins;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.jar.Attributes;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -29,14 +29,14 @@ public class PluginListParser {
      *
      * @param name the plugin name
      * @param url the plugin download url
-     * @param manifest the plugin manifest
+     * @param manifest the plugin manifest attributes
      * @return a plugin information object
      * @throws PluginListParseException if plugin manifest cannot be parsed
      */
-    public static PluginInformation createInfo(String name, String url, String manifest) throws PluginListParseException {
+    public static PluginInformation createInfo(String name, String url, Attributes manifest) throws PluginListParseException {
         try {
             return new PluginInformation(
-                    new ByteArrayInputStream(manifest.getBytes(StandardCharsets.UTF_8)),
+                    manifest,
                     name.substring(0, name.length() - 4),
                     url
                     );
@@ -61,36 +61,29 @@ public class PluginListParser {
         try (BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
             String name = null;
             String url = null;
-            StringBuilder manifest = new StringBuilder();
+            Attributes manifest = new Attributes();
             for (String line = r.readLine(); line != null; line = r.readLine()) {
                 if (line.startsWith("\t")) {
-                    line = line.substring(1);
-                    /* NOTE: Although manifest specification says line should not be longer than 72 bytes it
-                       supports more than 500 bytes and thus even the longest possible 72 character UTF-8, so
-                       this code correctly splits the text at 70 characters, not bytes. */
-                    while (line.length() > 70) {
-                        manifest.append(line.substring(0, 70)).append('\n');
-                        line = ' ' + line.substring(70);
-                    }
-                    manifest.append(line).append('\n');
+                    final String[] keyValue = line.split("\\s*:\\s*", 2);
+                    manifest.put(new Attributes.Name(keyValue[0].substring(1)), keyValue[1]);
                     continue;
                 }
-                addPluginInformation(ret, name, url, manifest.toString());
+                addPluginInformation(ret, name, url, manifest);
                 String[] x = line.split(";", -1);
                 if (x.length != 2)
                     throw new IOException(tr("Illegal entry in plugin list.") + " " + line);
                 name = x[0];
                 url = x[1];
-                manifest = new StringBuilder();
+                manifest = new Attributes();
             }
-            addPluginInformation(ret, name, url, manifest.toString());
+            addPluginInformation(ret, name, url, manifest);
             return ret;
         } catch (IOException e) {
             throw new PluginListParseException(e);
         }
     }
 
-    private static void addPluginInformation(List<PluginInformation> ret, String name, String url, String manifest) {
+    private static void addPluginInformation(List<PluginInformation> ret, String name, String url, Attributes manifest) {
         try {
             if (name != null) {
                 PluginInformation info = createInfo(name, url, manifest);

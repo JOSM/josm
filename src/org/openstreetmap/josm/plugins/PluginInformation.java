@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -93,7 +92,7 @@ public class PluginInformation {
     /** The libraries referenced in Class-Path manifest attribute. */
     public List<URL> libraries = new LinkedList<>();
     /** All manifest attributes. */
-    public final Map<String, String> attr = new TreeMap<>();
+    public Attributes attr;
     /** Invalid manifest entries */
     final List<String> invalidManifestEntries = new ArrayList<>();
     /** Empty icon for these plugins which have none */
@@ -133,7 +132,7 @@ public class PluginInformation {
             Manifest manifest = jar.getManifest();
             if (manifest == null)
                 throw new PluginException(tr("The plugin file ''{0}'' does not include a Manifest.", file.toString()));
-            scanManifest(manifest, false);
+            scanManifest(manifest.getMainAttributes(), false);
             libraries.add(0, Utils.fileToURL(file));
         } catch (IOException | InvalidPathException e) {
             throw new PluginException(name, e);
@@ -150,17 +149,33 @@ public class PluginInformation {
      * @throws PluginException if the plugin information can't be read from the input stream
      */
     public PluginInformation(InputStream manifestStream, String name, String url) throws PluginException {
-        this.name = name;
         try {
             Manifest manifest = new Manifest();
             manifest.read(manifestStream);
             if (url != null) {
                 downloadlink = url;
             }
-            scanManifest(manifest, url != null);
+            scanManifest(manifest.getMainAttributes(), url != null);
         } catch (IOException e) {
             throw new PluginException(name, e);
         }
+    }
+
+    /**
+     * Creates a plugin information object by reading plugin information in Manifest format
+     * from the input stream {@code manifestStream}.
+     *
+     * @param attr the manifest attributes
+     * @param name the plugin name
+     * @param url the download URL for the plugin
+     * @throws PluginException if the plugin information can't be read from the input stream
+     */
+    public PluginInformation(Attributes attr, String name, String url) throws PluginException {
+        this.name = name;
+        if (url != null) {
+            downloadlink = url;
+        }
+        scanManifest(attr, url != null);
     }
 
     /**
@@ -188,8 +203,7 @@ public class PluginInformation {
         this.iconPath = other.iconPath;
         this.canloadatruntime = other.canloadatruntime;
         this.libraries = other.libraries;
-        this.attr.clear();
-        this.attr.putAll(other.attr);
+        this.attr = new Attributes(other.attr);
         this.invalidManifestEntries.clear();
         this.invalidManifestEntries.addAll(other.invalidManifestEntries);
     }
@@ -214,9 +228,8 @@ public class PluginInformation {
         this.file = other.file;
     }
 
-    private void scanManifest(Manifest manifest, boolean oldcheck) {
+    private void scanManifest(Attributes attr, boolean oldcheck) {
         String lang = LanguageInfo.getLanguageCodeManifest();
-        Attributes attr = manifest.getMainAttributes();
         className = attr.getValue("Plugin-Class");
         String s = Optional.ofNullable(attr.getValue(lang+"Plugin-Link")).orElseGet(() -> attr.getValue("Plugin-Link"));
         if (s != null && !Utils.isValidUrl(s)) {
@@ -317,9 +330,7 @@ public class PluginInformation {
                 libraries.add(Utils.fileToURL(entryFile));
             }
         }
-        for (Object o : attr.keySet()) {
-            this.attr.put(o.toString(), attr.getValue(o.toString()));
-        }
+        this.attr = attr;
     }
 
     /**
