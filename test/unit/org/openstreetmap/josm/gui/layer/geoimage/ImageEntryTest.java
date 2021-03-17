@@ -4,9 +4,11 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -36,6 +38,7 @@ class ImageEntryTest {
         EqualsVerifier.forClass(ImageEntry.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
             .withPrefabValues(GpxImageEntry.class, new GpxImageEntry(new File("foo")), new GpxImageEntry(new File("bar")))
+            .withPrefabValues(ImageData.class, new ImageData(), new ImageData(new ArrayList<>()))
             .verify();
     }
 }
