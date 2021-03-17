@@ -102,7 +102,7 @@ class DividedScaleTest {
         DividedScale<String> scale = new DividedScale<String>()
                 .put("foo", new Range(4., 8.));
         Exception ex = assertThrows(DividedScale.RangeViolatedError.class, () -> scale.put("bar", new Range(4., 9.)));
-        assertEquals("the new range must be within a single subrange (1)", ex.getMessage());
+        assertEquals("the new range must be within a single subrange", ex.getMessage());
     }
 
     /**
@@ -124,6 +124,6 @@ class DividedScaleTest {
         DividedScale<String> scale = new DividedScale<String>()
                 .put("foo", new Range(4., 8.));
         Exception ex = assertThrows(DividedScale.RangeViolatedError.class, () -> scale.put("bar", new Range(2., 5.)));
-        assertEquals("the new range must be within a single subrange (2)", ex.getMessage());
+        assertEquals("the new range must be within a single subrange", ex.getMessage());
     }
 }

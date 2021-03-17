@@ -36,20 +36,19 @@ public class DividedScale<T> {
     }
 
     /* list of boundaries for the scale ranges */
-    private final List<Double> bd;
+    private final List<Range> ranges;
     /* data objects for each scale range */
     private final List<T> data;
 
     protected DividedScale() {
-        bd = new ArrayList<>();
-        bd.add(0.0);
-        bd.add(Double.POSITIVE_INFINITY);
+        ranges = new ArrayList<>();
+        ranges.add(Range.ZERO_TO_INFINITY);
         data = new ArrayList<>();
         data.add(null);
     }
 
     protected DividedScale(DividedScale<T> s) {
-        bd = new ArrayList<>(s.bd);
+        ranges = new ArrayList<>(s.ranges);
         data = new ArrayList<>(s.data);
     }
 
@@ -63,7 +62,8 @@ public class DividedScale<T> {
         if (scale <= 0)
             throw new IllegalArgumentException("scale must be <= 0 but is "+scale);
         for (int i = 0; i < data.size(); ++i) {
-            if (bd.get(i) < scale && scale <= bd.get(i+1)) {
+            Range range = ranges.get(i);
+            if (range.contains(scale)) {
                 return data.get(i);
             }
         }
@@ -81,8 +81,9 @@ public class DividedScale<T> {
         if (scale <= 0)
             throw new IllegalArgumentException("scale must be <= 0 but is "+scale);
         for (int i = 0; i < data.size(); ++i) {
-            if (bd.get(i) < scale && scale <= bd.get(i+1)) {
-                return new Pair<>(data.get(i), new Range(bd.get(i), bd.get(i+1)));
+            Range range = ranges.get(i);
+            if (range.contains(scale)) {
+                return new Pair<>(data.get(i), range);
             }
         }
         throw new AssertionError();
@@ -109,59 +110,43 @@ public class DividedScale<T> {
      *
      * ASCII-art explanation:
      *
-     *              data[i]
-     *  --|-------|---------|--
-     * bd[i-1]  bd[i]    bd[i+1]
-     *
-     *         (--------]
-     *       lower     upper
+     *    data[i-1]      data[i]      data[i+1
+     * |--------------|------------|--------------|
+     * (--range[i-1]--]
+     *                (--range[i]--]
+     *                             (--range[i+1]--]
+     *                       (--------]
+     *                     lower     upper
      * @param o data object
      * @param lower lower bound
      * @param upper upper bound
      */
     private void putImpl(T o, double lower, double upper) {
         int i = 0;
-        while (bd.get(i) < lower) {
+        while (ranges.get(i).getUpper() <= lower) {
             ++i;
         }
-        if (bd.get(i) == lower) {
-            if (upper > bd.get(i+1))
-                throw new RangeViolatedError("the new range must be within a single subrange (1)");
-            if (data.get(i) != null)
-                throw new RangeViolatedError("the new range must be within a subrange that has no data");
-
-            if (bd.get(i+1) == upper) {
-                //  --|-------|--------|--
-                //   i-1      i       i+1
-                //            (--------]
-                data.set(i, o);
-            } else {
-                //  --|-------|--------|--
-                //   i-1      i       i+1
-                //            (-----]
-                bd.add(i+1, upper);
-                data.add(i, o);
-            }
-        } else {
-            if (bd.get(i) < upper)
-                throw new RangeViolatedError("the new range must be within a single subrange (2)");
-            if (data.get(i-1) != null)
-                throw new AssertionError();
-
-            //  --|-------|--------|--
-            //   i-1      i       i+1
-            //       (--]   or
-            //       (----]
-            bd.add(i, lower);
+        Range split = ranges.get(i);
+        if (split.getUpper() < upper) {
+            throw new RangeViolatedError("the new range must be within a single subrange");
+        } else if (data.get(i) != null) {
+            throw new RangeViolatedError("the new range must be within a subrange that has no data");
+        } else if (split.getLower() == lower && split.getUpper() == upper) {
+            data.set(i, o);
+        } else if (split.getLower() == lower) {
+            ranges.set(i, new Range(split.getLower(), upper));
+            ranges.add(i + 1, new Range(upper, split.getUpper()));
             data.add(i, o);
-
-            //  --|--|----|--------|--
-            //   i-1 i   i+1      i+2
-            //       (--]
-            if (bd.get(i+1) > upper) {
-                bd.add(i+1, upper);
-                data.add(i+1, null);
-            }
+        } else if (split.getUpper() == upper) {
+            ranges.set(i, new Range(split.getLower(), lower));
+            ranges.add(i + 1, new Range(lower, split.getUpper()));
+            data.add(i + 1, o);
+        } else {
+            ranges.set(i, new Range(split.getLower(), lower));
+            ranges.add(i + 1, new Range(lower, upper));
+            ranges.add(i + 2, new Range(upper, split.getUpper()));
+            data.add(i + 1, o);
+            data.add(i + 2, null);
         }
     }
 
@@ -170,13 +155,13 @@ public class DividedScale<T> {
      * @throws AssertionError When an invariant is broken.
      */
     public void consistencyTest() {
-        if (bd.size() < 2) throw new AssertionError(bd);
+        if (ranges.size() < 1) throw new AssertionError(ranges);
         if (data.isEmpty()) throw new AssertionError(data);
-        if (bd.size() != data.size() + 1) throw new AssertionError();
-        if (bd.get(0) != 0) throw new AssertionError();
-        if (bd.get(bd.size() - 1) != Double.POSITIVE_INFINITY) throw new AssertionError();
+        if (ranges.size() != data.size()) throw new AssertionError();
+        if (ranges.get(0).getLower() != 0) throw new AssertionError();
+        if (ranges.get(ranges.size() - 1).getUpper() != Double.POSITIVE_INFINITY) throw new AssertionError();
         for (int i = 0; i < data.size() - 1; ++i) {
-            if (bd.get(i) >= bd.get(i + 1)) throw new AssertionError();
+            if (ranges.get(i).getUpper() != ranges.get(i + 1).getLower()) throw new AssertionError();
         }
     }
 
@@ -185,17 +170,17 @@ public class DividedScale<T> {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         DividedScale<?> that = (DividedScale<?>) obj;
-        return Objects.equals(bd, that.bd) &&
+        return Objects.equals(ranges, that.ranges) &&
                 Objects.equals(data, that.data);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bd, data);
+        return Objects.hash(ranges, data);
     }
 
     @Override
     public String toString() {
-        return "DS{" + bd + ' ' + data + '}';
+        return "DS{" + ranges + ' ' + data + '}';
     }
 }
