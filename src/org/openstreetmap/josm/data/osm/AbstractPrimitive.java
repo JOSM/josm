@@ -18,6 +18,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -656,6 +658,18 @@ public abstract class AbstractPrimitive implements IPrimitive {
             result.add(keys[i]);
         }
         return result;
+    }
+
+    @Override
+    public Stream<String> keys() {
+        final String[] k = this.keys;
+        if (k == null) {
+            return Stream.empty();
+        } else if (k.length == 1) {
+            return Stream.of(k[0]);
+        } else {
+            return IntStream.range(0, k.length / 2).mapToObj(i -> k[i * 2]);
+        }
     }
 
     /**

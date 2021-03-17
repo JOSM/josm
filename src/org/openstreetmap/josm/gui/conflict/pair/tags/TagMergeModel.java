@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -100,9 +102,7 @@ public class TagMergeModel extends DefaultTableModel {
      */
     public void populate(OsmPrimitive my, OsmPrimitive their) {
         tagMergeItems.clear();
-        Set<String> keys = new HashSet<>();
-        keys.addAll(my.keySet());
-        keys.addAll(their.keySet());
+        Set<String> keys = Stream.concat(my.keys(), their.keys()).collect(Collectors.toSet());
         for (String key : keys) {
             String myValue = my.get(key);
             String theirValue = their.get(key);

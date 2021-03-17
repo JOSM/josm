@@ -41,7 +41,7 @@ public class Lanes extends Test.TagTest {
 
     protected void checkNumberOfLanesByKey(final OsmPrimitive p, String lanesKey, String message) {
         final Set<Integer> lanesCount =
-                p.keySet().stream()
+                p.keys()
                 .filter(x -> x.endsWith(":" + lanesKey))
                 .filter(x -> !Arrays.asList(BLACKLIST).contains(x))
                 .map(key -> getLanesCount(p.get(key)))

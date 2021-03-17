@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Objects implement Tagged if they provide a map of key/value pairs.
@@ -185,8 +186,20 @@ public interface Tagged {
      * Replies the set of keys
      *
      * @return the set of keys
+     * @see #keys()
      */
     Collection<String> keySet();
+
+    /**
+     * Replies the keys as stream
+     *
+     * @return the keys as stream
+     * @see #keySet()
+     * @since 17584
+     */
+    default Stream<String> keys() {
+        return keySet().stream();
+    }
 
     /**
      * Gets the number of keys

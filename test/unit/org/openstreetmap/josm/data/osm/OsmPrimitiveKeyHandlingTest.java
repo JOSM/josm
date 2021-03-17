@@ -162,6 +162,7 @@ class OsmPrimitiveKeyHandlingTest {
     private void testKeysSize(OsmPrimitive p, int expectedSize) {
         assertEquals(expectedSize, p.getKeys().size());
         assertEquals(expectedSize, p.keySet().size());
+        assertEquals(expectedSize, p.keys().count());
         assertEquals(expectedSize, p.getKeys().entrySet().size());
         assertEquals(expectedSize, p.getKeys().keySet().size());
         assertEquals(expectedSize, p.getNumKeys());

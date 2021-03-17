@@ -831,7 +831,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     }
 
     private static boolean containsOnlyGpxTags(Tagged t) {
-        return t.getKeys().keySet().stream()
+        return t.keys()
                 .allMatch(key -> GpxConstants.WPT_KEYS.contains(key) || key.startsWith(GpxConstants.GPX_PREFIX));
     }
 

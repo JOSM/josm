@@ -689,7 +689,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     private static final Collection<String> NO_AREA_KEYS = Arrays.asList("name", "area", "ref", "access", "operator");
 
     private void checkMultipolygonTags(OsmPrimitive p) {
-        if (p.isAnnotated() || p.keySet().stream()
+        if (p.isAnnotated() || p.keys()
                 .anyMatch(k -> k.matches("^(abandoned|construction|demolished|disused|planned|razed|removed|was).*")))
             return;
 

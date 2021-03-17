@@ -555,7 +555,7 @@ public final class ConditionFactory {
                 case FALSE:
                     return e.osm.isKeyFalse(label) ^ negateResult;
                 case REGEX:
-                    return e.osm.keySet().stream().anyMatch(containsPattern) ^ negateResult;
+                    return e.osm.keys().anyMatch(containsPattern) ^ negateResult;
                 default:
                     return e.osm.hasKey(label) ^ negateResult;
                 }
@@ -579,7 +579,7 @@ public final class ConditionFactory {
         public Tag asTag(OsmPrimitive p) {
             String key = label;
             if (KeyMatchType.REGEX == matchType) {
-                key = p.keySet().stream().filter(containsPattern).findAny().orElse(key);
+                key = p.keys().filter(containsPattern).findAny().orElse(key);
             }
             return new Tag(key, p.get(key));
         }

@@ -738,7 +738,7 @@ public class SearchCompiler {
                     // The string search will just get a key like 'highway' and look that up as osm.get(key).
                     // But since we're doing a regex match we'll have to loop over all the keys to see if they match our regex,
                     // and only then try to match against the value
-                    return osm.keySet().stream()
+                    return osm.keys()
                             .anyMatch(k -> keyPattern.matcher(k).find() && valuePattern.matcher(osm.get(k)).find());
                 }
             } else {
@@ -759,7 +759,7 @@ public class SearchCompiler {
             } else {
                 mv = osm.get(key);
                 if (!caseSensitive && mv == null) {
-                    mv = osm.keySet().stream().filter(key::equalsIgnoreCase).findFirst().map(osm::get).orElse(null);
+                    mv = osm.keys().filter(key::equalsIgnoreCase).findFirst().map(osm::get).orElse(null);
                 }
             }
             return mv;
@@ -971,10 +971,10 @@ public class SearchCompiler {
                 return osm.getKeys().values().stream().anyMatch(v -> valuePattern.matcher(v).matches());
             case ANY_VALUE_REGEXP:
             case EXACT_REGEXP:
-                return osm.keySet().stream().anyMatch(k -> keyPattern.matcher(k).matches()
+                return osm.keys().anyMatch(k -> keyPattern.matcher(k).matches()
                         && (mode == Mode.ANY_VALUE_REGEXP || valuePattern.matcher(osm.get(k)).matches()));
             case MISSING_KEY_REGEXP:
-                return osm.keySet().stream().noneMatch(k -> keyPattern.matcher(k).matches());
+                return osm.keys().noneMatch(k -> keyPattern.matcher(k).matches());
             }
             throw new AssertionError("Missed state");
         }

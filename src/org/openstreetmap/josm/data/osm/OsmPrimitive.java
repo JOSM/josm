@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -569,13 +568,12 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     private void updateTagged() {
         // 'area' is not really uninteresting (putting it in that list may have unpredictable side effects)
         // but it's clearly not enough to consider an object as tagged (see #9261)
-        updateFlagsNoLock(FLAG_TAGGED, keySet().stream()
+        updateFlagsNoLock(FLAG_TAGGED, keys()
                 .anyMatch(key -> !isUninterestingKey(key) && !"area".equals(key)));
     }
 
     private void updateAnnotated() {
-        updateFlagsNoLock(FLAG_ANNOTATED, keySet().stream()
-                .anyMatch(getWorkInProgressKeys()::contains));
+        updateFlagsNoLock(FLAG_ANNOTATED, hasKeys() && getWorkInProgressKeys().stream().anyMatch(this::hasKey));
     }
 
     @Override
@@ -1071,12 +1069,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
 
     @Override
     public Collection<String> getTemplateKeys() {
-        Collection<String> keySet = keySet();
-        List<String> result = new ArrayList<>(keySet.size() + 2);
-        result.add(SPECIAL_VALUE_ID);
-        result.add(SPECIAL_VALUE_LOCAL_NAME);
-        result.addAll(keySet);
-        return result;
+        return Stream.concat(Stream.of(SPECIAL_VALUE_ID, SPECIAL_VALUE_LOCAL_NAME), keys())
+                .collect(Collectors.toList());
     }
 
     @Override

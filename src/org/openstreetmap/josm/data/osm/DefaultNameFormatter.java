@@ -453,7 +453,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             else
                 return relation.getName();
         } else if (":LocationCode".equals(nameTag)) {
-            return relation.keySet().stream()
+            return relation.keys()
                     .filter(m -> m.endsWith(nameTag))
                     .findFirst()
                     .map(relation::get)
