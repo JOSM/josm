@@ -1,25 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.data.imagery.ImageryPatterns.PATTERN_PARAM;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -29,28 +26,8 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8526
  */
 public class TemplatedWMSTileSource extends AbstractWMSTileSource implements TemplatedTileSource {
-    // CHECKSTYLE.OFF: SingleSpaceSeparator
-    private static final Pattern PATTERN_HEADER = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
-    private static final Pattern PATTERN_PROJ   = Pattern.compile("\\{proj\\}");
-    private static final Pattern PATTERN_WKID   = Pattern.compile("\\{wkid\\}");
-    private static final Pattern PATTERN_BBOX   = Pattern.compile("\\{bbox\\}");
-    private static final Pattern PATTERN_W      = Pattern.compile("\\{w\\}");
-    private static final Pattern PATTERN_S      = Pattern.compile("\\{s\\}");
-    private static final Pattern PATTERN_E      = Pattern.compile("\\{e\\}");
-    private static final Pattern PATTERN_N      = Pattern.compile("\\{n\\}");
-    private static final Pattern PATTERN_WIDTH  = Pattern.compile("\\{width\\}");
-    private static final Pattern PATTERN_HEIGHT = Pattern.compile("\\{height\\}");
-    private static final Pattern PATTERN_TIME   = Pattern.compile("\\{time\\}"); // Sentinel-2
-    private static final Pattern PATTERN_PARAM  = Pattern.compile("\\{([^}]+)\\}");
-    // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private static final NumberFormat LATLON_FORMAT = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
-
-    private static final Pattern[] ALL_PATTERNS = {
-            PATTERN_HEADER, PATTERN_PROJ, PATTERN_WKID, PATTERN_BBOX,
-            PATTERN_W, PATTERN_S, PATTERN_E, PATTERN_N,
-            PATTERN_WIDTH, PATTERN_HEIGHT, PATTERN_TIME,
-    };
 
     private final Set<String> serverProjections;
     private final Map<String, String> headers = new ConcurrentHashMap<>();
@@ -67,7 +44,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
         this.serverProjections = new TreeSet<>(info.getServerProjections());
         this.headers.putAll(info.getCustomHttpHeaders());
         this.date = info.getDate();
-        handleTemplate();
+        this.baseUrl = ImageryPatterns.handleHeaderTemplate(baseUrl, headers);
         initProjection();
         // Bounding box coordinates have to be switched for WMS 1.3.0 EPSG:4326.
         //
@@ -169,27 +146,6 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
      * @param url URL to check
      */
     public static void checkUrl(String url) {
-        CheckParameterUtil.ensureParameterNotNull(url, "url");
-        Matcher m = PATTERN_PARAM.matcher(url);
-        while (m.find()) {
-            boolean isSupportedPattern = Arrays.stream(ALL_PATTERNS)
-                    .anyMatch(pattern -> pattern.matcher(m.group()).matches());
-            if (!isSupportedPattern) {
-                throw new IllegalArgumentException(
-                        tr("{0} is not a valid WMS argument. Please check this server URL:\n{1}", m.group(), url));
-            }
-        }
-    }
-
-    private void handleTemplate() {
-        // Capturing group pattern on switch values
-        StringBuffer output = new StringBuffer();
-        Matcher matcher = PATTERN_HEADER.matcher(this.baseUrl);
-        while (matcher.find()) {
-            headers.put(matcher.group(1), matcher.group(2));
-            matcher.appendReplacement(output, "");
-        }
-        matcher.appendTail(output);
-        this.baseUrl = output.toString();
+        ImageryPatterns.checkWmsUrlPatterns(url);
     }
 }
