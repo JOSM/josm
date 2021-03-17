@@ -32,6 +32,7 @@ public final class ImageEntry extends GpxImageEntry {
     public ImageEntry(ImageEntry other) {
         super(other);
         thumbnail = other.thumbnail;
+        dataSet = other.dataSet;
     }
 
     /**
@@ -77,16 +78,8 @@ public final class ImageEntry extends GpxImageEntry {
     }
 
     @Override
-    public void applyTmp() {
-        super.applyTmp();
-        if (this.dataSet != null) {
-            this.dataSet.fireNodeMoved(this);
-        }
-    }
-
-    @Override
-    public void discardTmp() {
-        super.discardTmp();
+    protected void tmpUpdated() {
+        super.tmpUpdated();
         if (this.dataSet != null) {
             this.dataSet.fireNodeMoved(this);
         }
@@ -122,6 +115,6 @@ public final class ImageEntry extends GpxImageEntry {
         if (!super.equals(obj) || getClass() != obj.getClass())
             return false;
         ImageEntry other = (ImageEntry) obj;
-        return Objects.equals(thumbnail, other.thumbnail);
+        return Objects.equals(thumbnail, other.thumbnail) && Objects.equals(dataSet, other.dataSet);
     }
 }

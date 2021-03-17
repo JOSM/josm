@@ -59,11 +59,11 @@ public class ImageData implements Data {
         if (data != null) {
             Collections.sort(data);
             this.data = data;
+            this.data.forEach(image -> image.setDataSet(this));
         } else {
             this.data = new ArrayList<>();
         }
         this.geoImages.addAll(this.data);
-        data.forEach(image -> image.setDataSet(this));
         selectedImagesIndex.add(-1);
     }
 

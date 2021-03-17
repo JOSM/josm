@@ -240,6 +240,8 @@ public final class GpxImageCorrelation {
                     }
                     curTmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
                     curTmp.flagNewGpsData();
+                    curImg.tmpUpdated();
+
                     ret++;
                 }
                 i--;
@@ -264,6 +266,7 @@ public final class GpxImageCorrelation {
                     }
                     curTmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
                     curTmp.flagNewGpsData();
+                    curImg.tmpUpdated();
 
                     ret++;
                 }

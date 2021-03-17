@@ -508,6 +508,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             isNewGpsData = tmp.isNewGpsData;
             tmp = null;
         }
+        tmpUpdated();
     }
 
     /**
@@ -516,6 +517,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
      */
     public void discardTmp() {
         tmp = null;
+        tmpUpdated();
     }
 
     /**
@@ -547,6 +549,15 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     public void flagNewGpsData() {
         isNewGpsData = true;
    }
+
+    /**
+     * Indicate that the temporary copy has been updated. Mostly used to prevent UI issues.
+     * By default, this is a no-op. Override when needed in subclasses.
+     * @since 17579
+     */
+    protected void tmpUpdated() {
+        // No-op by default
+    }
 
     @Override
     public BBox getBBox() {
