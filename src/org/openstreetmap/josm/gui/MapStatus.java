@@ -642,9 +642,7 @@ public final class MapStatus extends JPanel implements
                     .append(Utils.escapeReservedCharactersHTML(osm.getUser().getName())).append(']');
             }
 
-            for (String key : osm.keySet()) {
-                text.append("<br>").append(key).append('=').append(osm.get(key));
-            }
+            osm.visitKeys((primitive, key, value) -> text.append("<br>").append(key).append('=').append(value));
 
             final JLabel l = new JLabel(
                     "<html>" + text.toString() + "</html>",

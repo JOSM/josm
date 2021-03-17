@@ -163,10 +163,7 @@ public class InspectPrimitiveDataText {
     void addAttributes(IPrimitive o) {
         if (o.hasKeys()) {
             add(tr("Tags: "));
-            for (String key : o.keySet()) {
-                s.append(INDENT).append(INDENT);
-                s.append(String.format("\"%s\"=\"%s\"%n", key, o.get(key)));
-            }
+            o.visitKeys((primitive, key, value) -> s.append(INDENT).append(INDENT).append(String.format("\"%s\"=\"%s\"%n", key, value)));
         }
     }
 

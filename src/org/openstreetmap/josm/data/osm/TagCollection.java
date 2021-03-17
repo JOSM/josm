@@ -63,9 +63,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
     public static TagCollection from(Tagged primitive) {
         TagCollection tags = new TagCollection();
         if (primitive != null) {
-            for (String key: primitive.keySet()) {
-                tags.add(new Tag(key, primitive.get(key)));
-            }
+            primitive.visitKeys((p, key, value) -> tags.add(new Tag(key, value)));
         }
         return tags;
     }

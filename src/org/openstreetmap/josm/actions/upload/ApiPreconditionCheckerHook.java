@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
@@ -59,8 +60,9 @@ public class ApiPreconditionCheckerHook implements UploadHook {
 
     private static boolean checkMaxNodes(Collection<OsmPrimitive> primitives, long maxNodes) {
         for (OsmPrimitive osmPrimitive : primitives) {
-            for (String key: osmPrimitive.keySet()) {
-                String value = osmPrimitive.get(key);
+            for (Map.Entry<String, String> entry: osmPrimitive.getKeys().entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
                 if (key.length() > Tagged.MAX_TAG_LENGTH) {
                     if (osmPrimitive.isDeleted()) {
                         // if OsmPrimitive is going to be deleted we automatically shorten the value

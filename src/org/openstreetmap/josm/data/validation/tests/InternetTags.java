@@ -121,12 +121,12 @@ public class InternetTags extends Test.TagTest {
 
     @Override
     public void check(OsmPrimitive p) {
-        for (String k : p.keySet()) {
+        p.visitKeys((primitive, k, value) -> {
             // Test key against URL validator
             if (!doTest(p, k, URL_KEYS, UrlValidator.getInstance(), INVALID_URL)) {
                 // Test key against e-mail validator only if the URL validator did not fail
                 doTest(p, k, EMAIL_KEYS, EmailValidator.getInstance(), INVALID_EMAIL);
             }
-        }
+        });
     }
 }

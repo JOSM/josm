@@ -1062,8 +1062,9 @@ public class SearchCompiler {
             if (!osm.hasKeys())
                 return search.isEmpty();
 
-            for (String key: osm.keySet()) {
-                String value = osm.get(key);
+            for (Map.Entry<String, String> entry: osm.getKeys().entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
                 if (searchRegex != null) {
 
                     value = Normalizer.normalize(value, Normalizer.Form.NFC);

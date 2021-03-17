@@ -422,13 +422,13 @@ public class CreateMultipolygonAction extends JosmAction {
                 Way way = m.getWay();
                 outerWays.add(way);
 
-                for (String key : way.keySet()) {
+                way.visitKeys((p, key, value) -> {
                     if (!values.containsKey(key)) { //relation values take precedence
-                        values.put(key, way.get(key));
-                    } else if (!values.get(key).equals(way.get(key))) {
+                        values.put(key, value);
+                    } else if (!values.get(key).equals(value)) {
                         conflictingKeys.add(key);
                     }
-                }
+                });
             }
         }
 

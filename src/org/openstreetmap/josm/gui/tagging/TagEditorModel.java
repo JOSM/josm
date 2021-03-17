@@ -367,10 +367,7 @@ public class TagEditorModel extends AbstractTableModel {
     public void initFromPrimitive(Tagged primitive) {
         commitPendingEdit();
         this.tags.clear();
-        for (String key : primitive.keySet()) {
-            String value = primitive.get(key);
-            this.tags.add(new TagModel(key, value));
-        }
+        primitive.visitKeys((p, key, value) -> this.tags.add(new TagModel(key, value)));
         sort();
         TagModel tag = new TagModel();
         tags.add(tag);
@@ -511,11 +508,11 @@ public class TagEditorModel extends AbstractTableModel {
         List<Command> commands = new ArrayList<>();
 
         for (OsmPrimitive prim : primitives) {
-            for (String oldkey : prim.keySet()) {
+            prim.visitKeys((p, oldkey, value) -> {
                 if (!currentkeys.contains(oldkey)) {
                     commands.add(new ChangePropertyCommand(prim, oldkey, null));
                 }
-            }
+            });
         }
 
         return commands.isEmpty() ? null : new SequenceCommand(

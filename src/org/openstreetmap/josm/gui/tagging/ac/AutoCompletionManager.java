@@ -192,10 +192,7 @@ public class AutoCompletionManager implements DataSetListener {
      * @param primitive an OSM primitive
      */
     protected void cachePrimitiveTags(OsmPrimitive primitive) {
-        for (String key: primitive.keySet()) {
-            String value = primitive.get(key);
-            tagCache.put(key, value);
-        }
+        primitive.visitKeys((p, key, value) -> tagCache.put(key, value));
     }
 
     /**

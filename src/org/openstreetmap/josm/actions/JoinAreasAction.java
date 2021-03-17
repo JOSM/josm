@@ -1697,9 +1697,7 @@ public class JoinAreasAction extends JosmAction {
                     }
                 }
                 // Add tags
-                for (String key : r.rel.keySet()) {
-                    newRel.put(key, r.rel.get(key));
-                }
+                r.rel.visitKeys((p, key, value) -> newRel.put(key, value));
                 // Delete old relation
                 relationsToDelete.add(r.rel);
             }

@@ -658,9 +658,8 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         Set<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
         for (IPrimitive osm : newSel) {
             types.add(TaggingPresetType.forPrimitive(osm));
-            for (String key : osm.keySet()) {
+            osm.visitKeys((p, key, value) -> {
                 if (displayDiscardableKeys || !AbstractPrimitive.getDiscardableKeys().contains(key)) {
-                    String value = osm.get(key);
                     keyCount.put(key, keyCount.containsKey(key) ? keyCount.get(key) + 1 : 1);
                     if (valueCount.containsKey(key)) {
                         Map<String, Integer> v = valueCount.get(key);
@@ -671,7 +670,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
                         valueCount.put(key, v);
                     }
                 }
-            }
+            });
         }
         for (Entry<String, Map<String, Integer>> e : valueCount.entrySet()) {
             int count = e.getValue().values().stream().mapToInt(i -> i).sum();
