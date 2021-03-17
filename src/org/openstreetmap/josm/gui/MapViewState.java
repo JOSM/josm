@@ -558,16 +558,17 @@ public final class MapViewState implements Serializable {
          * @since 10827
          */
         public int getOutsideRectangleFlags(MapViewRectangle rect) {
-            Rectangle2D bounds = rect.getInView();
             int flags = 0;
-            if (getInViewX() < bounds.getMinX()) {
+            double inViewX = getInViewX();
+            if (inViewX < rect.getInViewMinX()) {
                 flags |= OUTSIDE_LEFT;
-            } else if (getInViewX() > bounds.getMaxX()) {
+            } else if (inViewX > rect.getInViewMaxX()) {
                 flags |= OUTSIDE_RIGHT;
             }
-            if (getInViewY() < bounds.getMinY()) {
+            double inViewY = getInViewY();
+            if (inViewY < rect.getInViewMinY()) {
                 flags |= OUTSIDE_TOP;
-            } else if (getInViewY() > bounds.getMaxY()) {
+            } else if (inViewY > rect.getInViewMaxY()) {
                 flags |= OUTSIDE_BOTTOM;
             }
 
@@ -733,6 +734,22 @@ public final class MapViewState implements Serializable {
             double x2 = p2.getInViewX();
             double y2 = p2.getInViewY();
             return new Rectangle2D.Double(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
+        }
+
+        double getInViewMinX() {
+            return Math.min(p1.getInViewX(), p2.getInViewX());
+        }
+
+        double getInViewMaxX() {
+            return Math.max(p1.getInViewX(), p2.getInViewX());
+        }
+
+        double getInViewMinY() {
+            return Math.min(p1.getInViewY(), p2.getInViewY());
+        }
+
+        double getInViewMaxY() {
+            return Math.max(p1.getInViewY(), p2.getInViewY());
         }
 
         /**
