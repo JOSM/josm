@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -11,6 +12,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.Collections;
+import java.util.HashSet;
 
 /**
  * Some unit test cases for basic tag management on {@link OsmPrimitive}. Uses
@@ -49,6 +53,9 @@ class OsmPrimitiveKeyHandlingTest {
         testKeysSize(n, 1);
 
         testGetKey(n, "akey", "avalue");
+        assertEquals(Collections.singleton("akey"), n.keySet());
+        assertNotEquals(HashSet.class, n.keySet().getClass()); // expect Collections.singleton
+
     }
 
     /**

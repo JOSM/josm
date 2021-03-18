@@ -649,7 +649,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         if (keys == null) {
             return Collections.emptySet();
         }
-        if (keys.length == 1) {
+        if (keys.length == 2) {
             return Collections.singleton(keys[0]);
         }
 
@@ -665,7 +665,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         final String[] k = this.keys;
         if (k == null) {
             return Stream.empty();
-        } else if (k.length == 1) {
+        } else if (k.length == 2) {
             return Stream.of(k[0]);
         } else {
             return IntStream.range(0, k.length / 2).mapToObj(i -> k[i * 2]);
