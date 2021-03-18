@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -543,6 +545,17 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
 
     @Override
     public boolean isOutsideDownloadArea() {
+        return false;
+    }
+
+    @Override
+    public boolean testLatLon(Predicate<ILatLon> predicate) {
+        for (RelationMember member : members) {
+            // exclude relations to avoid dealing with circular dependencies
+            if (!member.isRelation() && member.getMember().testLatLon(predicate)) {
+                return true;
+            }
+        }
         return false;
     }
 

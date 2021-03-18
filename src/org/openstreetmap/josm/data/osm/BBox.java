@@ -238,6 +238,16 @@ public class BBox {
      * @return {@code true} if {@code c} lies within the bbox
      */
     public boolean bounds(LatLon c) {
+        return bounds((ILatLon) c);
+    }
+
+    /**
+     * Tests, whether the Point {@code c} lies within the bbox.
+     * @param c point
+     * @return {@code true} if {@code c} lies within the bbox
+     * @since xxx
+     */
+    public boolean bounds(ILatLon c) {
         return xmin <= c.lon() && xmax >= c.lon()
             && ymin <= c.lat() && ymax >= c.lat();
     }

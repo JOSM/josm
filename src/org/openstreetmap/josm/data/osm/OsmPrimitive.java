@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.geom.Area;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1134,7 +1135,14 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * Tests if this primitive lies outside of the downloaded area of its {@link DataSet}.
      * @return {@code true} if this primitive lies outside of the downloaded area
      */
-    public abstract boolean isOutsideDownloadArea();
+    public boolean isOutsideDownloadArea() {
+        if (isNewOrUndeleted() || getDataSet() == null)
+            return false;
+        Area area = getDataSet().getDataSourceArea();
+        if (area == null)
+            return false;
+        return testLatLon(iLatLon -> area.contains(iLatLon.lon(), iLatLon.lat()));
+    }
 
     /**
      * If necessary, extend the bbox to contain this primitive

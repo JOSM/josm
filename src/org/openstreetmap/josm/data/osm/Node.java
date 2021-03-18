@@ -5,10 +5,12 @@ import java.awt.geom.Area;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
@@ -354,6 +356,11 @@ public final class Node extends OsmPrimitive implements INode {
             return false;
         LatLon coor = getCoor();
         return coor != null && !coor.isIn(area);
+    }
+
+    @Override
+    public boolean testLatLon(Predicate<ILatLon> predicate) {
+        return isLatLonKnown() && predicate.test(this);
     }
 
     /**

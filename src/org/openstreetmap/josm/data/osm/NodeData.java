@@ -2,9 +2,12 @@
 package org.openstreetmap.josm.data.osm;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+
+import java.util.function.Predicate;
 
 /**
  * The data on a single node (tags and position) that is stored in the database
@@ -104,6 +107,11 @@ public class NodeData extends PrimitiveData implements INode {
     @Override
     public BBox getBBox() {
         return new BBox(lon, lat);
+    }
+
+    @Override
+    public boolean testLatLon(Predicate<ILatLon> predicate) {
+        return predicate.test(this);
     }
 
     @Override

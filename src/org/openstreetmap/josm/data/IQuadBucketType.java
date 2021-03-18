@@ -16,4 +16,15 @@ public interface IQuadBucketType {
      * @return Bounding box of the object
      */
     BBox getBBox();
+
+    /**
+     * Tests the bounding box of the primitive intersects with the given bbox.
+     * @param b other bounding box
+     * @return {@code true} if the bounding box of the primitive intersects with the given bbox
+     * @since xxx
+     */
+    default boolean intersects(BBox b) {
+        return getBBox().intersects(b);
+    }
+
 }

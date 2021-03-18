@@ -4,8 +4,10 @@ package org.openstreetmap.josm.data.osm;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.data.IQuadBucketType;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
@@ -448,6 +450,18 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      */
     @Override
     BBox getBBox();
+
+    @Override
+    default boolean intersects(BBox b) {
+        return testLatLon(b::bounds);
+    }
+
+    /**
+     * Tests if any coordinate of this primitive matches the given predicate.
+     * @return {@code true} any coordinate of this primitive matches the given predicate
+     * @since xxx
+     */
+    boolean testLatLon(Predicate<ILatLon> predicate);
 
     /**
      * Gets a list of all primitives in the current dataset that reference this primitive.

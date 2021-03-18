@@ -171,10 +171,6 @@ public class QuadBuckets<T extends IQuadBucketType> implements Collection<T> {
             return content.add(o);
         }
 
-        boolean matches(final T o, final BBox searchBbox) {
-            return o.getBBox().intersects(searchBbox);
-        }
-
         private void searchContents(BBox searchBbox, List<T> result) {
             /*
              * It is possible that this was created in a split
@@ -184,7 +180,7 @@ public class QuadBuckets<T extends IQuadBucketType> implements Collection<T> {
                 return;
 
             for (T o : content) {
-                if (matches(o, searchBbox)) {
+                if (o.intersects(searchBbox)) {
                     result.add(o);
                 }
             }
@@ -273,7 +269,7 @@ public class QuadBuckets<T extends IQuadBucketType> implements Collection<T> {
 
         void doAdd(T o) {
             if (CONSISTENCY_TESTING) {
-                if (o instanceof Node && !matches(o, this)) {
+                if (o instanceof Node && !o.intersects(this)) {
                     o.getBBox().getIndex(level);
                     o.getBBox().getIndex(level - 1);
                     abort("\nobject " + o + " does not belong in node at level: " + level + " bbox: " + super.toString());

@@ -3,7 +3,9 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
 /**
@@ -99,6 +101,11 @@ public class RelationData extends PrimitiveData implements IRelation<RelationMem
 
     @Override
     public BBox getBBox() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean testLatLon(Predicate<ILatLon> predicate) {
         throw new UnsupportedOperationException();
     }
 

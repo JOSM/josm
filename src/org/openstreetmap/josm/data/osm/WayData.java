@@ -3,7 +3,9 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
 /**
@@ -109,6 +111,11 @@ public class WayData extends PrimitiveData implements IWay<NodeData> {
 
     @Override
     public BBox getBBox() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean testLatLon(Predicate<ILatLon> predicate) {
         throw new UnsupportedOperationException();
     }
 

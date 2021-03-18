@@ -82,7 +82,7 @@ public class QuadBucketPrimitiveStore<N extends INode, W extends IWay<N>, R exte
     public List<R> searchRelations(BBox bbox) {
         // QuadBuckets might be useful here (don't forget to do reindexing after some of rm is changed)
         return relations.stream()
-                .filter(r -> r.getBBox().intersects(bbox))
+                .filter(r -> r.intersects(bbox))
                 .collect(Collectors.toList());
     }
 

@@ -566,6 +566,11 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         return new BBox(this.getPos());
     }
 
+    @Override
+    public boolean intersects(BBox b) {
+        return b.bounds(this.getPos());
+    }
+
     /**
      * Remove the flag that indicates new GPS data.
      * The flag is cleared by a new GPS data consumer.

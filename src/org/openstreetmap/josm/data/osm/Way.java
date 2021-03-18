@@ -9,9 +9,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
@@ -722,8 +724,13 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
     }
 
     @Override
-    public boolean isOutsideDownloadArea() {
-        return Arrays.stream(nodes).anyMatch(Node::isOutsideDownloadArea);
+    public boolean testLatLon(Predicate<ILatLon> predicate) {
+        for (Node node : nodes) {
+            if (node.testLatLon(predicate)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
