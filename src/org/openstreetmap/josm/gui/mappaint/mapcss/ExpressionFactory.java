@@ -46,7 +46,7 @@ public final class ExpressionFactory {
             Class<?>[] paramTypes = m.getParameterTypes();
             if (paramTypes.length == 1 && paramTypes[0].isArray()) {
                 arrayFunctions.add(m);
-            } else if (paramTypes.length >= 1 && paramTypes[0].equals(Environment.class)) {
+            } else if (paramTypes.length >= 1 && Environment.class.isAssignableFrom(paramTypes[0])) {
                 parameterFunctionsEnv.add(m);
             } else {
                 parameterFunctions.add(m);

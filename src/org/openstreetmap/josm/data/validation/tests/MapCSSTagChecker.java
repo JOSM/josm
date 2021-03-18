@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Environment.LinkEnvironment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleIndex;
@@ -153,7 +154,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             indexData = createMapCSSTagCheckerIndex(checks, includeOtherSeverity, ALL_TESTS);
         }
 
-        Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        final LinkEnvironment env = new LinkEnvironment(new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null));
         env.mpAreaCache = mpAreaCache;
 
         Iterator<MapCSSRule> candidates = indexData.getRuleCandidates(p);
@@ -210,7 +211,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             OsmPrimitive p, boolean includeOtherSeverity, Collection<Set<MapCSSTagCheckerRule>> checksCol) {
         // this variant is only used by the assertion tests
         final List<TestError> r = new ArrayList<>();
-        final Environment env = new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null);
+        final LinkEnvironment env = new LinkEnvironment(new Environment(p, new MultiCascade(), Environment.DEFAULT_LAYER, null));
         env.mpAreaCache = mpAreaCache;
         for (Set<MapCSSTagCheckerRule> schecks : checksCol) {
             for (MapCSSTagCheckerRule check : schecks) {

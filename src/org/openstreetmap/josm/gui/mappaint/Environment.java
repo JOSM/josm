@@ -39,53 +39,112 @@ public class Environment {
      * The style source that is evaluated
      */
     public StyleSource source;
-    private Context context = Context.PRIMITIVE;
 
     /**
      * The name of the default layer. It is used if no layer is specified in the MapCSS rule
      */
     public static final String DEFAULT_LAYER = "default";
 
-    /**
-     * If not null, this is the matching parent object if a condition or an expression
-     * is evaluated in a {@link LinkSelector} (within a child selector)
-     */
-    public IPrimitive parent;
+    public static class LinkEnvironment extends Environment {
 
-    /**
-     * The same for parent selector. Only one of the 2 fields (parent or child) is not null in any environment.
-     */
-    public IPrimitive child;
+        public LinkEnvironment() {
+        }
 
-    /**
-     * index of node in parent way or member in parent relation. Must be != null in LINK context.
-     */
-    public Integer index;
+        public LinkEnvironment(Environment other) {
+            super(other);
+        }
 
-    /**
-     * count of nodes in parent way or members in parent relation. Must be != null in LINK context.
-     */
-    public Integer count;
+        public LinkEnvironment(LinkEnvironment other) {
+            super(other);
+            this.parent = other.parent;
+            this.child = other.child;
+            this.index = other.index;
+            this.count = other.count;
+            this.children = other.children == null ? null : new LinkedHashSet<>(other.children);
+            this.intersections = other.intersections;
+            this.crossingWaysMap = other.crossingWaysMap;
+            this.mpAreaCache = other.mpAreaCache;
+        }
 
-    /**
-     * Set of matched children filled by ContainsFinder and CrossingFinder, null if nothing matched
-     */
-    public Set<IPrimitive> children;
+        /**
+         * If not null, this is the matching parent object if a condition or an expression
+         * is evaluated in a {@link LinkSelector} (within a child selector)
+         * Implies that {@link #child} is null.
+         */
+        public IPrimitive parent;
 
-    /**
-     * Crossing ways result from CrossingFinder, filled for incomplete ways/relations
-    */
-    public Map<IPrimitive, Map<List<Way>, List<WaySegment>>> crossingWaysMap;
+        /**
+         * If not null, this is the matching child object if a condition or an expression
+         * is evaluated in a {@link LinkSelector} (within a child selector)
+         * Implies that {@link #parent} is null.
+         */
+        public IPrimitive child;
 
-    /**
-     * Intersection areas (only filled with CrossingFinder if children is not null)
-     */
-    public Map<IPrimitive, Area> intersections;
+        /**
+         * index of node in parent way or member in parent relation. Must be >=0 context.
+         */
+        public int index = -1;
 
-    /**
-     * Cache for multipolygon areas, can be null, used with CrossingFinder
-     */
-    public Map<IPrimitive, Area> mpAreaCache;
+        /**
+         * count of nodes in parent way or members in parent relation. Must be >=0 context.
+         */
+        public int count = -1;
+
+        /**
+         * Set of matched children filled by ContainsFinder and CrossingFinder, null if nothing matched
+         */
+        public Set<IPrimitive> children;
+
+        /**
+         * Crossing ways result from CrossingFinder, filled for incomplete ways/relations
+         */
+        public Map<IPrimitive, Map<List<Way>, List<WaySegment>>> crossingWaysMap;
+
+        /**
+         * Intersection areas (only filled with CrossingFinder if children is not null)
+         */
+        public Map<IPrimitive, Area> intersections;
+
+        /**
+         * Cache for multipolygon areas, can be null, used with CrossingFinder
+         */
+        public Map<IPrimitive, Area> mpAreaCache;
+
+        @Override
+        public Context getContext() {
+            return Context.LINK;
+        }
+
+        @Override
+        public boolean isLinkContext() {
+            return true;
+        }
+
+        /**
+         * Gets the role of the matching primitive in the relation
+         * @return The role
+         */
+        @Override
+        public String getRole() {
+            if (parent instanceof Relation)
+                return ((Relation) parent).getMember(index).getRole();
+            if (child != null && osm instanceof Relation)
+                return ((Relation) osm).getMember(index).getRole();
+            return null;
+        }
+
+        @Override
+        public LinkEnvironment clearSelectorMatchingInformation() {
+            parent = null;
+            child = null;
+            index = -1;
+            count = -1;
+            children = null;
+            intersections = null;
+            crossingWaysMap = null;
+            return this;
+        }
+    }
 
     /**
      * Creates a new uninitialized environment.
@@ -130,16 +189,7 @@ public class Environment {
         this.osm = other.osm;
         this.mc = other.mc;
         this.layer = other.layer;
-        this.parent = other.parent;
-        this.child = other.child;
         this.source = other.source;
-        this.index = other.index;
-        this.count = other.count;
-        this.context = other.getContext();
-        this.children = other.children == null ? null : new LinkedHashSet<>(other.children);
-        this.intersections = other.intersections;
-        this.crossingWaysMap = other.crossingWaysMap;
-        this.mpAreaCache = other.mpAreaCache;
     }
 
     /**
@@ -159,11 +209,11 @@ public class Environment {
      * Creates a clone of this environment, with the specified parent.
      * @param parent the matching parent object
      * @return A clone of this environment, with the specified parent
-     * @see #parent
+     * @see LinkEnvironment#parent
      * @since 13810 (signature)
      */
-    public Environment withParent(IPrimitive parent) {
-        Environment e = new Environment(this);
+    public LinkEnvironment withParent(IPrimitive parent) {
+        LinkEnvironment e = new LinkEnvironment(this);
         e.parent = parent;
         return e;
     }
@@ -174,17 +224,16 @@ public class Environment {
      * @param index index of node in parent way or member in parent relation
      * @param count count of nodes in parent way or members in parent relation
      * @return A clone of this environment, with the specified parent, index, and context set to {@link Context#LINK}
-     * @see #parent
-     * @see #index
+     * @see LinkEnvironment#parent
+     * @see LinkEnvironment#index
      * @since 6175
      * @since 13810 (signature)
      */
-    public Environment withParentAndIndexAndLinkContext(IPrimitive parent, int index, int count) {
-        Environment e = new Environment(this);
+    public LinkEnvironment withParentAndIndexAndLinkContext(IPrimitive parent, int index, int count) {
+        LinkEnvironment e = new LinkEnvironment(this);
         e.parent = parent;
         e.index = index;
         e.count = count;
-        e.context = Context.LINK;
         return e;
     }
 
@@ -192,11 +241,11 @@ public class Environment {
      * Creates a clone of this environment, with the specified child.
      * @param child the matching child object
      * @return A clone of this environment, with the specified child
-     * @see #child
+     * @see LinkEnvironment#child
      * @since 13810 (signature)
      */
-    public Environment withChild(IPrimitive child) {
-        Environment e = new Environment(this);
+    public LinkEnvironment withChild(IPrimitive child) {
+        LinkEnvironment e = new LinkEnvironment(this);
         e.child = child;
         return e;
     }
@@ -207,17 +256,16 @@ public class Environment {
      * @param index index of node in parent way or member in parent relation
      * @param count count of nodes in parent way or members in parent relation
      * @return A clone of this environment, with the specified child, index, and context set to {@code Context#LINK}
-     * @see #child
-     * @see #index
+     * @see LinkEnvironment#child
+     * @see LinkEnvironment#index
      * @since 6175
      * @since 13810 (signature)
      */
-    public Environment withChildAndIndexAndLinkContext(IPrimitive child, int index, int count) {
-        Environment e = new Environment(this);
+    public LinkEnvironment withChildAndIndexAndLinkContext(IPrimitive child, int index, int count) {
+        LinkEnvironment e = new LinkEnvironment(this);
         e.child = child;
         e.index = index;
         e.count = count;
-        e.context = Context.LINK;
         return e;
     }
 
@@ -226,23 +274,12 @@ public class Environment {
      * @param index index of node in parent way or member in parent relation
      * @param count count of nodes in parent way or members in parent relation
      * @return A clone of this environment, with the specified index
-     * @see #index
+     * @see LinkEnvironment#index
      */
-    public Environment withIndex(int index, int count) {
-        Environment e = new Environment(this);
+    public LinkEnvironment withIndex(int index, int count) {
+        LinkEnvironment e = new LinkEnvironment(this);
         e.index = index;
         e.count = count;
-        return e;
-    }
-
-    /**
-     * Creates a clone of this environment, with the specified {@link Context}.
-     * @param context context
-     * @return A clone of this environment, with the specified {@code Context}
-     */
-    public Environment withContext(Context context) {
-        Environment e = new Environment(this);
-        e.context = context == null ? Context.PRIMITIVE : context;
         return e;
     }
 
@@ -250,10 +287,8 @@ public class Environment {
      * Creates a clone of this environment, with context set to {@link Context#LINK}.
      * @return A clone of this environment, with context set to {@code Context#LINK}
      */
-    public Environment withLinkContext() {
-        Environment e = new Environment(this);
-        e.context = Context.LINK;
-        return e;
+    public LinkEnvironment withLinkContext() {
+        return new LinkEnvironment(this);
     }
 
     /**
@@ -261,16 +296,7 @@ public class Environment {
      * @return {@code true} if the context of this environment is {@code Context#LINK}, {@code false} otherwise
      */
     public boolean isLinkContext() {
-        return Context.LINK == context;
-    }
-
-    /**
-     * Determines if this environment has a relation as parent.
-     * @return {@code true} if this environment has a relation as parent, {@code false} otherwise
-     * @see #parent
-     */
-    public boolean hasParentRelation() {
-        return parent instanceof Relation;
+        return false;
     }
 
     /**
@@ -279,7 +305,7 @@ public class Environment {
      * @return the current context
      */
     public Context getContext() {
-        return context == null ? Context.PRIMITIVE : context;
+        return Context.PRIMITIVE;
     }
 
     /**
@@ -287,13 +313,6 @@ public class Environment {
      * @return The role
      */
     public String getRole() {
-        if (getContext() == Context.PRIMITIVE)
-            return null;
-
-        if (parent instanceof Relation)
-            return ((Relation) parent).getMember(index).getRole();
-        if (child != null && osm instanceof Relation)
-            return ((Relation) osm).getMember(index).getRole();
         return null;
     }
 
@@ -302,13 +321,6 @@ public class Environment {
      * @return this
      */
     public Environment clearSelectorMatchingInformation() {
-        parent = null;
-        child = null;
-        index = null;
-        count = null;
-        children = null;
-        intersections = null;
-        crossingWaysMap = null;
         return this;
     }
 

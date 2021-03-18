@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.AssertionConsumer;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Environment.LinkEnvironment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.TagCondition;
@@ -380,7 +381,7 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
      * @param tester           the tester
      * @return an instance of {@link TestError}, or returns null if the primitive does not give rise to an error.
      */
-    List<TestError> getErrorsForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env, Test tester) {
+    List<TestError> getErrorsForPrimitive(OsmPrimitive p, Selector matchingSelector, LinkEnvironment env, Test tester) {
         List<TestError> res = new ArrayList<>();
         if (matchingSelector != null && !errors.isEmpty()) {
             final Command fix = fixPrimitive(p);

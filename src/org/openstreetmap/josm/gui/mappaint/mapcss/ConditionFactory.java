@@ -471,10 +471,12 @@ public final class ConditionFactory {
         }
 
         @Override
-        public boolean applies(Environment env) {
-            if (env.index == null) return false;
+        public boolean applies(Environment e) {
+            if (!(e instanceof Environment.LinkEnvironment)) return false;
+            Environment.LinkEnvironment env = (Environment.LinkEnvironment) e;
+            if (env.index < 0) return false;
             if (index.startsWith("-")) {
-                return env.count != null && op.eval(Integer.toString(env.index - env.count), index);
+                return env.count >= 0 && op.eval(Integer.toString(env.index - env.count), index);
             } else {
                 return op.eval(Integer.toString(env.index + 1), index);
             }
@@ -767,7 +769,10 @@ public final class ConditionFactory {
          * @see IPrimitive#hasSameInterestingTags(IPrimitive)
          */
         static boolean sameTags(Environment e) { // NO_UCD (unused code)
-            return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
+            if (!(e instanceof Environment.LinkEnvironment)) return false;
+            Environment.LinkEnvironment env = (Environment.LinkEnvironment) e;
+            IPrimitive other = Utils.firstNonNull(env.child, env.parent);
+            return e.osm.hasSameInterestingTags(other);
         }
 
         /**

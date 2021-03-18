@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Environment.LinkEnvironment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ClassCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
@@ -423,7 +424,7 @@ class MapCSSParserTest {
         w.addNode(n1);
         w.addNode(n2);
 
-        Environment e = new Environment(n2);
+        LinkEnvironment e = new Environment(n2).withLinkContext();
         assertTrue(s1.matches(e));
         assertEquals(n2, e.osm);
         assertEquals(n1, e.child);

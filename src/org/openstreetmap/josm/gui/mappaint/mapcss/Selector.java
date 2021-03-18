@@ -191,13 +191,13 @@ public interface Selector {
          *
          */
         private class MatchingReferrerFinder implements PrimitiveVisitor {
-            private final Environment e;
+            private final Environment.LinkEnvironment e;
 
             /**
              * Constructor
              * @param e the environment against which we match
              */
-            MatchingReferrerFinder(Environment e) {
+            MatchingReferrerFinder(Environment.LinkEnvironment e) {
                 this.e = e;
             }
 
@@ -250,9 +250,9 @@ public interface Selector {
         }
 
         private abstract static class AbstractFinder implements PrimitiveVisitor {
-            protected final Environment e;
+            protected final Environment.LinkEnvironment e;
 
-            protected AbstractFinder(Environment e) {
+            protected AbstractFinder(Environment.LinkEnvironment e) {
                 this.e = e;
             }
 
@@ -283,7 +283,7 @@ public interface Selector {
                 return !e.osm.equals(p) && p.isUsable();
             }
 
-            protected void addToChildren(Environment e, IPrimitive p) {
+            protected void addToChildren(Environment.LinkEnvironment e, IPrimitive p) {
                 if (e.children == null) {
                     e.children = new LinkedHashSet<>();
                 }
@@ -298,7 +298,7 @@ public interface Selector {
                 w.visitReferrers(innerVisitor);
             }
 
-            MultipolygonOpenEndFinder(Environment e) {
+            MultipolygonOpenEndFinder(Environment.LinkEnvironment e) {
                 super(e);
             }
 
@@ -325,13 +325,13 @@ public interface Selector {
             /** Will contain all way segments, grouped by cells */
             Map<Point2D, List<WaySegment>> cellSegments;
 
-            private CrossingFinder(Environment e) {
+            private CrossingFinder(Environment.LinkEnvironment e) {
                 super(e);
                 CheckParameterUtil.ensureThat(isArea(e.osm), "Only areas are supported");
                 layer = OsmUtils.getLayer(e.osm);
             }
 
-            private Area getAreaEastNorth(IPrimitive p, Environment e) {
+            private Area getAreaEastNorth(IPrimitive p, Environment.LinkEnvironment e) {
                 if (e.mpAreaCache != null && p.isMultipolygon()) {
                     Area a = e.mpAreaCache.get(p);
                     if (a == null) {
@@ -430,7 +430,7 @@ public interface Selector {
         private class ContainsFinder extends AbstractFinder {
             protected List<IPrimitive> toCheck;
 
-            protected ContainsFinder(Environment e) {
+            protected ContainsFinder(Environment.LinkEnvironment e) {
                 super(e);
                 CheckParameterUtil.ensureThat(!(e.osm instanceof INode), "Nodes not supported");
             }
@@ -462,7 +462,7 @@ public interface Selector {
          */
         private class InsideOrEqualFinder extends AbstractFinder {
 
-            protected InsideOrEqualFinder(Environment e) {
+            protected InsideOrEqualFinder(Environment.LinkEnvironment e) {
                 super(e);
             }
 
@@ -514,7 +514,10 @@ public interface Selector {
         }
 
         @Override
-        public boolean matches(Environment e) {
+        public boolean matches(Environment env) {
+
+            if (!(env instanceof Environment.LinkEnvironment)) return false;
+            Environment.LinkEnvironment e = (Environment.LinkEnvironment) env;
 
             if (!right.matches(e))
                 return false;

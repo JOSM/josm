@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.preferences.NamedColorProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Environment.LinkEnvironment;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory.NullableArguments;
 import org.openstreetmap.josm.io.XmlWriter;
@@ -449,7 +450,9 @@ public final class Functions {
      * @return first non-null value of the key {@code key} from the object's parent(s)
      */
     public static String parent_tag(final Environment env, String key) { // NO_UCD (unused code)
-        if (env.parent == null) {
+        if (!(env instanceof LinkEnvironment)) {
+            return null;
+        } else if (((LinkEnvironment) env).parent == null) {
             if (env.osm != null) {
                 // we don't have a matched parent, so just search all referrers
                 return env.osm.getReferrers().stream()
@@ -459,7 +462,7 @@ public final class Functions {
             }
             return null;
         }
-        return env.parent.get(key);
+        return ((LinkEnvironment) env).parent.get(key);
     }
 
     /**
@@ -471,7 +474,9 @@ public final class Functions {
      * @return a list of non-null values of the key {@code key} from the object's parent(s)
      */
     public static List<String> parent_tags(final Environment env, String key) { // NO_UCD (unused code)
-        if (env.parent == null) {
+        if (!(env instanceof LinkEnvironment)) {
+            return null;
+        } else if (((LinkEnvironment) env).parent == null) {
             if (env.osm != null) {
                 // we don't have a matched parent, so just search all referrers
                 return env.osm.getReferrers().stream().map(parent -> parent.get(key))
@@ -482,7 +487,7 @@ public final class Functions {
             }
             return Collections.emptyList();
         }
-        return Collections.singletonList(env.parent.get(key));
+        return Collections.singletonList(((LinkEnvironment) env).parent.get(key));
     }
 
     /**
@@ -492,7 +497,11 @@ public final class Functions {
      * @return the value of the key {@code key} from the object's child, or {@code null} if there is no child
      */
     public static String child_tag(final Environment env, String key) { // NO_UCD (unused code)
-        return env.child == null ? null : env.child.get(key);
+        if (!(env instanceof LinkEnvironment)) {
+            return null;
+        }
+        IPrimitive child = ((LinkEnvironment) env).child;
+        return child == null ? null : child.get(key);
     }
 
     /**
@@ -504,7 +513,11 @@ public final class Functions {
      * @see IPrimitive#getUniqueId()
      */
     public static Long parent_osm_id(final Environment env) { // NO_UCD (unused code)
-        return env.parent == null ? null : env.parent.getUniqueId();
+        if (!(env instanceof LinkEnvironment)) {
+            return null;
+        }
+        IPrimitive parent = ((LinkEnvironment) env).parent;
+        return parent == null ? null : parent.getUniqueId();
     }
 
     /**
@@ -539,10 +552,10 @@ public final class Functions {
      * @return the index as float. Starts at 1
      */
     public static Float index(final Environment env) { // NO_UCD (unused code)
-        if (env.index == null) {
+        if ((!(env instanceof LinkEnvironment)) || ((LinkEnvironment) env).index < 0) {
             return null;
         }
-        return Float.valueOf(env.index + 1f);
+        return Float.valueOf(((LinkEnvironment) env).index + 1f);
     }
 
     /**
