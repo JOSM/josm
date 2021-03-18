@@ -447,6 +447,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public void visitKeys(KeyValueVisitor visitor) {
+        String[] keys = this.keys;
         if (keys != null) {
             for (int i = 0; i < keys.length; i += 2) {
                 visitor.visitKeyValue(this, keys[i], keys[i + 1]);
@@ -646,6 +647,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public final Collection<String> keySet() {
+        String[] keys = this.keys;
         if (keys == null) {
             return Collections.emptySet();
         }
