@@ -34,6 +34,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.command.SplitWayCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodePositionComparator;
@@ -1712,7 +1713,7 @@ public class JoinAreasAction extends JosmAction {
      */
     private void stripTags(Collection<Way> ways) {
         Map<String, String> tagsToRemove = new HashMap<>();
-        ways.stream().flatMap(w -> w.keySet().stream()).forEach(k -> tagsToRemove.put(k, null));
+        ways.stream().flatMap(AbstractPrimitive::keys).forEach(k -> tagsToRemove.put(k, null));
         if (tagsToRemove.isEmpty())
             return;
         cmds.add(new ChangePropertyCommand(new ArrayList<>(ways), tagsToRemove));

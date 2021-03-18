@@ -279,7 +279,7 @@ class MapCSSParserTest {
         ds.addPrimitive(way1);
 
         tagRegex(way1, "way[ref][count(tag_regex(\"ref\")) > 1] {}", new Boolean[] {true, false, false, true, false});
-        way1.keySet().forEach(key -> way1.put(key, null));
+        way1.visitKeys((primitive, key, value) -> way1.put(key, null));
         way1.put("old_ref", "A1");
         way1.put("ref", "A2");
         tagRegex(way1, "way[ref][count(tag_regex(\"ref\", \"i\")) > 1] {}", new Boolean[] {true, false, false, true, true});

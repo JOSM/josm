@@ -173,7 +173,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
      */
     public DataSet filterDataSet(DataSet ds, List<String> listPos) {
         for (OsmPrimitive p : ds.getPrimitives(p -> p instanceof Node || p instanceof Way)) {
-            for (String key : p.keySet()) {
+            p.visitKeys((primitive, key, value) -> {
                 String listkey;
                 if (listPos != null && key.startsWith(GpxConstants.GPX_PREFIX)) {
                     listkey = key.substring(GpxConstants.GPX_PREFIX.length());
@@ -181,9 +181,9 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
                     listkey = key;
                 }
                 if (listPos == null || !listPos.contains(listkey)) {
-                   p.put(key, null);
+                    p.put(key, null);
                 }
-            }
+            });
         }
         return ds;
     }

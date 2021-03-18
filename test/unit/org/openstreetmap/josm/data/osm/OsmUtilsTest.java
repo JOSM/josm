@@ -35,7 +35,7 @@ class OsmUtilsTest {
     void testCreatePrimitive() {
         final OsmPrimitive p = OsmUtils.createPrimitive("way name=Foo railway=rail");
         assertTrue(p instanceof Way);
-        assertEquals(2, p.keySet().size());
+        assertEquals(2, p.getKeys().size());
         assertEquals("Foo", p.get("name"));
         assertEquals("rail", p.get("railway"));
     }
