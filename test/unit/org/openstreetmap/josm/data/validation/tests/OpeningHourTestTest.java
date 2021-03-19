@@ -144,7 +144,7 @@ class OpeningHourTestTest {
         assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"b \" at line 0, column 0%nWas expecting: <EOF>"),
                 checkOpeningHourSyntax(key, "badtext").get(0).getDescription().trim());
         assertThat(checkOpeningHourSyntax(key, "5.00 p.m-11.00 p.m"), hasSize(1));
-        assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"p \" at line 1, column 2%nWas expecting: <EOF>"),
+        assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"p \" at line 1, column 3%nWas expecting: <EOF>"),
                 checkOpeningHourSyntax(key, "5.00 p.m-11.00 p.m").get(0).getDescription());
     }
 
