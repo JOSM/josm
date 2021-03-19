@@ -10,12 +10,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import ch.poole.openinghoursparser.OpeningHoursParseException;
 import ch.poole.openinghoursparser.OpeningHoursParser;
-import ch.poole.openinghoursparser.ParseException;
 import ch.poole.openinghoursparser.Rule;
 import ch.poole.openinghoursparser.Util;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -105,8 +106,12 @@ public class OpeningHourTest extends TagTest {
                 // parse again in strict mode for detailed message
                 new OpeningHoursParser(new StringReader(value)).rules(true);
             }
-        } catch (ParseException e) {
-            return Collections.singletonList(createTestError(Severity.WARNING, e.getMessage(), key, value, prettifiedValue, p));
+        } catch (OpeningHoursParseException e) {
+            String message = e.getExceptions().stream()
+                    .map(OpeningHoursParseException::getMessage)
+                    .distinct()
+                    .collect(Collectors.joining("; "));
+            return Collections.singletonList(createTestError(Severity.WARNING, message, key, value, prettifiedValue, p));
         }
 
         if (!includeOtherSeverityChecks() || Objects.equals(value, prettifiedValue)) {

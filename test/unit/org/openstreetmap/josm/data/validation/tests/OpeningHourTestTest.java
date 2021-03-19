@@ -89,9 +89,9 @@ class OpeningHourTestTest {
         assertEquals(String.format("Encountered:  \".\" \". \" at line 0, column 0%nWas expecting: <EOF>"),
                 checkOpeningHourSyntax(key, value, Locale.ENGLISH).get(0).getDescription());
         value = "Mon-Thu 12-18";
-        assertEquals("Wochentag mit 3 Buchstaben in Zeile 1, Spalte 4",
+        assertEquals("Wochentag mit 3 Buchstaben in Zeile 1, Spalte 4; Wochentag mit 3 Buchstaben in Zeile 1, Spalte 9; Stunden ohne Minuten",
                 checkOpeningHourSyntax(key, value, Locale.GERMAN).get(0).getDescription());
-        assertEquals("Three character weekday at line 1, column 4",
+        assertEquals("Three character weekday at line 1, column 4; Three character weekday at line 1, column 9; Hours without minutes",
                 checkOpeningHourSyntax(key, value, Locale.ENGLISH).get(0).getDescription());
     }
 
@@ -117,7 +117,7 @@ class OpeningHourTestTest {
         final List<TestError> errors = checkOpeningHourSyntax(key, "Sa-Su 10.00-20.00");
         assertThat(errors, hasSize(1));
         assertFixEquals("Sa-Su 10:00-20:00", errors.get(0));
-        assertEquals("Invalid minutes at line 1, column 12", errors.get(0).getDescription());
+        assertEquals("Invalid minutes at line 1, column 12; Invalid minutes at line 1, column 17", errors.get(0).getDescription());
         assertEquals(Severity.WARNING, errors.get(0).getSeverity());
     }
 
@@ -144,7 +144,9 @@ class OpeningHourTestTest {
         assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"b \" at line 0, column 0%nWas expecting: <EOF>"),
                 checkOpeningHourSyntax(key, "badtext").get(0).getDescription().trim());
         assertThat(checkOpeningHourSyntax(key, "5.00 p.m-11.00 p.m"), hasSize(1));
-        assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"p \" at line 1, column 3%nWas expecting: <EOF>"),
+        assertEquals(String.format("Encountered:  <UNEXPECTED_CHAR> \"p \" at line 1, column 3%nWas expecting: <EOF>; " +
+                        "Encountered:  <UNEXPECTED_CHAR> \"p \" at line 1, column 13%n" +
+                        "Was expecting: <EOF>"),
                 checkOpeningHourSyntax(key, "5.00 p.m-11.00 p.m").get(0).getDescription());
     }
 
