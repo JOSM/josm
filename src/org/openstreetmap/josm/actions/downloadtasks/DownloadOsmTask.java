@@ -375,8 +375,8 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 if (!primitivesToUpdate.isEmpty()) {
                     MainApplication.worker.submit(new UpdatePrimitivesTask(layer, primitivesToUpdate));
                 }
-                layer.onPostDownloadFromServer();
             }
+            layer.onPostDownloadFromServer(); // for existing and newly added layer, see #19816
         }
 
         /**
