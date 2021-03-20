@@ -8,14 +8,18 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.Collections;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.dialogs.properties.HelpAction;
+import org.openstreetmap.josm.gui.dialogs.properties.HelpTagAction;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -160,7 +164,18 @@ public class TagEditorPanel extends JPanel {
             this.model = new TagEditorModel();
         }
         this.tagTable = new TagTable(this.model, maxCharacters);
+
+        setupKeyboardShortcuts();
         build();
+    }
+
+    private void setupKeyboardShortcuts() {
+        // F1 button = custom help action
+        final HelpAction helpTagAction = new HelpTagAction(tagTable,
+                viewRow -> this.model.get(tagTable.convertRowIndexToModel(viewRow)).getName(),
+                viewRow -> Collections.singletonMap(this.model.get(tagTable.convertRowIndexToModel(viewRow)).getValue(), 1));
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(HelpAction.getKeyStroke(), "onHelp");
+        getActionMap().put("onHelp", helpTagAction);
     }
 
     /**
