@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.ClassCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
+import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyRegexpCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.PseudoClassCondition;
@@ -218,8 +220,8 @@ class MapCSSParserTest {
 
     @Test
     void testRegexKeyCondition() throws Exception {
-        KeyCondition c1 = (KeyCondition) getParser("[/.*:(backward|forward)$/]").condition(PRIMITIVE);
-        assertEquals(KeyMatchType.REGEX, c1.matchType);
+        KeyRegexpCondition c1 = (KeyRegexpCondition) getParser("[/.*:(backward|forward)$/]").condition(PRIMITIVE);
+        assertEquals(Pattern.compile(".*:(backward|forward)$"), ((KeyRegexpCondition) c1).pattern);
         assertFalse(c1.applies(getEnvironment("lanes", "3")));
         assertTrue(c1.applies(getEnvironment("lanes:forward", "3")));
         assertTrue(c1.applies(getEnvironment("lanes:backward", "3")));
