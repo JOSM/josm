@@ -115,7 +115,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         HtmlPanel pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("With OAuth you grant JOSM the right to upload map data and GPS tracks "
-                        + "on your behalf (<a href=\"{0}\">more info...</a>).", "http://oauth.net/")
+                        + "on your behalf (<a href=\"{0}\">more info...</a>).", "https://wiki.openstreetmap.org/wiki/OAuth")
                         + "</body></html>"
         );
         pnlMessage.enableClickableHyperlinks();
