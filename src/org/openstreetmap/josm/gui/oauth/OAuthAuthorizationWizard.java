@@ -8,9 +8,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -47,6 +45,7 @@ import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -111,22 +110,8 @@ public class OAuthAuthorizationWizard extends JDialog {
     protected JPanel buildHeaderInfoPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        GridBagConstraints gc = new GridBagConstraints();
-
-        // the oauth logo in the header
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        gc.gridwidth = 2;
-        ImageProvider logoProv = new ImageProvider("oauth", "oauth-logo").setMaxHeight(100);
-        JLabel lbl = new JLabel(logoProv.get());
-        lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        lbl.setOpaque(true);
-        pnl.add(lbl, gc);
 
         // OAuth in a nutshell ...
-        gc.gridy = 1;
-        gc.insets = new Insets(5, 0, 0, 5);
         HtmlPanel pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("With OAuth you grant JOSM the right to upload map data and GPS tracks "
@@ -134,27 +119,18 @@ public class OAuthAuthorizationWizard extends JDialog {
                         + "</body></html>"
         );
         pnlMessage.enableClickableHyperlinks();
-        pnl.add(pnlMessage, gc);
+        pnl.add(pnlMessage, GBC.eol().fill(GBC.HORIZONTAL));
 
         // the authorisation procedure
-        gc.gridy = 2;
-        gc.gridwidth = 1;
-        gc.weightx = 0.0;
-        lbl = new JLabel(tr("Please select an authorization procedure: "));
+        JLabel lbl = new JLabel(tr("Please select an authorization procedure: "));
         lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
-        pnl.add(lbl, gc);
+        pnl.add(lbl, GBC.std());
 
-        gc.gridx = 1;
-        gc.gridwidth = 1;
-        gc.weightx = 1.0;
-        pnl.add(cbAuthorisationProcedure, gc);
+        pnl.add(cbAuthorisationProcedure, GBC.eol().fill(GBC.HORIZONTAL));
         cbAuthorisationProcedure.addItemListener(new AuthorisationProcedureChangeListener());
         lbl.setLabelFor(cbAuthorisationProcedure);
 
         if (!Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl)) {
-            gc.gridy = 3;
-            gc.gridwidth = 2;
-            gc.gridx = 0;
             final HtmlPanel pnlWarning = new HtmlPanel();
             final HTMLEditorKit kit = (HTMLEditorKit) pnlWarning.getEditorPane().getEditorKit();
             kit.getStyleSheet().addRule(".warning-body {"
@@ -167,7 +143,7 @@ public class OAuthAuthorizationWizard extends JDialog {
                     "make sure to set an OAuth consumer key and secret in the <i>Advanced OAuth parameters</i>.")
                     + "</p>"
                     + "</body></html>");
-            pnl.add(pnlWarning, gc);
+            pnl.add(pnlWarning, GBC.eop().fill());
         }
 
         return pnl;
@@ -205,7 +181,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         getContentPane().add(buildHeaderInfoPanel(), BorderLayout.NORTH);
 
         setTitle(tr("Get an Access Token for ''{0}''", apiUrl));
-        this.setMinimumSize(new Dimension(500, 400));
+        this.setMinimumSize(new Dimension(500, 300));
 
         pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI(apiUrl, executor);
         pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI(apiUrl, executor);
