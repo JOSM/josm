@@ -561,13 +561,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 .map(tag -> new ChangePropertyCommand(sel, tag.getKey(), tag.getValue()))
                 .filter(cmd -> cmd.getObjectsNumber() > 0)
                 .collect(StreamUtils.toUnmodifiableList());
-
-        if (cmds.isEmpty())
-            return null;
-        else if (cmds.size() == 1)
-            return cmds.get(0);
-        else
-            return new SequenceCommand(tr("Change Tags"), cmds);
+        return cmds.isEmpty() ? null : SequenceCommand.wrapIfNeeded(tr("Change Tags"), cmds);
     }
 
     private boolean supportsRelation() {
