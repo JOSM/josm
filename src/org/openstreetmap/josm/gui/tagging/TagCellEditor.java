@@ -104,12 +104,10 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
             return editor;
         } else if (column == 1) {
 
-            if (currentTag.getValueCount() == 0) {
+            if (currentTag.getValueCount() > 1) {
                 editor.setText("");
-            } else if (currentTag.getValueCount() == 1) {
-                editor.setText(currentTag.getValues().get(0));
             } else {
-                editor.setText("");
+                editor.setText(currentTag.getValue());
             }
             initAutoCompletionListForValues(currentTag.getName());
             return editor;

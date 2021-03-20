@@ -125,14 +125,7 @@ public class TagModel {
         } else if (getValueCount() == 1) {
             return values.get(0);
         } else {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < values.size(); i++) {
-                sb.append(values.get(i));
-                if (i + 1 < values.size()) {
-                    sb.append(';');
-                }
-            }
-            return sb.toString();
+            return String.join(";", values);
         }
     }
 
