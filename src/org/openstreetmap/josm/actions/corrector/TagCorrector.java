@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.correction.TagCorrection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.correction.RoleCorrectionTable;
 import org.openstreetmap.josm.gui.correction.TagCorrectionTable;
@@ -114,7 +115,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 final TagCorrectionTable table = new TagCorrectionTable(
                         tagCorrections);
                 final JScrollPane scrollPane = new JScrollPane(table);
-                p.add(scrollPane, GBC.eop().fill(GBC.HORIZONTAL));
+                p.add(scrollPane, GBC.eop().fill(GBC.BOTH));
 
                 tagTableMap.put(primitive, table);
             }
@@ -140,22 +141,21 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
                 final RoleCorrectionTable table = new RoleCorrectionTable(roleCorrections);
                 final JScrollPane scrollPane = new JScrollPane(table);
-                p.add(scrollPane, GBC.eop().fill(GBC.HORIZONTAL));
+                p.add(scrollPane, GBC.eop().fill(GBC.BOTH));
                 primitiveLabel.setLabelFor(table);
 
                 roleTableMap.put(primitive, table);
             }
 
-            int answer = JOptionPane.showOptionDialog(
+            ExtendedDialog dialog = new ExtendedDialog(
                     MainApplication.getMainFrame(),
-                    p,
                     tr("Automatic tag correction"),
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    APPLICATION_OPTIONS,
-                    APPLICATION_OPTIONS[0]
+                    APPLICATION_OPTIONS
             );
+            dialog.setContent(p, false);
+            dialog.setButtonIcons("dialogs/edit", "dialogs/next", "cancel");
+            dialog.showDialog();
+            int answer = dialog.getValue();
 
             if (answer == JOptionPane.YES_OPTION) {
                 for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
