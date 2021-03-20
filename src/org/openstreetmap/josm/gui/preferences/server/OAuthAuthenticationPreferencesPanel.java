@@ -22,11 +22,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
+import org.openstreetmap.josm.gui.oauth.AuthorizationProcedure;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -173,27 +175,20 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             GridBagConstraints gc = new GridBagConstraints();
 
             // A message explaining that the user isn't authorised yet
-            gc.anchor = GridBagConstraints.NORTHWEST;
-            gc.insets = new Insets(0, 0, 3, 0);
-            gc.fill = GridBagConstraints.HORIZONTAL;
-            gc.weightx = 1.0;
             JMultilineLabel lbl = new JMultilineLabel(
                     tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorize first."));
-            add(lbl, gc);
+            add(lbl, GBC.eol().anchor(GBC.NORTHWEST).fill(GBC.HORIZONTAL));
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
             // Action for authorising now
-            gc.gridy = 1;
-            gc.fill = GridBagConstraints.NONE;
-            gc.weightx = 0.0;
-            add(new JButton(new AuthoriseNowAction()), gc);
+            add(new JButton(new AuthoriseNowAction(AuthorizationProcedure.FULLY_AUTOMATIC)), GBC.eol());
+            add(new JButton(new AuthoriseNowAction(AuthorizationProcedure.SEMI_AUTOMATIC)), GBC.eol());
+            JButton authManually = new JButton(new AuthoriseNowAction(AuthorizationProcedure.MANUALLY));
+            add(authManually, GBC.eol());
+            ExpertToggleAction.addVisibilitySwitcher(authManually);
 
             // filler - grab remaining space
-            gc.gridy = 2;
-            gc.fill = GridBagConstraints.BOTH;
-            gc.weightx = 1.0;
-            gc.weighty = 1.0;
-            add(new JPanel(), gc);
+            add(new JPanel(), GBC.std().fill(GBC.BOTH));
         }
     }
 
@@ -259,7 +254,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
             // -- action buttons
             JPanel btns = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            btns.add(new JButton(new RenewAuthorisationAction()));
+            btns.add(new JButton(new RenewAuthorisationAction(AuthorizationProcedure.FULLY_AUTOMATIC)));
             btns.add(new JButton(new TestAuthorisationAction()));
             gc.gridy = 4;
             gc.gridx = 0;
@@ -295,16 +290,22 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      * Action to authorise the current user
      */
     private class AuthoriseNowAction extends AbstractAction {
-        AuthoriseNowAction() {
-            putValue(NAME, tr("Authorize now"));
-            putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process"));
-            new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
+        private final AuthorizationProcedure procedure;
+
+        AuthoriseNowAction(AuthorizationProcedure procedure) {
+            this.procedure = procedure;
+            putValue(NAME, tr("{0} ({1})", tr("Authorize now"), procedure.getText()));
+            putValue(SHORT_DESCRIPTION, procedure.getDescription());
+            if (procedure == AuthorizationProcedure.FULLY_AUTOMATIC) {
+                new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);
+            }
         }
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
             OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                     OAuthAuthenticationPreferencesPanel.this,
+                    procedure,
                     apiUrl,
                     MainApplication.worker);
             try {
@@ -325,7 +326,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
         /**
          * Constructs a new {@code RenewAuthorisationAction}.
          */
-        RenewAuthorisationAction() {
+        RenewAuthorisationAction(AuthorizationProcedure procedure) {
+            super(procedure);
             putValue(NAME, tr("New Access Token"));
             putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process and generate a new Access Token"));
             new ImageProvider("oauth", "oauth-small").getResource().attachImageIcon(this);

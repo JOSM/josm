@@ -12,14 +12,13 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
@@ -27,7 +26,6 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -43,8 +41,8 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -58,9 +56,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class OAuthAuthorizationWizard extends JDialog {
     private boolean canceled;
+    private final AuthorizationProcedure procedure;
     private final String apiUrl;
 
-    private final AuthorizationProcedureComboBox cbAuthorisationProcedure = new AuthorizationProcedureComboBox();
     private FullyAutomaticAuthorizationUI pnlFullyAutomaticAuthorisationUI;
     private SemiAutomaticAuthorizationUI pnlSemiAutomaticAuthorisationUI;
     private ManualAuthorizationUI pnlManualAuthorisationUI;
@@ -122,13 +120,9 @@ public class OAuthAuthorizationWizard extends JDialog {
         pnl.add(pnlMessage, GBC.eol().fill(GBC.HORIZONTAL));
 
         // the authorisation procedure
-        JLabel lbl = new JLabel(tr("Please select an authorization procedure: "));
+        JMultilineLabel lbl = new JMultilineLabel(AuthorizationProcedure.FULLY_AUTOMATIC.getDescription());
         lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
         pnl.add(lbl, GBC.std());
-
-        pnl.add(cbAuthorisationProcedure, GBC.eol().fill(GBC.HORIZONTAL));
-        cbAuthorisationProcedure.addItemListener(new AuthorisationProcedureChangeListener());
-        lbl.setLabelFor(cbAuthorisationProcedure);
 
         if (!Config.getUrls().getDefaultOsmApiUrl().equals(apiUrl)) {
             final HtmlPanel pnlWarning = new HtmlPanel();
@@ -154,7 +148,6 @@ public class OAuthAuthorizationWizard extends JDialog {
      * currently selected
      */
     protected void refreshAuthorisationProcedurePanel() {
-        AuthorizationProcedure procedure = (AuthorizationProcedure) cbAuthorisationProcedure.getSelectedItem();
         switch(procedure) {
         case FULLY_AUTOMATIC:
             spAuthorisationProcedureUI.getViewport().setView(pnlFullyAutomaticAuthorisationUI);
@@ -216,14 +209,15 @@ public class OAuthAuthorizationWizard extends JDialog {
      * Creates the wizard.
      *
      * @param parent the component relative to which the dialog is displayed
+     * @param procedure the authorization procedure to use
      * @param apiUrl the API URL. Must not be null.
      * @param executor the executor used for running the HTTP requests for the authorization
      * @throws IllegalArgumentException if apiUrl is null
      */
-    public OAuthAuthorizationWizard(Component parent, String apiUrl, Executor executor) {
+    public OAuthAuthorizationWizard(Component parent, AuthorizationProcedure procedure, String apiUrl, Executor executor) {
         super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
-        CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
-        this.apiUrl = apiUrl;
+        this.procedure = Objects.requireNonNull(procedure, "procedure");
+        this.apiUrl = Objects.requireNonNull(apiUrl, "apiUrl");
         this.executor = executor;
         build();
     }
@@ -238,7 +232,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     }
 
     protected AbstractAuthorizationUI getCurrentAuthorisationUI() {
-        switch((AuthorizationProcedure) cbAuthorisationProcedure.getSelectedItem()) {
+        switch(procedure) {
         case FULLY_AUTOMATIC: return pnlFullyAutomaticAuthorisationUI;
         case MANUALLY: return pnlManualAuthorisationUI;
         case SEMI_AUTOMATIC: return pnlSemiAutomaticAuthorisationUI;
@@ -319,7 +313,9 @@ public class OAuthAuthorizationWizard extends JDialog {
             // Concerning Utils.newDirectExecutor: Main worker cannot be used since this connection is already
             // executed via main worker. The OAuth connections would block otherwise.
             final OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
-                    MainApplication.getMainFrame(), serverUrl.toExternalForm(), Utils.newDirectExecutor());
+                    MainApplication.getMainFrame(),
+                    AuthorizationProcedure.FULLY_AUTOMATIC,
+                    serverUrl.toExternalForm(), Utils.newDirectExecutor());
             wizard.showDialog();
             return wizard;
         });
@@ -328,13 +324,6 @@ public class OAuthAuthorizationWizard extends JDialog {
             authTask.run();
         } else {
             SwingUtilities.invokeAndWait(authTask);
-        }
-    }
-
-    class AuthorisationProcedureChangeListener implements ItemListener {
-        @Override
-        public void itemStateChanged(ItemEvent arg0) {
-            refreshAuthorisationProcedurePanel();
         }
     }
 
