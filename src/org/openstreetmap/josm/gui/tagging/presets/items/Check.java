@@ -31,10 +31,6 @@ public class Check extends KeyedItem {
     public boolean disable_off; // NOSONAR
     /** "on" or "off" or unset (default is unset) */
     public String default_; // only used for tagless objects // NOSONAR
-    /** The location of icon file to display */
-    public String icon; // NOSONAR
-    /** The size of displayed icon. If not set, default is 16px */
-    public short icon_size = 16; // NOSONAR
 
     private QuadStateCheckBox check;
     private QuadStateCheckBox.State initialState;

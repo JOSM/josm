@@ -172,7 +172,6 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         protected void build() {
             setLayout(new GridBagLayout());
-            GridBagConstraints gc = new GridBagConstraints();
 
             // A message explaining that the user isn't authorised yet
             JMultilineLabel lbl = new JMultilineLabel(
