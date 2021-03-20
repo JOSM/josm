@@ -19,11 +19,13 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -202,12 +204,23 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
     private static LayerSelection askToSelectLayers(WMSImagery wms) {
         final WMSLayerTree tree = new WMSLayerTree();
-        tree.updateTree(wms);
 
         Collection<String> wmsFormats = wms.getFormats();
         final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[0]));
         formats.setSelectedItem(wms.getPreferredFormat());
         formats.setToolTipText(tr("Select image format for WMS layer"));
+
+        JCheckBox checkBounds = new JCheckBox(tr("Show only layers for current view"), true);
+        Runnable updateTree = () -> {
+            LatLon latLon = checkBounds.isSelected() && MainApplication.isDisplayingMapView()
+                    ? MainApplication.getMap().mapView.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter())
+                    : null;
+            tree.setCheckBounds(latLon);
+            tree.updateTree(wms);
+            System.out.println(wms);
+        };
+        checkBounds.addActionListener(ignore -> updateTree.run());
+        updateTree.run();
 
         if (!GraphicsEnvironment.isHeadless()) {
             ExtendedDialog dialog = new ExtendedDialog(MainApplication.getMainFrame(),
@@ -216,6 +229,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             scrollPane.setPreferredSize(new Dimension(400, 400));
             final JPanel panel = new JPanel(new GridBagLayout());
             panel.add(scrollPane, GBC.eol().fill());
+            panel.add(checkBounds, GBC.eol().fill(GBC.HORIZONTAL));
             panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
             dialog.setContent(panel);
 

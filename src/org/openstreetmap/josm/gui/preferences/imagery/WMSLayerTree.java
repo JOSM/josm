@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import java.awt.Component;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.LayerDetails;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 
@@ -26,6 +28,7 @@ public class WMSLayerTree {
     private final DefaultTreeModel treeData = new DefaultTreeModel(treeRootNode);
     private final JTree layerTree = new JTree(treeData);
     private final List<LayerDetails> selectedLayers = new LinkedList<>();
+    private LatLon checkBounds = null;
 
     /**
      * Returns the root node.
@@ -59,9 +62,19 @@ public class WMSLayerTree {
         layerTree.addTreeSelectionListener(new WMSTreeSelectionListener());
     }
 
+    /**
+     * Set coordinate to check {@linkplain LayerDetails#getBounds() layer bounds}
+     * when {@linkplain #updateTree updating the tree}.
+     * @param checkBounds the coordinate
+     */
+    public void setCheckBounds(LatLon checkBounds) {
+        this.checkBounds = checkBounds;
+    }
+
     void addLayersToTreeData(MutableTreeNode parent, Collection<LayerDetails> layers) {
         for (LayerDetails layerDetails : layers.stream()
-                .sorted((l1, l2) -> -1 * l1.toString().compareTo(l2.toString()))
+                .filter(l -> checkBounds == null || l.getBounds() == null || l.getBounds().contains(checkBounds))
+                .sorted(Comparator.comparing(LayerDetails::toString).reversed())
                 .toArray(LayerDetails[]::new)
                 ) {
             DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode(layerDetails);
@@ -88,6 +101,7 @@ public class WMSLayerTree {
      */
     public void updateTreeList(Collection<LayerDetails> layers) {
         addLayersToTreeData(getTreeRootNode(), layers);
+        treeData.nodeStructureChanged(getTreeRootNode());
         getLayerTree().expandRow(0);
         getLayerTree().expandRow(1);
     }
