@@ -28,7 +28,7 @@ public class WMSLayerTree {
     private final DefaultTreeModel treeData = new DefaultTreeModel(treeRootNode);
     private final JTree layerTree = new JTree(treeData);
     private final List<LayerDetails> selectedLayers = new LinkedList<>();
-    private LatLon checkBounds = null;
+    private LatLon checkBounds;
 
     /**
      * Returns the root node.

@@ -659,7 +659,7 @@ public final class ConditionFactory {
          */
         @Override
         public Tag asTag(OsmPrimitive p) {
-            String key = p.keys().filter(pattern.asPredicate()).findAny().orElse(pattern.pattern());;
+            String key = p.keys().filter(pattern.asPredicate()).findAny().orElse(pattern.pattern());
             return new Tag(key, p.get(key));
         }
 
