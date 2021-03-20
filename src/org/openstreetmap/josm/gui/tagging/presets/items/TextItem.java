@@ -31,7 +31,6 @@ public abstract class TextItem extends TaggingPresetItem {
     /** The size of displayed icon. If not set, default is 16px */
     public short icon_size = 16; // NOSONAR
 
-
     protected final void initializeLocaleText(String defaultText) {
         if (locale_text == null) {
             locale_text = getLocaleText(text, text_context, defaultText);
