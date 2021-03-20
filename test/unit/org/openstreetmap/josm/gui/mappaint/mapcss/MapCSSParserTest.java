@@ -221,7 +221,7 @@ class MapCSSParserTest {
     @Test
     void testRegexKeyCondition() throws Exception {
         KeyRegexpCondition c1 = (KeyRegexpCondition) getParser("[/.*:(backward|forward)$/]").condition(PRIMITIVE);
-        assertEquals(Pattern.compile(".*:(backward|forward)$"), ((KeyRegexpCondition) c1).pattern);
+        assertEquals(Pattern.compile(".*:(backward|forward)$").pattern(), c1.pattern.pattern());
         assertFalse(c1.applies(getEnvironment("lanes", "3")));
         assertTrue(c1.applies(getEnvironment("lanes:forward", "3")));
         assertTrue(c1.applies(getEnvironment("lanes:backward", "3")));
