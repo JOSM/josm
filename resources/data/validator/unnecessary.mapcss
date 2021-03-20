@@ -154,7 +154,9 @@ node[emergency=fire_hydrant][fire_hydrant:count=1] {
 }
 
 /* #2760 */
-*[/^(gpx|gpxx|gpxd):/] {
+*[/^gpx:/],
+*[/^gpxx:/],
+*[/^gpxd:/] {
   throwWarning: tr("{0} should not be uploaded", "{0.key}");
   group: tr("unnecessary tag");
   fixRemove: "{0.key}";

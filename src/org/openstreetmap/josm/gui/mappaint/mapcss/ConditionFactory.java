@@ -104,7 +104,20 @@ public final class ConditionFactory {
     public static Condition createKeyCondition(String k, boolean not, KeyMatchType matchType, Context context) {
         switch (context) {
         case PRIMITIVE:
-            return new KeyCondition(k, not, matchType);
+            if (KeyMatchType.REGEX == matchType && k.matches("[A-Za-z0-9:_-]+")) {
+                // optimization: using String.contains avoids allocating a Matcher
+                return new KeyCondition(k, not, KeyMatchType.ANY_CONTAINS);
+            } else if (KeyMatchType.REGEX == matchType && k.matches("\\^[A-Za-z0-9:_-]+")) {
+                // optimization: using String.startsWith avoids allocating a Matcher
+                return new KeyCondition(k.substring(1), not, KeyMatchType.ANY_STARTS_WITH);
+            } else if (KeyMatchType.REGEX == matchType && k.matches("[A-Za-z0-9:_-]+\\$")) {
+                // optimization: using String.endsWith avoids allocating a Matcher
+                return new KeyCondition(k.substring(0, k.length() - 1), not, KeyMatchType.ANY_ENDS_WITH);
+            } else if (matchType == KeyMatchType.REGEX) {
+                return new KeyRegexpCondition(Pattern.compile(k), not);
+            } else {
+                return new KeyCondition(k, not, matchType);
+            }
         case LINK:
             if (matchType != null)
                 throw new MapCSSException("Question mark operator ''?'' and regexp match not supported in LINK context");
@@ -488,7 +501,19 @@ public final class ConditionFactory {
         /**
          * The key needs to match the given regular expression.
          */
-        REGEX
+        REGEX,
+        /**
+         * The key needs to contain the given label as substring.
+         */
+        ANY_CONTAINS,
+        /**
+         * The key needs to start with the given label.
+         */
+        ANY_STARTS_WITH,
+        /**
+         * The key needs to end with the given label.
+         */
+        ANY_ENDS_WITH,
     }
 
     /**
@@ -509,6 +534,7 @@ public final class ConditionFactory {
      *     ["a label"?!] PRIMITIVE:  the primitive has a tag "a label" whose value evaluates to a false-value
      *                   LINK:       not supported
      * </pre>
+     * @see KeyRegexpCondition
      */
     public static class KeyCondition implements Condition, ToTagConvertable {
 
@@ -525,10 +551,6 @@ public final class ConditionFactory {
          * @see KeyMatchType
          */
         public final KeyMatchType matchType;
-        /**
-         * A predicate used to match a the regexp against the key. Only used if the match type is regexp.
-         */
-        public final Predicate<String> containsPattern;
 
         /**
          * Creates a new KeyCondition
@@ -537,33 +559,93 @@ public final class ConditionFactory {
          * @param matchType The match type.
          */
         public KeyCondition(String label, boolean negateResult, KeyMatchType matchType) {
+            CheckParameterUtil.ensureThat(matchType != KeyMatchType.REGEX, "Use KeyPatternCondition");
             this.label = label;
             this.negateResult = negateResult;
             this.matchType = matchType == null ? KeyMatchType.EQ : matchType;
-            this.containsPattern = KeyMatchType.REGEX == matchType
-                    ? Pattern.compile(label).asPredicate()
-                    : null;
         }
 
         @Override
         public boolean applies(Environment e) {
-            switch(e.getContext()) {
-            case PRIMITIVE:
-                switch (matchType) {
+            CheckParameterUtil.ensureThat(!e.isLinkContext(), "Illegal state: KeyCondition not supported in LINK context");
+            switch (matchType) {
                 case TRUE:
                     return e.osm.isKeyTrue(label) ^ negateResult;
                 case FALSE:
                     return e.osm.isKeyFalse(label) ^ negateResult;
-                case REGEX:
-                    return e.osm.keys().anyMatch(containsPattern) ^ negateResult;
+                case ANY_CONTAINS:
+                case ANY_STARTS_WITH:
+                case ANY_ENDS_WITH:
+                    return e.osm.keys().anyMatch(keyPredicate()) ^ negateResult;
                 default:
                     return e.osm.hasKey(label) ^ negateResult;
-                }
-            case LINK:
-                Utils.ensure(false, "Illegal state: KeyCondition not supported in LINK context");
-                return false;
-            default: throw new AssertionError();
             }
+        }
+
+        private Predicate<String> keyPredicate() {
+            switch (matchType) {
+                case ANY_CONTAINS:
+                    return key -> key.contains(label);
+                case ANY_STARTS_WITH:
+                    return key -> key.startsWith(label);
+                case ANY_ENDS_WITH:
+                    return key -> key.endsWith(label);
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Get the matched key and the corresponding value.
+         * <p>
+         * WARNING: This ignores {@link #negateResult}.
+         * @param p The primitive to get the value from.
+         * @return The tag.
+         */
+        @Override
+        public Tag asTag(OsmPrimitive p) {
+            String key = label;
+            Predicate<String> keyPredicate = keyPredicate();
+            if (keyPredicate != null) {
+                key = p.keys().filter(keyPredicate).findAny().orElse(key);
+            }
+            return new Tag(key, p.get(key));
+        }
+
+        @Override
+        public String toString() {
+            return '[' + (negateResult ? "!" : "") + label + ']';
+        }
+    }
+
+    /**
+     * KeyPatternCondition represents a conditions matching keys based on a pattern.
+     */
+    public static class KeyRegexpCondition implements Condition, ToTagConvertable {
+
+        /**
+         * A predicate used to match a the regexp against the key. Only used if the match type is regexp.
+         */
+        public final Pattern pattern;
+        /**
+         * If we should negate the result of the match.
+         */
+        public final boolean negateResult;
+
+        /**
+         * Creates a new KeyPatternCondition
+         * @param pattern The regular expression for matching keys.
+         * @param negateResult If we should negate the result.
+         */
+        public KeyRegexpCondition(Pattern pattern, boolean negateResult) {
+            this.negateResult = negateResult;
+            this.pattern = pattern;
+        }
+
+        @Override
+        public boolean applies(Environment e) {
+            CheckParameterUtil.ensureThat(!e.isLinkContext(), "Illegal state: KeyCondition not supported in LINK context");
+            return e.osm.keys().anyMatch(pattern.asPredicate()) ^ negateResult;
         }
 
         /**
@@ -577,16 +659,13 @@ public final class ConditionFactory {
          */
         @Override
         public Tag asTag(OsmPrimitive p) {
-            String key = label;
-            if (KeyMatchType.REGEX == matchType) {
-                key = p.keys().filter(containsPattern).findAny().orElse(key);
-            }
+            String key = p.keys().filter(pattern.asPredicate()).findAny().orElse(pattern.pattern());;
             return new Tag(key, p.get(key));
         }
 
         @Override
         public String toString() {
-            return '[' + (negateResult ? "!" : "") + label + ']';
+            return '[' + (negateResult ? "!" : "") + pattern + ']';
         }
     }
 

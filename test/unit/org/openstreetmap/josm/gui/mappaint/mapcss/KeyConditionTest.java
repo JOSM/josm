@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -80,6 +82,26 @@ class KeyConditionTest {
         ConditionFactory.createKeyCondition("a key", true, KeyMatchType.FALSE, Context.PRIMITIVE);
         // [!"a label"?]
         ConditionFactory.createKeyCondition("a key", true, KeyMatchType.TRUE, Context.PRIMITIVE);
+
+        // [/regex/]
+        Condition c = ConditionFactory.createKeyCondition("foo|bar", false, KeyMatchType.REGEX, Context.PRIMITIVE);
+        assertTrue(c.applies(new Environment(OsmUtils.createPrimitive("node BARfooBAZ=true"))));
+        assertFalse(c.applies(new Environment(OsmUtils.createPrimitive("node BARBAZ=true"))));
+        c = ConditionFactory.createKeyCondition("colour:", false, KeyMatchType.REGEX, Context.PRIMITIVE);
+        assertEquals(KeyMatchType.ANY_CONTAINS, ((KeyCondition) c).matchType);
+        assertEquals("colour:", ((KeyCondition) c).label);
+        assertTrue(c.applies(new Environment(OsmUtils.createPrimitive("node colour:roof=ref"))));
+        assertFalse(c.applies(new Environment(OsmUtils.createPrimitive("node foo=bar"))));
+        c = ConditionFactory.createKeyCondition("^wikipedia:", false, KeyMatchType.REGEX, Context.PRIMITIVE);
+        assertEquals(KeyMatchType.ANY_STARTS_WITH, ((KeyCondition) c).matchType);
+        assertEquals("wikipedia:", ((KeyCondition) c).label);
+        assertTrue(c.applies(new Environment(OsmUtils.createPrimitive("node wikipedia:en=a"))));
+        assertFalse(c.applies(new Environment(OsmUtils.createPrimitive("node wikipedia=a"))));
+        c = ConditionFactory.createKeyCondition("_name$", false, KeyMatchType.REGEX, Context.PRIMITIVE);
+        assertEquals(KeyMatchType.ANY_ENDS_WITH, ((KeyCondition) c).matchType);
+        assertEquals("_name", ((KeyCondition) c).label);
+        assertTrue(c.applies(new Environment(OsmUtils.createPrimitive("node alt_name=a"))));
+        assertFalse(c.applies(new Environment(OsmUtils.createPrimitive("node name=a"))));
 
         // ["a label"]
         ConditionFactory.createKeyCondition("a key", false, null, Context.LINK);

@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.KeyValueVisitor;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyCondition;
-import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyMatchType;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.KeyValueCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
 import org.openstreetmap.josm.tools.Utils;
@@ -189,7 +188,7 @@ public class MapCSSRuleIndex {
         for (Condition c : conds) {
             if (c instanceof KeyCondition) {
                 KeyCondition keyCondition = (KeyCondition) c;
-                if (!keyCondition.negateResult && conditionRequiresKeyPresence(keyCondition.matchType)) {
+                if (!keyCondition.negateResult) {
                     key = keyCondition.label;
                 }
             } else if (c instanceof KeyValueCondition) {
@@ -200,10 +199,6 @@ public class MapCSSRuleIndex {
             }
         }
         return key;
-    }
-
-    private static boolean conditionRequiresKeyPresence(KeyMatchType matchType) {
-        return matchType != KeyMatchType.REGEX;
     }
 
     private MapCSSKeyRules getEntryInIndex(String key) {
