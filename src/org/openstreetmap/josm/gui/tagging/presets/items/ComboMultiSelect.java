@@ -27,8 +27,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
@@ -205,11 +205,11 @@ public abstract class ComboMultiSelect extends KeyedItem {
     }
 
     @Override
-    public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
+    public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
         initListEntries(true);
 
         // find out if our key is already used in the selection.
-        usage = determineTextUsage(sel, key);
+        usage = determineTextUsage(support.getSelected(), key);
         if (!usage.hasUniqueValue() && !usage.unused()) {
             presetListEntries.add(new PresetListEntry(DIFFERENT));
         }
@@ -219,7 +219,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         label.setToolTipText(getKeyTooltipText());
         label.setComponentPopupMenu(getPopupMenu());
         p.add(label, GBC.std().insets(0, 0, 10, 0));
-        addToPanelAnchor(p, default_, presetInitiallyMatches);
+        addToPanelAnchor(p, default_, support.isPresetInitiallyMatches());
         label.setLabelFor(component);
         component.setToolTipText(getKeyTooltipText());
 

@@ -1,12 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
-import java.util.Collection;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -15,7 +13,7 @@ import org.openstreetmap.josm.tools.GBC;
 public class Label extends TextItem {
 
     @Override
-    public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
+    public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
         initializeLocaleText(null);
         JLabel label = new JLabel(locale_text);
         addIcon(label);

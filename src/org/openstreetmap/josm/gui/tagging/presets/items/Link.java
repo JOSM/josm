@@ -5,14 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.properties.HelpAction;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
@@ -34,7 +33,7 @@ public class Link extends TextItem {
     public String locale_href; // NOSONAR
 
     @Override
-    public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
+    public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
         initializeLocaleText(tr("More information about this feature"));
         Optional.ofNullable(buildUrlLabel()).ifPresent(label -> p.add(label, GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL)));
         return false;

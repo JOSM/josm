@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.widgets.QuadStateCheckBox;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -37,10 +38,10 @@ public class Check extends KeyedItem {
     private Boolean def;
 
     @Override
-    public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
+    public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
 
         // find out if our key is already used in the selection.
-        final Usage usage = determineBooleanUsage(sel, key);
+        final Usage usage = determineBooleanUsage(support.getSelected(), key);
         final String oneValue = usage.values.isEmpty() ? null : usage.values.last();
         def = "on".equals(default_) ? Boolean.TRUE : "off".equals(default_) ? Boolean.FALSE : null;
 
@@ -49,7 +50,7 @@ public class Check extends KeyedItem {
         if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
             if (def != null && !PROP_FILL_DEFAULT.get()) {
                 // default is set and filling default values feature is disabled - check if all primitives are untagged
-                for (OsmPrimitive s : sel) {
+                for (OsmPrimitive s : support.getSelected()) {
                     if (s.hasKeys()) {
                         def = null;
                     }

@@ -21,10 +21,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -60,10 +60,10 @@ public class Text extends KeyedItem {
     private JComponent value;
 
     @Override
-    public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
+    public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
 
         // find out if our key is already used in the selection.
-        Usage usage = determineTextUsage(sel, key);
+        Usage usage = determineTextUsage(support.getSelected(), key);
         AutoCompletingTextField textField = new AutoCompletingTextField();
         if (alternative_autocomplete_keys != null) {
             initAutoCompletionField(textField, (key + ',' + alternative_autocomplete_keys).split(",", -1));
@@ -87,7 +87,7 @@ public class Text extends KeyedItem {
                 }
             } else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                 // selected osm primitives are untagged or filling default values feature is enabled
-                if (!presetInitiallyMatches && !"false".equals(use_last_as_default) && LAST_VALUES.containsKey(key)) {
+                if (!support.isPresetInitiallyMatches() && !"false".equals(use_last_as_default) && LAST_VALUES.containsKey(key)) {
                     textField.setText(LAST_VALUES.get(key));
                 } else {
                     textField.setText(default_);

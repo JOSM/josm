@@ -5,14 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collections;
-
 import javax.swing.JPanel;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 
 /**
  * Unit tests of {@link Space} class.
@@ -34,7 +32,7 @@ class SpaceTest {
     void testAddToPanel() {
         JPanel p = new JPanel();
         assertEquals(0, p.getComponentCount());
-        assertFalse(new Space().addToPanel(p, Collections.<OsmPrimitive>emptyList(), false));
+        assertFalse(new Space().addToPanel(p, TaggingPresetItemGuiSupport.create(false)));
         assertTrue(p.getComponentCount() > 0);
     }
 }

@@ -4,13 +4,11 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collections;
-
 import javax.swing.JPanel;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -34,7 +32,7 @@ class TextTest {
     void testAddToPanel() {
         JPanel p = new JPanel();
         assertEquals(0, p.getComponentCount());
-        assertTrue(new Text().addToPanel(p, Collections.<OsmPrimitive>emptyList(), false));
+        assertTrue(new Text().addToPanel(p, TaggingPresetItemGuiSupport.create(false)));
         assertTrue(p.getComponentCount() > 0);
     }
 }

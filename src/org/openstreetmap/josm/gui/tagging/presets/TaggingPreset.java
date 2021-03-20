@@ -328,6 +328,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && selected.stream().allMatch(this);
+        final TaggingPresetItemGuiSupport itemGuiSupport = TaggingPresetItemGuiSupport.create(presetInitiallyMatches, selected);
         JPanel items = new JPanel(new GridBagLayout());
         TaggingPresetItem previous = null;
         for (TaggingPresetItem i : data) {
@@ -341,7 +342,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                         items.add(link.createLabel(), GBC.eol().insets(0, 8, 0, 0));
                     }
                 }
-                if (i.addToPanel(items, selected, presetInitiallyMatches)) {
+                if (i.addToPanel(items, itemGuiSupport)) {
                     p.hasElements = true;
                 }
             }
@@ -354,7 +355,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
         // add Link
         for (Link link : l) {
-            link.addToPanel(p, selected, presetInitiallyMatches);
+            link.addToPanel(p, itemGuiSupport);
         }
 
         // "Add toolbar button"
@@ -673,4 +674,5 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     public CompletableFuture<Void> getIconLoadingTask() {
         return iconFuture;
     }
+
 }

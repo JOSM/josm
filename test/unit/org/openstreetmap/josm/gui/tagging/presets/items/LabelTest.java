@@ -4,14 +4,12 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Collections;
-
 import javax.swing.JPanel;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 
 /**
  * Unit tests of {@link Label} class.
@@ -33,7 +31,7 @@ class LabelTest {
     void testAddToPanel() {
         JPanel p = new JPanel();
         assertEquals(0, p.getComponentCount());
-        assertTrue(new Label().addToPanel(p, Collections.<OsmPrimitive>emptyList(), false));
+        assertTrue(new Label().addToPanel(p, TaggingPresetItemGuiSupport.create(false)));
         assertTrue(p.getComponentCount() > 0);
     }
 }
