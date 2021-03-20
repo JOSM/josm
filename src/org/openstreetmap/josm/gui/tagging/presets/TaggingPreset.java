@@ -328,7 +328,8 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         }
 
         boolean presetInitiallyMatches = !selected.isEmpty() && selected.stream().allMatch(this);
-        final TaggingPresetItemGuiSupport itemGuiSupport = TaggingPresetItemGuiSupport.create(presetInitiallyMatches, selected);
+        final TaggingPresetItemGuiSupport itemGuiSupport = TaggingPresetItemGuiSupport.create(
+                presetInitiallyMatches, selected, this::getChangedTags);
         JPanel items = new JPanel(new GridBagLayout());
         TaggingPresetItem previous = null;
         for (TaggingPresetItem i : data) {
@@ -362,6 +363,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         JToggleButton tb = new JToggleButton(new ToolbarButtonAction());
         tb.setFocusable(false);
         p.add(tb, GBC.std(1, 0).anchor(GBC.LINE_END));
+
+        // Trigger initial updates
+        itemGuiSupport.fireItemValueModified(null, null, null);
         return p;
     }
 

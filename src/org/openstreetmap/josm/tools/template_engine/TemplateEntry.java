@@ -9,6 +9,18 @@ package org.openstreetmap.josm.tools.template_engine;
  * The root node, representing the entire template is also a {@code TemplateEntry}.
  */
 public interface TemplateEntry {
+
+    /**
+     * Execute this template by generating text for a given data provider.
+     * @param dataProvider the data provider from which information should be compiled to a string
+     * @return the generated text
+     */
+    default String getText(TemplateEngineDataProvider dataProvider) {
+        StringBuilder sb = new StringBuilder();
+        appendText(sb, dataProvider);
+        return sb.toString();
+    }
+
     /**
      * Execute this template by generating text for a given data provider.
      * @param result the {@link StringBuilder} to append the text to

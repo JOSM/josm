@@ -331,7 +331,15 @@
         <attribute name="alternative_autocomplete_keys" type="string">
             <annotation>
                 <documentation><![CDATA[
-                    A comma separated list of alternative keys to use for auto completion of <text<.
+                    A comma separated list of alternative keys to use for auto completion of <text>.
+                ]]></documentation>
+            </annotation>
+        </attribute>
+        <attribute name="value_template" type="string">
+            <annotation>
+                <documentation><![CDATA[
+                    A template to generate the value automatically based on other <text> values of this preset.
+                    For instance, "Bus {ref}: {from} → {to}" can be used to generate the name of a bus route relation.
                 ]]></documentation>
             </annotation>
         </attribute>

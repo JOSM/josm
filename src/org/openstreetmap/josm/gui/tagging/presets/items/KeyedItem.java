@@ -95,8 +95,10 @@ public abstract class KeyedItem extends TextItem {
 
     /**
      * Usage information on a key
+     *
+     * TODO merge with {@link org.openstreetmap.josm.data.osm.TagCollection}
      */
-    protected static class Usage {
+    public static class Usage {
         /**
          * A set of values that were used for this key.
          */
@@ -138,7 +140,13 @@ public abstract class KeyedItem extends TextItem {
         }
     }
 
-    protected static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
+    /**
+     * Computes the tag usage for the given key from the given primitives
+     * @param sel the primitives
+     * @param key the key
+     * @return the tag usage
+     */
+    public static Usage determineTextUsage(Collection<OsmPrimitive> sel, String key) {
         Usage returnValue = new Usage();
         for (OsmPrimitive s : sel) {
             String v = s.get(key);

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -20,6 +21,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -31,6 +34,10 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.template_engine.ParseError;
+import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
+import org.openstreetmap.josm.tools.template_engine.TemplateParser;
+import org.xml.sax.SAXException;
 
 /**
  * Text field type.
@@ -58,6 +65,7 @@ public class Text extends KeyedItem {
     public String alternative_autocomplete_keys; // NOSONAR
 
     private JComponent value;
+    private transient TemplateEntry valueTemplate;
 
     @Override
     public boolean addToPanel(JPanel p, TaggingPresetItemGuiSupport support) {
@@ -113,6 +121,8 @@ public class Text extends KeyedItem {
             originalValue = DIFFERENT;
         }
         initializeLocaleText(null);
+
+        setupListeners(textField, support);
 
         // if there's an auto_increment setting, then wrap the text field
         // into a panel, appending a number of buttons.
@@ -227,5 +237,42 @@ public class Text extends KeyedItem {
         if (default_ == null || default_.isEmpty())
             return Collections.emptyList();
         return Collections.singleton(default_);
+    }
+
+    public void setValue_template(String pattern) throws SAXException {
+        try {
+            this.valueTemplate = new TemplateParser(pattern).parse();
+        } catch (ParseError e) {
+            Logging.error("Error while parsing " + pattern + ": " + e.getMessage());
+            throw new SAXException(e);
+        }
+    }
+
+    private void setupListeners(AutoCompletingTextField textField, TaggingPresetItemGuiSupport support) {
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                support.fireItemValueModified(Text.this, key, textField.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                support.fireItemValueModified(Text.this, key, textField.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                support.fireItemValueModified(Text.this, key, textField.getText());
+            }
+        });
+
+        if (valueTemplate != null) {
+            textField.setForeground(Color.BLUE);
+            support.addListener((source, key, newValue) -> {
+                if (source != this) {
+                    textField.setItem(valueTemplate.getText(support));
+                }
+            });
+        }
     }
 }
