@@ -43,7 +43,7 @@ public class Link extends TextItem {
     protected UrlLabel buildUrlLabel() {
         final String url = getUrl();
         if (wiki != null) {
-            return new UrlLabel(url, locale_text, 2) {
+            UrlLabel urlLabel = new UrlLabel(url, locale_text, 2) {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (SwingUtilities.isLeftMouseButton(e)) {
@@ -56,8 +56,12 @@ public class Link extends TextItem {
                     }
                 }
             };
+            addIcon(urlLabel);
+            return urlLabel;
         } else if (href != null || locale_href != null) {
-            return new UrlLabel(url, locale_text, 2);
+            UrlLabel urlLabel = new UrlLabel(url, locale_text, 2);
+            addIcon(urlLabel);
+            return urlLabel;
         }
         return null;
     }

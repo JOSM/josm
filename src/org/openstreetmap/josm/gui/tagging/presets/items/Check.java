@@ -9,15 +9,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.widgets.QuadStateCheckBox;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -95,7 +92,8 @@ public class Check extends KeyedItem {
         if (icon != null) {
             JPanel checkPanel = new JPanel(new GridBagLayout());
             checkPanel.add(check, GBC.std());
-            JLabel label = new JLabel(locale_text, getIcon(), SwingConstants.LEFT);
+            JLabel label = new JLabel(locale_text);
+            addIcon(label);
             label.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -126,15 +124,6 @@ public class Check extends KeyedItem {
     @Override
     public MatchType getDefaultMatch() {
         return MatchType.NONE;
-    }
-
-    /**
-     * Returns the entry icon, if any.
-     * @return the entry icon, or {@code null}
-     * @since 15437
-     */
-    public ImageIcon getIcon() {
-        return icon == null ? null : loadImageIcon(icon, TaggingPresetReader.getZipIcons(), (int) icon_size);
     }
 
     @Override

@@ -270,6 +270,7 @@
         <attribute name="wiki" type="string" />
         <attribute name="href" type="string" />
         <attributeGroup ref="tns:attributes.text" />
+        <attributeGroup ref="tns:attributes.icon" />
 
         <attribute name="name" use="prohibited" />
         <anyAttribute processContents="skip" />
@@ -316,6 +317,7 @@
     <complexType name="text">
         <attributeGroup ref="tns:attributes.key" />
         <attributeGroup ref="tns:attributes.text" />
+        <attributeGroup ref="tns:attributes.icon" />
         <attribute name="use_last_as_default" type="tns:last_default" />
         <attribute name="auto_increment" type="string">
             <annotation>
@@ -381,6 +383,7 @@
         </sequence>
         <attributeGroup ref="tns:attributes.key" />
         <attributeGroup ref="tns:attributes.text" />
+        <attributeGroup ref="tns:attributes.icon" />
         <attributeGroup ref="tns:attributes.values" />
         <attribute name="use_last_as_default" type="tns:last_default" />
         <attribute name="editable" type="boolean">
@@ -408,6 +411,7 @@
         </sequence>
         <attributeGroup ref="tns:attributes.key" />
         <attributeGroup ref="tns:attributes.text" />
+        <attributeGroup ref="tns:attributes.icon" />
         <attributeGroup ref="tns:attributes.values" />
         <attribute name="use_last_as_default" type="tns:last_default" />
         <attribute name="match" type="tns:match" />

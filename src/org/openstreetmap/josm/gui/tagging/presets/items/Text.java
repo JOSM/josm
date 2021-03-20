@@ -163,7 +163,8 @@ public class Text extends KeyedItem {
             pnl.add(releasebutton, GBC.eol());
             value = pnl;
         }
-        final JLabel label = new JLabel(locale_text + ':');
+        final JLabel label = new JLabel(tr("{0}:", locale_text));
+        addIcon(label);
         label.setToolTipText(getKeyTooltipText());
         label.setComponentPopupMenu(getPopupMenu());
         label.setLabelFor(value);

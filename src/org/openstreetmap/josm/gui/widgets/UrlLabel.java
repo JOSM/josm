@@ -59,7 +59,7 @@ public class UrlLabel extends JLabel implements MouseListener {
     }
 
     /**
-     * Constructs a new {@code UrlLabel} for the given URL, description and font increase.
+     * Constructs a new {@code UrlLabel} for the given URL, description and image.
      * @param url The URL to use
      * @param description The description to display
      * @param image The image to be displayed by the label instead of text
