@@ -177,6 +177,32 @@ class DuplicateNodeTest {
     }
 
     /**
+     * Test of "Duplicate node" validation test - server precision.
+     *
+     * Non-regression test for ticket #18074.
+     */
+    @Test
+    void testServerPrecision() {
+        DuplicateNode.NodeHash nodeHash = new DuplicateNode.NodeHash();
+        DataSet ds = new DataSet();
+
+        Node a = new Node(new LatLon(-23.51108285, -46.489264256));
+        Node b = new Node(new LatLon(-23.511082861, -46.489264251));
+        ds.addPrimitive(a);
+        ds.addPrimitive(b);
+
+        a.put("foo", "bar");
+        b.put("bar", "foo");
+
+        // on OSM server, both are: lat = -23.5110829 lon = -46.4892643
+        assertEquals(new LatLon(-23.5110828, -46.4892643), a.getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(-23.5110829, -46.4892643), b.getCoor().getRoundedToOsmPrecision());
+        assertEquals(new LatLon(-23.511083, -46.489264), nodeHash.roundCoord(a.getCoor()));
+        assertEquals(new LatLon(-23.511083, -46.489264), nodeHash.roundCoord(b.getCoor()));
+        performTest(DuplicateNode.DUPLICATE_NODE, ds, false);
+    }
+
+    /**
      * Test of "Duplicate node" validation test - mixed case.
      */
     @Test
