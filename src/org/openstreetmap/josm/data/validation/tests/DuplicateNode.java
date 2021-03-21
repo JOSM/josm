@@ -51,6 +51,7 @@ public class DuplicateNode extends Test {
                 1 / Config.getPref().getDouble("validator.duplicatenodes.precision", LatLon.MAX_SERVER_PRECISION * 10);
 
         /**
+         * Returns the rounded coordinated according to {@link #precision}
          * @see LatLon#roundToOsmPrecision
          */
         protected LatLon roundCoord(LatLon coor) {
