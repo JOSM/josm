@@ -972,6 +972,36 @@ public final class Functions {
     }
 
     /**
+     * Returns a title-cased version of the string where words start with an uppercase character and the remaining characters are lowercase
+     *
+     * Also known as "capitalize".
+     * @param str The source string
+     * @return The resulting string
+     * @since 17613
+     * @see Character#toTitleCase(char)
+     */
+    public static String title(String str) {
+        // adapted from org.apache.commons.lang3.text.WordUtils.capitalize
+        if (str == null) {
+            return null;
+        }
+        final char[] buffer = str.toCharArray();
+        boolean capitalizeNext = true;
+        for (int i = 0; i < buffer.length; i++) {
+            final char ch = buffer[i];
+            if (Character.isWhitespace(ch)) {
+                capitalizeNext = true;
+            } else if (capitalizeNext) {
+                buffer[i] = Character.toTitleCase(ch);
+                capitalizeNext = false;
+            } else {
+                buffer[i] = Character.toLowerCase(ch);
+            }
+        }
+        return new String(buffer);
+    }
+
+    /**
      * Trim whitespaces from the string {@code s}.
      * @param s The source string
      * @return The resulting string

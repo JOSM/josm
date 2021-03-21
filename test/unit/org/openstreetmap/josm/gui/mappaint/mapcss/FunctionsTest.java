@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.data.osm.OsmPrimitiveType.NODE;
 
@@ -53,6 +54,16 @@ class FunctionsTest {
         Environment build() {
             return new Environment(osm);
         }
+    }
+
+    /**
+     * Unit test of {@link Functions#title}.
+     */
+    @Test
+    void testTitle() {
+        assertNull(Functions.title(null));
+        assertEquals("", Functions.title(""));
+        assertEquals("I Am Fine", Functions.title("i am FINE"));
     }
 
     /**
