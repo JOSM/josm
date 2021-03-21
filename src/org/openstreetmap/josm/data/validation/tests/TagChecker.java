@@ -1042,7 +1042,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
         if (deprecatedChecker == null)
             return 0;
         deprecatedChecker.getErrors().clear();
-        deprecatedChecker.runOnly("deprecated.mapcss", Collections.singleton(p));
+        deprecatedChecker.visit(Collections.singleton(p), url -> url.endsWith("deprecated.mapcss"));
         return deprecatedChecker.getErrors().size();
     }
 

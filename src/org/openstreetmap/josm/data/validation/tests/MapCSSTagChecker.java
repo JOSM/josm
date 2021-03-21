@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -385,7 +386,16 @@ public class MapCSSTagChecker extends Test.TagTest {
 
     @Override
     public void visit(Collection<OsmPrimitive> selection) {
-        if (progressMonitor != null) {
+        visit(selection, null);
+    }
+
+    /**
+     * Execute the rules from the URLs matching the given predicate.
+     * @param selection collection of primitives
+     * @param urlPredicate a predicate deciding whether the rules from the given URL shall be executed
+     */
+    void visit(Collection<OsmPrimitive> selection, Predicate<String> urlPredicate) {
+        if (urlPredicate == null && progressMonitor != null) {
             progressMonitor.setTicksCount(selection.size() * checks.size());
         }
 
@@ -395,6 +405,9 @@ public class MapCSSTagChecker extends Test.TagTest {
         for (Entry<String, Set<MapCSSTagCheckerRule>> entry : checks.entrySet()) {
             if (isCanceled()) {
                 break;
+            }
+            if (urlPredicate != null && !urlPredicate.test(entry.getKey())) {
+                continue;
             }
             visit(entry.getKey(), entry.getValue(), selection, surrounding);
         }
@@ -479,24 +492,4 @@ public class MapCSSTagChecker extends Test.TagTest {
 
     }
 
-    /**
-     * Execute only the rules for the rules matching the given file name. See #19180
-     * @param ruleFile the name of the mapcss file, e.g. deprecated.mapcss
-     * @param selection collection of primitives
-     * @since 16784
-     */
-    public void runOnly(String ruleFile, Collection<OsmPrimitive> selection) {
-        mpAreaCache.clear();
-
-        Set<OsmPrimitive> surrounding = new HashSet<>();
-        for (Entry<String, Set<MapCSSTagCheckerRule>> entry : checks.entrySet()) {
-            if (isCanceled()) {
-                break;
-            }
-            if (entry.getKey().endsWith(ruleFile)) {
-                visit(entry.getKey(), entry.getValue(), selection, surrounding);
-            }
-        }
-
-    }
 }
