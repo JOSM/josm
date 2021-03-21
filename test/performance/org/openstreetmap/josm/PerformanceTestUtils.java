@@ -15,6 +15,7 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.XmlWriter;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.tools.Stopwatch;
 
 /**
  * Timer utilities for performance tests.
@@ -43,30 +44,11 @@ public final class PerformanceTestUtils {
     }
 
     /**
-     * A helper class that captures the time from object creation until #done() was called.
-     * @author Michael Zangl
-     */
-    public static class PerformanceTestTimerCapture {
-        private final long time;
-
-        protected PerformanceTestTimerCapture() {
-            time = System.nanoTime();
-        }
-
-        /**
-         * Get the time since this object was created.
-         * @return The time.
-         */
-        public long getTimeSinceCreation() {
-            return (System.nanoTime() - time) / 1000000;
-        }
-    }
-
-    /**
      * A timer that measures the time from it's creation to the {@link #done()} call.
      * @author Michael Zangl
      */
-    public static class PerformanceTestTimer extends PerformanceTestTimerCapture {
+    public static class PerformanceTestTimer {
+        private final Stopwatch stopwatch = Stopwatch.createStarted();
         private final String name;
         private boolean measurementPlotsPlugin = true;
 
@@ -86,7 +68,7 @@ public final class PerformanceTestUtils {
          * Prints the time since this timer was created.
          */
         public void done() {
-            long dTime = getTimeSinceCreation();
+            long dTime = stopwatch.elapsed();
             if (measurementPlotsPlugin) {
                 measurementPlotsPluginOutput(name + "(ms)", dTime);
             } else {
@@ -119,16 +101,16 @@ public final class PerformanceTestUtils {
     public static void runPerformanceTest(String name, Runnable testRunner) {
         for (int i = 0; i < TIMES_WARMUP; i++) {
             cleanSystem();
-            PerformanceTestTimerCapture capture = new PerformanceTestTimerCapture();
+            Stopwatch capture = Stopwatch.createStarted();
             testRunner.run();
-            capture.getTimeSinceCreation();
+            capture.elapsed();
         }
         ArrayList<Long> times = new ArrayList<>();
         for (int i = 0; i < TIMES_RUN; i++) {
             cleanSystem();
-            PerformanceTestTimerCapture capture = new PerformanceTestTimerCapture();
+            Stopwatch stopwatch = Stopwatch.createStarted();
             testRunner.run();
-            times.add(capture.getTimeSinceCreation());
+            times.add(stopwatch.elapsed());
         }
         System.out.println(times);
         Collections.sort(times);

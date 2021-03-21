@@ -22,7 +22,7 @@ public final class Stopwatch {
      * @return the started stopwatch
      */
     public static Stopwatch createStarted() {
-        return new Stopwatch(System.currentTimeMillis());
+        return new Stopwatch(System.nanoTime());
     }
 
     /**
@@ -31,7 +31,7 @@ public final class Stopwatch {
      * @return the elapsed milliseconds
      */
     public long elapsed() {
-        return System.currentTimeMillis() - start;
+        return (System.nanoTime() - start) / 1_000_000;
     }
 
     /**
