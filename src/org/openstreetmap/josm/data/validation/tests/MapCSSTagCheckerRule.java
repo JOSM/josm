@@ -54,32 +54,32 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
     /**
      * The selector of this {@code TagCheck}
      */
-    protected final MapCSSRule rule;
+    final MapCSSRule rule;
     /**
      * Commands to apply in order to fix a matching primitive
      */
-    protected final List<MapCSSTagCheckerFixCommand> fixCommands;
+    final List<MapCSSTagCheckerFixCommand> fixCommands;
     /**
      * Tags (or arbitrary strings) of alternatives to be presented to the user
      */
-    protected final List<String> alternatives;
+    final List<String> alternatives;
     /**
      * An {@link org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.AssignmentInstruction}-{@link Severity} pair.
      * Is evaluated on the matching primitive to give the error message. Map is checked to contain exactly one element.
      */
-    protected final Map<Instruction.AssignmentInstruction, Severity> errors;
+    final Map<Instruction.AssignmentInstruction, Severity> errors;
     /**
      * MapCSS Classes to set on matching primitives
      */
-    protected final Collection<String> setClassExpressions;
+    final Collection<String> setClassExpressions;
     /**
      * Denotes whether the object should be deleted for fixing it
      */
-    protected boolean deletion;
+    boolean deletion;
     /**
      * A string used to group similar tests
      */
-    protected String group;
+    String group;
 
     MapCSSTagCheckerRule(MapCSSRule rule) {
         this.rule = rule;
