@@ -165,8 +165,7 @@ public class MainFrame extends JFrame {
      */
     public void refreshTitle() {
         OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
-        boolean dirty = editLayer != null && (editLayer.requiresSaveToFile()
-                || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
+        boolean dirty = editLayer != null && editLayer.isDirty();
         String userInfo = UserIdentityManager.getInstance().getUserName();
         if (userInfo != null && Config.getPref().getBoolean("draw.show-user", false))
             userInfo = tr(" ({0})", "@" + userInfo);

@@ -311,6 +311,15 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     }
 
     /**
+     * Replies a label for this layer useful for UI elements. Defaults to the layer name
+     * @return a label for this layer
+     * @since 17626
+     */
+    public String getLabel() {
+        return getName();
+    }
+
+    /**
      * Replies the name of the layer
      *
      * @return the name of the layer

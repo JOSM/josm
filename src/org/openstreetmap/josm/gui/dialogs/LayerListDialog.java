@@ -707,7 +707,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                 return this;
             Layer layer = (Layer) value;
             JLabel label = (JLabel) super.getTableCellRendererComponent(table,
-                    layer.getName(), isSelected, hasFocus, row, column);
+                    layer.getLabel(), isSelected, hasFocus, row, column);
             if (isActiveLayer(layer)) {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             }

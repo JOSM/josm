@@ -1059,6 +1059,28 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         return getAssociatedFile() != null && requiresSaveToFile;
     }
 
+    /**
+     * Determines if this layer is "dirty", i.e., requires save or upload
+     * @return if this layer is "dirty"
+     * @since 17626
+     */
+    public boolean isDirty() {
+        return requiresSaveToFile() || (requiresUploadToServer() && !isUploadDiscouraged());
+    }
+
+    @Override
+    public String getLabel() {
+        String label = super.getLabel();
+        if (this.isDirty()) {
+            label += " *";
+        }
+        if (this.getDataSet().isEmpty()) {
+            // U+2205 EMPTY SET
+            label += " \u2205";
+        }
+        return label;
+    }
+
     @Override
     public void onPostLoadFromFile() {
         setRequiresSaveToFile(false);
