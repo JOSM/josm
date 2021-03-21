@@ -36,7 +36,9 @@ public final class PerformanceTestUtils {
      */
     public static DataSet getNeubrandenburgDataSet() throws IOException, IllegalDataException {
         try (InputStream in = Compression.getUncompressedFileInputStream(new File(DATA_FILE))) {
-            return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+            DataSet dataSet = OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+            dataSet.setName(DATA_FILE);
+            return dataSet;
         }
     }
 

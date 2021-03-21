@@ -7,6 +7,8 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 import java.util.ArrayList;
@@ -35,7 +37,14 @@ public class ValidationTask extends PleaseWaitRunnable {
     public ValidationTask(Collection<Test> tests,
                           Collection<OsmPrimitive> validatedPrimitives,
                           Collection<OsmPrimitive> formerValidatedPrimitives) {
-        super(tr("Validating"), false /*don't ignore exceptions */);
+        this(new PleaseWaitProgressMonitor(tr("Validating")), tests, validatedPrimitives, formerValidatedPrimitives);
+    }
+
+    protected ValidationTask(ProgressMonitor progressMonitor,
+                             Collection<Test> tests,
+                             Collection<OsmPrimitive> validatedPrimitives,
+                             Collection<OsmPrimitive> formerValidatedPrimitives) {
+        super(tr("Validating"), progressMonitor, false /*don't ignore exceptions */);
         this.validatedPrimitives = validatedPrimitives;
         this.formerValidatedPrimitives = formerValidatedPrimitives;
         this.tests = tests;
@@ -92,5 +101,13 @@ public class ValidationTask extends PleaseWaitRunnable {
                 error.updateIgnored();
             }
         }
+    }
+
+    /**
+     * Gets the validation errors accumulated until this moment.
+     * @return The list of errors
+     */
+    public List<TestError> getErrors() {
+        return errors;
     }
 }

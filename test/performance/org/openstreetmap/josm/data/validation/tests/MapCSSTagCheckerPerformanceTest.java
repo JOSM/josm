@@ -38,6 +38,7 @@ class MapCSSTagCheckerPerformanceTest {
 
     @Test
     void testCity() {
-        tagChecker.visit(dsCity.allPrimitives());
+        PerformanceTestUtils.runPerformanceTest("MapCSSTagChecker on " + dsCity.getName(),
+                () -> tagChecker.visit(dsCity.allPrimitives()));
     }
 }
