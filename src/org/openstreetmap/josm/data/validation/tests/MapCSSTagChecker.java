@@ -201,29 +201,9 @@ public class MapCSSTagChecker extends Test.TagTest {
      * @param errors the list of errors
      */
     private static void addIfNotSimilar(TestError toAdd, List<TestError> errors) {
-        final boolean isDup = toAdd.getPrimitives().size() >= 2 && errors.stream()
-                .anyMatch(e -> e.getCode() == toAdd.getCode()
-                        && e.getMessage().equals(toAdd.getMessage())
-                        && e.getPrimitives().size() == toAdd.getPrimitives().size()
-                        && e.getPrimitives().containsAll(toAdd.getPrimitives())
-                        && highlightedIsEqual(e.getHighlighted(), toAdd.getHighlighted()));
+        final boolean isDup = toAdd.getPrimitives().size() >= 2 && errors.stream().anyMatch(toAdd::isSimilar);
         if (!isDup)
             errors.add(toAdd);
-    }
-
-    private static boolean highlightedIsEqual(Collection<?> highlighted, Collection<?> highlighted2) {
-        if (highlighted.size() == highlighted2.size()) {
-            if (!highlighted.isEmpty()) {
-                Object h1 = highlighted.iterator().next();
-                Object h2 = highlighted2.iterator().next();
-                if (h1 instanceof Area && h2 instanceof Area) {
-                    return ((Area) h1).equals((Area) h2);
-                }
-                return highlighted.containsAll(highlighted2);
-            }
-            return true;
-        }
-        return false;
     }
 
     static Collection<TestError> getErrorsForPrimitive(

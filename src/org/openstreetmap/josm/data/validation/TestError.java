@@ -539,6 +539,35 @@ public class TestError implements Comparable<TestError> {
         return v;
     }
 
+    /**
+     * Tests if two errors are similar, i.e.,
+     * same code and description and same combination of primitives and same combination of highlighted objects, but maybe with different orders.
+     * @param other the other error to be compared
+     * @return true if two errors are similar
+     */
+    public boolean isSimilar(TestError other) {
+        return getCode() == other.getCode()
+                && getMessage().equals(other.getMessage())
+                && getPrimitives().size() == other.getPrimitives().size()
+                && getPrimitives().containsAll(other.getPrimitives())
+                && highlightedIsEqual(getHighlighted(), other.getHighlighted());
+    }
+
+    private static boolean highlightedIsEqual(Collection<?> highlighted, Collection<?> highlighted2) {
+        if (highlighted.size() == highlighted2.size()) {
+            if (!highlighted.isEmpty()) {
+                Object h1 = highlighted.iterator().next();
+                Object h2 = highlighted2.iterator().next();
+                if (h1 instanceof Area && h2 instanceof Area) {
+                    return ((Area) h1).equals((Area) h2);
+                }
+                return highlighted.containsAll(highlighted2);
+            }
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "TestError [tester=" + tester + ", code=" + code + ", message=" + message + ']';
