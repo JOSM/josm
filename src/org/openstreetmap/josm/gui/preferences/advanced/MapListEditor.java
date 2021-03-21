@@ -25,6 +25,7 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
 
     private final transient List<List<String>> dataKeys;
     private final transient List<List<String>> dataValues;
+    private final transient List<String> dataLabels;
 
     /**
      * Constructs a new {@code MapListEditor}.
@@ -38,7 +39,9 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
 
         dataKeys = new ArrayList<>();
         dataValues = new ArrayList<>();
+        dataLabels = new ArrayList<>();
         if (orig != null) {
+            int index = 0;
             for (Map<String, String> m : orig) {
                 List<String> keys = new ArrayList<>();
                 List<String> values = new ArrayList<>();
@@ -48,6 +51,8 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
                 }
                 dataKeys.add(keys);
                 dataValues.add(values);
+                dataLabels.add(m.getOrDefault("name", tr("Entry {0}", index + 1)));
+                index++;
             }
         }
     }
@@ -76,7 +81,7 @@ public class MapListEditor extends AbstractTableListEditor<Map<String, String>> 
 
         @Override
         public String getElementAt(int index) {
-            return tr("Entry {0}", index+1);
+            return dataLabels.get(index);
         }
 
         @Override
