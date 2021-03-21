@@ -184,12 +184,13 @@ area[building][building!~/no|entrance/] ⧉ area[building][building!~/no|entranc
 }
 
 /* Overlapping areas (spatial test) */
-area[natural =~ /^(water|wetland|coastline)$/], area[landuse=reservoir] {
+area[natural =~ /^(water|wetland|coastline)$/], area[waterway=riverbank], area[landuse=reservoir] {
   set water_area;
 }
 
 /* area:closed:areaStyle.water_area ⧉ area:closed:areaStyle.water_area -- does not work for now -- see ticket#10215 */
 area:closed:areaStyle[natural =~ /^(water|wetland|coastline)$/] ⧉ area:closed:areaStyle.water_area,
+area:closed:areaStyle[waterway=riverbank]                       ⧉ area:closed:areaStyle.water_area,
 area:closed:areaStyle[landuse=reservoir]                        ⧉ area:closed:areaStyle.water_area {
   throwWarning: tr("Overlapping Water Areas");
 }
@@ -212,8 +213,8 @@ node[amenity=parking]["capacity:disabled" !~ /^(yes|[0-9]+)$/] ∈ area[amenity=
   group: tr("{0} inside {1}", "amenity", "amenity");
 }
 
-/* #9556 */
-area:closed:areaStyle[tag("natural") = parent_tag("natural")] ⧉ area:closed:areaStyle[natural] {
+/* #9556, #20570 */
+area:closed:areaStyle[tag("natural") = parent_tag("natural")] ⧉ area:closed:areaStyle[natural][natural !~ /^(water|wetland|coastline)$/] {
   throwWarning: tr("Overlapping Identical Natural Areas");
 }
 
