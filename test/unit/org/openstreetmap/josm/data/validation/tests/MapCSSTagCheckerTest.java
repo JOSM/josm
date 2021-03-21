@@ -36,7 +36,6 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test.TagTest;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
-import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -70,7 +69,7 @@ class MapCSSTagCheckerTest {
     static MapCSSTagChecker buildTagChecker(String css) throws ParseException {
         final MapCSSTagChecker test = new MapCSSTagChecker();
         Set<String> errors = new HashSet<>();
-        test.checks.putAll("test", TagCheck.readMapCSS(new StringReader(css), errors::add).parseChecks);
+        test.checks.putAll("test", MapCSSTagCheckerRule.readMapCSS(new StringReader(css), errors::add).parseChecks);
         assertTrue(errors.isEmpty(), errors::toString);
         return test;
     }
@@ -81,7 +80,7 @@ class MapCSSTagCheckerTest {
      */
     @Test
     void testNaturalMarsh() throws ParseException {
-        ParseResult result = TagCheck.readMapCSS(new StringReader(
+        ParseResult result = MapCSSTagCheckerRule.readMapCSS(new StringReader(
                 "*[natural=marsh] {\n" +
                 "   group: tr(\"deprecated\");\n" +
                 "   throwWarning: tr(\"{0}={1} is deprecated\", \"{0.key}\", tag(\"natural\"));\n" +
@@ -89,10 +88,10 @@ class MapCSSTagCheckerTest {
                 "   fixAdd: \"natural=wetland\";\n" +
                 "   fixAdd: \"wetland=marsh\";\n" +
                 "}"));
-        final List<TagCheck> checks = result.parseChecks;
+        final List<MapCSSTagCheckerRule> checks = result.parseChecks;
         assertEquals(1, checks.size());
         assertTrue(result.parseErrors.isEmpty());
-        final TagCheck check = checks.get(0);
+        final MapCSSTagCheckerRule check = checks.get(0);
         assertNotNull(check);
         assertEquals("{0.key}=null is deprecated", check.getDescription(null));
         assertEquals("fixRemove: {0.key}", check.fixCommands.get(0).toString());
@@ -113,7 +112,7 @@ class MapCSSTagCheckerTest {
         assertEquals("{natural=}", ((ChangePropertyCommand) check.fixPrimitive(n1).getChildren().iterator().next()).getTags().toString());
         assertFalse(check.test(n2));
         assertEquals("The key is natural and the value is marsh",
-                TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}", null));
+                MapCSSTagCheckerRule.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}", null));
     }
 
     /**
@@ -123,7 +122,7 @@ class MapCSSTagCheckerTest {
     @Test
     void testTicket10913() throws ParseException {
         final OsmPrimitive p = TestUtils.addFakeDataSet(TestUtils.newWay("highway=tertiary construction=yes"));
-        final TagCheck check = TagCheck.readMapCSS(new StringReader("way {" +
+        final MapCSSTagCheckerRule check = MapCSSTagCheckerRule.readMapCSS(new StringReader("way {" +
                 "throwError: \"error\";" +
                 "fixChangeKey: \"highway => construction\";\n" +
                 "fixAdd: \"highway=construction\";\n" +
@@ -171,7 +170,7 @@ class MapCSSTagCheckerTest {
      */
     @Test
     void testTicket13630() throws ParseException {
-        ParseResult result = TagCheck.readMapCSS(new StringReader(
+        ParseResult result = MapCSSTagCheckerRule.readMapCSS(new StringReader(
                 "node[crossing=zebra] {fixRemove: \"crossing=zebra\";}"));
         assertTrue(result.parseChecks.isEmpty());
         assertEquals(1, result.parseErrors.size());
@@ -264,7 +263,7 @@ class MapCSSTagCheckerTest {
      */
     @Test
     void testTicket13762() throws ParseException {
-        final ParseResult parseResult = TagCheck.readMapCSS(new StringReader("" +
+        final ParseResult parseResult = MapCSSTagCheckerRule.readMapCSS(new StringReader("" +
                 "meta[lang=de] {\n" +
                 "    title: \"Deutschlandspezifische Regeln\";" +
                 "}"));
@@ -301,7 +300,7 @@ class MapCSSTagCheckerTest {
                 "   fixRemove: \"cycleway\";\n" +
                 "}");
         assertEquals(1, test.checks.size());
-        TagCheck check = test.checks.get("test").iterator().next();
+        MapCSSTagCheckerRule check = test.checks.get("test").iterator().next();
         assertEquals(1, check.fixCommands.size());
         assertEquals(2, check.rule.declaration.instructions.size());
     }

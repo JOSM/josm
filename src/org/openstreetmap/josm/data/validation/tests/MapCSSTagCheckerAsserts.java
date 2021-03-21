@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Territories;
 
 /**
- * Utility class for checking rule assertions of {@link MapCSSTagChecker.TagCheck}.
+ * Utility class for checking rule assertions of {@link MapCSSTagCheckerRule}.
  */
 final class MapCSSTagCheckerAsserts {
 
@@ -42,7 +42,7 @@ final class MapCSSTagCheckerAsserts {
         // private constructor
     }
 
-    private static final ArrayList<MapCSSTagChecker.TagCheck> previousChecks = new ArrayList<>();
+    private static final ArrayList<MapCSSTagCheckerRule> previousChecks = new ArrayList<>();
 
     /**
      * Checks that rule assertions are met for the given set of TagChecks.
@@ -50,8 +50,8 @@ final class MapCSSTagCheckerAsserts {
      * @param assertions The assertions to check (map values correspond to expected result)
      * @param assertionConsumer The handler for assertion error messages
      */
-    static void checkAsserts(final MapCSSTagChecker.TagCheck check, final Map<String, Boolean> assertions,
-                                    final MapCSSTagChecker.AssertionConsumer assertionConsumer) {
+    static void checkAsserts(final MapCSSTagCheckerRule check, final Map<String, Boolean> assertions,
+                             final MapCSSTagChecker.AssertionConsumer assertionConsumer) {
         final Method insideMethod = getFunctionMethod("inside");
         final DataSet ds = new DataSet();
         Logging.debug("Check: {0}", check);
@@ -59,8 +59,8 @@ final class MapCSSTagCheckerAsserts {
             Logging.debug("- Assertion: {0}", i);
             final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey(), getLocation(check, insideMethod), true);
             // Build minimal ordered list of checks to run to test the assertion
-            List<Set<MapCSSTagChecker.TagCheck>> checksToRun = new ArrayList<>();
-            Set<MapCSSTagChecker.TagCheck> checkDependencies = getTagCheckDependencies(check, previousChecks);
+            List<Set<MapCSSTagCheckerRule>> checksToRun = new ArrayList<>();
+            Set<MapCSSTagCheckerRule> checkDependencies = getTagCheckDependencies(check, previousChecks);
             if (!checkDependencies.isEmpty()) {
                 checksToRun.add(checkDependencies);
             }
@@ -111,7 +111,7 @@ final class MapCSSTagCheckerAsserts {
         ds.addPrimitive(p);
     }
 
-    private static LatLon getLocation(MapCSSTagChecker.TagCheck check, Method insideMethod) {
+    private static LatLon getLocation(MapCSSTagCheckerRule check, Method insideMethod) {
         Optional<String> inside = getFirstInsideCountry(check, insideMethod);
         if (inside.isPresent()) {
             GeoPropertyIndex<Boolean> index = Territories.getGeoPropertyIndex(inside.get());
@@ -125,7 +125,7 @@ final class MapCSSTagCheckerAsserts {
         return LatLon.ZERO;
     }
 
-    private static Optional<String> getFirstInsideCountry(MapCSSTagChecker.TagCheck check, Method insideMethod) {
+    private static Optional<String> getFirstInsideCountry(MapCSSTagCheckerRule check, Method insideMethod) {
         return check.rule.selectors.stream()
                 .filter(s -> s instanceof Selector.GeneralSelector)
                 .flatMap(s -> ((Selector.GeneralSelector) s).getConditions().stream())
@@ -149,9 +149,9 @@ final class MapCSSTagCheckerAsserts {
      * @return the set of tagchecks on which this check depends on
      * @since 7881
      */
-    private static Set<MapCSSTagChecker.TagCheck> getTagCheckDependencies(MapCSSTagChecker.TagCheck check,
-                                                                          Collection<MapCSSTagChecker.TagCheck> schecks) {
-        Set<MapCSSTagChecker.TagCheck> result = new HashSet<>();
+    private static Set<MapCSSTagCheckerRule> getTagCheckDependencies(MapCSSTagCheckerRule check,
+                                                                     Collection<MapCSSTagCheckerRule> schecks) {
+        Set<MapCSSTagCheckerRule> result = new HashSet<>();
         Set<String> classes = check.rule.selectors.stream()
                 .filter(s -> s instanceof Selector.AbstractSelector)
                 .flatMap(s -> ((Selector.AbstractSelector) s).getConditions().stream())
