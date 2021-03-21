@@ -74,6 +74,14 @@ public class ScaleCommand extends TransformNodesCommand {
     }
 
     /**
+     * Returns the scaling factor.
+     * @return The scaling factor
+     */
+    public double getScalingFactor() {
+        return scalingFactor;
+    }
+
+    /**
      * Scale nodes.
      */
     @Override

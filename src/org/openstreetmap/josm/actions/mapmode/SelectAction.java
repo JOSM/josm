@@ -58,6 +58,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Move is an action that can move all kind of OsmPrimitives (except keys for now).
@@ -767,6 +768,14 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 Collection<Way> ways = ds.getSelectedWays();
                 if (doesImpactStatusLine(affectedNodes, ways)) {
                     MainApplication.getMap().statusLine.setDist(ways);
+                }
+                if (c instanceof RotateCommand) {
+                    double angle = Utils.toDegrees(((RotateCommand) c).getRotationAngle());
+                    MainApplication.getMap().statusLine.setAngle(angle);
+                } else if (c instanceof ScaleCommand) {
+                    // U+00D7 MULTIPLICATION SIGN
+                    String angle = String.format("%.2f", ((ScaleCommand) c).getScalingFactor()) + " \u00d7";
+                    MainApplication.getMap().statusLine.setAngleText(angle);
                 }
                 return true;
             });

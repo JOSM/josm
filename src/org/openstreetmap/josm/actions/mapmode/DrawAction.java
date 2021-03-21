@@ -880,7 +880,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         if (getCurrentBaseNode() == null || getCurrentBaseNode() == currentMouseNode)
             return; // Don't create zero length way segments.
 
-        showStatusInfo(-1, -1, -1, snapHelper.isSnapOn());
+        showStatusInfo(Double.NaN, -1, -1, snapHelper.isSnapOn());
 
         double curHdg = Utils.toDegrees(getCurrentBaseNode().getEastNorth()
                 .heading(currentMouseEastNorth));

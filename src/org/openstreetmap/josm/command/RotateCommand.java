@@ -78,6 +78,14 @@ public class RotateCommand extends TransformNodesCommand {
     }
 
     /**
+     * Returns the rotation angle.
+     * @return The rotation angle
+     */
+    public double getRotationAngle() {
+        return rotationAngle;
+    }
+
+    /**
      * Rotate nodes.
      */
     @Override

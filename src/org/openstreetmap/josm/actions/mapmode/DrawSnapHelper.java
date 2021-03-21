@@ -340,7 +340,7 @@ class DrawSnapHelper {
         MapView mapView = MainApplication.getMap().mapView;
         EastNorth p0 = drawAction.getCurrentBaseNode().getEastNorth();
         EastNorth snapPoint = currentEN;
-        double angle = -1;
+        double angle = Double.NaN;
 
         double activeBaseHeading = (customBaseHeading >= 0) ? customBaseHeading : baseHeading;
 

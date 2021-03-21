@@ -1084,11 +1084,19 @@ public final class MapStatus extends JPanel implements
     }
 
     /**
-     * Sets the angle to display in the angle panel
+     * Sets the angle to display in the angle panel. NaN yields "--".
      * @param a The angle
      */
     public void setAngle(double a) {
-        angleText.setText(a < 0 ? "--" : DECIMAL_FORMAT.format(a) + " \u00B0");
+        angleText.setText(!Double.isFinite(a) ? "--" : DECIMAL_FORMAT.format(a) + " \u00B0");
+    }
+
+    /**
+     * Sets the angle to display in the angle panel
+     * @param text The angle text
+     */
+    public void setAngleText(String text) {
+        angleText.setText(text);
     }
 
     /**
