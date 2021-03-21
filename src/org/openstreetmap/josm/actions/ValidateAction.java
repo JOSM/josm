@@ -5,26 +5,17 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Test;
-import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.ValidationTask;
 import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.layer.ValidatorLayer;
-import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.xml.sax.SAXException;
 
 /**
  * The action that does the validate thing.
@@ -103,83 +94,4 @@ public class ValidateAction extends JosmAction {
         lastSelection = null;
     }
 
-    /**
-     * Asynchronous task for running a collection of tests against a collection of primitives
-     */
-    static class ValidationTask extends PleaseWaitRunnable {
-        private Collection<Test> tests;
-        private final Collection<OsmPrimitive> validatedPrimitives;
-        private final Collection<OsmPrimitive> formerValidatedPrimitives;
-        private boolean canceled;
-        private List<TestError> errors;
-
-        /**
-         * Constructs a new {@code ValidationTask}
-         * @param tests  the tests to run
-         * @param validatedPrimitives the collection of primitives to validate.
-         * @param formerValidatedPrimitives the last collection of primitives being validates. May be null.
-         */
-        ValidationTask(Collection<Test> tests, Collection<OsmPrimitive> validatedPrimitives,
-                Collection<OsmPrimitive> formerValidatedPrimitives) {
-            super(tr("Validating"), false /*don't ignore exceptions */);
-            this.validatedPrimitives = validatedPrimitives;
-            this.formerValidatedPrimitives = formerValidatedPrimitives;
-            this.tests = tests;
-        }
-
-        @Override
-        protected void cancel() {
-            this.canceled = true;
-        }
-
-        @Override
-        protected void finish() {
-            if (canceled) return;
-
-            // update GUI on Swing EDT
-            //
-            GuiHelper.runInEDT(() -> {
-                MapFrame map = MainApplication.getMap();
-                map.validatorDialog.unfurlDialog();
-                map.validatorDialog.tree.setErrors(errors);
-                //FIXME: nicer way to find / invalidate the corresponding error layer
-                MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
-                if (!errors.isEmpty()) {
-                    OsmValidator.initializeErrorLayer();
-                }
-            });
-        }
-
-        @Override
-        protected void realRun() throws SAXException, IOException,
-        OsmTransferException {
-            if (tests == null || tests.isEmpty())
-                return;
-            errors = new ArrayList<>();
-            getProgressMonitor().setTicksCount(tests.size() * validatedPrimitives.size());
-            int testCounter = 0;
-            for (Test test : tests) {
-                if (canceled)
-                    return;
-                testCounter++;
-                getProgressMonitor().setCustomText(tr("Test {0}/{1}: Starting {2}", testCounter, tests.size(), test.getName()));
-                test.setBeforeUpload(false);
-                test.setPartialSelection(formerValidatedPrimitives != null);
-                test.startTest(getProgressMonitor().createSubTaskMonitor(validatedPrimitives.size(), false));
-                test.visit(validatedPrimitives);
-                test.endTest();
-                errors.addAll(test.getErrors());
-                test.clear();
-            }
-            tests = null;
-            if (Boolean.TRUE.equals(ValidatorPrefHelper.PREF_USE_IGNORE.get())) {
-                getProgressMonitor().setCustomText("");
-                getProgressMonitor().subTask(tr("Updating ignored errors ..."));
-                for (TestError error : errors) {
-                    if (canceled) return;
-                    error.updateIgnored();
-                }
-            }
-        }
-    }
 }
