@@ -58,7 +58,7 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
     /**
      * Commands to apply in order to fix a matching primitive
      */
-    protected final List<MapCSSTagChecker.FixCommand> fixCommands;
+    protected final List<MapCSSTagCheckerFixCommand> fixCommands;
     /**
      * Tags (or arbitrary strings) of alternatives to be presented to the user
      */
@@ -134,17 +134,17 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
                         Logging.log(Logging.LEVEL_WARN,
                                 "Unsupported " + ai.key + " instruction. Allowed instructions are " + POSSIBLE_THROWS + '.', null);
                     } else if ("fixAdd".equals(ai.key)) {
-                        check.fixCommands.add(MapCSSTagChecker.FixCommand.fixAdd(ai.val));
+                        check.fixCommands.add(MapCSSTagCheckerFixCommand.fixAdd(ai.val));
                     } else if ("fixRemove".equals(ai.key)) {
                         CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !(val != null && val.contains("=")),
                                 "Unexpected '='. Please only specify the key to remove in: " + ai);
-                        check.fixCommands.add(MapCSSTagChecker.FixCommand.fixRemove(ai.val));
+                        check.fixCommands.add(MapCSSTagCheckerFixCommand.fixRemove(ai.val));
                     } else if (val != null && "fixChangeKey".equals(ai.key)) {
                         CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
                         final String[] x = val.split("=>", 2);
                         final String oldKey = Utils.removeWhiteSpaces(x[0]);
                         final String newKey = Utils.removeWhiteSpaces(x[1]);
-                        check.fixCommands.add(MapCSSTagChecker.FixCommand.fixChangeKey(oldKey, newKey));
+                        check.fixCommands.add(MapCSSTagCheckerFixCommand.fixChangeKey(oldKey, newKey));
                     } else if (val != null && "fixDeleteObject".equals(ai.key)) {
                         CheckParameterUtil.ensureThat("this".equals(val), "fixDeleteObject must be followed by 'this'");
                         check.deletion = true;
