@@ -977,8 +977,8 @@ public final class Functions {
      * Also known as "capitalize".
      * @param str The source string
      * @return The resulting string
-     * @since 17613
      * @see Character#toTitleCase(char)
+     * @since 17613
      */
     public static String title(String str) {
         // adapted from org.apache.commons.lang3.text.WordUtils.capitalize
