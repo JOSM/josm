@@ -635,6 +635,9 @@ public class SelectionListDialog extends ToggleDialog {
          * Sorts the current elements in the selection
          */
         public synchronized void sort() {
+            if (Config.getPref().getBoolean("selection.no_sort", false)) {
+                return;
+            }
             int size = selection.size();
             if (size > 1 && size <= Config.getPref().getInt("selection.no_sort_above", 100_000)) {
                 boolean quick = size > Config.getPref().getInt("selection.fast_sort_above", 10_000);
