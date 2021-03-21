@@ -28,9 +28,12 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
+import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -107,7 +110,15 @@ public class BoundingBoxSelection implements DownloadSelection {
             panel.add(latlon[i]);
             latlonPanel.add(panel, positions[i]);
         }
-        dlg.add(latlonPanel, GBC.eop().insets(0, 20, 0, 0));
+        dlg.add(latlonPanel, GBC.std().insets(0, 20, 0, 0));
+        final JButton btnCopy = new JButton(tr("Copy bounds"), ImageProvider.get("copy", ImageSizes.SMALLICON));
+        btnCopy.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                ClipboardUtils.copyString(gui.currentBounds.encodeAsString(","));
+            }
+        });
+        dlg.add(btnCopy, GBC.eop().insets(20, 20, 0, 0));
 
         final JButton btnClear = new JButton(tr("Clear textarea"));
         btnClear.addMouseListener(new MouseAdapter() {
@@ -117,7 +128,6 @@ public class BoundingBoxSelection implements DownloadSelection {
             }
         });
         dlg.add(btnClear, GBC.eol().insets(10, 20, 0, 0));
-
         dlg.add(new JLabel(tr("URL from www.openstreetmap.org (you can paste an URL here to download the area)")),
                 GBC.eol().insets(10, 5, 5, 0));
         dlg.add(tfOsmUrl, GBC.eop().insets(10, 0, 5, 0).fill());
