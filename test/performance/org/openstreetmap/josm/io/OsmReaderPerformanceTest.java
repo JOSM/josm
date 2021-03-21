@@ -29,7 +29,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 @Timeout(value = 15*60, unit = TimeUnit.SECONDS)
 class OsmReaderPerformanceTest {
     private static final int TIMES = 4;
-    private static final String DATA_FILE = "nodist/data/neubrandenburg.osm.bz2";
 
     /**
      * Prepare the test.
@@ -64,7 +63,7 @@ class OsmReaderPerformanceTest {
         for (int i = 0; i < TIMES; i++) {
             is.reset();
 
-            ds = OsmReader.parseDataSet(decompressBeforeRead ? is : Compression.byExtension(DATA_FILE)
+            ds = OsmReader.parseDataSet(decompressBeforeRead ? is : Compression.byExtension(PerformanceTestUtils.DATA_FILE)
                     .getUncompressedInputStream(is), null);
         }
         timer.done();
@@ -72,7 +71,7 @@ class OsmReaderPerformanceTest {
     }
 
     private InputStream loadFile(boolean decompressBeforeRead) throws IOException {
-        File file = new File(DATA_FILE);
+        File file = new File(PerformanceTestUtils.DATA_FILE);
         try (InputStream is = decompressBeforeRead ? Compression.getUncompressedFileInputStream(file) : new FileInputStream(file)) {
             ByteArrayOutputStream temporary = new ByteArrayOutputStream();
             byte[] readBuffer = new byte[4096];

@@ -12,6 +12,7 @@ import java.util.Collection;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
@@ -19,9 +20,7 @@ import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapRendererPerformanceTest;
-import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.io.OsmReader;
 
 /**
  * This performance test measures the time for a full run of MapPaintVisitor.visitAll()
@@ -36,10 +35,6 @@ class MapCSSPerformanceTest {
      */
     static final String STYLE_FILE = "resources/styles/standard/elemstyles.mapcss";
 
-    /**
-     * The data file to be rendered
-     */
-    static final String DATA_FILE = "nodist/data/neubrandenburg.osm.bz2";
     /* ------------------------ / configuration section  ---------------------------- */
 
     DataSet ds;
@@ -88,8 +83,8 @@ class MapCSSPerformanceTest {
     }
 
     void loadData() throws IllegalDataException, IOException {
-        System.out.print("Loading data file '"+DATA_FILE+"' ...");
-        ds = OsmReader.parseDataSet(Compression.getUncompressedFileInputStream(new File(DATA_FILE)), null);
+        System.out.print("Loading data file '"+PerformanceTestUtils.DATA_FILE+"' ...");
+        ds = PerformanceTestUtils.getNeubrandenburgDataSet();
         System.out.println("DONE");
     }
 
@@ -115,7 +110,7 @@ class MapCSSPerformanceTest {
             () -> visitor.render(ds, false, new Bounds(-90, -180, 90, 180))
         );
         System.out.println("DONE");
-        System.out.println("data file : "+DATA_FILE);
+        System.out.println("data file : "+PerformanceTestUtils.DATA_FILE);
         System.out.println("style file: "+STYLE_FILE);
         System.out.println("");
         System.out.println("Rendering took "+time+" ms.");

@@ -1,9 +1,17 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.io.Compression;
+import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.XmlWriter;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -13,8 +21,24 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Michael Zangl
  */
 public final class PerformanceTestUtils {
+    /**
+     * The Neubrandenburg data file
+     */
+    public static final String DATA_FILE = "nodist/data/neubrandenburg.osm.bz2";
     private static final int TIMES_WARMUP = 2;
     private static final int TIMES_RUN = 8;
+
+    /**
+     * Parses and returns the Neubrandenburg dataset
+     * @return the Neubrandenburg dataset
+     * @throws IllegalDataException in case of invalid data
+     * @throws IOException in case of I/O error
+     */
+    public static DataSet getNeubrandenburgDataSet() throws IOException, IllegalDataException {
+        try (InputStream in = Compression.getUncompressedFileInputStream(new File(DATA_FILE))) {
+            return OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+        }
+    }
 
     /**
      * A helper class that captures the time from object creation until #done() was called.

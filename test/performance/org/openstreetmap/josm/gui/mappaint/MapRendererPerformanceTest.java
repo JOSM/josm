@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,9 +42,6 @@ import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.io.Compression;
-import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -168,11 +164,7 @@ public class MapRendererPerformanceTest {
         hideIconsSetting.setValue(false);
         MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
 
-        try (
-            InputStream fisC = Compression.getUncompressedFileInputStream(new File("nodist/data/neubrandenburg.osm.bz2"));
-        ) {
-            dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
-        }
+        dsCity = PerformanceTestUtils.getNeubrandenburgDataSet();
     }
 
     /**

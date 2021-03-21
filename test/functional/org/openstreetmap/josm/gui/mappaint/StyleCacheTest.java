@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.InputStream;
 import java.util.IdentityHashMap;
 
 import org.junit.jupiter.api.AfterAll;
@@ -17,6 +15,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -25,9 +24,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.io.Compression;
-import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -61,12 +57,7 @@ class StyleCacheTest {
     @BeforeAll
     public static void load() throws Exception {
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-
-        try (
-            InputStream fisC = Compression.getUncompressedFileInputStream(new File("nodist/data/neubrandenburg.osm.bz2"));
-        ) {
-            dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
-        }
+        dsCity = PerformanceTestUtils.getNeubrandenburgDataSet();
         dsCity2 = new DataSet(dsCity);
     }
 
