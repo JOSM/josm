@@ -213,6 +213,15 @@ public class Notification {
         NotificationManager.getInstance().showNotification(this);
     }
 
+    /**
+     * Display the notification by replacing the given queued/displaying notification
+     * @param oldNotification the notification to replace
+     * @since 17628
+     */
+    public void replaceExisting(Notification oldNotification) {
+        NotificationManager.getInstance().replaceExistingNotification(oldNotification, this);
+    }
+
     private Object getContentTextOrComponent() {
         return content instanceof JTextComponent ? ((JTextComponent) content).getText() : content;
     }

@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -18,12 +19,14 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -133,6 +136,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
         if (file == null)
             return false;
 
+        ImageIcon icon = ImageProvider.get("save");
+        Notification savingNotification = new Notification(tr("Saving file {0}...", file.getName())).setIcon(icon);
+        GuiHelper.runInEDT(savingNotification::show);
         try {
             boolean exported = false;
             boolean canceled = false;
@@ -168,6 +174,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return false;
         }
         addToFileOpenHistory(file);
+        Notification doneNotification = new Notification(tr("Successfully saved file {0}", file.getName())).setIcon(icon);
+        GuiHelper.runInEDT(() -> doneNotification.replaceExisting(savingNotification));
         return true;
     }
 

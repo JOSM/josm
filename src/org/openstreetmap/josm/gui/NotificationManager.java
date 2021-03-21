@@ -91,13 +91,30 @@ class NotificationManager {
      * @param note The note to show.
      * @see Notification#show()
      */
-    public void showNotification(Notification note) {
+    void showNotification(Notification note) {
         synchronized (queue) {
             if (Objects.equals(note, currentNotification) || Objects.equals(note, queue.peekLast())) {
                 Logging.debug("Dropping duplicate notification {0}", note);
                 return;
             }
             queue.add(note);
+            processQueue();
+        }
+    }
+
+    /**
+     * Show the given notification by replacing the given queued/displaying notification
+     * @param oldNotification the notification to replace
+     * @param newNotification the notification to show
+     */
+    void replaceExistingNotification(Notification oldNotification, Notification newNotification) {
+        synchronized (queue) {
+            if (Objects.equals(oldNotification, currentNotification)) {
+                stopHideTimer();
+            } else {
+                queue.remove(oldNotification);
+            }
+            showNotification(newNotification);
             processQueue();
         }
     }
