@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.AssertionCo
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.TagCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
@@ -236,8 +237,8 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
     static String determineArgument(Selector.GeneralSelector matchingSelector, int index, String type, OsmPrimitive p) {
         try {
             final Condition c = matchingSelector.getConditions().get(index);
-            final Tag tag = c instanceof Condition.ToTagConvertable
-                    ? ((Condition.ToTagConvertable) c).asTag(p)
+            final Tag tag = c instanceof TagCondition
+                    ? ((TagCondition) c).asTag(p)
                     : null;
             if (tag == null) {
                 return null;

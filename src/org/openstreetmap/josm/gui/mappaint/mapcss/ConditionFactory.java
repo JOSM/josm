@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.InDataSourceArea;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -29,7 +30,7 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.ToTagConvertable;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.TagCondition;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
@@ -256,7 +257,7 @@ public final class ConditionFactory {
      *
      * Extra class for performance reasons.
      */
-    public static class SimpleKeyValueCondition implements Condition, ToTagConvertable {
+    public static class SimpleKeyValueCondition implements TagCondition {
         /**
          * The key to search for.
          */
@@ -277,12 +278,12 @@ public final class ConditionFactory {
         }
 
         @Override
-        public boolean applies(Environment e) {
-            return v.equals(e.osm.get(k));
+        public boolean applies(Tagged osm) {
+            return v.equals(osm.get(k));
         }
 
         @Override
-        public Tag asTag(OsmPrimitive primitive) {
+        public Tag asTag(Tagged primitive) {
             return new Tag(k, v);
         }
 
@@ -297,7 +298,7 @@ public final class ConditionFactory {
      * <p>Represents a key/value condition which is either applied to a primitive.</p>
      *
      */
-    public static class KeyValueCondition implements Condition, ToTagConvertable {
+    public static class KeyValueCondition implements TagCondition {
         /**
          * The key to search for.
          */
@@ -340,12 +341,12 @@ public final class ConditionFactory {
         }
 
         @Override
-        public boolean applies(Environment env) {
-            return op.eval(env.osm.get(k), considerValAsKey ? env.osm.get(v) : v);
+        public boolean applies(Tagged osm) {
+            return op.eval(osm.get(k), considerValAsKey ? osm.get(v) : v);
         }
 
         @Override
-        public Tag asTag(OsmPrimitive primitive) {
+        public Tag asTag(Tagged primitive) {
             return new Tag(k, v);
         }
 
@@ -378,17 +379,17 @@ public final class ConditionFactory {
             this.pattern = Pattern.compile(v);
         }
 
-        protected boolean matches(Environment env) {
-            final String value = env.osm.get(k);
+        protected boolean matches(Tagged osm) {
+            final String value = osm.get(k);
             return value != null && pattern.matcher(value).find();
         }
 
         @Override
-        public boolean applies(Environment env) {
+        public boolean applies(Tagged osm) {
             if (Op.REGEX == op) {
-                return matches(env);
+                return matches(osm);
             } else if (Op.NREGEX == op) {
-                return !matches(env);
+                return !matches(osm);
             } else {
                 throw new IllegalStateException();
             }
@@ -419,8 +420,8 @@ public final class ConditionFactory {
         }
 
         @Override
-        protected boolean matches(Environment env) {
-            return env.osm.getKeys().entrySet().stream()
+        protected boolean matches(Tagged osm) {
+            return osm.getKeys().entrySet().stream()
                     .anyMatch(kv -> keyPattern.matcher(kv.getKey()).find() && pattern.matcher(kv.getValue()).find());
         }
     }
@@ -536,7 +537,7 @@ public final class ConditionFactory {
      * </pre>
      * @see KeyRegexpCondition
      */
-    public static class KeyCondition implements Condition, ToTagConvertable {
+    public static class KeyCondition implements TagCondition {
 
         /**
          * The key name.
@@ -566,19 +567,18 @@ public final class ConditionFactory {
         }
 
         @Override
-        public boolean applies(Environment e) {
-            CheckParameterUtil.ensureThat(!e.isLinkContext(), "Illegal state: KeyCondition not supported in LINK context");
+        public boolean applies(Tagged osm) {
             switch (matchType) {
                 case TRUE:
-                    return e.osm.isKeyTrue(label) ^ negateResult;
+                    return osm.isKeyTrue(label) ^ negateResult;
                 case FALSE:
-                    return e.osm.isKeyFalse(label) ^ negateResult;
+                    return osm.isKeyFalse(label) ^ negateResult;
                 case ANY_CONTAINS:
                 case ANY_STARTS_WITH:
                 case ANY_ENDS_WITH:
-                    return e.osm.keys().anyMatch(keyPredicate()) ^ negateResult;
+                    return osm.keys().anyMatch(keyPredicate()) ^ negateResult;
                 default:
-                    return e.osm.hasKey(label) ^ negateResult;
+                    return osm.hasKey(label) ^ negateResult;
             }
         }
 
@@ -603,7 +603,7 @@ public final class ConditionFactory {
          * @return The tag.
          */
         @Override
-        public Tag asTag(OsmPrimitive p) {
+        public Tag asTag(Tagged p) {
             String key = label;
             Predicate<String> keyPredicate = keyPredicate();
             if (keyPredicate != null) {
@@ -621,7 +621,7 @@ public final class ConditionFactory {
     /**
      * KeyPatternCondition represents a conditions matching keys based on a pattern.
      */
-    public static class KeyRegexpCondition implements Condition, ToTagConvertable {
+    public static class KeyRegexpCondition implements TagCondition {
 
         /**
          * A predicate used to match a the regexp against the key. Only used if the match type is regexp.
@@ -643,9 +643,8 @@ public final class ConditionFactory {
         }
 
         @Override
-        public boolean applies(Environment e) {
-            CheckParameterUtil.ensureThat(!e.isLinkContext(), "Illegal state: KeyCondition not supported in LINK context");
-            return e.osm.keys().anyMatch(pattern.asPredicate()) ^ negateResult;
+        public boolean applies(Tagged osm) {
+            return osm.keys().anyMatch(pattern.asPredicate()) ^ negateResult;
         }
 
         /**
@@ -658,7 +657,7 @@ public final class ConditionFactory {
          * @return The tag.
          */
         @Override
-        public Tag asTag(OsmPrimitive p) {
+        public Tag asTag(Tagged p) {
             String key = p.keys().filter(pattern.asPredicate()).findAny().orElse(pattern.pattern());
             return new Tag(key, p.get(key));
         }

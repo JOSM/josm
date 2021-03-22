@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.ToTagConvertable;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.TagCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -62,8 +62,8 @@ class ConditionTest {
 
         assertTrue(op instanceof SimpleKeyValueCondition);
         assertEquals("[k1=v1]", op.toString());
-        assertEquals("k1", ((ToTagConvertable) op).asTag(null).getKey());
-        assertEquals("v1", ((ToTagConvertable) op).asTag(null).getValue());
+        assertEquals("k1", ((TagCondition) op).asTag(null).getKey());
+        assertEquals("v1", ((TagCondition) op).asTag(null).getValue());
     }
 
     /**
@@ -78,8 +78,8 @@ class ConditionTest {
         assertFalse(op.applies(genEnv(node3)));
         assertFalse(op.applies(genEnv(node4)));
 
-        assertEquals("k1", ((ToTagConvertable) op).asTag(null).getKey());
-        assertEquals("k2", ((ToTagConvertable) op).asTag(null).getValue());
+        assertEquals("k1", ((TagCondition) op).asTag(null).getKey());
+        assertEquals("k2", ((TagCondition) op).asTag(null).getValue());
     }
 
     /**
