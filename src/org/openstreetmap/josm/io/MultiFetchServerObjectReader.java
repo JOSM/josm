@@ -442,6 +442,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @see #getMissingPrimitives()
      */
     private void downloadRelations(ProgressMonitor progressMonitor) throws OsmTransferException {
+        boolean removeIncomplete = outputDataSet.isEmpty();
         Set<Long> toDownload = new LinkedHashSet<>(relations);
         fetchPrimitives(toDownload, OsmPrimitiveType.RELATION, progressMonitor);
         if (!recurseDownRelations) {
@@ -449,9 +450,13 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         }
         // OSM multi-fetch api may return invisible objects, we don't try to get details for them
         for (Relation r : outputDataSet.getRelations()) {
-            if (!r.isVisible())
+            if (!r.isVisible()) {
                 toDownload.remove(r.getUniqueId());
+            } else if (removeIncomplete) {
+                outputDataSet.removePrimitive(r);
+            }
         }
+
         // fetch full info for all visible relations
         for (long id : toDownload) {
             if (isCanceled())
