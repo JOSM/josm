@@ -379,7 +379,7 @@ final class MapCSSTagCheckerRule implements Predicate<OsmPrimitive> {
      * @param tester           the tester
      * @return an instance of {@link TestError}, or returns null if the primitive does not give rise to an error.
      */
-    protected List<TestError> getErrorsForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env, Test tester) {
+    List<TestError> getErrorsForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env, Test tester) {
         List<TestError> res = new ArrayList<>();
         if (matchingSelector != null && !errors.isEmpty()) {
             final Command fix = fixPrimitive(p);
