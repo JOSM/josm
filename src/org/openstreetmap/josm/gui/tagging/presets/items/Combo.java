@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -46,7 +47,7 @@ public class Combo extends ComboMultiSelect {
     }
 
     @Override
-    protected void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches) {
+    protected void addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support) {
         if (!usage.unused()) {
             for (String s : usage.values) {
                 presetListEntries.add(new PresetListEntry(s));
@@ -76,7 +77,7 @@ public class Combo extends ComboMultiSelect {
             acList.add(getDisplayValues(), AutoCompletionPriority.IS_IN_STANDARD);
         }
         combobox.setEditor(tf);
-        combobox.setSelectedItem(getItemToSelect(def, presetInitiallyMatches, false));
+        combobox.setSelectedItem(getItemToSelect(def, support, false));
 
         if (key != null && ("colour".equals(key) || key.startsWith("colour:") || key.endsWith(":colour"))) {
             p.add(combobox, GBC.std().fill(GBC.HORIZONTAL));
@@ -91,6 +92,7 @@ public class Combo extends ComboMultiSelect {
         } else {
             p.add(combobox, GBC.eol().fill(GBC.HORIZONTAL));
         }
+        combobox.addActionListener(l -> support.fireItemValueModified(this, key, getSelectedValue()));
     }
 
     class ChooseColorAction extends AbstractAction {

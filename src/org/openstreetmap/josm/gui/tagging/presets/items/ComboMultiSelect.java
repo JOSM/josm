@@ -187,7 +187,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
     protected abstract Object getSelectedItem();
 
-    protected abstract void addToPanelAnchor(JPanel p, String def, boolean presetInitiallyMatches);
+    protected abstract void addToPanelAnchor(JPanel p, String def, TaggingPresetItemGuiSupport support);
 
     @Override
     public Collection<String> getValues() {
@@ -219,7 +219,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         label.setToolTipText(getKeyTooltipText());
         label.setComponentPopupMenu(getPopupMenu());
         p.add(label, GBC.std().insets(0, 0, 10, 0));
-        addToPanelAnchor(p, default_, support.isPresetInitiallyMatches());
+        addToPanelAnchor(p, default_, support);
         label.setLabelFor(component);
         component.setToolTipText(getKeyTooltipText());
 
@@ -342,7 +342,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         return null;
     }
 
-    protected Object getItemToSelect(String def, boolean presetInitiallyMatches, boolean multi) {
+    protected Object getItemToSelect(String def, TaggingPresetItemGuiSupport support, boolean multi) {
         final Object itemToSelect;
         if (usage.hasUniqueValue()) {
             // all items have the same value (and there were no unset items)
@@ -366,7 +366,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         } else if (usage.unused()) {
             // all items were unset (and so is default)
             originalValue = multi ? null : getListEntry("");
-            if (LAST_VALUES.containsKey(key) && isUseLastAsDefault() && (!presetInitiallyMatches || isForceUseLastAsDefault())) {
+            if (LAST_VALUES.containsKey(key) && isUseLastAsDefault() && (!support.isPresetInitiallyMatches() || isForceUseLastAsDefault())) {
                 itemToSelect = getListEntry(LAST_VALUES.get(key));
             } else {
                 itemToSelect = originalValue;
