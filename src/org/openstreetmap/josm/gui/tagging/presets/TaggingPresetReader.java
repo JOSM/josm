@@ -240,6 +240,9 @@ public final class TaggingPresetReader {
                 Iterator<Object> it = byId.get(ref).iterator();
                 if (it.hasNext()) {
                     lastIdIterators.push(it);
+                    if (lastIdIterators.size() > 100) {
+                        throw new SAXException(tr("Reference stack for {0} is too large", ref));
+                    }
                 } else {
                     Logging.warn("Ignoring reference '"+ref+"' denoting an empty chunk");
                 }
