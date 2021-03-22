@@ -1050,6 +1050,13 @@ Build-Date: ${build.tstamp}
             <patternset>
                 <exclude name="META-INF/*"/>
                 <exclude name="META-INF/maven/**"/>
+                <exclude name="META-INF/resources/webjars/tag2link/*/LICENSE"/>
+                <exclude name="META-INF/resources/webjars/tag2link/*/README.md"/>
+                <exclude name="META-INF/resources/webjars/tag2link/*/build.js"/>
+                <exclude name="META-INF/resources/webjars/tag2link/*/package.json"/>
+                <exclude name="META-INF/resources/webjars/tag2link/*/schema.json"/>
+                <exclude name="META-INF/resources/webjars/tag2link/*/tag2link.sophox.sparql"/>
+                <exclude name="META-INF/resources/webjars/tag2link/*/tag2link.wikidata.sparql"/>
                 <exclude name="META-INF/versions/**"/>
                 <exclude name="*"/>
                 <exclude name="org/openstreetmap/gui/jmapviewer/Demo*"/>
