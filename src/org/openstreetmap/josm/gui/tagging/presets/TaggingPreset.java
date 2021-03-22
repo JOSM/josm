@@ -316,6 +316,10 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             label.setToolTipText("<html>" + tr("This preset also sets: {0}", Utils.joinAsHtmlUnorderedList(directlyAppliedTags)));
             pp.add(label);
         }
+        JLabel validationLabel = new JLabel(ImageProvider.get("warning-small", ImageProvider.ImageSizes.LARGEICON));
+        validationLabel.setVisible(false);
+        pp.add(validationLabel);
+
         final int count = pp.getComponentCount();
         if (preset_name_label) {
             p.add(new JLabel(getIcon(Action.LARGE_ICON_KEY)), GBC.std(0, 0).span(1, count > 0 ? 2 : 1).insets(0, 0, 5, 0));
@@ -352,6 +356,11 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         p.add(items, GBC.eol().fill());
         if (selected.isEmpty() && !supportsRelation()) {
             GuiHelper.setEnabledRec(items, false);
+        }
+
+        if (selected.size() == 1 && Config.getPref().getBoolean("taggingpreset.validator", false)) {
+            itemGuiSupport.addListener((source, key, newValue) ->
+                    TaggingPresetValidation.validateAsync(selected.iterator().next(), validationLabel, getChangedTags()));
         }
 
         // add Link

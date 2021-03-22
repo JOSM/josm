@@ -124,6 +124,16 @@ public class OpeningHourTest extends TagTest {
 
     @Override
     public void check(final OsmPrimitive p) {
+        addErrorsForPrimitive(p, this.errors);
+    }
+
+    /**
+     * Checks the tags of the given primitive and adds validation errors to the given list.
+     * @param p The primitive to test
+     * @param errors The list to add validation errors to
+     * @since 17643
+     */
+    public void addErrorsForPrimitive(OsmPrimitive p, Collection<TestError> errors) {
         if (p.isTagged()) {
             for (String key : KEYS_TO_CHECK) {
                 errors.addAll(checkOpeningHourSyntax(key, p.get(key), p, Locale.getDefault()));
