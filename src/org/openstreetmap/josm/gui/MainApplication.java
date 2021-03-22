@@ -70,6 +70,7 @@ import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RestartAction;
+import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadParams;
@@ -656,6 +657,7 @@ public class MainApplication {
                 "\t--set=<key>=<value>                       "+tr("Set preference key to value")+"\n\n"+
                 "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 "\t--version                                 "+tr("Displays the JOSM version and exits")+"\n\n"+
+                "\t--status-report                           "+ShowStatusReportAction.ACTION_DESCRIPTION+"\n\n"+
                 "\t--debug                                   "+tr("Print debugging messages to console")+"\n\n"+
                 "\t--skip-plugins                            "+tr("Skip loading plugins")+"\n\n"+
                 "\t--offline=" + Arrays.stream(OnlineResource.values()).map(OnlineResource::name).collect(
@@ -729,7 +731,7 @@ public class MainApplication {
 
         Level logLevel = args.getLogLevel();
         Logging.setLogLevel(logLevel);
-        if (!args.showVersion() && !args.showHelp()) {
+        if (!args.hasOption(Option.VERSION) && !args.hasOption(Option.STATUS_REPORT) && !args.showHelp()) {
             Logging.info(tr("Log level is at {0} ({1}, {2})", logLevel.getLocalizedName(), logLevel.getName(), logLevel.intValue()));
         }
 
@@ -771,8 +773,11 @@ public class MainApplication {
         Config.setBaseDirectoriesProvider(JosmBaseDirectories.getInstance());
         Config.setUrlsProvider(JosmUrls.getInstance());
 
-        if (args.showVersion()) {
+        if (args.hasOption(Option.VERSION)) {
             System.out.println(Version.getInstance().getAgentString());
+            return;
+        } else if (args.hasOption(Option.STATUS_REPORT)) {
+            System.out.println(ShowStatusReportAction.getReportHeader());
             return;
         } else if (args.showHelp()) {
             showHelp();

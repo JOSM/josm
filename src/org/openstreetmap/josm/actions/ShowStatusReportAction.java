@@ -63,13 +63,18 @@ import org.openstreetmap.josm.tools.bugreport.BugReportSender;
 public final class ShowStatusReportAction extends JosmAction {
 
     /**
+     * Localized description text for this action
+     */
+    public static final String ACTION_DESCRIPTION = tr("Show status report with useful information that can be attached to bugs");
+
+    /**
      * Constructs a new {@code ShowStatusReportAction}
      */
     public ShowStatusReportAction() {
         super(
                 tr("Show Status Report"),
                 "misc/statusreport",
-                tr("Show status report with useful information that can be attached to bugs"),
+                ACTION_DESCRIPTION,
                 Shortcut.registerShortcut("help:showstatusreport", tr("Help: {0}",
                         tr("Show Status Report")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE), true, "help/showstatusreport", false);
 

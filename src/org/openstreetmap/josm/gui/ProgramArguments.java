@@ -34,6 +34,8 @@ public class ProgramArguments {
         HELP(false),
         /** --version                                  Displays the JOSM version and exits */
         VERSION(false),
+        /** {@code --status-report} Show status report with useful information that can be attached to bugs */
+        STATUS_REPORT(false),
         /** --debug                                    Print debugging messages to console */
         DEBUG(false),
         /** --trace                                    Print detailed debugging messages to console */
