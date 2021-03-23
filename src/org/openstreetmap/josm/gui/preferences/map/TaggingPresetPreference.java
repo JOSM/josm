@@ -31,10 +31,12 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.PreferencePanel;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -152,6 +154,7 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
     private static final List<SourceProvider> presetSourceProviders = new ArrayList<>();
 
     private SourceEditor sources;
+    private JCheckBox useValidator;
     private JCheckBox sortMenu;
 
     /**
@@ -169,11 +172,16 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
+        useValidator = new JCheckBox(tr("Run data validator on user input"), TaggingPreset.USE_VALIDATOR.get());
         sortMenu = new JCheckBox(tr("Sort presets menu alphabetically"), TaggingPresets.SORT_MENU.get());
 
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        panel.add(sortMenu, GBC.eol().insets(5, 5, 5, 0));
+
+        panel.add(useValidator, GBC.std().insets(5, 5, 0, 0));
+        panel.add(new JLabel(ImageProvider.get("dialogs/validator")), GBC.eol().insets(5, 5, 0, 0));
+        panel.add(sortMenu, GBC.eol().insets(5, 0, 5, 0));
+
         sources = new TaggingPresetSourceEditor();
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         PreferencePanel preferencePanel = gui.createPreferenceTab(this);
@@ -245,7 +253,8 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public boolean ok() {
-        if (sources.finish() || TaggingPresets.SORT_MENU.put(sortMenu.getSelectedObjects() != null)) {
+        TaggingPreset.USE_VALIDATOR.put(useValidator.isSelected());
+        if (sources.finish() || TaggingPresets.SORT_MENU.put(sortMenu.isSelected())) {
             TaggingPresets.destroy();
             TaggingPresets.initialize();
         }
