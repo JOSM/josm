@@ -27,10 +27,10 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -78,7 +78,7 @@ public class Text extends KeyedItem {
         } else {
             initAutoCompletionField(textField, key);
         }
-        if (Config.getPref().getBoolean("taggingpreset.display-keys-as-hint", true)) {
+        if (TaggingPresetItem.DISPLAY_KEYS_AS_HINT.get()) {
             textField.setHint(key);
         }
         if (length > 0) {

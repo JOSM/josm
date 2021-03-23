@@ -51,6 +51,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
@@ -66,7 +67,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.PresetLink;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
@@ -97,6 +97,12 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
     /** Prefix of preset icon loading failure error message */
     public static final String PRESET_ICON_ERROR_MSG_PREFIX = "Could not get presets icon ";
+
+    /**
+     * Defines whether the validator should be active in the preset dialog
+     * @see TaggingPresetValidation
+     */
+    public static final BooleanProperty USE_VALIDATOR = new BooleanProperty("taggingpreset.validator", false);
 
     /**
      * The preset group this preset belongs to.
@@ -227,7 +233,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return;
         }
         File arch = TaggingPresetReader.getZipIcons();
-        final Collection<String> s = Config.getPref().getList("taggingpreset.icon.sources", null);
+        final Collection<String> s = TaggingPresets.ICON_SOURCES.get();
         this.iconFuture = new CompletableFuture<>();
         new ImageProvider(iconName)
             .setDirs(s)
@@ -358,7 +364,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             GuiHelper.setEnabledRec(items, false);
         }
 
-        if (selected.size() == 1 && Config.getPref().getBoolean("taggingpreset.validator", false)) {
+        if (selected.size() == 1 && USE_VALIDATOR.get()) {
             itemGuiSupport.addListener((source, key, newValue) ->
                     TaggingPresetValidation.validateAsync(selected.iterator().next(), validationLabel, getChangedTags()));
         }

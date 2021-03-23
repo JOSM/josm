@@ -18,9 +18,9 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -66,7 +66,7 @@ public class Combo extends ComboMultiSelect {
         combobox.setEditable(editable); // see #6157
         AutoCompletingTextField tf = new AutoCompletingTextField();
         initAutoCompletionField(tf, key);
-        if (Config.getPref().getBoolean("taggingpreset.display-keys-as-hint", true)) {
+        if (TaggingPresetItem.DISPLAY_KEYS_AS_HINT.get()) {
             tf.setHint(key);
         }
         if (length > 0) {

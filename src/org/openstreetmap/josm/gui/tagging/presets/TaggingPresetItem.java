@@ -19,11 +19,11 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmDataManager;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.util.LruCache;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
@@ -36,6 +36,10 @@ public abstract class TaggingPresetItem {
 
     // cache the parsing of types using a LRU cache
     private static final Map<String, Set<TaggingPresetType>> TYPE_CACHE = new LruCache<>(16);
+    /**
+     * Display OSM keys as {@linkplain org.openstreetmap.josm.gui.widgets.OsmIdTextField#setHint hint}
+     */
+    protected static BooleanProperty DISPLAY_KEYS_AS_HINT = new BooleanProperty("taggingpreset.display-keys-as-hint", true);
 
     protected void initAutoCompletionField(AutoCompletingTextField field, String... key) {
         initAutoCompletionField(field, Arrays.asList(key));
@@ -131,7 +135,7 @@ public abstract class TaggingPresetItem {
      * @return the requested image or null if the request failed
      */
     public static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
-        final Collection<String> s = Config.getPref().getList("taggingpreset.icon.sources", null);
+        final Collection<String> s = TaggingPresets.ICON_SOURCES.get();
         ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
         if (maxSize != null && maxSize > 0) {
             imgProv.setMaxSize(maxSize);

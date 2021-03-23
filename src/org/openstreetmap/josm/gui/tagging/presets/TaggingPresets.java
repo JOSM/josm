@@ -17,6 +17,9 @@ import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MenuScroller;
@@ -26,7 +29,6 @@ import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
@@ -47,6 +49,15 @@ public final class TaggingPresets {
 
     /** The collection of listeners */
     private static final Collection<TaggingPresetListener> listeners = new ArrayList<>();
+    /**
+     * Sort presets menu alphabetically
+     */
+    public static BooleanProperty SORT_MENU = new BooleanProperty("taggingpreset.sortvalues", true);
+    /**
+     * Custom icon sources
+     */
+    public static final ListProperty ICON_SOURCES = new ListProperty("taggingpreset.icon.sources", null);
+    private static final IntegerProperty MIN_ELEMENTS_FOR_SCROLLER = new IntegerProperty("taggingpreset.min-elements-for-scroller", 15);
 
     private TaggingPresets() {
         // Hide constructor for utility classes
@@ -106,12 +117,12 @@ public final class TaggingPresets {
                 }
             }
             for (JMenu submenu : submenus.values()) {
-                if (submenu.getItemCount() >= Config.getPref().getInt("taggingpreset.min-elements-for-scroller", 15)) {
+                if (submenu.getItemCount() >= MIN_ELEMENTS_FOR_SCROLLER.get()) {
                     MenuScroller.setScrollerFor(submenu);
                 }
             }
         }
-        if (Config.getPref().getBoolean("taggingpreset.sortmenu")) {
+        if (SORT_MENU.get()) {
             TaggingPresetMenu.sortMenu(presetsMenu);
         }
         listeners.forEach(TaggingPresetListener::taggingPresetsModified);

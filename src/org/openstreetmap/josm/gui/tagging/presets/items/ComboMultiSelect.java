@@ -30,7 +30,7 @@ import javax.swing.ListCellRenderer;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
-import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -331,7 +331,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             entries.add(e);
         }
 
-        if (values_sort && Config.getPref().getBoolean("taggingpreset.sortvalues", true)) {
+        if (values_sort && TaggingPresets.SORT_MENU.get()) {
             Collections.sort(entries);
         }
 

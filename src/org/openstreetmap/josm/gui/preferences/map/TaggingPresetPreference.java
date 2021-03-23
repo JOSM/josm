@@ -169,8 +169,7 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        sortMenu = new JCheckBox(tr("Sort presets menu alphabetically"),
-                Config.getPref().getBoolean("taggingpreset.sortmenu", false));
+        sortMenu = new JCheckBox(tr("Sort presets menu alphabetically"), TaggingPresets.SORT_MENU.get());
 
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -185,8 +184,6 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
 
     public static class TaggingPresetSourceEditor extends SourceEditor {
 
-        private static final String ICONPREF = "taggingpreset.icon.sources";
-
         public TaggingPresetSourceEditor() {
             super(SourceType.TAGGING_PRESET, Config.getUrls().getJOSMWebsite()+"/presets", presetSourceProviders, true);
         }
@@ -198,7 +195,7 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
 
         @Override
         public boolean finish() {
-            return doFinish(PresetPrefHelper.INSTANCE, ICONPREF);
+            return doFinish(PresetPrefHelper.INSTANCE, TaggingPresets.ICON_SOURCES.getKey());
         }
 
         @Override
@@ -208,7 +205,7 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
 
         @Override
         public Collection<String> getInitialIconPathsList() {
-            return Config.getPref().getList(ICONPREF, null);
+            return TaggingPresets.ICON_SOURCES.get();
         }
 
         @Override
@@ -248,8 +245,7 @@ public final class TaggingPresetPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public boolean ok() {
-        if (sources.finish()
-                || Config.getPref().putBoolean("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null)) {
+        if (sources.finish() || TaggingPresets.SORT_MENU.put(sortMenu.getSelectedObjects() != null)) {
             TaggingPresets.destroy();
             TaggingPresets.initialize();
         }
