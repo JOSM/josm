@@ -1,21 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets.items;
 
-import java.awt.GridBagLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
+import org.openstreetmap.josm.gui.widgets.IconTextCheckBox;
 import org.openstreetmap.josm.gui.widgets.QuadStateCheckBox;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -87,18 +84,7 @@ public class Check extends KeyedItem {
         check.setComponentPopupMenu(getPopupMenu());
 
         if (icon != null) {
-            JPanel checkPanel = new JPanel(new GridBagLayout());
-            checkPanel.add(check, GBC.std());
-            JLabel label = new JLabel(locale_text);
-            addIcon(label);
-            label.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    check.getMouseAdapter().mousePressed(e);
-                }
-            });
-            checkPanel.add(label);
-            checkPanel.add(new JLabel(), GBC.eol().fill());
+            JPanel checkPanel = IconTextCheckBox.wrap(check, locale_text, getIcon());
             p.add(checkPanel, GBC.eol()); // Do not fill, see #15104
         } else {
             p.add(check, GBC.eol()); // Do not fill, see #15104
