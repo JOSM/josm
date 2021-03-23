@@ -66,6 +66,15 @@ public final class DateUtils {
      * @throws DateTimeException if the value of any field is out of range, or if the day-of-month is invalid for the month-year
      */
     public static long tsFromString(String str) {
+        return parseInstant(str).toEpochMilli();
+    }
+
+    /**
+     * Parses the given date string quickly, regardless of current locale.
+     * @param str the date string
+     * @return the parsed instant
+     */
+    public static Instant parseInstant(String str) {
         // "2007-07-25T09:26:24{Z|{+|-}01[:00]}"
         if (checkLayout(str, "xxxx-xx-xx") ||
                 checkLayout(str, "xxxx-xx") ||
@@ -75,7 +84,7 @@ public final class DateUtils {
                     str.length() > 5 ? parsePart2(str, 5) : 1,
                     str.length() > 8 ? parsePart2(str, 8) : 1,
                     0, 0, 0, 0, ZoneOffset.UTC);
-            return local.toInstant().toEpochMilli();
+            return local.toInstant();
         } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
                 checkLayout(str, "xxxx:xx:xx xx:xx:xx") ||
@@ -97,9 +106,9 @@ public final class DateUtils {
             );
             if (str.length() == 22 || str.length() == 25) {
                 final int plusHr = parsePart2(str, 20);
-                return local.plusHours(str.charAt(19) == '+' ? -plusHr : plusHr).toInstant().toEpochMilli();
+                return local.plusHours(str.charAt(19) == '+' ? -plusHr : plusHr).toInstant();
             }
-            return local.toInstant().toEpochMilli();
+            return local.toInstant();
         } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx") ||
                 checkLayout(str, "xxxx:xx:xx xx:xx:xx.xxx") ||
@@ -117,20 +126,20 @@ public final class DateUtils {
             );
             if (str.length() == 29) {
                 final int plusHr = parsePart2(str, 24);
-                return local.plusHours(str.charAt(23) == '+' ? -plusHr : plusHr).toInstant().toEpochMilli();
+                return local.plusHours(str.charAt(23) == '+' ? -plusHr : plusHr).toInstant();
             }
-            return local.toInstant().toEpochMilli();
+            return local.toInstant();
         } else {
             // example date format "18-AUG-08 13:33:03"
             SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
             Date d = f.parse(str, new ParsePosition(0));
             if (d != null)
-                return d.getTime();
+                return d.toInstant();
         }
 
         try {
             // slow path for fractional seconds different from millisecond precision
-            return ZonedDateTime.parse(str).toInstant().toEpochMilli();
+            return ZonedDateTime.parse(str).toInstant();
         } catch (IllegalArgumentException | DateTimeParseException ex) {
             throw new UncheckedParseException("The date string (" + str + ") could not be parsed.", ex);
         }
