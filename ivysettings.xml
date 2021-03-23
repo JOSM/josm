@@ -4,9 +4,5 @@
   <settings defaultResolver="josm-nexus"/>
   <resolvers>
     <ibiblio name="josm-nexus" m2compatible="true" root="https://josm.openstreetmap.de/nexus/content/repositories/public/" />
-    <ibiblio name="jcenter" m2compatible="true" root="https://jcenter.bintray.com/" />
   </resolvers>
-  <modules>
-    <module organisation="ch.poole" name="OpeningHoursParser" resolver="jcenter"/>
-  </modules>
 </ivysettings>
