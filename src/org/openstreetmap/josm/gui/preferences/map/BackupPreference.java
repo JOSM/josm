@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -131,4 +132,8 @@ public class BackupPreference extends DefaultTabPreferenceSetting {
         return false;
     }
 
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/BackupPreference");
+    }
 }

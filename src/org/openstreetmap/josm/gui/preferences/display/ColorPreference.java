@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.MapScaler;
 import org.openstreetmap.josm.gui.MapStatus;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -448,5 +449,10 @@ public class ColorPreference extends ExtensibleTabPreferenceSetting implements L
         remove.setEnabled(ce != null && isRemoveColor(ce));
         colorEdit.setEnabled(ce != null);
         defaultSet.setEnabled(ce != null && !ce.isDefault());
+    }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/ColorPreference");
     }
 }

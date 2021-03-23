@@ -58,6 +58,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSettingGroupGui;
@@ -677,5 +678,10 @@ public class MapPaintDialog extends ToggleDialog {
             addSeparator();
             add(new InfoAction());
         }
+    }
+
+    @Override
+    public String helpTopic() {
+        return HelpUtil.ht("/Preferences/MapPaintPreference");
     }
 }

@@ -18,6 +18,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -138,4 +139,8 @@ public class LanguagePreference extends DefaultTabPreferenceSetting {
         return false;
     }
 
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/LanguagePreference");
+    }
 }

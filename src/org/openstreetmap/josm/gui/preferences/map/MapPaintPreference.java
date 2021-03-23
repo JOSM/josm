@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceProvider;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
@@ -81,6 +82,11 @@ public class MapPaintPreference extends DefaultTabPreferenceSetting {
         PreferencePanel preferencePanel = gui.createPreferenceTab(this);
         preferencePanel.add(panel, GBC.std().fill());
         sources.deferLoading(gui, preferencePanel);
+    }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/MapPaintPreference");
     }
 
     static class MapPaintSourceEditor extends SourceEditor {

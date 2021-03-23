@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.swing.Box;
 
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -83,5 +84,10 @@ public final class ProxyPreference extends DefaultTabPreferenceSetting {
             return listeners.remove(listener);
         }
         return false;
+    }
+
+    @Override
+    public String getHelpContext() {
+        return HelpUtil.ht("/Preferences/ProxyPreference");
     }
 }
