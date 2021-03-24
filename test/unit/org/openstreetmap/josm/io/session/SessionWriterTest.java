@@ -3,15 +3,22 @@ package org.openstreetmap.josm.io.session;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipFile;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -33,6 +40,8 @@ import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for Session writing.
@@ -98,7 +107,7 @@ class SessionWriterTest {
         MainApplication.getLayerManager().addLayer(createOsmLayer());
     }
 
-    private void testWrite(List<Layer> layers, final boolean zip) throws IOException {
+    private byte[] testWrite(List<Layer> layers, final boolean zip) throws IOException {
         Map<Layer, SessionLayerExporter> exporters = new HashMap<>();
         if (zip) {
             SessionWriter.registerSessionLayerExporter(OsmDataLayer.class, OsmHeadlessJozExporter.class);
@@ -114,6 +123,13 @@ class SessionWriterTest {
         File file = new File(System.getProperty("java.io.tmpdir"), getClass().getName()+(zip ? ".joz" : ".jos"));
         try {
             sw.write(file);
+            if (!zip) {
+                return null;
+            }
+            try (ZipFile zipFile = new ZipFile(file);
+                 InputStream input = zipFile.getInputStream(zipFile.getEntry("session.jos"))) {
+                return Utils.readBytesFromStream(input);
+            }
         } finally {
             if (file.exists()) {
                 Utils.deleteFile(file);
@@ -212,7 +228,11 @@ class SessionWriterTest {
     @Test
     void testWriteGpxAndMarkerJoz() throws IOException {
         GpxLayer gpx = createGpxLayer();
-        testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
+        byte[] bytes = testWrite(Arrays.asList(gpx, createMarkerLayer(gpx)), true);
+        Path path = Paths.get(TestUtils.getTestDataRoot() + "/sessions/gpx_markers.jos");
+        String expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8).replace("\r", "");
+        String actual = new String(bytes, StandardCharsets.UTF_8).replace("\r", "");
+        assertEquals(expected, actual);
     }
 
     /**

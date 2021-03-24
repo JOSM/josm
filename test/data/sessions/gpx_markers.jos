@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<josm-session version="0.1">
+    <viewport>
+        <center lat="0.0" lon="0.0"/>
+        <scale meter-per-pixel="10.000000"/>
+    </viewport>
+    <projection>
+        <projection-choice>
+            <id>core:mercator</id>
+            <parameters/>
+        </projection-choice>
+        <code>EPSG:3857</code>
+    </projection>
+    <layers>
+        <layer index="1" name="GPX layer name" type="tracks" version="0.1" visible="true">
+            <file>layers/01/data.gpx</file>
+        </layer>
+        <layer index="2" name="Marker layer name" type="markers" version="0.1" visible="true">
+            <file>layers/02/data.gpx</file>
+        </layer>
+    </layers>
+</josm-session>

@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -270,7 +271,7 @@ public class SessionWriter {
         Element scale = doc.createElement("scale");
         viewportEl.appendChild(scale);
         double dist100px = mapView.getDist100Pixel();
-        scale.setAttribute("meter-per-pixel", Double.toString(dist100px / 100));
+        scale.setAttribute("meter-per-pixel", String.format(Locale.ROOT, "%6f", dist100px / 100));
     }
 
     private static void writeProjection(Element root) {
