@@ -4,8 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -223,9 +223,9 @@ class GeoJSONReaderTest {
     void testInvalidFeatureCollection() throws Exception {
         String featureCollection = "{\"type\": \"FeatureCollection\", \"features\": {}}";
         try (InputStream in = new ByteArrayInputStream(featureCollection.getBytes(StandardCharsets.UTF_8))) {
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            IllegalDataException exception = assertThrows(IllegalDataException.class,
                     () -> new GeoJSONReader().doParseDataSet(in, null));
-            assertEquals("features must be ARRAY, but is OBJECT", exception.getMessage());
+            assertEquals("java.lang.IllegalArgumentException: features must be ARRAY, but is OBJECT", exception.getMessage());
         }
     }
 
