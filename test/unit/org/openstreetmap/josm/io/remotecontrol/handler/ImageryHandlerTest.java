@@ -52,7 +52,7 @@ class ImageryHandlerTest {
     @Test
     void testBadRequestInvalidUrl() {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("invalid_url").handle());
-        assertEquals("The following keys are mandatory, but have not been provided: url", e.getMessage());
+        assertEquals("The following keys are mandatory, but have not been provided: url/id", e.getMessage());
     }
 
     /**
@@ -61,7 +61,7 @@ class ImageryHandlerTest {
     @Test
     void testBadRequestIncompleteUrl() {
         Exception e = assertThrows(RequestHandlerBadRequestException.class, () -> newHandler("https://localhost").handle());
-        assertEquals("The following keys are mandatory, but have not been provided: url", e.getMessage());
+        assertEquals("The following keys are mandatory, but have not been provided: url/id", e.getMessage());
     }
 
     /**

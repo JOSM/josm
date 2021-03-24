@@ -4,11 +4,17 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -31,19 +37,23 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     @Override
     public String getPermissionMessage() {
         return tr("Remote Control has been asked to load an imagery layer from the following URL:")
-                + "<br>" + args.get("url");
+                + "<br>" + args.getOrDefault("url", args.get("id"));
     }
 
     @Override
     public String[] getMandatoryParams() {
-        return new String[]{"url"};
+        return new String[0];
     }
 
     @Override
     public String[] getOptionalParams() {
-        return StructUtils.serializeStruct(new ImageryPreferenceEntry(), ImageryPreferenceEntry.class,
-                StructUtils.SerializeOptions.INCLUDE_NULL, StructUtils.SerializeOptions.INCLUDE_DEFAULT
-        ).keySet().toArray(new String[0]);
+        Set<String> params = new LinkedHashSet<>();
+        params.add("url");
+        params.add("id");
+        Map<String, String> struct = StructUtils.serializeStruct(new ImageryPreferenceEntry(), ImageryPreferenceEntry.class,
+                StructUtils.SerializeOptions.INCLUDE_NULL, StructUtils.SerializeOptions.INCLUDE_DEFAULT);
+        params.addAll(struct.keySet());
+        return params.toArray(new String[0]);
     }
 
     @Override
@@ -52,6 +62,15 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     }
 
     protected ImageryInfo buildImageryInfo() {
+        String id = args.get("id");
+        if (id != null) {
+            Optional<ImageryInfo> byId = ImageryLayerInfo.instance.getLayers().stream()
+                    .filter(l -> Objects.equals(l.getId(), id))
+                    .findFirst();
+            if (byId.isPresent()) {
+                return byId.get();
+            }
+        }
         args.computeIfAbsent("type", ignore -> ImageryType.WMS.getDefault().getTypeString());
         args.computeIfAbsent("name", ignore -> args.getOrDefault("title", tr("Remote imagery")));
         ImageryPreferenceEntry imageryPreferenceEntry = StructUtils.deserializeStruct(args, ImageryPreferenceEntry.class);
@@ -82,7 +101,8 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     protected void validateRequest() throws RequestHandlerBadRequestException {
         try {
             CheckParameterUtil.ensureParameterNotNull(args);
-            CheckParameterUtil.ensureParameterNotNull(args.get("url"));
+            CheckParameterUtil.ensureThat(args.containsKey("url") || args.containsKey("id"),
+                    tr("The following keys are mandatory, but have not been provided: {0}", "url/id"));
             ImageryLayer.create(buildImageryInfo());
         } catch (IllegalArgumentException e) {
             throw new RequestHandlerBadRequestException(e.getMessage(), e);
@@ -99,6 +119,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
         final String types = String.join("|", Utils.transform(Arrays.asList(ImageryInfo.ImageryType.values()),
                 ImageryType::getTypeString));
         return new String[] {
+            "/imagery?id=Bing",
             "/imagery?title=osm&type=tms&url=https://a.tile.openstreetmap.org/%7Bzoom%7D/%7Bx%7D/%7By%7D.png",
             "/imagery?title=landsat&type=wms&url=http://irs.gis-lab.info/?" +
                     "layers=landsat&SRS=%7Bproj%7D&WIDTH=%7Bwidth%7D&HEIGHT=%7Bheight%7D&BBOX=%7Bbbox%7D",
