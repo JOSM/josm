@@ -141,7 +141,12 @@ public class RestartAction extends JosmAction {
     }
 
     private static boolean isExecutableFile(File f) {
-        return f.isFile() && f.canExecute();
+        try {
+            return f.isFile() && f.canExecute();
+        } catch (SecurityException e) {
+            Logging.error(e);
+            return false;
+        }
     }
 
     private static List<String> determineRestartCommands() {

@@ -119,7 +119,11 @@ public final class Logging {
                 // this wouldn't be necessary if StreamHandler made it possible to see what the current
                 // output stream is set to
                 this.outputStreamMemo = outputStream;
-                super.setOutputStream(outputStream);
+                try {
+                    super.setOutputStream(outputStream);
+                } catch (SecurityException e) {
+                    System.err.println("Unable to set logging output stream: " + e.getMessage());
+                }
             }
         }
 

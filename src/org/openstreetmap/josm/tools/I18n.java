@@ -396,7 +396,13 @@ public final class I18n {
             // Don't call Logging class, it may not be fully initialized yet
             System.err.println("Unable to set locale providers: " + e.getMessage());
         }
-        return System.setProperty("java.locale.providers", "JRE,CLDR");
+        try {
+            return System.setProperty("java.locale.providers", "JRE,CLDR");
+        } catch (SecurityException e) {
+            // Don't call Logging class, it may not be fully initialized yet
+            System.err.println("Unable to set locale providers: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
