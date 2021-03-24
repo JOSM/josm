@@ -155,6 +155,15 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="match_expression" type="string">
+            <annotation>
+                <documentation>
+                    Additional criteria for matching primitives. Specified in <a href="https://josm.openstreetmap.de/wiki/Help/Action/Search">JOSM search syntax</a>.
+                    For instance, a preset with <code>match_expression="foo=bar"</code> requires OSM objects to have the tag <code>foo=bar</code>.
+                    You may want to use the <code>match_expression</code> to exclude certain OSM objects, for instance when a more specific preset is present.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="preset_name_label" type="boolean">
             <annotation>
                 <documentation>

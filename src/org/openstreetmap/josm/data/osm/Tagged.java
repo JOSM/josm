@@ -232,4 +232,59 @@ public interface Tagged {
     default boolean isKeyFalse(String key) {
         return OsmUtils.isFalse(get(key));
     }
+
+    /**
+     * Returns a Tagged instance for the given tag map
+     * @param tags the tag map
+     * @return a Tagged instance for the given tag map
+     */
+    static Tagged ofMap(Map<String, String> tags) {
+        return new Tagged() {
+
+            @Override
+            public String get(String key) {
+                return tags.get(key);
+            }
+
+            @Override
+            public Map<String, String> getKeys() {
+                return tags;
+            }
+
+            @Override
+            public Collection<String> keySet() {
+                return tags.keySet();
+            }
+
+            @Override
+            public void put(String key, String value) {
+                tags.put(key, value);
+            }
+
+            @Override
+            public void setKeys(Map<String, String> keys) {
+                tags.putAll(keys);
+            }
+
+            @Override
+            public boolean hasKeys() {
+                return !tags.isEmpty();
+            }
+
+            @Override
+            public int getNumKeys() {
+                return tags.size();
+            }
+
+            @Override
+            public void remove(String key) {
+                tags.remove(key);
+            }
+
+            @Override
+            public void removeAll() {
+                tags.clear();
+            }
+        };
+    }
 }
