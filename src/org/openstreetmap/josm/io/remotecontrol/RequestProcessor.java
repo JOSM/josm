@@ -253,7 +253,7 @@ public class RequestProcessor extends Thread {
                 String websiteDoc = HelpUtil.getWikiBaseHelpUrl() +"/Help/Preferences/RemoteControl";
                 String help = "No command specified! The following commands are available:<ul>" + usage
                         + "</ul>" + "See <a href=\""+websiteDoc+"\">"+websiteDoc+"</a> for complete documentation.";
-                sendBadRequest(out, help);
+                sendErrorHtml(out, 400, "Bad Request", help);
             } else {
                 // create handler object
                 RequestHandler handler = handlerClass.getConstructor().newInstance();
@@ -301,12 +301,16 @@ public class RequestProcessor extends Thread {
     }
 
     private static void sendError(Writer out, int errorCode, String errorName, String help) throws IOException {
+        sendErrorHtml(out, errorCode, errorName, help == null ? "" : "<p>"+Utils.escapeReservedCharactersHTML(help) + "</p>");
+    }
+
+    private static void sendErrorHtml(Writer out, int errorCode, String errorName, String helpHtml) throws IOException {
         sendHeader(out, errorCode + " " + errorName, "text/html", true);
         out.write(String.format(
                 RESPONSE_TEMPLATE,
                 "<title>" + errorName + "</title>",
                 "<h1>HTTP Error " + errorCode + ": " + errorName + "</h1>" +
-                (help == null ? "" : "<p>"+Utils.escapeReservedCharactersHTML(help) + "</p>")
+                helpHtml
         ));
         out.flush();
     }
