@@ -80,6 +80,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
     protected boolean recurseDownRelations;
     private boolean recurseDownAppended = true;
 
+    private ExecutorService exec;
+
     /**
      * Constructs a {@code MultiFetchServerObjectReader}.
      */
@@ -319,11 +321,11 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         // we will run up to MAX_DOWNLOAD_THREADS concurrent fetchers.
         int threadsNumber = Config.getPref().getInt("osm.download.threads", OsmApi.MAX_DOWNLOAD_THREADS);
         threadsNumber = Utils.clamp(threadsNumber, 1, OsmApi.MAX_DOWNLOAD_THREADS);
-        final ExecutorService exec = Executors.newFixedThreadPool(
+        exec = Executors.newFixedThreadPool(
                 threadsNumber, Utils.newThreadFactory(getClass() + "-%d", Thread.NORM_PRIORITY));
         CompletionService<FetchResult> ecs = new ExecutorCompletionService<>(exec);
         List<Future<FetchResult>> jobs = new ArrayList<>();
-        while (!toFetch.isEmpty()) {
+        while (!toFetch.isEmpty() && !isCanceled()) {
             jobs.add(ecs.submit(new Fetcher(type, extractIdPackage(toFetch), progressMonitor)));
         }
         // Run the fetchers
@@ -357,6 +359,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 job.cancel(true);
             }
         }
+        exec = null;
     }
 
     /**
@@ -704,5 +707,12 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
             }
             return result;
         }
+    }
+
+    @Override
+    public void cancel() {
+        super.cancel();
+        if (exec != null)
+            exec.shutdownNow();
     }
 }
