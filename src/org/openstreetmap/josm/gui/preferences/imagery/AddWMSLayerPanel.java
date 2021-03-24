@@ -206,10 +206,15 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         if (getImageryName().isEmpty()) {
             return false;
         }
+        if (!endpoint.isSelected() && !getWmsUrl().isEmpty()) {
+            // if endpoint is not selected and imagery name and WMS URL is provided, allow adding imagery
+            // this is to cover the cases, when the user constructs URL on hers/his own
+            return true;
+        }
         /*
          * We need selection of the layers in following situations:
          * * endpoint is not selected (and we don't care about setDefault layers as it's disabled anyway)
-         * * endpoint is selected and setDefultLayers is selected
+         * * endpoint is selected and setDefaultLayers is selected
          */
         if ((!endpoint.isSelected() || setDefaultLayers.isSelected()) && (tree == null || tree.getSelectedLayers().isEmpty())) {
             return false;
