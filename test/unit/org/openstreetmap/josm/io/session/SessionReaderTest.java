@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -118,6 +119,10 @@ class SessionReaderTest {
         assertNotNull(marker);
         assertEquals(gpx.getName(), "GPX layer name");
         assertEquals(marker.getName(), "Marker layer name");
+        assertEquals(1.0, gpx.getOpacity());
+        assertEquals(0.5, marker.getOpacity());
+        assertEquals(new Color(0x204060), gpx.getColor());
+        assertEquals(new Color(0x12345678, true), marker.getColor());
     }
 
     /**

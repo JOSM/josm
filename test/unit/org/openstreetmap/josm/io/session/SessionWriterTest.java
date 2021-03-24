@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.session;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -153,7 +154,10 @@ class SessionWriterTest {
     }
 
     private MarkerLayer createMarkerLayer(GpxLayer gpx) {
-        return new MarkerLayer(gpx.data, "Marker layer name", gpx.getAssociatedFile(), gpx);
+        MarkerLayer layer = new MarkerLayer(gpx.data, "Marker layer name", gpx.getAssociatedFile(), gpx);
+        layer.setOpacity(0.5);
+        layer.setColor(new Color(0x12345678, true));
+        return layer;
     }
 
     private ImageryLayer createImageryLayer() {

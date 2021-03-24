@@ -15,7 +15,7 @@
         <layer index="1" name="GPX layer name" type="tracks" version="0.1" visible="true">
             <file>layers/01/data.gpx</file>
         </layer>
-        <layer index="2" name="Marker layer name" type="markers" version="0.1" visible="true">
+        <layer color="#34567812" index="2" name="Marker layer name" opacity="0.5" type="markers" version="0.1" visible="true">
             <file>layers/02/data.gpx</file>
         </layer>
     </layers>
