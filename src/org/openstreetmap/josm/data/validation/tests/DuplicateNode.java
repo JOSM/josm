@@ -42,27 +42,21 @@ public class DuplicateNode extends Test {
 
     protected static class NodeHash implements Hash<Object, Object> {
 
-        /**
-         * Rounding on OSM server and via {@link LatLon#roundToOsmPrecision} sometimes differs in the last digit by 1.
-         * Thus, for the duplicate node test, we reduce the precision by one to find errors before uploading.
-         * @see LatLon#MAX_SERVER_INV_PRECISION
-         */
-        private final double precision =
-                1 / Config.getPref().getDouble("validator.duplicatenodes.precision", LatLon.MAX_SERVER_PRECISION * 10);
+        private final double precision = Config.getPref().getDouble("validator.duplicatenodes.precision", 0.);
 
         /**
          * Returns the rounded coordinated according to {@link #precision}
          * @see LatLon#roundToOsmPrecision
          */
-        protected LatLon roundCoord(LatLon coor) {
+        private LatLon roundCoord(LatLon coor) {
             return new LatLon(
-                    Math.round(coor.lat() * precision) / precision,
-                    Math.round(coor.lon() * precision) / precision
+                    Math.round(coor.lat() / precision) * precision,
+                    Math.round(coor.lon() / precision) * precision
                     );
         }
 
         @SuppressWarnings("unchecked")
-        private LatLon getLatLon(Object o) {
+        protected LatLon getLatLon(Object o) {
             if (o instanceof Node) {
                 LatLon coor = ((Node) o).getCoor();
                 if (coor == null)
