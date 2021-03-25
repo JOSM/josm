@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * A user action will just change a preference value. To take any real action,
  * register another {@link PreferenceChangedListener} for the given preference key.
  */
-public class PreferenceToggleAction extends JosmAction implements PreferenceChangedListener {
+public class PreferenceToggleAction extends ToggleAction implements PreferenceChangedListener {
 
     private final JCheckBoxMenuItem checkbox;
     private final BooleanProperty pref;

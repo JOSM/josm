@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -67,8 +68,10 @@ import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
+import org.openstreetmap.josm.actions.ToggleAction;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.gui.IconToggleButton;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -1169,7 +1172,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             if (action.isSeparator()) {
                 control.addSeparator();
             } else {
-                final JButton b = addButtonAndShortcut(action);
+                final AbstractButton b = addButtonAndShortcut(action);
                 buttonActions.put(b, action);
 
                 Icon i = action.getDisplayIcon();
@@ -1229,9 +1232,15 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         MainApplication.getToolbar().refreshToolbarControl();
     }
 
-    private JButton addButtonAndShortcut(ActionDefinition action) {
+    private AbstractButton addButtonAndShortcut(ActionDefinition action) {
         Action act = action.getParametrizedAction();
-        JButton b = control.add(act);
+        final AbstractButton b;
+        if (act instanceof ToggleAction) {
+            b = new IconToggleButton(act);
+            control.add(b);
+        } else {
+            b = control.add(act);
+        }
 
         Shortcut sc = null;
         if (action.getAction() instanceof JosmAction) {
