@@ -65,12 +65,26 @@ public class PluginClassLoader extends DynamicURLClassLoader {
                         return result;
                     }
                 } catch (ClassNotFoundException e) {
-                    // do nothing
-                    Logging.trace("Plugin class not found in {0}: {1}", dep, e.getMessage());
+                    Logging.trace("Plugin class not found in dep {0}: {1}", dep, e.getMessage());
                     Logging.trace(e);
                 }
             }
-            result = super.loadClass(name, resolve);
+            try {
+                // Will delegate to parent.loadClass(name, resolve) if needed
+                result = super.loadClass(name, resolve);
+            } catch (ClassNotFoundException e) {
+                Logging.trace("Plugin class not found in super {0}: {1}", this, e.getMessage());
+                Logging.trace(e);
+            }
+        }
+        // IcedTea-Web JNLPClassLoader overrides loadClass(String) but not loadClass(String, boolean)
+        if (result == null && getParent() != null) {
+            try {
+                result = getParent().loadClass(name);
+            } catch (ClassNotFoundException e) {
+                Logging.trace("Plugin class not found in parent {0}: {1}", getParent(), e.getMessage());
+                Logging.trace(e);
+            }
         }
         if (result != null) {
             return result;
