@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
+import static javax.swing.SwingConstants.CENTER;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.Utils.getSystemProperty;
@@ -104,7 +106,7 @@ public final class AboutAction extends JosmAction {
                 "<p>" + tr("Java Version {0}", getSystemProperty("java.version")) + "</p>" +
                 "<p style='font-size:50%'></p>" +
                 "</html>");
-        info.add(label, GBC.eol().fill(GBC.HORIZONTAL).insets(10, 0, 0, 10));
+        info.add(label, GBC.eol().fill(HORIZONTAL).insets(10, 0, 0, 10));
         info.add(new JLabel(tr("Homepage")), GBC.std().insets(10, 0, 10, 0));
         info.add(new UrlLabel(Config.getUrls().getJOSMWebsite(), 2), GBC.eol());
         info.add(new JLabel(tr("Translations")), GBC.std().insets(10, 0, 10, 0));
@@ -120,9 +122,7 @@ public final class AboutAction extends JosmAction {
         info.add(GBC.glue(0, 5), GBC.eol());
 
         JPanel inst = new JPanel(new GridBagLayout());
-        final String pathToPreferences = ShowStatusReportAction
-                .paramCleanup(Preferences.main().getPreferenceFile().getAbsolutePath());
-        inst.add(new JLabel(tr("Preferences are stored in {0}", pathToPreferences)), GBC.eol().insets(0, 0, 0, 10));
+        inst.add(new JLabel(tr("Preferences are stored in {0}", getPathToPreferences())), GBC.eol().insets(0, 0, 0, 10));
         inst.add(new JLabel(tr("Symbolic names for directories and the actual paths:")),
                 GBC.eol().insets(0, 0, 0, 10));
         for (Entry<String, String> entry : ShowStatusReportAction.getAnonimicDirectorySymbolMap().entrySet()) {
@@ -146,10 +146,19 @@ public final class AboutAction extends JosmAction {
         // Intermediate panel to allow proper optionPane resizing
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setPreferredSize(new Dimension(890, 300));
-        panel.add(new JLabel("", ImageProvider.get("logo.svg", ImageProvider.ImageSizes.ABOUT_LOGO),
-                JLabel.CENTER), GBC.std().insets(0, 5, 0, 0));
+        panel.add(new JLabel("", ImageProvider.get("logo.svg", ImageSizes.ABOUT_LOGO), CENTER), GBC.std().insets(0, 5, 0, 0));
         panel.add(about, GBC.std().fill());
         return panel;
+    }
+
+    private static String getPathToPreferences() {
+        File preferenceFile = Preferences.main().getPreferenceFile();
+        try {
+            return ShowStatusReportAction.paramCleanup(preferenceFile.getAbsolutePath());
+        } catch (SecurityException e) {
+            Logging.warn(e);
+            return ShowStatusReportAction.paramCleanup(preferenceFile.getPath());
+        }
     }
 
     @Override
@@ -175,7 +184,12 @@ public final class AboutAction extends JosmAction {
         OpenDirAction(String dir) {
             putValue(Action.NAME, "...");
             this.dir = dir;
-            setEnabled(dir != null && new File(dir).isDirectory());
+            try {
+                setEnabled(dir != null && new File(dir).isDirectory());
+            } catch (SecurityException e) {
+                setEnabled(false);
+                Logging.warn(e);
+            }
         }
 
         @Override
@@ -208,7 +222,7 @@ public final class AboutAction extends JosmAction {
         inst.add(GBC.glue(10, 0), GBC.std());
         dirLabel.setFont(GuiHelper.getMonospacedFont(dirLabel));
         dirLabel.setOpaque(false);
-        inst.add(dirLabel, GBC.std().fill(GBC.HORIZONTAL));
+        inst.add(dirLabel, GBC.std().fill(HORIZONTAL));
         JButton btn = new JButton(new OpenDirAction(dir));
         btn.setToolTipText(tr("Open directory"));
         inst.add(btn, GBC.eol().insets(0, 0, 5, 0));

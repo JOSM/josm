@@ -78,8 +78,12 @@ public final class Lifecycle {
                 i.get();
             }
             // asynchronous initializations to be completed eventually
-            initSequence.asynchronousRunnableTasks().forEach(service::submit);
-            initSequence.asynchronousCallableTasks().forEach(service::submit);
+            initSequence.asynchronousRunnableTasks().forEach(x -> {
+                if (x != null) service.submit(x);
+            });
+            initSequence.asynchronousCallableTasks().forEach(x -> {
+                if (x != null) service.submit(x);
+            });
             try {
                 service.shutdown();
             } catch (SecurityException e) {
