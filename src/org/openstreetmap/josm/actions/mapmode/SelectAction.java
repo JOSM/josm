@@ -771,7 +771,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 }
                 if (c instanceof RotateCommand) {
                     double angle = Utils.toDegrees(((RotateCommand) c).getRotationAngle());
-                    MainApplication.getMap().statusLine.setAngle(angle);
+                    MainApplication.getMap().statusLine.setAngleNaN(angle);
                 } else if (c instanceof ScaleCommand) {
                     // U+00D7 MULTIPLICATION SIGN
                     String angle = String.format("%.2f", ((ScaleCommand) c).getScalingFactor()) + " \u00d7";

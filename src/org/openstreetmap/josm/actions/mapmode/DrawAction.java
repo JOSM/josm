@@ -899,7 +899,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
     static void showStatusInfo(double angle, double hdg, double distance, boolean activeFlag) {
         MapFrame map = MainApplication.getMap();
-        map.statusLine.setAngle(angle);
+        map.statusLine.setAngleNaN(angle);
         map.statusLine.activateAnglePanel(activeFlag);
         map.statusLine.setHeading(hdg);
         map.statusLine.setDist(distance);
