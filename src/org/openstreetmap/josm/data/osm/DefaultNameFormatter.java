@@ -184,22 +184,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     n = node.getName();
                 }
                 if (n == null) {
-                    String s = node.get("addr:housename");
-                    if (s != null) {
-                        /* I18n: name of house as parameter */
-                        n = tr("House {0}", s);
-                    }
-                    if (n == null && (s = node.get("addr:housenumber")) != null) {
-                        String t = node.get("addr:street");
-                        if (t != null) {
-                            /* I18n: house number, street as parameter, number should remain
-                        before street for better visibility */
-                            n = tr("House number {0} at {1}", s, t);
-                        } else {
-                            /* I18n: house number as parameter */
-                            n = tr("House number {0}", s);
-                        }
-                    }
+                    n = formatAddress(node);
                 }
 
                 if (n == null) {
@@ -268,22 +253,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         way.hasKey("landuse") ? tr("landuse") : null;
                 }
                 if (n == null) {
-                    String s = way.get("addr:housename");
-                    if (s != null) {
-                        /* I18n: name of house as parameter */
-                        n = tr("House {0}", s);
-                    }
-                    if (n == null && (s = way.get("addr:housenumber")) != null) {
-                        String t = way.get("addr:street");
-                        if (t != null) {
-                            /* I18n: house number, street as parameter, number should remain
-                        before street for better visibility */
-                            n = tr("House number {0} at {1}", s, t);
-                        } else {
-                            /* I18n: house number as parameter */
-                            n = tr("House number {0}", s);
-                        }
-                    }
+                    n = formatAddress(way);
                 }
                 if (n == null && way.hasKey("building")) {
                     n = tr("building");
@@ -312,6 +282,27 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 .filter(Objects::nonNull)
                 .findFirst().orElse(result);
 
+    }
+
+    private static String formatAddress(Tagged osm) {
+        String n = null;
+        String s = osm.get("addr:housename");
+        if (s != null) {
+            /* I18n: name of house as parameter */
+            n = tr("House {0}", s);
+        }
+        if (n == null && (s = osm.get("addr:housenumber")) != null) {
+            String t = osm.get("addr:street");
+            if (t != null) {
+                /* I18n: house number, street as parameter, number should remain
+            before street for better visibility */
+                n = tr("House number {0} at {1}", s, t);
+            } else {
+                /* I18n: house number as parameter */
+                n = tr("House number {0}", s);
+            }
+        }
+        return n;
     }
 
     private final Comparator<IWay<?>> wayComparator = Comparator.comparing(this::format);
