@@ -405,6 +405,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     private static String getRelationTypeName(IRelation<?> relation) {
+        // see https://josm.openstreetmap.de/browser/osm/applications/editors/josm/i18n/specialmessages.java
         String name = trc("Relation type", relation.get("type"));
         if (name == null) {
             name = relation.hasKey("public_transport") ? tr("public transport") : null;
@@ -418,6 +419,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             }
         }
         if (name == null) {
+            // see https://josm.openstreetmap.de/browser/osm/applications/editors/josm/i18n/specialmessages.java
             name = trc("Place type", relation.get("place"));
         }
         if (name == null) {
