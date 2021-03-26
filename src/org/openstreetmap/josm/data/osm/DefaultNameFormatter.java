@@ -177,12 +177,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         } else {
             TaggingPreset preset = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(node);
             if (preset == null || !(node instanceof TemplateEngineDataProvider)) {
-                String n;
-                if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
-                    n = node.getLocalName();
-                } else {
-                    n = node.getName();
-                }
+                String n = formatLocalName(node);
                 if (n == null) {
                     n = formatAddress(node);
                 }
@@ -238,11 +233,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             TaggingPreset preset = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(way);
             if (preset == null || !(way instanceof TemplateEngineDataProvider)) {
                 String n;
-                if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
-                    n = way.getLocalName();
-                } else {
-                    n = way.getName();
-                }
+                n = formatLocalName(way);
                 if (n == null) {
                     n = way.get("ref");
                 }
@@ -282,6 +273,22 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 .filter(Objects::nonNull)
                 .findFirst().orElse(result);
 
+    }
+
+    private static String formatLocalName(IPrimitive osm) {
+        if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
+            return osm.getLocalName();
+        } else {
+            return osm.getName();
+        }
+    }
+
+    private static String formatLocalName(HistoryOsmPrimitive osm) {
+        if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
+            return osm.getLocalName();
+        } else {
+            return osm.getName();
+        }
     }
 
     private static String formatAddress(Tagged osm) {
@@ -439,10 +446,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     private static String getNameTagValue(IRelation<?> relation, String nameTag) {
         if ("name".equals(nameTag)) {
-            if (Config.getPref().getBoolean("osm-primitives.localize-name", true))
-                return relation.getLocalName();
-            else
-                return relation.getName();
+            return formatLocalName(relation);
         } else if (":LocationCode".equals(nameTag)) {
             return relation.keys()
                     .filter(m -> m.endsWith(nameTag))
@@ -533,12 +537,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     @Override
     public String format(HistoryNode node) {
         StringBuilder sb = new StringBuilder();
-        String name;
-        if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
-            name = node.getLocalName();
-        } else {
-            name = node.getName();
-        }
+        String name = formatLocalName(node);
         if (name == null) {
             sb.append(node.getId());
         } else {
@@ -559,12 +558,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     @Override
     public String format(HistoryWay way) {
         StringBuilder sb = new StringBuilder();
-        String name;
-        if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
-            name = way.getLocalName();
-        } else {
-            name = way.getName();
-        }
+        String name = formatLocalName(way);
         if (name != null) {
             sb.append(name);
         }
@@ -607,11 +601,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         for (String n : relation.getTags().keySet()) {
             // #3328: "note " and " note" are name tags too
             if (namingTags.contains(n.trim())) {
-                if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
-                    nameTag = relation.getLocalName();
-                } else {
-                    nameTag = relation.getName();
-                }
+                nameTag = formatLocalName(relation);
                 if (nameTag == null) {
                     nameTag = relation.get(n);
                 }
