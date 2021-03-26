@@ -13,7 +13,9 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -447,8 +449,7 @@ public class Preferences extends AbstractPreferences {
         }
 
         File tmpFile = new File(prefFile + "_tmp");
-        Utils.copyFile(tmpFile, prefFile);
-        Utils.deleteFile(tmpFile, marktr("Unable to delete temporary file {0}"));
+        Files.move(tmpFile.toPath(), prefFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         setCorrectPermissions(prefFile);
         setCorrectPermissions(backupFile);
