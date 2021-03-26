@@ -159,14 +159,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @since 13564 (signature)
      */
     public String format(IPrimitive osm) {
-        if (osm instanceof INode) {
-            return format((INode) osm);
-        } else if (osm instanceof IWay) {
-            return format((IWay<?>) osm);
-        } else if (osm instanceof IRelation) {
-            return format((IRelation<?>) osm);
-        }
-        return null;
+        return osm.getDisplayName(this);
     }
 
     @Override

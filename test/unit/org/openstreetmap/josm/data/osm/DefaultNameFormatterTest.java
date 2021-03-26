@@ -133,11 +133,11 @@ public class DefaultNameFormatterTest {
     }
 
     static String getFormattedRelationName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Relation) OsmUtils.createPrimitive("relation " + tagsString));
+        return DefaultNameFormatter.getInstance().format(OsmUtils.createPrimitive("relation " + tagsString));
     }
 
     static String getFormattedWayName(String tagsString) {
-        return DefaultNameFormatter.getInstance().format((Way) OsmUtils.createPrimitive("way " + tagsString));
+        return DefaultNameFormatter.getInstance().format(OsmUtils.createPrimitive("way " + tagsString));
     }
 
     /**
