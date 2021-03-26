@@ -777,6 +777,8 @@ public class MainApplication {
             System.out.println(Version.getInstance().getAgentString());
             return;
         } else if (args.hasOption(Option.STATUS_REPORT)) {
+            Preferences.main().enableSaveOnPut(false);
+            Preferences.main().init(false);
             System.out.println(ShowStatusReportAction.getReportHeader());
             return;
         } else if (args.showHelp()) {
