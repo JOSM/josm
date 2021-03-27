@@ -536,7 +536,7 @@ public final class Shortcut {
                 // Try to reassign Meta to Ctrl
                 int newmodifier = findNewOsxModifier(requestedGroup);
                 if (!findShortcut(requestedKey, newmodifier).isPresent()) {
-                    Logging.info("Reassigning OSX shortcut '" + shortText + "' from Meta to Ctrl because of conflict with " + conflict);
+                    Logging.info("Reassigning macOS shortcut '" + shortText + "' from Meta to Ctrl because of conflict with " + conflict);
                     return reassignShortcut(shortText, longText, requestedKey, conflict, requestedGroup, requestedKey, newmodifier);
                 }
             }

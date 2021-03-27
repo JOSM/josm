@@ -95,7 +95,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             enableOSXFullscreen(MainApplication.getMainFrame());
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
-            Logging.warn("Failed to register with OSX: " + ex);
+            Logging.warn("Failed to register with macOS: " + ex);
         }
         checkExpiredJava(callback);
     }
@@ -157,7 +157,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             eawtFullScreenUtilities.getDeclaredMethod("setWindowCanFullScreen",
                     Window.class, boolean.class).invoke(eawtFullScreenUtilities, window, Boolean.TRUE);
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException e) {
-            Logging.warn("Failed to register with OSX: " + e);
+            Logging.warn("Failed to register with macOS: " + e);
         }
     }
 
@@ -170,7 +170,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (Logging.isDebugEnabled()) {
-            Logging.debug("OSX handler: {0} - {1}", method.getName(), Arrays.toString(args));
+            Logging.debug("macOS handler: {0} - {1}", method.getName(), Arrays.toString(args));
         }
         switch (method.getName()) {
         case "openFiles":
@@ -204,7 +204,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             osCallback.handlePreferences();
             break;
         default:
-            Logging.warn("OSX unsupported method: "+method.getName());
+            Logging.warn("macOS unsupported method: "+method.getName());
         }
         return null;
     }
