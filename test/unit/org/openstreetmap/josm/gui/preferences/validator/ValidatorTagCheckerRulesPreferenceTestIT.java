@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.validator;
 
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -88,6 +88,6 @@ class ValidatorTagCheckerRulesPreferenceTestIT extends AbstractExtendedSourceEnt
         // See https://bz.apache.org/bugzilla/show_bug.cgi?id=64564
         // See https://github.com/apache/ant/pull/121
         assertTrue(errors.isEmpty(), displayName + " => " + errors);
-        assumeTrue(ignoredErrors.toString(), ignoredErrors.isEmpty());
+        assumeTrue(ignoredErrors.isEmpty(), ignoredErrors.toString());
     }
 }

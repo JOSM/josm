@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -172,7 +171,7 @@ class PlatformHookWindowsTest {
      */
     @Test
     void testGetInstalledFonts() {
-        assumeNotNull(FileSystems.getDefault()); // weird NPE on Jenkins
+        assumeTrue(FileSystems.getDefault() != null); // weird NPE on Jenkins
         assumeTrue(Utils.getJavaVersion() < 16 || PlatformManager.isPlatformWindows()); // No idea why the test fails with Java 16+ on Linux
         Collection<String> fonts = hook.getInstalledFonts();
         if (PlatformManager.isPlatformWindows()) {
