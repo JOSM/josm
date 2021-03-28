@@ -188,18 +188,20 @@ area[natural =~ /^(water|wetland|coastline)$/], area[waterway=riverbank], area[l
   set water_area;
 }
 
-/* area:closed:areaStyle.water_area ⧉ area:closed:areaStyle.water_area -- does not work for now -- see ticket#10215 */
-area:closed:areaStyle[natural =~ /^(water|wetland|coastline)$/] ⧉ area:closed:areaStyle.water_area,
-area:closed:areaStyle[waterway=riverbank]                       ⧉ area:closed:areaStyle.water_area,
-area:closed:areaStyle[landuse=reservoir]                        ⧉ area:closed:areaStyle.water_area {
+/* area:closed.water_area ⧉ area:closed.water_area -- does not work for now -- see ticket#10215 */
+area:closed[natural =~ /^(water|wetland|coastline)$/] ⧉ area:closed.water_area,
+area:closed[waterway=riverbank]                       ⧉ area:closed.water_area,
+area:closed[landuse=reservoir]                        ⧉ area:closed.water_area {
   throwWarning: tr("Overlapping Water Areas");
 }
 
 /* Water area inside water area (spatial test) */
-area:closed:areaStyle[natural =~ /^(water|wetland|coastline)$/] ⊆  area:closed:areaStyle.water_area,
-area:closed:areaStyle[landuse=reservoir]                        ⊆  area:closed:areaStyle.water_area,
-area:closed:areaStyle[natural =~ /^(water|wetland|coastline)$/] ⊇  area:closed:areaStyle.water_area,
-area:closed:areaStyle[landuse=reservoir]                        ⊇  area:closed:areaStyle.water_area {
+area:closed[natural =~ /^(water|wetland|coastline)$/] ⊆  area:closed.water_area,
+area:closed[waterway=riverbank]                       ⊆  area:closed.water_area,
+area:closed[landuse=reservoir]                        ⊆  area:closed.water_area,
+area:closed[natural =~ /^(water|wetland|coastline)$/] ⊇  area:closed.water_area,
+area:closed[waterway=riverbank]                       ⊇  area:closed.water_area,
+area:closed[landuse=reservoir]                        ⊇  area:closed.water_area {
   throwWarning: tr("Water area inside water area");
 }
 
@@ -218,7 +220,7 @@ area:closed:areaStyle[tag("natural") = parent_tag("natural")] ⧉ area:closed:ar
   throwWarning: tr("Overlapping Identical Natural Areas");
 }
 
-area:closed:areaStyle[tag("landuse") = parent_tag("landuse")] ⧉ area:closed:areaStyle[landuse] {
+area:closed[tag("landuse") = parent_tag("landuse")] ⧉ area:closed[landuse] {
   throwWarning: tr("Overlapping Identical Landuses");
 }
 
