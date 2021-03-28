@@ -34,8 +34,9 @@ public class JosmMetalToolTipUI extends MetalToolTipUI {
         } catch (IllegalArgumentException e) {
             if ("Width and height must be >= 0".equals(e.getMessage())) {
                 Logging.debug(e);
+            } else {
+                throw e;
             }
-            throw e;
         }
     }
 }
