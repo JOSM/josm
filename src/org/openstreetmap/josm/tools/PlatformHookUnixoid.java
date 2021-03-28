@@ -63,6 +63,11 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     @Override
+    public void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback) {
+        checkWebStartMigration(webStartCallback);
+    }
+
+    @Override
     public void openUrl(String url) throws IOException {
         for (String program : Config.getPref().getList("browser.unix",
                 Arrays.asList("xdg-open", "#DESKTOP#", "$BROWSER", "gnome-open", "kfmclient openURL", "firefox"))) {

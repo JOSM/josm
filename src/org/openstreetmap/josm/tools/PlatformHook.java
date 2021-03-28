@@ -84,10 +84,11 @@ public interface PlatformHook {
       *
       * Reason: On OSX we need to register some callbacks with the
       * OS, so we'll receive events from the system menu.
-     * @param callback Java expiration callback, providing GUI feedback
-     * @since 12270 (signature)
+      * @param javaCallback Java expiration callback, providing GUI feedback
+      * @param webStartCallback WebStart migration callback, providing GUI feedback
+      * @since 17679 (signature)
       */
-    default void startupHook(JavaExpirationCallback callback) {
+    default void startupHook(JavaExpirationCallback javaCallback, WebStartMigrationCallback webStartCallback) {
         // Do nothing
     }
 
@@ -264,6 +265,19 @@ public interface PlatformHook {
     }
 
     /**
+     * Called when Oracle Java WebStart is detected at startup.
+     * @since 17679
+     */
+    @FunctionalInterface
+    interface WebStartMigrationCallback {
+        /**
+         * Asks user to migrate to OpenWebStart.
+         * @param url download URL
+         */
+        void askMigrateWebStart(String url);
+    }
+
+    /**
      * Checks if the running version of Java has expired, proposes to user to update it if needed.
      * @param callback Java expiration callback
      * @since 12270 (signature)
@@ -280,6 +294,17 @@ public interface PlatformHook {
                         Config.getPref().get("java.update.url", "https://www.java.com/download"),
                         DateUtils.getDateFormat(DateFormat.MEDIUM).format(expiration), false);
             }
+        }
+    }
+
+    /**
+     * Checks if we run Oracle Web Start, proposes to user to migrate to OpenWebStart.
+     * @param callback WebStart migration callback
+     * @since 17679
+     */
+    default void checkWebStartMigration(WebStartMigrationCallback callback) {
+        if (Utils.isRunningJavaWebStart()) {
+            callback.askMigrateWebStart(Config.getPref().get("openwebstart.download.url", "https://openwebstart.com/download/"));
         }
     }
 

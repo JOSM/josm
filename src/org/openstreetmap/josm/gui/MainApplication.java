@@ -341,36 +341,13 @@ public class MainApplication {
         Lifecycle.setShutdownSequence(new MainTermination());
     }
 
-    /**
-     * Asks user to update its version of Java.
-     * @param updVersion target update version
-     * @param url download URL
-     * @param major true for a migration towards a major version of Java (8:9), false otherwise
-     * @param eolDate the EOL/expiration date
-     * @since 12270
-     */
-    public static void askUpdateJava(String updVersion, String url, String eolDate, boolean major) {
-        ExtendedDialog ed = new ExtendedDialog(
-                mainFrame,
-                tr("Outdated Java version"),
-                tr("OK"), tr("Update Java"), tr("Cancel"));
+    private static void askUpdate(String title, String update, String property, String icon, StringBuilder content, String url) {
+        ExtendedDialog ed = new ExtendedDialog(mainFrame, title, tr("OK"), update, tr("Cancel"));
         // Check if the dialog has not already been permanently hidden by user
-        if (!ed.toggleEnable("askUpdateJava"+updVersion).toggleCheckState()) {
-            ed.setButtonIcons("ok", "java", "cancel").setCancelButton(3);
+        if (!ed.toggleEnable(property).toggleCheckState()) {
+            ed.setButtonIcons("ok", icon, "cancel").setCancelButton(3);
             ed.setMinimumSize(new Dimension(480, 300));
             ed.setIcon(JOptionPane.WARNING_MESSAGE);
-            StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.",
-                    "<b>"+getSystemProperty("java.version")+"</b>")).append("<br><br>");
-            if ("Sun Microsystems Inc.".equals(getSystemProperty("java.vendor")) && !PlatformManager.getPlatform().isOpenJDK()) {
-                content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
-                        "Oracle", eolDate)).append("</b><br><br>");
-            }
-            content.append("<b>")
-                   .append(major ?
-                        tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", updVersion) :
-                        tr("You may face critical Java bugs; we highly recommend you to update to Java {0}.", updVersion))
-                   .append("</b><br><br>")
-                   .append(tr("Would you like to update now ?"));
             ed.setContent(content.toString());
 
             if (ed.showDialog().getValue() == 2) {
@@ -381,6 +358,48 @@ public class MainApplication {
                 }
             }
         }
+    }
+
+    /**
+     * Asks user to update its version of Java.
+     * @param updVersion target update version
+     * @param url download URL
+     * @param major true for a migration towards a major version of Java (8:11), false otherwise
+     * @param eolDate the EOL/expiration date
+     * @since 12270
+     */
+    public static void askUpdateJava(String updVersion, String url, String eolDate, boolean major) {
+        StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.",
+                "<b>"+getSystemProperty("java.version")+"</b>")).append("<br><br>");
+        if ("Sun Microsystems Inc.".equals(getSystemProperty("java.vendor")) && !PlatformManager.getPlatform().isOpenJDK()) {
+            content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
+                    "Oracle", eolDate)).append("</b><br><br>");
+        }
+        content.append("<b>")
+               .append(major ?
+                    tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", updVersion) :
+                    tr("You may face critical Java bugs; we highly recommend you to update to Java {0}.", updVersion))
+               .append("</b><br><br>")
+               .append(tr("Would you like to update now ?"));
+        askUpdate(tr("Outdated Java version"), tr("Update Java"), "askUpdateJava"+updVersion, "java", content, url);
+    }
+
+    /**
+     * Asks user to migrate to OpenWebStart
+     * @param url download URL
+     * @since 17679
+     */
+    public static void askMigrateWebStart(String url) {
+        // CHECKSTYLE.OFF: LineLength
+        StringBuilder content = new StringBuilder(tr("You are running an <b>Oracle</b> implementation of Java WebStart."))
+                .append("<br><br>")
+                .append(tr("It was for years the recommended way to use JOSM. Oracle removed WebStart from Java 11,<br>but the open source community reimplemented the Java Web Start technology as a new product: <b>OpenWebStart</b>"))
+                .append("<br><br>")
+                .append(tr("OpenWebStart is now considered mature enough by JOSM developers to ask everyone to move away from an Oracle implementation,<br>allowing you to benefit from a recent version of Java, and allowing JOSM developers to move forward by planning the Java {0} migration.", "11"))
+                .append("<br><br>")
+                .append(tr("Would you like to <b>download OpenWebStart now</b>? (Please do!)"));
+        askUpdate(tr("Outdated Java WebStart version"), tr("Update to OpenWebStart"), "askUpdateWebStart", "presets/transport/rocket", content, url);
+        // CHECKSTYLE.ON: LineLength
     }
 
     /**

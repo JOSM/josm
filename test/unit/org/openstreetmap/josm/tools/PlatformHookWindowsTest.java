@@ -54,7 +54,7 @@ class PlatformHookWindowsTest {
      */
     @Test
     void testStartupHook() {
-        hook.startupHook((a, b, c, d) -> System.out.println("callback"));
+        hook.startupHook((a, b, c, d) -> System.out.println("java callback"), u -> System.out.println("webstart callback"));
     }
 
     /**

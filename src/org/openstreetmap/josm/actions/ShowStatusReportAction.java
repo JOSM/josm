@@ -138,7 +138,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 text.format("Java package: %s%n", packageDetails);
             }
             // Add WebStart package details if run from JNLP
-            if (Utils.isRunningJavaWebStart()) {
+            if (Utils.isRunningWebStart()) {
                 String webStartDetails = platform.getWebStartPackageDetails();
                 if (webStartDetails != null) {
                     text.format("WebStart package: %s%n", webStartDetails);

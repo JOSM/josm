@@ -66,8 +66,9 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
-import com.kitfox.svg.xml.XMLParseUtil;
 import org.openstreetmap.josm.spi.preferences.Config;
+
+import com.kitfox.svg.xml.XMLParseUtil;
 
 /**
  * Basic utils, that can be useful in different parts of the program.
@@ -1719,17 +1720,35 @@ public final class Utils {
     }
 
     /**
-     * Determines whether JOSM has been started via Java Web Start.
-     * @return true if JOSM has been started via Java Web Start
-     * @since 15740
+     * Determines whether JOSM has been started via Web Start (JNLP).
+     * @return true if JOSM has been started via Web Start (JNLP)
+     * @since 17679
      */
-    public static boolean isRunningJavaWebStart() {
+    public static boolean isRunningWebStart() {
         try {
             // See http://stackoverflow.com/a/16200769/2257172
             return Class.forName("javax.jnlp.ServiceManager") != null;
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    /**
+     * Determines whether JOSM has been started via Oracle Java Web Start.
+     * @return true if JOSM has been started via Oracle Java Web Start
+     * @since 15740
+     */
+    public static boolean isRunningJavaWebStart() {
+        return isRunningWebStart() && Package.getPackage("com.sun.javaws") != null;
+    }
+
+    /**
+     * Determines whether JOSM has been started via Open Web Start (IcedTea-Web).
+     * @return true if JOSM has been started via Open Web Start (IcedTea-Web)
+     * @since 17679
+     */
+    public static boolean isRunningOpenWebStart() {
+        return isRunningWebStart() && Package.getPackage("net.adoptopenjdk.icedteaweb") != null;
     }
 
     /**
