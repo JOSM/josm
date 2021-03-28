@@ -1046,6 +1046,8 @@ public class MainApplication {
     }
 
     static void applyWorkarounds() {
+        final String laf = UIManager.getLookAndFeel().getID();
+        final int javaVersion = Utils.getJavaVersion();
         // Workaround for JDK-8180379: crash on Windows 10 1703 with Windows L&F and java < 8u141 / 9+172
         // To remove during Java 9 migration
         if (getSystemProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
@@ -1054,7 +1056,6 @@ public class MainApplication {
                 String build = PlatformHookWindows.getCurrentBuild();
                 if (build != null) {
                     final int currentBuild = Integer.parseInt(build);
-                    final int javaVersion = Utils.getJavaVersion();
                     final int javaUpdate = Utils.getJavaUpdate();
                     final int javaBuild = Utils.getJavaBuild();
                     // See https://technet.microsoft.com/en-us/windows/release-info.aspx
@@ -1069,16 +1070,19 @@ public class MainApplication {
             } catch (ExceptionInInitializerError e) {
                 Logging.log(Logging.LEVEL_ERROR, null, e);
             }
-        } else if (PlatformManager.isPlatformOsx() && Utils.getJavaVersion() < 16) {
+        } else if (PlatformManager.isPlatformOsx() && javaVersion < 16) {
             // Workaround for JDK-8251377: JTabPanel active tab is unreadable in Big Sur, see #20075
             // os.version will return 10.16, or 11.0 depending on environment variable
             // https://twitter.com/BriceDutheil/status/1330926649269956612
-            final String laf = UIManager.getLookAndFeel().getID();
             final String macOSVersion = getSystemProperty("os.version");
             if ((laf.contains("Mac") || laf.contains("Aqua"))
                     && (macOSVersion.startsWith("10.16") || macOSVersion.startsWith("11"))) {
                 UIManager.put("TabbedPane.foreground", Color.BLACK);
             }
+        }
+        // Workaround for JDK-8262085
+        if ("Metal".equals(laf) && javaVersion >= 11 && javaVersion < 17) {
+            UIManager.put("ToolTipUI", JosmMetalToolTipUI.class.getCanonicalName());
         }
     }
 
