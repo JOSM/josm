@@ -14,11 +14,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.actions.RestorePropertyAction;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Tagged;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyAllKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyKeyValueAction;
 import org.openstreetmap.josm.gui.dialogs.properties.CopyValueAction;
@@ -82,14 +79,7 @@ public class TagInfoViewer extends HistoryViewerPanel {
             return value != null ? Collections.singletonMap(value, 1) : Collections.emptyMap();
         };
         Supplier<Collection<? extends Tagged>> objectSp = () -> Collections.singletonList(model.getPointInTime(pointInTime));
-        Supplier<OsmPrimitive> primitiveSupplier = () -> {
-            DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
-            PrimitiveId primitiveId = model.getPointInTime(pointInTime);
-            if (dataSet == null || primitiveId == null) {
-                return null;
-            }
-            return dataSet.getPrimitiveById(primitiveId.getUniqueId(), primitiveId.getType());
-        };
+        Supplier<OsmPrimitive> primitiveSupplier = () -> getPrimitiveFromDataSet(pointInTime);
 
         tagMenu.add(trackJosmAction(new CopyValueAction(table, tagKeyFn, objectSp)));
         final CopyKeyValueAction copyKeyValueAction = new CopyKeyValueAction(table, tagKeyFn, objectSp);

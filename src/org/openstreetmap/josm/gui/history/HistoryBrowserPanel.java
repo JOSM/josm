@@ -9,6 +9,10 @@ import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Destroyable;
 
 /**
@@ -61,6 +65,15 @@ public abstract class HistoryBrowserPanel extends JPanel implements Destroyable 
         if (this.model != null) {
             registerAsChangeListener(model);
         }
+    }
+
+    protected OsmPrimitive getPrimitiveFromDataSet(PointInTimeType pointInTime) {
+        DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
+        PrimitiveId primitiveId = model.getPointInTime(pointInTime);
+        if (dataSet == null || primitiveId == null) {
+            return null;
+        }
+        return dataSet.getPrimitiveById(primitiveId.getUniqueId(), primitiveId.getType());
     }
 
     protected final <T extends AbstractAction> T trackJosmAction(T action) {
