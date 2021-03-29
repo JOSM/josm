@@ -66,9 +66,8 @@ public class MainApplicationTest {
      * Make sure {@link MainApplication#contentPanePrivate} is initialized.
      */
     public static void initContentPane() {
-        if (MainApplication.contentPanePrivate == null) {
-            MainApplication.contentPanePrivate = new JPanel(new BorderLayout());
-        }
+        // init every time to avoid "Keystroke %s is already assigned to %s"
+        MainApplication.contentPanePrivate = new JPanel(new BorderLayout());
     }
 
     /**
@@ -103,9 +102,8 @@ public class MainApplicationTest {
      * Make sure {@link MainApplication#toolbar} is initialized.
      */
     public static void initToolbar() {
-        if (MainApplication.toolbar == null) {
-            MainApplication.toolbar = new ToolbarPreferences();
-        }
+        // init every time to avoid "Registered toolbar action"
+        MainApplication.toolbar = new ToolbarPreferences();
     }
 
     @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING")
