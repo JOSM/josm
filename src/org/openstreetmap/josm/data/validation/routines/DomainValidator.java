@@ -683,7 +683,6 @@ public final class DomainValidator extends AbstractValidator {
         "frontier", // frontier Frontier Communications Corporation
         "ftr", // ftr Frontier Communications Corporation
         "fujitsu", // fujitsu Fujitsu Limited
-        "fujixerox", // fujixerox Xerox DNHC LLC
         "fun", // fun DotSpace, Inc.
         "fund", // fund John Castle, LLC
         "furniture", // furniture Lone Fields, LLC
