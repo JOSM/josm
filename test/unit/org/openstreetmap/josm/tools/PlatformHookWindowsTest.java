@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -12,7 +11,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.security.KeyStoreException;
 import java.util.Collection;
 
@@ -171,13 +169,11 @@ class PlatformHookWindowsTest {
      */
     @Test
     void testGetInstalledFonts() {
-        assumeTrue(FileSystems.getDefault() != null); // weird NPE on Jenkins
-        assumeTrue(Utils.getJavaVersion() < 16 || PlatformManager.isPlatformWindows()); // No idea why the test fails with Java 16+ on Linux
         Collection<String> fonts = hook.getInstalledFonts();
         if (PlatformManager.isPlatformWindows()) {
             assertFalse(fonts.isEmpty());
         } else {
-            assertNull(fonts);
+            assumeTrue(fonts.isEmpty());
         }
     }
 

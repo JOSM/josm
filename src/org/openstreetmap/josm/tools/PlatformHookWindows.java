@@ -528,7 +528,11 @@ public class PlatformHookWindows implements PlatformHook {
         // because we have to set the system property before Java initializes its fonts.
         // Use more low-level method to find the installed fonts.
         List<String> fontsAvail = new ArrayList<>();
-        Path fontPath = FileSystems.getDefault().getPath(getSystemEnv("SYSTEMROOT"), "Fonts");
+        String systemRoot = getSystemEnv("SYSTEMROOT");
+        if (systemRoot == null) {
+            return fontsAvail;
+        }
+        Path fontPath = FileSystems.getDefault().getPath(systemRoot, "Fonts");
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(fontPath)) {
             for (Path p : ds) {
                 Path filename = p.getFileName();
