@@ -1720,17 +1720,27 @@ public final class Utils {
     }
 
     /**
+     * Determines if a class can be found for the given name.
+     * @param className class nmae to find
+     * @return {@code true} if the class can be found, {@code false} otherwise
+     * @since 17692
+     */
+    public static boolean isClassFound(String className) {
+        try {
+            return Class.forName(className) != null;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
      * Determines whether JOSM has been started via Web Start (JNLP).
      * @return true if JOSM has been started via Web Start (JNLP)
      * @since 17679
      */
     public static boolean isRunningWebStart() {
-        try {
-            // See http://stackoverflow.com/a/16200769/2257172
-            return Class.forName("javax.jnlp.ServiceManager") != null;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        // See http://stackoverflow.com/a/16200769/2257172
+        return isClassFound("javax.jnlp.ServiceManager");
     }
 
     /**
@@ -1739,7 +1749,7 @@ public final class Utils {
      * @since 15740
      */
     public static boolean isRunningJavaWebStart() {
-        return isRunningWebStart() && Package.getPackage("com.sun.javaws") != null;
+        return isRunningWebStart() && isClassFound("com.sun.javaws.Main");
     }
 
     /**
@@ -1748,7 +1758,8 @@ public final class Utils {
      * @since 17679
      */
     public static boolean isRunningOpenWebStart() {
-        return isRunningWebStart() && Package.getPackage("net.adoptopenjdk.icedteaweb") != null;
+        // To be kept in sync if package name changes to org.eclipse.adoptium or something
+        return isRunningWebStart() && isClassFound("net.adoptopenjdk.icedteaweb.client.commandline.CommandLine");
     }
 
     /**
