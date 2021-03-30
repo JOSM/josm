@@ -1,12 +1,10 @@
-name: Java CI
+name: Java CI Build
 env:
   junit_platform_version: '1.7.0'
   # ANT_HOME is also our ant version
   ANT_HOME: 'apache-ant-1.10.9'
 on:
   push:
-    branches: [master]
-  pull_request:
     branches: [master]
 
 defaults:
@@ -92,30 +90,22 @@ jobs:
           path: |
             ~/.ivy2/cache/
             ~/work/josm/josm/tools/
-            build-tools-cache/
           key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
 
-      - name: Setup java
+      - name: Setup Java ${{ matrix.java }}
         uses: actions/setup-java@v1.4.3
         with:
           java-version: ${{ matrix.java }}
 
-      - name: Install ant ${{ env.ANT_HOME }} and junit ${{ env.junit_platform_version }}
+      - name: Install Ant ${{ env.ANT_HOME }}
         run: |
-          mkdir -p build-tools-cache/
-          cd build-tools-cache/
-          if [ ! -f ${{ env.ANT_HOME }}-bin.tar.gz ]; then
-            curl -o ${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          if [ ! -f tools/${{ env.ANT_HOME }}-bin.tar.gz ]; then
+            curl -o tools/${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
           fi
-          if [ ! -f junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ]; then
-            curl -o junit-platform-console-standalone-${{ env.junit_platform_version }}.jar https://repo1.maven.org/maven2/org/junit/platform/junit-platform-console-standalone/${{ env.junit_platform_version }}/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
-          fi
-          cd ..
-          tar zxf build-tools-cache/${{ env.ANT_HOME }}-bin.tar.gz
-          cp build-tools-cache/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar ${{ env.ANT_HOME }}/lib/junit-platform-console-standalone-${{ env.junit_platform_version }}.jar
+          tar zxf tools/${{ env.ANT_HOME }}-bin.tar.gz
 
-      - name: Print ant version, expecting ${{ env.ANT_HOME }}
-        run: ${{ env.ANT_HOME }}/bin/ant -version
+      - name: Ant diagnostics
+        run: ${{ env.ANT_HOME }}/bin/ant -diagnostics
 
       - name: Optimise images
         if: ${{ runner.os == 'macos' && always() }}
@@ -148,37 +138,6 @@ jobs:
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
           asset_content_type: application/java-archive
 
-      - name: Test with Ant
-        if: ${{ needs.createrelease.outputs.josm_prerelease }}
-        run: |
-          ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
-          $ANT -Dtest.headless=true
-
-      - name: Dump errors if failed
-        if: ${{ failure() }}
-        run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
-
-      - name: Upload Ant reports
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }}
-          path: test/report/*.txt
-
-      - name: Publish Test Report with junit-report-annotations-action
-        uses: ashley-taylor/junit-report-annotations-action@1.3
-        if: always()
-        with:
-          access-token: ${{ secrets.GITHUB_TOKEN }}
-          path: 'test/report/TEST*.xml'
-
-      - name: Publish Test Report with action-junit-report
-        if: always()
-        uses: mikepenz/action-junit-report@v1
-        with:
-          report_paths: 'test/report/TEST*.xml'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and package for macOS
         if: ${{ runner.os == 'macos' && always() }}
         env:
@@ -188,7 +147,7 @@ jobs:
         run: |
           ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
-      - name: Upload app
+      - name: Upload macOS app
         if: ${{ runner.os == 'macos' && always() }}
         id: upload-app
         uses: actions/upload-release-asset@v1

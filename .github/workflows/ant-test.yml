@@ -1,0 +1,89 @@
+name: Java CI Test
+env:
+  junit_platform_version: '1.7.0'
+  # ANT_HOME is also our ant version
+  ANT_HOME: 'apache-ant-1.10.9'
+on:
+  - push
+  - pull_request
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  test:
+    runs-on: ${{ matrix.os }}
+    env:
+      LANG: en_US.UTF-8
+    strategy:
+      fail-fast: false
+      matrix:
+        # test against latest update of each major Java version, as well as specific updates of LTS versions:
+        java: [8, 11, 16, 17-ea]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        exclude:
+          - java: 8
+            os: macos-latest
+          - java: 11
+            os: macos-latest
+    name: Java ${{ matrix.java }} on ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 256
+
+      - name: Cache
+        uses: actions/cache@v2.0.0
+        with:
+          path: |
+            ~/.ivy2/cache/
+            ~/work/josm/josm/tools/
+          key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
+
+      - name: Setup Java ${{ matrix.java }}
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: ${{ matrix.java }}
+
+      - name: Install Ant ${{ env.ANT_HOME }}
+        run: |
+          if [ ! -f tools/${{ env.ANT_HOME }}-bin.tar.gz ]; then
+            curl -o tools/${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          fi
+          tar zxf tools/${{ env.ANT_HOME }}-bin.tar.gz
+
+      - name: Ant diagnostics
+        run: ${{ env.ANT_HOME }}/bin/ant -diagnostics
+
+      - name: Test with Ant
+        run: |
+          ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
+          $ANT -Dtest.headless=true
+
+      - name: Dump errors if failed
+        if: ${{ failure() }}
+        run: "grep -L ', Failures: 0, Skipped: ' test/report/*.txt | xargs cat"
+
+      - name: Upload Ant reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }}
+          path: 'test/report/*.txt'
+
+      - name: Publish Test Report with junit-report-annotations-action
+        uses: ashley-taylor/junit-report-annotations-action@1.3
+        if: ${{ always() }}
+        with:
+          path: 'test/report/TEST*.xml'
+          access-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Test Report with action-junit-report
+        if: ${{ always() }}
+        uses: mikepenz/action-junit-report@v1
+        with:
+          report_paths: 'test/report/TEST*.xml'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
