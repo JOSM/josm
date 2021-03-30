@@ -3,15 +3,12 @@ package org.openstreetmap.josm.io.remotecontrol;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -68,11 +66,7 @@ class RemoteControlTest {
         connection.connect();
         assertEquals(connection.getResponseCode(), HttpURLConnection.HTTP_BAD_REQUEST);
         try (InputStream is = connection.getErrorStream()) {
-            // TODO this code should be refactored somewhere in Utils as it is used in several JOSM classes
-            String responseBody;
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                responseBody = in.lines().collect(Collectors.joining("\n"));
-            }
+            String responseBody = new String(Utils.readBytesFromStream(is), StandardCharsets.UTF_8);
             assert responseBody.contains(RequestProcessor.getUsageAsHtml());
         }
     }
