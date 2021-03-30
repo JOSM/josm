@@ -74,17 +74,12 @@ jobs:
         # test against latest update of each major Java version, as well as specific updates of LTS versions:
         java: [8, 11, 16, 17-ea]
         os: [ubuntu-latest, macos-latest, windows-latest]
-        headless: ["true", "false"]
         exclude:
           - java: 8
             os: macos-latest
           - java: 11
             os: macos-latest
-          - headless: "false"
-            os: macos-latest
-          - headless: "false"
-            os: windows-latest
-    name: Java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
+    name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -142,8 +137,7 @@ jobs:
           $ANT dist
 
       - name: Upload jar
-        # Only run on matrix.headless to avoid double jars. They should be the same jars.
-        if: ${{ always() && matrix.headless == 'true' }}
+        if: ${{ always() }}
         id: upload-jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -154,15 +148,11 @@ jobs:
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
           asset_content_type: application/java-archive
 
-      - name: Test with Ant, headless ${{ matrix.headless }}
+      - name: Test with Ant
         if: ${{ needs.createrelease.outputs.josm_prerelease }}
         run: |
           ANT="${{ env.ANT_HOME }}/bin/ant -DnoJavaFX=true test-unit-hardfail"
-          if [ "${{ matrix.headless }}" == "true" ]; then
-            $ANT -Dtest.headless=true
-          else
-            xvfb-run $ANT -Dtest.headless=false
-          fi
+          $ANT -Dtest.headless=true
 
       - name: Dump errors if failed
         if: ${{ failure() }}
@@ -172,7 +162,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v2
         with:
-          name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }} with headless=${{ matrix.headless }}
+          name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }}
           path: test/report/*.txt
 
       - name: Publish Test Report with junit-report-annotations-action
