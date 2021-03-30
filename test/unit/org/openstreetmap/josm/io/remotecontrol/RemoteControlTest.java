@@ -11,22 +11,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore.TrustedCertificateEntry;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.PlatformHookWindows;
-import org.openstreetmap.josm.tools.PlatformManager;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import mockit.Mock;
-import mockit.MockUp;
 
 /**
  * Unit tests for Remote Control
@@ -34,13 +28,6 @@ import mockit.MockUp;
 class RemoteControlTest {
 
     private String httpBase;
-
-    private static class PlatformHookWindowsMock extends MockUp<PlatformHookWindows> {
-        @Mock
-        public boolean setupHttpsCertificate(String entryAlias, TrustedCertificateEntry trustedCert) {
-            return true;
-        }
-    }
 
     /**
      * Setup test.
@@ -55,12 +42,6 @@ class RemoteControlTest {
      */
     @BeforeEach
     public void setUp() throws GeneralSecurityException {
-        if (PlatformManager.isPlatformWindows() && "True".equals(System.getenv("APPVEYOR"))) {
-            // appveyor doesn't like us tinkering with the root keystore, so mock this out
-            TestUtils.assumeWorkingJMockit();
-            new PlatformHookWindowsMock();
-        }
-
         RemoteControl.start();
         httpBase = "http://127.0.0.1:"+Config.getPref().getInt("remote.control.port", 8111);
     }
