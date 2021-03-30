@@ -114,7 +114,7 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
         // check that links are correct and not redirections
         presets.parallelStream().flatMap(x -> x.data.stream().filter(i -> i instanceof Link).map(i -> ((Link) i).getUrl())).forEach(u -> {
             try {
-                Response cr = HttpClient.create(new URL(u)).setMaxRedirects(-1).connect();
+                Response cr = HttpClient.create(new URL(u), "HEAD").setMaxRedirects(-1).connect();
                 final int code = cr.getResponseCode();
                 if (HttpClient.isRedirect(code)) {
                     addOrIgnoreError(source, messages,
