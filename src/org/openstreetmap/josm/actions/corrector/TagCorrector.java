@@ -157,7 +157,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             dialog.showDialog();
             int answer = dialog.getValue();
 
-            if (answer == JOptionPane.YES_OPTION) {
+            if (answer == 1) {
                 for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
                     OsmPrimitive primitive = entry.getKey();
 
@@ -198,7 +198,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                         }
                     }
                 }
-            } else if (answer != JOptionPane.NO_OPTION)
+            } else if (answer != 2)
                 throw new UserCancelException();
             return Collections.unmodifiableCollection(commands);
         }
