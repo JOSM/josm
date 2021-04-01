@@ -128,6 +128,19 @@ public final class ShowStatusReportAction extends JosmAction {
                     toString(new Dimension(32, 32)), toString(bestCursorSize32));
         }
 
+        for (String name : Arrays.asList("LANG", "LC_ALL")) {
+            String value = Utils.getSystemEnv(name);
+            if (value != null) {
+                text.format("Environment variable %s: %s%n", name, value);
+            }
+        }
+        for (String name : Arrays.asList("file.encoding", "sun.jnu.encoding")) {
+            String value = Utils.getSystemProperty(name);
+            if (value != null) {
+                text.format("System property %s: %s%n", name, value);
+            }
+        }
+
         if (PlatformManager.isPlatformUnixoid()) {
             PlatformHookUnixoid platform = (PlatformHookUnixoid) PlatformManager.getPlatform();
             // Add desktop environment
@@ -148,10 +161,6 @@ public final class ShowStatusReportAction extends JosmAction {
             String atkWrapperDetails = platform.getAtkWrapperPackageDetails();
             if (atkWrapperDetails != null) {
                 text.format("Java ATK Wrapper package: %s%n", atkWrapperDetails);
-            }
-            String lang = System.getenv("LANG");
-            if (lang != null) {
-                text.format("Environment variable LANG: %s%n", lang);
             }
             // Add dependencies details if found
             for (String p : new String[] {
