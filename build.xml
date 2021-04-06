@@ -288,6 +288,7 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc" unless="compile.notRequired" description="Compile JOSM">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone.classpath" conf="errorprone"/>
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac"/>
+        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="semanticdb.classpath" conf="semanticdb" if:set="lsif"/>
         <!-- JOSM -->
         <call-javac-compile excludes="**/package-info.java,**/module-info.java,main/**" release="${java.lang.version}"/>
         <!-- Java 11 specific files (2018-09 LTS) -->
@@ -941,6 +942,9 @@ Build-Date: ${build.tstamp}
             <ruleset>${pmd.dir}/josm-ruleset.xml</ruleset>
             <formatter type="text" toConsole="true" />
             <formatter type="xml" toFile="pmd-josm.xml">
+                <param name="encoding" value="UTF-8" />
+            </formatter>
+            <formatter type="codeclimate" toFile="codeclimate-josm.json">
                 <param name="encoding" value="UTF-8" />
             </formatter>
             <fileset dir="${src.dir}">

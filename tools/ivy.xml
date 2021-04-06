@@ -10,6 +10,7 @@
         <conf name="spotbugs" description="Everything needed for running SpotBugs"/>
         <conf name="errorprone" description="Everything needed for running error-prone"/>
         <conf name="errorprone_javac" description="Everything needed for running javac from error-prone"/>
+        <conf name="semanticdb" description="Everything needed for running semanticdb"/>
         <conf name="animal" description="Everything needed for running Animal Sniffer"/>
     </configurations>
     <dependencies>
@@ -33,6 +34,8 @@
         <dependency org="com.google.errorprone" name="error_prone_core" rev="2.10.0" conf="errorprone->default"/>
         <!-- errorprone->default -->
         <dependency org="com.google.errorprone" name="javac" rev="9+181-r4173-1" conf="errorprone_javac->default"/>
+        <!-- semanticdb->default -->
+        <dependency org="com.sourcegraph" name="semanticdb-javac" rev="0.7.8" conf="semanticdb->default"/>
         <!-- animal->default -->
         <dependency org="org.codehaus.mojo" name="animal-sniffer-ant-tasks" rev="1.21" conf="animal->default"/>
     </dependencies>
