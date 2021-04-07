@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data;
 
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.BBox;
 
 /**
  * Represents a "rectangular" area of the world, given in lat/lon min/max values.
