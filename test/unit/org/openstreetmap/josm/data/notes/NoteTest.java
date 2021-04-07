@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.notes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class NoteTest {
     void testToString() {
         Note note = new Note(LatLon.ZERO);
         assertEquals("Note 0: null", note.toString());
-        note.addComment(new NoteComment(new Date(), null, "foo", null, true));
+        note.addComment(new NoteComment(Instant.now(), null, "foo", null, true));
         assertEquals("Note 0: foo", note.toString());
     }
 
@@ -64,8 +64,8 @@ class NoteTest {
             .suppress(Warning.NONFINAL_FIELDS)
             .withPrefabValues(LatLon.class, LatLon.ZERO, new LatLon(1, 1))
             .withPrefabValues(NoteComment.class,
-                    new NoteComment(new Date(), null, "foo", null, true),
-                    new NoteComment(new Date(), null, "bar", null, false))
+                    new NoteComment(Instant.now(), null, "foo", null, true),
+                    new NoteComment(Instant.now(), null, "bar", null, false))
             .verify();
     }
 }

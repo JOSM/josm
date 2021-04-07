@@ -5,8 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -59,7 +59,7 @@ public class NoteReader {
         private long commentUid;
         private String commentUsername;
         private Action noteAction;
-        private Date commentCreateDate;
+        private Instant commentCreateDate;
         private boolean commentIsNew;
         private List<Note> notes;
         private String commentText;
@@ -99,7 +99,7 @@ public class NoteReader {
                 commentUid = Long.parseLong(Optional.ofNullable(attrs.getValue("uid")).orElse("0"));
                 commentUsername = attrs.getValue("user");
                 noteAction = Action.valueOf(attrs.getValue("action").toUpperCase(Locale.ENGLISH));
-                commentCreateDate = DateUtils.fromString(attrs.getValue("timestamp"));
+                commentCreateDate = DateUtils.parseInstant(attrs.getValue("timestamp"));
                 commentIsNew = Boolean.parseBoolean(Optional.ofNullable(attrs.getValue("is_new")).orElse("false"));
                 break;
             default: // Do nothing
@@ -142,13 +142,13 @@ public class NoteReader {
                 thisNote.setState(Note.State.valueOf(buffer.toString().toUpperCase(Locale.ENGLISH)));
                 break;
             case "date_created":
-                thisNote.setCreatedAt(DateUtils.fromString(buffer.toString()));
+                thisNote.setCreatedAt(DateUtils.parseInstant(buffer.toString()));
                 break;
             case "date_closed":
-                thisNote.setClosedAt(DateUtils.fromString(buffer.toString()));
+                thisNote.setClosedAt(DateUtils.parseInstant(buffer.toString()));
                 break;
             case "date":
-                commentCreateDate = DateUtils.fromString(buffer.toString());
+                commentCreateDate = DateUtils.parseInstant(buffer.toString());
                 break;
             case "user":
                 commentUsername = buffer.toString();
@@ -204,11 +204,11 @@ public class NoteReader {
             note.setState(Note.State.OPEN);
         } else {
             note.setState(Note.State.CLOSED);
-            note.setClosedAt(DateUtils.fromString(closedTimeStr));
+            note.setClosedAt(DateUtils.parseInstant(closedTimeStr));
         }
         String createdAt = attrs.apply("created_at");
         if (createdAt != null) {
-            note.setCreatedAt(DateUtils.fromString(createdAt));
+            note.setCreatedAt(DateUtils.parseInstant(createdAt));
         }
         return note;
     }

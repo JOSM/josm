@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.text.DateFormat;
+import java.time.Instant;
+import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Random;
 import java.util.TimeZone;
@@ -270,5 +272,25 @@ public class DateUtilsTest {
         final Date date = new Date(1453694709000L);
         assertEquals(date, DateUtils.cloneDate(date));
         assertNotSame(date, DateUtils.cloneDate(date));
+    }
+
+    /**
+     * Unit test of {@link DateUtils#getDateTimeFormatter} method.
+     */
+    @Test
+    void testDateTimeFormatter() {
+        Instant instant = Instant.parse("2006-01-02T15:04:05Z");
+        Boolean iso = DateUtils.PROP_ISO_DATES.get();
+        try {
+            assertNotNull(DateUtils.getDateFormatter(FormatStyle.SHORT).format(instant));
+            assertNotNull(DateUtils.getTimeFormatter(FormatStyle.SHORT).format(instant));
+            assertNotNull(DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.SHORT).format(instant));
+            DateUtils.PROP_ISO_DATES.put(!iso);
+            assertNotNull(DateUtils.getDateFormatter(FormatStyle.SHORT).format(instant));
+            assertNotNull(DateUtils.getTimeFormatter(FormatStyle.SHORT).format(instant));
+            assertNotNull(DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.SHORT).format(instant));
+        } finally {
+            DateUtils.PROP_ISO_DATES.put(iso);
+        }
     }
 }

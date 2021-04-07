@@ -6,10 +6,12 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -269,6 +271,18 @@ public final class DateUtils {
     }
 
     /**
+     * Returns the date formatter to be used for current user, based on user preferences.
+     * @param dateStyle The date style. Ignored if "ISO dates" option is set.
+     * @return The date format
+     */
+    public static DateTimeFormatter getDateFormatter(FormatStyle dateStyle) {
+        DateTimeFormatter formatter = PROP_ISO_DATES.get()
+                ? DateTimeFormatter.ISO_LOCAL_DATE
+                : DateTimeFormatter.ofLocalizedDate(dateStyle);
+        return formatter.withZone(ZoneId.systemDefault());
+    }
+
+    /**
      * Returns the date format used for GPX waypoints.
      * @return the date format used for GPX waypoints
      * @since 14055
@@ -307,6 +321,18 @@ public final class DateUtils {
     }
 
     /**
+     * Returns the time formatter to be used for current user, based on user preferences.
+     * @param timeStyle The time style. Ignored if "ISO dates" option is set.
+     * @return The time format
+     */
+    public static DateTimeFormatter getTimeFormatter(FormatStyle timeStyle) {
+        DateTimeFormatter formatter = PROP_ISO_DATES.get()
+                ? DateTimeFormatter.ISO_LOCAL_TIME
+                : DateTimeFormatter.ofLocalizedTime(timeStyle);
+        return formatter.withZone(ZoneId.systemDefault());
+    }
+
+    /**
      * Formats a time to be displayed to current user, based on user preferences.
      * @param time The time to display. Must not be {@code null}
      * @param timeStyle The time style as described in {@link DateFormat#getTimeInstance}. Ignored if "ISO dates" option is set
@@ -333,6 +359,19 @@ public final class DateUtils {
         } else {
             return DateFormat.getDateTimeInstance(dateStyle, timeStyle, Locale.getDefault());
         }
+    }
+
+    /**
+     * Returns the date/time formatter to be used for current user, based on user preferences.
+     * @param dateStyle The date style. Ignored if "ISO dates" option is set.
+     * @param timeStyle The time style. Ignored if "ISO dates" option is set.
+     * @return The date/time format
+     */
+    public static DateTimeFormatter getDateTimeFormatter(FormatStyle dateStyle, FormatStyle timeStyle) {
+        DateTimeFormatter formatter = PROP_ISO_DATES.get()
+                ? DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                : DateTimeFormatter.ofLocalizedDateTime(dateStyle, timeStyle);
+        return formatter.withZone(ZoneId.systemDefault());
     }
 
     /**

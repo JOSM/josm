@@ -9,7 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -231,7 +232,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
     static class NoteRenderer implements ListCellRenderer<Note> {
 
         private final DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
-        private final DateFormat dateFormat = DateUtils.getDateTimeFormat(DateFormat.MEDIUM, DateFormat.SHORT);
+        private final DateTimeFormatter dateFormat = DateUtils.getDateTimeFormatter(FormatStyle.MEDIUM, FormatStyle.SHORT);
 
         @Override
         public Component getListCellRendererComponent(JList<? extends Note> list, Note note, int index,

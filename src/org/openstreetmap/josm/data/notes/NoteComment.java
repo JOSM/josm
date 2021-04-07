@@ -1,11 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.notes;
 
+import java.time.Instant;
 import java.util.Comparator;
-import java.util.Date;
 
 import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Represents a comment made on a note. All notes have at least on comment
@@ -16,7 +15,7 @@ public class NoteComment {
 
     private final String text;
     private final User user;
-    private final Date commentTimestamp;
+    private final Instant commentTimestamp;
     private final Action action;
 
     //not currently used. I'm planning on using this to keep track of new actions that need to be uploaded
@@ -49,10 +48,10 @@ public class NoteComment {
      * @param action The action associated with this comment
      * @param isNew Whether or not this comment is new and needs to be uploaded
      */
-    public NoteComment(Date createDate, User user, String commentText, Action action, boolean isNew) {
+    public NoteComment(Instant createDate, User user, String commentText, Action action, boolean isNew) {
         this.text = commentText;
         this.user = user;
-        this.commentTimestamp = DateUtils.cloneDate(createDate);
+        this.commentTimestamp = createDate;
         this.action = action;
         this.isNew = isNew;
     }
@@ -77,8 +76,8 @@ public class NoteComment {
      * Returns the time at which this comment was created.
      * @return The time at which this comment was created
      */
-    public Date getCommentTimestamp() {
-        return DateUtils.cloneDate(commentTimestamp);
+    public Instant getCommentTimestamp() {
+        return commentTimestamp;
     }
 
     /**

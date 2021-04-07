@@ -1,11 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -176,10 +176,10 @@ public class NoteData implements Data {
             throw new IllegalArgumentException("Comment can not be blank when creating a note");
         }
         Note note = new Note(location);
-        note.setCreatedAt(new Date());
+        note.setCreatedAt(Instant.now());
         note.setState(State.OPEN);
         note.setId(newNoteId--);
-        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.OPENED, true);
+        NoteComment comment = new NoteComment(Instant.now(), getCurrentUser(), text, NoteComment.Action.OPENED, true);
         note.addComment(comment);
         if (Logging.isDebugEnabled()) {
             Logging.debug("Created note {0} with comment: {1}", note.getId(), text);
@@ -203,7 +203,7 @@ public class NoteData implements Data {
         if (Logging.isDebugEnabled()) {
             Logging.debug("Adding comment to note {0}: {1}", note.getId(), text);
         }
-        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.COMMENTED, true);
+        NoteComment comment = new NoteComment(Instant.now(), getCurrentUser(), text, NoteComment.Action.COMMENTED, true);
         note.addComment(comment);
         dataUpdated();
     }
@@ -223,10 +223,10 @@ public class NoteData implements Data {
         if (Logging.isDebugEnabled()) {
             Logging.debug("closing note {0} with comment: {1}", note.getId(), text);
         }
-        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.CLOSED, true);
+        NoteComment comment = new NoteComment(Instant.now(), getCurrentUser(), text, NoteComment.Action.CLOSED, true);
         note.addComment(comment);
         note.setState(State.CLOSED);
-        note.setClosedAt(new Date());
+        note.setClosedAt(Instant.now());
         dataUpdated();
     }
 
@@ -243,7 +243,7 @@ public class NoteData implements Data {
             throw new IllegalStateException("Cannot reopen a note that isn't closed");
         }
         Logging.debug("reopening note {0} with comment: {1}", note.getId(), text);
-        NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.REOPENED, true);
+        NoteComment comment = new NoteComment(Instant.now(), getCurrentUser(), text, NoteComment.Action.REOPENED, true);
         note.addComment(comment);
         note.setState(State.OPEN);
         dataUpdated();

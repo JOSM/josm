@@ -3,14 +3,13 @@ package org.openstreetmap.josm.data.notes;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * A map note. It always has at least one comment since a comment is required to create a note on osm.org.
@@ -65,8 +64,8 @@ public class Note {
 
     private long id;
     private LatLon latLon;
-    private Date createdAt;
-    private Date closedAt;
+    private Instant createdAt;
+    private Instant closedAt;
     private State state;
     private List<NoteComment> comments = new ArrayList<>();
 
@@ -106,32 +105,32 @@ public class Note {
      * Returns the date at which this note was submitted.
      * @return Date that this note was submitted
      */
-    public Date getCreatedAt() {
-        return DateUtils.cloneDate(createdAt);
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
     /**
      * Sets date at which this note has been created.
      * @param createdAt date at which this note has been created
      */
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = DateUtils.cloneDate(createdAt);
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 
     /**
      * Returns the date at which this note was closed.
      * @return Date that this note was closed. Null if it is still open.
      */
-    public Date getClosedAt() {
-        return DateUtils.cloneDate(closedAt);
+    public Instant getClosedAt() {
+        return closedAt;
     }
 
     /**
      * Sets date at which this note has been closed.
      * @param closedAt date at which this note has been closed
      */
-    public void setClosedAt(Date closedAt) {
-        this.closedAt = DateUtils.cloneDate(closedAt);
+    public void setClosedAt(Instant closedAt) {
+        this.closedAt = closedAt;
     }
 
     /**
@@ -190,7 +189,7 @@ public class Note {
      */
     public void updateWith(Note note) {
         this.comments = note.comments;
-        this.createdAt = DateUtils.cloneDate(note.createdAt);
+        this.createdAt = note.createdAt;
         this.id = note.id;
         this.state = note.state;
         this.latLon = note.latLon;

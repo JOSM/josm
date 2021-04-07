@@ -12,7 +12,6 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Class to write a collection of notes out to XML.
@@ -52,9 +51,9 @@ public class NoteWriter extends XmlWriter {
             out.print("id=\"" + note.getId() + "\" ");
             out.print("lat=\"" + LatLon.cDdHighPrecisionFormatter.format(ll.lat()) + "\" ");
             out.print("lon=\"" + LatLon.cDdHighPrecisionFormatter.format(ll.lon()) + "\" ");
-            out.print("created_at=\"" + DateUtils.fromDate(note.getCreatedAt()) + "\" ");
+            out.print("created_at=\"" + note.getCreatedAt() + "\" ");
             if (note.getClosedAt() != null) {
-                out.print("closed_at=\"" + DateUtils.fromDate(note.getClosedAt()) + "\" ");
+                out.print("closed_at=\"" + note.getClosedAt() + "\" ");
             }
 
             out.println(">");
@@ -71,7 +70,7 @@ public class NoteWriter extends XmlWriter {
     private void writeComment(NoteComment comment) {
         out.print("    <comment");
         out.print(" action=\"" + comment.getNoteAction() + "\" ");
-        out.print("timestamp=\"" + DateUtils.fromDate(comment.getCommentTimestamp()) + "\" ");
+        out.print("timestamp=\"" + comment.getCommentTimestamp() + "\" ");
         if (comment.getUser() != null && !comment.getUser().equals(User.getAnonymous())) {
             out.print("uid=\"" + comment.getUser().getId() + "\" ");
             out.print("user=\"" + encode(comment.getUser().getName()) + "\" ");

@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Date;
+import java.time.Instant;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -34,8 +34,8 @@ class NotesDialogTest {
     @Test
     void testMultiLineNoteRendering() {
         Note note = new Note(LatLon.ZERO);
-        note.setCreatedAt(new Date());
-        note.addComment(new NoteComment(new Date(), User.createLocalUser(null), "foo\nbar\n\nbaz:\nfoo", null, false));
+        note.setCreatedAt(Instant.now());
+        note.addComment(new NoteComment(Instant.now(), User.createLocalUser(null), "foo\nbar\n\nbaz:\nfoo", null, false));
         assertEquals("0: foo; bar; baz: foo",
                 ((JLabel) new NoteRenderer().getListCellRendererComponent(new JList<>(), note, 0, false, false)).getText());
     }

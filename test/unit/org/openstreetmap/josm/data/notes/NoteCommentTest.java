@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class NoteCommentTest {
      */
     @Test
     void testNoteComment() {
-        NoteComment comment = new NoteComment(new Date(), null, "foo", null, true);
+        NoteComment comment = new NoteComment(Instant.now(), null, "foo", null, true);
         assertEquals("foo", comment.toString());
         assertTrue(comment.isNew());
         comment.setNew(false);

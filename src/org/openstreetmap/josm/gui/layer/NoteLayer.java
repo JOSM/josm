@@ -14,7 +14,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
+import java.time.format.FormatStyle;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -318,7 +318,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
                 }
                 sb.append(userName)
                   .append(" on ")
-                  .append(DateUtils.getDateFormat(DateFormat.MEDIUM).format(comment.getCommentTimestamp()))
+                  .append(DateUtils.getDateFormatter(FormatStyle.MEDIUM).format(comment.getCommentTimestamp()))
                   .append(":<br>");
                 String htmlText = XmlWriter.encode(comment.getText(), true);
                 // encode method leaves us with entity instead of \n
