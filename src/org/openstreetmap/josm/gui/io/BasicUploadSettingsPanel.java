@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -207,20 +206,18 @@ public class BasicUploadSettingsPanel extends JPanel {
     }
 
     protected void build() {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        add(buildUploadCommentPanel());
-        add(buildUploadSourcePanel());
-        add(pnlUploadParameterSummary);
+        GBC gbc = GBC.eol().insets(0, 0, 0, 20).fill(GBC.HORIZONTAL);
+        add(buildUploadCommentPanel(), gbc);
+        add(buildUploadSourcePanel(), gbc);
+        add(pnlUploadParameterSummary, gbc);
         if (Config.getPref().getBoolean("upload.show.review.request", true)) {
-            JPanel pnl = new JPanel(new GridBagLayout());
-            pnl.add(cbRequestReview, GBC.eol().fill(GBC.HORIZONTAL));
-            add(pnl);
+            add(cbRequestReview, gbc);
             cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
         }
-        JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.add(areaValidatorFeedback, GBC.eol().fill(GBC.HORIZONTAL));
-        add(pnl);
+        add(areaValidatorFeedback, gbc);
+        add(new JPanel(), GBC.std().fill(GBC.BOTH));
     }
 
     /**

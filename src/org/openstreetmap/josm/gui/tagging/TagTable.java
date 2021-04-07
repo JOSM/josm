@@ -230,7 +230,7 @@ public class TagTable extends JosmTable implements EndEditListener {
     class AddAction extends AbstractAction implements PropertyChangeListener {
         AddAction() {
             new ImageProvider("dialogs", "add").getResource().attachImageIcon(this);
-            putValue(SHORT_DESCRIPTION, tr("Add a new tag"));
+            putValue(SHORT_DESCRIPTION, tr("Add Tag"));
             TagTable.this.addPropertyChangeListener(this);
             updateEnabledState();
         }
@@ -264,7 +264,7 @@ public class TagTable extends JosmTable implements EndEditListener {
     class PasteAction extends AbstractAction implements PropertyChangeListener {
         PasteAction() {
             new ImageProvider("pastetags").getResource().attachImageIcon(this);
-            putValue(SHORT_DESCRIPTION, tr("Paste tags from buffer"));
+            putValue(SHORT_DESCRIPTION, tr("Paste Tags"));
             TagTable.this.addPropertyChangeListener(this);
             updateEnabledState();
         }

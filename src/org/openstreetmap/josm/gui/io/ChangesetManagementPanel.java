@@ -156,14 +156,6 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         cbCloseAfterUpload.setSelected(Config.getPref().getBoolean("upload.changeset.close", true));
         cbCloseAfterUpload.addItemListener(new CloseAfterUploadItemStateListener());
 
-        gc.gridx = 0;
-        gc.gridy = 5;
-        gc.gridwidth = 4;
-        gc.weightx = 1.0;
-        gc.weighty = 1.0;
-        gc.fill = GridBagConstraints.BOTH;
-        add(new JPanel(), gc);
-
         rbUseNew.getModel().addItemListener(new RadioButtonHandler());
         rbExisting.getModel().addItemListener(new RadioButtonHandler());
     }

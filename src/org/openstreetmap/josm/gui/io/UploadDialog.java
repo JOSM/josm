@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -33,7 +34,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.border.TitledBorder;
 
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Version;
@@ -80,6 +83,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
     private UploadStrategySelectionPanel pnlUploadStrategySelectionPanel;
 
+    private TitledBorder tagSettingsBorder;
     /** checkbox for selecting whether an atomic upload is to be used  */
     private TagSettingsPanel pnlTagSettings;
     /** the tabbed pane used below of the list of primitives  */
@@ -121,39 +125,38 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      * @return the content panel
      */
     protected JPanel buildContentPanel() {
-        JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // the panel with the list of uploaded objects
         pnlUploadedObjects = new UploadedObjectsSummaryPanel();
-        pnl.add(pnlUploadedObjects, GBC.eol().fill(GBC.BOTH));
+        pnlUploadedObjects.setMinimumSize(new Dimension(200, 50));
+        splitPane.setLeftComponent(pnlUploadedObjects);
 
         // a tabbed pane with configuration panels in the lower half
         tpConfigPanels = new CompactTabbedPane();
+        splitPane.setRightComponent(tpConfigPanels);
 
         pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel, changesetSourceModel, changesetReviewModel);
         tpConfigPanels.add(pnlBasicUploadSettings);
-        tpConfigPanels.setTitleAt(0, tr("Settings"));
+        tpConfigPanels.setTitleAt(0, tr("Description"));
         tpConfigPanels.setToolTipTextAt(0, tr("Decide how to upload the data and which changeset to use"));
 
+        tagSettingsBorder = BorderFactory.createTitledBorder(tr("Tags of new changeset"));
         pnlTagSettings = new TagSettingsPanel(changesetCommentModel, changesetSourceModel, changesetReviewModel);
-        tpConfigPanels.add(pnlTagSettings);
-        tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
-        tpConfigPanels.setToolTipTextAt(1, tr("Apply tags to the changeset data is uploaded to"));
-
+        pnlTagSettings.setBorder(tagSettingsBorder);
         pnlChangesetManagement = new ChangesetManagementPanel(changesetCommentModel);
-        tpConfigPanels.add(pnlChangesetManagement);
-        tpConfigPanels.setTitleAt(2, tr("Changesets"));
-        tpConfigPanels.setToolTipTextAt(2, tr("Manage open changesets and select a changeset to upload to"));
-
         pnlUploadStrategySelectionPanel = new UploadStrategySelectionPanel();
-        tpConfigPanels.add(pnlUploadStrategySelectionPanel);
-        tpConfigPanels.setTitleAt(3, tr("Advanced"));
-        tpConfigPanels.setToolTipTextAt(3, tr("Configure advanced settings"));
+        JPanel pnlChangeset = new JPanel(new GridBagLayout());
+        pnlChangeset.add(pnlChangesetManagement, GBC.eop().fill(GBC.HORIZONTAL));
+        pnlChangeset.add(pnlUploadStrategySelectionPanel, GBC.eop().fill(GBC.HORIZONTAL));
+        pnlChangeset.add(pnlTagSettings, GBC.eol().fill(GBC.BOTH));
+        tpConfigPanels.add(pnlChangeset);
+        tpConfigPanels.setTitleAt(1, tr("Settings"));
 
-        pnl.add(tpConfigPanels, GBC.eol().fill(GBC.HORIZONTAL));
-
-        pnl.add(buildActionPanel(), GBC.eol().fill(GBC.HORIZONTAL));
+        JPanel pnl = new JPanel(new BorderLayout());
+        pnl.add(splitPane, BorderLayout.CENTER);
+        pnl.add(buildActionPanel(), BorderLayout.SOUTH);
         return pnl;
     }
 
@@ -211,17 +214,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         // We simply select the appropriate tab in the tabbed pane with the configuration dialogs.
         //
         pnlBasicUploadSettings.getUploadParameterSummaryPanel().setConfigurationParameterRequestListener(
-                new ConfigurationParameterRequestHandler() {
-                    @Override
-                    public void handleUploadStrategyConfigurationRequest() {
-                        tpConfigPanels.setSelectedIndex(3);
-                    }
-
-                    @Override
-                    public void handleChangesetConfigurationRequest() {
-                        tpConfigPanels.setSelectedIndex(2);
-                    }
-                }
+                () -> tpConfigPanels.setSelectedIndex(2)
         );
 
         pnlBasicUploadSettings.setUploadTagDownFocusTraversalHandlers(e -> btnUpload.requestFocusInWindow());
@@ -418,7 +411,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             MainApplication.getMainFrame(),
-                            new Dimension(400, 600)
+                            new Dimension(800, 600)
                     )
             ).applySafe(this);
             startUserInput();
@@ -464,16 +457,15 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         static boolean isUploadCommentTooShort(String comment) {
             String s = Utils.strip(comment);
-            boolean result = true;
-            if (!s.isEmpty()) {
-                UnicodeBlock block = Character.UnicodeBlock.of(s.charAt(0));
-                if (block != null && block.toString().contains("CJK")) {
-                    result = s.length() < 4;
-                } else {
-                    result = s.length() < 10;
-                }
+            if (s.isEmpty()) {
+                return true;
             }
-            return result;
+            UnicodeBlock block = Character.UnicodeBlock.of(s.charAt(0));
+            if (block != null && block.toString().contains("CJK")) {
+                return s.length() < 4;
+            } else {
+                return s.length() < 10;
+            }
         }
 
         private static String lower(String s) {
@@ -598,9 +590,9 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             Changeset cs = (Changeset) evt.getNewValue();
             setChangesetTags(dataSet, cs == null); // keep comment/source of first tab for new changesets
             if (cs == null) {
-                tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
+                tagSettingsBorder.setTitle(tr("Tags of new changeset"));
             } else {
-                tpConfigPanels.setTitleAt(1, tr("Tags of changeset {0}", cs.getId()));
+                tagSettingsBorder.setTitle(tr("Tags of changeset {0}", cs.getId()));
             }
         }
     }

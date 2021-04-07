@@ -20,6 +20,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,7 +54,6 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
     private transient Map<UploadStrategy, JRadioButton> rbStrategy;
     private transient Map<UploadStrategy, JLabel> lblNumRequests;
-    private transient Map<UploadStrategy, JMultilineLabel> lblStrategies;
     private final JosmTextField tfChunkSize = new JosmTextField(4);
     private final JPanel pnlMultiChangesetPolicyPanel = new JPanel(new GridBagLayout());
     private final JRadioButton rbFillOneChangeset = new JRadioButton(
@@ -73,48 +73,32 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
     protected JPanel buildUploadStrategyPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
+        pnl.setBorder(BorderFactory.createTitledBorder(tr("Please select the upload strategy:")));
         ButtonGroup bgStrategies = new ButtonGroup();
         rbStrategy = new EnumMap<>(UploadStrategy.class);
-        lblStrategies = new EnumMap<>(UploadStrategy.class);
         lblNumRequests = new EnumMap<>(UploadStrategy.class);
         for (UploadStrategy strategy: UploadStrategy.values()) {
             rbStrategy.put(strategy, new JRadioButton());
             lblNumRequests.put(strategy, new JLabel());
-            lblStrategies.put(strategy, new JMultilineLabel(""));
             bgStrategies.add(rbStrategy.get(strategy));
         }
 
-        // -- headline
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.gridx = 0;
-        gc.gridy = 0;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.gridwidth = 4;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets = new Insets(0, 0, 3, 0);
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        pnl.add(new JMultilineLabel(tr("Please select the upload strategy:")), gc);
-
         // -- single request strategy
+        GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 1;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
         gc.gridwidth = 1;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.insets = new Insets(0, 0, 3, 0);
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        pnl.add(rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY), gc);
-        gc.gridx = 1;
-        gc.gridy = 1;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.gridwidth = 2;
-        JMultilineLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
-        lbl.setText(tr("Upload data in one request"));
-        pnl.add(lbl, gc);
+        JRadioButton radioButton = rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
+        radioButton.setText(tr("Upload data in one request"));
+        pnl.add(radioButton, gc);
         gc.gridx = 3;
         gc.gridy = 1;
-        gc.weightx = 0.0;
+        gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.gridwidth = 1;
         pnl.add(lblNumRequests.get(UploadStrategy.SINGLE_REQUEST_STRATEGY), gc);
@@ -124,15 +108,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.gridy = 2;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        pnl.add(rbStrategy.get(UploadStrategy.CHUNKED_DATASET_STRATEGY), gc);
-        gc.gridx = 1;
-        gc.gridy = 2;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.gridwidth = 1;
-        lbl = lblStrategies.get(UploadStrategy.CHUNKED_DATASET_STRATEGY);
-        lbl.setText(tr("Upload data in chunks of objects. Chunk size: "));
-        pnl.add(lbl, gc);
+        radioButton = rbStrategy.get(UploadStrategy.CHUNKED_DATASET_STRATEGY);
+        radioButton.setText(tr("Upload data in chunks of objects. Chunk size: "));
+        pnl.add(radioButton, gc);
         gc.gridx = 2;
         gc.gridy = 2;
         gc.weightx = 0.0;
@@ -151,15 +129,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.gridy = 3;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        pnl.add(rbStrategy.get(UploadStrategy.INDIVIDUAL_OBJECTS_STRATEGY), gc);
-        gc.gridx = 1;
-        gc.gridy = 3;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        gc.gridwidth = 2;
-        lbl = lblStrategies.get(UploadStrategy.INDIVIDUAL_OBJECTS_STRATEGY);
-        lbl.setText(tr("Upload each object individually"));
-        pnl.add(lbl, gc);
+        radioButton = rbStrategy.get(UploadStrategy.INDIVIDUAL_OBJECTS_STRATEGY);
+        radioButton.setText(tr("Upload each object individually"));
+        pnl.add(radioButton, gc);
         gc.gridx = 3;
         gc.gridy = 3;
         gc.weightx = 0.0;
@@ -339,7 +311,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
         if (maxChunkSize > 0 && numUploadedObjects > maxChunkSize) {
             rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setEnabled(false);
-            JMultilineLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
+            JRadioButton lbl = rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
             lbl.setText(tr("Upload in one request not possible (too many objects to upload)"));
             lbl.setToolTipText(tr("<html>Cannot upload {0} objects in one request because the<br>"
                     + "max. changeset size {1} on server ''{2}'' is exceeded.</html>",
@@ -360,7 +332,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
 
         } else {
             rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setEnabled(true);
-            JMultilineLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
+            JRadioButton lbl = rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
             lbl.setText(tr("Upload data in one request"));
             lbl.setToolTipText(null);
             lblNumRequests.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setVisible(true);

@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.StreamUtils;
 
 /**
  * A panel that displays a summary of data the user is about to upload
@@ -36,7 +38,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
 
     private transient Changeset selectedChangeset;
     private boolean closeChangesetAfterNextUpload;
-    private transient ConfigurationParameterRequestHandler configHandler;
+    private transient Runnable configHandler;
 
     /**
      * Constructs a new {@code UploadParameterSummaryPanel}.
@@ -47,23 +49,22 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     }
 
     protected String buildChangesetSummary() {
-        StringBuilder msg = new StringBuilder(96);
         if (selectedChangeset == null || selectedChangeset.isNew()) {
-            msg.append(tr("Objects are uploaded to a <strong>new changeset</strong>."));
+            return tr("Objects are uploaded to a <strong>new changeset</strong>.");
         } else {
-            msg.append(tr("Objects are uploaded to the <strong>open changeset</strong> {0} with upload comment ''{1}''.",
+            return tr("Objects are uploaded to the <strong>open changeset</strong> {0} with upload comment ''{1}''.",
                     selectedChangeset.getId(),
                     selectedChangeset.getComment()
-            ));
+            );
         }
-        msg.append(' ');
+    }
+
+    protected String buildChangesetSummary2() {
         if (closeChangesetAfterNextUpload) {
-            msg.append(tr("The changeset is going to be <strong>closed</strong> after this upload"));
+            return tr("The changeset is going to be <strong>closed</strong> after this upload");
         } else {
-            msg.append(tr("The changeset is <strong>left open</strong> after this upload"));
+            return tr("The changeset is <strong>left open</strong> after this upload");
         }
-        msg.append(" (<a href=\"urn:changeset-configuration\">").append(tr("configure changeset")).append("</a>)");
-        return msg.toString();
     }
 
     protected String buildStrategySummary() {
@@ -79,39 +80,36 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         }
 
         int numRequests = spec.getNumRequests(numObjects);
-        String msg = null;
         if (useOneChangeset) {
             lblWarning.setVisible(false);
             if (numRequests == 0) {
-                msg = trn(
+                return trn(
                         "Uploading <strong>{0} object</strong> to <strong>1 changeset</strong>",
                         "Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong>",
                         numObjects, numObjects
                 );
             } else if (numRequests == 1) {
-                msg = trn(
+                return trn(
                         "Uploading <strong>{0} object</strong> to <strong>1 changeset</strong> using <strong>1 request</strong>",
                         "Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong> using <strong>1 request</strong>",
                         numObjects, numObjects
                 );
             } else if (numRequests > 1) {
-                msg = tr("Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong> using <strong>{1} requests</strong>",
+                return tr("Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong> using <strong>{1} requests</strong>",
                         numObjects, numRequests);
             }
-            msg = msg + " (<a href=\"urn:advanced-configuration\">" + tr("advanced configuration") + "</a>)";
         } else {
             lblWarning.setVisible(true);
             if (numRequests == 0) {
-                msg = tr("{0} objects exceed the max. allowed {1} objects in a changeset on the server ''{2}''. " +
-                        "Please <a href=\"urn:advanced-configuration\">configure</a> how to proceed with <strong>multiple changesets</strong>",
+                return tr("{0} objects exceed the max. allowed {1} objects in a changeset on the server ''{2}''. " +
+                        "Please <a href=\"urn:changeset-configuration\">configure</a> how to proceed with <strong>multiple changesets</strong>",
                         numObjects, maxChunkSize, OsmApi.getOsmApi().getBaseUrl());
             } else if (numRequests > 1) {
-                msg = tr("Uploading <strong>{0} objects</strong> to <strong>multiple changesets</strong> using <strong>{1} requests</strong>",
+                return tr("Uploading <strong>{0} objects</strong> to <strong>multiple changesets</strong> using <strong>{1} requests</strong>",
                         numObjects, numRequests);
-                msg = msg + " (<a href=\"urn:advanced-configuration\">" + tr("advanced configuration") + "</a>)";
             }
         }
-        return msg;
+        return "";
     }
 
     protected void build() {
@@ -119,6 +117,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         jepMessage.addHyperlinkListener(this);
 
         setLayout(new BorderLayout());
+        setBorder(BorderFactory.createTitledBorder(tr("Settings:")));
         add(jepMessage, BorderLayout.CENTER);
         lblWarning = new JLabel("");
         lblWarning.setVisible(false);
@@ -130,7 +129,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         add(pnl, BorderLayout.WEST);
     }
 
-    public void setConfigurationParameterRequestListener(ConfigurationParameterRequestHandler handler) {
+    public void setConfigurationParameterRequestListener(Runnable handler) {
         this.configHandler = handler;
     }
 
@@ -166,14 +165,10 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                 .filter(url -> !Config.getUrls().getDefaultOsmApiUrl().equals(url))
                 .map(url -> tr("… to server: <strong>{0}</strong>", url))
                 .orElse("");
-        jepMessage.setText("<html>"
-                + "<br>"
-                + buildChangesetSummary()
-                + "<br><br>"
-                + buildStrategySummary()
-                + "<br>"
-                + server
-                + "</html>");
+        final String html = Stream.of(buildChangesetSummary(), buildChangesetSummary2(), buildStrategySummary(), server)
+                .filter(s -> s != null && !s.isEmpty())
+                .collect(StreamUtils.toHtmlList());
+        jepMessage.setText(html);
         validate();
     }
 
@@ -187,9 +182,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
             if (desc == null || configHandler == null)
                 return;
             if ("urn:changeset-configuration".equals(desc)) {
-                configHandler.handleChangesetConfigurationRequest();
-            } else if ("urn:advanced-configuration".equals(desc)) {
-                configHandler.handleUploadStrategyConfigurationRequest();
+                configHandler.run();
             }
         }
     }
