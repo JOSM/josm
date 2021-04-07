@@ -13,6 +13,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -278,10 +279,8 @@ public class WindowGeometry {
      * @param preferenceKey the preference key
      */
     public void remember(String preferenceKey) {
-        StringBuilder value = new StringBuilder(32);
-        value.append("x=").append(topLeft.x).append(",y=").append(topLeft.y)
-             .append(",width=").append(extent.width).append(",height=").append(extent.height);
-        Config.getPref().put(preferenceKey, value.toString());
+        String value = String.format(Locale.ROOT, "x=%d,y=%d,width=%d,height=%d", topLeft.x, topLeft.y, extent.width, extent.height);
+        Config.getPref().put(preferenceKey, value);
     }
 
     /**
@@ -506,17 +505,7 @@ public class WindowGeometry {
         if (obj == null || getClass() != obj.getClass())
             return false;
         WindowGeometry other = (WindowGeometry) obj;
-        if (extent == null) {
-            if (other.extent != null)
-                return false;
-        } else if (!extent.equals(other.extent))
-            return false;
-        if (topLeft == null) {
-            if (other.topLeft != null)
-                return false;
-        } else if (!topLeft.equals(other.topLeft))
-            return false;
-        return true;
+        return Objects.equals(extent, other.extent) && Objects.equals(topLeft, other.topLeft);
     }
 
     @Override
