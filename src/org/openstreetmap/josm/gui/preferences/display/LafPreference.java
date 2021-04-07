@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
@@ -90,6 +91,7 @@ public class LafPreference implements SubPreferenceSetting {
     private final JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
     private final JCheckBox dynamicButtons = new JCheckBox(tr("Dynamic buttons in side menus"));
     private final JCheckBox isoDates = new JCheckBox(tr("Display ISO dates"));
+    private final JCheckBox dialogGeometry = new JCheckBox(tr("Remember dialog geometries"));
     private final JCheckBox nativeFileChoosers = new JCheckBox(tr("Use native file choosers (nicer, but do not support file filters)"));
     private final JCheckBox zoomReverseWheel = new JCheckBox(tr("Reverse zoom with mouse wheel"));
     private final JCheckBox zoomIntermediateSteps = new JCheckBox(tr("Intermediate steps between native resolutions"));
@@ -182,6 +184,9 @@ public class LafPreference implements SubPreferenceSetting {
         isoDates.setSelected(DateUtils.PROP_ISO_DATES.get());
         panel.add(isoDates, GBC.eop().insets(20, 0, 0, 0));
 
+        dialogGeometry.setSelected(WindowGeometry.GUI_GEOMETRY_ENABLED.get());
+        panel.add(dialogGeometry, GBC.eop().insets(20, 0, 0, 0));
+
         nativeFileChoosers.setToolTipText(
                 tr("Use file choosers that behave more like native ones. They look nicer but do not support some features like file filters"));
         nativeFileChoosers.setSelected(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get());
@@ -233,6 +238,7 @@ public class LafPreference implements SubPreferenceSetting {
         MapFrame.MODELESS.put(modeless.isSelected());
         Config.getPref().putBoolean(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         Config.getPref().putBoolean(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
+        WindowGeometry.GUI_GEOMETRY_ENABLED.put(dialogGeometry.isSelected());
         Config.getPref().putBoolean(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
         MapMover.PROP_ZOOM_REVERSE_WHEEL.put(zoomReverseWheel.isSelected());
         NavigatableComponent.PROP_ZOOM_INTERMEDIATE_STEPS.put(zoomIntermediateSteps.isSelected());

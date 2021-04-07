@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -38,6 +39,11 @@ public class WindowGeometry {
      * Preference key for the {@code MainFrame} geometry
      */
     public static final String PREF_KEY_GUI_GEOMETRY = "gui.geometry";
+
+    /**
+     * Whether storing/restoring of geometries to/from preferences is enabled
+     */
+    public static final BooleanProperty GUI_GEOMETRY_ENABLED = new BooleanProperty(PREF_KEY_GUI_GEOMETRY + ".enabled", true);
 
     /** the top left point */
     private Point topLeft;
@@ -213,6 +219,9 @@ public class WindowGeometry {
     }
 
     protected final void initFromPreferences(String preferenceKey) throws WindowGeometryException {
+        if (!GUI_GEOMETRY_ENABLED.get()) {
+            throw new WindowGeometryException("window geometry from preferences is disabled");
+        }
         String value = Config.getPref().get(preferenceKey);
         if (value.isEmpty())
             throw new WindowGeometryException(
