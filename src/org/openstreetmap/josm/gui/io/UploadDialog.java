@@ -68,9 +68,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     /** the unique instance of the upload dialog */
     private static UploadDialog uploadDialog;
 
-    /** list of custom components that can be added by plugins at JOSM startup */
-    private static final Collection<Component> customComponents = new ArrayList<>();
-
     /** the "created_by" changeset OSM key */
     private static final String CREATED_BY = "created_by";
 
@@ -130,11 +127,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         // the panel with the list of uploaded objects
         pnlUploadedObjects = new UploadedObjectsSummaryPanel();
         pnl.add(pnlUploadedObjects, GBC.eol().fill(GBC.BOTH));
-
-        // Custom components
-        for (Component c : customComponents) {
-            pnl.add(c, GBC.eol().fill(GBC.HORIZONTAL));
-        }
 
         // a tabbed pane with configuration panels in the lower half
         tpConfigPanels = new CompactTabbedPane();
@@ -434,20 +426,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         super.setVisible(visible);
-    }
-
-    /**
-     * Adds a custom component to this dialog.
-     * Custom components added at JOSM startup are displayed between the objects list and the properties tab pane.
-     * @param c The custom component to add. If {@code null}, this method does nothing.
-     * @return {@code true} if the collection of custom components changed as a result of the call
-     * @since 5842
-     */
-    public static boolean addCustomComponent(Component c) {
-        if (c != null) {
-            return customComponents.add(c);
-        }
-        return false;
     }
 
     static final class CompactTabbedPane extends JTabbedPane {
