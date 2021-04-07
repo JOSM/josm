@@ -61,8 +61,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -85,6 +83,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.util.DocumentAdapter;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.ReorderableTableModel;
@@ -830,22 +829,7 @@ public abstract class SourceEditor extends JPanel {
             setContent(p);
 
             // Make OK button enabled only when a file/URL has been set
-            tfURL.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    updateOkButtonState();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    updateOkButtonState();
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    updateOkButtonState();
-                }
-            });
+            tfURL.getDocument().addDocumentListener(DocumentAdapter.create(ignore -> updateOkButtonState()));
         }
 
         private void updateOkButtonState() {

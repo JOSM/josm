@@ -21,14 +21,13 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItemGuiSupport;
+import org.openstreetmap.josm.gui.util.DocumentAdapter;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
@@ -249,22 +248,8 @@ public class Text extends KeyedItem {
     }
 
     private void setupListeners(AutoCompletingTextField textField, TaggingPresetItemGuiSupport support) {
-        textField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                support.fireItemValueModified(Text.this, key, textField.getText());
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                support.fireItemValueModified(Text.this, key, textField.getText());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                support.fireItemValueModified(Text.this, key, textField.getText());
-            }
-        });
+        textField.getDocument().addDocumentListener(DocumentAdapter.create(ignore ->
+                support.fireItemValueModified(Text.this, key, textField.getText())));
 
         if (valueTemplate != null) {
             textField.setForeground(Color.BLUE);

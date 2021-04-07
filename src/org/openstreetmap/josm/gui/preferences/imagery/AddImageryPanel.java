@@ -20,14 +20,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoaderJob;
+import org.openstreetmap.josm.gui.util.DocumentAdapter;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
@@ -137,22 +136,7 @@ public abstract class AddImageryPanel extends JPanel {
     }
 
     protected final void registerValidableComponent(JTextComponent component) {
-        component.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                notifyListeners();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                notifyListeners();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                notifyListeners();
-            }
-        });
+        component.getDocument().addDocumentListener(DocumentAdapter.create(ignore -> notifyListeners()));
     }
 
     protected abstract ImageryInfo getImageryInfo();

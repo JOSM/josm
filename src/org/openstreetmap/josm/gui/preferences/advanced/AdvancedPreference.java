@@ -32,8 +32,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileFilter;
@@ -52,6 +50,7 @@ import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
+import org.openstreetmap.josm.gui.util.DocumentAdapter;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -173,26 +172,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         lbFilter.setLabelFor(txtFilter);
         txtFilterPanel.add(lbFilter, GBC.std().insets(0, 0, 5, 0));
         txtFilterPanel.add(txtFilter, GBC.eol().fill(GBC.HORIZONTAL));
-        txtFilter.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                action();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                action();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                action();
-            }
-
-            private void action() {
-                applyFilter();
-            }
-        });
+        txtFilter.getDocument().addDocumentListener(DocumentAdapter.create(ignore -> applyFilter()));
         readPreferences(Preferences.main());
 
         applyFilter();
