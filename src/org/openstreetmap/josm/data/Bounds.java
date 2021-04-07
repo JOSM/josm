@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * @see BBox to represent invalid areas.
  */
-public class Bounds {
+public class Bounds implements IBounds {
     /**
      * The minimum and maximum coordinates.
      */
@@ -31,6 +31,7 @@ public class Bounds {
      * Gets the point that has both the minimal lat and lon coordinate
      * @return The point
      */
+    @Override
     public LatLon getMin() {
         return new LatLon(minLat, minLon);
     }
@@ -41,6 +42,7 @@ public class Bounds {
      * @return min latitude of bounds.
      * @since 6203
      */
+    @Override
     public double getMinLat() {
         return minLat;
     }
@@ -51,6 +53,7 @@ public class Bounds {
      * @return min longitude of bounds.
      * @since 6203
      */
+    @Override
     public double getMinLon() {
         return minLon;
     }
@@ -59,6 +62,7 @@ public class Bounds {
      * Gets the point that has both the maximum lat and lon coordinate
      * @return The point
      */
+    @Override
     public LatLon getMax() {
         return new LatLon(maxLat, maxLon);
     }
@@ -69,6 +73,7 @@ public class Bounds {
      * @return max latitude of bounds.
      * @since 6203
      */
+    @Override
     public double getMaxLat() {
         return maxLat;
     }
@@ -79,6 +84,7 @@ public class Bounds {
      * @return max longitude of bounds.
      * @since 6203
      */
+    @Override
     public double getMaxLon() {
         return maxLon;
     }
@@ -363,6 +369,7 @@ public class Bounds {
      * Returns center of the bounding box.
      * @return Center of the bounding box.
      */
+    @Override
     public LatLon getCenter() {
         if (crosses180thMeridian()) {
             double lat = (minLat + maxLat) / 2;
@@ -445,6 +452,7 @@ public class Bounds {
      * @return {@code true} if {@code ll} is within these bounds, {@code false} otherwise
      * @since 12161
      */
+    @Override
     public boolean contains(ILatLon ll) {
         if (!ll.isLatLonKnown()) {
             return false;
@@ -461,8 +469,8 @@ public class Bounds {
         return true;
     }
 
-    private static boolean intersectsLonCrossing(Bounds crossing, Bounds notCrossing) {
-        return notCrossing.minLon <= crossing.maxLon || notCrossing.maxLon >= crossing.minLon;
+    private static boolean intersectsLonCrossing(IBounds crossing, IBounds notCrossing) {
+        return notCrossing.getMinLon() <= crossing.getMaxLon() || notCrossing.getMaxLon() >= crossing.getMinLon();
     }
 
     /**
@@ -472,7 +480,12 @@ public class Bounds {
      * @return {@code true} if the two bounds intersect
      */
     public boolean intersects(Bounds b) {
-        if (b.maxLat < minLat || b.minLat > maxLat)
+        return intersects((IBounds) b);
+    }
+
+    @Override
+    public boolean intersects(IBounds b) {
+        if (b.getMaxLat() < minLat || b.getMinLat() > maxLat)
             return false;
 
         if (crosses180thMeridian() && !b.crosses180thMeridian()) {
@@ -482,7 +495,7 @@ public class Bounds {
         } else if (crosses180thMeridian() && b.crosses180thMeridian()) {
             return true;
         } else {
-            return b.maxLon >= minLon && b.minLon <= maxLon;
+            return b.getMaxLon() >= minLon && b.getMinLon() <= maxLon;
         }
     }
 
@@ -491,6 +504,7 @@ public class Bounds {
      * See http://wiki.openstreetmap.org/wiki/180th_meridian
      * @return true if this Bounds object crosses the 180th Meridian.
      */
+    @Override
     public boolean crosses180thMeridian() {
         return this.minLon > this.maxLon;
     }
@@ -508,6 +522,7 @@ public class Bounds {
      * @return the bounds width
      * @since 14521
      */
+    @Override
     public double getHeight() {
         return maxLat-minLat;
     }
@@ -517,6 +532,7 @@ public class Bounds {
      * @return the bounds width
      * @since 14521
      */
+    @Override
     public double getWidth() {
         return maxLon-minLon + (crosses180thMeridian() ? 360.0 : 0.0);
     }
@@ -525,6 +541,7 @@ public class Bounds {
      * Gets the area of this bounds (in lat/lon space)
      * @return The area
      */
+    @Override
     public double getArea() {
         return getWidth() * getHeight();
     }
