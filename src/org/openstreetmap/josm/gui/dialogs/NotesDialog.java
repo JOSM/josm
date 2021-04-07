@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -48,6 +50,9 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
+import org.openstreetmap.josm.gui.util.DocumentAdapter;
+import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
+import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -63,6 +68,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
 
     private NoteTableModel model;
     private JList<Note> displayList;
+    private final JosmTextField filter = setupFilter();
     private final AddCommentAction addCommentAction;
     private final CloseAction closeAction;
     private final DownloadNotesInViewAction downloadNotesInViewAction;
@@ -113,6 +119,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         });
 
         JPanel pane = new JPanel(new BorderLayout());
+        pane.add(filter, BorderLayout.NORTH);
         pane.add(new JScrollPane(displayList), BorderLayout.CENTER);
 
         createLayout(pane, false, Arrays.asList(
@@ -223,6 +230,38 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
         return noteData != null ? noteData.getSelectedNote() : null;
     }
 
+    private JosmTextField setupFilter() {
+        final JosmTextField f = new DisableShortcutsOnFocusGainedTextField();
+        f.setToolTipText(tr("Note filter"));
+        f.getDocument().addDocumentListener(DocumentAdapter.create(ignore -> {
+            String text = f.getText();
+            model.setFilter(note -> matchesNote(text, note));
+        }));
+        return f;
+    }
+
+    static boolean matchesNote(String filter, Note note) {
+        if (filter == null || filter.isEmpty()) {
+            return true;
+        }
+        return Pattern.compile("\\s+").splitAsStream(filter).allMatch(string -> {
+            switch (string) {
+                case "open":
+                    return note.getState() == State.OPEN;
+                case "closed":
+                    return note.getState() == State.CLOSED;
+                case "reopened":
+                    return note.getLastComment().getNoteAction() == NoteComment.Action.REOPENED;
+                case "new":
+                    return note.getId() < 0;
+                case "modified":
+                    return note.getLastComment().isNew();
+                default:
+                    return note.getComments().toString().contains(string);
+            }
+        });
+    }
+
     @Override
     public void destroy() {
         MainApplication.getLayerManager().removeLayerChangeListener(this);
@@ -269,38 +308,44 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
     }
 
     class NoteTableModel extends AbstractListModel<Note> {
-        private final transient List<Note> data;
-
-        /**
-         * Constructs a new {@code NoteTableModel}.
-         */
-        NoteTableModel() {
-            data = new ArrayList<>();
-        }
+        private final transient List<Note> data = new ArrayList<>();
+        private final transient List<Note> filteredData = new ArrayList<>();
+        private transient Predicate<Note> filter;
 
         @Override
         public int getSize() {
-            if (data == null) {
-                return 0;
-            }
-            return data.size();
+            return filteredData.size();
         }
 
         @Override
         public Note getElementAt(int index) {
-            return data.get(index);
+            return filteredData.get(index);
+        }
+
+        public void setFilter(Predicate<Note> filter) {
+            this.filter = filter;
+            filteredData.clear();
+            if (filter == null) {
+                filteredData.addAll(data);
+            } else {
+                data.stream().filter(filter).forEach(filteredData::add);
+            }
+            fireContentsChanged(this, 0, getSize());
+            setTitle(data.isEmpty()
+                    ? tr("Notes")
+                    : tr("Notes: {0}/{1}", filteredData.size(), data.size()));
         }
 
         public void setData(Collection<Note> noteList) {
             data.clear();
             data.addAll(noteList);
-            fireContentsChanged(this, 0, noteList.size());
+            setFilter(filter);
         }
 
         public void clearData() {
             displayList.clearSelection();
             data.clear();
-            fireIntervalRemoved(this, 0, getSize());
+            setFilter(filter);
         }
     }
 
