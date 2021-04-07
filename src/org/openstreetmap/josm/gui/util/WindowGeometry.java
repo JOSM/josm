@@ -33,6 +33,11 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class WindowGeometry {
 
+    /**
+     * Preference key for the {@code MainFrame} geometry
+     */
+    public static final String PREF_KEY_GUI_GEOMETRY = "gui.geometry";
+
     /** the top left point */
     private Point topLeft;
     /** the size */
@@ -106,7 +111,7 @@ public class WindowGeometry {
      * @return the geometry object
      */
     public static WindowGeometry centerOnScreen(Dimension extent) {
-        return centerOnScreen(extent, "gui.geometry");
+        return centerOnScreen(extent, PREF_KEY_GUI_GEOMETRY);
     }
 
     /**
@@ -232,7 +237,7 @@ public class WindowGeometry {
      * @return The geometry for the main window
      */
     public static WindowGeometry mainWindow(String preferenceKey, String arg, boolean maximize) {
-        Rectangle screenDimension = getScreenInfo("gui.geometry");
+        Rectangle screenDimension = getScreenInfo(PREF_KEY_GUI_GEOMETRY);
         if (arg != null) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(arg);
             if (m.matches()) {

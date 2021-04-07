@@ -844,7 +844,7 @@ public class MainApplication {
 
         Handler.install();
 
-        WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
+        WindowGeometry geometry = WindowGeometry.mainWindow(WindowGeometry.PREF_KEY_GUI_GEOMETRY,
                 args.getSingle(Option.GEOMETRY).orElse(null),
                 !args.hasOption(Option.NO_MAXIMIZE) && Config.getPref().getBoolean("gui.maximized", false));
         final MainFrame mainFrame = createMainFrame(geometry);

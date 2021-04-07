@@ -116,7 +116,7 @@ public class MainFrame extends JFrame {
      */
     public void storeState() {
         if (geometry != null) {
-            geometry.remember("gui.geometry");
+             geometry.remember(WindowGeometry.PREF_KEY_GUI_GEOMETRY);
         }
         Config.getPref().putBoolean("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
     }

@@ -54,7 +54,7 @@ class WindowGeometryTest {
         assertEquals(new WindowGeometry(new Point(0, 0), dim), WindowGeometry.centerOnScreen(dim));
         assertEquals(new WindowGeometry(new Point(300, 250), dim), WindowGeometry.centerOnScreen(dim, null));
 
-        Config.getPref().put("gui.geometry", "x=0,y=0,width=800,height=600");
+        Config.getPref().put(WindowGeometry.PREF_KEY_GUI_GEOMETRY, "x=0,y=0,width=800,height=600");
         assertEquals(new WindowGeometry(new Point(300, 250), dim), WindowGeometry.centerOnScreen(dim));
     }
 

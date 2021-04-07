@@ -110,7 +110,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         pack();
 
-        WindowGeometry.centerOnScreen(this.getSize(), "gui.geometry").applySafe(this);
+        WindowGeometry.centerOnScreen(this.getSize(), WindowGeometry.PREF_KEY_GUI_GEOMETRY).applySafe(this);
 
         // Add ability to hide splash screen by clicking it
         addMouseListener(new MouseAdapter() {
