@@ -9,13 +9,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.swing.JScrollPane;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -29,6 +32,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -44,6 +48,15 @@ public class GpxLayerTest {
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().projection().i18n().metricSystem();
+
+    /**
+     * Setup test.
+     */
+    @BeforeEach
+    void setUp() {
+        Locale.setDefault(Locale.ROOT);
+        DateUtils.PROP_ISO_DATES.put(true);
+    }
 
     private static String getHtml(GpxLayer layer) {
         return ((HtmlPanel) ((JScrollPane) layer.getInfoComponent()).getViewport().getView()).getEditorPane().getText();
@@ -166,7 +179,7 @@ public class GpxLayerTest {
                      "          \n" +
                      "        </td>\n" +
                      "        <td>\n" +
-                     "          1/3/16 11:59 AM - 12:00 PM (0:00)\n" +
+                     "          2016-01-03 11:59:58 &#8211; 12:00:00 (2.0 s)\n" +
                      "        </td>\n" +
                      "        <td>\n" +
                      "          12.0 m\n" +
@@ -196,10 +209,19 @@ public class GpxLayerTest {
         assertEquals("", GpxLayer.getTimespanForTrack(
                 new GpxTrack(new ArrayList<Collection<WayPoint>>(), new HashMap<String, Object>())));
 
-        assertEquals("1/3/16 11:59 AM - 12:00 PM (0:00)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
+        assertEquals("2016-01-03 11:59:58 \u2013 12:00:00 (2.0 s)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
 
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
-        assertEquals("1/3/16 12:59 PM - 1:00 PM (0:00)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
+        assertEquals("2016-01-03 12:59:58 \u2013 13:00:00 (2.0 s)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
+    }
+
+    /**
+     * Unit test of {@link GpxLayer#formatTimespan}.
+     */
+    @Test
+    void testFormatTimespan() {
+        Instant[] timespan = {Instant.parse("2021-03-01T17:53:16Z"), Instant.parse("2021-04-03T08:19:19Z")};
+        assertEquals("2021-03-01T17:53:16 \u2013 2021-04-03T08:19:19 (32 days 14 h)", GpxLayer.formatTimespan(timespan));
     }
 
     /**

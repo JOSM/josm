@@ -1,32 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
@@ -66,6 +40,30 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 /**
  * A layer that displays data from a Gpx file / the OSM gpx downloads.
@@ -177,14 +175,13 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
         if (earliestDate.equals(latestDate)) {
             DateTimeFormatter tf = DateUtils.getTimeFormatter(FormatStyle.SHORT);
             ts += earliestDate + ' ';
-            ts += tf.format(bounds[0]) + " - " + tf.format(bounds[1]);
+            ts += tf.format(bounds[0]) + " \u2013 " + tf.format(bounds[1]);
         } else {
             DateTimeFormatter dtf = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM);
-            ts += dtf.format(bounds[0]) + " - " + dtf.format(bounds[1]);
+            ts += dtf.format(bounds[0]) + " \u2013 " + dtf.format(bounds[1]);
         }
 
-        long diff = ChronoUnit.SECONDS.between(bounds[1], bounds[0]);
-        ts += String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60);
+        ts += String.format(" (%s)", Utils.getDurationString(bounds[1].toEpochMilli() - bounds[0].toEpochMilli()));
         return ts;
     }
 
