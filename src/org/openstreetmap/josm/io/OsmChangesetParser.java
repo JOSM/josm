@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Date;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -171,11 +171,7 @@ public final class OsmChangesetParser {
         private void parseCommentAttributes(Attributes atts) throws XmlParsingException {
             // -- date
             String value = atts.getValue("date");
-            Date date = null;
-            if (value != null) {
-                date = DateUtils.fromString(value);
-            }
-
+            Instant date = value != null ? DateUtils.parseInstant(value) : null;
             comment = new ChangesetDiscussionComment(date, createUser(atts));
         }
 

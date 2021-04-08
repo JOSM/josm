@@ -3,7 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
@@ -28,12 +28,12 @@ class ChangesetDiscussionCommentTest {
      */
     @Test
     void testChangesetDiscussionComment() {
-        Date d = new Date(1000);
+        Instant d = Instant.ofEpochMilli(1000);
         User foo = User.createOsmUser(1, "foo");
         ChangesetDiscussionComment cdc = new ChangesetDiscussionComment(d, foo);
         assertEquals(d, cdc.getDate());
         assertEquals(foo, cdc.getUser());
-        assertEquals("ChangesetDiscussionComment [date=Thu Jan 01 00:00:01 UTC 1970, user=id:1 name:foo, text='null']", cdc.toString());
+        assertEquals("ChangesetDiscussionComment [date=1970-01-01T00:00:01Z, user=id:1 name:foo, text='null']", cdc.toString());
     }
 
     /**
@@ -41,7 +41,7 @@ class ChangesetDiscussionCommentTest {
      */
     @Test
     void testText() {
-        ChangesetDiscussionComment cdc = new ChangesetDiscussionComment(new Date(), null);
+        ChangesetDiscussionComment cdc = new ChangesetDiscussionComment(Instant.now(), null);
         cdc.setText("foo");
         assertEquals("foo", cdc.getText());
     }

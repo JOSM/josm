@@ -1,9 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import java.util.Date;
-
-import org.openstreetmap.josm.tools.date.DateUtils;
+import java.time.Instant;
 
 /**
  * A comment in a public changeset discussion.
@@ -12,7 +10,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class ChangesetDiscussionComment {
 
     /** date this comment was posted at */
-    private final Date date;
+    private final Instant date;
     /** the user who posted the comment */
     private final User user;
     /** comment text */
@@ -23,8 +21,8 @@ public class ChangesetDiscussionComment {
      * @param date date this comment was posted at
      * @param user the user who posted the comment
      */
-    public ChangesetDiscussionComment(Date date, User user) {
-        this.date = DateUtils.cloneDate(date);
+    public ChangesetDiscussionComment(Instant date, User user) {
+        this.date = date;
         this.user = user;
     }
 
@@ -48,8 +46,8 @@ public class ChangesetDiscussionComment {
      * Replies date this comment was posted at.
      * @return date this comment was posted at
      */
-    public final Date getDate() {
-        return DateUtils.cloneDate(date);
+    public final Instant getDate() {
+        return date;
     }
 
     /**
