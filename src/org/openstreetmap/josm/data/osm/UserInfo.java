@@ -1,11 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Public user information.
@@ -17,7 +16,7 @@ public class UserInfo {
     /** the display name */
     private String displayName;
     /** the date this user was created */
-    private Date accountCreated;
+    private Instant accountCreated;
     /** the home location */
     private LatLon home;
     /** the zoom level for the home location */
@@ -72,16 +71,16 @@ public class UserInfo {
      * Returns the date at which the account has been created.
      * @return the user account creation date
      */
-    public Date getAccountCreated() {
-        return DateUtils.cloneDate(accountCreated);
+    public Instant getAccountCreated() {
+        return accountCreated;
     }
 
     /**
      * Sets the date at which the account has been created.
      * @param accountCreated user account creation date
      */
-    public void setAccountCreated(Date accountCreated) {
-        this.accountCreated = DateUtils.cloneDate(accountCreated);
+    public void setAccountCreated(Instant accountCreated) {
+        this.accountCreated = accountCreated;
     }
 
     /**

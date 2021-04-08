@@ -60,7 +60,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             // -- account_created
             v = getAttribute(xmlNode, "account_created");
             if (v != null) {
-                userInfo.setAccountCreated(DateUtils.fromString(v));
+                userInfo.setAccountCreated(DateUtils.parseInstant(v));
             }
             // -- description
             xmlNode = (Node) xpath.compile("/osm/user[1]/description[1]/text()").evaluate(document, XPathConstants.NODE);
