@@ -4,10 +4,10 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.PrintWriter;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -298,13 +298,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.print(" user='"+ XmlWriter.encode(cs.getUser().getName()) +'\'');
             out.print(" uid='"+cs.getUser().getId() +'\'');
         }
-        Date createdDate = cs.getCreatedAt();
+        Instant createdDate = cs.getCreatedAt();
         if (createdDate != null) {
-            out.print(" created_at='"+DateUtils.fromDate(createdDate) +'\'');
+            out.print(" created_at='"+ createdDate +'\'');
         }
-        Date closedDate = cs.getClosedAt();
+        Instant closedDate = cs.getClosedAt();
         if (closedDate != null) {
-            out.print(" closed_at='"+DateUtils.fromDate(closedDate) +'\'');
+            out.print(" closed_at='"+ closedDate +'\'');
         }
         out.print(" open='"+ (cs.isOpen() ? "true" : "false") +'\'');
         if (cs.getMin() != null) {

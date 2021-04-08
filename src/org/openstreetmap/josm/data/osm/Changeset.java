@@ -3,10 +3,10 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,6 @@ import java.util.Optional;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Represents a single changeset in JOSM. For now its only used during
@@ -33,9 +32,9 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     /** the user who owns the changeset */
     private User user;
     /** date this changeset was created at */
-    private Date createdAt;
+    private Instant createdAt;
     /** the date this changeset was closed at*/
-    private Date closedAt;
+    private Instant closedAt;
     /** indicates whether this changeset is still open or not */
     private boolean open;
     /** the min. coordinates of the bounding box of this changeset */
@@ -103,7 +102,7 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     public static Changeset fromPrimitive(final OsmPrimitive primitive) {
         final Changeset changeset = new Changeset(primitive.getChangesetId());
         changeset.setUser(primitive.getUser());
-        changeset.setCreatedAt(primitive.getTimestamp()); // not accurate in all cases
+        changeset.setCreatedAt(primitive.getTimestamp().toInstant()); // not accurate in all cases
         return changeset;
     }
 
@@ -173,32 +172,32 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
      * Returns the changeset creation date.
      * @return the changeset creation date
      */
-    public Date getCreatedAt() {
-        return DateUtils.cloneDate(createdAt);
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
     /**
      * Sets the changeset creation date.
      * @param createdAt changeset creation date
      */
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = DateUtils.cloneDate(createdAt);
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 
     /**
      * Returns the changeset closure date.
      * @return the changeset closure date
      */
-    public Date getClosedAt() {
-        return DateUtils.cloneDate(closedAt);
+    public Instant getClosedAt() {
+        return closedAt;
     }
 
     /**
      * Sets the changeset closure date.
      * @param closedAt changeset closure date
      */
-    public void setClosedAt(Date closedAt) {
-        this.closedAt = DateUtils.cloneDate(closedAt);
+    public void setClosedAt(Instant closedAt) {
+        this.closedAt = closedAt;
     }
 
     /**
@@ -426,8 +425,8 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
         if (id != other.id)
             return;
         this.user = other.user;
-        this.createdAt = DateUtils.cloneDate(other.createdAt);
-        this.closedAt = DateUtils.cloneDate(other.closedAt);
+        this.createdAt = other.createdAt;
+        this.closedAt = other.closedAt;
         this.open = other.open;
         this.min = other.min;
         this.max = other.max;

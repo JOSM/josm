@@ -12,6 +12,8 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.time.Instant;
+
 /**
  * Unit tests of {@link ChangesetCellRenderer} class.
  */
@@ -30,6 +32,7 @@ class ChangesetCellRendererTest {
     void testChangesetCellRenderer() {
         JList<Changeset> list = new JList<>();
         Changeset cs = new Changeset();
+        cs.setCreatedAt(Instant.EPOCH);
         ChangesetCellRenderer c = new ChangesetCellRenderer();
         assertEquals(c, c.getListCellRendererComponent(list, cs, 0, false, false));
     }

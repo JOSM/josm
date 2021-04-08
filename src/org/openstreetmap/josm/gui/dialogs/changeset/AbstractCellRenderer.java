@@ -4,8 +4,8 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Font;
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.format.FormatStyle;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -65,11 +65,11 @@ public abstract class AbstractCellRenderer extends JLabel implements TableCellRe
         }
     }
 
-    protected void renderDate(Date d) {
+    protected void renderInstant(Instant d) {
         if (d == null) {
             setText("");
         } else {
-            setText(DateUtils.formatDateTime(d, DateFormat.SHORT, DateFormat.SHORT));
+            setText(DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.SHORT).format(d));
         }
         setToolTipText(null);
     }

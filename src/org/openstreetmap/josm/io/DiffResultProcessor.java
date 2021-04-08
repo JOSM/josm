@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -150,7 +151,8 @@ public class DiffResultProcessor {
                     p.setChangesetId(cs.getId());
                     p.setUser(cs.getUser());
                     // TODO is there a way to obtain the timestamp for non-closed changesets?
-                    p.setTimestamp(Utils.firstNonNull(cs.getClosedAt(), new Date()));
+                    Instant instant = Utils.firstNonNull(cs.getClosedAt(), Instant.now());
+                    p.setTimestamp(Date.from(instant));
                 }
             }
             return processed;

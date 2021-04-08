@@ -56,7 +56,7 @@ public final class ChangesetUpdater {
         long now = System.currentTimeMillis();
         List<Long> changesetIds = ChangesetCache.getInstance().getOpenChangesets().stream()
             .filter(x -> x.getCreatedAt() != null
-                && now - x.getCreatedAt().getTime() > TimeUnit.HOURS.toMillis(1))
+                && now - x.getCreatedAt().toEpochMilli() > TimeUnit.HOURS.toMillis(1))
             .map(Changeset::getId)
             .map(Integer::longValue)
             .collect(Collectors.toList());

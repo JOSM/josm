@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.changeset;
 
 import java.awt.Component;
-import java.util.Date;
+import java.time.Instant;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -26,7 +26,7 @@ public class ChangesetDiscussionTableCellRenderer extends AbstractCellRenderer {
         renderColors(comp, isSelected);
         switch(column) {
         case 0:
-            renderDate((Date) value);
+            renderInstant((Instant) value);
             break;
         case 1:
             renderUser((User) value);

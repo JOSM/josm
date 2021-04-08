@@ -12,9 +12,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.DateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -227,10 +228,10 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             msg = cs.getUser().getName();
         }
         tfUser.setText(msg);
-        DateFormat sdf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
+        DateTimeFormatter sdf = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.SHORT);
 
-        Date createdDate = cs.getCreatedAt();
-        Date closedDate = cs.getClosedAt();
+        Instant createdDate = cs.getCreatedAt();
+        Instant closedDate = cs.getClosedAt();
         tfCreatedOn.setText(createdDate == null ? "" : sdf.format(createdDate));
         tfClosedOn.setText(closedDate == null ? "" : sdf.format(closedDate));
     }

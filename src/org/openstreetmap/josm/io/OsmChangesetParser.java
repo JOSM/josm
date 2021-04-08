@@ -95,7 +95,7 @@ public final class OsmChangesetParser {
             if (value == null) {
                 current.setCreatedAt(null);
             } else {
-                current.setCreatedAt(DateUtils.fromString(value));
+                current.setCreatedAt(DateUtils.parseInstant(value));
             }
 
             // -- closed_at
@@ -103,7 +103,7 @@ public final class OsmChangesetParser {
             if (value == null) {
                 current.setClosedAt(null);
             } else {
-                current.setClosedAt(DateUtils.fromString(value));
+                current.setClosedAt(DateUtils.parseInstant(value));
             }
 
             //  -- open

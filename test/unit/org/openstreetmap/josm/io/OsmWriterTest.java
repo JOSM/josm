@@ -10,12 +10,15 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -23,11 +26,19 @@ import org.openstreetmap.josm.data.osm.DownloadPolicy;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Unit tests of {@link OsmWriter} class.
  */
 class OsmWriterTest {
+
+    /**
+     * Setup rule
+     */
+    @RegisterExtension
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Unit test of {@link OsmWriter#byIdComparator}.
@@ -106,10 +117,11 @@ class OsmWriterTest {
         cs.setId(38038262);
         cs.setMin(new LatLon(12., 34.));
         cs.setMax(new LatLon(56., 78.));
+        cs.setCreatedAt(Instant.EPOCH);
         try (StringWriter stringWriter = new StringWriter();
              OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(stringWriter), true, OsmWriter.DEFAULT_API_VERSION)) {
             osmWriter.visit(cs);
-            assertEquals("  <changeset id='38038262' user='&lt;anonymous&gt;' uid='-1' open='false' " +
+            assertEquals("  <changeset id='38038262' user='&lt;anonymous&gt;' uid='-1' created_at='1970-01-01T00:00:00Z' open='false' " +
                             "min_lon='34.0' min_lat='12.0' max_lon='78.0' max_lat='56.0'>\n  </changeset>\n",
                     stringWriter.toString().replace("\r", ""));
         }

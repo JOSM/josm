@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.openstreetmap.josm.data.osm.Changeset.MAX_CHANGESET_TAG_LENGTH;
 
-import java.util.Calendar;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -137,18 +137,13 @@ class ChangesetTest {
         assertEquals("changeset 0", new Changeset().getName());
     }
 
-    private static Date yesterday() {
-        final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
-        return cal.getTime();
-    }
-
     /**
      * Unit test of method {@link Changeset#hasEqualSemanticAttributes}.
      */
     @Test
     void testHasEqualSemanticAttributes() {
-        Date today = new Date();
+        Instant today = Instant.now();
+        Instant yesterday = today.minus(Duration.ofDays(1));
         Changeset cs1 = new Changeset();
         Changeset cs2 = new Changeset();
         assertTrue(cs1.hasEqualSemanticAttributes(cs2));
@@ -157,7 +152,7 @@ class ChangesetTest {
         cs1.setClosedAt(null);
         cs2.setClosedAt(today);
         assertFalse(cs1.hasEqualSemanticAttributes(cs2));
-        cs1.setClosedAt(yesterday());
+        cs1.setClosedAt(yesterday);
         cs2.setClosedAt(today);
         assertFalse(cs1.hasEqualSemanticAttributes(cs2));
         cs1.setClosedAt(today);
@@ -167,7 +162,7 @@ class ChangesetTest {
         cs1.setCreatedAt(null);
         cs2.setCreatedAt(today);
         assertFalse(cs1.hasEqualSemanticAttributes(cs2));
-        cs1.setCreatedAt(yesterday());
+        cs1.setCreatedAt(yesterday);
         cs2.setCreatedAt(today);
         assertFalse(cs1.hasEqualSemanticAttributes(cs2));
         cs1.setCreatedAt(today);
