@@ -1,9 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.animation;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 
@@ -44,8 +42,6 @@ public final class AnimationExtensionManager {
     }
 
     private static boolean isChristmas() {
-        Calendar c = new GregorianCalendar();
-        c.setTime(new Date());
-        return c.get(Calendar.DAY_OF_YEAR) > 350;
+        return LocalDate.now().getDayOfYear() > 350;
     }
 }
