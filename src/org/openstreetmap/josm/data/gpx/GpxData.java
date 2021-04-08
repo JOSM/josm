@@ -3,12 +3,12 @@ package org.openstreetmap.josm.data.gpx;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -199,13 +199,13 @@ public class GpxData extends WithAttributes implements Data {
                 }
                 boolean split = false;
                 WayPoint prevLastOwnWp = null;
-                Date prevWpTime = null;
+                Instant prevWpTime = null;
                 for (WayPoint wp : wpsOld) {
-                    Date wpTime = wp.getDate();
+                    Instant wpTime = wp.getInstant();
                     boolean overlap = false;
                     if (wpTime != null) {
                         for (GpxTrackSegmentSpan ownspan : getSegmentSpans()) {
-                            if (wpTime.after(ownspan.firstTime) && wpTime.before(ownspan.lastTime)) {
+                            if (wpTime.isAfter(ownspan.firstTime) && wpTime.isBefore(ownspan.lastTime)) {
                                 overlap = true;
                                 if (connect) {
                                     if (!split) {
@@ -218,8 +218,8 @@ public class GpxData extends WithAttributes implements Data {
                                 split = true;
                                 break;
                             } else if (connect && prevWpTime != null
-                                    && prevWpTime.before(ownspan.firstTime)
-                                    && wpTime.after(ownspan.lastTime)) {
+                                    && prevWpTime.isBefore(ownspan.firstTime)
+                                    && wpTime.isAfter(ownspan.lastTime)) {
                                 // the overlapping high priority track is shorter than the distance
                                 // between two waypoints of the low priority track
                                 if (split) {
@@ -286,16 +286,16 @@ public class GpxData extends WithAttributes implements Data {
 
     static class GpxTrackSegmentSpan {
 
-        final Date firstTime;
-        final Date lastTime;
+        final Instant firstTime;
+        final Instant lastTime;
         private final boolean inv;
         private final WayPoint firstWp;
         private final WayPoint lastWp;
 
         GpxTrackSegmentSpan(WayPoint a, WayPoint b) {
-            Date at = a.getDate();
-            Date bt = b.getDate();
-            inv = bt.before(at);
+            Instant at = a.getInstant();
+            Instant bt = b.getInstant();
+            inv = bt.isBefore(at);
             if (inv) {
                 firstWp = b;
                 firstTime = bt;
@@ -332,8 +332,8 @@ public class GpxData extends WithAttributes implements Data {
         }
 
         boolean overlapsWith(GpxTrackSegmentSpan other) {
-            return (firstTime.before(other.lastTime) && other.firstTime.before(lastTime))
-                || (other.firstTime.before(lastTime) && firstTime.before(other.lastTime));
+            return (firstTime.isBefore(other.lastTime) && other.firstTime.isBefore(lastTime))
+                || (other.firstTime.isBefore(lastTime) && firstTime.isBefore(other.lastTime));
         }
 
         static GpxTrackSegmentSpan tryGetFromSegment(IGpxTrackSegment seg) {
@@ -719,14 +719,14 @@ public class GpxData extends WithAttributes implements Data {
      * @param trk track to analyze
      * @return  minimum and maximum dates in array of 2 elements
      */
-    public static Date[] getMinMaxTimeForTrack(IGpxTrack trk) {
+    public static Instant[] getMinMaxTimeForTrack(IGpxTrack trk) {
         final LongSummaryStatistics statistics = trk.getSegments().stream()
                 .flatMap(seg -> seg.getWayPoints().stream())
                 .mapToLong(WayPoint::getTimeInMillis)
                 .summaryStatistics();
         return statistics.getCount() == 0 || (statistics.getMin() == 0 && statistics.getMax() == 0)
                 ? null
-                : new Date[]{new Date(statistics.getMin()), new Date(statistics.getMax())};
+                : new Instant[]{Instant.ofEpochMilli(statistics.getMin()), Instant.ofEpochMilli(statistics.getMax())};
     }
 
     /**
@@ -736,7 +736,7 @@ public class GpxData extends WithAttributes implements Data {
     * @return minimum and maximum dates in array of 2 elements
     * @since 7319
     */
-    public synchronized Date[] getMinMaxTimeForAllTracks() {
+    public synchronized Instant[] getMinMaxTimeForAllTracks() {
         long now = System.currentTimeMillis();
         final LongSummaryStatistics statistics = tracks.stream()
                 .flatMap(trk -> trk.getSegments().stream())
@@ -745,8 +745,8 @@ public class GpxData extends WithAttributes implements Data {
                 .filter(t -> t > 0 && t <= now)
                 .summaryStatistics();
         return statistics.getCount() == 0
-                ? new Date[0]
-                : new Date[]{new Date(statistics.getMin()), new Date(statistics.getMax())};
+                ? new Instant[0]
+                : new Instant[]{Instant.ofEpochMilli(statistics.getMin()), Instant.ofEpochMilli(statistics.getMax())};
     }
 
     /**

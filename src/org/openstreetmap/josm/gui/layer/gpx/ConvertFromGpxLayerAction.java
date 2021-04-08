@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +36,6 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Converts a {@link GpxLayer} to a {@link OsmDataLayer}.
@@ -122,19 +122,19 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
         for (Entry<String, Object> entry : attr.entrySet()) {
             String key = entry.getKey();
             Object obj = entry.getValue();
-            if (check && !keys.contains(key) && (obj instanceof String || obj instanceof Number || obj instanceof Date)) {
+            if (check && !keys.contains(key) && (obj instanceof String || obj instanceof Number || obj instanceof Instant)) {
                 keys.add(key);
             }
             if (!none && (obj instanceof String || obj instanceof Number)) {
                 // only convert when required
                 p.put(GpxConstants.GPX_PREFIX + key, obj.toString());
-            } else if (obj instanceof Date && GpxConstants.PT_TIME.equals(key)) {
+            } else if (obj instanceof Instant && GpxConstants.PT_TIME.equals(key)) {
                 // timestamps should always be converted
-                Date date = (Date) obj;
+                Instant date = (Instant) obj;
                 if (!none) { //... but the tag will only be set when required
-                    p.put(GpxConstants.GPX_PREFIX + key, DateUtils.fromDate(date));
+                    p.put(GpxConstants.GPX_PREFIX + key, String.valueOf(date));
                 }
-                p.setTimestamp(date);
+                p.setTimestamp(Date.from(date));
             }
         }
     }

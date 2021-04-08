@@ -286,7 +286,9 @@ public final class DateUtils {
      * Returns the date format used for GPX waypoints.
      * @return the date format used for GPX waypoints
      * @since 14055
+     * @deprecated Use {@link Instant#toString()}
      */
+    @Deprecated
     public static DateFormat getGpxFormat() {
         SimpleDateFormat result = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         result.setTimeZone(UTC);

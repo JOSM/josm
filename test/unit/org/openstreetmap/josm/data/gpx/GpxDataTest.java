@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -336,16 +337,16 @@ class GpxDataTest {
         WayPoint p3 = new WayPoint(LatLon.NORTH_POLE);
         WayPoint p4 = new WayPoint(LatLon.NORTH_POLE);
         WayPoint p5 = new WayPoint(LatLon.NORTH_POLE);
-        p1.setTime(new Date(200020));
-        p2.setTime(new Date(100020));
-        p4.setTime(new Date(500020));
+        p1.setInstant(new Date(200020).toInstant());
+        p2.setInstant(new Date(100020).toInstant());
+        p4.setInstant(new Date(500020).toInstant());
         data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p1, p2)), Collections.emptyMap()));
         data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p3, p4, p5)), Collections.emptyMap()));
 
-        Date[] times = data.getMinMaxTimeForAllTracks();
+        Instant[] times = data.getMinMaxTimeForAllTracks();
         assertEquals(times.length, 2);
-        assertEquals(new Date(100020), times[0]);
-        assertEquals(new Date(500020), times[1]);
+        assertEquals(Instant.ofEpochMilli(100020), times[0]);
+        assertEquals(Instant.ofEpochMilli(500020), times[1]);
     }
 
     /**

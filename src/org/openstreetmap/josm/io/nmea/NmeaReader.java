@@ -365,7 +365,7 @@ public class NmeaReader implements IGpxReader {
                 if (!currentwp.attr.containsKey("time")) {
                     // As this sentence has no complete time only use it
                     // if there is no time so far
-                    currentwp.setTime(d);
+                    currentwp.setInstant(d.toInstant());
                 }
                 // elevation
                 accu = e[GGA.HEIGHT_UNTIS.position];
@@ -493,7 +493,7 @@ public class NmeaReader implements IGpxReader {
                     currentwp = new WayPoint(latLon);
                 }
                 // time: this sentence has complete time so always use it.
-                currentwp.setTime(d);
+                currentwp.setInstant(d.toInstant());
                 // speed
                 accu = e[RMC.SPEED.position];
                 if (!accu.isEmpty() && !currentwp.attr.containsKey("speed")) {
@@ -543,7 +543,7 @@ public class NmeaReader implements IGpxReader {
             ps.pDate = currentDate;
             if (ps.pWp != currentwp) {
                 if (ps.pWp != null) {
-                    ps.pWp.getDate();
+                    ps.pWp.getInstant();
                 }
                 ps.pWp = currentwp;
                 ps.waypoints.add(currentwp);

@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -38,7 +37,6 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -244,19 +242,18 @@ class OsmDataLayerTest {
         Collection<WayPoint> trackpoints = segments.iterator().next().getWayPoints();
         assertEquals(3, trackpoints.size());
         Iterator<WayPoint> it = trackpoints.iterator();
-        DateFormat gpxFormat = DateUtils.getGpxFormat();
         WayPoint p1 = it.next();
         assertEquals(new LatLon(47.0, 9.0), p1.getCoor());
         assertEquals("123", p1.get(GpxConstants.PT_ELE));
-        assertEquals("2018-08-01T10:00:00.000Z", gpxFormat.format(p1.get(GpxConstants.PT_TIME)));
+        assertEquals("2018-08-01T10:00:00Z", String.valueOf(p1.get(GpxConstants.PT_TIME)));
         WayPoint p2 = it.next();
         assertEquals(new LatLon(47.1, 9.1), p2.getCoor());
         assertEquals("456", p2.get(GpxConstants.PT_ELE));
-        assertEquals("2018-08-01T10:01:00.000Z", gpxFormat.format(p2.get(GpxConstants.PT_TIME)));
+        assertEquals("2018-08-01T10:01:00Z", String.valueOf(p2.get(GpxConstants.PT_TIME)));
         WayPoint p3 = it.next();
         assertEquals(new LatLon(47.05, 9.05), p3.getCoor());
         assertEquals("789", p3.get(GpxConstants.PT_ELE));
-        assertEquals("2018-08-01T10:02:00.000Z", gpxFormat.format(p3.get(GpxConstants.PT_TIME)));
+        assertEquals("2018-08-01T10:02:00Z", String.valueOf(p3.get(GpxConstants.PT_TIME)));
     }
 
     /**

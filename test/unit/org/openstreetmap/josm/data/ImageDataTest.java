@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import mockit.MockUp;
  */
 class ImageDataTest {
 
-    private static ImageEntry newImageEntry(String file, Date exifTime) {
+    private static ImageEntry newImageEntry(String file, Instant exifTime) {
         ImageEntry entry = new ImageEntry(new File(file));
         entry.setExifTime(exifTime);
         return entry;
@@ -64,8 +64,8 @@ class ImageDataTest {
 
     @Test
     void testSortData() {
-        ImageEntry entry1 = newImageEntry("test1", new Date(1_000_000));
-        ImageEntry entry2 = newImageEntry("test2", new Date(2_000_000));
+        ImageEntry entry1 = newImageEntry("test1", Instant.ofEpochMilli(1_000_000));
+        ImageEntry entry2 = newImageEntry("test2", Instant.ofEpochMilli(2_000_000));
 
         ArrayList<ImageEntry> list = new ArrayList<>();
         list.add(entry2);

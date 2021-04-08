@@ -10,13 +10,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
@@ -44,16 +42,6 @@ class NmeaReaderTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-
-    /**
-     * Forces the timezone.
-     */
-    @BeforeEach
-    public void setUp() {
-        iso8601.setTimeZone(DateUtils.UTC);
-    }
-
     /**
      * Tests reading a nmea file.
      * @throws Exception if any error occurs
@@ -67,14 +55,14 @@ class NmeaReaderTest {
         assertEquals(0, in.getParserMalformed());
 
         final List<WayPoint> wayPoints = new ArrayList<>(in.data.tracks.iterator().next().getSegments().iterator().next().getWayPoints());
-        assertEquals(DateUtils.fromString("2016-01-25T05:05:09.200Z"), wayPoints.get(0).get(GpxConstants.PT_TIME));
-        assertEquals(DateUtils.fromString("2016-01-25T05:05:09.400Z"), wayPoints.get(1).get(GpxConstants.PT_TIME));
-        assertEquals(DateUtils.fromString("2016-01-25T05:05:09.600Z"), wayPoints.get(2).get(GpxConstants.PT_TIME));
-        assertEquals(wayPoints.get(0).getDate(), wayPoints.get(0).get(GpxConstants.PT_TIME));
+        assertEquals(DateUtils.parseInstant("2016-01-25T05:05:09.200Z"), wayPoints.get(0).get(GpxConstants.PT_TIME));
+        assertEquals(DateUtils.parseInstant("2016-01-25T05:05:09.400Z"), wayPoints.get(1).get(GpxConstants.PT_TIME));
+        assertEquals(DateUtils.parseInstant("2016-01-25T05:05:09.600Z"), wayPoints.get(2).get(GpxConstants.PT_TIME));
+        assertEquals(wayPoints.get(0).getInstant(), wayPoints.get(0).get(GpxConstants.PT_TIME));
 
-        assertEquals("2016-01-25T05:05:09.200Z", iso8601.format(wayPoints.get(0).getDate()));
-        assertEquals("2016-01-25T05:05:09.400Z", iso8601.format(wayPoints.get(1).getDate()));
-        assertEquals("2016-01-25T05:05:09.600Z", iso8601.format(wayPoints.get(2).getDate()));
+        assertEquals(DateUtils.parseInstant("2016-01-25T05:05:09.200Z"), wayPoints.get(0).getInstant());
+        assertEquals(DateUtils.parseInstant("2016-01-25T05:05:09.400Z"), wayPoints.get(1).getInstant());
+        assertEquals(DateUtils.parseInstant("2016-01-25T05:05:09.600Z"), wayPoints.get(2).getInstant());
 
         assertEquals(new LatLon(46.98807, -1.400525), wayPoints.get(0).getCoor());
         assertEquals("38.9", wayPoints.get(0).get(GpxConstants.PT_ELE));
@@ -170,8 +158,8 @@ class NmeaReaderTest {
         return read(nmeaLine).tracks.iterator().next().getSegments().iterator().next().getWayPoints().iterator().next();
     }
 
-    private static Date readDate(String nmeaLine) throws IOException, SAXException {
-        return readWayPoint(nmeaLine).getDate();
+    private static Instant readDate(String nmeaLine) throws IOException, SAXException {
+        return readWayPoint(nmeaLine).getInstant();
     }
 
     private static double readSpeed(String nmeaLine) throws IOException, SAXException {
@@ -184,12 +172,12 @@ class NmeaReaderTest {
      */
     @Test
     void testTicket16496() throws Exception {
-        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(
-                readDate("$GNRMC,162859.400,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13")));
-        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(
-                readDate("$GNRMC,162859.40,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*23")));
-        assertEquals("2018-05-30T16:28:59.400Z", iso8601.format(
-                readDate("$GNRMC,162859.4,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13")));
+        assertEquals(DateUtils.parseInstant("2018-05-30T16:28:59.400Z"),
+                readDate("$GNRMC,162859.400,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13"));
+        assertEquals(DateUtils.parseInstant("2018-05-30T16:28:59.400Z"),
+                readDate("$GNRMC,162859.40,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*23"));
+        assertEquals(DateUtils.parseInstant("2018-05-30T16:28:59.400Z"),
+                readDate("$GNRMC,162859.4,A,4543.03388,N,00058.19870,W,45.252,209.07,300518,,,D,V*13"));
     }
 
     /**

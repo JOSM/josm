@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +43,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     private Integer exifOrientation;
     private LatLon exifCoor;
     private Double exifImgDir;
-    private Date exifTime;
+    private Instant exifTime;
     /**
      * Flag isNewGpsData indicates that the GPS data of the image is new or has changed.
      * GPS data includes the position, speed, elevation, time (e.g. as extracted from the GPS track).
@@ -50,7 +51,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
      */
     private boolean isNewGpsData;
     /** Temporary source of GPS time if not correlated with GPX track. */
-    private Date exifGpsTime;
+    private Instant exifGpsTime;
 
     private String iptcCaption;
     private String iptcHeadline;
@@ -67,7 +68,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /** Elevation (altitude) in meters */
     private Double elevation;
     /** The time after correlation with a gpx track */
-    private Date gpsTime;
+    private Instant gpsTime;
 
     private int width;
     private int height;
@@ -172,11 +173,22 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
      * Returns the GPS time value. The GPS time value from the temporary copy
      * is returned if that copy exists.
      * @return the GPS time value
+     * @deprecated Use {@link #getGpsInstant}
      */
+    @Deprecated
     public Date getGpsTime() {
         if (tmp != null)
             return getDefensiveDate(tmp.gpsTime);
         return getDefensiveDate(gpsTime);
+    }
+
+    /**
+     * Returns the GPS time value. The GPS time value from the temporary copy
+     * is returned if that copy exists.
+     * @return the GPS time value
+     */
+    public Instant getGpsInstant() {
+        return tmp != null ? tmp.gpsTime : gpsTime;
     }
 
     /**
@@ -207,9 +219,19 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /**
      * Returns EXIF time
      * @return EXIF time
+     * @deprecated Use {@link #getExifInstant}
      */
+    @Deprecated
     public Date getExifTime() {
         return getDefensiveDate(exifTime);
+    }
+
+    /**
+     * Returns EXIF time
+     * @return EXIF time
+     */
+    public Instant getExifInstant() {
+        return exifTime;
     }
 
     /**
@@ -225,9 +247,19 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
      * Returns the EXIF GPS time.
      * @return the EXIF GPS time
      * @since 6392
+     * @deprecated Use {@link #getExifGpsInstant}
      */
+    @Deprecated
     public Date getExifGpsTime() {
         return getDefensiveDate(exifGpsTime);
+    }
+
+    /**
+     * Returns the EXIF GPS time.
+     * @return the EXIF GPS time
+     */
+    public Instant getExifGpsInstant() {
+        return exifGpsTime;
     }
 
     /**
@@ -239,10 +271,10 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         return exifGpsTime != null;
     }
 
-    private static Date getDefensiveDate(Date date) {
+    private static Date getDefensiveDate(Instant date) {
         if (date == null)
             return null;
-        return new Date(date.getTime());
+        return Date.from(date);
     }
 
     public LatLon getExifCoor() {
@@ -324,22 +356,56 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /**
      * Sets EXIF time.
      * @param exifTime EXIF time
+     * @deprecated Use {@link #setExifTime(Instant)}
      */
+    @Deprecated
     public void setExifTime(Date exifTime) {
-        this.exifTime = getDefensiveDate(exifTime);
+        this.exifTime = exifTime == null ? null : exifTime.toInstant();
     }
 
     /**
      * Sets the EXIF GPS time.
      * @param exifGpsTime the EXIF GPS time
      * @since 6392
+     * @deprecated Use {@link #setExifGpsTime(Instant)}
      */
+    @Deprecated
     public void setExifGpsTime(Date exifGpsTime) {
-        this.exifGpsTime = getDefensiveDate(exifGpsTime);
+        this.exifGpsTime = exifGpsTime == null ? null : exifGpsTime.toInstant();
     }
 
+    /**
+     * Sets the GPS time.
+     * @param gpsTime the GPS time
+     * @deprecated Use {@link #setGpsTime(Instant)}
+     */
+    @Deprecated
     public void setGpsTime(Date gpsTime) {
-        this.gpsTime = getDefensiveDate(gpsTime);
+        this.gpsTime = gpsTime == null ? null : gpsTime.toInstant();
+    }
+
+    /**
+     * Sets EXIF time.
+     * @param exifTime EXIF time
+     */
+    public void setExifTime(Instant exifTime) {
+        this.exifTime = exifTime;
+    }
+
+    /**
+     * Sets the EXIF GPS time.
+     * @param exifGpsTime the EXIF GPS time
+     */
+    public void setExifGpsTime(Instant exifGpsTime) {
+        this.exifGpsTime = exifGpsTime;
+    }
+
+    /**
+     * Sets the GPS time.
+     * @param gpsTime the GPS time
+     */
+    public void setGpsTime(Instant gpsTime) {
+        this.gpsTime = gpsTime;
     }
 
     public void setExifCoor(LatLon exifCoor) {
@@ -634,7 +700,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
                     } catch (PngProcessingException | IOException ex3) {
                         Logging.warn(topException);
                         Logging.info(tr("Can''t parse metadata for file \"{0}\". Using last modified date as timestamp.", fn));
-                        setExifTime(new Date(file.lastModified()));
+                        setExifTime(Instant.ofEpochMilli(file.lastModified()));
                         setExifCoor(null);
                         setPos(null);
                         return;
@@ -645,16 +711,16 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
 
         // Changed to silently cope with no time info in exif. One case
         // of person having time that couldn't be parsed, but valid GPS info
-        Date time = null;
+        Instant time = null;
         try {
-            time = ExifReader.readTime(metadata);
+            time = ExifReader.readInstant(metadata);
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException ex) {
             Logging.warn(ex);
         }
 
         if (time == null) {
             Logging.info(tr("No EXIF time in file \"{0}\". Using last modified date as timestamp.", fn));
-            time = new Date(file.lastModified()); //use lastModified time if no EXIF time present
+            time = Instant.ofEpochMilli(file.lastModified()); //use lastModified time if no EXIF time present
         }
         setExifTime(time);
 
@@ -704,7 +770,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             Logging.debug(ex);
         }
 
-        ifNotNull(dirGps.getGpsDate(), this::setExifGpsTime);
+        ifNotNull(dirGps.getGpsDate(), d -> setExifGpsTime(d.toInstant()));
 
         IptcDirectory dirIptc = metadata.getFirstDirectoryOfType(IptcDirectory.class);
         if (dirIptc != null) {

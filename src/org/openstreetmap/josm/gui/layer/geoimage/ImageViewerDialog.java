@@ -12,8 +12,9 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -471,23 +472,16 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
             }
 
-            DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
-            // Make sure date/time format includes milliseconds
-            if (dtf instanceof SimpleDateFormat) {
-                String pattern = ((SimpleDateFormat) dtf).toPattern();
-                if (!pattern.contains(".SSS")) {
-                    dtf = new SimpleDateFormat(pattern.replace(":ss", ":ss.SSS"));
-                }
-            }
-            // Set timezone to UTC since UTC is assumed when parsing the EXIF timestamp,
-            // see see org.openstreetmap.josm.tools.ExifReader.readTime(com.drew.metadata.Metadata)
-            dtf.setTimeZone(DateUtils.UTC);
+            DateTimeFormatter dtf = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM)
+                    // Set timezone to UTC since UTC is assumed when parsing the EXIF timestamp,
+                    // see see org.openstreetmap.josm.tools.ExifReader.readTime(com.drew.metadata.Metadata)
+                    .withZone(ZoneOffset.UTC);
 
             if (entry.hasExifTime()) {
-                osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifTime())));
+                osd.append(tr("\nEXIF time: {0}", dtf.format(entry.getExifInstant())));
             }
             if (entry.hasGpsTime()) {
-                osd.append(tr("\nGPS time: {0}", dtf.format(entry.getGpsTime())));
+                osd.append(tr("\nGPS time: {0}", dtf.format(entry.getGpsInstant())));
             }
             Optional.ofNullable(entry.getIptcCaption()).map(s -> tr("\nCaption: {0}", s)).ifPresent(osd::append);
             Optional.ofNullable(entry.getIptcHeadline()).map(s -> tr("\nHeadline: {0}", s)).ifPresent(osd::append);

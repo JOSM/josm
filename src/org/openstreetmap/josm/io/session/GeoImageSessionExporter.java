@@ -86,16 +86,16 @@ public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLay
                 addAttr("elevation", entry.getElevation().toString(), imgElem, support);
             }
             if (entry.hasGpsTime()) {
-                addAttr("gps-time", Long.toString(entry.getGpsTime().getTime()), imgElem, support);
+                addAttr("gps-time", Long.toString(entry.getGpsInstant().toEpochMilli()), imgElem, support);
             }
             if (entry.getExifOrientation() != null) {
                 addAttr("exif-orientation", Integer.toString(entry.getExifOrientation()), imgElem, support);
             }
             if (entry.hasExifTime()) {
-                addAttr("exif-time", Long.toString(entry.getExifTime().getTime()), imgElem, support);
+                addAttr("exif-time", Long.toString(entry.getExifInstant().toEpochMilli()), imgElem, support);
             }
             if (entry.hasExifGpsTime()) {
-                addAttr("exif-gps-time", Long.toString(entry.getExifGpsTime().getTime()), imgElem, support);
+                addAttr("exif-gps-time", Long.toString(entry.getExifGpsInstant().toEpochMilli()), imgElem, support);
             }
             if (entry.getExifCoor() != null) {
                 Element posElem = support.createElement("exif-coordinates");

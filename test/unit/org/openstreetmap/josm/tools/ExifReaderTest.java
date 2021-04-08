@@ -7,9 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,30 +45,25 @@ class ExifReaderTest {
 
     /**
      * Test time extraction
-     * @throws ParseException if {@link ExifReader#readTime} fails to parse date/time of sample file
      */
     @Test
-    void testReadTime() throws ParseException {
-        Date date = ExifReader.readTime(directionSampleFile);
-        doTest("2010-05-15T17:12:05.000", date);
+    void testReadTime() {
+        Instant date = ExifReader.readInstant(directionSampleFile);
+        assertEquals(Instant.parse("2010-05-15T17:12:05.000Z"), date);
     }
 
     /**
      * Tests reading sub-seconds from the EXIF header
-     * @throws ParseException if {@link ExifReader#readTime} fails to parse date/time of sample file
      */
     @Test
-    void testReadTimeSubSecond1() throws ParseException {
-        Date date = ExifReader.readTime(new File("nodist/data/IMG_20150711_193419.jpg"));
-        doTest("2015-07-11T19:34:19.100", date);
-    }
-
-    private static void doTest(String expectedDate, Date parsedDate) {
-        assertEquals(expectedDate, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(parsedDate));
+    void testReadTimeSubSecond1() {
+        Instant date = ExifReader.readInstant(new File("nodist/data/IMG_20150711_193419.jpg"));
+        assertEquals(Instant.parse("2015-07-11T19:34:19.100Z"), date);
     }
 
     private static void doTestFile(String expectedDate, int ticket, String filename) {
-        doTest(expectedDate, ExifReader.readTime(new File(TestUtils.getRegressionDataFile(ticket, filename))));
+        Instant date = ExifReader.readInstant(new File(TestUtils.getRegressionDataFile(ticket, filename)));
+        assertEquals(Instant.parse(expectedDate), date);
     }
 
     /**
@@ -124,7 +117,7 @@ class ExifReaderTest {
      */
     @Test
     void testTicket11685() throws IOException {
-        doTestFile("2015-11-08T15:33:27.500", 11685, "2015-11-08_15-33-27-Xiaomi_YI-Y0030832.jpg");
+        doTestFile("2015-11-08T15:33:27.500Z", 11685, "2015-11-08_15-33-27-Xiaomi_YI-Y0030832.jpg");
     }
 
     /**
@@ -133,7 +126,7 @@ class ExifReaderTest {
      */
     @Test
     void testTicket14209() throws IOException {
-        doTestFile("2017-01-16T18:27:00.000", 14209, "0MbEfj1S--.1.jpg");
-        doTestFile("2016-08-13T19:51:13.000", 14209, "7VWFOryj--.1.jpg");
+        doTestFile("2017-01-16T18:27:00.000Z", 14209, "0MbEfj1S--.1.jpg");
+        doTestFile("2016-08-13T19:51:13.000Z", 14209, "7VWFOryj--.1.jpg");
     }
 }

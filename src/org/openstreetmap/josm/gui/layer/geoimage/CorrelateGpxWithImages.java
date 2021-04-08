@@ -27,11 +27,14 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -767,10 +770,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         void updateExifComponents(ImageEntry img) {
             imgDisp.setImage(img);
-            Date date = img.getExifTime();
+            Instant date = img.getExifInstant();
             if (date != null) {
-                DateFormat df = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
-                df.setTimeZone(DateUtils.UTC); // EXIF data does not contain timezone information and is read as UTC
+                DateTimeFormatter df = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM)
+                        .withZone(ZoneOffset.UTC); // EXIF data does not contain timezone information and is read as UTC
                 lbExifTime.setText(df.format(date));
                 tfGpsTime.setText(df.format(date));
                 tfGpsTime.setCaretPosition(tfGpsTime.getText().length());
@@ -1259,7 +1262,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     static Pair<GpxTimezone, GpxTimeOffset> autoGuess(List<ImageEntry> imgs, GpxData gpx) throws NoGpxTimestamps {
 
         // Init variables
-        long firstExifDate = imgs.get(0).getExifTime().getTime();
+        long firstExifDate = imgs.get(0).getExifInstant().toEpochMilli();
 
         // Finds first GPX point
         long firstGPXDate = gpx.tracks.stream()
@@ -1333,7 +1336,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 .filter(GpxImageEntry::hasExifTime)
                 .filter(e -> e.getExifCoor() == null || exif)
                 .filter(e -> tagged || !e.isTagged() || e.getExifCoor() != null)
-                .sorted(Comparator.comparing(ImageEntry::getExifTime))
+                .sorted(Comparator.comparing(ImageEntry::getExifInstant))
                 .collect(Collectors.toList());
     }
 

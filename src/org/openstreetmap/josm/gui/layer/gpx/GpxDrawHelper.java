@@ -21,10 +21,10 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -564,10 +564,10 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         }
         double now = System.currentTimeMillis()/1000.0;
         if (colored == ColorMode.TIME) {
-            Date[] bounds = data.getMinMaxTimeForAllTracks();
+            Instant[] bounds = data.getMinMaxTimeForAllTracks();
             if (bounds.length >= 2) {
-                minval = bounds[0].getTime()/1000.0;
-                maxval = bounds[1].getTime()/1000.0;
+                minval = bounds[0].getEpochSecond();
+                maxval = bounds[1].getEpochSecond();
             } else {
                 minval = 0;
                 maxval = now;

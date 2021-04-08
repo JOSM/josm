@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.awt.Color;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,7 +16,6 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
@@ -65,9 +65,6 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     public WayPoint(WayPoint p) {
         attr = new HashMap<>(0);
         attr.putAll(p.attr);
-        if (p.getDate() != null) {
-            attr.put(PT_TIME, p.getDate());
-        }
         lat = p.lat;
         lon = p.lon;
         east = p.east;
@@ -138,9 +135,11 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      *
      * @param time the time to set
      * @since 9383
+     * @deprecated Use {@link #setInstant(Instant)}
      */
+    @Deprecated
     public void setTime(Date time) {
-        setTimeInMillis(time.getTime());
+        setInstant(time.toInstant());
     }
 
     /**
@@ -148,9 +147,11 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      *
      * @param ts seconds from the epoch
      * @since 13210
+     * @deprecated Use {@link #setInstant(Instant)}
      */
+    @Deprecated
     public void setTime(long ts) {
-        setTimeInMillis(ts * 1000);
+        setInstant(Instant.ofEpochSecond(ts));
     }
 
     /**
@@ -160,7 +161,16 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * @since 14434
      */
     public void setTimeInMillis(long ts) {
-        attr.put(PT_TIME, new Date(ts));
+        setInstant(Instant.ofEpochMilli(ts));
+    }
+
+    /**
+     * Sets the {@link #PT_TIME} attribute to the specified time.
+     *
+     * @param instant the time to set
+     */
+    public void setInstant(Instant instant) {
+        attr.put(PT_TIME, instant);
     }
 
     @Override
@@ -184,8 +194,8 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * @since 14456
      */
     public long getTimeInMillis() {
-        Date d = getDateImpl();
-        return d == null ? 0 : d.getTime();
+        Instant d = getInstant();
+        return d == null ? 0 : d.toEpochMilli();
     }
 
     /**
@@ -195,7 +205,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * @since 14456
      */
     public boolean hasDate() {
-        return attr.get(PT_TIME) instanceof Date;
+        return attr.get(PT_TIME) instanceof Instant;
     }
 
     /**
@@ -203,22 +213,26 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      *
      * @return a copy of the Date object associated with this waypoint
      * @since 14456
+     * @deprecated Use {@link #getInstant()}
      */
+    @Deprecated
     public Date getDate() {
-        return DateUtils.cloneDate(getDateImpl());
+        Instant instant = getInstant();
+        return instant == null ? null : Date.from(instant);
     }
 
     /**
-     * Returns the waypoint time Date object.
+     * Returns the waypoint instant.
      *
-     * @return the Date object associated with this waypoint
+     * @return the instant associated with this waypoint
+     * @since 14456
      */
-    private Date getDateImpl() {
+    public Instant getInstant() {
         if (attr != null) {
             final Object obj = attr.get(PT_TIME);
 
-            if (obj instanceof Date) {
-                return (Date) obj;
+            if (obj instanceof Instant) {
+                return (Instant) obj;
             } else if (obj == null) {
                 Logging.trace("Waypoint {0} value unset", PT_TIME);
             } else {

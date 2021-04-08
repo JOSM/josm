@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -51,9 +52,14 @@ public class DateFilterPanel extends JPanel {
         this.layer = layer;
 
         final Date startTime, endTime;
-        Date[] bounds = layer.data.getMinMaxTimeForAllTracks();
-        startTime = (bounds.length == 0) ? Date.from(ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant()) : bounds[0];
-        endTime = (bounds.length == 0) ? new Date() : bounds[1];
+        Instant[] bounds = layer.data.getMinMaxTimeForAllTracks();
+        if (bounds.length == 0) {
+            startTime = Date.from(ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant());
+            endTime = new Date();
+        } else {
+            startTime = Date.from(bounds[0]);
+            endTime = Date.from(bounds[1]);
+        }
 
         dateFrom.setDate(startTime);
         dateTo.setDate(endTime);

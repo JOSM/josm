@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.DateTimeException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -877,7 +878,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             } else if ((v = gpxVal(n, GpxConstants.PT_TIME)) != null) {
                 wpt.setTimeInMillis(DateUtils.tsFromString(v));
             } else if (!n.isTimestampEmpty()) {
-                wpt.setTime(Integer.toUnsignedLong(n.getRawTimestamp()));
+                wpt.setInstant(Instant.ofEpochSecond(Integer.toUnsignedLong(n.getRawTimestamp())));
             }
         } catch (UncheckedParseException | DateTimeException e) {
             Logging.error(e);

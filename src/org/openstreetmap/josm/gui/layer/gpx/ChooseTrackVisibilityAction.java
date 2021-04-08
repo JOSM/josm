@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -87,7 +88,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             Map<String, Object> attr = trk.getAttributes();
             String name = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_NAME)).orElse("");
             String desc = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_DESC)).orElse("");
-            Date[] time = GpxData.getMinMaxTimeForTrack(trk);
+            Instant[] time = GpxData.getMinMaxTimeForTrack(trk);
             String url = (String) Optional.ofNullable(attr.get("url")).orElse("");
             tracks[i] = new Object[]{name, desc, time, trk.length(), url, trk};
             i++;
@@ -139,7 +140,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>();
         t.setRowSorter(rowSorter);
         rowSorter.setModel(model);
-        rowSorter.setComparator(2, Comparator.comparing((Date[] d) -> d == null ? Long.MIN_VALUE : d[0].getTime()));
+        rowSorter.setComparator(2, Comparator.comparing((Instant[] d) -> d == null ? Instant.MIN : d[0]));
         rowSorter.setComparator(3, Comparator.comparingDouble(length -> (double) length));
         // default column widths
         t.getColumnModel().getColumn(0).setPreferredWidth(220);
@@ -149,8 +150,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             @Override
             public Component getTableCellRendererComponent(
                     JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                if (value instanceof Date[]) {
-                    value = GpxLayer.formatTimespan(((Date[]) value));
+                if (value instanceof Instant[]) {
+                    value = GpxLayer.formatTimespan(((Instant[]) value));
                 }
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }

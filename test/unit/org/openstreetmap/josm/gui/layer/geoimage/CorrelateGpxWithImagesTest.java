@@ -47,7 +47,7 @@ class CorrelateGpxWithImagesTest {
     void testAutoGuess() throws Exception {
         final GpxData gpx = GpxReaderTest.parseGpxData("nodist/data/2094047.gpx");
         final ImageEntry i0 = new ImageEntry();
-        i0.setExifTime(DateUtils.fromString("2016:01:03 11:59:54")); // 4 sec before start of GPX
+        i0.setExifTime(DateUtils.parseInstant("2016:01:03 11:59:54")); // 4 sec before start of GPX
         i0.createTmp();
         assertEquals(Pair.create(GpxTimezone.ZERO, GpxTimeOffset.seconds(-4)),
                 CorrelateGpxWithImages.autoGuess(Collections.singletonList(i0), gpx));

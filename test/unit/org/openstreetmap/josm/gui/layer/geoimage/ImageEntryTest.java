@@ -26,7 +26,7 @@ class ImageEntryTest {
     void testTicket12255() {
         ImageEntry e = new ImageEntry(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG")));
         e.extractExif();
-        assertNotNull(e.getExifTime());
+        assertNotNull(e.getExifInstant());
     }
 
     /**

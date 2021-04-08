@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.time.DateTimeException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -41,11 +42,23 @@ public final class ExifReader {
      * Returns the date/time from the given JPEG file.
      * @param filename The JPEG file to read
      * @return The date/time read in the EXIF section, or {@code null} if not found
+     * @deprecated Use {@link #readInstant(File)}
      */
+    @Deprecated
     public static Date readTime(File filename) {
+        Instant instant = readInstant(filename);
+        return instant == null ? null : Date.from(instant);
+    }
+
+    /**
+     * Returns the date/time from the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The date/time read in the EXIF section, or {@code null} if not found
+     */
+    public static Instant readInstant(File filename) {
         try {
             final Metadata metadata = JpegMetadataReader.readMetadata(filename);
-            return readTime(metadata);
+            return readInstant(metadata);
         } catch (JpegProcessingException | IOException e) {
             Logging.error(e);
         }
@@ -57,8 +70,20 @@ public final class ExifReader {
      * @param metadata The EXIF metadata
      * @return The date/time read in the EXIF section, or {@code null} if not found
      * @since 11745
+     * @deprecated Use {@link #readInstant(Metadata)}
      */
+    @Deprecated
     public static Date readTime(Metadata metadata) {
+        Instant instant = readInstant(metadata);
+        return instant == null ? null : Date.from(instant);
+    }
+
+    /**
+     * Returns the date/time from the given JPEG file.
+     * @param metadata The EXIF metadata
+     * @return The date/time read in the EXIF section, or {@code null} if not found
+     */
+    public static Instant readInstant(Metadata metadata) {
         try {
             String dateTimeOrig = null;
             String dateTime = null;
@@ -108,10 +133,10 @@ public final class ExifReader {
             }
             if (dateStr != null) {
                 dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228
-                final Date date = DateUtils.fromString(dateStr);
+                Instant date = DateUtils.parseInstant(dateStr);
                 if (subSeconds != null) {
                     try {
-                        date.setTime(date.getTime() + (long) (TimeUnit.SECONDS.toMillis(1) * Double.parseDouble("0." + subSeconds)));
+                        date = date.plusMillis((long) (TimeUnit.SECONDS.toMillis(1) * Double.parseDouble("0." + subSeconds)));
                     } catch (NumberFormatException e) {
                         Logging.warn("Failed parsing sub seconds from [{0}]", subSeconds);
                         Logging.warn(e);

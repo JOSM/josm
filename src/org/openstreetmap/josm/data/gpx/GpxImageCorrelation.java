@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -225,7 +224,7 @@ public final class GpxImageCorrelation {
             while (i >= 0) {
                 final GpxImageEntry curImg = images.get(i);
                 final GpxImageEntry curTmp = curImg.getTmp();
-                final long time = curImg.getExifTime().getTime();
+                final long time = curImg.getExifInstant().toEpochMilli();
                 if ((!isLast && time > curWpTime) || time < prevWpTime) {
                     break;
                 }
@@ -238,7 +237,7 @@ public final class GpxImageCorrelation {
                     } else {
                         curTmp.setPos(curWp.getCoor());
                     }
-                    curTmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
+                    curTmp.setGpsTime(curImg.getExifInstant().minusMillis(offset));
                     curTmp.flagNewGpsData();
                     curImg.tmpUpdated();
 
@@ -252,7 +251,7 @@ public final class GpxImageCorrelation {
             while (i >= 0) {
                 GpxImageEntry curImg = images.get(i);
                 GpxImageEntry curTmp = curImg.getTmp();
-                final long imgTime = curImg.getExifTime().getTime();
+                final long imgTime = curImg.getExifInstant().toEpochMilli();
                 if (imgTime < prevWpTime) {
                     break;
                 }
@@ -264,7 +263,7 @@ public final class GpxImageCorrelation {
                     if (curElevation != null && prevElevation != null) {
                         curTmp.setElevation(prevElevation + (curElevation - prevElevation) * timeDiff);
                     }
-                    curTmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
+                    curTmp.setGpsTime(curImg.getExifInstant().minusMillis(offset));
                     curTmp.flagNewGpsData();
                     curImg.tmpUpdated();
 
@@ -280,11 +279,11 @@ public final class GpxImageCorrelation {
         int lstSize = images.size();
 
         // No photos or the first photo taken is later than the search period
-        if (lstSize == 0 || searchedTime < images.get(0).getExifTime().getTime())
+        if (lstSize == 0 || searchedTime < images.get(0).getExifInstant().toEpochMilli())
             return -1;
 
         // The search period is later than the last photo
-        if (searchedTime > images.get(lstSize - 1).getExifTime().getTime())
+        if (searchedTime > images.get(lstSize - 1).getExifInstant().toEpochMilli())
             return lstSize-1;
 
         // The searched index is somewhere in the middle, do a binary search from the beginning
@@ -293,18 +292,18 @@ public final class GpxImageCorrelation {
         int endIndex = lstSize-1;
         while (endIndex - startIndex > 1) {
             curIndex = (endIndex + startIndex) / 2;
-            if (searchedTime > images.get(curIndex).getExifTime().getTime()) {
+            if (searchedTime > images.get(curIndex).getExifInstant().toEpochMilli()) {
                 startIndex = curIndex;
             } else {
                 endIndex = curIndex;
             }
         }
-        if (searchedTime < images.get(endIndex).getExifTime().getTime())
+        if (searchedTime < images.get(endIndex).getExifInstant().toEpochMilli())
             return startIndex;
 
         // This final loop is to check if photos with the exact same EXIF time follows
-        while ((endIndex < (lstSize - 1)) && (images.get(endIndex).getExifTime().getTime()
-                == images.get(endIndex + 1).getExifTime().getTime())) {
+        while ((endIndex < (lstSize - 1)) && (images.get(endIndex).getExifInstant().toEpochMilli()
+                == images.get(endIndex + 1).getExifInstant().toEpochMilli())) {
             endIndex++;
         }
         return endIndex;

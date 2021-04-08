@@ -57,28 +57,28 @@ class GpxImageCorrelationTest {
         assertEquals(128, gpx.tracks.iterator().next().getSegments().iterator().next().getWayPoints().size());
 
         final GpxImageEntry ib = new GpxImageEntry();
-        ib.setExifTime(DateUtils.fromString("2016:01:03 11:54:58")); // 5 minutes before start of GPX
+        ib.setExifTime(DateUtils.parseInstant("2016:01:03 11:54:58")); // 5 minutes before start of GPX
         ib.createTmp();
         final GpxImageEntry i0 = new GpxImageEntry();
-        i0.setExifTime(DateUtils.fromString("2016:01:03 11:59:54")); // 4 sec before start of GPX
+        i0.setExifTime(DateUtils.parseInstant("2016:01:03 11:59:54")); // 4 sec before start of GPX
         i0.createTmp();
         final GpxImageEntry i1 = new GpxImageEntry();
-        i1.setExifTime(DateUtils.fromString("2016:01:03 12:04:01"));
+        i1.setExifTime(DateUtils.parseInstant("2016:01:03 12:04:01"));
         i1.createTmp();
         final GpxImageEntry i2 = new GpxImageEntry();
-        i2.setExifTime(DateUtils.fromString("2016:01:03 12:04:57"));
+        i2.setExifTime(DateUtils.parseInstant("2016:01:03 12:04:57"));
         i2.createTmp();
         final GpxImageEntry i3 = new GpxImageEntry();
-        i3.setExifTime(DateUtils.fromString("2016:01:03 12:05:05"));
+        i3.setExifTime(DateUtils.parseInstant("2016:01:03 12:05:05"));
         i3.createTmp();
         final GpxImageEntry i4 = new GpxImageEntry(); //Image close to two points with elevation, but without time
-        i4.setExifTime(DateUtils.fromString("2016:01:03 12:05:20"));
+        i4.setExifTime(DateUtils.parseInstant("2016:01:03 12:05:20"));
         i4.createTmp();
         final GpxImageEntry i5 = new GpxImageEntry(); //between two tracks, closer to first
-        i5.setExifTime(DateUtils.fromString("2016:01:03 12:07:00"));
+        i5.setExifTime(DateUtils.parseInstant("2016:01:03 12:07:00"));
         i5.createTmp();
         final GpxImageEntry i6 = new GpxImageEntry(); //between two tracks, closer to second (more than 1 minute from any track)
-        i6.setExifTime(DateUtils.fromString("2016:01:03 12:07:45"));
+        i6.setExifTime(DateUtils.parseInstant("2016:01:03 12:07:45"));
         i6.createTmp();
 
         List<GpxImageEntry> images = Arrays.asList(ib, i0, i1, i2, i3, i4, i5, i6);
@@ -118,11 +118,11 @@ class GpxImageCorrelationTest {
         assertEquals(null, i5.getElevation());
         assertEquals(null, i6.getElevation());
 
-        assertEquals(null, ib.getGpsTime());
-        assertEquals(DateUtils.fromString("2016:01:03 11:59:54"), i0.getGpsTime()); // original time is kept
-        assertEquals(DateUtils.fromString("2016:01:03 12:04:01"), i1.getGpsTime());
-        assertEquals(DateUtils.fromString("2016:01:03 12:04:57"), i2.getGpsTime());
-        assertEquals(DateUtils.fromString("2016:01:03 12:05:05"), i3.getGpsTime());
+        assertEquals(null, ib.getGpsInstant());
+        assertEquals(DateUtils.parseInstant("2016:01:03 11:59:54"), i0.getGpsInstant()); // original time is kept
+        assertEquals(DateUtils.parseInstant("2016:01:03 12:04:01"), i1.getGpsInstant());
+        assertEquals(DateUtils.parseInstant("2016:01:03 12:04:57"), i2.getGpsInstant());
+        assertEquals(DateUtils.parseInstant("2016:01:03 12:05:05"), i3.getGpsInstant());
 
         clearTmp(images);
 

@@ -90,7 +90,7 @@ public class RtkLibPosReader implements IGpxReader {
                                     Double.parseDouble(fields[IDX_LAT]),
                                     Double.parseDouble(fields[IDX_LON])));
                             currentwp.put(GpxConstants.PT_ELE, fields[IDX_HEIGHT]);
-                            currentwp.setTime(parseDate(fields[IDX_DATE]+" "+fields[IDX_TIME]));
+                            currentwp.setInstant(parseDate(fields[IDX_DATE]+" "+fields[IDX_TIME]).toInstant());
                             currentwp.put(GpxConstants.RTKLIB_Q, Integer.parseInt(fields[IDX_Q]));
                             currentwp.put(GpxConstants.PT_SAT, fields[IDX_NS]);
                             currentwp.put(GpxConstants.RTKLIB_SDN, fields[IDX_SDN]);

@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -89,16 +89,16 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                 entry.setElevation(Double.valueOf(attrElem.getTextContent()));
                 break;
             case "gps-time":
-                entry.setGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
+                entry.setGpsTime(Instant.ofEpochMilli(Long.parseLong(attrElem.getTextContent())));
                 break;
             case "exif-orientation":
                 entry.setExifOrientation(Integer.valueOf(attrElem.getTextContent()));
                 break;
             case "exif-time":
-                entry.setExifTime(new Date(Long.parseLong(attrElem.getTextContent())));
+                entry.setExifTime(Instant.ofEpochMilli(Long.parseLong(attrElem.getTextContent())));
                 break;
             case "exif-gps-time":
-                entry.setExifGpsTime(new Date(Long.parseLong(attrElem.getTextContent())));
+                entry.setExifGpsTime(Instant.ofEpochMilli(Long.parseLong(attrElem.getTextContent())));
                 break;
             case "exif-coordinates":
                 entry.setExifCoor(new LatLon(

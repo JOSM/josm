@@ -9,7 +9,10 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.text.DateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -156,7 +159,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      * @return The timespan as a string
      */
     public static String getTimespanForTrack(IGpxTrack trk) {
-        Date[] bounds = GpxData.getMinMaxTimeForTrack(trk);
+        Instant[] bounds = GpxData.getMinMaxTimeForTrack(trk);
         return bounds != null ? formatTimespan(bounds) : "";
     }
 
@@ -165,22 +168,22 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      * @param bounds The bounds to format, i.e., an array containing the min/max date
      * @return The timespan as a string
      */
-    public static String formatTimespan(Date[] bounds) {
+    public static String formatTimespan(Instant[] bounds) {
         String ts = "";
-        DateFormat df = DateUtils.getDateFormat(DateFormat.SHORT);
+        DateTimeFormatter df = DateUtils.getDateFormatter(FormatStyle.SHORT);
         String earliestDate = df.format(bounds[0]);
         String latestDate = df.format(bounds[1]);
 
         if (earliestDate.equals(latestDate)) {
-            DateFormat tf = DateUtils.getTimeFormat(DateFormat.SHORT);
+            DateTimeFormatter tf = DateUtils.getTimeFormatter(FormatStyle.SHORT);
             ts += earliestDate + ' ';
             ts += tf.format(bounds[0]) + " - " + tf.format(bounds[1]);
         } else {
-            DateFormat dtf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
+            DateTimeFormatter dtf = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM);
             ts += dtf.format(bounds[0]) + " - " + dtf.format(bounds[1]);
         }
 
-        int diff = (int) (bounds[1].getTime() - bounds[0].getTime()) / 1000;
+        long diff = ChronoUnit.SECONDS.between(bounds[1], bounds[0]);
         ts += String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60);
         return ts;
     }
@@ -354,10 +357,10 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
         long from = fromDate.getTime();
         long to = toDate.getTime();
         for (IGpxTrack trk : data.getTracks()) {
-            Date[] t = GpxData.getMinMaxTimeForTrack(trk);
+            Instant[] t = GpxData.getMinMaxTimeForTrack(trk);
 
             if (t == null) continue;
-            long tm = t[1].getTime();
+            long tm = t[1].toEpochMilli();
             trackVisibility[i] = (tm == 0 && showWithoutDate) || (from <= tm && tm <= to);
             i++;
         }
