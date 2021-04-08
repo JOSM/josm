@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -230,7 +231,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
          * @param cs changeset from which the boundaries are read. Its id, name and comment are used to name the bookmark
          */
         public ChangesetBookmark(Changeset cs) {
-            setName(String.format("%d - %tF - %s", cs.getId(), cs.getCreatedAt(), cs.getComment()));
+            setName(String.format("%d - %tF - %s", cs.getId(), cs.getCreatedAt().atZone(ZoneId.systemDefault()), cs.getComment()));
             setIcon(ImageProvider.get("data", "changeset", ImageSizes.SMALLICON));
             setArea(cs.getBounds());
         }
