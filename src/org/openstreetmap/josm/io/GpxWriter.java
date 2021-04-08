@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -169,7 +170,9 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
                 } else {
                     Object val = obj.get(key);
                     if (val instanceof Date) {
-                        simpleTag(key, DateUtils.fromDate((Date) val));
+                        throw new IllegalStateException();
+                    } else if (val instanceof Instant) {
+                        simpleTag(key, String.valueOf(val));
                     } else if (val instanceof Number) {
                         simpleTag(key, val.toString());
                     } else if (val != null) {

@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.TestUtils.assertEqualsNewline;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneOffset;
@@ -43,6 +44,7 @@ public class GpxWriterTest {
     private static void testSingleWaypoint(Consumer<WayPoint> consumer, String atts) throws IOException {
         GpxData gpx = new GpxData();
         WayPoint waypoint = new WayPoint(LatLon.ZERO);
+        waypoint.setInstant(Instant.parse("2019-06-08T08:23:12.300Z"));
         consumer.accept(waypoint);
         gpx.addWaypoint(waypoint);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -88,6 +90,7 @@ public class GpxWriterTest {
                     w.put(GpxConstants.PT_VDOP, 0.9);
                     w.put(GpxConstants.PT_PDOP, 1.2);
                 },
+                "    <time>2019-06-08T08:23:12.300Z</time>\n" +
                 "    <sat>16</sat>\n" +
                 "    <hdop>0.7</hdop>\n" +
                 "    <vdop>0.9</vdop>\n" +
