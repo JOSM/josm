@@ -26,6 +26,7 @@ import javax.json.JsonArray;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
+import com.google.gdata.util.common.base.PercentEscaper;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
@@ -201,11 +202,11 @@ public final class Tag2Link {
         }
         if (key.matches("wikimedia_commons|image") && value.matches("(?i:File):.*")) {
             OsmUtils.splitMultipleValues(value).forEach(i -> linkConsumer.acceptLink(
-                    tr("View image on Wikimedia Commons"), "https://commons.wikimedia.org/wiki/" + i, imageResource.get()));
+                    tr("View image on Wikimedia Commons"), getWikimediaCommonsUrl(i), imageResource.get()));
         }
         if (key.matches("wikimedia_commons|image") && value.matches("(?i:Category):.*")) {
             OsmUtils.splitMultipleValues(value).forEach(i -> linkConsumer.acceptLink(
-                    tr("View category on Wikimedia Commons"), "https://commons.wikimedia.org/wiki/" + i, imageResource.get()));
+                    tr("View category on Wikimedia Commons"), getWikimediaCommonsUrl(i), imageResource.get()));
         }
 
         wikidataRules.getValues(key).forEach(urlFormatter -> {
@@ -213,6 +214,10 @@ public final class Tag2Link {
             final String url = urlFormatter.replace("$1", formattedValue);
             linkConsumer.acceptLink(getLinkName(url, key), url, imageResource.get());
         });
+    }
+
+    private static String getWikimediaCommonsUrl(String i) {
+        return "https://commons.wikimedia.org/wiki/" + new PercentEscaper(PercentEscaper.SAFEPATHCHARS_URLENCODER, false).escape(i);
     }
 
     private static String getLinkName(String url, String fallback) {
