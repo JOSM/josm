@@ -213,7 +213,7 @@ public class ImageResource {
             imgCache.put(cacheKey, img);
         }
 
-        if (!multiResolution)
+        if (!multiResolution || svg == null)
             return new ImageIcon(img);
         else {
             try {
