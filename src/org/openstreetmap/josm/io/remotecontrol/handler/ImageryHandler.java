@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.StructUtils;
@@ -64,12 +63,10 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     protected ImageryInfo buildImageryInfo() {
         String id = args.get("id");
         if (id != null) {
-            Optional<ImageryInfo> byId = ImageryLayerInfo.instance.getLayers().stream()
+            return ImageryLayerInfo.instance.getAllDefaultLayers().stream()
                     .filter(l -> Objects.equals(l.getId(), id))
-                    .findFirst();
-            if (byId.isPresent()) {
-                return byId.get();
-            }
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find layer for id " + id));
         }
         args.computeIfAbsent("type", ignore -> ImageryType.WMS.getDefault().getTypeString());
         args.computeIfAbsent("name", ignore -> args.getOrDefault("title", tr("Remote imagery")));
