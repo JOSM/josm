@@ -252,6 +252,7 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
         if (toggleable || focusOnDefaultButton) {
             requestFocusToDefaultButton();
         }
+        applyComponentOrientation(MainApplication.getMainFrame().getComponentOrientation());
         setVisible(true);
         toggleSaveState();
         return this;
