@@ -1,10 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
+import java.awt.Polygon;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.AbstractList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -12,9 +11,9 @@ import java.util.stream.Stream;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.Geometry;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Data class to store the outline for background imagery coverage.
@@ -24,7 +23,7 @@ import org.openstreetmap.josm.tools.Geometry;
  */
 public class Shape {
 
-    private final List<Coordinate> coords = new ArrayList<>();
+    private final Polygon coords;
 
     public Shape(String asString, String separator) {
         CheckParameterUtil.ensureParameterNotNull(asString, "asString");
@@ -32,6 +31,8 @@ public class Shape {
         if (components.length % 2 != 0)
             throw new IllegalArgumentException(MessageFormat.format("Even number of doubles expected in string, got {0}: {1}",
                     components.length, asString));
+        int size = components.length / 2;
+        this.coords = new Polygon(new int[size], new int[size], 0);
         for (int i = 0; i < components.length; i += 2) {
             addPoint(components[i], components[i+1]);
         }
@@ -41,6 +42,7 @@ public class Shape {
      * Constructs a new empty {@code Shape}.
      */
     public Shape() {
+        coords = new Polygon();
         // shape contents can be set later with addPoint()
     }
 
@@ -50,7 +52,7 @@ public class Shape {
      * @return The string encoded shape
      */
     public String encodeAsString(String separator) {
-        return coords.stream()
+        return getPoints().stream()
                 .flatMap(c -> Stream.of(c.getLat(), c.getLon()))
                 .map(String::valueOf)
                 .collect(Collectors.joining(separator));
@@ -68,16 +70,25 @@ public class Shape {
     }
 
     public List<Coordinate> getPoints() {
-        return coords;
+        return new AbstractList<Coordinate>() {
+            @Override
+            public Coordinate get(int index) {
+                double lat = coords.ypoints[index] / LatLon.MAX_SERVER_INV_PRECISION;
+                double lon = coords.xpoints[index] / LatLon.MAX_SERVER_INV_PRECISION;
+                return new Coordinate(lat, lon);
+            }
+
+            @Override
+            public int size() {
+                return coords.npoints;
+            }
+        };
     }
 
     public boolean contains(LatLon latlon) {
-        if (latlon == null)
-            return false;
-        List<Node> nodes = coords.stream()
-                .map(c -> new Node(new LatLon(c.getLat(), c.getLon())))
-                .collect(Collectors.toList());
-        return Geometry.nodeInsidePolygon(new Node(latlon), nodes);
+        return coords.contains(
+                latlon.getX() * LatLon.MAX_SERVER_INV_PRECISION,
+                latlon.getY() * LatLon.MAX_SERVER_INV_PRECISION);
     }
 
     public void addPoint(String sLat, String sLon) {
@@ -102,12 +113,14 @@ public class Shape {
             throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", sLon), e);
         }
 
-        coords.add(new Coordinate(LatLon.roundToOsmPrecision(lat), LatLon.roundToOsmPrecision(lon)));
+        coords.addPoint(
+                (int) (lon * LatLon.MAX_SERVER_INV_PRECISION),
+                (int) (lat * LatLon.MAX_SERVER_INV_PRECISION));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coords);
+        return Objects.hash(getPoints());
     }
 
     @Override
@@ -115,6 +128,11 @@ public class Shape {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Shape shape = (Shape) obj;
-        return Objects.equals(coords, shape.coords);
+        return Objects.equals(getPoints(), shape.getPoints());
+    }
+
+    @Override
+    public String toString() {
+        return "Shape{coords=" + getPoints() + '}';
     }
 }
