@@ -1116,7 +1116,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
     @Override
     public void addGui(JPanel testPanel) {
         GBC a = GBC.eol();
-        a.anchor = GridBagConstraints.EAST;
+        a.anchor = GridBagConstraints.LINE_END;
 
         testPanel.add(new JLabel(name+" :"), GBC.eol().insets(3, 0, 0, 0));
 

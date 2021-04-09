@@ -261,7 +261,7 @@ public class Test implements OsmPrimitiveVisitor {
         testPanel.add(checkEnabled, GBC.std());
 
         GBC a = GBC.eol();
-        a.anchor = GridBagConstraints.EAST;
+        a.anchor = GridBagConstraints.LINE_END;
         checkBeforeUpload = new JCheckBox();
         checkBeforeUpload.setSelected(testBeforeUpload);
         testPanel.add(checkBeforeUpload, a);

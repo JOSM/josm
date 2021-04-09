@@ -27,7 +27,7 @@ public final class GBC extends GridBagConstraints {
      */
     public static GBC std() {
         GBC c = new GBC();
-        c.anchor = WEST;
+        c.anchor = GridBagConstraints.LINE_START;
         return c;
     }
 

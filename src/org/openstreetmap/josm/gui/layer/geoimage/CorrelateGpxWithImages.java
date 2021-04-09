@@ -618,7 +618,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.gridwidth = gc.gridheight = 1;
             gc.weightx = gc.weighty = 0.0;
             gc.fill = GridBagConstraints.NONE;
-            gc.anchor = GridBagConstraints.WEST;
+            gc.anchor = GridBagConstraints.LINE_START;
             panelTf.add(new JLabel(tr("Photo time (from exif):")), gc);
 
             lbExifTime = new JLabel();
@@ -633,7 +633,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.gridwidth = gc.gridheight = 1;
             gc.weightx = gc.weighty = 0.0;
             gc.fill = GridBagConstraints.NONE;
-            gc.anchor = GridBagConstraints.WEST;
+            gc.anchor = GridBagConstraints.LINE_START;
             panelTf.add(new JLabel(tr("Gps time (read from the above photo): ")), gc);
 
             tfGpsTime = new JosmTextField(12);
@@ -653,7 +653,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             gc.gridwidth = gc.gridheight = 1;
             gc.weightx = gc.weighty = 0.0;
             gc.fill = GridBagConstraints.NONE;
-            gc.anchor = GridBagConstraints.WEST;
+            gc.anchor = GridBagConstraints.LINE_START;
             panelTf.add(new JLabel(tr("Photo taken in the timezone of: ")), gc);
 
             ckDst = new JCheckBox(tr("Use daylight saving time (where applicable)"), Config.getPref().getBoolean("geoimage.timezoneid.dst"));

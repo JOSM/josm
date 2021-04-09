@@ -78,7 +78,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         JPanel pnl = new AutoSizePanel();
         GridBagConstraints gc = new GridBagConstraints();
 
-        gc.anchor = GridBagConstraints.WEST;
+        gc.anchor = GridBagConstraints.LINE_START;
         gc.insets = new Insets(5, 5, 0, 0);
         gc.fill = HORIZONTAL;
         gc.weightx = 0.0;
@@ -148,7 +148,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     protected final JPanel buildSocksProxyConfigurationPanel() {
         JPanel pnl = new AutoSizePanel();
         GridBagConstraints gc = new GridBagConstraints();
-        gc.anchor = GridBagConstraints.WEST;
+        gc.anchor = GridBagConstraints.LINE_START;
         gc.insets = new Insets(5, 5, 0, 0);
         gc.fill = HORIZONTAL;
         gc.weightx = 0.0;

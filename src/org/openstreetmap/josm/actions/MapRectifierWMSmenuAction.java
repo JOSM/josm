@@ -150,9 +150,9 @@ public class MapRectifierWMSmenuAction extends JosmAction {
             group.add(serviceBtn);
             if (!s.url.isEmpty()) {
                 panel.add(serviceBtn, GBC.std());
-                panel.add(new UrlLabel(s.url, tr("Visit Homepage")), GBC.eol().anchor(GridBagConstraints.EAST));
+                panel.add(new UrlLabel(s.url, tr("Visit Homepage")), GBC.eol().anchor(GridBagConstraints.LINE_END));
             } else {
-                panel.add(serviceBtn, GBC.eol().anchor(GridBagConstraints.WEST));
+                panel.add(serviceBtn, GBC.eol().anchor(GridBagConstraints.LINE_START));
             }
         }
 
