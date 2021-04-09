@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -14,6 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -72,6 +74,15 @@ public class MainFrame extends JFrame {
         this.geometry = geometry;
         this.panel = new MainPanel(MainApplication.getLayerManager());
         setContentPane(new JPanel(new BorderLayout()));
+        setComponentOrientation();
+    }
+
+    private void setComponentOrientation() {
+        ComponentOrientation orientation = ComponentOrientation.getOrientation(Locale.getDefault());
+        if (orientation == ComponentOrientation.RIGHT_TO_LEFT) {
+            Logging.info(tr("Setting component orientation to right-to-left"));
+        }
+        applyComponentOrientation(orientation);
     }
 
     /**
