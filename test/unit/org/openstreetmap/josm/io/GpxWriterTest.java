@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -72,7 +71,7 @@ public class GpxWriterTest {
     void testTicket16550() throws IOException {
         // Checks that time stored as date is correctly written into XML timestamp
         testSingleWaypoint(
-                w -> w.put(GpxConstants.PT_TIME, Date.from(LocalDate.of(2018, Month.AUGUST, 2).atStartOfDay(ZoneOffset.UTC).toInstant())),
+                w -> w.put(GpxConstants.PT_TIME, LocalDate.of(2018, Month.AUGUST, 2).atStartOfDay(ZoneOffset.UTC).toInstant()),
                 "    <time>2018-08-02T00:00:00Z</time>\n");
     }
 
