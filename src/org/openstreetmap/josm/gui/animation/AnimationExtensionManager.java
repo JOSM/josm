@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.animation;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 
@@ -42,6 +43,6 @@ public final class AnimationExtensionManager {
     }
 
     private static boolean isChristmas() {
-        return LocalDate.now().getDayOfYear() > 350;
+        return LocalDate.now(ZoneId.systemDefault()).getDayOfYear() > 350;
     }
 }
