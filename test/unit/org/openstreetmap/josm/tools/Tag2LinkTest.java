@@ -122,4 +122,17 @@ class Tag2LinkTest {
                 "View Wikidata item // https://www.wikidata.org/wiki/Q756988");
     }
 
+    /**
+     * Unit test of function {@link Tag2Link#getLinksForTag}.
+     *
+     * Non-regression test for https://josm.openstreetmap.de/ticket/19754#comment:9
+     */
+    @Test
+    void testMultipleSources() {
+        Tag2Link.getLinksForTag("source", "https://foo.com/; https://bar.com/; https://baz.com/", this::addLink);
+        checkLinks("Open foo.com // https://foo.com/",
+                "Open bar.com // https://bar.com/",
+                "Open baz.com // https://baz.com/");
+    }
+
 }

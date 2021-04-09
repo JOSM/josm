@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -159,22 +160,27 @@ public final class Tag2Link {
         }
 
         // Common
-        final String validURL = value.startsWith("http:") || value.startsWith("https:")
-                ? value
-                : value.startsWith("www.")
-                ? "http://" + value
-                : null;
-        if (key.matches("^(.+[:_])?website([:_].+)?$") && validURL != null) {
-            linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get());
+        final List<String> validURLs = value.startsWith("http:") || value.startsWith("https:") || value.startsWith("www.")
+                ? OsmUtils.splitMultipleValues(value)
+                .map(v -> v.startsWith("http:") || v.startsWith("https:")
+                        ? v
+                        : v.startsWith("www.")
+                        ? "http://" + v
+                        : null)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList())
+                : Collections.emptyList();
+        if (key.matches("^(.+[:_])?website([:_].+)?$") && !validURLs.isEmpty()) {
+            validURLs.forEach(validURL -> linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get()));
         }
-        if (key.matches("^(.+[:_])?source([:_].+)?$") && validURL != null) {
-            linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get());
+        if (key.matches("^(.+[:_])?source([:_].+)?$") && !validURLs.isEmpty()) {
+            validURLs.forEach(validURL -> linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get()));
         }
-        if (key.matches("^(.+[:_])?url([:_].+)?$") && validURL != null) {
-            linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get());
+        if (key.matches("^(.+[:_])?url([:_].+)?$") && !validURLs.isEmpty()) {
+            validURLs.forEach(validURL -> linkConsumer.acceptLink(getLinkName(validURL, key), validURL, imageResource.get()));
         }
-        if (key.matches("image") && validURL != null) {
-            linkConsumer.acceptLink(tr("View image"), validURL, imageResource.get());
+        if (key.matches("image") && !validURLs.isEmpty()) {
+            validURLs.forEach(validURL -> linkConsumer.acceptLink(tr("View image"), validURL, imageResource.get()));
         }
 
         // Wikimedia
