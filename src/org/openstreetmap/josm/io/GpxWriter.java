@@ -36,7 +36,6 @@ import org.openstreetmap.josm.data.gpx.IWithAttributes;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Writes GPX files from GPX data or OSM data.
