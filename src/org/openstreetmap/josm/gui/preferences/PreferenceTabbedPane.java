@@ -462,7 +462,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
      * file, otherwise no change of the file happens.
      */
     public PreferenceTabbedPane() {
-        super(SwingConstants.LEADING, JTabbedPane.SCROLL_TAB_LAYOUT);
+        super(SwingConstants.LEFT, JTabbedPane.SCROLL_TAB_LAYOUT);
         super.addMouseWheelListener(new WheelListener(this));
         ExpertToggleAction.addExpertModeChangeListener(this);
     }
