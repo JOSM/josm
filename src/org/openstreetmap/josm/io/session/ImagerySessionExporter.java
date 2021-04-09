@@ -68,7 +68,7 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
     public Component getExportPanel() {
         final JPanel p = new JPanel(new GridBagLayout());
         export.setSelected(true);
-        final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
+        final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEADING);
         lbl.setToolTipText(layer.getToolTipText());
         lbl.setLabelFor(export);
         p.add(export, GBC.std());

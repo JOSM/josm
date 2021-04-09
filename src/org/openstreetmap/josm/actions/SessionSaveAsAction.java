@@ -270,7 +270,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
             JPanel p = new JPanel(new GridBagLayout());
             JCheckBox include = new JCheckBox();
             include.setEnabled(false);
-            JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
+            JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEADING);
             lbl.setToolTipText(tr("No exporter for this layer"));
             lbl.setLabelFor(include);
             lbl.setEnabled(false);

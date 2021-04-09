@@ -48,7 +48,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         String text = member == null ? "" : member.getRole();
         setText(text);
         setToolTipText(text);
-        setHorizontalAlignment(LEFT);
+        setHorizontalAlignment(LEADING);
         renderIcon(null);
     }
 
@@ -65,7 +65,7 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         }
         setText(text);
         setToolTipText(text);
-        setHorizontalAlignment(LEFT);
+        setHorizontalAlignment(LEADING);
         renderIcon((RelationMemberData) diffItem.value);
     }
 

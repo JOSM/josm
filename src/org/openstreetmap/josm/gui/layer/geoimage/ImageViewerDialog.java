@@ -327,7 +327,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                                       "Delete the {0} files from disk?", size, size)
                                 + "<p>" + trn("The image file will be permanently lost!",
                                               "The images files will be permanently lost!", size) + "</h3></html>",
-                                ImageProvider.get("dialogs/geoimage/deletefromdisk"), SwingConstants.LEFT))
+                                ImageProvider.get("dialogs/geoimage/deletefromdisk"), SwingConstants.LEADING))
                         .toggleEnable("geoimage.deleteimagefromdisk")
                         .setCancelButton(1)
                         .setDefaultButton(2)

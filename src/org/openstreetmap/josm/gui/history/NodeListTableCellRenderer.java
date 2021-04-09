@@ -56,7 +56,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
             setIcon(null);
         }
         setText(text);
-        setHorizontalAlignment(LEFT);
+        setHorizontalAlignment(LEADING);
     }
 
     // Warning: The model pads with null-rows to match the size of the opposite table. 'value' could be null

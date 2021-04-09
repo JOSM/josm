@@ -134,14 +134,14 @@ public class PurgeAction extends JosmAction {
                 tr("This operation makes JOSM forget the selected objects.<br> " +
                         "They will be removed from the layer, but <i>not</i> deleted<br> " +
                         "on the server when uploading.")+"</html>",
-                        ImageProvider.get("purge"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
+                        ImageProvider.get("purge"), JLabel.LEADING), GBC.eol().fill(GBC.HORIZONTAL));
 
         if (!toPurgeAdditionally.isEmpty()) {
             pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
             pnl.add(new JLabel("<html>"+
                     tr("The following dependent objects will be purged<br> " +
                             "in addition to the selected objects:")+"</html>",
-                            ImageProvider.get("warning-small"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
+                            ImageProvider.get("warning-small"), JLabel.LEADING), GBC.eol().fill(GBC.HORIZONTAL));
 
             toPurgeAdditionally.sort((o1, o2) -> {
                 int type = o2.getType().compareTo(o1.getType());
@@ -176,7 +176,7 @@ public class PurgeAction extends JosmAction {
             pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
             pnl.add(new JLabel("<html>"+tr("Some of the objects are modified.<br> " +
                     "Proceed, if these changes should be discarded."+"</html>"),
-                    ImageProvider.get("warning-small"), JLabel.LEFT),
+                    ImageProvider.get("warning-small"), JLabel.LEADING),
                     GBC.eol().fill(GBC.HORIZONTAL));
         }
 

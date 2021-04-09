@@ -107,7 +107,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 final JLabel primitiveLabel = new JLabel(
                         primitive.getDisplayName(DefaultNameFormatter.getInstance()) + ':',
                         ImageProvider.get(primitive.getDisplayType()),
-                        JLabel.LEFT
+                        JLabel.LEADING
                 );
                 p.add(primitiveLabel, GBC.eol());
 
@@ -133,7 +133,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 final JLabel primitiveLabel = new JLabel(
                         primitive.getDisplayName(DefaultNameFormatter.getInstance()),
                         ImageProvider.get(primitive.getDisplayType()),
-                        JLabel.LEFT
+                        JLabel.LEADING
                 );
                 p.add(primitiveLabel, GBC.eol());
                 rolesLabel.setLabelFor(primitiveLabel);

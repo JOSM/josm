@@ -235,7 +235,7 @@ public class PrefJPanel extends JPanel {
         shortcutEditPane.add(cbShift);
         shortcutEditPane.add(cbDisable);
         shortcutEditPane.add(cbCtrl);
-        shortcutEditPane.add(new JLabel(tr("Key:"), SwingConstants.LEFT));
+        shortcutEditPane.add(new JLabel(tr("Key:"), SwingConstants.LEADING));
         shortcutEditPane.add(cbAlt);
         shortcutEditPane.add(tfKey);
         shortcutEditPane.add(cbMeta);

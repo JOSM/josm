@@ -338,7 +338,7 @@ public class VersionTable extends JTable implements ChangeListener, Destroyable 
         }
 
         AlignedRenderer() {
-            this(SwingConstants.LEFT);
+            this(SwingConstants.LEADING);
         }
 
         @Override

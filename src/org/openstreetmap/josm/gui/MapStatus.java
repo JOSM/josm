@@ -362,7 +362,7 @@ public final class MapStatus extends JPanel implements
                                         null,
                                         JLabel.HORIZONTAL
                                 );
-                        lbl.setHorizontalAlignment(JLabel.LEFT);
+                        lbl.setHorizontalAlignment(JLabel.LEADING);
                         c.add(lbl, GBC.eol().insets(2, 0, 2, 0));
 
                         // Only cycle if the mouse has not been moved and the middle mouse button has been pressed at least
@@ -661,7 +661,7 @@ public final class MapStatus extends JPanel implements
             popupSetLabelColors(l, osm);
             l.setFont(l.getFont().deriveFont(Font.PLAIN));
             l.setVerticalTextPosition(JLabel.TOP);
-            l.setHorizontalAlignment(JLabel.LEFT);
+            l.setHorizontalAlignment(JLabel.LEADING);
             l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             l.addMouseListener(new MouseAdapter() {
                 @Override

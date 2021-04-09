@@ -95,7 +95,7 @@ public abstract class GenericSessionExporter<T extends Layer> extends AbstractSe
         final JPanel p = new JPanel(new GridBagLayout());
         JPanel topRow = new JPanel(new GridBagLayout());
         export.setSelected(true);
-        final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEFT);
+        final JLabel lbl = new JLabel(layer.getName(), layer.getIcon(), SwingConstants.LEADING);
         lbl.setToolTipText(layer.getToolTipText());
         lbl.setLabelFor(export);
         JLabel lblData = new JLabel(tr("Data:"));

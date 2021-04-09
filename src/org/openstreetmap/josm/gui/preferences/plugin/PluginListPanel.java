@@ -133,7 +133,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             JLabel lblPlugin = new JLabel(
                     pluginText,
                     pi.getScaledIcon(),
-                    SwingConstants.LEFT);
+                    SwingConstants.LEADING);
             lblPlugin.addMouseListener(new PluginCheckBoxMouseAdapter(cbPlugin));
 
             gbc.gridx = 0;
