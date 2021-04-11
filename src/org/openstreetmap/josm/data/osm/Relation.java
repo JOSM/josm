@@ -440,18 +440,21 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
 
     @Override
     public BBox getBBox() {
-        if (getDataSet() != null && bbox != null)
-            return new BBox(bbox); // use cached value
+        if (getDataSet() != null && bbox != null) {
+            return this.bbox; // use cached immutable value
+        }
 
         BBox box = new BBox();
         addToBBox(box, new HashSet<PrimitiveId>());
-        if (getDataSet() != null)
-            setBBox(box); // set cache
-        return new BBox(box);
+        if (getDataSet() == null) {
+            return box;
+        }
+        setBBox(box); // set cached immutable value
+        return this.bbox;
     }
 
     private void setBBox(BBox bbox) {
-        this.bbox = bbox;
+        this.bbox = bbox == null ? null : bbox.toImmutable();
     }
 
     @Override

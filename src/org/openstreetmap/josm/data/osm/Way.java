@@ -585,9 +585,9 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         if (getDataSet() == null)
             return new BBox(this);
         if (bbox == null) {
-            bbox = new BBox(this);
+            setBBox(new BBox(this));
         }
-        return new BBox(bbox);
+        return bbox;
     }
 
     @Override
@@ -595,9 +595,13 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         box.add(getBBox());
     }
 
+    private void setBBox(BBox bbox) {
+        this.bbox = bbox == null ? null : bbox.toImmutable();
+    }
+
     @Override
     public void updatePosition() {
-        bbox = new BBox(this);
+        setBBox(new BBox(this));
         clearCachedStyle();
     }
 

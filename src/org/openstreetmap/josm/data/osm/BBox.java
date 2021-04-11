@@ -147,10 +147,7 @@ public class BBox implements IBounds {
      */
     public final void add(double x, double y) {
         if (!Double.isNaN(x) && !Double.isNaN(y)) {
-            xmin = Math.min(xmin, x);
-            xmax = Math.max(xmax, x);
-            ymin = Math.min(ymin, y);
-            ymax = Math.max(ymax, y);
+            set(Math.min(xmin, x), Math.max(xmax, x), Math.min(ymin, y), Math.max(ymax, y));
         }
     }
 
@@ -160,11 +157,15 @@ public class BBox implements IBounds {
      */
     public final void add(BBox other) {
         if (other.isValid()) {
-            xmin = Math.min(xmin, other.xmin);
-            xmax = Math.max(xmax, other.xmax);
-            ymin = Math.min(ymin, other.ymin);
-            ymax = Math.max(ymax, other.ymax);
+            set(Math.min(xmin, other.xmin), Math.max(xmax, other.xmax), Math.min(ymin, other.ymin), Math.max(ymax, other.ymax));
         }
+    }
+
+    protected void set(double xmin, double xmax, double ymin, double ymax) {
+        this.xmin = xmin;
+        this.xmax = xmax;
+        this.ymin = ymin;
+        this.ymax = ymax;
     }
 
     /**
@@ -370,14 +371,14 @@ public class BBox implements IBounds {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(xmin, xmax, ymin, ymax);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof BBox)) return false;
         BBox b = (BBox) o;
         return Double.compare(b.xmax, xmax) == 0 && Double.compare(b.ymax, ymax) == 0
             && Double.compare(b.xmin, xmin) == 0 && Double.compare(b.ymin, ymin) == 0;
@@ -449,5 +450,30 @@ public class BBox implements IBounds {
                 LatLon.cDdFormatter.format(ymin),
                 LatLon.cDdFormatter.format(xmax),
                 LatLon.cDdFormatter.format(ymax));
+    }
+
+    /**
+     * Returns an immutable version of this bbox, i.e., modifying calls throw an {@link UnsupportedOperationException}.
+     * @return an immutable version of this bbox
+     */
+    BBox toImmutable() {
+        return new Immutable(this);
+    }
+
+    private static class Immutable extends BBox {
+
+        Immutable(BBox copy) {
+            super(copy);
+        }
+
+        @Override
+        protected void set(double xmin, double xmax, double ymin, double ymax) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        BBox toImmutable() {
+            return this;
+        }
     }
 }

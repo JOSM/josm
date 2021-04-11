@@ -153,11 +153,10 @@ abstract class UploadTextComponentValidator extends AbstractTextComponentValidat
         void computeArea(Collection<? extends IPrimitive> primitives) {
             this.area = primitives.stream()
                     .map(IPrimitive::getBBox)
-                    .reduce((b1, b2) -> {
+                    .reduce(new BBox(), (b1, b2) -> {
                         b1.add(b2);
                         return b1;
-                    }).map(BBox::area)
-                    .orElse(Double.NaN);
+                    }).area();
             validate();
         }
 

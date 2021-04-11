@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -33,9 +34,28 @@ class BBoxTest {
     @Test
     void testEqualsContract() {
         TestUtils.assumeWorkingEqualsVerifier();
-        EqualsVerifier.forClass(BBox.class).usingGetClass()
+        EqualsVerifier.forClass(BBox.class)
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
+    }
+
+    /**
+     * Unit test of {@link BBox#equals} method.
+     */
+    @Test
+    void testEquals() {
+        BBox box = new BBox(1, 2, 3, 4);
+        assertEquals(box, box);
+        assertEquals(box, new BBox(box));
+        assertEquals(box, box.toImmutable());
+    }
+
+    /**
+     * Unit test of {@link BBox#toImmutable} method.
+     */
+    @Test
+    void testToImmutable() {
+        assertThrows(UnsupportedOperationException.class, () -> new BBox(1, 2, 3, 4).toImmutable().add(5, 6));
     }
 
     /**

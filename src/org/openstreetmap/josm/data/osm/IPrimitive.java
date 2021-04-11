@@ -465,6 +465,7 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
 
     /**
      * Fetches the bounding box of the primitive.
+     * Since 17752, the returned bounding box might be immutable, i.e., modifying calls throw an {@link UnsupportedOperationException}.
      * @return Bounding box of the object
      * @since 13764
      */
