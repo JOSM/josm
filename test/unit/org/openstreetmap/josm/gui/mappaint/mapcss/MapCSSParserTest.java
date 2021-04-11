@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -116,6 +118,22 @@ class MapCSSParserTest {
         MultiCascade mc3 = new MultiCascade();
         css.apply(mc3, OsmUtils.createPrimitive("way highway=footway"), 1, false);
         assertEquals(ColorHelper.html2color("#FF6644"), mc3.getCascade(null).get("color", null, Color.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "way[railway][bridge=yes]::bridges { z-index: 1; casting-width: 4; casing-color: #797979 }",
+            "way[bridge=yes]::bridges { set .bridge }\nway[railway].bridge::bridges { z-index: 1; casting-width: 4; casing-color: #797979 }",
+            // FIXME "way[bridge=yes] { set .bridge }\nway[railway].bridge::bridges { z-index: 1; casting-width: 4; casing-color: #797979 }",
+    })
+    void testLayerMatching(String cssString) {
+        MapCSSStyleSource css = new MapCSSStyleSource(cssString);
+        css.loadStyleSource();
+        assertTrue(css.getErrors().isEmpty());
+        MultiCascade mc1 = new MultiCascade();
+        css.apply(mc1, OsmUtils.createPrimitive("way railway=rail bridge=yes"), 1, false);
+        assertNull(mc1.getCascade(null).get("casing-color", null, String.class));
+        assertEquals("#797979", mc1.getCascade("bridges").get("casing-color", null, String.class));
     }
 
     @Test
