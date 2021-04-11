@@ -108,7 +108,7 @@ public class RepeatImageElement extends StyleElement {
         MapImage pattern = NodeElement.createIcon(env, REPEAT_IMAGE_KEYS);
         if (pattern == null)
             return null;
-        Cascade c = env.mc.getCascade(env.layer);
+        Cascade c = env.getCascade();
         float offset = c.get(REPEAT_IMAGE_OFFSET, 0f, Float.class);
         float spacing = c.get(REPEAT_IMAGE_SPACING, 0f, Float.class);
         float phase = -c.get(REPEAT_IMAGE_PHASE, 0f, Float.class);

@@ -483,7 +483,7 @@ public class TagInfoExtract {
             Optional<String> findUrl(boolean generateImage) {
                 this.osm = new Node(LatLon.ZERO);
                 Environment env = applyStylesheet(osm);
-                Cascade c = env.mc.getCascade("default");
+                Cascade c = env.getCascade("default");
                 Object image = c.get("icon-image");
                 if (image instanceof MapPaintStyles.IconReference && !((MapPaintStyles.IconReference) image).isDeprecatedIcon()) {
                     return Optional.of(options.findImageUrl(((MapPaintStyles.IconReference) image).iconName));

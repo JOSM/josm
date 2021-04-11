@@ -56,7 +56,7 @@ public class AreaIconElement extends StyleElement {
      * @return The area element or <code>null</code> if there is no icon.
      */
     public static AreaIconElement create(final Environment env) {
-        final Cascade c = env.mc.getCascade(env.layer);
+         final Cascade c = env.getCascade();
         MapImage iconImage = NodeElement.createIcon(env);
         if (iconImage != null) {
             RotationAngle rotationAngle = NodeElement.createRotationAngle(env);

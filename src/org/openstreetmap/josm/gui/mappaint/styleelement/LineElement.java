@@ -311,8 +311,8 @@ public class LineElement extends StyleElement {
     }
 
     private static LineElement createImpl(Environment env, LineType type) {
-        Cascade c = env.mc.getCascade(env.layer);
-        Cascade cDef = env.mc.getCascade("default");
+        Cascade c = env.getCascade();
+        Cascade cDef = env.getCascade("default");
         Float width = computeWidth(type, c, cDef);
         if (width == null)
             return null;

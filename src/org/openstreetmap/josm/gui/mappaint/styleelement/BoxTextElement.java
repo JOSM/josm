@@ -215,7 +215,7 @@ public class BoxTextElement extends StyleElement {
         // repaint. This way, one BoxTextElement object can be used by multiple primitives (to save memory).
         if (text.labelCompositionStrategy.compose(env.osm) == null) return null;
 
-        Cascade c = env.mc.getCascade(env.layer);
+        Cascade c = env.getCascade();
 
         HorizontalTextAlignment hAlign;
         switch (c.get(TEXT_ANCHOR_HORIZONTAL, Keyword.RIGHT, Keyword.class).val) {

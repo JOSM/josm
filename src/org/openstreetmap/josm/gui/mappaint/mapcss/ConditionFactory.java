@@ -689,7 +689,7 @@ public final class ConditionFactory {
 
         @Override
         public boolean applies(Environment env) {
-            Cascade cascade = env.getCascade(env.layer);
+            Cascade cascade = env.getCascade();
             return cascade != null && (not ^ cascade.containsKey(id));
         }
 
@@ -865,7 +865,7 @@ public final class ConditionFactory {
 
         static boolean selected(Environment e) { // NO_UCD (unused code)
             if (e.mc != null) {
-                e.mc.getCascade(e.layer).setDefaultSelectedHandling(false);
+                e.getCascade().setDefaultSelectedHandling(false);
             }
             return e.osm.isSelected();
         }

@@ -137,7 +137,7 @@ public class TextLabel implements StyleKeys {
      */
     public static TextLabel create(Environment env, Color defaultTextColor, boolean defaultAnnotate) {
         CheckParameterUtil.ensureParameterNotNull(defaultTextColor);
-        Cascade c = env.mc.getCascade(env.layer);
+        Cascade c = env.getCascade();
 
         LabelCompositionStrategy strategy = buildLabelCompositionStrategy(c, defaultAnnotate);
         if (strategy == null) return null;

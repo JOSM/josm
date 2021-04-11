@@ -76,7 +76,7 @@ public class AreaElement extends StyleElement {
      * @return The area element or <code>null</code> if the area should not be filled.
      */
     public static AreaElement create(final Environment env) {
-        final Cascade c = env.mc.getCascade(env.layer);
+        final Cascade c = env.getCascade();
         MapImage fillImage = null;
         Color color;
 

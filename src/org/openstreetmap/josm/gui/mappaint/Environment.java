@@ -313,6 +313,14 @@ public class Environment {
     }
 
     /**
+     * Gets the current cascade for the current layer of this environment
+     * @return The cascade
+     */
+    public Cascade getCascade() {
+        return getCascade(null);
+    }
+
+    /**
      * Gets the current cascade for a given layer
      * @param layer The layer to use, <code>null</code> to use the layer of the {@link Environment}
      * @return The cascade

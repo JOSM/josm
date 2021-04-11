@@ -56,7 +56,7 @@ public class TextElement extends StyleElement {
         TextLabel text = TextLabel.create(env, PaintColors.TEXT.get(), false);
         if (text == null)
             return null;
-        final Cascade c = env.mc.getCascade(env.layer);
+        final Cascade c = env.getCascade();
 
         Keyword positionKeyword = c.get(AreaElement.TEXT_POSITION, null, Keyword.class);
         PositionForAreaStrategy position = PositionForAreaStrategy.forKeyword(positionKeyword);
@@ -73,7 +73,7 @@ public class TextElement extends StyleElement {
      * @return The text element or <code>null</code> if it could not be created.
      */
     public static TextElement createForContent(Environment env) {
-        final Cascade c = env.mc.getCascade(env.layer);
+        final Cascade c = env.getCascade();
         Keyword positionKeyword = c.get(AreaElement.TEXT_POSITION, null, Keyword.class);
         if (positionKeyword != null) {
             return null; // No need for this hack.

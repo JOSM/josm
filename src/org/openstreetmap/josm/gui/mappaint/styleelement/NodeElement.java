@@ -75,7 +75,7 @@ public class NodeElement extends StyleElement {
         // have to allocate a node element style.
         if (!allowDefault && symbol == null && mapImage == null) return null;
 
-        Cascade c = env.mc.getCascade(env.layer);
+        Cascade c = env.getCascade();
         RotationAngle rotationAngle = createRotationAngle(env);
         return new NodeElement(c, mapImage, symbol, defaultMajorZindex, rotationAngle);
     }
@@ -101,7 +101,7 @@ public class NodeElement extends StyleElement {
     }
 
     private static RotationAngle createRotationAngle(Environment env, String key) {
-        Cascade c = env.mc.getCascade(env.layer);
+        Cascade c = env.getCascade();
 
         RotationAngle rotationAngle = RotationAngle.NO_ROTATION;
         final Float angle = c.get(key, null, Float.class, true);
@@ -144,13 +144,13 @@ public class NodeElement extends StyleElement {
         CheckParameterUtil.ensureParameterNotNull(env, "env");
         CheckParameterUtil.ensureParameterNotNull(keys, "keys");
 
-        Cascade c = env.mc.getCascade(env.layer);
+        Cascade c = env.getCascade();
 
         final IconReference iconRef = c.get(keys[ICON_IMAGE_IDX], null, IconReference.class, true);
         if (iconRef == null)
             return null;
 
-        Cascade cDef = env.mc.getCascade("default");
+        Cascade cDef = env.getCascade("default");
 
         Float widthOnDefault = cDef.get(keys[ICON_WIDTH_IDX], null, Float.class);
         if (widthOnDefault != null && widthOnDefault <= 0) {
@@ -195,7 +195,7 @@ public class NodeElement extends StyleElement {
      * @return The symbol.
      */
     private static Symbol createSymbol(Environment env) {
-        Cascade c = env.mc.getCascade(env.layer);
+        Cascade c = env.getCascade();
 
         Keyword shapeKW = c.get("symbol-shape", null, Keyword.class);
         if (shapeKW == null)
@@ -205,7 +205,7 @@ public class NodeElement extends StyleElement {
             return null;
         }
 
-        Cascade cDef = env.mc.getCascade("default");
+        Cascade cDef = env.getCascade("default");
         Float sizeOnDefault = cDef.get("symbol-size", null, Float.class);
         if (sizeOnDefault != null && sizeOnDefault <= 0) {
             sizeOnDefault = null;
