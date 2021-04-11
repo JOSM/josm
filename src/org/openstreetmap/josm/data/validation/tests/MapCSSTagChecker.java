@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -58,6 +59,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     private MapCSSStyleIndex indexData;
     private final Map<MapCSSRule, MapCSSTagCheckerAndRule> ruleToCheckMap = new HashMap<>();
     private static final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
+    private static final CachingProperty<Boolean> PREF_OTHER = ValidatorPrefHelper.PREF_OTHER.cached();
     static final boolean ALL_TESTS = true;
     static final boolean ONLY_SELECTED_TESTS = false;
 
@@ -238,7 +240,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
-        for (TestError e : getErrorsForPrimitive(p, ValidatorPrefHelper.PREF_OTHER.get())) {
+        for (TestError e : getErrorsForPrimitive(p, PREF_OTHER.get())) {
             addIfNotSimilar(e, errors);
         }
     }
