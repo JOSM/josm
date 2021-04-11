@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.imagery;
 
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -12,7 +13,7 @@ import org.openstreetmap.josm.tools.ImageProcessor;
  * @author Michael Zangl
  * @since 10547
  */
-public class ImageryFilterSettings {
+public class ImageryFilterSettings implements ImageProcessor {
 
     protected GammaImageProcessor gammaImageProcessor = new GammaImageProcessor();
     protected SharpenImageProcessor sharpenImageProcessor = new SharpenImageProcessor();
@@ -82,6 +83,14 @@ public class ImageryFilterSettings {
      */
     public List<ImageProcessor> getProcessors() {
         return Arrays.asList(colorfulnessImageProcessor, gammaImageProcessor, sharpenImageProcessor);
+    }
+
+    @Override
+    public BufferedImage process(BufferedImage image) {
+        for (ImageProcessor processor : getProcessors()) {
+            image = processor.process(image);
+        }
+        return image;
     }
 
     /**

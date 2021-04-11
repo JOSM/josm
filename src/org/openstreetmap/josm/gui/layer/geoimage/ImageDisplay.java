@@ -31,11 +31,14 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
+import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ExifReader;
+import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -44,13 +47,18 @@ import org.openstreetmap.josm.tools.Logging;
  *
  * Offers basic mouse interaction (zoom, drag) and on-screen text.
  */
-public class ImageDisplay extends JComponent implements Destroyable, PreferenceChangedListener {
+public class ImageDisplay extends JComponent implements Destroyable, PreferenceChangedListener, FilterChangeListener {
 
     /** The file that is currently displayed */
     private ImageEntry entry;
 
     /** The image currently displayed */
-    private transient Image image;
+    private transient BufferedImage image;
+
+    /**
+     * Process the image before it is being displayed
+     */
+    private final ImageProcessor imageProcessor;
 
     /** The image currently displayed */
     private boolean errorLoading;
@@ -294,7 +302,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
         @Override
         public void run() {
-            Image img;
+            BufferedImage img;
             try {
                 img = ImageIO.read(file);
 
@@ -689,11 +697,19 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      * Constructs a new {@code ImageDisplay}.
      */
     public ImageDisplay() {
+        this(image -> image);
+    }
+
+    public ImageDisplay(ImageProcessor imageProcessor) {
         addMouseListener(imgMouseListener);
         addMouseWheelListener(imgMouseListener);
         addMouseMotionListener(imgMouseListener);
         Config.getPref().addPreferenceChangeListener(this);
         preferenceChanged(null);
+        this.imageProcessor = imageProcessor;
+        if (imageProcessor instanceof ImageryFilterSettings) {
+            ((ImageryFilterSettings) imageProcessor).addFilterChangeListener(this);
+        }
     }
 
     @Override
@@ -702,6 +718,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         removeMouseWheelListener(imgMouseListener);
         removeMouseMotionListener(imgMouseListener);
         Config.getPref().removePreferenceChangeListener(this);
+        if (imageProcessor instanceof ImageryFilterSettings) {
+            ((ImageryFilterSettings) imageProcessor).removeFilterChangeListener(this);
+        }
     }
 
     /**
@@ -743,9 +762,14 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     }
 
     @Override
+    public void filterChanged() {
+        repaint();
+    }
+
+    @Override
     public void paintComponent(Graphics g) {
         ImageEntry entry;
-        Image image;
+        BufferedImage image;
         VisRect visibleRect;
         boolean errorLoading;
 
@@ -817,6 +841,10 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                     image = ImageProvider.toBufferedImage(image, r);
                     r.x = r.y = 0;
                 }
+            }
+
+            if (image != null) {
+                image = imageProcessor.process(image);
             }
 
             g.drawImage(image,

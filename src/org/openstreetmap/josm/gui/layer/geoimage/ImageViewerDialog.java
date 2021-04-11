@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
+import org.openstreetmap.josm.gui.dialogs.layer.LayerVisibilityAction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -53,6 +55,8 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public final class ImageViewerDialog extends ToggleDialog implements LayerChangeListener, ActiveLayerChangeListener, ImageDataUpdateListener {
 
+    private final ImageryFilterSettings imageryFilterSettings = new ImageryFilterSettings();
+
     private final ImageZoomAction imageZoomAction = new ImageZoomAction();
     private final ImageCenterViewAction imageCenterViewAction = new ImageCenterViewAction();
     private final ImageNextAction imageNextAction = new ImageNextAction();
@@ -63,8 +67,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private final ImageFirstAction imageFirstAction = new ImageFirstAction();
     private final ImageLastAction imageLastAction = new ImageLastAction();
     private final ImageCopyPathAction imageCopyPathAction = new ImageCopyPathAction();
+    private final LayerVisibilityAction visibilityAction = new LayerVisibilityAction(Collections::emptyList,
+            () -> Collections.singleton(imageryFilterSettings));
 
-    private final ImageDisplay imgDisplay = new ImageDisplay();
+    private final ImageDisplay imgDisplay = new ImageDisplay(imageryFilterSettings);
     private boolean centerView;
 
     // Only one instance of that class is present at one time
@@ -161,6 +167,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         buttons.add(btnDeleteFromDisk);
         buttons.add(Box.createRigidArea(new Dimension(7, 0)));
         buttons.add(btnCopyPath);
+        buttons.add(Box.createRigidArea(new Dimension(7, 0)));
+        buttons.add(new JButton(visibilityAction));
 
         JPanel bottomPane = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
