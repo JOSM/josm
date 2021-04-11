@@ -107,15 +107,15 @@ class MapCSSParserTest {
         assertTrue(css.getErrors().isEmpty());
         MultiCascade mc1 = new MultiCascade();
         css.apply(mc1, OsmUtils.createPrimitive("way highway=path"), 1, false);
-        assertEquals("green", mc1.getCascade("default").get("text-color", null, String.class));
-        assertEquals("brown", mc1.getCascade("default").get("color", null, String.class));
+        assertEquals("green", mc1.getCascade(null).get("text-color", null, String.class));
+        assertEquals("brown", mc1.getCascade(null).get("color", null, String.class));
         MultiCascade mc2 = new MultiCascade();
         css.apply(mc2, OsmUtils.createPrimitive("way highway=residential"), 1, false);
-        assertEquals("orange", mc2.getCascade("default").get("color", null, String.class));
-        assertNull(mc2.getCascade("default").get("text-color", null, String.class));
+        assertEquals("orange", mc2.getCascade(null).get("color", null, String.class));
+        assertNull(mc2.getCascade(null).get("text-color", null, String.class));
         MultiCascade mc3 = new MultiCascade();
         css.apply(mc3, OsmUtils.createPrimitive("way highway=footway"), 1, false);
-        assertEquals(ColorHelper.html2color("#FF6644"), mc3.getCascade("default").get("color", null, Color.class));
+        assertEquals(ColorHelper.html2color("#FF6644"), mc3.getCascade(null).get("color", null, Color.class));
     }
 
     @Test
@@ -349,13 +349,13 @@ class MapCSSParserTest {
         sheet.loadStyleSource();
         MultiCascade mc = new MultiCascade();
         sheet.apply(mc, OsmUtils.createPrimitive("way foo=bar"), 20, false);
-        assertEquals(Float.valueOf(5f), mc.getCascade(Environment.DEFAULT_LAYER).get("width"));
+        assertEquals(Float.valueOf(5f), mc.getCascade(null).get("width"));
         sheet.apply(mc, OsmUtils.createPrimitive("way keyA=true"), 20, false);
-        assertEquals(Float.valueOf(15f), mc.getCascade(Environment.DEFAULT_LAYER).get("width"));
+        assertEquals(Float.valueOf(15f), mc.getCascade(null).get("width"));
         sheet.apply(mc, OsmUtils.createPrimitive("way keyB=true"), 20, false);
-        assertEquals(Float.valueOf(15f), mc.getCascade(Environment.DEFAULT_LAYER).get("width"));
+        assertEquals(Float.valueOf(15f), mc.getCascade(null).get("width"));
         sheet.apply(mc, OsmUtils.createPrimitive("way keyA=true keyB=true"), 20, false);
-        assertEquals(Float.valueOf(15f), mc.getCascade(Environment.DEFAULT_LAYER).get("width"));
+        assertEquals(Float.valueOf(15f), mc.getCascade(null).get("width"));
     }
 
     @Test
@@ -365,17 +365,17 @@ class MapCSSParserTest {
         sheet.loadStyleSource();
         MultiCascade mc = new MultiCascade();
         sheet.apply(mc, OsmUtils.createPrimitive("way name=Foo"), 20, false);
-        assertEquals(" Foo", mc.getCascade(Environment.DEFAULT_LAYER).get("text"));
+        assertEquals(" Foo", mc.getCascade(null).get("text"));
         sheet.apply(mc, OsmUtils.createPrimitive("way rcn_ref=15"), 20, false);
-        assertEquals("15 ", mc.getCascade(Environment.DEFAULT_LAYER).get("text"));
+        assertEquals("15 ", mc.getCascade(null).get("text"));
         sheet.apply(mc, OsmUtils.createPrimitive("way rcn_ref=15 name=Foo"), 20, false);
-        assertEquals("15 Foo", mc.getCascade(Environment.DEFAULT_LAYER).get("text"));
+        assertEquals("15 Foo", mc.getCascade(null).get("text"));
 
         sheet = new MapCSSStyleSource("" +
                 "*[rcn_ref], *[name] {text: join(\" - \", tag(rcn_ref), tag(ref), tag(name)); }");
         sheet.loadStyleSource();
         sheet.apply(mc, OsmUtils.createPrimitive("way rcn_ref=15 ref=1.5 name=Foo"), 20, false);
-        assertEquals("15 - 1.5 - Foo", mc.getCascade(Environment.DEFAULT_LAYER).get("text"));
+        assertEquals("15 - 1.5 - Foo", mc.getCascade(null).get("text"));
     }
 
     @Test
@@ -383,7 +383,7 @@ class MapCSSParserTest {
         Environment e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         getParser("{color: testcolour1#88DD22}").declaration().instructions.get(0).execute(e);
         Color expected = new Color(0x88DD22);
-        assertEquals(expected, e.getCascade(Environment.DEFAULT_LAYER).get("color"));
+        assertEquals(expected, e.getCascade(null).get("color"));
     }
 
     @Test
@@ -391,7 +391,7 @@ class MapCSSParserTest {
         Environment e = new Environment(null, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         getParser("{color: testcolour2#12345678}").declaration().instructions.get(0).execute(e);
         Color expected = new Color(0x12, 0x34, 0x56, 0x78);
-        assertEquals(expected, e.getCascade(Environment.DEFAULT_LAYER).get("color"));
+        assertEquals(expected, e.getCascade(null).get("color"));
     }
 
     @Test
@@ -456,7 +456,7 @@ class MapCSSParserTest {
         Environment e = new Environment(n, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
-        assertEquals("x2;x10", e.getCascade(Environment.DEFAULT_LAYER).get("refs", null, String.class));
+        assertEquals("x2;x10", e.getCascade(null).get("refs", null, String.class));
     }
 
     @Test
@@ -471,14 +471,14 @@ class MapCSSParserTest {
         Environment e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
-        assertEquals(Functions.join(",", "Alpha", "Beta"), e.getCascade(Environment.DEFAULT_LAYER).get("sorted", null, String.class));
+        assertEquals(Functions.join(",", "Alpha", "Beta"), e.getCascade(null).get("sorted", null, String.class));
 
         source = new MapCSSStyleSource("way[ref] {sorted: join_list(\",\", sort_list(split(\";\", tag(\"ref\"))));}");
         source.loadStyleSource();
         e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
-        assertEquals(Functions.join(",", "A8", "A9"), e.getCascade(Environment.DEFAULT_LAYER).get("sorted", null, String.class));
+        assertEquals(Functions.join(",", "A8", "A9"), e.getCascade(null).get("sorted", null, String.class));
     }
 
     @Test
@@ -536,7 +536,7 @@ class MapCSSParserTest {
         e = new Environment(rel1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
-        assertEquals((Integer) 1, e.getCascade(Environment.DEFAULT_LAYER).get("roles", null, Integer.class));
+        assertEquals((Integer) 1, e.getCascade(null).get("roles", null, Integer.class));
     }
 
     @Test
@@ -588,13 +588,13 @@ class MapCSSParserTest {
         MultiCascade mc = new MultiCascade();
 
         sheet.apply(mc, OsmUtils.createPrimitive("way x=4 y=6 z=8 u=100"), 20, false);
-        assertEquals(Float.valueOf(4.0f), mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", Float.NaN, Float.class));
-        assertEquals(Float.valueOf(8.0f), mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", Float.NaN, Float.class));
+        assertEquals(Float.valueOf(4.0f), mc.getCascade(null).get("min_value", Float.NaN, Float.class));
+        assertEquals(Float.valueOf(8.0f), mc.getCascade(null).get("max_value", Float.NaN, Float.class));
 
         sheet.apply(mc, OsmUtils.createPrimitive("way x=4 y=6 widths=1;2;8;56;3;a"), 20, false);
-        assertEquals(Float.valueOf(4f), mc.getCascade(Environment.DEFAULT_LAYER).get("min_value", -777f, Float.class));
-        assertEquals(Float.valueOf(6f), mc.getCascade(Environment.DEFAULT_LAYER).get("max_value", -777f, Float.class));
-        assertEquals(Float.valueOf(56f), mc.getCascade(Environment.DEFAULT_LAYER).get("max_split", -777f, Float.class));
+        assertEquals(Float.valueOf(4f), mc.getCascade(null).get("min_value", -777f, Float.class));
+        assertEquals(Float.valueOf(6f), mc.getCascade(null).get("max_value", -777f, Float.class));
+        assertEquals(Float.valueOf(56f), mc.getCascade(null).get("max_split", -777f, Float.class));
     }
 
     /**
