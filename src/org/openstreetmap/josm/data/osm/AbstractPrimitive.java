@@ -802,6 +802,8 @@ public abstract class AbstractPrimitive implements IPrimitive {
                             "tiger:separated",
                             "tiger:tlid",
                             "tiger:upload_uuid",
+                            "import_uuid",
+                            "gnis:import_uuid",
                             "yh:LINE_NAME",
                             "yh:LINE_NUM",
                             "yh:STRUCTURE",
