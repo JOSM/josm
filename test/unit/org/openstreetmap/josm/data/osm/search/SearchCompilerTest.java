@@ -146,6 +146,22 @@ class SearchCompilerTest {
     }
 
     /**
+     * Search by case-sensitive regular expression.
+     * @throws SearchParseError if an error has been encountered while compiling
+     */
+    @Test
+    void testRegexpCaseSensitive() throws Exception {
+        SearchSetting searchSetting = new SearchSetting();
+        searchSetting.regexSearch = true;
+        searchSetting.text = "foo=\"^bar$\"";
+        assertTrue(SearchCompiler.compile(searchSetting).match(OsmUtils.createPrimitive("node foo=bar")));
+        assertTrue(SearchCompiler.compile(searchSetting).match(OsmUtils.createPrimitive("node foo=BAR")));
+        searchSetting.caseSensitive = true;
+        assertTrue(SearchCompiler.compile(searchSetting).match(OsmUtils.createPrimitive("node foo=bar")));
+        assertFalse(SearchCompiler.compile(searchSetting).match(OsmUtils.createPrimitive("node foo=BAR")));
+    }
+
+    /**
      * Search by comparison.
      * @throws SearchParseError if an error has been encountered while compiling
      */

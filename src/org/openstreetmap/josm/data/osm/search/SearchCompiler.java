@@ -897,11 +897,12 @@ public class SearchCompiler {
         /**
          * Constructs a new {@code ExactKeyValue}.
          * @param regexp regular expression
+         * @param caseSensitive {@code true} to perform a case-sensitive search
          * @param key key
          * @param value value
          * @throws SearchParseError if a parse error occurs
          */
-        public ExactKeyValue(boolean regexp, String key, String value) throws SearchParseError {
+        public ExactKeyValue(boolean regexp, boolean caseSensitive, String key, String value) throws SearchParseError {
             if ("".equals(key))
                 throw new SearchParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
             this.key = key;
@@ -937,12 +938,12 @@ public class SearchCompiler {
             }
 
             if (regexp && !key.isEmpty() && !"*".equals(key)) {
-                keyPattern = compilePattern(key, regexFlags(false));
+                keyPattern = compilePattern(key, regexFlags(caseSensitive));
             } else {
                 keyPattern = null;
             }
             if (regexp && !this.value.isEmpty() && !"*".equals(this.value)) {
-                valuePattern = compilePattern(this.value, regexFlags(false));
+                valuePattern = compilePattern(this.value, regexFlags(caseSensitive));
             } else {
                 valuePattern = null;
             }
@@ -2101,9 +2102,9 @@ public class SearchCompiler {
             // factor consists of key:value or key=value
             String key = tokenizer.getText();
             if (tokenizer.readIfEqual(Token.EQUALS)) {
-                return new ExactKeyValue(regexSearch, key, tokenizer.readTextOrNumber());
+                return new ExactKeyValue(regexSearch, caseSensitive, key, tokenizer.readTextOrNumber());
             } else if (tokenizer.readIfEqual(Token.TILDE)) {
-                return new ExactKeyValue(true, key, tokenizer.readTextOrNumber());
+                return new ExactKeyValue(true, caseSensitive, key, tokenizer.readTextOrNumber());
             } else if (tokenizer.readIfEqual(Token.LESS_THAN)) {
                 return new ValueComparison(key, tokenizer.readTextOrNumber(), -1);
             } else if (tokenizer.readIfEqual(Token.GREATER_THAN)) {
