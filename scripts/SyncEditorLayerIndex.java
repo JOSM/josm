@@ -1036,7 +1036,7 @@ public class SyncEditorLayerIndex {
                             for (int nump = 0; nump < ep.size() && !err; ++nump) {
                                 Coordinate ept = ep.get(nump);
                                 Coordinate jpt = jp.get(nump);
-                                if (Math.abs(ept.getLat()-jpt.getLat()) > 0.00001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.00001)
+                                if (differentCoordinate(ept.getLat(), jpt.getLat()) || differentCoordinate(ept.getLon(), jpt.getLon()))
                                     err = true;
                             }
                             if (!err) {
@@ -1056,7 +1056,7 @@ public class SyncEditorLayerIndex {
                             for (int nump = 0; nump < ep.size() && !err; ++nump) {
                                 Coordinate ept = ep.get(nump);
                                 Coordinate jpt = jp.get(nump);
-                                if (Math.abs(ept.getLat()-jpt.getLat()) > 0.00001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.00001) {
+                                if (differentCoordinate(ept.getLat(), jpt.getLat()) || differentCoordinate(ept.getLon(), jpt.getLon())) {
                                     String numtxt = Integer.toString(enums+1);
                                     if (enums != jnums) {
                                         numtxt += '/' + Integer.toString(jnums+1);
@@ -1090,6 +1090,11 @@ public class SyncEditorLayerIndex {
                 }
             }
         }
+    }
+
+    private boolean differentCoordinate(double v1, double v2) {
+        double epsilon = 0.00001;
+        return Math.abs(v1 - v2) > epsilon;
     }
 
     void doMismatchingIcons() {
@@ -1289,7 +1294,10 @@ public class SyncEditorLayerIndex {
                     }
                 }
                 ImageryBounds b = j.getBounds();
-                if (b.getMinLat() != minlat || b.getMinLon() != minlon || b.getMaxLat() != maxlat || b.getMaxLon() != maxlon) {
+                if (differentCoordinate(b.getMinLat(), minlat)
+                        || differentCoordinate(b.getMinLon(), minlon)
+                        || differentCoordinate(b.getMaxLat(), maxlat)
+                        || differentCoordinate(b.getMaxLon(), maxlon)) {
                     myprintln("* Bounds do not match shape (is "+b.getMinLat()+","+b.getMinLon()+","+b.getMaxLat()+","+b.getMaxLon()
                         + ", calculated <bounds min-lat='"+minlat+"' min-lon='"+minlon+"' max-lat='"+maxlat+"' max-lon='"+maxlon+"'>): "
                         + getDescription(j));
