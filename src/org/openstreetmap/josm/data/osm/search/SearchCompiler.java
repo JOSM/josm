@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSeparator;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.AlphanumComparator;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -194,23 +195,7 @@ public class SearchCompiler {
                         if (rangeA.length == 1) {
                             return new KeyValue(keyword, rangeS.trim(), regexSearch, caseSensitive);
                         } else if (rangeA.length == 2) {
-                            String rangeA1 = rangeA[0].trim();
-                            String rangeA2 = rangeA[1].trim();
-                            final long minDate;
-                            final long maxDate;
-                            try {
-                                // if min timestamp is empty: use lowest possible date
-                                minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
-                            } catch (UncheckedParseException | DateTimeException ex) {
-                                throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
-                            }
-                            try {
-                                // if max timestamp is empty: use "now"
-                                maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
-                            } catch (UncheckedParseException | DateTimeException ex) {
-                                throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA2), ex);
-                            }
-                            return new TimestampRange(minDate, maxDate);
+                            return TimestampRange.create(rangeA);
                         } else {
                             throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>")
                                 + "</html>");
@@ -1497,6 +1482,27 @@ public class SearchCompiler {
 
         TimestampRange(long minCount, long maxCount) {
             super(minCount, maxCount);
+        }
+
+        private static TimestampRange create(String[] range) throws SearchParseError {
+            CheckParameterUtil.ensureThat(range.length == 2, "length 2");
+            String rangeA1 = range[0].trim();
+            String rangeA2 = range[1].trim();
+            final long minDate;
+            final long maxDate;
+            try {
+                // if min timestamp is empty: use lowest possible date
+                minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
+            } catch (UncheckedParseException | DateTimeException ex) {
+                throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
+            }
+            try {
+                // if max timestamp is empty: use "now"
+                maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
+            } catch (UncheckedParseException | DateTimeException ex) {
+                throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA2), ex);
+            }
+            return new TimestampRange(minDate, maxDate);
         }
 
         @Override
