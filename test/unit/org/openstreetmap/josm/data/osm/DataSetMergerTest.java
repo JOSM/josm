@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +23,6 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -306,14 +304,14 @@ class DataSetMergerTest {
         n.setCoor(LatLon.ZERO);
         n.put("key1", "value1");
         n.setUser(myUser);
-        n.setTimestamp(new Date());
+        n.setInstant(Instant.now());
 
         my.addPrimitive(n);
 
         Node n1 = new Node();
         n1.setCoor(LatLon.ZERO);
         n1.put("key1", "value1");
-        n1.setTimestamp(Date.from(Instant.now().plusSeconds(3600)));
+        n1.setInstant(Instant.now().plusSeconds(3600));
         n1.setUser(theirUser);
         their.addPrimitive(n1);
 
@@ -345,7 +343,7 @@ class DataSetMergerTest {
         n1.setCoor(LatLon.ZERO);
         n1.setOsmId(1, 1);
         n1.put("key1", "value1");
-        n1.setTimestamp(new Date());
+        n1.setInstant(Instant.now());
         their.addPrimitive(n1);
 
         DataSetMerger visitor = new DataSetMerger(my, their);
@@ -645,7 +643,7 @@ class DataSetMergerTest {
         theirWay.addNode(n4);
         User user = User.createOsmUser(1111, "their");
         theirWay.setUser(user);
-        theirWay.setTimestamp(new Date());
+        theirWay.setInstant(Instant.now());
         their.addPrimitive(theirWay);
 
         DataSetMerger visitor = new DataSetMerger(my, their);
@@ -698,7 +696,7 @@ class DataSetMergerTest {
         theirWay.addNode(n4);
         User user = User.createOsmUser(1111, "their");
         theirWay.setUser(user);
-        theirWay.setTimestamp(new Date());
+        theirWay.setInstant(Instant.now());
         their.addPrimitive(theirWay);
 
         DataSetMerger visitor = new DataSetMerger(my, their);
@@ -753,7 +751,7 @@ class DataSetMergerTest {
         theirWay.addNode(tn2);
         theirWay.addNode(tn3);
         theirWay.setUser(User.createOsmUser(1111, "their"));
-        theirWay.setTimestamp(new Date());
+        theirWay.setInstant(Instant.now());
         their.addPrimitive(theirWay);
 
         DataSetMerger visitor = new DataSetMerger(my, their);
@@ -1181,7 +1179,7 @@ class DataSetMergerTest {
         // Local node A
         Node nA = new Node(2848219691L, 1);
         nA.setCoor(LatLon.ZERO);
-        nA.setTimestamp(DateUtils.fromString("2014-05-10T14:25:40Z"));
+        nA.setInstant(Instant.parse("2014-05-10T14:25:40Z"));
         nA.setChangesetId(22251108);
         nA.setUser(User.createOsmUser(385987, "yaho"));
         nA.put("name", "Mionga");

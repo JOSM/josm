@@ -300,6 +300,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
+    @Deprecated
     @Override
     public void setTimestamp(Date timestamp) {
         checkDatasetNotReadOnly();

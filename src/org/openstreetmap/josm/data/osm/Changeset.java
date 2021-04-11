@@ -102,7 +102,7 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     public static Changeset fromPrimitive(final OsmPrimitive primitive) {
         final Changeset changeset = new Changeset(primitive.getChangesetId());
         changeset.setUser(primitive.getUser());
-        changeset.setCreatedAt(primitive.getTimestamp().toInstant()); // not accurate in all cases
+        changeset.setCreatedAt(primitive.getInstant()); // not accurate in all cases
         return changeset;
     }
 

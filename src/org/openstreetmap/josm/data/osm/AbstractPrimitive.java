@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -296,9 +297,15 @@ public abstract class AbstractPrimitive implements IPrimitive {
         this.changesetId = changesetId;
     }
 
+    @Deprecated
     @Override
     public void setTimestamp(Date timestamp) {
         this.timestamp = (int) TimeUnit.MILLISECONDS.toSeconds(timestamp.getTime());
+    }
+
+    @Override
+    public void setInstant(Instant timestamp) {
+        this.timestamp = (int) timestamp.getEpochSecond();
     }
 
     @Override
@@ -306,9 +313,15 @@ public abstract class AbstractPrimitive implements IPrimitive {
         this.timestamp = timestamp;
     }
 
+    @Deprecated
     @Override
     public Date getTimestamp() {
-        return new Date(TimeUnit.SECONDS.toMillis(Integer.toUnsignedLong(timestamp)));
+        return Date.from(getInstant());
+    }
+
+    @Override
+    public Instant getInstant() {
+        return Instant.ofEpochSecond(Integer.toUnsignedLong(timestamp));
     }
 
     @Override

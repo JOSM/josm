@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +44,6 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -448,13 +448,13 @@ class SearchCompilerTest {
     @Test
     void testTimestamp() throws SearchParseError {
         final Node n1 = new Node();
-        n1.setTimestamp(DateUtils.fromString("2010-01-22"));
+        n1.setInstant(Instant.parse("2010-01-22T00:00:00Z"));
         assertTrue(SearchCompiler.compile("timestamp:2010/2011").match(n1));
         assertTrue(SearchCompiler.compile("timestamp:2010-01/2011").match(n1));
         assertTrue(SearchCompiler.compile("timestamp:2010-01-22/2011").match(n1));
         assertFalse(SearchCompiler.compile("timestamp:2010-01-23/2011").match(n1));
         assertFalse(SearchCompiler.compile("timestamp:2010/2010-01-21").match(n1));
-        n1.setTimestamp(DateUtils.fromString("2016-01-22"));
+        n1.setInstant(Instant.parse("2016-01-22T00:00:00Z"));
         assertFalse(SearchCompiler.compile("timestamp:2010/2011").match(n1));
     }
 

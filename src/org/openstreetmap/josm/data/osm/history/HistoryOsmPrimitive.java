@@ -95,7 +95,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
      * @param p the primitive
      */
     protected HistoryOsmPrimitive(OsmPrimitive p) {
-        this(p.getId(), p.getVersion(), p.isVisible(), p.getUser(), p.getChangesetId(), p.getTimestamp());
+        this(p.getId(), p.getVersion(), p.isVisible(), p.getUser(), p.getChangesetId(), Date.from(p.getInstant()));
     }
 
     /**
@@ -363,7 +363,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
         } catch (IllegalStateException e) {
             Logging.log(Logging.LEVEL_ERROR, "Cannot change visibility for "+data+':', e);
         }
-        data.setTimestamp(timestamp);
+        data.setInstant(timestamp.toInstant());
         data.setKeys(tags);
         data.setOsmId(id, (int) version);
     }

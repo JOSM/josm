@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -134,7 +133,7 @@ public class ConvertFromGpxLayerAction extends ConvertToDataLayerAction<GpxLayer
                 if (!none) { //... but the tag will only be set when required
                     p.put(GpxConstants.GPX_PREFIX + key, String.valueOf(date));
                 }
-                p.setTimestamp(Date.from(date));
+                p.setInstant(date);
             }
         }
     }

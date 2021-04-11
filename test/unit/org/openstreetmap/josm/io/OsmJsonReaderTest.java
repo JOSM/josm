@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -130,7 +131,7 @@ class OsmJsonReaderTest {
         Node n = ds.getNodes().iterator().next();
         assertEquals(1, n.getUniqueId());
         assertEquals(new LatLon(2.0, -3.0), n.getCoor());
-        assertEquals("2018-01-01T00:00:00Z", DateUtils.newIsoDateTimeFormat().format(n.getTimestamp()));
+        assertEquals(Instant.parse("2018-01-01T00:00:00Z"), n.getInstant());
         assertEquals(4, n.getVersion());
         assertEquals(5, n.getChangesetId());
         assertEquals(6, n.getUser().getId());

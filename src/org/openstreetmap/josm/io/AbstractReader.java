@@ -430,7 +430,7 @@ public abstract class AbstractReader {
             return;
         }
         try {
-            int timestamp = timestampCache.computeIfAbsent(time, t -> (int) (DateUtils.tsFromString(t) / 1000));
+            int timestamp = timestampCache.computeIfAbsent(time, t -> (int) (DateUtils.parseInstant(t).getEpochSecond()));
             current.setRawTimestamp(timestamp);
         } catch (UncheckedParseException | DateTimeException e) {
             Logging.error(e);

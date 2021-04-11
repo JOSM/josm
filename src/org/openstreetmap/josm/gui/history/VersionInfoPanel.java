@@ -235,7 +235,8 @@ public class VersionInfoPanel extends JPanel implements ChangeListener, Destroya
      * @param isLatest whether this relates to a not yet committed changeset
      */
     public void update(final OsmPrimitive primitive, final boolean isLatest) {
-        update(Changeset.fromPrimitive(primitive), isLatest, primitive.getTimestamp(), primitive.getVersion(), primitive.getPrimitiveId());
+        Date timestamp = Date.from(primitive.getInstant());
+        update(Changeset.fromPrimitive(primitive), isLatest, timestamp, primitive.getVersion(), primitive.getPrimitiveId());
     }
 
     /**

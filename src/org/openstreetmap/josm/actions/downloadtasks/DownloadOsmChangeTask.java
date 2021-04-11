@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -111,13 +112,13 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             try {
                 // A changeset does not contain all referred primitives, this is the map of incomplete ones
                 // For each incomplete primitive, we'll have to get its state at date it was referred
-                Map<OsmPrimitive, Date> toLoad = new HashMap<>();
+                Map<OsmPrimitive, Instant> toLoad = new HashMap<>();
                 for (OsmPrimitive p : downloadedData.allNonDeletedPrimitives()) {
                     if (p.isIncomplete()) {
-                        Date timestamp = p.getReferrers().stream()
+                        Instant timestamp = p.getReferrers().stream()
                                 .filter(ref -> !ref.isTimestampEmpty())
                                 .findFirst()
-                                .map(AbstractPrimitive::getTimestamp)
+                                .map(AbstractPrimitive::getInstant)
                                 .orElse(null);
                         toLoad.put(p, timestamp);
                     }
@@ -137,9 +138,9 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
      */
     private static final class HistoryLoaderAndListener extends HistoryLoadTask implements HistoryDataSetListener {
 
-        private final Map<OsmPrimitive, Date> toLoad;
+        private final Map<OsmPrimitive, Instant> toLoad;
 
-        private HistoryLoaderAndListener(Map<OsmPrimitive, Date> toLoad) {
+        private HistoryLoaderAndListener(Map<OsmPrimitive, Instant> toLoad) {
             this.toLoad = toLoad;
             this.setChangesetDataNeeded(false);
             addOsmPrimitives(toLoad.keySet());
@@ -149,16 +150,16 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
         @Override
         public void historyUpdated(HistoryDataSet source, PrimitiveId id) {
-            Map<OsmPrimitive, Date> toLoadNext = new HashMap<>();
-            for (Iterator<Entry<OsmPrimitive, Date>> it = toLoad.entrySet().iterator(); it.hasNext();) {
-                Entry<OsmPrimitive, Date> entry = it.next();
+            Map<OsmPrimitive, Instant> toLoadNext = new HashMap<>();
+            for (Iterator<Entry<OsmPrimitive, Instant>> it = toLoad.entrySet().iterator(); it.hasNext();) {
+                Entry<OsmPrimitive, Instant> entry = it.next();
                 OsmPrimitive p = entry.getKey();
                 History history = source.getHistory(p.getPrimitiveId());
-                Date date = entry.getValue();
+                Instant date = entry.getValue();
                 // If the history has been loaded and a timestamp is known
                 if (history != null && date != null) {
                     // Lookup for the primitive version at the specified timestamp
-                    HistoryOsmPrimitive hp = history.getByDate(date);
+                    HistoryOsmPrimitive hp = history.getByDate(Date.from(date));
                     if (hp != null) {
                         PrimitiveData data;
 

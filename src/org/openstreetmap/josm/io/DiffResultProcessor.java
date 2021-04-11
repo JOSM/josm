@@ -8,7 +8,6 @@ import java.io.StringReader;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -152,7 +151,7 @@ public class DiffResultProcessor {
                     p.setUser(cs.getUser());
                     // TODO is there a way to obtain the timestamp for non-closed changesets?
                     Instant instant = Utils.firstNonNull(cs.getClosedAt(), Instant.now());
-                    p.setTimestamp(Date.from(instant));
+                    p.setInstant(instant);
                 }
             }
             return processed;

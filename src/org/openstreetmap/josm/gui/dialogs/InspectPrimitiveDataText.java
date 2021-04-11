@@ -153,7 +153,7 @@ public class InspectPrimitiveDataText {
     void addCommon(IPrimitive o) {
         add(tr("Data Set: "), Integer.toHexString(o.getDataSet().hashCode()));
         add(tr("Edited at: "), o.isTimestampEmpty() ? tr("<new object>")
-                : DateUtils.fromTimestamp(o.getRawTimestamp()));
+                : o.getInstant().toString());
         add(tr("Edited by: "), o.getUser() == null ? tr("<new object>")
                 : getNameAndId(o.getUser().getName(), o.getUser().getId()));
         add(tr("Version:"), " ", Integer.toString(o.getVersion()));

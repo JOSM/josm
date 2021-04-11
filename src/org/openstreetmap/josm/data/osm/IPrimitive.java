@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -275,8 +276,20 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      *
      * @return date of last modification
      * @see #setTimestamp
+     * @deprecated Use {@link #getInstant}
      */
+    @Deprecated
     Date getTimestamp();
+
+    /**
+     * Time of last modification to this object. This is not set by JOSM but
+     * read from the server and delivered back to the server unmodified. It is
+     * used to check against edit conflicts.
+     *
+     * @return date of last modification
+     * @see #getInstant
+     */
+    Instant getInstant();
 
     /**
      * Time of last modification to this object. This is not set by JOSM but
@@ -292,8 +305,17 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
      * Sets time of last modification to this object
      * @param timestamp date of last modification
      * @see #getTimestamp
+     * @deprecated Use {@link #setInstant}
      */
+    @Deprecated
     void setTimestamp(Date timestamp);
+
+    /**
+     * Sets time of last modification to this object
+     * @param timestamp date of last modification
+     * @see #getInstant
+     */
+    void setInstant(Instant timestamp);
 
     /**
      * Sets time of last modification to this object

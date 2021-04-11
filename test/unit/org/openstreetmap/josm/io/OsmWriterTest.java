@@ -23,6 +23,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DownloadPolicy;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.User;
@@ -123,6 +125,23 @@ class OsmWriterTest {
             osmWriter.visit(cs);
             assertEquals("  <changeset id='38038262' user='&lt;anonymous&gt;' uid='-1' created_at='1970-01-01T00:00:00Z' open='false' " +
                             "min_lon='34.0' min_lat='12.0' max_lon='78.0' max_lat='56.0'>\n  </changeset>\n",
+                    stringWriter.toString().replace("\r", ""));
+        }
+    }
+
+    /**
+     * Unit test of {@link OsmWriter#visit(INode)}.
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    void testNode() throws IOException {
+        Node node = new Node(1, 42);
+        node.setCoor(new LatLon(12., 34.));
+        node.setInstant(Instant.parse("2006-05-10T18:27:47Z"));
+        try (StringWriter stringWriter = new StringWriter();
+             OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(new PrintWriter(stringWriter), true, OsmWriter.DEFAULT_API_VERSION)) {
+            osmWriter.visit(node);
+            assertEquals("  <node id='1' timestamp='2006-05-10T18:27:47Z' visible='true' version='42' lat='12.0' lon='34.0' />\n",
                     stringWriter.toString().replace("\r", ""));
         }
     }

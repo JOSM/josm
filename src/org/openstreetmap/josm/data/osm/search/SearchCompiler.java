@@ -740,7 +740,7 @@ public class SearchCompiler {
         private String getMv(Tagged osm) {
             String mv;
             if ("timestamp".equals(key) && osm instanceof OsmPrimitive) {
-                mv = DateUtils.fromTimestamp(((OsmPrimitive) osm).getRawTimestamp());
+                mv = ((OsmPrimitive) osm).getInstant().toString();
             } else {
                 mv = osm.get(key);
                 if (!caseSensitive && mv == null) {
@@ -1492,13 +1492,13 @@ public class SearchCompiler {
             final long maxDate;
             try {
                 // if min timestamp is empty: use lowest possible date
-                minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
+                minDate = DateUtils.parseInstant(rangeA1.isEmpty() ? "1980" : rangeA1).toEpochMilli();
             } catch (UncheckedParseException | DateTimeException ex) {
                 throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
             }
             try {
                 // if max timestamp is empty: use "now"
-                maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
+                maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.parseInstant(rangeA2).toEpochMilli();
             } catch (UncheckedParseException | DateTimeException ex) {
                 throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA2), ex);
             }
@@ -1507,7 +1507,7 @@ public class SearchCompiler {
 
         @Override
         protected Long getNumber(OsmPrimitive osm) {
-            return osm.getTimestamp().getTime();
+            return osm.getInstant().toEpochMilli();
         }
 
         @Override
