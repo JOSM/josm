@@ -25,13 +25,11 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
-import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * {@code PlatformHook} implementation for Apple macOS (formerly Mac OS X) systems.
