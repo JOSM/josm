@@ -476,7 +476,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     break;
                 case PT_TIME:
                     try {
-                        currentWayPoint.setTimeInMillis(DateUtils.tsFromString(accumulator.toString()));
+                        currentWayPoint.setInstant(DateUtils.parseInstant(accumulator.toString()));
                     } catch (UncheckedParseException | DateTimeException e) {
                         Logging.error(e);
                     }

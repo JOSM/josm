@@ -295,7 +295,7 @@ public class GpxData extends WithAttributes implements Data {
         GpxTrackSegmentSpan(WayPoint a, WayPoint b) {
             Instant at = a.getInstant();
             Instant bt = b.getInstant();
-            inv = bt.isBefore(at);
+            inv = at != null && bt != null && bt.isBefore(at);
             if (inv) {
                 firstWp = b;
                 firstTime = bt;
