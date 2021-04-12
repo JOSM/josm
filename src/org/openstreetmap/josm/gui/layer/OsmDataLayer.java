@@ -146,6 +146,9 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, DataSelectionListener, HighlightUpdateListener {
     private static final int HATCHED_SIZE = 15;
+    // U+2205 EMPTY SET
+    private static final String IS_EMPTY_SYMBOL = "\u2205";
+    private static final String IS_DIRTY_SYMBOL = "*";
     /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     /** Property used to know if this layer has to be uploaded */
@@ -709,6 +712,8 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         addConditionalInformation(p, tr("Download is blocked"), data.getDownloadPolicy() == DownloadPolicy.BLOCKED);
         addConditionalInformation(p, tr("Upload is discouraged"), isUploadDiscouraged());
         addConditionalInformation(p, tr("Upload is blocked"), data.getUploadPolicy() == UploadPolicy.BLOCKED);
+        addConditionalInformation(p, IS_EMPTY_SYMBOL + " " + tr("Empty layer"), this.getDataSet().isEmpty());
+        addConditionalInformation(p, IS_DIRTY_SYMBOL + " " + tr("Unsaved changes"), this.isDirty());
 
         return p;
     }
@@ -1072,11 +1077,10 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
     public String getLabel() {
         String label = super.getLabel();
         if (this.isDirty()) {
-            label += " *";
+            label += " " + IS_DIRTY_SYMBOL;
         }
         if (this.getDataSet().isEmpty()) {
-            // U+2205 EMPTY SET
-            label += " \u2205";
+            label += " " + IS_EMPTY_SYMBOL;
         }
         return label;
     }
@@ -1213,9 +1217,9 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         if (isDataSetEmpty() && 1 != GuiHelper.runInEDTAndWaitAndReturn(() ->
             new ExtendedDialog(
                     MainApplication.getMainFrame(),
-                    tr("Empty document"),
+                    tr("Empty layer"),
                     tr("Save anyway"), tr("Cancel"))
-                .setContent(tr("The document contains no data."))
+                .setContent(tr("The layer contains no data."))
                 .setButtonIcons("save", "cancel")
                 .showDialog().getValue()
         )) {
