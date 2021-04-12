@@ -71,75 +71,53 @@ public final class Functions {
 
     /**
      * Function associated to the numeric "+" operator.
-     * @param args arguments
+     * @param a the first operand
+     * @param b the second operand
      * @return Sum of arguments
+     * @see Float#sum
      */
-    public static float plus(float... args) { // NO_UCD (unused code)
-        float res = 0;
-        for (float f : args) {
-            res += f;
-        }
-        return res;
+    public static double plus(double a, double b) { // NO_UCD (unused code)
+        return a + b;
     }
 
     /**
      * Function associated to the numeric "-" operator.
-     * @param args arguments
-     * @return Substraction of arguments
+     * @param a the first operand
+     * @param b the second operand
+     * @return Subtraction of arguments
      */
-    public static Float minus(float... args) { // NO_UCD (unused code)
-        if (args.length == 0) {
-            return 0.0F;
-        }
-        if (args.length == 1) {
-            return -args[0];
-        }
-        float res = args[0];
-        for (int i = 1; i < args.length; ++i) {
-            res -= args[i];
-        }
-        return res;
+    public static double minus(double a, double b) { // NO_UCD (unused code)
+        return a - b;
     }
 
     /**
      * Function associated to the numeric "*" operator.
-     * @param args arguments
+     * @param a the first operand
+     * @param b the second operand
      * @return Multiplication of arguments
      */
-    public static float times(float... args) { // NO_UCD (unused code)
-        float res = 1;
-        for (float f : args) {
-            res *= f;
-        }
-        return res;
+    public static double times(double a, double b) { // NO_UCD (unused code)
+        return a * b;
     }
 
     /**
      * Function associated to the numeric "/" operator.
-     * @param args arguments
+     * @param a the first operand
+     * @param b the second operand
      * @return Division of arguments
      */
-    public static Float divided_by(float... args) { // NO_UCD (unused code)
-        if (args.length == 0) {
-            return 1.0F;
-        }
-        float res = args[0];
-        for (int i = 1; i < args.length; ++i) {
-            if (args[i] == 0) {
-                return null;
-            }
-            res /= args[i];
-        }
-        return res;
+    public static double divided_by(double a, double b) { // NO_UCD (unused code)
+        return a / b;
     }
 
     /**
      * Creates a list of values, e.g., for the {@code dashes} property.
+     * @param ignored The environment (ignored)
      * @param args The values to put in a list
      * @return list of values
      * @see Arrays#asList(Object[])
      */
-    public static List<Object> list(Object... args) { // NO_UCD (unused code)
+    public static List<Object> list(Environment ignored, Object... args) { // NO_UCD (unused code)
         return Arrays.asList(args);
     }
 
@@ -155,12 +133,13 @@ public final class Functions {
     /**
      * Returns the first non-null object.
      * The name originates from <a href="http://wiki.openstreetmap.org/wiki/MapCSS/0.2/eval">MapCSS standard</a>.
+     * @param ignored The environment (ignored)
      * @param args arguments
      * @return the first non-null object
      * @see Utils#firstNonNull(Object[])
      */
     @NullableArguments
-    public static Object any(Object... args) { // NO_UCD (unused code)
+    public static Object any(Environment ignored, Object... args) { // NO_UCD (unused code)
         return Utils.firstNonNull(args);
     }
 
@@ -303,12 +282,13 @@ public final class Functions {
 
     /**
      * Assembles the strings to one.
+     * @param ignored The environment (ignored)
      * @param args arguments
      * @return assembled string
      * @see Collectors#joining
      */
     @NullableArguments
-    public static String concat(Object... args) { // NO_UCD (unused code)
+    public static String concat(Environment ignored, Object... args) { // NO_UCD (unused code)
         return Arrays.stream(args)
                 .filter(Objects::nonNull)
                 .map(String::valueOf)
@@ -317,12 +297,13 @@ public final class Functions {
 
     /**
      * Assembles the strings to one, where the first entry is used as separator.
+     * @param ignored The environment (ignored)
      * @param args arguments. First one is used as separator
      * @return assembled string
      * @see String#join
      */
     @NullableArguments
-    public static String join(String... args) { // NO_UCD (unused code)
+    public static String join(Environment ignored, String... args) { // NO_UCD (unused code)
         return String.join(args[0], Arrays.asList(args).subList(1, args.length));
     }
 
@@ -547,11 +528,12 @@ public final class Functions {
 
     /**
      * Sort an array of strings
+     * @param ignored The environment (ignored)
      * @param sortables The array to sort
      * @return The sorted list
      * @since 15279
      */
-    public static List<String> sort(String... sortables) { // NO_UCD (unused code)
+    public static List<String> sort(Environment ignored, String... sortables) { // NO_UCD (unused code)
         Arrays.parallelSort(sortables);
         return Arrays.asList(sortables);
     }
@@ -569,11 +551,12 @@ public final class Functions {
 
     /**
      * Get unique values
+     * @param ignored The environment (ignored)
      * @param values A list of values that may have duplicates
      * @return A list with no duplicates
      * @since 15323
      */
-    public static List<String> uniq(String... values) { // NO_UCD (unused code)
+    public static List<String> uniq(Environment ignored, String... values) { // NO_UCD (unused code)
         return uniq_list(Arrays.asList(values));
     }
 
@@ -903,11 +886,12 @@ public final class Functions {
     /**
      * Translates some text for the current locale. The first argument is the text to translate,
      * and the subsequent arguments are parameters for the string indicated by <code>{0}</code>, <code>{1}</code>, …
+     * @param ignored The environment (ignored)
      * @param args arguments
      * @return the translated string
      */
     @NullableArguments
-    public static String tr(String... args) { // NO_UCD (unused code)
+    public static String tr(Environment ignored, String... args) { // NO_UCD (unused code)
         final String text = args[0];
         System.arraycopy(args, 1, args, 0, args.length - 1);
         return org.openstreetmap.josm.tools.I18n.tr(text, (Object[]) args);

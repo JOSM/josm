@@ -1,25 +1,24 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import java.awt.Color;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -37,46 +36,213 @@ public final class ExpressionFactory {
     @Retention(RetentionPolicy.RUNTIME)
     @interface NullableArguments {}
 
-    private static final List<Method> arrayFunctions = new ArrayList<>();
-    private static final List<Method> parameterFunctions = new ArrayList<>();
-    private static final List<Method> parameterFunctionsEnv = new ArrayList<>();
+    @FunctionalInterface
+    public interface TriFunction<T, U, V, R> {
+        R apply(T t, U u, V v);
+    }
+
+    @FunctionalInterface
+    public interface QuadFunction<T, U, V, W, R> {
+        R apply(T t, U u, V v, W w);
+    }
+
+    @FunctionalInterface
+    interface Factory {
+        Expression createExpression(List<Expression> args);
+
+        static Factory of(DoubleUnaryOperator operator) {
+            return of(Double.class, operator::applyAsDouble);
+        }
+
+        static Factory ofNumberVarArgs(DoubleBinaryOperator operator) {
+            return args -> env -> args.stream()
+                    .map(arg -> Cascade.convertTo(arg.evaluate(env), Double.class))
+                    .filter(Objects::nonNull)
+                    .reduce(operator::applyAsDouble)
+                    .orElse(null);
+        }
+
+        static Factory ofStringVarargs(BiFunction<Environment, String[], ?> function) {
+            return args -> env -> function.apply(env, args.stream()
+                    .map(arg -> Cascade.convertTo(arg.evaluate(env), String.class))
+                    .toArray(String[]::new));
+        }
+
+        static Factory ofObjectVarargs(BiFunction<Environment, Object[], ?> function) {
+            return args -> env -> function.apply(env, args.stream()
+                    .map(arg -> arg.evaluate(env))
+                    .toArray(Object[]::new));
+        }
+
+        static <T> Factory of(Class<T> type, Function<T, ?> function) {
+            return args -> env -> {
+                T v = Cascade.convertTo(args.get(0).evaluate(env), type);
+                return v == null ? null : function.apply(v);
+            };
+        }
+
+        static <T, U> Factory of(Class<T> type1, Class<U> type2, BiFunction<T, U, ?> function) {
+            return args -> env -> {
+                T v1 = Cascade.convertTo(args.get(0).evaluate(env), type1);
+                U v2 = Cascade.convertTo(args.get(1).evaluate(env), type2);
+                return v1 == null || v2 == null ? null : function.apply(v1, v2);
+            };
+        }
+
+        static <T, U, V> Factory of(Class<T> type1, Class<U> type2, Class<V> type3,
+                                    BiFunction<T, U, ?> biFunction, TriFunction<T, U, V, ?> triFunction) {
+            return args -> env -> {
+                T v1 = args.size() >= 1 ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
+                U v2 = args.size() >= 2 ? Cascade.convertTo(args.get(1).evaluate(env), type2) : null;
+                V v3 = args.size() >= 3 ? Cascade.convertTo(args.get(2).evaluate(env), type3) : null;
+                return v1 == null || v2 == null ? null : v3 == null ? biFunction.apply(v1, v2) : triFunction.apply(v1, v2, v3);
+            };
+        }
+
+        static <T, U, V, W> Factory of(Class<T> type1, Class<U> type2, Class<V> type3, Class<W> type4,
+                                       QuadFunction<T, U, V, W, ?> function) {
+            return args -> env -> {
+                T v1 = args.size() >= 1 ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
+                U v2 = args.size() >= 2 ? Cascade.convertTo(args.get(1).evaluate(env), type2) : null;
+                V v3 = args.size() >= 3 ? Cascade.convertTo(args.get(2).evaluate(env), type3) : null;
+                W v4 = args.size() >= 4 ? Cascade.convertTo(args.get(3).evaluate(env), type4) : null;
+                return v1 == null || v2 == null || v3 == null || v4 == null ? null : function.apply(v1, v2, v3, v4);
+            };
+        }
+
+        static <T> Factory ofEnv(Function<Environment, ?> function) {
+            return args -> function::apply;
+        }
+
+        static <T> Factory ofEnv(Class<T> type, BiFunction<Environment, T, ?> function) {
+            return args -> env -> {
+                T v = Cascade.convertTo(args.get(0).evaluate(env), type);
+                return v == null ? null : function.apply(env, v);
+            };
+        }
+
+        static <T, U> Factory ofEnv(Class<T> type1, Class<U> type2,
+                                    BiFunction<Environment, T, ?> biFunction, TriFunction<Environment, T, U, ?> triFunction) {
+            return args -> env -> {
+                T v1 = args.size() >= 1 ? Cascade.convertTo(args.get(0).evaluate(env), type1) : null;
+                U v2 = args.size() >= 2 ? Cascade.convertTo(args.get(1).evaluate(env), type2) : null;
+                return v1 == null ? null : v2 == null ? biFunction.apply(env, v1) : triFunction.apply(env, v1, v2);
+            };
+        }
+    }
+
+    static final Map<String, Factory> FACTORY_MAP = new HashMap<>();
 
     static {
-        for (Method m : Functions.class.getDeclaredMethods()) {
-            Class<?>[] paramTypes = m.getParameterTypes();
-            if (paramTypes.length == 1 && paramTypes[0].isArray()) {
-                arrayFunctions.add(m);
-            } else if (paramTypes.length >= 1 && paramTypes[0].equals(Environment.class)) {
-                parameterFunctionsEnv.add(m);
-            } else {
-                parameterFunctions.add(m);
-            }
-        }
-        try {
-            parameterFunctions.add(Math.class.getMethod("abs", float.class));
-            parameterFunctions.add(Math.class.getMethod("acos", double.class));
-            parameterFunctions.add(Math.class.getMethod("asin", double.class));
-            parameterFunctions.add(Math.class.getMethod("atan", double.class));
-            parameterFunctions.add(Math.class.getMethod("atan2", double.class, double.class));
-            parameterFunctions.add(Math.class.getMethod("ceil", double.class));
-            parameterFunctions.add(Math.class.getMethod("cos", double.class));
-            parameterFunctions.add(Math.class.getMethod("cosh", double.class));
-            parameterFunctions.add(Math.class.getMethod("exp", double.class));
-            parameterFunctions.add(Math.class.getMethod("floor", double.class));
-            parameterFunctions.add(Math.class.getMethod("log", double.class));
-            parameterFunctions.add(Math.class.getMethod("max", float.class, float.class));
-            parameterFunctions.add(Math.class.getMethod("min", float.class, float.class));
-            parameterFunctions.add(Math.class.getMethod("random"));
-            parameterFunctions.add(Math.class.getMethod("round", float.class));
-            parameterFunctions.add(Math.class.getMethod("signum", double.class));
-            parameterFunctions.add(Math.class.getMethod("sin", double.class));
-            parameterFunctions.add(Math.class.getMethod("sinh", double.class));
-            parameterFunctions.add(Math.class.getMethod("sqrt", double.class));
-            parameterFunctions.add(Math.class.getMethod("tan", double.class));
-            parameterFunctions.add(Math.class.getMethod("tanh", double.class));
-        } catch (NoSuchMethodException | SecurityException ex) {
-            throw new JosmRuntimeException(ex);
-        }
+        FACTORY_MAP.put("CRC32_checksum", Factory.of(String.class, Functions::CRC32_checksum));
+        FACTORY_MAP.put("JOSM_pref", Factory.ofEnv(String.class, String.class, null, Functions::JOSM_pref));
+        FACTORY_MAP.put("JOSM_search", Factory.ofEnv(String.class, Functions::JOSM_search));
+        FACTORY_MAP.put("URL_decode", Factory.of(String.class, Functions::URL_decode));
+        FACTORY_MAP.put("URL_encode", Factory.of(String.class, Functions::URL_encode));
+        FACTORY_MAP.put("XML_encode", Factory.of(String.class, Functions::XML_encode));
+        FACTORY_MAP.put("abs", Factory.of(Math::acos));
+        FACTORY_MAP.put("acos", Factory.of(Math::acos));
+        FACTORY_MAP.put("alpha", Factory.of(Color.class, Functions::alpha));
+        FACTORY_MAP.put("any", Factory.ofObjectVarargs(Functions::any));
+        FACTORY_MAP.put("areasize", Factory.ofEnv(Functions::areasize));
+        FACTORY_MAP.put("asin", Factory.of(Math::asin));
+        FACTORY_MAP.put("at", Factory.ofEnv(double.class, double.class, null, Functions::at));
+        FACTORY_MAP.put("atan", Factory.of(Math::atan));
+        FACTORY_MAP.put("atan2", Factory.of(Double.class, Double.class, Math::atan2));
+        FACTORY_MAP.put("blue", Factory.of(Color.class, Functions::blue));
+        FACTORY_MAP.put("cardinal_to_radians", Factory.of(String.class, Functions::cardinal_to_radians));
+        FACTORY_MAP.put("ceil", Factory.of(Math::ceil));
+        FACTORY_MAP.put("center", Factory.ofEnv(Functions::center));
+        FACTORY_MAP.put("child_tag", Factory.ofEnv(String.class, Functions::child_tag));
+        FACTORY_MAP.put("color2html", Factory.of(Color.class, Functions::color2html));
+        FACTORY_MAP.put("concat", Factory.ofObjectVarargs(Functions::concat));
+        FACTORY_MAP.put("cos", Factory.of(Math::cos));
+        FACTORY_MAP.put("cosh", Factory.of(Math::cosh));
+        FACTORY_MAP.put("count", Factory.of(List.class, Functions::count));
+        FACTORY_MAP.put("count_roles", Factory.ofStringVarargs(Functions::count_roles));
+        FACTORY_MAP.put("degree_to_radians", Factory.of(Functions::degree_to_radians));
+        FACTORY_MAP.put("divided_by", Factory.ofNumberVarArgs(Functions::divided_by));
+        FACTORY_MAP.put("equal", Factory.of(Object.class, Object.class, Functions::equal));
+        FACTORY_MAP.put("eval", Factory.of(Object.class, Functions::eval));
+        FACTORY_MAP.put("exp", Factory.of(Math::exp));
+        FACTORY_MAP.put("floor", Factory.of(Math::floor));
+        FACTORY_MAP.put("get", Factory.of(List.class, float.class, Functions::get));
+        FACTORY_MAP.put("gpx_distance", Factory.ofEnv(Functions::gpx_distance));
+        FACTORY_MAP.put("greater", Factory.of(float.class, float.class, Functions::greater));
+        FACTORY_MAP.put("greater_equal", Factory.of(float.class, float.class, Functions::greater_equal));
+        FACTORY_MAP.put("green", Factory.of(Color.class, Functions::green));
+        FACTORY_MAP.put("has_tag_key", Factory.ofEnv(String.class, Functions::has_tag_key));
+        FACTORY_MAP.put("hsb_color", Factory.of(float.class, float.class, float.class, null, Functions::hsb_color));
+        FACTORY_MAP.put("html2color", Factory.of(String.class, Functions::html2color));
+        FACTORY_MAP.put("index", Factory.ofEnv(Functions::index));
+        FACTORY_MAP.put("inside", Factory.ofEnv(String.class, Functions::inside));
+        FACTORY_MAP.put("is_anticlockwise", Factory.ofEnv(Functions::is_anticlockwise));
+        FACTORY_MAP.put("is_clockwise", Factory.ofEnv(Functions::is_clockwise));
+        FACTORY_MAP.put("is_prop_set", Factory.ofEnv(String.class, Functions::is_prop_set));
+        FACTORY_MAP.put("is_right_hand_traffic", Factory.ofEnv(Functions::is_right_hand_traffic));
+        FACTORY_MAP.put("is_similar", Factory.of(String.class, String.class, Functions::is_similar));
+        FACTORY_MAP.put("join", Factory.ofStringVarargs(Functions::join));
+        FACTORY_MAP.put("join_list", Factory.of(String.class, List.class, Functions::join_list));
+        FACTORY_MAP.put("less", Factory.of(float.class, float.class, Functions::less));
+        FACTORY_MAP.put("less_equal", Factory.of(float.class, float.class, Functions::less_equal));
+        FACTORY_MAP.put("list", Factory.ofObjectVarargs(Functions::list));
+        FACTORY_MAP.put("log", Factory.of(Math::log));
+        FACTORY_MAP.put("lower", Factory.of(String.class, Functions::lower));
+        FACTORY_MAP.put("minus", Factory.ofNumberVarArgs(Functions::minus));
+        FACTORY_MAP.put("not", Factory.of(boolean.class, Functions::not));
+        FACTORY_MAP.put("not_equal", Factory.of(Object.class, Object.class, Functions::not_equal));
+        FACTORY_MAP.put("number_of_tags", Factory.ofEnv(Functions::number_of_tags));
+        FACTORY_MAP.put("osm_changeset_id", Factory.ofEnv(Functions::osm_changeset_id));
+        FACTORY_MAP.put("osm_id", Factory.ofEnv(Functions::osm_id));
+        FACTORY_MAP.put("osm_timestamp", Factory.ofEnv(Functions::osm_timestamp));
+        FACTORY_MAP.put("osm_user_id", Factory.ofEnv(Functions::osm_user_id));
+        FACTORY_MAP.put("osm_user_name", Factory.ofEnv(Functions::osm_user_name));
+        FACTORY_MAP.put("osm_version", Factory.ofEnv(Functions::osm_version));
+        FACTORY_MAP.put("outside", Factory.ofEnv(String.class, Functions::outside));
+        FACTORY_MAP.put("parent_osm_id", Factory.ofEnv(Functions::parent_osm_id));
+        FACTORY_MAP.put("parent_tag", Factory.ofEnv(String.class, Functions::parent_tag));
+        FACTORY_MAP.put("parent_tags", Factory.ofEnv(String.class, Functions::parent_tags));
+        FACTORY_MAP.put("plus", Factory.ofNumberVarArgs(Functions::plus));
+        FACTORY_MAP.put("print", Factory.of(Object.class, Functions::print));
+        FACTORY_MAP.put("println", Factory.of(Object.class, Functions::println));
+        FACTORY_MAP.put("prop", Factory.ofEnv(String.class, Functions::prop));
+        FACTORY_MAP.put("red", Factory.of(Color.class, Functions::red));
+        FACTORY_MAP.put("regexp_match", Factory.of(String.class, String.class, String.class, Functions::regexp_match, Functions::regexp_match));
+        FACTORY_MAP.put("regexp_test", Factory.of(String.class, String.class, String.class, Functions::regexp_test, Functions::regexp_test));
+        FACTORY_MAP.put("replace", Factory.of(String.class, String.class, String.class, null, Functions::replace));
+        FACTORY_MAP.put("rgb", Factory.of(float.class, float.class, float.class, null, Functions::rgb));
+        FACTORY_MAP.put("rgba", Factory.of(float.class, float.class, float.class, float.class, Functions::rgba));
+        FACTORY_MAP.put("role", Factory.ofEnv(Functions::role));
+        FACTORY_MAP.put("round", Factory.of(Math::acos));
+        FACTORY_MAP.put("setting", Factory.ofEnv(String.class, Functions::setting));
+        FACTORY_MAP.put("signum", Factory.of(Math::signum));
+        FACTORY_MAP.put("sin", Factory.of(Math::sin));
+        FACTORY_MAP.put("sinh", Factory.of(Math::sinh));
+        FACTORY_MAP.put("sort", Factory.ofStringVarargs(Functions::sort));
+        FACTORY_MAP.put("sort_list", Factory.of(List.class, Functions::sort_list));
+        FACTORY_MAP.put("split", Factory.of(String.class, String.class, Functions::split));
+        FACTORY_MAP.put("sqrt", Factory.of(Math::sqrt));
+        FACTORY_MAP.put("substring", Factory.of(String.class, float.class, float.class, Functions::substring, Functions::substring));
+        FACTORY_MAP.put("tag", Factory.ofEnv(String.class, Functions::tag));
+        FACTORY_MAP.put("tag_regex", Factory.ofEnv(String.class, String.class, Functions::tag_regex, Functions::tag_regex));
+        FACTORY_MAP.put("tan", Factory.of(Math::tan));
+        FACTORY_MAP.put("tanh", Factory.of(Math::tanh));
+        FACTORY_MAP.put("times", Factory.ofNumberVarArgs(Functions::times));
+        FACTORY_MAP.put("title", Factory.of(String.class, Functions::title));
+        FACTORY_MAP.put("to_boolean", Factory.of(String.class, Functions::to_boolean));
+        FACTORY_MAP.put("to_byte", Factory.of(String.class, Functions::to_byte));
+        FACTORY_MAP.put("to_double", Factory.of(String.class, Functions::to_double));
+        FACTORY_MAP.put("to_float", Factory.of(String.class, Functions::to_float));
+        FACTORY_MAP.put("to_int", Factory.of(String.class, Functions::to_int));
+        FACTORY_MAP.put("to_long", Factory.of(String.class, Functions::to_long));
+        FACTORY_MAP.put("to_short", Factory.of(String.class, Functions::to_short));
+        FACTORY_MAP.put("tr", Factory.ofStringVarargs(Functions::tr));
+        FACTORY_MAP.put("trim", Factory.of(String.class, Functions::trim));
+        FACTORY_MAP.put("trim_list", Factory.of(List.class, Functions::trim_list));
+        FACTORY_MAP.put("uniq", Factory.ofStringVarargs(Functions::uniq));
+        FACTORY_MAP.put("uniq_list", Factory.of(List.class, Functions::uniq_list));
+        FACTORY_MAP.put("upper", Factory.of(String.class, Functions::upper));
+        FACTORY_MAP.put("waylength", Factory.ofEnv(Functions::waylength));
     }
 
     private ExpressionFactory() {
@@ -104,18 +270,14 @@ public final class ExpressionFactory {
             return new MinMaxFunction(args, true);
         else if ("min".equals(name) && !args.isEmpty())
             return new MinMaxFunction(args, false);
+        else if ("inside".equals(name) && args.size() == 1)
+            return new IsInsideFunction(args.get(0));
+        else if ("random".equals(name))
+            return env -> Math.random();
 
-        for (Method m : arrayFunctions) {
-            if (m.getName().equals(name))
-                return new ArrayFunction(m, args);
-        }
-        for (Method m : parameterFunctions) {
-            if (m.getName().equals(name) && args.size() == m.getParameterTypes().length)
-                return new ParameterFunction(m, args, false);
-        }
-        for (Method m : parameterFunctionsEnv) {
-            if (m.getName().equals(name) && args.size() == m.getParameterTypes().length-1)
-                return new ParameterFunction(m, args, true);
+        Factory factory = FACTORY_MAP.get(name);
+        if (factory != null) {
+            return factory.createExpression(args);
         }
         return NullExpression.INSTANCE;
     }
@@ -282,171 +444,33 @@ public final class ExpressionFactory {
     }
 
     /**
-     * Function that takes a certain number of argument with specific type.
+     * {@code Functions#inside} implementation for use in {@link org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker}
      *
-     * Implementation is based on a Method object.
-     * If any of the arguments evaluate to null, the result will also be null.
+     * @see Functions#inside
      */
-    public static class ParameterFunction implements Expression {
-
-        private final Method m;
-        private final boolean nullable;
-        private final List<Expression> args;
-        private final Class<?>[] expectedParameterTypes;
-        private final boolean needsEnvironment;
+    public static class IsInsideFunction implements Expression {
+        private final Expression arg;
 
         /**
-         * Constructs a new {@code ParameterFunction}.
-         * @param m method
-         * @param args arguments
-         * @param needsEnvironment whether function needs environment
+         * Constructs a new {@code IsInsideFunction}.
+         * @param arg argument
          */
-        public ParameterFunction(Method m, List<Expression> args, boolean needsEnvironment) {
-            this.m = m;
-            this.nullable = m.getAnnotation(NullableArguments.class) != null;
-            this.args = args;
-            this.expectedParameterTypes = m.getParameterTypes();
-            this.needsEnvironment = needsEnvironment;
+        public IsInsideFunction(Expression arg) {
+            this.arg = arg;
         }
 
         /**
-         * Returns the method.
-         * @return the method
-         * @since 14484
+         * Returns the argument
+         * @return the argument
          */
-        public final Method getMethod() {
-            return m;
-        }
-
-        /**
-         * Returns the arguments.
-         * @return the arguments
-         * @since 14484
-         */
-        public final List<Expression> getArgs() {
-            return args;
+        public Expression getArg() {
+            return arg;
         }
 
         @Override
         public Object evaluate(Environment env) {
-            Object[] convertedArgs;
-
-            int start = 0;
-            int offset = 0;
-            if (needsEnvironment) {
-                start = 1;
-                offset = 1;
-                convertedArgs = new Object[args.size() + 1];
-                convertedArgs[0] = env;
-            } else {
-                convertedArgs = new Object[args.size()];
-            }
-
-            for (int i = start; i < convertedArgs.length; ++i) {
-                if (!expectedParameterTypes[i].isArray()) {
-                    convertedArgs[i] = Cascade.convertTo(args.get(i - offset).evaluate(env), expectedParameterTypes[i]);
-                } else {
-                    Class<?> clazz = expectedParameterTypes[i].getComponentType();
-                    Object[] varargs = (Object[]) Array.newInstance(clazz, args.size() - i + 1);
-                    for (int j = 0; j < args.size() - i + 1; ++j) {
-                        varargs[j] = Cascade.convertTo(args.get(j + i - 1).evaluate(env), clazz);
-                    }
-                    convertedArgs[i] = expectedParameterTypes[i].cast(varargs);
-                    break;
-                }
-                if (convertedArgs[i] == null && !nullable) {
-                    return null;
-                }
-            }
-
-            Object result = null;
-            try {
-                result = m.invoke(null, convertedArgs);
-            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                throw new JosmRuntimeException(ex);
-            } catch (InvocationTargetException ex) {
-                Logging.error(ex);
-                return null;
-            }
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder b = new StringBuilder("ParameterFunction~");
-            b.append(m.getName()).append('(');
-            for (int i = 0; i < expectedParameterTypes.length; ++i) {
-                if (i > 0) b.append(',');
-                b.append(expectedParameterTypes[i]);
-                if (!needsEnvironment) {
-                    b.append(' ').append(args.get(i));
-                } else if (i > 0) {
-                    b.append(' ').append(args.get(i-1));
-                }
-            }
-            b.append(')');
-            return b.toString();
-        }
-    }
-
-    /**
-     * Function that takes an arbitrary number of arguments.
-     *
-     * Currently, all array functions are static, so there is no need to
-     * provide the environment, like it is done in {@link ParameterFunction}.
-     * If any of the arguments evaluate to null, the result will also be null.
-     */
-    public static class ArrayFunction implements Expression {
-
-        private final Method m;
-        private final boolean nullable;
-        private final List<Expression> args;
-        private final Class<?>[] expectedParameterTypes;
-        private final Class<?> arrayComponentType;
-
-        /**
-         * Constructs a new {@code ArrayFunction}.
-         * @param m method
-         * @param args arguments
-         */
-        public ArrayFunction(Method m, List<Expression> args) {
-            this.m = m;
-            this.nullable = m.getAnnotation(NullableArguments.class) != null;
-            this.args = args;
-            this.expectedParameterTypes = m.getParameterTypes();
-            this.arrayComponentType = expectedParameterTypes[0].getComponentType();
-        }
-
-        @Override
-        public Object evaluate(Environment env) {
-            Object[] convertedArgs = new Object[expectedParameterTypes.length];
-            Object arrayArg = Array.newInstance(arrayComponentType, args.size());
-            for (int i = 0; i < args.size(); ++i) {
-                Object o = Cascade.convertTo(args.get(i).evaluate(env), arrayComponentType);
-                if (o == null && !nullable) {
-                    return null;
-                }
-                Array.set(arrayArg, i, o);
-            }
-            convertedArgs[0] = arrayArg;
-
-            Object result = null;
-            try {
-                result = m.invoke(null, convertedArgs);
-            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                throw new JosmRuntimeException(ex);
-            } catch (InvocationTargetException ex) {
-                Logging.error(ex);
-                return null;
-            }
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return args.stream()
-                    .map(arg -> arrayComponentType + " " + arg)
-                    .collect(Collectors.joining(",", "ArrayFunction~" + m.getName() + '(', ")"));
+            String codes = Cascade.convertTo(arg.evaluate(env), String.class);
+            return Functions.inside(env, codes);
         }
     }
 }

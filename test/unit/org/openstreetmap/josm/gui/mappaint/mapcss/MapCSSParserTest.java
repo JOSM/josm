@@ -367,13 +367,13 @@ class MapCSSParserTest {
         sheet.loadStyleSource();
         MultiCascade mc = new MultiCascade();
         sheet.apply(mc, OsmUtils.createPrimitive("way foo=bar"), 20, false);
-        assertEquals(Float.valueOf(5f), mc.getCascade(null).get("width"));
+        assertEquals(5.0f, mc.getCascade(null).get("width"));
         sheet.apply(mc, OsmUtils.createPrimitive("way keyA=true"), 20, false);
-        assertEquals(Float.valueOf(15f), mc.getCascade(null).get("width"));
+        assertEquals(15.0, mc.getCascade(null).get("width"));
         sheet.apply(mc, OsmUtils.createPrimitive("way keyB=true"), 20, false);
-        assertEquals(Float.valueOf(15f), mc.getCascade(null).get("width"));
+        assertEquals(15.0, mc.getCascade(null).get("width"));
         sheet.apply(mc, OsmUtils.createPrimitive("way keyA=true keyB=true"), 20, false);
-        assertEquals(Float.valueOf(15f), mc.getCascade(null).get("width"));
+        assertEquals(15.0, mc.getCascade(null).get("width"));
     }
 
     @Test
@@ -479,7 +479,7 @@ class MapCSSParserTest {
 
     @Test
     void testSort() throws Exception {
-        assertEquals(Arrays.asList(new String[] {"alpha", "beta"}), Functions.sort("beta", "alpha"));
+        assertEquals(Arrays.asList(new String[] {"alpha", "beta"}), Functions.sort(null, "beta", "alpha"));
         Way way1 = TestUtils.newWay("highway=residential name=Alpha alt_name=Beta ref=\"A9;A8\"", new Node(new LatLon(0.001, 0.001)),
                 new Node(new LatLon(0.002, 0.002)));
 
@@ -489,20 +489,20 @@ class MapCSSParserTest {
         Environment e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
-        assertEquals(Functions.join(",", "Alpha", "Beta"), e.getCascade(null).get("sorted", null, String.class));
+        assertEquals(Functions.join(null, ",", "Alpha", "Beta"), e.getCascade(null).get("sorted", null, String.class));
 
         source = new MapCSSStyleSource("way[ref] {sorted: join_list(\",\", sort_list(split(\";\", tag(\"ref\"))));}");
         source.loadStyleSource();
         e = new Environment(way1, new MultiCascade(), Environment.DEFAULT_LAYER, null);
         assertTrue(source.rules.get(0).matches(e));
         source.rules.get(0).declaration.execute(e);
-        assertEquals(Functions.join(",", "A8", "A9"), e.getCascade(null).get("sorted", null, String.class));
+        assertEquals(Functions.join(null, ",", "A8", "A9"), e.getCascade(null).get("sorted", null, String.class));
     }
 
     @Test
     void testUniqueValues() throws Exception {
         assertEquals(Arrays.asList(new String[] {"alpha", "beta"}),
-                Functions.uniq("alpha", "alpha", "alpha", "beta"));
+                Functions.uniq(null, "alpha", "alpha", "alpha", "beta"));
         assertEquals(Arrays.asList(new String[] {"one", "two", "three"}),
                 Functions.uniq_list(Arrays.asList(new String[] {"one", "one", "two", "two", "two", "three"})));
     }
@@ -593,6 +593,18 @@ class MapCSSParserTest {
         css.loadStyleSource();
         assertFalse(css.getErrors().isEmpty());
         assertTrue(css.getErrors().iterator().next().toString().contains("Unknown MapCSS base selector invalid_base"));
+    }
+
+    @Test
+    void testMath() {
+        MapCSSStyleSource source = new MapCSSStyleSource("node { add: 1 + 2 + 3 + 4; mul: 2 * 3 * 5 * 7; sub: 0 - 1 - 2 - 3; div: 360 / 15; }");
+        source.loadStyleSource();
+        MultiCascade mc = new MultiCascade();
+        source.apply(mc, OsmUtils.createPrimitive("node"), 20, false);
+        assertEquals(10.0, mc.getCascade(null).get("add"));
+        assertEquals(210.0, mc.getCascade(null).get("mul"));
+        assertEquals(-6.0, mc.getCascade(null).get("sub"));
+        assertEquals(24.0, mc.getCascade(null).get("div"));
     }
 
     @Test
