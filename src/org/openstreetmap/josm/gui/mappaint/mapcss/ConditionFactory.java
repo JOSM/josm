@@ -1,10 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -32,7 +33,6 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.TagCondition;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -882,12 +882,38 @@ public final class ConditionFactory {
      */
     public static class PseudoClassCondition implements Condition {
 
-        final Method method;
-        final boolean not;
+        static final Map<String, PseudoClassCondition> CONDITION_MAP = new HashMap<>();
 
-        protected PseudoClassCondition(Method method, boolean not) {
-            this.method = method;
-            this.not = not;
+        static {
+            PseudoClassCondition.register("anticlockwise", PseudoClasses::anticlockwise);
+            PseudoClassCondition.register("areaStyle", PseudoClasses::areaStyle);
+            PseudoClassCondition.register("clockwise", PseudoClasses::clockwise);
+            PseudoClassCondition.register("closed", PseudoClasses::closed);
+            PseudoClassCondition.register("closed2", PseudoClasses::closed2);
+            PseudoClassCondition.register("completely_downloaded", PseudoClasses::completely_downloaded);
+            PseudoClassCondition.register("connection", PseudoClasses::connection);
+            PseudoClassCondition.register("inDownloadedArea", PseudoClasses::inDownloadedArea);
+            PseudoClassCondition.register("modified", PseudoClasses::modified);
+            PseudoClassCondition.register("new", PseudoClasses::_new);
+            PseudoClassCondition.register("righthandtraffic", PseudoClasses::righthandtraffic);
+            PseudoClassCondition.register("sameTags", PseudoClasses::sameTags);
+            PseudoClassCondition.register("selected", PseudoClasses::selected);
+            PseudoClassCondition.register("tagged", PseudoClasses::tagged);
+            PseudoClassCondition.register("unclosed_multipolygon", PseudoClasses::unclosed_multipolygon);
+            PseudoClassCondition.register("unconnected", PseudoClasses::unconnected);
+        }
+
+        private static void register(String name, Predicate<Environment> predicate) {
+            CONDITION_MAP.put(clean(name), new PseudoClassCondition(":" + name, predicate));
+            CONDITION_MAP.put("!" + clean(name), new PseudoClassCondition("!:" + name, predicate.negate()));
+        }
+
+        private final String name;
+        private final Predicate<Environment> predicate;
+
+        protected PseudoClassCondition(String name, Predicate<Environment> predicate) {
+            this.name = name;
+            this.predicate = predicate;
         }
 
         /**
@@ -902,37 +928,27 @@ public final class ConditionFactory {
             if ("open_end".equals(id)) {
                 return new OpenEndPseudoClassCondition(not);
             }
-            final Method method = getMethod(id);
-            if (method != null) {
-                return new PseudoClassCondition(method, not);
+            String cleanId = not ? clean("!" + id) : clean(id);
+            PseudoClassCondition condition = CONDITION_MAP.get(cleanId);
+            if (condition != null) {
+                return condition;
             }
             throw new MapCSSException("Invalid pseudo class specified: " + id);
         }
 
-        protected static Method getMethod(String id) {
-            String cleanId = clean(id);
-            return Arrays.stream(PseudoClasses.class.getDeclaredMethods())
-                    .filter(method -> clean(method.getName()).equalsIgnoreCase(cleanId))
-                    .findFirst().orElse(null);
-        }
-
         private static String clean(String id) {
             // for backwards compatibility, consider :sameTags == :same-tags == :same_tags (#11150)
-            return id.replaceAll("[-_]", "");
+            return id.toLowerCase(Locale.ROOT).replaceAll("[-_]", "");
         }
 
         @Override
         public boolean applies(Environment e) {
-            try {
-                return not ^ (Boolean) method.invoke(null, e);
-            } catch (ReflectiveOperationException ex) {
-                throw new JosmRuntimeException(ex);
-            }
+            return predicate.test(e);
         }
 
         @Override
         public String toString() {
-            return (not ? "!" : "") + ':' + method.getName();
+            return name;
         }
     }
 
@@ -940,17 +956,19 @@ public final class ConditionFactory {
      * Open end pseudo class condition.
      */
     public static class OpenEndPseudoClassCondition extends PseudoClassCondition {
+        final boolean not;
         /**
          * Constructs a new {@code OpenEndPseudoClassCondition}.
          * @param not negation or not
          */
         public OpenEndPseudoClassCondition(boolean not) {
-            super(null, not);
+            super("open_end", null);
+            this.not = not;
         }
 
         @Override
         public boolean applies(Environment e) {
-            return true;
+            return !not;
         }
     }
 

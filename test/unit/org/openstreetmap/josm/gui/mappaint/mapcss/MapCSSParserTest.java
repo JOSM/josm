@@ -88,12 +88,20 @@ class MapCSSParserTest {
 
     @Test
     void testPseudoClassCondition() throws Exception {
+        Condition c0 = ((Selector.GeneralSelector) getParser("way:area-style").selector()).conds.get(0);
         Condition c1 = ((Selector.GeneralSelector) getParser("way!:area-style").selector()).conds.get(0);
         Condition c2 = ((Selector.GeneralSelector) getParser("way!:areaStyle").selector()).conds.get(0);
         Condition c3 = ((Selector.GeneralSelector) getParser("way!:area_style").selector()).conds.get(0);
+        assertEquals(":areaStyle", c0.toString());
         assertEquals("!:areaStyle", c1.toString());
         assertEquals("!:areaStyle", c2.toString());
         assertEquals("!:areaStyle", c3.toString());
+        Selector tagged = getParser("way:tagged").selector();
+        Selector notTagged = getParser("way!:tagged").selector();
+        assertFalse(tagged.matches((new Environment(OsmUtils.createPrimitive("way")))));
+        assertTrue(tagged.matches((new Environment(OsmUtils.createPrimitive("way building=yes")))));
+        assertTrue(notTagged.matches((new Environment(OsmUtils.createPrimitive("way")))));
+        assertFalse(notTagged.matches((new Environment(OsmUtils.createPrimitive("way building=yes")))));
     }
 
     @Test

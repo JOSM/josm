@@ -13,6 +13,8 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
+import java.lang.reflect.Method;
+
 /**
  * Unit tests of {@link ConditionFactory}.
  */
@@ -41,5 +43,18 @@ class ConditionFactoryTest {
     @Test
     void testUtilityClass() throws ReflectiveOperationException {
         UtilityClassTestUtil.assertUtilityClassWellDefined(PseudoClasses.class);
+    }
+
+    /**
+     * Tests that all functions have been registered to {@link ConditionFactory.PseudoClassCondition#CONDITION_MAP}
+     */
+    @Test
+    void testAllPseudoClassesRegistered() {
+        for (Method method : PseudoClasses.class.getDeclaredMethods()) {
+            String name = method.getName().replaceFirst("^_new$", "new");
+            Context context = name.equals("sameTags") ? Context.LINK : Context.PRIMITIVE;
+            ConditionFactory.PseudoClassCondition.createPseudoClassCondition(name, false, context);
+            ConditionFactory.PseudoClassCondition.createPseudoClassCondition(name, true, context);
+        }
     }
 }
