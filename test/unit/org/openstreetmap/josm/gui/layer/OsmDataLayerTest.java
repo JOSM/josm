@@ -290,7 +290,7 @@ class OsmDataLayerTest {
     void testCheckSaveConditions() {
         TestUtils.assumeWorkingJMockit();
         final ExtendedDialogMocker edMocker = new ExtendedDialogMocker(
-            Collections.singletonMap("The document contains no data.", "Cancel")
+            Collections.singletonMap("The layer contains no data.", "Cancel")
         );
 
         assertFalse(layer.checkSaveConditions());
@@ -300,7 +300,7 @@ class OsmDataLayerTest {
         assertEquals(1, edMocker.getInvocationLog().size());
         Object[] invocationLogEntry = edMocker.getInvocationLog().get(0);
         assertEquals(2, (int) invocationLogEntry[0]);
-        assertEquals("Empty document", invocationLogEntry[2]);
+        assertEquals("Empty layer", invocationLogEntry[2]);
     }
 
     /**
