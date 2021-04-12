@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
@@ -59,9 +60,13 @@ public class MapCSSTagChecker extends Test.TagTest {
     private MapCSSStyleIndex indexData;
     private final Map<MapCSSRule, MapCSSTagCheckerAndRule> ruleToCheckMap = new HashMap<>();
     private static final Map<IPrimitive, Area> mpAreaCache = new HashMap<>();
-    private static final CachingProperty<Boolean> PREF_OTHER = ValidatorPrefHelper.PREF_OTHER.cached();
     static final boolean ALL_TESTS = true;
     static final boolean ONLY_SELECTED_TESTS = false;
+
+    /**
+     * Cached version of {@link ValidatorPrefHelper#PREF_OTHER}, see #20745.
+     */
+    private static final CachingProperty<Boolean> PREF_OTHER = new BooleanProperty("validator.other", false).cached();
 
     /**
      * The preference key for tag checker source entries.
