@@ -646,7 +646,7 @@ way.MotorwayTrunk[lanes][destination:symbol:lanes][tag(lanes)!=eval(count(split(
 }
 
 /* #14125, #14323, #18185 */
-way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][oneway!=reversible][highway!=motorway][junction!=roundabout][lanes>2][get(split(".", tag(lanes)/2), 1)=5] {
+way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][oneway!=reversible][highway!=motorway][junction!=roundabout][lanes>2][mod(tag(lanes),2)=1] {
   throwWarning: tr("street with odd number of {0}, but without {1} and {2} or {3}", "{1.key}", "{2.key}", "{3.key}", "{4.key}");
   group: tr("missing tag");
   assertNoMatch: "way highway=primary lanes=2";
@@ -666,8 +666,8 @@ way[highway][!lanes:both_ways][/^.*:lanes:both_ways$/] {
   assertMatch: "way highway=primary turn:lanes:forward=left|right";
   assertNoMatch: "way highway=primary turn:lanes=left|right lanes=2";
 }
-way[highway][!lanes:forward][/^.*:lanes:forward$/][!lanes:backward][!get(split(".", tag(lanes)/2), 1)=5],
-way[highway][!lanes:backward][/^.*:lanes:backward$/][!lanes:forward][!get(split(".", tag(lanes)/2), 1)=5] {
+way[highway][!lanes:forward][/^.*:lanes:forward$/][!lanes:backward][mod(tag(lanes),2)=0],
+way[highway][!lanes:backward][/^.*:lanes:backward$/][!lanes:forward][mod(tag(lanes),2)=0] {
   throwOther: tr("{0} without {1}", "{2.key}", "{1.key}");
   group: tr("missing tag");
   assertMatch: "way highway=primary turn:lanes:forward=left|right lanes=2";

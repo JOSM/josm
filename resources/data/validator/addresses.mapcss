@@ -1,8 +1,8 @@
 /* #10232 */
-way[addr:interpolation=odd] > node[addr:housenumber][get(split(".", tag("addr:housenumber")/2), 1)=0] {
+way[addr:interpolation=odd] > node[addr:housenumber][mod(tag("addr:housenumber"),2)=0] {
     throwWarning: tr("Even housenumber in odd address interpolation.");
 }
-way[addr:interpolation=even] > node[addr:housenumber][get(split(".", tag("addr:housenumber")/2), 1)=5] {
+way[addr:interpolation=even] > node[addr:housenumber][mod(tag("addr:housenumber"),2)=1] {
     throwWarning: tr("Odd housenumber in even address interpolation.");
 }
 way[addr:interpolation] {

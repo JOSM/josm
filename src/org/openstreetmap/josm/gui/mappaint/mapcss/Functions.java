@@ -111,6 +111,16 @@ public final class Functions {
     }
 
     /**
+     * Function associated to the math modulo "%" operator.
+     * @param a first value
+     * @param b second value
+     * @return {@code a mod b}, e.g., {@code mod(7, 5) = 2}
+     */
+    public static float mod(float a, float b) { // NO_UCD (unused code)
+        return a % b;
+    }
+
+    /**
      * Creates a list of values, e.g., for the {@code dashes} property.
      * @param ignored The environment (ignored)
      * @param args The values to put in a list

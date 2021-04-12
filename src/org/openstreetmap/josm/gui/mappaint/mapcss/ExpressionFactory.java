@@ -189,6 +189,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("log", Factory.of(Math::log));
         FACTORY_MAP.put("lower", Factory.of(String.class, Functions::lower));
         FACTORY_MAP.put("minus", Factory.ofNumberVarArgs(Functions::minus));
+        FACTORY_MAP.put("mod", Factory.of(float.class, float.class, Functions::mod));
         FACTORY_MAP.put("not", Factory.of(boolean.class, Functions::not));
         FACTORY_MAP.put("not_equal", Factory.of(Object.class, Object.class, Functions::not_equal));
         FACTORY_MAP.put("number_of_tags", Factory.ofEnv(Functions::number_of_tags));
