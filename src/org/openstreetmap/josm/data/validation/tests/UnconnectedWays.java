@@ -594,7 +594,7 @@ public abstract class UnconnectedWays extends Test {
             }
             Node a = w.getNode(i-1);
             Node b = w.getNode(i);
-            if (a.isDrawable() && b.isDrawable()) {
+            if (a.isLatLonKnown() && b.isLatLonKnown()) {
                 MyWaySegment ws = new MyWaySegment(w, a, b, concersArea);
                 ret.add(ws);
             }

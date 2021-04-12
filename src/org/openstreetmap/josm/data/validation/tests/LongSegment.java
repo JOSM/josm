@@ -135,7 +135,7 @@ public class LongSegment extends Test {
 
     private static boolean isUsableNode(OsmPrimitive p) {
         // test changed nodes - ways referred by them may not be checked automatically.
-        return p instanceof Node && p.isDrawable();
+        return p instanceof Node && ((Node) p).isLatLonKnown();
     }
 
     private static boolean isUsableWay(OsmPrimitive p) {

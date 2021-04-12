@@ -513,10 +513,10 @@ public class Multipolygon {
         for (RelationMember m : r.getMembers()) {
             if (m.getMember().isIncomplete()) {
                 this.incomplete = true;
-            } else if (m.getMember().isDrawable() && m.isWay()) {
+            } else if (!m.getMember().isDeleted() && m.isWay()) {
                 Way w = m.getWay();
 
-                if (w.getNodesCount() < 2) {
+                if (!w.hasOnlyLocatableNodes() || w.getNodesCount() < 2) {
                     continue;
                 }
 
