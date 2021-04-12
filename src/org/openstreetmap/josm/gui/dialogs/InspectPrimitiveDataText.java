@@ -32,7 +32,6 @@ import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator.Hemisphere;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Textual representation of primitive contents, used in {@code InspectPrimitiveDialog}.

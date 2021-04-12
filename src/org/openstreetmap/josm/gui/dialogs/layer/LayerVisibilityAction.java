@@ -226,7 +226,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
      * This is a slider for a filter value.
      * @author Michael Zangl
      */
-    private static abstract class AbstractFilterSlider extends JPanel implements LayerVisibilityMenuEntry {
+    private abstract static class AbstractFilterSlider extends JPanel implements LayerVisibilityMenuEntry {
         private final double minValue;
         private final double maxValue;
 
