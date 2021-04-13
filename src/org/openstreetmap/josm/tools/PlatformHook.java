@@ -107,10 +107,10 @@ public interface PlatformHook {
       * it or registered from within the application.
       *
       * Please note that you are not allowed to register any
-      * shortuts from this hook, but only "systemCuts"!
+      * shortcuts from this hook, but only "systemCuts"!
       *
       * BTW: SystemCuts should be named "system:&lt;whatever&gt;",
-      * and it'd be best if sou'd recycle the names already used
+      * and it'd be best if you'd recycle the names already used
       * by the Windows and OSX hooks. Especially the later has
       * really many of them.
       *

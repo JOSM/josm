@@ -345,8 +345,8 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
         auto(Shortcut.registerSystemShortcut("system:about", tr("reserved"), 0, -1)); // About
 
-        Shortcut.registerSystemShortcut("view:zoomin", tr("reserved"), KeyEvent.VK_ADD, KeyEvent.META_DOWN_MASK); // Zoom in
-        Shortcut.registerSystemShortcut("view:zoomout", tr("reserved"), KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
+        //Shortcut.registerSystemShortcut("view:zoomin", tr("reserved"), KeyEvent.VK_ADD, KeyEvent.META_DOWN_MASK); // Zoom in
+        //Shortcut.registerSystemShortcut("view:zoomout", tr("reserved"), KeyEvent.VK_SUBTRACT, KeyEvent.META_DOWN_MASK); // Zoom out
         // CHECKSTYLE.ON: LineLength
     }
 
