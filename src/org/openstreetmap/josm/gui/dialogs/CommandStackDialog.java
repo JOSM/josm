@@ -346,11 +346,10 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
 
     /**
      * Return primitives that are affected by some command
-     * @param path GUI elements
-     * @return collection of affected primitives, onluy usable ones
+     * @param c the command
+     * @return collection of affected primitives, only usable ones
      */
-    protected static Collection<? extends OsmPrimitive> getAffectedPrimitives(TreePath path) {
-        PseudoCommand c = ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand();
+    protected static Collection<? extends OsmPrimitive> getAffectedPrimitives(PseudoCommand c) {
         final OsmDataLayer currentLayer = MainApplication.getLayerManager().getEditLayer();
         return new SubclassFilteredCollection<>(
                 c.getParticipatingPrimitives(),
@@ -424,25 +423,37 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueuePrec
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            TreePath path;
-            if (!undoTree.isSelectionEmpty()) {
-                path = undoTree.getSelectionPath();
-            } else if (!redoTree.isSelectionEmpty()) {
-                path = redoTree.getSelectionPath();
-            } else {
-                // see #19514 for a possible cause
+            PseudoCommand command = getSelectedCommand();
+            if (command == null) {
                 return;
             }
 
             DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
             if (dataSet == null) return;
-            dataSet.setSelected(getAffectedPrimitives(path));
+            dataSet.setSelected(getAffectedPrimitives(command));
         }
 
         @Override
         public void updateEnabledState() {
             setEnabled(!undoTree.isSelectionEmpty() || !redoTree.isSelectionEmpty());
         }
+    }
+
+    /**
+     * Returns the selected undo/redo command
+     * @return the selected undo/redo command or {@code null}
+     */
+    public PseudoCommand getSelectedCommand() {
+        TreePath path;
+        if (!undoTree.isSelectionEmpty()) {
+            path = undoTree.getSelectionPath();
+        } else if (!redoTree.isSelectionEmpty()) {
+            path = redoTree.getSelectionPath();
+        } else {
+            // see #19514 for a possible cause
+            return null;
+        }
+        return path != null ? ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand() : null;
     }
 
     /**
