@@ -37,4 +37,9 @@ public class CommandListMutableTreeNode extends DefaultMutableTreeNode {
     public int getIndex() {
         return getParent().getIndex(this);
     }
+
+    @Override
+    public String toString() {
+        return cmd.getDescriptionText();
+    }
 }
