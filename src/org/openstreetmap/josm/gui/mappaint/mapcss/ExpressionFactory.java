@@ -206,7 +206,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("plus", Factory.ofNumberVarArgs(Functions::plus));
         FACTORY_MAP.put("print", Factory.of(Object.class, Functions::print));
         FACTORY_MAP.put("println", Factory.of(Object.class, Functions::println));
-        FACTORY_MAP.put("prop", Factory.ofEnv(String.class, Functions::prop));
+        FACTORY_MAP.put("prop", Factory.ofEnv(String.class, String.class, Functions::prop, Functions::prop));
         FACTORY_MAP.put("red", Factory.of(Color.class, Functions::red));
         FACTORY_MAP.put("regexp_match", Factory.of(String.class, String.class, String.class, Functions::regexp_match, Functions::regexp_match));
         FACTORY_MAP.put("regexp_test", Factory.of(String.class, String.class, String.class, Functions::regexp_test, Functions::regexp_test));
