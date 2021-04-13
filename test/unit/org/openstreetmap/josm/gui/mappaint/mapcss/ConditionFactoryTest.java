@@ -14,6 +14,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * Unit tests of {@link ConditionFactory}.
@@ -51,6 +52,9 @@ class ConditionFactoryTest {
     @Test
     void testAllPseudoClassesRegistered() {
         for (Method method : PseudoClasses.class.getDeclaredMethods()) {
+            if (!Modifier.isPublic(method.getModifiers()) || method.toString().contains("$jacocoInit")) {
+                return;
+            }
             String name = method.getName().replaceFirst("^_new$", "new");
             Context context = name.equals("sameTags") ? Context.LINK : Context.PRIMITIVE;
             ConditionFactory.PseudoClassCondition.createPseudoClassCondition(name, false, context);
