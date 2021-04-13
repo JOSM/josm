@@ -9,7 +9,6 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -515,7 +514,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
         tagTable.setTransferHandler(null);
 
         tagTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK), "onCopy");
+                .put(Shortcut.getCopyKeyStroke(), "onCopy");
         tagTable.getActionMap().put("onCopy", copyKeyValueAction);
 
         // allow using enter to add tags for all look&feel configurations
