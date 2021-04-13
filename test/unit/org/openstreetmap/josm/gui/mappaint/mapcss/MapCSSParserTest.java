@@ -720,4 +720,16 @@ class MapCSSParserTest {
         assertEquals(1, sheet.getErrors().size());
         assertEquals("Error at line 1, column 17: Invalid pseudo class specified: foobar", sheet.getErrors().iterator().next().getMessage());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20757">Bug #20757</a>.
+     */
+    @Test
+    void testTicket20757() {
+        MapCSSStyleSource source = new MapCSSStyleSource("node {name: osm_user_name()}");
+        source.loadStyleSource();
+        MultiCascade mc = new MultiCascade();
+        source.apply(mc, OsmUtils.createPrimitive("node"), 20, false);
+        assertNull(mc.getCascade(null).get("name"));
+    }
 }

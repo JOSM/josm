@@ -9,6 +9,7 @@ import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A MapCSS Instruction.
@@ -90,7 +91,12 @@ public interface Instruction extends StyleKeys {
         public void execute(Environment env) {
             Object value;
             if (val instanceof Expression) {
-                value = ((Expression) val).evaluate(env);
+                try {
+                    value = ((Expression) val).evaluate(env);
+                } catch (RuntimeException ex) {
+                    Logging.error(ex);
+                    value = null;
+                }
             } else {
                 value = val;
             }
