@@ -106,6 +106,7 @@ import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -543,6 +544,7 @@ implements DataSelectionListener, ActiveLayerChangeListener, DataSetListenerAdap
 
     private JosmTextField setupFilter() {
         final JosmTextField f = new DisableShortcutsOnFocusGainedTextField();
+        FilterField.setSearchIcon(f);
         f.setToolTipText(tr("Tag filter"));
         final CompileSearchTextDecorator decorator = CompileSearchTextDecorator.decorate(f);
         f.addPropertyChangeListener("filter", evt -> setFilter(decorator.getMatch()));

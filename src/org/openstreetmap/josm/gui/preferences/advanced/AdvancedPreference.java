@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,6 +52,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.DocumentAdapter;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.Setting;
@@ -167,11 +167,8 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
         final JPanel txtFilterPanel = new JPanel(new GridBagLayout());
         p.add(txtFilterPanel, GBC.eol().fill(GBC.HORIZONTAL));
-        txtFilter = new JosmTextField();
-        JLabel lbFilter = new JLabel(tr("Search:"));
-        lbFilter.setLabelFor(txtFilter);
-        txtFilterPanel.add(lbFilter, GBC.std().insets(0, 0, 5, 0));
-        txtFilterPanel.add(txtFilter, GBC.eol().fill(GBC.HORIZONTAL));
+        txtFilter = new FilterField();
+        txtFilterPanel.add(txtFilter, GBC.eol().insets(0, 0, 0, 5).fill(GBC.HORIZONTAL));
         txtFilter.getDocument().addDocumentListener(DocumentAdapter.create(ignore -> applyFilter()));
         readPreferences(Preferences.main());
 

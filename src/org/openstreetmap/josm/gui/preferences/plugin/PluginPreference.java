@@ -8,10 +8,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -27,7 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -166,39 +163,25 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
 
     private JPanel buildSearchFieldPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = HORIZONTAL;
-        gc.weightx = 0.0;
-        gc.insets = new Insets(0, 0, 0, 3);
         pnl.add(GBC.glue(0, 0));
 
-        gc.weightx = 1.0;
         ButtonGroup bg = new ButtonGroup();
         JPanel radios = new JPanel();
-        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "All"), true), gc, PluginInstallation.ALL);
-        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "Installed")), gc, PluginInstallation.INSTALLED);
-        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "Available")), gc, PluginInstallation.AVAILABLE);
-        pnl.add(radios, gc);
+        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "All"), true), PluginInstallation.ALL);
+        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "Installed")), PluginInstallation.INSTALLED);
+        addRadioButton(bg, radios, new JRadioButton(trc("plugins", "Available")), PluginInstallation.AVAILABLE);
+        pnl.add(radios, GBC.eol().fill(HORIZONTAL));
 
-        gc.gridx = 0;
-        gc.weightx = 0.0;
-        pnl.add(new JLabel(tr("Search:")), gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
         pnl.add(new FilterField().filter(expr -> {
             model.filterDisplayedPlugins(expr);
             pnlPluginPreferences.refreshView();
-        }), gc);
+        }), GBC.eol().insets(0, 0, 0, 5).fill(HORIZONTAL));
         return pnl;
     }
 
-    private void addRadioButton(ButtonGroup bg, JPanel pnl, JRadioButton rb, GridBagConstraints gc, PluginInstallation value) {
+    private void addRadioButton(ButtonGroup bg, JPanel pnl, JRadioButton rb, PluginInstallation value) {
         bg.add(rb);
-        pnl.add(rb, gc);
+        pnl.add(rb, GBC.std());
         rb.addActionListener(e -> {
             model.filterDisplayedPlugins(value);
             pnlPluginPreferences.refreshView();

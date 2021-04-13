@@ -17,6 +17,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -30,8 +31,18 @@ public class FilterField extends JosmTextField {
      * Constructs a new {@code TableFilterField}.
      */
     public FilterField() {
+        setSearchIcon(this);
         setToolTipText(tr("Enter a search expression"));
         SelectAllOnFocusGainedDecorator.decorate(this);
+    }
+
+    /**
+     * Sets the search icon for the given text field
+     * @param textField the text field
+     * @since 17768
+     */
+    public static void setSearchIcon(JosmTextField textField) {
+        textField.setIcon(ImageProvider.get("listsearch"));
     }
 
     /**

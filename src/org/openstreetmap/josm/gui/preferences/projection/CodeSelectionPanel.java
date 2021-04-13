@@ -22,6 +22,7 @@ import javax.swing.table.AbstractTableModel;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice.CodeComparator;
 import org.openstreetmap.josm.gui.util.TableHelper;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -31,7 +32,7 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class CodeSelectionPanel extends JPanel implements ListSelectionListener, DocumentListener {
 
-    private final JosmTextField filter = new JosmTextField(30);
+    private final JosmTextField filter = new FilterField();
     private final ProjectionCodeModel model = new ProjectionCodeModel();
     private JTable table;
     private final List<String> data;
@@ -103,7 +104,7 @@ public class CodeSelectionPanel extends JPanel implements ListSelectionListener,
         scroll.setPreferredSize(new Dimension(200, 214));
 
         this.setLayout(new GridBagLayout());
-        this.add(filter, GBC.eol().weight(1.0, 0.0));
+        this.add(filter, GBC.eol().fill(GBC.HORIZONTAL).weight(1.0, 0.0));
         this.add(scroll, GBC.eol().fill(GBC.HORIZONTAL));
     }
 

@@ -42,7 +42,7 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
     protected SearchTextResultListPanel() {
         super(new BorderLayout());
 
-        edSearchText = new JosmTextField();
+        edSearchText = new FilterField();
         edSearchText.getDocument().addDocumentListener(DocumentAdapter.create(ignore -> filterItems()));
         edSearchText.addKeyListener(new KeyAdapter() {
             @Override

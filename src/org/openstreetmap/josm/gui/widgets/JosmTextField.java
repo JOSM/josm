@@ -10,7 +10,10 @@ import java.awt.RenderingHints;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
 import javax.swing.text.Document;
 
 import org.openstreetmap.josm.gui.MainApplication;
@@ -30,6 +33,8 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
 
     private final PopupMenuLauncher launcher;
     private String hint;
+    private Icon icon;
+    private int leftInsets;
 
     /**
      * Constructs a new <code>JosmTextField</code> that uses the given text
@@ -148,6 +153,30 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
     }
 
     /**
+     * Returns the icon to display
+     * @return the icon to display
+     * @since 17768
+     */
+    public Icon getIcon() {
+        return icon;
+    }
+
+    /**
+     * Sets the icon to display
+     * @param icon the icon to set
+     * @since 17768
+     */
+    public void setIcon(Icon icon) {
+        this.icon = icon;
+        if (icon != null) {
+            this.leftInsets = getInsets().left;
+            Border original = getBorder();
+            Border margin = BorderFactory.createEmptyBorder(0, icon.getIconWidth(), 0, 0);
+            setBorder(original == null ? margin : BorderFactory.createCompoundBorder(original, margin));
+        }
+    }
+
+    /**
      * Empties the internal undo manager.
      * @since 14977
      */
@@ -158,6 +187,10 @@ public class JosmTextField extends JTextField implements Destroyable, FocusListe
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        if (icon != null) {
+            int h = getHeight() - icon.getIconHeight();
+            icon.paintIcon(this, g, Math.min(leftInsets, h / 2), h / 2);
+        }
         if (hint != null && !hint.isEmpty() && getText().isEmpty() && !isFocusOwner()) {
             // Taken from http://stackoverflow.com/a/24571681/2257172
             int h = getHeight();

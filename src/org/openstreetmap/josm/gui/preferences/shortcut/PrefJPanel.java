@@ -7,10 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.im.InputContext;
@@ -20,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
@@ -43,6 +40,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.TableHelper;
 import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.KeyboardUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -250,19 +248,8 @@ public class PrefJPanel extends JPanel {
     private JPanel buildFilterPanel() {
         // copied from PluginPreference
         JPanel pnl = new JPanel(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
-        gc.insets = new Insets(0, 0, 0, 5);
-        pnl.add(new JLabel(tr("Search:")), gc);
-
-        gc.gridx = 1;
-        gc.weightx = 1.0;
-        pnl.add(filterField, gc);
-        pnl.setMaximumSize(new Dimension(300, 10));
+        pnl.add(filterField, GBC.eol().insets(0, 0, 0, 5).fill(GBC.HORIZONTAL));
+        pnl.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10));
         return pnl;
     }
 

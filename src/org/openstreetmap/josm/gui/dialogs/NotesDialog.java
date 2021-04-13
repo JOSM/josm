@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.util.DocumentAdapter;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
+import org.openstreetmap.josm.gui.widgets.FilterField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -232,6 +233,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
 
     private JosmTextField setupFilter() {
         final JosmTextField f = new DisableShortcutsOnFocusGainedTextField();
+        FilterField.setSearchIcon(f);
         f.setToolTipText(tr("Note filter"));
         f.getDocument().addDocumentListener(DocumentAdapter.create(ignore -> {
             String text = f.getText();
