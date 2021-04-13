@@ -89,7 +89,6 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.gui.widgets.ScrollableTable;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.ArrayUtils;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -891,7 +890,7 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
          * @return  the list of indices of the selected rows. Never null, but may be empty.
          */
         public List<Integer> getSelectedRows() {
-            return ArrayUtils.toList(TableHelper.getSelectedIndices(selectionModel));
+            return TableHelper.selectedIndices(selectionModel).boxed().collect(Collectors.toList());
         }
 
         /**
@@ -904,9 +903,8 @@ public class LayerListDialog extends ToggleDialog implements DisplaySettingsChan
                 return;
             layer.removePropertyChangeListener(this);
             final int size = getRowCount();
-            final int[] rows = TableHelper.getSelectedIndices(selectionModel);
 
-            if (rows.length == 0 && size > 0) {
+            if (selectionModel.isSelectionEmpty() && size > 0) {
                 selectionModel.setSelectionInterval(size-1, size-1);
             }
             fireTableDataChanged();

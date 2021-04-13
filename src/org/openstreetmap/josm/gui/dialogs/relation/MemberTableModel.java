@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +49,6 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.SortableTableModel;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
-import org.openstreetmap.josm.tools.ArrayUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -512,7 +510,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      * @return a collection with the currently selected relation members
      */
     public Collection<RelationMember> getSelectedMembers() {
-        return Arrays.stream(getSelectedIndices())
+        return selectedIndices()
                 .mapToObj(members::get)
                 .collect(Collectors.toList());
     }
@@ -691,10 +689,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
         }
         addToSelectedMembers(selected);
         getSelectionModel().setValueIsAdjusting(false);
-        int[] selectedIndices = getSelectedIndices();
-        if (selectedIndices.length > 0) {
-            fireMakeMemberVisible(selectedIndices[0]);
-        }
+        selectedIndices().findFirst().ifPresent(this::fireMakeMemberVisible);
     }
 
     /**
@@ -722,7 +717,7 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
             sortedMembers = newMembers;
         } else {
             sortedMembers = relationSorter.sortMembers(selectedMembers);
-            List<Integer> selectedIndices = ArrayUtils.toList(getSelectedIndices());
+            List<Integer> selectedIndices = selectedIndices().boxed().collect(Collectors.toList());
             newMembers = new ArrayList<>();
             boolean inserted = false;
             for (int i = 0; i < members.size(); i++) {
@@ -783,8 +778,8 @@ implements TableModelListener, DataSelectionListener, DataSetListener, OsmPrimit
      */
     @Override
     public void reverse() {
-        List<Integer> selectedIndices = ArrayUtils.toList(getSelectedIndices());
-        List<Integer> selectedIndicesReversed = ArrayUtils.toList(getSelectedIndices());
+        List<Integer> selectedIndices = selectedIndices().boxed().collect(Collectors.toList());
+        List<Integer> selectedIndicesReversed = selectedIndices().boxed().collect(Collectors.toList());
 
         if (selectedIndices.size() <= 1) {
             Collections.reverse(members);

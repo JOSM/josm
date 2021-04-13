@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -60,13 +59,12 @@ public class SelectionSynchronizer implements ListSelectionListener {
         }
         preventRecursion = true;
         ListSelectionModel referenceModel = (ListSelectionModel) e.getSource();
-        int[] selectedIndices = TableHelper.getSelectedIndices(referenceModel);
         for (ListSelectionModel model : participants) {
             if (model == referenceModel) {
                 continue;
             }
             TableHelper.setSelectedIndices(model,
-                    Arrays.stream(selectedIndices).flatMap(i -> selectionIndexMapper.apply(i, referenceModel)));
+                    TableHelper.selectedIndices(referenceModel).flatMap(i -> selectionIndexMapper.apply(i, referenceModel)));
         }
         preventRecursion = false;
     }

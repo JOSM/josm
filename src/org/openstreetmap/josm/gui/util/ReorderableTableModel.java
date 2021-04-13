@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.util;
 
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -37,9 +38,19 @@ public interface ReorderableTableModel<T> extends ReorderableModel<T> {
     /**
      * Returns an array of all of the selected indices in the selection model, in increasing order.
      * @return an array of all of the selected indices in the selection model, in increasing order
+     * @see #selectedIndices()
      */
     default int[] getSelectedIndices() {
         return TableHelper.getSelectedIndices(getSelectionModel());
+    }
+
+    /**
+     * Returns a stream of all of the selected indices in the selection model, in increasing order.
+     * @return a stream of all of the selected indices in the selection model, in increasing order
+     * @since 17773
+     */
+    default IntStream selectedIndices() {
+        return TableHelper.selectedIndices(getSelectionModel());
     }
 
     /**

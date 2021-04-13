@@ -122,32 +122,35 @@ public final class TableHelper {
      * Returns an array of all of the selected indices in the selection model, in increasing order.
      * Unfortunately this method is not available in OpenJDK before version 11, see
      * https://bugs.openjdk.java.net/browse/JDK-8199395
-     * Code taken from OpenJDK 11. To be removed when we switch to Java 11 or later.
+     *
+     * To be removed when we switch to Java 11 or later.
      *
      * @param selectionModel list selection model.
      *
      * @return all of the selected indices, in increasing order,
      *         or an empty array if nothing is selected
      * @since 15226
+     * @see #selectedIndices(ListSelectionModel)
      */
     public static int[] getSelectedIndices(ListSelectionModel selectionModel) {
-        int iMin = selectionModel.getMinSelectionIndex();
-        int iMax = selectionModel.getMaxSelectionIndex();
+        return selectedIndices(selectionModel).toArray();
+    }
 
-        if (iMin < 0 || iMax < 0) {
-            return new int[0];
+    /**
+     * Returns a stream of all of the selected indices in the selection model, in increasing order.
+     *
+     * @param selectionModel list selection model.
+     *
+     * @return all of the selected indices, in increasing order,
+     *         or an empty stream if nothing is selected
+     * @since 17773
+     */
+    public static IntStream selectedIndices(ListSelectionModel selectionModel) {
+        if (selectionModel.isSelectionEmpty()) {
+            return IntStream.empty();
         }
-
-        int[] rvTmp = new int[1 + iMax - iMin];
-        int n = 0;
-        for (int i = iMin; i <= iMax; i++) {
-            if (selectionModel.isSelectedIndex(i)) {
-                rvTmp[n++] = i;
-            }
-        }
-        int[] rv = new int[n];
-        System.arraycopy(rvTmp, 0, rv, 0, n);
-        return rv;
+        return IntStream.rangeClosed(selectionModel.getMinSelectionIndex(), selectionModel.getMaxSelectionIndex())
+                .filter(selectionModel::isSelectedIndex);
     }
 
     /**
