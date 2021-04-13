@@ -129,8 +129,8 @@ public final class TableHelper {
      *
      * @return all of the selected indices, in increasing order,
      *         or an empty array if nothing is selected
-     * @since 15226
      * @see #selectedIndices(ListSelectionModel)
+     * @since 15226
      */
     public static int[] getSelectedIndices(ListSelectionModel selectionModel) {
         return selectedIndices(selectionModel).toArray();
