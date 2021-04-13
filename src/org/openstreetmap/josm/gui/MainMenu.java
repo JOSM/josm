@@ -39,6 +39,7 @@ import org.openstreetmap.josm.actions.CloseChangesetAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.CopyCoordinatesAction;
+import org.openstreetmap.josm.actions.CopyUrlAction;
 import org.openstreetmap.josm.actions.CreateCircleAction;
 import org.openstreetmap.josm.actions.CreateMultipolygonAction;
 import org.openstreetmap.josm.actions.DeleteAction;
@@ -214,6 +215,8 @@ public class MainMenu extends JMenuBar {
     public final RedoAction redo = new RedoAction();
     /** Edit / Copy */
     public final CopyAction copy = new CopyAction();
+    /** Edit / Copy URLs*/
+    public final CopyUrlAction copyUrl = new CopyUrlAction();
     /** Edit / Copy Coordinates */
     public final JosmAction copyCoordinates = new CopyCoordinatesAction();
     /** Edit / Paste */
@@ -767,6 +770,7 @@ public class MainMenu extends JMenuBar {
         editMenu.addSeparator();
         add(editMenu, copy);
         add(editMenu, copyCoordinates, true);
+        add(editMenu, copyUrl, true);
         add(editMenu, paste);
         add(editMenu, pasteAtSource, true);
         add(editMenu, pasteTags);
