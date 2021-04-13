@@ -382,4 +382,12 @@ class TagCheckerTest {
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:kbp", "Wasɩŋtɔŋ"));
         assertFalse(TagChecker.containsUnusualUnicodeCharacter("name:kbp", "Kalɩfɔrnii"));
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20754">Bug #20754</a>.
+     */
+    @Test
+    void testTicket20754() {
+        assertFalse(TagChecker.containsUnusualUnicodeCharacter("name", "Yuułuʔiłʔatḥ Lands"));
+    }
 }

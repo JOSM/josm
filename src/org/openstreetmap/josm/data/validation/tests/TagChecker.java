@@ -498,6 +498,7 @@ public class TagChecker extends TagTest implements TaggingPresetListener {
             || c == 0x0269 || c == 0x0196 // "ɩ/Ɩ" (U+0269/U+0196), see #20437
             || c == 0x0272 || c == 0x019D // "ɲ/Ɲ" (U+0272/U+019D), see #18740
             || c == 0x0273 || c == 0x019E // "ŋ/Ŋ" (U+0273/U+019E), see #18740
+            || c == 0x0142 || c == 0x0294 // see #20754
             || (key.endsWith("ref") && 0x1D2C <= c && c <= 0x1D42); // allow uppercase superscript latin characters in *ref tags
     }
 
