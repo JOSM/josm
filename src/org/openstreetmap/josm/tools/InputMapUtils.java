@@ -125,7 +125,7 @@ public final class InputMapUtils {
      * @see JComponent#WHEN_IN_FOCUSED_WINDOW
      */
     public static void addCtrlEnterAction(JComponent c, Action a) {
-        final KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK);
+        final KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, PlatformManager.getPlatform().getMenuShortcutKeyMaskEx());
         c.getActionMap().put("ctrl_enter", a);
         c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "ctrl_enter");
         Optional.ofNullable(a)
