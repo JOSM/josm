@@ -605,7 +605,14 @@ class MapCSSParserTest {
 
     @Test
     void testMath() {
-        MapCSSStyleSource source = new MapCSSStyleSource("node { add: 1 + 2 + 3 + 4; mul: 2 * 3 * 5 * 7; sub: 0 - 1 - 2 - 3; div: 360 / 15; }");
+        MapCSSStyleSource source = new MapCSSStyleSource("node {" +
+                "add: 1 + 2 + 3 + 4;" +
+                "mul: 2 * 3 * 5 * 7;" +
+                "sub: 0 - 1 - 2 - 3;" +
+                "div: 360 / 15;" +
+                "neg: -13;" +
+                "not: !0;" +
+                "}");
         source.loadStyleSource();
         MultiCascade mc = new MultiCascade();
         source.apply(mc, OsmUtils.createPrimitive("node"), 20, false);
@@ -613,6 +620,8 @@ class MapCSSParserTest {
         assertEquals(210.0, mc.getCascade(null).get("mul"));
         assertEquals(-6.0, mc.getCascade(null).get("sub"));
         assertEquals(24.0, mc.getCascade(null).get("div"));
+        assertEquals(-13.0, mc.getCascade(null).get("neg"));
+        assertEquals(true, mc.getCascade(null).get("not"));
     }
 
     @Test

@@ -54,8 +54,12 @@ public final class ExpressionFactory {
             return of(Double.class, operator::applyAsDouble);
         }
 
-        static Factory ofNumberVarArgs(DoubleBinaryOperator operator) {
-            return args -> env -> args.stream()
+        static Factory ofNumberVarArgs(double identity, DoubleUnaryOperator unaryOperator, DoubleBinaryOperator operator) {
+            return args -> env -> args.isEmpty()
+                    ? identity
+                    : args.size() == 1
+                    ? unaryOperator.applyAsDouble(Cascade.convertTo(args.get(0).evaluate(env), Double.class))
+                    : args.stream()
                     .map(arg -> Cascade.convertTo(arg.evaluate(env), Double.class))
                     .filter(Objects::nonNull)
                     .reduce(operator::applyAsDouble)
@@ -161,7 +165,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("count", Factory.of(List.class, Functions::count));
         FACTORY_MAP.put("count_roles", Factory.ofStringVarargs(Functions::count_roles));
         FACTORY_MAP.put("degree_to_radians", Factory.of(Functions::degree_to_radians));
-        FACTORY_MAP.put("divided_by", Factory.ofNumberVarArgs(Functions::divided_by));
+        FACTORY_MAP.put("divided_by", Factory.ofNumberVarArgs(1.0, DoubleUnaryOperator.identity(), Functions::divided_by));
         FACTORY_MAP.put("equal", Factory.of(Object.class, Object.class, Functions::equal));
         FACTORY_MAP.put("eval", Factory.of(Object.class, Functions::eval));
         FACTORY_MAP.put("exp", Factory.of(Math::exp));
@@ -188,7 +192,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("list", Factory.ofObjectVarargs(Functions::list));
         FACTORY_MAP.put("log", Factory.of(Math::log));
         FACTORY_MAP.put("lower", Factory.of(String.class, Functions::lower));
-        FACTORY_MAP.put("minus", Factory.ofNumberVarArgs(Functions::minus));
+        FACTORY_MAP.put("minus", Factory.ofNumberVarArgs(0.0, v -> -v, Functions::minus));
         FACTORY_MAP.put("mod", Factory.of(float.class, float.class, Functions::mod));
         FACTORY_MAP.put("not", Factory.of(boolean.class, Functions::not));
         FACTORY_MAP.put("not_equal", Factory.of(Object.class, Object.class, Functions::not_equal));
@@ -203,7 +207,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("parent_osm_id", Factory.ofEnv(Functions::parent_osm_id));
         FACTORY_MAP.put("parent_tag", Factory.ofEnv(String.class, Functions::parent_tag));
         FACTORY_MAP.put("parent_tags", Factory.ofEnv(String.class, Functions::parent_tags));
-        FACTORY_MAP.put("plus", Factory.ofNumberVarArgs(Functions::plus));
+        FACTORY_MAP.put("plus", Factory.ofNumberVarArgs(0.0, DoubleUnaryOperator.identity(), Functions::plus));
         FACTORY_MAP.put("print", Factory.of(Object.class, Functions::print));
         FACTORY_MAP.put("println", Factory.of(Object.class, Functions::println));
         FACTORY_MAP.put("prop", Factory.ofEnv(String.class, String.class, Functions::prop, Functions::prop));
@@ -228,7 +232,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("tag_regex", Factory.ofEnv(String.class, String.class, Functions::tag_regex, Functions::tag_regex));
         FACTORY_MAP.put("tan", Factory.of(Math::tan));
         FACTORY_MAP.put("tanh", Factory.of(Math::tanh));
-        FACTORY_MAP.put("times", Factory.ofNumberVarArgs(Functions::times));
+        FACTORY_MAP.put("times", Factory.ofNumberVarArgs(1.0, DoubleUnaryOperator.identity(), Functions::times));
         FACTORY_MAP.put("title", Factory.of(String.class, Functions::title));
         FACTORY_MAP.put("to_boolean", Factory.of(String.class, Functions::to_boolean));
         FACTORY_MAP.put("to_byte", Factory.of(String.class, Functions::to_byte));
