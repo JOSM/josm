@@ -65,7 +65,7 @@ public final class Functions {
      * @param o any object
      * @return {@code o} unchanged
      */
-    public static Object eval(Object o) { // NO_UCD (unused code)
+    public static Object eval(Object o) {
         return o;
     }
 
@@ -76,7 +76,7 @@ public final class Functions {
      * @return Sum of arguments
      * @see Float#sum
      */
-    public static double plus(double a, double b) { // NO_UCD (unused code)
+    public static double plus(double a, double b) {
         return a + b;
     }
 
@@ -86,7 +86,7 @@ public final class Functions {
      * @param b the second operand
      * @return Subtraction of arguments
      */
-    public static double minus(double a, double b) { // NO_UCD (unused code)
+    public static double minus(double a, double b) {
         return a - b;
     }
 
@@ -96,7 +96,7 @@ public final class Functions {
      * @param b the second operand
      * @return Multiplication of arguments
      */
-    public static double times(double a, double b) { // NO_UCD (unused code)
+    public static double times(double a, double b) {
         return a * b;
     }
 
@@ -106,7 +106,7 @@ public final class Functions {
      * @param b the second operand
      * @return Division of arguments
      */
-    public static double divided_by(double a, double b) { // NO_UCD (unused code)
+    public static double divided_by(double a, double b) {
         return a / b;
     }
 
@@ -116,7 +116,7 @@ public final class Functions {
      * @param b second value
      * @return {@code a mod b}, e.g., {@code mod(7, 5) = 2}
      */
-    public static float mod(float a, float b) { // NO_UCD (unused code)
+    public static float mod(float a, float b) {
         return a % b;
     }
 
@@ -127,7 +127,7 @@ public final class Functions {
      * @return list of values
      * @see Arrays#asList(Object[])
      */
-    public static List<Object> list(Environment ignored, Object... args) { // NO_UCD (unused code)
+    public static List<Object> list(Environment ignored, Object... args) {
         return Arrays.asList(args);
     }
 
@@ -136,7 +136,7 @@ public final class Functions {
      * @param lst the list
      * @return length of the list
      */
-    public static Integer count(List<?> lst) { // NO_UCD (unused code)
+    public static Integer count(List<?> lst) {
         return lst.size();
     }
 
@@ -149,7 +149,7 @@ public final class Functions {
      * @see Utils#firstNonNull(Object[])
      */
     @NullableArguments
-    public static Object any(Environment ignored, Object... args) { // NO_UCD (unused code)
+    public static Object any(Environment ignored, Object... args) {
         return Utils.firstNonNull(args);
     }
 
@@ -160,7 +160,7 @@ public final class Functions {
      * @return {@code n}th element of the list, or {@code null} if index out of range
      * @since 5699
      */
-    public static Object get(List<?> lst, float n) { // NO_UCD (unused code)
+    public static Object get(List<?> lst, float n) {
         int idx = Math.round(n);
         if (idx >= 0 && idx < lst.size()) {
             return lst.get(idx);
@@ -176,7 +176,7 @@ public final class Functions {
      * @see String#split(String)
      * @since 5699
      */
-    public static List<String> split(String sep, String toSplit) { // NO_UCD (unused code)
+    public static List<String> split(String sep, String toSplit) {
         return Arrays.asList(toSplit.split(Pattern.quote(sep), -1));
     }
 
@@ -188,7 +188,7 @@ public final class Functions {
      * @return color matching the given components
      * @see Color#Color(float, float, float)
      */
-    public static Color rgb(float r, float g, float b) { // NO_UCD (unused code)
+    public static Color rgb(float r, float g, float b) {
         try {
             return new Color(r, g, b);
         } catch (IllegalArgumentException e) {
@@ -207,7 +207,7 @@ public final class Functions {
      * @return color matching the given components
      * @see Color#Color(float, float, float, float)
      */
-    public static Color rgba(float r, float g, float b, float alpha) { // NO_UCD (unused code)
+    public static Color rgba(float r, float g, float b, float alpha) {
         try {
             return new Color(r, g, b, alpha);
         } catch (IllegalArgumentException e) {
@@ -223,7 +223,7 @@ public final class Functions {
      * @param b brightness
      * @return the corresponding color
      */
-    public static Color hsb_color(float h, float s, float b) { // NO_UCD (unused code)
+    public static Color hsb_color(float h, float s, float b) {
         try {
             return Color.getHSBColor(h, s, b);
         } catch (IllegalArgumentException e) {
@@ -237,7 +237,7 @@ public final class Functions {
      * @param html HTML notation
      * @return color matching the given notation
      */
-    public static Color html2color(String html) { // NO_UCD (unused code)
+    public static Color html2color(String html) {
         return ColorHelper.html2color(html);
     }
 
@@ -246,7 +246,7 @@ public final class Functions {
      * @param c color
      * @return HTML notation matching the given color
      */
-    public static String color2html(Color c) { // NO_UCD (unused code)
+    public static String color2html(Color c) {
         return ColorHelper.color2html(c);
     }
 
@@ -256,7 +256,7 @@ public final class Functions {
      * @return the red color channel in the range [0;1]
      * @see java.awt.Color#getRed()
      */
-    public static float red(Color c) { // NO_UCD (unused code)
+    public static float red(Color c) {
         return ColorHelper.int2float(c.getRed());
     }
 
@@ -266,7 +266,7 @@ public final class Functions {
      * @return the green color channel in the range [0;1]
      * @see java.awt.Color#getGreen()
      */
-    public static float green(Color c) { // NO_UCD (unused code)
+    public static float green(Color c) {
         return ColorHelper.int2float(c.getGreen());
     }
 
@@ -276,7 +276,7 @@ public final class Functions {
      * @return the blue color channel in the range [0;1]
      * @see java.awt.Color#getBlue()
      */
-    public static float blue(Color c) { // NO_UCD (unused code)
+    public static float blue(Color c) {
         return ColorHelper.int2float(c.getBlue());
     }
 
@@ -286,7 +286,7 @@ public final class Functions {
      * @return the alpha channel in the range [0;1]
      * @see java.awt.Color#getAlpha()
      */
-    public static float alpha(Color c) { // NO_UCD (unused code)
+    public static float alpha(Color c) {
         return ColorHelper.int2float(c.getAlpha());
     }
 
@@ -298,7 +298,7 @@ public final class Functions {
      * @see Collectors#joining
      */
     @NullableArguments
-    public static String concat(Environment ignored, Object... args) { // NO_UCD (unused code)
+    public static String concat(Environment ignored, Object... args) {
         return Arrays.stream(args)
                 .filter(Objects::nonNull)
                 .map(String::valueOf)
@@ -313,7 +313,7 @@ public final class Functions {
      * @see String#join
      */
     @NullableArguments
-    public static String join(Environment ignored, String... args) { // NO_UCD (unused code)
+    public static String join(Environment ignored, String... args) {
         return String.join(args[0], Arrays.asList(args).subList(1, args.length));
     }
 
@@ -324,7 +324,7 @@ public final class Functions {
      * @return assembled string
      * @see String#join
      */
-    public static String join_list(final String separator, final List<String> values) { // NO_UCD (unused code)
+    public static String join_list(final String separator, final List<String> values) {
         return String.join(separator, values);
     }
 
@@ -334,7 +334,7 @@ public final class Functions {
      * @param key the property key
      * @return the property value
      */
-    public static Object prop(final Environment env, String key) { // NO_UCD (unused code)
+    public static Object prop(final Environment env, String key) {
         return prop(env, key, null);
     }
 
@@ -355,7 +355,7 @@ public final class Functions {
      * @param key the property key
      * @return {@code true} if the property is set, {@code false} otherwise
      */
-    public static Boolean is_prop_set(final Environment env, String key) { // NO_UCD (unused code)
+    public static Boolean is_prop_set(final Environment env, String key) {
         return is_prop_set(env, key, null);
     }
 
@@ -376,7 +376,7 @@ public final class Functions {
      * @param key the OSM key
      * @return the value for given key
      */
-    public static String tag(final Environment env, String key) { // NO_UCD (unused code)
+    public static String tag(final Environment env, String key) {
         return env.osm == null ? null : env.osm.get(key);
     }
 
@@ -388,7 +388,7 @@ public final class Functions {
      * @see Functions#tag_regex(Environment, String, String)
      * @since 15315
      */
-    public static List<String> tag_regex(final Environment env, String keyRegex) { // NO_UCD (unused code)
+    public static List<String> tag_regex(final Environment env, String keyRegex) {
         return tag_regex(env, keyRegex, "");
     }
 
@@ -403,7 +403,7 @@ public final class Functions {
      * @see Pattern#MULTILINE
      * @since 15315
      */
-    public static List<String> tag_regex(final Environment env, String keyRegex, String flags) { // NO_UCD (unused code)
+    public static List<String> tag_regex(final Environment env, String keyRegex, String flags) {
         int f = parse_regex_flags(flags);
         Pattern compiled = Pattern.compile(keyRegex, f);
         return env.osm.getKeys().entrySet().stream()
@@ -439,7 +439,7 @@ public final class Functions {
      * @param key the OSM key
      * @return first non-null value of the key {@code key} from the object's parent(s)
      */
-    public static String parent_tag(final Environment env, String key) { // NO_UCD (unused code)
+    public static String parent_tag(final Environment env, String key) {
         if (env.parent == null) {
             if (env.osm != null) {
                 // we don't have a matched parent, so just search all referrers
@@ -461,7 +461,7 @@ public final class Functions {
      * @param key the OSM key
      * @return a list of non-null values of the key {@code key} from the object's parent(s)
      */
-    public static List<String> parent_tags(final Environment env, String key) { // NO_UCD (unused code)
+    public static List<String> parent_tags(final Environment env, String key) {
         if (env.parent == null) {
             if (env.osm != null) {
                 // we don't have a matched parent, so just search all referrers
@@ -482,7 +482,7 @@ public final class Functions {
      * @param key the OSM key
      * @return the value of the key {@code key} from the object's child, or {@code null} if there is no child
      */
-    public static String child_tag(final Environment env, String key) { // NO_UCD (unused code)
+    public static String child_tag(final Environment env, String key) {
         return env.child == null ? null : env.child.get(key);
     }
 
@@ -494,7 +494,7 @@ public final class Functions {
      * @return the OSM id of the object's parent, if available, or {@code null}
      * @see IPrimitive#getUniqueId()
      */
-    public static Long parent_osm_id(final Environment env) { // NO_UCD (unused code)
+    public static Long parent_osm_id(final Environment env) {
         return env.parent == null ? null : env.parent.getUniqueId();
     }
 
@@ -505,7 +505,7 @@ public final class Functions {
      * @return the distance between the object and the closest gpx point or {@code Double.MAX_VALUE}
      * @since 14802
      */
-    public static double gpx_distance(final Environment env) { // NO_UCD (unused code)
+    public static double gpx_distance(final Environment env) {
         if (env.osm instanceof OsmPrimitive) {
             return MainApplication.getLayerManager().getAllGpxData().stream()
                     .mapToDouble(gpx -> GpxDistance.getLowestDistance((OsmPrimitive) env.osm, gpx))
@@ -520,7 +520,7 @@ public final class Functions {
      * @param key the OSM key
      * @return {@code true} if the object has a tag with the given key, {@code false} otherwise
      */
-    public static boolean has_tag_key(final Environment env, String key) { // NO_UCD (unused code)
+    public static boolean has_tag_key(final Environment env, String key) {
         return env.osm.hasKey(key);
     }
 
@@ -529,7 +529,7 @@ public final class Functions {
      * @param env the environment
      * @return the index as float. Starts at 1
      */
-    public static Float index(final Environment env) { // NO_UCD (unused code)
+    public static Float index(final Environment env) {
         if (env.index == null) {
             return null;
         }
@@ -543,7 +543,7 @@ public final class Functions {
      * @return The sorted list
      * @since 15279
      */
-    public static List<String> sort(Environment ignored, String... sortables) { // NO_UCD (unused code)
+    public static List<String> sort(Environment ignored, String... sortables) {
         Arrays.parallelSort(sortables);
         return Arrays.asList(sortables);
     }
@@ -554,7 +554,7 @@ public final class Functions {
      * @return The sorted list
      * @since 15279
      */
-    public static List<String> sort_list(List<String> sortables) { // NO_UCD (unused code)
+    public static List<String> sort_list(List<String> sortables) {
         Collections.sort(sortables);
         return sortables;
     }
@@ -566,7 +566,7 @@ public final class Functions {
      * @return A list with no duplicates
      * @since 15323
      */
-    public static List<String> uniq(Environment ignored, String... values) { // NO_UCD (unused code)
+    public static List<String> uniq(Environment ignored, String... values) {
         return uniq_list(Arrays.asList(values));
     }
 
@@ -586,7 +586,7 @@ public final class Functions {
      * @return role of current object in parent relation, or role of child if current object is a relation
      * @see Environment#getRole()
      */
-    public static String role(final Environment env) { // NO_UCD (unused code)
+    public static String role(final Environment env) {
         return env.getRole();
     }
 
@@ -597,7 +597,7 @@ public final class Functions {
      * @return The number of relation members with the specified role
      * @since 15196
      */
-    public static int count_roles(final Environment env, String... roles) { // NO_UCD (unused code)
+    public static int count_roles(final Environment env, String... roles) {
         int rValue = 0;
         if (env.osm instanceof Relation) {
             List<String> roleList = Arrays.asList(roles);
@@ -615,7 +615,7 @@ public final class Functions {
      * @return the area of a closed way or multipolygon in square meters or {@code null}
      * @see Geometry#computeArea(IPrimitive)
      */
-    public static Float areasize(final Environment env) { // NO_UCD (unused code)
+    public static Float areasize(final Environment env) {
         final Double area = Geometry.computeArea(env.osm);
         return area == null ? null : area.floatValue();
     }
@@ -626,7 +626,7 @@ public final class Functions {
      * @return the length of the way in metres or {@code null}.
      * @see Way#getLength()
      */
-    public static Float waylength(final Environment env) { // NO_UCD (unused code)
+    public static Float waylength(final Environment env) {
         if (env.osm instanceof Way) {
             return (float) ((Way) env.osm).getLength();
         } else {
@@ -639,7 +639,7 @@ public final class Functions {
      * @param b boolean value
      * @return {@code true} if {@code !b}
      */
-    public static boolean not(boolean b) { // NO_UCD (unused code)
+    public static boolean not(boolean b) {
         return !b;
     }
 
@@ -649,7 +649,7 @@ public final class Functions {
      * @param b second value
      * @return {@code true} if {@code a >= b}
      */
-    public static boolean greater_equal(float a, float b) { // NO_UCD (unused code)
+    public static boolean greater_equal(float a, float b) {
         return a >= b;
     }
 
@@ -659,7 +659,7 @@ public final class Functions {
      * @param b second value
      * @return {@code true} if {@code a <= b}
      */
-    public static boolean less_equal(float a, float b) { // NO_UCD (unused code)
+    public static boolean less_equal(float a, float b) {
         return a <= b;
     }
 
@@ -669,7 +669,7 @@ public final class Functions {
      * @param b second value
      * @return {@code true} if {@code a > b}
      */
-    public static boolean greater(float a, float b) { // NO_UCD (unused code)
+    public static boolean greater(float a, float b) {
         return a > b;
     }
 
@@ -679,7 +679,7 @@ public final class Functions {
      * @param b second value
      * @return {@code true} if {@code a < b}
      */
-    public static boolean less(float a, float b) { // NO_UCD (unused code)
+    public static boolean less(float a, float b) {
         return a < b;
     }
 
@@ -689,7 +689,7 @@ public final class Functions {
      * @return the angle in radians
      * @see Math#toRadians(double)
      */
-    public static double degree_to_radians(double degree) { // NO_UCD (unused code)
+    public static double degree_to_radians(double degree) {
         return Utils.toRadians(degree);
     }
 
@@ -702,7 +702,7 @@ public final class Functions {
      * @return the angle in radians
      * @see RotationAngle#parseCardinalRotation(String)
      */
-    public static Double cardinal_to_radians(String cardinal) { // NO_UCD (unused code)
+    public static Double cardinal_to_radians(String cardinal) {
         try {
             return RotationAngle.parseCardinalRotation(cardinal);
         } catch (IllegalArgumentException ignore) {
@@ -731,7 +731,7 @@ public final class Functions {
      * @return {@code false} if objects are equal, {@code true} otherwise
      * @see Object#equals(Object)
      */
-    public static boolean not_equal(Object a, Object b) { // NO_UCD (unused code)
+    public static boolean not_equal(Object a, Object b) {
         return !equal(a, b);
     }
 
@@ -742,7 +742,7 @@ public final class Functions {
      * @return {@code true} if the JOSM search with {@code searchStr} applies to the object
      * @see SearchCompiler
      */
-    public static Boolean JOSM_search(final Environment env, String searchStr) { // NO_UCD (unused code)
+    public static Boolean JOSM_search(final Environment env, String searchStr) {
         Match m;
         try {
             m = SearchCompiler.compile(searchStr);
@@ -765,7 +765,7 @@ public final class Functions {
      * @param def Default value
      * @return value for key, or default value if not found
      */
-    public static String JOSM_pref(Environment env, String key, String def) { // NO_UCD (unused code)
+    public static String JOSM_pref(Environment env, String key, String def) {
         return MapPaintStyles.getStyles().getPreferenceCached(env != null ? env.source : null, key, def);
     }
 
@@ -777,7 +777,7 @@ public final class Functions {
      * @see Pattern#matches(String, CharSequence)
      * @since 5699
      */
-    public static boolean regexp_test(String pattern, String target) { // NO_UCD (unused code)
+    public static boolean regexp_test(String pattern, String target) {
         return Pattern.matches(pattern, target);
     }
 
@@ -792,7 +792,7 @@ public final class Functions {
      * @see Pattern#MULTILINE
      * @since 5699
      */
-    public static boolean regexp_test(String pattern, String target, String flags) { // NO_UCD (unused code)
+    public static boolean regexp_test(String pattern, String target, String flags) {
         int f = parse_regex_flags(flags);
         return Pattern.compile(pattern, f).matcher(target).matches();
     }
@@ -810,7 +810,7 @@ public final class Functions {
      * @see Pattern#MULTILINE
      * @since 5701
      */
-    public static List<String> regexp_match(String pattern, String target, String flags) { // NO_UCD (unused code)
+    public static List<String> regexp_match(String pattern, String target, String flags) {
         int f = parse_regex_flags(flags);
         return Utils.getMatches(Pattern.compile(pattern, f).matcher(target));
     }
@@ -824,7 +824,7 @@ public final class Functions {
      * @return a list of capture groups if {@link Matcher#matches()}, or {@code null}.
      * @since 5701
      */
-    public static List<String> regexp_match(String pattern, String target) { // NO_UCD (unused code)
+    public static List<String> regexp_match(String pattern, String target) {
         return Utils.getMatches(Pattern.compile(pattern).matcher(target));
     }
 
@@ -834,7 +834,7 @@ public final class Functions {
      * @return the OSM id of the current object
      * @see IPrimitive#getUniqueId()
      */
-    public static long osm_id(final Environment env) { // NO_UCD (unused code)
+    public static long osm_id(final Environment env) {
         return env.osm.getUniqueId();
     }
 
@@ -845,7 +845,7 @@ public final class Functions {
      * @see IPrimitive#getUser
      * @since 15246
      */
-    public static String osm_user_name(final Environment env) { // NO_UCD (unused code)
+    public static String osm_user_name(final Environment env) {
         return env.osm.getUser().getName();
     }
 
@@ -856,7 +856,7 @@ public final class Functions {
      * @see IPrimitive#getUser
      * @since 15246
      */
-    public static long osm_user_id(final Environment env) { // NO_UCD (unused code)
+    public static long osm_user_id(final Environment env) {
         return env.osm.getUser().getId();
     }
 
@@ -867,7 +867,7 @@ public final class Functions {
      * @see IPrimitive#getVersion
      * @since 15246
      */
-    public static int osm_version(final Environment env) { // NO_UCD (unused code)
+    public static int osm_version(final Environment env) {
         return env.osm.getVersion();
     }
 
@@ -878,7 +878,7 @@ public final class Functions {
      * @see IPrimitive#getChangesetId
      * @since 15246
      */
-    public static int osm_changeset_id(final Environment env) { // NO_UCD (unused code)
+    public static int osm_changeset_id(final Environment env) {
         return env.osm.getChangesetId();
     }
 
@@ -889,7 +889,7 @@ public final class Functions {
      * @see IPrimitive#getRawTimestamp
      * @since 15246
      */
-    public static int osm_timestamp(final Environment env) { // NO_UCD (unused code)
+    public static int osm_timestamp(final Environment env) {
         return env.osm.getRawTimestamp();
     }
 
@@ -901,7 +901,7 @@ public final class Functions {
      * @return the translated string
      */
     @NullableArguments
-    public static String tr(Environment ignored, String... args) { // NO_UCD (unused code)
+    public static String tr(Environment ignored, String... args) {
         final String text = args[0];
         System.arraycopy(args, 1, args, 0, args.length - 1);
         return org.openstreetmap.josm.tools.I18n.tr(text, (Object[]) args);
@@ -914,7 +914,7 @@ public final class Functions {
      * @return the substring
      * @see String#substring(int)
      */
-    public static String substring(String s, /* due to missing Cascade.convertTo for int*/ float begin) { // NO_UCD (unused code)
+    public static String substring(String s, /* due to missing Cascade.convertTo for int*/ float begin) {
         return s == null ? null : s.substring((int) begin);
     }
 
@@ -927,7 +927,7 @@ public final class Functions {
      * @return the substring
      * @see String#substring(int, int)
      */
-    public static String substring(String s, float begin, float end) { // NO_UCD (unused code)
+    public static String substring(String s, float begin, float end) {
         return s == null ? null : s.substring((int) begin, (int) end);
     }
 
@@ -939,7 +939,7 @@ public final class Functions {
      * @return The resulting string
      * @see String#replace(CharSequence, CharSequence)
      */
-    public static String replace(String s, String target, String replacement) { // NO_UCD (unused code)
+    public static String replace(String s, String target, String replacement) {
         return s == null ? null : s.replace(target, replacement);
     }
 
@@ -1054,7 +1054,7 @@ public final class Functions {
      * @param s arbitrary string
      * @return the encoded string
      */
-    public static String URL_encode(String s) { // NO_UCD (unused code)
+    public static String URL_encode(String s) {
         return s == null ? null : Utils.encodeUrl(s);
     }
 
@@ -1065,7 +1065,7 @@ public final class Functions {
      * @param s arbitrary string
      * @return the encoded string
      */
-    public static String XML_encode(String s) { // NO_UCD (unused code)
+    public static String XML_encode(String s) {
         return s == null ? null : XmlWriter.encode(s);
     }
 
@@ -1074,7 +1074,7 @@ public final class Functions {
      * @param s the string
      * @return long value from 0 to 2^32-1
      */
-    public static long CRC32_checksum(String s) { // NO_UCD (unused code)
+    public static long CRC32_checksum(String s) {
         CRC32 cs = new CRC32();
         cs.update(s.getBytes(StandardCharsets.UTF_8));
         return cs.getValue();
@@ -1128,7 +1128,7 @@ public final class Functions {
      * @return the same object, unchanged
      */
     @NullableArguments
-    public static Object print(Object o) { // NO_UCD (unused code)
+    public static Object print(Object o) {
         System.out.print(o == null ? "none" : o.toString());
         return o;
     }
@@ -1140,7 +1140,7 @@ public final class Functions {
      * @return the same object, unchanged
      */
     @NullableArguments
-    public static Object println(Object o) { // NO_UCD (unused code)
+    public static Object println(Object o) {
         System.out.println(o == null ? "none" : o.toString());
         return o;
     }
@@ -1150,7 +1150,7 @@ public final class Functions {
      * @param env the environment
      * @return number of tags
      */
-    public static int number_of_tags(Environment env) { // NO_UCD (unused code)
+    public static int number_of_tags(Environment env) {
         return env.osm.getNumKeys();
     }
 
@@ -1160,7 +1160,7 @@ public final class Functions {
      * @param key setting key (given as layer identifier, e.g. setting::mykey {...})
      * @return the value of the setting (calculated when the style is loaded)
      */
-    public static Object setting(Environment env, String key) { // NO_UCD (unused code)
+    public static Object setting(Environment env, String key) {
         return env.source.settingValues.get(key);
     }
 
@@ -1170,7 +1170,7 @@ public final class Functions {
      * @return the center of the environment OSM primitive
      * @since 11247
      */
-    public static LatLon center(Environment env) { // NO_UCD (unused code)
+    public static LatLon center(Environment env) {
         return env.osm instanceof Node ? ((Node) env.osm).getCoor() : env.osm.getBBox().getCenter();
     }
 
@@ -1181,7 +1181,7 @@ public final class Functions {
      * @return {@code true} if the object is inside territory matching given ISO3166 codes
      * @since 11247
      */
-    public static boolean inside(Environment env, String codes) { // NO_UCD (unused code)
+    public static boolean inside(Environment env, String codes) {
         return Arrays.stream(codes.toUpperCase(Locale.ENGLISH).split(",", -1))
                 .anyMatch(code -> Territories.isIso3166Code(code.trim(), center(env)));
     }
@@ -1193,7 +1193,7 @@ public final class Functions {
      * @return {@code true} if the object is outside territory matching given ISO3166 codes
      * @since 11247
      */
-    public static boolean outside(Environment env, String codes) { // NO_UCD (unused code)
+    public static boolean outside(Environment env, String codes) {
         return !inside(env, codes);
     }
 
@@ -1205,7 +1205,7 @@ public final class Functions {
      * @return {@code true} if the object centroid lies at given lat/lon coordinates
      * @since 12514
      */
-    public static boolean at(Environment env, double lat, double lon) { // NO_UCD (unused code)
+    public static boolean at(Environment env, double lat, double lon) {
         return new LatLon(lat, lon).equalsEpsilon(center(env));
     }
 
@@ -1216,7 +1216,7 @@ public final class Functions {
      * @see Boolean#parseBoolean
      * @since 16110
      */
-    public static boolean to_boolean(String value) { // NO_UCD (unused code)
+    public static boolean to_boolean(String value) {
         return Boolean.parseBoolean(value);
     }
 
@@ -1227,7 +1227,7 @@ public final class Functions {
      * @see Byte#parseByte
      * @since 16110
      */
-    public static byte to_byte(String value) { // NO_UCD (unused code)
+    public static byte to_byte(String value) {
         return Byte.parseByte(value);
     }
 
@@ -1238,7 +1238,7 @@ public final class Functions {
      * @see Short#parseShort
      * @since 16110
      */
-    public static short to_short(String value) { // NO_UCD (unused code)
+    public static short to_short(String value) {
         return Short.parseShort(value);
     }
 
@@ -1249,7 +1249,7 @@ public final class Functions {
      * @see Integer#parseInt
      * @since 16110
      */
-    public static int to_int(String value) { // NO_UCD (unused code)
+    public static int to_int(String value) {
         return Integer.parseInt(value);
     }
 
@@ -1260,7 +1260,7 @@ public final class Functions {
      * @see Long#parseLong
      * @since 16110
      */
-    public static long to_long(String value) { // NO_UCD (unused code)
+    public static long to_long(String value) {
         return Long.parseLong(value);
     }
 
@@ -1271,7 +1271,7 @@ public final class Functions {
      * @see Float#parseFloat
      * @since 16110
      */
-    public static float to_float(String value) { // NO_UCD (unused code)
+    public static float to_float(String value) {
         return Float.parseFloat(value);
     }
 
@@ -1282,7 +1282,7 @@ public final class Functions {
      * @see Double#parseDouble
      * @since 16110
      */
-    public static double to_double(String value) { // NO_UCD (unused code)
+    public static double to_double(String value) {
         return Double.parseDouble(value);
     }
 }

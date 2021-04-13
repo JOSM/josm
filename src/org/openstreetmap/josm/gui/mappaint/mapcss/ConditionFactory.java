@@ -720,7 +720,7 @@ public final class ConditionFactory {
          * @param e MapCSS environment
          * @return {@code true} if the way is closed or the relation is a closed multipolygon
          */
-        static boolean closed(Environment e) { // NO_UCD (unused code)
+        static boolean closed(Environment e) {
             if (e.osm instanceof IWay<?> && ((IWay<?>) e.osm).isClosed())
                 return true;
             return e.osm instanceof IRelation<?> && ((IRelation<?>) e.osm).isMultipolygon();
@@ -732,7 +732,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object has been modified
          * @see IPrimitive#isModified()
          */
-        static boolean modified(Environment e) { // NO_UCD (unused code)
+        static boolean modified(Environment e) {
             return e.osm.isModified() || e.osm.isNewOrUndeleted();
         }
 
@@ -742,7 +742,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object is new
          * @see IPrimitive#isNew()
          */
-        static boolean _new(Environment e) { // NO_UCD (unused code)
+        static boolean _new(Environment e) {
             return e.osm.isNew();
         }
 
@@ -752,7 +752,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object is a connection node
          * @see Node#isConnectionNode()
          */
-        static boolean connection(Environment e) { // NO_UCD (unused code)
+        static boolean connection(Environment e) {
             return e.osm instanceof INode && e.osm.getDataSet() != null && ((INode) e.osm).isConnectionNode();
         }
 
@@ -762,7 +762,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object is tagged
          * @see IPrimitive#isTagged()
          */
-        static boolean tagged(Environment e) { // NO_UCD (unused code)
+        static boolean tagged(Environment e) {
             return e.osm.isTagged();
         }
 
@@ -772,7 +772,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object has the same tags as its child/parent
          * @see IPrimitive#hasSameInterestingTags(IPrimitive)
          */
-        static boolean sameTags(Environment e) { // NO_UCD (unused code)
+        static boolean sameTags(Environment e) {
             return e.osm.hasSameInterestingTags(Utils.firstNonNull(e.child, e.parent));
         }
 
@@ -782,7 +782,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object has an area style
          * @see ElemStyles#hasAreaElemStyle(IPrimitive, boolean)
          */
-        static boolean areaStyle(Environment e) { // NO_UCD (unused code)
+        static boolean areaStyle(Environment e) {
             // only for validator
             return ElemStyles.hasAreaElemStyle(e.osm, false);
         }
@@ -792,7 +792,7 @@ public final class ConditionFactory {
          * @param e MapCSS environment
          * @return {@code true} if the object is a unconnected node
          */
-        static boolean unconnected(Environment e) { // NO_UCD (unused code)
+        static boolean unconnected(Environment e) {
             return e.osm instanceof Node && ((Node) e.osm).getParentWays().isEmpty();
         }
 
@@ -802,7 +802,7 @@ public final class ConditionFactory {
          * @return {@code true} if there is right-hand traffic at the current location
          * @see Functions#is_right_hand_traffic(Environment)
          */
-        static boolean righthandtraffic(Environment e) { // NO_UCD (unused code)
+        static boolean righthandtraffic(Environment e) {
             return Functions.is_right_hand_traffic(e);
         }
 
@@ -813,7 +813,7 @@ public final class ConditionFactory {
          * @return {@code true} if the way clockwise
          * @see Functions#is_clockwise(Environment)
          */
-        static boolean clockwise(Environment e) { // NO_UCD (unused code)
+        static boolean clockwise(Environment e) {
             return Functions.is_clockwise(e);
         }
 
@@ -824,7 +824,7 @@ public final class ConditionFactory {
          * @return {@code true} if the way clockwise
          * @see Functions#is_anticlockwise(Environment)
          */
-        static boolean anticlockwise(Environment e) { // NO_UCD (unused code)
+        static boolean anticlockwise(Environment e) {
             return Functions.is_anticlockwise(e);
         }
 
@@ -833,7 +833,7 @@ public final class ConditionFactory {
          * @param e MapCSS environment
          * @return {@code true} if the object is an unclosed multipolygon
          */
-        static boolean unclosed_multipolygon(Environment e) { // NO_UCD (unused code)
+        static boolean unclosed_multipolygon(Environment e) {
             return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
                     !e.osm.isIncomplete() && !((Relation) e.osm).hasIncompleteMembers() &&
                     !MultipolygonCache.getInstance().get((Relation) e.osm).getOpenEnds().isEmpty();
@@ -847,11 +847,11 @@ public final class ConditionFactory {
          * @return {@code true} if the object is within source area ("downloaded area")
          * @see InDataSourceArea
          */
-        static boolean inDownloadedArea(Environment e) { // NO_UCD (unused code)
+        static boolean inDownloadedArea(Environment e) {
             return e.osm instanceof OsmPrimitive && IN_DOWNLOADED_AREA.test((OsmPrimitive) e.osm);
         }
 
-        static boolean completely_downloaded(Environment e) { // NO_UCD (unused code)
+        static boolean completely_downloaded(Environment e) {
             if (e.osm instanceof IRelation<?>) {
                 return !((IRelation<?>) e.osm).hasIncompleteMembers();
             } else {
@@ -859,7 +859,7 @@ public final class ConditionFactory {
             }
         }
 
-        static boolean closed2(Environment e) { // NO_UCD (unused code)
+        static boolean closed2(Environment e) {
             if (e.osm instanceof IWay<?> && ((IWay<?>) e.osm).isClosed())
                 return true;
             if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon()) {
@@ -869,7 +869,7 @@ public final class ConditionFactory {
             return false;
         }
 
-        static boolean selected(Environment e) { // NO_UCD (unused code)
+        static boolean selected(Environment e) {
             if (e.mc != null) {
                 e.getCascade().setDefaultSelectedHandling(false);
             }
