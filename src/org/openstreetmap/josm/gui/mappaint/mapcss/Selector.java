@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
-import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.INode;
@@ -656,8 +655,8 @@ public interface Selector {
             for (Condition c : conds) {
                 try {
                     if (!c.applies(env)) return false;
-                } catch (PatternSyntaxException e) {
-                    Logging.log(Logging.LEVEL_ERROR, "PatternSyntaxException while applying condition" + c + ':', e);
+                } catch (RuntimeException e) {
+                    Logging.log(Logging.LEVEL_ERROR, "Exception while applying condition" + c + ':', e);
                     return false;
                 }
             }
