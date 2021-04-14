@@ -96,7 +96,7 @@ public class AutoScaleAction extends JosmAction {
          * Returns {@code AutoScaleMode} for a given English label
          * @param englishLabel English label
          * @return {@code AutoScaleMode} for given English label
-         * @throws IllegalArgumentException if Engligh label is unknown
+         * @throws IllegalArgumentException if English label is unknown
          */
         public static AutoScaleMode of(String englishLabel) {
             for (AutoScaleMode v : values()) {
@@ -115,7 +115,7 @@ public class AutoScaleAction extends JosmAction {
 
     /** Time of last zoom to bounds action */
     protected long lastZoomTime = -1;
-    /** Last zommed bounds */
+    /** Last zoomed bounds */
     protected int lastZoomArea = -1;
 
     /**

@@ -308,7 +308,7 @@ public class SearchCompiler {
             } catch (PatternSyntaxException e) {
                 throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
             } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
-                // StringIndexOutOfBoundsException catched because of https://bugs.openjdk.java.net/browse/JI-9044959
+                // StringIndexOutOfBoundsException caught because of https://bugs.openjdk.java.net/browse/JI-9044959
                 // See #13870: To remove after we switch to a version of Java which resolves this bug
                 throw new SearchParseError(tr(rxErrorMsgNoPos, regex, e.getMessage()), e);
             }

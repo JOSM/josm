@@ -1257,9 +1257,9 @@ public class MainApplication {
                                 }
                                 Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
                                 if (!wasv6) {
-                                    Logging.info(tr("Detected useable IPv6 network, preferring IPv6 over IPv4 after next restart."));
+                                    Logging.info(tr("Detected usable IPv6 network, preferring IPv6 over IPv4 after next restart."));
                                 } else {
-                                    Logging.info(tr("Detected useable IPv6 network, preferring IPv6 over IPv4."));
+                                    Logging.info(tr("Detected usable IPv6 network, preferring IPv6 over IPv4."));
                                 }
                             }
                             break; /* we're done */
@@ -1271,7 +1271,7 @@ public class MainApplication {
                     Logging.trace(e);
                 }
                 if (wasv6 && !hasv6) {
-                    Logging.info(tr("Detected no useable IPv6 network, preferring IPv4 over IPv6 after next restart."));
+                    Logging.info(tr("Detected no usable IPv6 network, preferring IPv4 over IPv6 after next restart."));
                     Config.getPref().putBoolean("validated.ipv6", hasv6); // be sure it is stored before the restart!
                     RestartAction.restartJOSM();
                 }

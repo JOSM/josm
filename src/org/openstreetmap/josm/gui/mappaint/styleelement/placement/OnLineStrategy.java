@@ -6,7 +6,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -88,8 +87,8 @@ public class OnLineStrategy implements PositionForAreaStrategy {
         List<OffsetGlyph> offsetGlyphs = computeOffsetGlyphs(gvs,
                 middleOffset + (doRotateText ? 1 : -1) * nb.getWidth() / 2, doRotateText);
 
-        // Order the glyphs along the line to ensure that they are drawn corretly.
-        Collections.sort(offsetGlyphs, Comparator.comparing(OffsetGlyph::getOffset));
+        // Order the glyphs along the line to ensure that they are drawn correctly.
+        offsetGlyphs.sort(Comparator.comparing(OffsetGlyph::getOffset));
 
         // Now translate all glyphs. This will modify the glyphs stored in gvs.
         path.visitLine(new GlyphRotatingVisitor(offsetGlyphs, isDoubleTranslationBug));

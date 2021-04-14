@@ -253,10 +253,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     /**
      * Get projections this imagery layer supports natively.
-     *
-     * For example projection of tiles that are downloaded from a server. Layer
-     * may support even more projections (by reprojecting the tiles), but with a
-     * certain loss in image quality and performance.
+     * <p/>
+     * For example projection of tiles that are downloaded from a server. Layer may support even more
+     * projections (by reprojecting the tiles), but with a certain loss in image quality and performance.
      * @return projections this imagery layer supports natively; null if layer is projection agnostic.
      */
     public abstract Collection<String> getNativeProjections();
@@ -643,7 +642,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          */
         int maxYtiles = (int) Math.ceil((double) height / tileSize + 1);
         int maxXtiles = (int) Math.ceil((double) width / tileSize + 1);
-        int visibileTiles = maxXtiles * maxYtiles;
+        int visibleTiles = maxXtiles * maxYtiles;
         /**
          * Take into account ZOOM_OFFSET to calculate real number of tiles and multiply by 7, to cover all tiles, that might be
          * accessed when looking for tiles outside current zoom level.
@@ -658,14 +657,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * @see #drawInViewArea((Graphics2D, MapView, ProjectionBounds)
          *
          * Add +2 to maxYtiles / maxXtiles to add space in cache for extra tiles in current zoom level that are
-         * download by overloadTiles(). This is not added in computation of visibileTiles as this unnecessarily grow the cache size
+         * download by overloadTiles(). This is not added in computation of visibleTiles as this unnecessarily grow the cache size
          * @see #overloadTiles()
          */
         int ret = (int) Math.ceil(
                 Math.pow(2d, ZOOM_OFFSET.get()) * // use offset to decide, how many tiles are visible
-                visibileTiles * 7 + // 7 to cover tiles from other zooms as described above
+                visibleTiles * 7 + // 7 to cover tiles from other zooms as described above
                 ((maxYtiles + 2) * (maxXtiles +2))); // to add as many tiles as they will be accessed on current zoom level
-        Logging.info("AbstractTileSourceLayer: estimated visibile tiles: {0}, estimated cache size: {1}", visibileTiles, ret);
+        Logging.info("AbstractTileSourceLayer: estimated visible tiles: {0}, estimated cache size: {1}", visibleTiles, ret);
         return ret;
     }
 
@@ -867,7 +866,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     /**
      * Zoom out from map.
      *
-     * @return    true, if zoom increasing was successful, false othervise
+     * @return    true, if zoom increasing was successful, false otherwise
      */
     public boolean decreaseZoomLevel() {
         if (zoomDecreaseAllowed()) {

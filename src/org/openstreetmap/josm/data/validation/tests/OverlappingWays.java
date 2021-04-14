@@ -47,7 +47,7 @@ public class OverlappingWays extends Test {
     /** Bag of all way segments */
     private MultiMap<Pair<Node, Node>, WaySegment> nodePairs;
 
-    private boolean onlyKnwonLinear;
+    private boolean onlyKnownLinear;
     private boolean includeOther;
     private boolean ignoreLayer;
 
@@ -83,7 +83,7 @@ public class OverlappingWays extends Test {
         super.startTest(monitor);
         nodePairs = new MultiMap<>(1000);
         includeOther = isBeforeUpload ? ValidatorPrefHelper.PREF_OTHER_UPLOAD.get() : ValidatorPrefHelper.PREF_OTHER.get();
-        onlyKnwonLinear = Config.getPref().getBoolean("overlapping-ways.only-known-linear", true);
+        onlyKnownLinear = Config.getPref().getBoolean("overlapping-ways.only-known-linear", true);
         ignoreLayer = Config.getPref().getBoolean("overlapping-ways.ignore-layer", false);
     }
 
@@ -192,7 +192,7 @@ public class OverlappingWays extends Test {
                 errortype = tr("Waterway shares segment with linear way");
                 type = OVERLAPPING_WATERWAY_LINEAR_WAY;
                 severity = Severity.WARNING;
-            } else if (!includeOther || onlyKnwonLinear) {
+            } else if (!includeOther || onlyKnownLinear) {
                 return;
             } else if (countHighway > 0) {
                 errortype = tr("Highway shares segment with other way");
@@ -269,7 +269,7 @@ public class OverlappingWays extends Test {
         if (IGNORED.test(w))
             return;
 
-        if (onlyKnwonLinear && (w.concernsArea() || w.getInterestingTags().isEmpty()))
+        if (onlyKnownLinear && (w.concernsArea() || w.getInterestingTags().isEmpty()))
             return;
 
         Node lastN = null;

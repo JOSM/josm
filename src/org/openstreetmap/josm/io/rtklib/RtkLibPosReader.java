@@ -124,8 +124,8 @@ public class RtkLibPosReader implements IGpxReader {
     }
 
     /**
-     * Returns the number of coordinates that have been successfuly read.
-     * @return the number of coordinates that have been successfuly read
+     * Returns the number of coordinates that have been successfully read.
+     * @return the number of coordinates that have been successfully read
      */
     public int getNumberOfCoordinates() {
         return success;
