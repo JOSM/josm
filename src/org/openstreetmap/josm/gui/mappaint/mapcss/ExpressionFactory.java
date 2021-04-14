@@ -55,15 +55,18 @@ public final class ExpressionFactory {
         }
 
         static Factory ofNumberVarArgs(double identity, DoubleUnaryOperator unaryOperator, DoubleBinaryOperator operator) {
-            return args -> env -> args.isEmpty()
-                    ? identity
-                    : args.size() == 1
-                    ? unaryOperator.applyAsDouble(Cascade.convertTo(args.get(0).evaluate(env), Double.class))
-                    : args.stream()
-                    .map(arg -> Cascade.convertTo(arg.evaluate(env), Double.class))
-                    .filter(Objects::nonNull)
-                    .reduce(operator::applyAsDouble)
-                    .orElse(null);
+            return args -> env -> {
+                if (args.isEmpty()) {
+                    return identity;
+                } else if (args.size() == 1) {
+                    return unaryOperator.applyAsDouble(Cascade.convertTo(args.get(0).evaluate(env), Double.class));
+                } else {
+                    return args.stream()
+                            .map(arg -> Cascade.convertTo(arg.evaluate(env), Double.class))
+                            .filter(Objects::nonNull)
+                            .reduce(operator::applyAsDouble).orElse(null);
+                }
+            };
         }
 
         static Factory ofStringVarargs(BiFunction<Environment, String[], ?> function) {

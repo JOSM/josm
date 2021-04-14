@@ -612,6 +612,8 @@ class MapCSSParserTest {
                 "div: 360 / 15;" +
                 "neg: -13;" +
                 "not: !0;" +
+                "null1: tag(x1) + tag(x2);" +
+                "null2: 3 + tag(does_not_exist) + 5;" +
                 "}");
         source.loadStyleSource();
         MultiCascade mc = new MultiCascade();
@@ -622,6 +624,8 @@ class MapCSSParserTest {
         assertEquals(24.0, mc.getCascade(null).get("div"));
         assertEquals(-13.0, mc.getCascade(null).get("neg"));
         assertEquals(true, mc.getCascade(null).get("not"));
+        assertNull(mc.getCascade(null).get("null1"));
+        assertEquals(8.0, mc.getCascade(null).get("null2"));
     }
 
     @Test
