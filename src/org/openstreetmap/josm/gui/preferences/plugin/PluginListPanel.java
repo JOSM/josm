@@ -9,7 +9,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -112,6 +112,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
                 + "</html>"
         );
         hint.putClientProperty("plugin", "empty");
+        hint.setVisible(false);
         add(hint, gbc);
     }
 
@@ -169,7 +170,6 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             description.putClientProperty("plugin", pi);
             add(description, gbc);
         }
-
         pluginListInitialized = true;
     }
 
@@ -181,16 +181,12 @@ public class PluginListPanel extends VerticallyScrollablePanel {
      */
     public void refreshView() {
         final Rectangle visibleRect = getVisibleRect();
-        List<PluginInformation> displayedPlugins = model.getDisplayedPlugins();
-
-        if (displayedPlugins.isEmpty()) {
-            hidePluginsNotInList(new ArrayList<>());
-            displayEmptyPluginListInformation();
-        } else if (!pluginListInitialized) {
+        if (!pluginListInitialized) {
             removeAll();
-            displayPluginList(displayedPlugins);
+            displayEmptyPluginListInformation();
+            displayPluginList(model.getAvailablePlugins());
         } else {
-            hidePluginsNotInList(displayedPlugins);
+            hidePluginsNotInList(new HashSet<>(model.getDisplayedPlugins()));
         }
         revalidate();
         repaint();
@@ -204,25 +200,19 @@ public class PluginListPanel extends VerticallyScrollablePanel {
      * when the filter changes is fairly slow, so we build them once and just hide
      * those that shouldn't be visible.
      *
-     * @param displayedPlugins A collection of plugins that are currently visible.
+     * @param displayedPlugins A set of plugins that are currently visible.
      */
-    private void hidePluginsNotInList(List<PluginInformation> displayedPlugins) {
-        // Remove the empty plugin list warning if it's there
-        synchronized (getTreeLock()) {
-            for (int i = 0; i < getComponentCount(); i++) {
-                JComponent component = (JComponent) getComponent(i);
-                if ("empty".equals(component.getClientProperty("plugin"))) {
-                    remove(component);
-                }
-            }
-        }
-
-        Set<PluginInformation> displayedPluginsSet = new HashSet<>(displayedPlugins);
+    private void hidePluginsNotInList(Set<PluginInformation> displayedPlugins) {
         synchronized (getTreeLock()) {
             for (int i = 0; i < getComponentCount(); i++) {
                 JComponent component = (JComponent) getComponent(i);
                 Object plugin = component.getClientProperty("plugin");
-                component.setVisible(displayedPluginsSet.contains(plugin));
+                if ("empty".equals(plugin)) {
+                    // Hide the empty plugin list warning if it's there
+                    component.setVisible(displayedPlugins.isEmpty());
+                } else {
+                    component.setVisible(displayedPlugins.contains(plugin));
+                }
             }
         }
     }
