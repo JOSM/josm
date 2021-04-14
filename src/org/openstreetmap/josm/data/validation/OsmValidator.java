@@ -363,7 +363,7 @@ public final class OsmValidator {
      */
     public static JTree buildJTreeList() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(tr("Ignore list"));
-        final Pattern elemId1Pattern = Pattern.compile(":(r|w|n)_");
+        final Pattern elemId1Pattern = Pattern.compile(":([rwn])_");
         final Pattern elemId2Pattern = Pattern.compile("^[0-9]+$");
         for (Entry<String, String> e: ignoredErrors.entrySet()) {
             String key = e.getKey();
@@ -463,10 +463,10 @@ public final class OsmValidator {
 
                 String item = child.getUserObject().toString();
                 String entry = null;
-                if (item.matches("^\\[(r|w|n)_.*")) {
+                if (item.matches("^\\[([rwn])_.*")) {
                     // list of elements (produced with list.toString() method)
                     entry = key + ":" + item.substring(1, item.lastIndexOf(']')).replace(", ", ":");
-                } else if (item.matches("^(r|w|n)_.*")) {
+                } else if (item.matches("^([rwn])_.*")) {
                     // single element
                     entry = key + ":" + item;
                 } else if (item.matches("^[0-9]+(_.*|)$")) {

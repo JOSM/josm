@@ -441,7 +441,7 @@ public class Preferences extends AbstractPreferences {
         }
 
         try (PreferencesWriter writer = new PreferencesWriter(
-                new PrintWriter(new File(prefFile + "_tmp"), StandardCharsets.UTF_8.name()), false, defaults)) {
+                new PrintWriter(prefFile + "_tmp", StandardCharsets.UTF_8.name()), false, defaults)) {
             writer.write(settings);
         } catch (SecurityException e) {
             throw new IOException(e);

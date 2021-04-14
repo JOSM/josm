@@ -65,16 +65,21 @@ public final class LanguageInfo {
                     return "";
                 }
             }
-            if ("nb".equals(code)) { /* OSM-Wiki has "no", but no "nb" */
-                return "No:";
-            } else if ("sr@latin".equals(code)) { /* OSM-Wiki has "Sr-latn" and not Sr-latin */
-                return "Sr-latn:";
-            } else if ("de".equals(code) || "es".equals(code) || "fr".equals(code)
-                    || "it".equals(code) || "nl".equals(code) || "ru".equals(code)
-                    || "ja".equals(code)) {
-                return code.toUpperCase(Locale.ENGLISH) + ":";
-            } else {
-                return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ":";
+            switch (code) {
+                case "nb":          /* OSM-Wiki has "no", but no "nb" */
+                    return "No:";
+                case "sr@latin":    /* OSM-Wiki has "Sr-latn" and not Sr-latin */
+                    return "Sr-latn:";
+                case "de":
+                case "es":
+                case "fr":
+                case "it":
+                case "nl":
+                case "ru":
+                case "ja":
+                    return code.toUpperCase(Locale.ENGLISH) + ":";
+                default:
+                    return code.substring(0, 1).toUpperCase(Locale.ENGLISH) + code.substring(1) + ":";
             }
         }
 
@@ -159,14 +164,15 @@ public final class LanguageInfo {
      */
     public static String getJavaLocaleCode(String localeName) {
         if (localeName == null) return "en";
-        if ("ca@valencia".equals(localeName)) {
-            localeName = "ca__valencia";
-        } else if ("sr@latin".equals(localeName)) {
-            localeName = "sr__latin";
-        } else if ("he".equals(localeName)) {
-            localeName = "iw_IL";
-        } else if ("id".equals(localeName)) {
-            localeName = "in";
+        switch (localeName) {
+            case "ca@valencia":
+                return "ca__valencia";
+            case "sr@latin":
+                return "sr__latin";
+            case "he":
+                return "iw_IL";
+            case "id":
+                return "in";
         }
         return localeName;
     }

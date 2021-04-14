@@ -106,8 +106,8 @@ public class PrefJPanel extends JPanel {
                 }
             }
         }
-        KeyboardUtils.getExtendedKeyCodes(InputContext.getInstance().getLocale()).entrySet()
-            .forEach(e -> list.put(e.getKey(), e.getValue().toString()));
+        KeyboardUtils.getExtendedKeyCodes(InputContext.getInstance().getLocale())
+                .forEach((key, value) -> list.put(key, value.toString()));
         list.put(Integer.valueOf(-1), "");
         return list;
     }

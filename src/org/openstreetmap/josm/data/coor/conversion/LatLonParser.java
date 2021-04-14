@@ -42,7 +42,7 @@ public final class LatLonParser {
             + "("+DEG+"|o|deg)|"                // (3)
             + "('|"+MIN+"|min)|"                // (4)
             + "(\"|"+SEC+"|sec)|"               // (5)
-            + "(,|;)|"                          // (6)
+            + "([,;])|"                         // (6)
             + "([NSEW"+N_TR+S_TR+E_TR+W_TR+"])|"// (7)
             + "\\s+|"
             + "(.+)", Pattern.CASE_INSENSITIVE);

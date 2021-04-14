@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -106,7 +105,7 @@ public class HeadersTable extends JPanel {
     }
 
     private static List<String[]> getHeadersAsVector(Map<String, String> headers) {
-        return headers.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey))
+        return headers.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .map(e -> new String[] {e.getKey(), e.getValue()}).collect(Collectors.toList());
     }
 

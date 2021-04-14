@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class DownloadSessionTask extends AbstractDownloadTask<Object> {
 
-    private static final String PATTERN_SESSION = "https?://.*/.*\\.jo(s|z)";
+    private static final String PATTERN_SESSION = "https?://.*/.*\\.jo([sz])";
 
     private Loader loader;
 

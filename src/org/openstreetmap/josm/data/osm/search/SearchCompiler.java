@@ -731,7 +731,7 @@ public class SearchCompiler {
                 if (mv != null) {
                     String v1 = Normalizer.normalize(caseSensitive ? mv : mv.toLowerCase(Locale.ENGLISH), Normalizer.Form.NFC);
                     String v2 = Normalizer.normalize(caseSensitive ? value : value.toLowerCase(Locale.ENGLISH), Normalizer.Form.NFC);
-                    return v1.indexOf(v2) != -1;
+                    return v1.contains(v2);
                 }
             }
             return false;
@@ -1071,7 +1071,7 @@ public class SearchCompiler {
 
                     value = Normalizer.normalize(value, Normalizer.Form.NFC);
 
-                    if (key.indexOf(search) != -1 || value.indexOf(search) != -1)
+                    if (key.contains(search) || value.contains(search))
                         return true;
                 }
             }

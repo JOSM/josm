@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -27,9 +28,7 @@ public class InvalidXmlCharacterFilter extends Reader {
 
     static {
         INVALID_CHARS = new boolean[0x20];
-        for (int i = 0; i < INVALID_CHARS.length; ++i) {
-            INVALID_CHARS[i] = true;
-        }
+        Arrays.fill(INVALID_CHARS, true);
         INVALID_CHARS[0x9] = false; // tab
         INVALID_CHARS[0xA] = false; // LF
         INVALID_CHARS[0xD] = false; // CR

@@ -77,7 +77,7 @@ public class RtkLibPosReader implements IGpxReader {
         Collection<Collection<WayPoint>> currentTrack = new ArrayList<>();
         Collection<WayPoint> waypoints = new ArrayList<>();
         try (BufferedReader rd = new BufferedReader(new InputStreamReader(source, StandardCharsets.UTF_8))) {
-            String line = null;
+            String line;
             do {
                 line = rd.readLine();
                 if (line != null) {

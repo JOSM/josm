@@ -231,9 +231,7 @@ public class Storage<T> extends AbstractSet<T> {
         copyArray();
         modCount++;
         size = 0;
-        for (int i = 0; i < data.length; i++) {
-            data[i] = null;
-        }
+        Arrays.fill(data, null);
     }
 
     @Override

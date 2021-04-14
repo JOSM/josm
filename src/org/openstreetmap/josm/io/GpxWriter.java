@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +96,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
             GpxExtensionCollection layerExts = data.getExtensions().add("josm", "layerPreferences").getExtensions();
             data.getLayerPrefs().entrySet()
             .stream()
-            .sorted(Comparator.comparing(Map.Entry::getKey))
+            .sorted(Map.Entry.comparingByKey())
             .forEach(entry -> {
                 GpxExtension e = layerExts.add("josm", "entry");
                 e.put("key", entry.getKey());
