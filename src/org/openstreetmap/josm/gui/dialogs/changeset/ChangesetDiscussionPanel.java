@@ -26,6 +26,7 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NoteInputDialog;
+import org.openstreetmap.josm.gui.widgets.LargeTextTable;
 import org.openstreetmap.josm.io.NetworkManager;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
@@ -168,7 +169,7 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
 
     private Component buildDiscussionPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
-        table = new JTable(model, new ChangesetDiscussionTableColumnModel());
+        table = new LargeTextTable(model, new ChangesetDiscussionTableColumnModel());
         table.setRowSorter(new ChangesetDiscussionTableRowSorter(model));
         table.getTableHeader().setReorderingAllowed(false);
 
