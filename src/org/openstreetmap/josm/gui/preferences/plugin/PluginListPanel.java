@@ -9,8 +9,12 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -37,6 +41,9 @@ public class PluginListPanel extends VerticallyScrollablePanel {
     }
 
     private final transient PluginPreferencesModel model;
+
+    /** Whether the plugin list has been built up already in the UI. */
+    private boolean pluginListInitialized = false;
 
     /**
      * Constructs a new {@code PluginListPanel} with a default model.
@@ -104,6 +111,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
                         tr("The filter returned no results."))
                 + "</html>"
         );
+        hint.putClientProperty("plugin", "empty");
         add(hint, gbc);
     }
 
@@ -141,10 +149,12 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             gbc.insets = new Insets(5, 5, 0, 5);
             gbc.weighty = 0.0;
             gbc.weightx = 0.0;
+            cbPlugin.putClientProperty("plugin", pi);
             add(cbPlugin, gbc);
 
             gbc.gridx = 1;
             gbc.weightx = 1.0;
+            lblPlugin.putClientProperty("plugin", pi);
             add(lblPlugin, gbc);
 
             HtmlPanel description = new HtmlPanel();
@@ -156,26 +166,76 @@ public class PluginListPanel extends VerticallyScrollablePanel {
             gbc.gridy = ++row;
             gbc.insets = new Insets(3, 25, 5, 5);
             gbc.weighty = 1.0;
+            description.putClientProperty("plugin", pi);
             add(description, gbc);
         }
+
+        pluginListInitialized = true;
     }
 
     /**
      * Refreshes the list.
+     *
+     * If the list has been changed completely (i.e. not just filtered),
+     * call {@link #resetDisplayedComponents()} prior to calling this method.
      */
     public void refreshView() {
         final Rectangle visibleRect = getVisibleRect();
         List<PluginInformation> displayedPlugins = model.getDisplayedPlugins();
-        removeAll();
 
         if (displayedPlugins.isEmpty()) {
+            hidePluginsNotInList(new ArrayList<>());
             displayEmptyPluginListInformation();
-        } else {
+        } else if (!pluginListInitialized) {
+            removeAll();
             displayPluginList(displayedPlugins);
+        } else {
+            hidePluginsNotInList(displayedPlugins);
         }
         revalidate();
         repaint();
         SwingUtilities.invokeLater(() -> scrollRectToVisible(visibleRect));
+    }
+
+    /**
+     * Hides components in the list for plugins that are currently filtered away.
+     *
+     * Since those components are relatively heavyweight rebuilding them every time
+     * when the filter changes is fairly slow, so we build them once and just hide
+     * those that shouldn't be visible.
+     *
+     * @param displayedPlugins A collection of plugins that are currently visible.
+     */
+    private void hidePluginsNotInList(List<PluginInformation> displayedPlugins) {
+        // Remove the empty plugin list warning if it's there
+        synchronized (getTreeLock()) {
+            for (int i = 0; i < getComponentCount(); i++) {
+                JComponent component = (JComponent) getComponent(i);
+                if ("empty".equals(component.getClientProperty("plugin"))) {
+                    remove(component);
+                }
+            }
+        }
+
+        Set<PluginInformation> displayedPluginsSet = new HashSet<>(displayedPlugins);
+        synchronized (getTreeLock()) {
+            for (int i = 0; i < getComponentCount(); i++) {
+                JComponent component = (JComponent) getComponent(i);
+                Object plugin = component.getClientProperty("plugin");
+                component.setVisible(displayedPluginsSet.contains(plugin));
+            }
+        }
+    }
+
+    /**
+     * Causes the components for the list items to be rebuilt from scratch.
+     *
+     * Should be called before calling {@link #refreshView()} whenever the
+     * underlying list changes to display a completely different set of
+     * plugins instead of merely hiding plugins by a filter.
+     */
+    public void resetDisplayedComponents() {
+        pluginListInitialized = false;
     }
 
     @Override

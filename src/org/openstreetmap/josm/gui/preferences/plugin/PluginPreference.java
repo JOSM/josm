@@ -322,6 +322,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
             if (!task.isCanceled()) {
                 SwingUtilities.invokeLater(() -> {
                     model.setAvailablePlugins(task.getAvailablePlugins());
+                    pnlPluginPreferences.resetDisplayedComponents();
                     pnlPluginPreferences.refreshView();
                 });
             }
@@ -355,6 +356,7 @@ public final class PluginPreference extends ExtensibleTabPreferenceSetting {
                 if (!task.isCanceled()) {
                     SwingUtilities.invokeLater(() -> {
                         model.updateAvailablePlugins(task.getAvailablePlugins());
+                        pnlPluginPreferences.resetDisplayedComponents();
                         pnlPluginPreferences.refreshView();
                         Config.getPref().putInt("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
                     });
