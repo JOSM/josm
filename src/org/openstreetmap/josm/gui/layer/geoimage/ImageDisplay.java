@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -52,6 +53,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     /** The file that is currently displayed */
     private ImageEntry entry;
+
+    /** The previous file that is currently displayed. Cleared on paint. Only used to help improve UI error information. */
+    private ImageEntry oldEntry;
 
     /** The image currently displayed */
     private transient BufferedImage image;
@@ -103,6 +107,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         new BooleanProperty("geoimage.bilinear-upsampling", false);
     private static double bilinUpper;
     private static double bilinLower;
+
+    /** Show a background for the error text (may be hard on eyes) */
+    private static final BooleanProperty ERROR_MESSAGE_BACKGROUND = new BooleanProperty("geoimage.message.error.background", false);
 
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
@@ -372,6 +379,8 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                         }
 
                         ImageDisplay.this.image = img;
+                        // This will clear the loading info box
+                        ImageDisplay.this.oldEntry = ImageDisplay.this.entry;
                         visibleRect = new VisRect(0, 0, width, height);
 
                         Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
@@ -731,8 +740,12 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      */
     public void setImage(ImageEntry entry) {
         synchronized (this) {
+            this.oldEntry = this.entry;
             this.entry = entry;
-            image = null;
+            if (entry == null) {
+                image = null;
+                this.oldEntry = null;
+            }
             errorLoading = false;
         }
         repaint();
@@ -770,6 +783,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     @Override
     public void paintComponent(Graphics g) {
         ImageEntry entry;
+        ImageEntry oldEntry;
         BufferedImage image;
         VisRect visibleRect;
         boolean errorLoading;
@@ -777,6 +791,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         synchronized (this) {
             image = this.image;
             entry = this.entry;
+            oldEntry = this.oldEntry;
             visibleRect = this.visibleRect;
             errorLoading = this.errorLoading;
         }
@@ -786,29 +801,8 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         }
 
         Dimension size = getSize();
-        if (entry == null) {
-            g.setColor(Color.black);
-            if (emptyText == null) {
-                emptyText = tr("No image");
-            }
-            String noImageStr = emptyText;
-            Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(noImageStr, g);
-            g.drawString(noImageStr,
-                    (int) ((size.width - noImageSize.getWidth()) / 2),
-                    (int) ((size.height - noImageSize.getHeight()) / 2));
-        } else if (image == null) {
-            g.setColor(Color.black);
-            String loadingStr;
-            if (!errorLoading) {
-                loadingStr = tr("Loading {0}", entry.getFile().getName());
-            } else {
-                loadingStr = tr("Error on file {0}", entry.getFile().getName());
-            }
-            Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(loadingStr, g);
-            g.drawString(loadingStr,
-                    (int) ((size.width - noImageSize.getWidth()) / 2),
-                    (int) ((size.height - noImageSize.getHeight()) / 2));
-        } else {
+        // Draw the image first, then draw error information
+        if (image != null && (entry != null || oldEntry != null)) {
             Rectangle r = new Rectangle(visibleRect);
             Rectangle target = calculateDrawImageRectangle(visibleRect, size);
             double scale = target.width / (double) r.width; // pixel ratio is 1:1
@@ -902,6 +896,43 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                 g.drawString(line, x, y + ascent);
             }
         }
+        final String errorMessage;
+        // If the new entry is null, then there is no image.
+        if (entry == null) {
+            if (emptyText == null) {
+                emptyText = tr("No image");
+            }
+            errorMessage = emptyText;
+        } else if (image == null || !Objects.equals(entry, oldEntry)) {
+            // The image is not necessarily null when loading anymore. If the oldEntry is not the same as the new entry,
+            // we are probably still loading the image. (oldEntry gets set to entry when the image finishes loading).
+            if (!errorLoading) {
+                errorMessage = tr("Loading {0}", entry.getFile().getName());
+            } else {
+                errorMessage = tr("Error on file {0}", entry.getFile().getName());
+            }
+        } else {
+            errorMessage = null;
+        }
+        if (errorMessage != null && !errorMessage.trim().isEmpty()) {
+            Rectangle2D errorStringSize = g.getFontMetrics(g.getFont()).getStringBounds(errorMessage, g);
+            if (Boolean.TRUE.equals(ERROR_MESSAGE_BACKGROUND.get())) {
+                int height = g.getFontMetrics().getHeight();
+                int descender = g.getFontMetrics().getDescent();
+                g.setColor(getBackground());
+                int width = (int) (errorStringSize.getWidth() * 1);
+                // top-left of text
+                int tlx = (int) ((size.getWidth() - errorStringSize.getWidth()) / 2);
+                int tly = (int) ((size.getHeight() - 3 * errorStringSize.getHeight()) / 2 + descender);
+                g.fillRect(tlx, tly, width, height);
+            }
+
+            // lower-left of text
+            int llx = (int) ((size.width - errorStringSize.getWidth()) / 2);
+            int lly = (int) ((size.height - errorStringSize.getHeight()) / 2);
+            g.setColor(getForeground());
+            g.drawString(errorMessage, llx, lly);
+        }
     }
 
     static Point img2compCoord(VisRect visibleRect, int xImg, int yImg, Dimension compSize) {
@@ -981,6 +1012,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      */
     public void zoomBestFitOrOne() {
         ImageEntry entry;
+        ImageEntry oldEntry;
         Image image;
         VisRect visibleRect;
 
