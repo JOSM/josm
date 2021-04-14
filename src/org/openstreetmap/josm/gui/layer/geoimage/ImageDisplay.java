@@ -38,6 +38,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ExifReader;
+import org.openstreetmap.josm.tools.HiDPISupport;
 import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -818,13 +819,14 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                     BufferedImage bi = ImageProvider.toBufferedImage(image, r);
                     if (bi != null) {
                         r.x = r.y = 0;
-
+                        double hiDPIScale = HiDPISupport.getHiDPIScale();
+                        int width = (int) (target.width * hiDPIScale);
+                        int height = (int) (target.height * hiDPIScale);
                         // See https://community.oracle.com/docs/DOC-983611 - The Perils of Image.getScaledInstance()
                         // Pre-scale image when downscaling by more than two times to avoid aliasing from default algorithm
-                        bi = ImageProvider.createScaledImage(bi, target.width, target.height,
-                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                        r.width = target.width;
-                        r.height = target.height;
+                        bi = ImageProvider.createScaledImage(bi, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                        r.width = width;
+                        r.height = height;
                         image = bi;
                     }
                 } catch (OutOfMemoryError oom) {
