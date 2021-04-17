@@ -66,8 +66,9 @@
         <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
         <text key="width" text="Width (meters)" />
     </chunk>
-    <chunk id="highway_yesno_incline_oneway_lit_width_sidewalk">
+    <chunk id="highway_yesno_incline_oneway_lit_width_busbay_sidewalk">
         <reference ref="highway_yesno_incline_oneway_lit_width" />
+		<combo key="bus_bay" text="Bus bay" values="both,left,right" />
         <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
     </chunk>
     <chunk id="placement_shoulder">
@@ -688,7 +689,7 @@
                 <text key="name" text="Name" />
                 <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <checkgroup columns="4">
                     <check key="motorroad" text="Motorroad" />
                     <check key="narrow" text="Narrow" disable_off="true" />
@@ -707,7 +708,7 @@
                 <text key="destination:ref" text="Destination reference" />
                 <text key="junction:ref" text="Junction reference" />
                 <check key="motorroad" text="Motorroad" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <space />
                 <reference ref="placement_shoulder" />
             </optional>
@@ -723,7 +724,7 @@
                 <text key="name" text="Name" />
                 <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <checkgroup columns="2">
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
@@ -739,7 +740,7 @@
                 <reference ref="highway_base" />
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <space />
                 <reference ref="placement_shoulder" />
             </optional>
@@ -755,7 +756,7 @@
                 <text key="name" text="Name" />
                 <check key="noname" text="Street has no name" disable_off="true" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <checkgroup columns="2">
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
@@ -771,7 +772,7 @@
                 <reference ref="highway_base" />
                 <text key="destination" text="Destination" />
                 <text key="destination:ref" text="Destination reference" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <space />
                 <reference ref="placement_shoulder" />
             </optional>
@@ -786,7 +787,7 @@
                 <text key="ref" text="Reference" />
                 <check key="noref" text="Street has no reference" disable_off="true" />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <checkgroup columns="3">
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
@@ -812,6 +813,7 @@
                     <check key="lit" text="Lit" />
                 </checkgroup>
                 <text key="width" text="Width (meters)" />
+				<combo key="bus_bay" text="Bus bay" values="both,left,right" />
                 <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
                 <checkgroup columns="2">
                     <check key="narrow" text="Narrow" disable_off="true" />
@@ -841,6 +843,7 @@
                     <check key="lit" text="Lit" />
                 </checkgroup>
                 <text key="width" text="Width (meters)" />
+				<combo key="bus_bay" text="Bus bay" values="both,left,right" />
                 <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -855,7 +858,7 @@
                 <combo key="lanes" text="Lanes" values="1,2,3" length="3" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <reference ref="surface_smoothness" />
-                <reference ref="highway_yesno_incline_oneway_lit_width" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <checkgroup columns="2">
                     <check key="narrow" text="Narrow" disable_off="true" />
                     <check key="trolley_wire" text="Overhead trolley wires" />
@@ -888,7 +891,7 @@
                 <text key="name" text="Name" />
                 <space />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <check key="passing_places" text="Passing Places" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -928,7 +931,7 @@
                 <text key="name" text="Name" />
                 <space />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
             </optional>
             <reference ref="link_road_access_restrictions" />
@@ -941,7 +944,7 @@
                 <text key="name" text="Name" />
                 <space />
                 <reference ref="highway_base" />
-                <reference ref="highway_yesno_incline_oneway_lit_width_sidewalk" />
+                <reference ref="highway_yesno_incline_oneway_lit_width_busbay_sidewalk" />
                 <check key="trolley_wire" text="Overhead trolley wires" />
                 <combo key="junction" text="Junction" values="roundabout,jughandle" />
             </optional>
