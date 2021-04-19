@@ -129,13 +129,13 @@ public final class ShowStatusReportAction extends JosmAction {
         }
 
         for (String name : Arrays.asList("LANG", "LC_ALL")) {
-            String value = Utils.getSystemEnv(name);
+            String value = getSystemEnv(name);
             if (value != null) {
                 text.format("Environment variable %s: %s%n", name, value);
             }
         }
         for (String name : Arrays.asList("file.encoding", "sun.jnu.encoding")) {
-            String value = Utils.getSystemProperty(name);
+            String value = getSystemProperty(name);
             if (value != null) {
                 text.format("System property %s: %s%n", name, value);
             }

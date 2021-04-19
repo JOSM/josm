@@ -155,7 +155,7 @@ public class DividedScale<T> {
      * @throws AssertionError When an invariant is broken.
      */
     public void consistencyTest() {
-        if (ranges.size() < 1) throw new AssertionError(ranges);
+        if (ranges.isEmpty()) throw new AssertionError(ranges);
         if (data.isEmpty()) throw new AssertionError(data);
         if (ranges.size() != data.size()) throw new AssertionError();
         if (ranges.get(0).getLower() != 0) throw new AssertionError();

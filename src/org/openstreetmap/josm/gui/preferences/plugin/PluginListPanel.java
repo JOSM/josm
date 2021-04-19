@@ -9,7 +9,6 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +42,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
     private final transient PluginPreferencesModel model;
 
     /** Whether the plugin list has been built up already in the UI. */
-    private boolean pluginListInitialized = false;
+    private boolean pluginListInitialized;
 
     /**
      * Constructs a new {@code PluginListPanel} with a default model.

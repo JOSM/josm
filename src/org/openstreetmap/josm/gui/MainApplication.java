@@ -369,7 +369,8 @@ public class MainApplication {
      * @since 12270
      */
     public static void askUpdateJava(String updVersion, String url, String eolDate, boolean major) {
-        StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.",
+        StringBuilder content = new StringBuilder(256);
+        content.append(tr("You are running version {0} of Java.",
                 "<b>"+getSystemProperty("java.version")+"</b>")).append("<br><br>");
         if ("Sun Microsystems Inc.".equals(getSystemProperty("java.vendor")) && !PlatformManager.getPlatform().isOpenJDK()) {
             content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",

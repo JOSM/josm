@@ -1012,7 +1012,6 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      */
     public void zoomBestFitOrOne() {
         ImageEntry entry;
-        ImageEntry oldEntry;
         Image image;
         VisRect visibleRect;
 

@@ -238,7 +238,7 @@ public class Text extends KeyedItem {
         return Collections.singleton(default_);
     }
 
-    public void setValue_template(String pattern) throws SAXException {
+    public void setValue_template(String pattern) throws SAXException { // NOPMD
         try {
             this.valueTemplate = new TemplateParser(pattern).parse();
         } catch (ParseError e) {
@@ -249,7 +249,7 @@ public class Text extends KeyedItem {
 
     private void setupListeners(AutoCompletingTextField textField, TaggingPresetItemGuiSupport support) {
         textField.getDocument().addDocumentListener(DocumentAdapter.create(ignore ->
-                support.fireItemValueModified(Text.this, key, textField.getText())));
+                support.fireItemValueModified(this, key, textField.getText())));
 
         if (valueTemplate != null) {
             textField.setForeground(Color.BLUE);
