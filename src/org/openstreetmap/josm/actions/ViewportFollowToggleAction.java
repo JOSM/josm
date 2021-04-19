@@ -42,6 +42,10 @@ public class ViewportFollowToggleAction extends ToggleAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (!ExpertToggleAction.isExpert()) {
+            // #16848 (Possible to activate "Viewport following" mode when not in "Expert mode" through keyboard shortcut)
+            return;
+        }
         toggleSelectedState(e);
         DrawAction.VIEWPORT_FOLLOWING.put(isSelected());
         if (!getShortcut().getKeyText().isEmpty() && PROP_NOTIFICATION.get()) {
