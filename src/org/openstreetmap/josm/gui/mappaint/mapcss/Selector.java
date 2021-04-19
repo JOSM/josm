@@ -844,7 +844,7 @@ public interface Selector {
         public String toString() {
             return base
                     + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range)
-                    + (getConditions().stream().map(String::valueOf).collect(Collectors.joining("")))
+                    + getConditions().stream().map(String::valueOf).collect(Collectors.joining(""))
                     + (subpart != null && subpart != Subpart.DEFAULT_SUBPART ? ("::" + subpart) : "");
         }
     }
