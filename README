@@ -166,7 +166,7 @@ There are some third party libraries which are directly included in the source c
 
 * jmapviewer: Java component to browse a TMS map
     src/org/openstreetmap/gui (svn external)
-    -> http://svn.openstreetmap.org/applications/viewer/jmapviewer/
+    -> https://josm.openstreetmap.de/osmsvn/applications/viewer/jmapviewer/
 * Apache commons compress: Support for bzip2 compression when opening files
     -> https://github.com/apache/commons-compress
 * Apache commons validator: Improved validator routines
