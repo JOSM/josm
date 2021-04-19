@@ -141,6 +141,11 @@ public final class ExpressionFactory {
     static final Map<String, Factory> FACTORY_MAP = new HashMap<>();
 
     static {
+        initFactories();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void initFactories() {
         FACTORY_MAP.put("CRC32_checksum", Factory.of(String.class, Functions::CRC32_checksum));
         FACTORY_MAP.put("JOSM_pref", Factory.ofEnv(String.class, String.class, null, Functions::JOSM_pref));
         FACTORY_MAP.put("JOSM_search", Factory.ofEnv(String.class, Functions::JOSM_search));
