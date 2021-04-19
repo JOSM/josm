@@ -644,7 +644,8 @@ public final class ConditionFactory {
 
         @Override
         public boolean applies(Tagged osm) {
-            return osm.keys().anyMatch(pattern.asPredicate()) ^ negateResult;
+            boolean matches = osm.hasKeys() && osm.keys().anyMatch(pattern.asPredicate());
+            return matches ^ negateResult;
         }
 
         /**
