@@ -213,8 +213,14 @@ public interface Selector {
                 // We skip any following referrer injected into the visitor.
                 if (e.parent != null) return;
 
-                if (!left.matches(e.withPrimitive(parent)))
-                    return;
+                IPrimitive osm = e.osm;
+                try {
+                    e.osm = parent;
+                    if (!left.matches(e))
+                        return;
+                } catch (Exception exception) {
+                    e.osm = osm;
+                }
                 int count = parent instanceof IWay<?>
                         ? ((IWay<?>) parent).getNodesCount()
                         : ((IRelation<?>) parent).getMembersCount();
