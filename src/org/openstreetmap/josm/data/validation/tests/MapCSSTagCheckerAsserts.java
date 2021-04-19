@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,10 +20,8 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Functions;
 import org.openstreetmap.josm.gui.mappaint.mapcss.LiteralExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.tools.DefaultGeoProperty;
@@ -52,12 +49,11 @@ final class MapCSSTagCheckerAsserts {
      */
     static void checkAsserts(final MapCSSTagCheckerRule check, final Map<String, Boolean> assertions,
                              final MapCSSTagChecker.AssertionConsumer assertionConsumer) {
-        final Method insideMethod = getFunctionMethod("inside");
         final DataSet ds = new DataSet();
         Logging.debug("Check: {0}", check);
         for (final Map.Entry<String, Boolean> i : assertions.entrySet()) {
             Logging.debug("- Assertion: {0}", i);
-            final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey(), getLocation(check, insideMethod), true);
+            final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey(), getLocation(check), true);
             // Build minimal ordered list of checks to run to test the assertion
             List<Set<MapCSSTagCheckerRule>> checksToRun = new ArrayList<>();
             Set<MapCSSTagCheckerRule> checkDependencies = getTagCheckDependencies(check, previousChecks);
@@ -93,15 +89,6 @@ final class MapCSSTagCheckerAsserts {
         previousChecks.trimToSize();
     }
 
-    private static Method getFunctionMethod(String method) {
-        try {
-            return Functions.class.getDeclaredMethod(method, Environment.class, String.class);
-        } catch (NoSuchMethodException | SecurityException e) {
-            Logging.error(e);
-            return null;
-        }
-    }
-
     private static void addPrimitive(DataSet ds, OsmPrimitive p) {
         if (p instanceof Way) {
             ((Way) p).getNodes().forEach(n -> addPrimitive(ds, n));
@@ -111,8 +98,8 @@ final class MapCSSTagCheckerAsserts {
         ds.addPrimitive(p);
     }
 
-    private static LatLon getLocation(MapCSSTagCheckerRule check, Method insideMethod) {
-        Optional<String> inside = getFirstInsideCountry(check, insideMethod);
+    private static LatLon getLocation(MapCSSTagCheckerRule check) {
+        Optional<String> inside = getFirstInsideCountry(check);
         if (inside.isPresent()) {
             GeoPropertyIndex<Boolean> index = Territories.getGeoPropertyIndex(inside.get());
             if (index != null) {
@@ -125,7 +112,7 @@ final class MapCSSTagCheckerAsserts {
         return LatLon.ZERO;
     }
 
-    private static Optional<String> getFirstInsideCountry(MapCSSTagCheckerRule check, Method insideMethod) {
+    private static Optional<String> getFirstInsideCountry(MapCSSTagCheckerRule check) {
         return check.rule.selectors.stream()
                 .filter(s -> s instanceof Selector.GeneralSelector)
                 .flatMap(s -> ((Selector.GeneralSelector) s).getConditions().stream())
