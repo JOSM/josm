@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -207,14 +208,16 @@ public interface Selector {
                 throw new AssertionError();
             }
 
-            private <T extends IPrimitive> void doVisit(T parent, IntSupplier counter, IntFunction<IPrimitive> getter) {
+            private void doVisit(IPrimitive parent) {
                 // If e.parent is already set to the first matching referrer.
                 // We skip any following referrer injected into the visitor.
                 if (e.parent != null) return;
 
                 if (!left.matches(e.withPrimitive(parent)))
                     return;
-                int count = counter.getAsInt();
+                int count = parent instanceof IWay<?>
+                        ? ((IWay<?>) parent).getNodesCount()
+                        : ((IRelation<?>) parent).getMembersCount();
                 if (link.getConditions().isEmpty()) {
                     // index is not needed, we can avoid the sequential search below
                     e.parent = parent;
@@ -224,7 +227,10 @@ public interface Selector {
                 // see #18964
                 int step = firstAndLastOnly() ? count - 1 : 1;
                 for (int i = 0; i < count; i += step) {
-                    if (getter.apply(i).equals(e.osm)
+                    IPrimitive o = parent instanceof IWay<?>
+                            ? ((IWay<?>) parent).getNode(i)
+                            : ((IRelation<?>) parent).getMember(i).getMember();
+                    if (Objects.equals(o, e.osm)
                             && link.matches(e.withParentAndIndexAndLinkContext(parent, i, count))) {
                         e.parent = parent;
                         e.index = i;
@@ -240,12 +246,12 @@ public interface Selector {
 
             @Override
             public void visit(IWay<?> w) {
-                doVisit(w, w::getNodesCount, w::getNode);
+                doVisit(w);
             }
 
             @Override
             public void visit(IRelation<?> r) {
-                doVisit(r, r::getMembersCount, i -> r.getMember(i).getMember());
+                doVisit(r);
             }
         }
 
