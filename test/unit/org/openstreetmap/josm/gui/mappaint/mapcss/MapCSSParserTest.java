@@ -78,7 +78,7 @@ class MapCSSParserTest {
 
     @Test
     void testClassCondition() throws Exception {
-        List<Condition> conditions = ((Selector.GeneralSelector) getParser("way[name=X].highway:closed").selector()).conds;
+        List<Condition> conditions = getParser("way[name=X].highway:closed").selector().getConditions();
         assertTrue(conditions.get(0) instanceof SimpleKeyValueCondition);
         assertTrue(conditions.get(0).applies(getEnvironment("name", "X")));
         assertTrue(conditions.get(1) instanceof ClassCondition);
@@ -88,10 +88,10 @@ class MapCSSParserTest {
 
     @Test
     void testPseudoClassCondition() throws Exception {
-        Condition c0 = ((Selector.GeneralSelector) getParser("way:area-style").selector()).conds.get(0);
-        Condition c1 = ((Selector.GeneralSelector) getParser("way!:area-style").selector()).conds.get(0);
-        Condition c2 = ((Selector.GeneralSelector) getParser("way!:areaStyle").selector()).conds.get(0);
-        Condition c3 = ((Selector.GeneralSelector) getParser("way!:area_style").selector()).conds.get(0);
+        Condition c0 = getParser("way:area-style").selector().getConditions().get(0);
+        Condition c1 = getParser("way!:area-style").selector().getConditions().get(0);
+        Condition c2 = getParser("way!:areaStyle").selector().getConditions().get(0);
+        Condition c3 = getParser("way!:area_style").selector().getConditions().get(0);
         assertEquals(":areaStyle", c0.toString());
         assertEquals("!:areaStyle", c1.toString());
         assertEquals("!:areaStyle", c2.toString());

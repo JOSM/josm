@@ -7,6 +7,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -214,7 +215,7 @@ public interface Selector {
                 if (!left.matches(e.withPrimitive(parent)))
                     return;
                 int count = counter.getAsInt();
-                if (link.conds == null || link.conds.isEmpty()) {
+                if (link.getConditions().isEmpty()) {
                     // index is not needed, we can avoid the sequential search below
                     e.parent = parent;
                     e.count = count;
@@ -234,7 +235,7 @@ public interface Selector {
             }
 
             private boolean firstAndLastOnly() {
-                return link.conds.stream().allMatch(c -> c instanceof IndexCondition && ((IndexCondition) c).isFirstOrLast);
+                return link.getConditions().stream().allMatch(c -> c instanceof IndexCondition && ((IndexCondition) c).isFirstOrLast);
             }
 
             @Override
@@ -573,8 +574,8 @@ public interface Selector {
                     }
                 }
             } else if (ChildOrParentSelectorType.CHILD == type
-                    && link.conds != null && !link.conds.isEmpty()
-                    && link.conds.get(0) instanceof OpenEndPseudoClassCondition) {
+                    && !link.getConditions().isEmpty()
+                    && link.getConditions().get(0) instanceof OpenEndPseudoClassCondition) {
                 if (e.osm instanceof INode) {
                     e.osm.visitReferrers(new MultipolygonOpenEndFinder(e));
                     return e.parent != null;
@@ -637,10 +638,10 @@ public interface Selector {
      */
     abstract class AbstractSelector implements Selector {
 
-        protected final List<Condition> conds;
+        private final Condition[] conds;
 
         protected AbstractSelector(List<Condition> conditions) {
-            this.conds = Utils.toUnmodifiableList(conditions);
+            this.conds = conditions.toArray(new Condition[0]);
         }
 
         /**
@@ -665,7 +666,7 @@ public interface Selector {
 
         @Override
         public List<Condition> getConditions() {
-            return conds;
+            return Arrays.asList(conds);
         }
     }
 
@@ -702,7 +703,7 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return "LinkSelector{conditions=" + conds + '}';
+            return "LinkSelector{conditions=" + getConditions() + '}';
         }
     }
 
@@ -831,7 +832,7 @@ public interface Selector {
         public String toString() {
             return base
                     + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range)
-                    + (conds != null ? conds.stream().map(String::valueOf).collect(Collectors.joining("")) : "")
+                    + (getConditions().stream().map(String::valueOf).collect(Collectors.joining("")))
                     + (subpart != null && subpart != Subpart.DEFAULT_SUBPART ? ("::" + subpart) : "");
         }
     }
