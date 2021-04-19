@@ -185,7 +185,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("inside", Factory.ofEnv(String.class, Functions::inside));
         FACTORY_MAP.put("is_anticlockwise", Factory.ofEnv(Functions::is_anticlockwise));
         FACTORY_MAP.put("is_clockwise", Factory.ofEnv(Functions::is_clockwise));
-        FACTORY_MAP.put("is_prop_set", Factory.ofEnv(String.class, Functions::is_prop_set));
+        FACTORY_MAP.put("is_prop_set", Factory.ofEnv(String.class, String.class, Functions::is_prop_set, Functions::is_prop_set));
         FACTORY_MAP.put("is_right_hand_traffic", Factory.ofEnv(Functions::is_right_hand_traffic));
         FACTORY_MAP.put("is_similar", Factory.of(String.class, String.class, Functions::is_similar));
         FACTORY_MAP.put("join", Factory.ofStringVarargs(Functions::join));
