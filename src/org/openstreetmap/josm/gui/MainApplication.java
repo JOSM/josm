@@ -904,6 +904,8 @@ public class MainApplication {
         }
         // Configure Look and feel before showing SplashScreen (#19290)
         setupUIManager();
+        // MainFrame created before setting look and feel and not updated (#20771)
+        SwingUtilities.updateComponentTreeUI(mainFrame);
 
         final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(SplashScreen::new);
         // splash can be null sometimes on Linux, in this case try to load JOSM silently
