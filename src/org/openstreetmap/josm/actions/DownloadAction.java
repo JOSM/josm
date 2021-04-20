@@ -21,12 +21,17 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class DownloadAction extends JosmAction {
 
     /**
+     * Action shortcut (ctrl-shift-down by default), made public in order to be used from {@code GettingStarted} page.
+     */
+    public static final Shortcut SHORTCUT =
+            Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download data")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT);
+
+    /**
      * Constructs a new {@code DownloadAction}.
      */
     public DownloadAction() {
         super(tr("Download data..."), "download", tr("Download map data from a server of your choice"),
-              Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download data")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT),
-              true, false);
+                SHORTCUT, true, false);
         setHelpId(ht("/Action/Download"));
     }
 
