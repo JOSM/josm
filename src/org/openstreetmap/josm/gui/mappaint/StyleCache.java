@@ -45,15 +45,9 @@ public final class StyleCache {
         StyleCache s = new StyleCache(this);
 
         if (selected) {
-            if (s.selectedStyle == null) {
-                s.selectedStyle = new DividedScale<>();
-            }
-            s.selectedStyle.put(o, r);
+            s.selectedStyle = (s.selectedStyle == null ? new DividedScale<StyleElementList>() : s.selectedStyle).put(o, r);
         } else {
-            if (s.plainStyle == null) {
-                s.plainStyle = new DividedScale<>();
-            }
-            s.plainStyle.put(o, r);
+            s.plainStyle = (s.plainStyle == null ? new DividedScale<StyleElementList>() : s.plainStyle).put(o, r);
         }
         return s.intern();
     }
@@ -81,12 +75,8 @@ public final class StyleCache {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         final StyleCache other = (StyleCache) obj;
         return Objects.equals(plainStyle, other.plainStyle) && Objects.equals(selectedStyle, other.selectedStyle);
     }

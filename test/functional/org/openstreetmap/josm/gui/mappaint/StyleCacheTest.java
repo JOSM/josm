@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.util.IdentityHashMap;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -52,14 +51,14 @@ class StyleCacheTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection().mapStyles().timeout(60000);
+    public JOSMTestRules test = new JOSMTestRules().main().preferences().projection().mapStyles().timeout(60000);
 
     /**
      * Load the test data that is required.
      * @throws Exception If an error occurred during load.
      */
-    @BeforeAll
-    public static void load() throws Exception {
+    @BeforeEach
+    public void load() throws Exception {
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         try (InputStream in = Compression.getUncompressedFileInputStream(new File("nodist/data/neubrandenburg.osm.bz2"))) {
             dsCity = OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
@@ -157,11 +156,7 @@ class StyleCacheTest {
                 Pair<StyleElementList, Range> p = osm.getCachedStyle().getWithRange(nc.getDist100Pixel(), false);
                 StyleElementList sel = p.a;
                 assertNotNull(sel);
-                Integer k = counter.get(sel);
-                if (k == null) {
-                    k = 0;
-                }
-                counter.put(sel, k + 1);
+                counter.merge(sel, 1, Integer::sum);
             }
         }
         int EXPECTED_NO_PRIMITIVES = 4294; // needs to be updated if data file or bbox changes
