@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import java.util.Objects;
-
 /**
  * A scale interval of the form "lower &lt; x &lt;= upper" where 0 &lt;= lower &lt; upper.
  * (upper can be Double.POSITIVE_INFINITY)
@@ -116,6 +114,6 @@ public class Range {
 
     @Override
     public int hashCode() {
-        return Objects.hash(lower, upper);
+        return 31 * Double.hashCode(lower) + Double.hashCode(upper);
     }
 }

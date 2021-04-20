@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -24,15 +23,12 @@ public final class StyleCache {
      */
     public static final StyleCache EMPTY_STYLECACHE = new StyleCache().intern();
 
-    private static final int PLAIN = 0;
-    private static final int SELECTED = 1;
-
-    @SuppressWarnings("unchecked")
-    private final DividedScale<StyleElementList>[] states = new DividedScale[2];
+    private DividedScale<StyleElementList> plainStyle;
+    private DividedScale<StyleElementList> selectedStyle;
 
     private StyleCache(StyleCache sc) {
-        states[0] = sc.states[0];
-        states[1] = sc.states[1];
+        plainStyle = sc.plainStyle;
+        selectedStyle = sc.selectedStyle;
     }
 
     private StyleCache() {
@@ -48,8 +44,17 @@ public final class StyleCache {
     public StyleCache put(StyleElementList o, Range r, boolean selected) {
         StyleCache s = new StyleCache(this);
 
-        int idx = getIndex(selected);
-        s.states[idx] = Optional.ofNullable(s.states[idx]).orElseGet(DividedScale::new).put(o, r);
+        if (selected) {
+            if (s.selectedStyle == null) {
+                s.selectedStyle = new DividedScale<>();
+            }
+            s.selectedStyle.put(o, r);
+        } else {
+            if (s.plainStyle == null) {
+                s.plainStyle = new DividedScale<>();
+            }
+            s.plainStyle.put(o, r);
+        }
         return s.intern();
     }
 
@@ -60,25 +65,18 @@ public final class StyleCache {
      * @return The style and the range it is valid for.
      */
     public Pair<StyleElementList, Range> getWithRange(double scale, boolean selected) {
-        int idx = getIndex(selected);
-        if (states[idx] == null) {
-            return Pair.create(null, Range.ZERO_TO_INFINITY);
-        }
-        return states[idx].getWithRange(scale);
-    }
-
-    private static int getIndex(boolean selected) {
-        return selected ? SELECTED : PLAIN;
+        DividedScale<StyleElementList> style = selected ? selectedStyle : plainStyle;
+        return style != null ? style.getWithRange(scale) : Pair.create(null, Range.ZERO_TO_INFINITY);
     }
 
     @Override
     public String toString() {
-        return "StyleCache{PLAIN: " + this.states[PLAIN] + " SELECTED: " + this.states[SELECTED] + "}";
+        return "StyleCache{PLAIN: " + plainStyle + " SELECTED: " + selectedStyle + "}";
     }
 
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(this.states);
+        return 31 * Objects.hashCode(plainStyle) + Objects.hashCode(selectedStyle);
     }
 
     @Override
@@ -90,7 +88,7 @@ public final class StyleCache {
             return false;
         }
         final StyleCache other = (StyleCache) obj;
-        return Arrays.deepEquals(this.states, other.states);
+        return Objects.equals(plainStyle, other.plainStyle) && Objects.equals(selectedStyle, other.selectedStyle);
     }
 
     /**

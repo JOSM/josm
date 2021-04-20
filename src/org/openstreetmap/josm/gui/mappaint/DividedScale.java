@@ -176,7 +176,7 @@ public class DividedScale<T> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(ranges, data);
+        return 31 * ranges.hashCode() + data.hashCode();
     }
 
     @Override
