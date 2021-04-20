@@ -1033,8 +1033,6 @@ public class MainApplication {
         }
         // Disable automatic POST retry after 5 minutes, see #17882 / https://bugs.openjdk.java.net/browse/JDK-6382788
         Utils.updateSystemProperty("sun.net.http.retryPost", "false");
-        // Force text antialiasing, not including mappaint text
-        Utils.updateSystemProperty("awt.useSystemAAFontSettings", "on");
     }
 
     /**
