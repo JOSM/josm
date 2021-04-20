@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.IntFunction;
-import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.INode;
@@ -25,7 +23,6 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.IWay;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -218,7 +215,7 @@ public interface Selector {
                     e.osm = parent;
                     if (!left.matches(e))
                         return;
-                } catch (Exception exception) {
+                } finally {
                     e.osm = osm;
                 }
                 int count = parent instanceof IWay<?>
