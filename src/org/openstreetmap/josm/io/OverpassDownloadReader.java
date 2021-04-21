@@ -305,7 +305,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         idOffset.put(OsmPrimitiveType.RELATION, 3_600_000_000L);
         final PrimitiveId osmId = searchName(area).getOsmId();
         Logging.debug("Area ''{0}'' resolved to {1}", area, osmId);
-        return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
+        return String.format(Locale.ENGLISH, "area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
     }
 
     static String geocodeBbox(String area) throws IOException {
@@ -320,7 +320,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
     static String geocodeId(String area) throws IOException {
         PrimitiveId osmId = searchName(area).getOsmId();
-        return String.format("%s(%d)", osmId.getType().getAPIName(), osmId.getUniqueId());
+        return String.format(Locale.ENGLISH, "%s(%d)", osmId.getType().getAPIName(), osmId.getUniqueId());
     }
 
     @Override
