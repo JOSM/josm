@@ -231,16 +231,16 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     n = way.get("ref");
                 }
                 if (n == null) {
-                    n = way.hasKey("highway") ? tr("highway") :
-                        way.hasKey("railway") ? tr("railway") :
-                        way.hasKey("waterway") ? tr("waterway") :
-                        way.hasKey("landuse") ? tr("landuse") : null;
-                }
-                if (n == null) {
                     n = formatAddress(way);
                 }
-                if (n == null && way.hasKey("building")) {
-                    n = tr("building");
+                if (n == null) {
+                    for (String key : Arrays.asList(marktr("highway"), marktr("railway"), marktr("waterway"), marktr("landuse"), marktr("building"))) {
+                        if (way.hasKey(key) && !way.isKeyFalse(key)) {
+                            /* I18N: first is highway, railway, waterway, landuse or building type, second is the type itself */
+                            n = way.isKeyTrue(key) ? tr(key) : tr("{0} ({1})", trcLazy(key, way.get(key)), tr(key));
+                            break;
+                        }
+                    }
                 }
                 if (n == null || n.isEmpty()) {
                     n = String.valueOf(way.getId());
