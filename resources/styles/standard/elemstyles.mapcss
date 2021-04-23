@@ -3597,6 +3597,7 @@ area[tourism=picnic_site],
 area[tourism=viewpoint],
 area[tourism=theme_park],
 area[tourism=zoo],
+area[tourism=gallery],
 area[tourism=museum] {
     fill-color: tourism#e180a2;
 }
@@ -3625,6 +3626,10 @@ way[tourism=artwork] {
 }
 node[tourism=artwork] {
     icon-image: "presets/sightseeing/arts_centre.svg";
+    set icon_z17;
+}
+node[tourism=gallery] {
+    icon-image: "presets/sightseeing/gallery.svg";
     set icon_z17;
 }
 node[tourism=museum] {
