@@ -53,13 +53,8 @@
         <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
     </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width">
-        <checkgroup columns="4">
-            <check key="bridge" text="Bridge" disable_off="true" />
-            <check key="tunnel" text="Tunnel" disable_off="true" />
-            <check key="embankment" text="Embankment" disable_off="true" />
-            <check key="cutting" text="Cutting" disable_off="true" />
-        </checkgroup>
-        <checkgroup columns="4">
+        <reference ref="highway_yesno" />
+        <checkgroup columns="2">
             <check key="oneway" text="Oneway" />
             <check key="lit" text="Lit" />
         </checkgroup>
@@ -1107,7 +1102,10 @@
                 </combo>
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" />
                 <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" values_context="trail_visibility" values_sort="false" />
-                <check key="segregated" text="Segregated" />
+                <checkgroup columns="2">
+                    <check key="segregated" text="Segregated" />
+                    <check key="informal" text="Informal" disable_off="true" />
+                </checkgroup>
                 <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
                 <reference ref="wheelchair" />
                 <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" values_sort="false" />
