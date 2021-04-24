@@ -813,7 +813,6 @@ public final class DomainValidator extends AbstractValidator {
         "istanbul", // istanbul Istanbul Metropolitan Municipality / Medya A.S.
         "itau", // itau Itau Unibanco Holding S.A.
         "itv", // itv ITV Services Limited
-        "iveco", // iveco CNH Industrial N.V.
         "jaguar", // jaguar Jaguar Land Rover Ltd
         "java", // java Oracle Corporation
         "jcb", // jcb JCB Co., Ltd.
@@ -971,7 +970,6 @@ public final class DomainValidator extends AbstractValidator {
         "nab", // nab National Australia Bank Limited
         "nagoya", // nagoya GMO Registry, Inc.
         "name", // name VeriSign Information Services, Inc.
-        "nationwide", // nationwide Nationwide Mutual Insurance Company
         "natura", // natura NATURA COSMÉTICOS S.A.
         "navy", // navy United TLD Holdco Ltd.
         "nba", // nba NBA REGISTRY, LLC
@@ -1019,7 +1017,6 @@ public final class DomainValidator extends AbstractValidator {
         "ong", // ong Public Interest Registry
         "onl", // onl I-REGISTRY Ltd., Niederlassung Deutschland
         "online", // online DotOnline Inc.
-        "onyourside", // onyourside Nationwide Mutual Insurance Company
         "ooo", // ooo INFIBEAM INCORPORATION LIMITED
         "open", // open American Express Travel Related Services Company, Inc.
         "oracle", // oracle Oracle Corporation
@@ -1218,7 +1215,6 @@ public final class DomainValidator extends AbstractValidator {
         "space", // space DotSpace Inc.
         "sport", // sport Global Association of International Sports Federations (GAISF)
         "spot", // spot Amazon Registry Services, Inc.
-        "spreadbetting", // spreadbetting DOTSPREADBETTING REGISTRY LTD
         "srl", // srl InterNetX Corp.
         "ss", // ss National Communication Authority (NCA)
         "stada", // stada STADA Arzneimittel AG
