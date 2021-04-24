@@ -1064,11 +1064,11 @@
             <link wiki="Tag:highway=track" />
             <space />
             <combo key="tracktype" text="Tracktype" values_searchable="true" values_sort="false">
-                <list_entry value="grade1" icon="presets/transport/way/tracktype_grade1.svg" short_description="Solid: paved or heavily compacted hardcore surface" />
-                <list_entry value="grade2" icon="presets/transport/way/tracktype_grade2.svg" short_description="Mostly Solid: gravel/rock with some soft material mixed in" />
-                <list_entry value="grade3" icon="presets/transport/way/tracktype_grade3.svg" short_description="Even mixture of hard and soft materials" />
-                <list_entry value="grade4" icon="presets/transport/way/tracktype_grade4.svg" short_description="Mostly Soft: soil/sand/grass with some hard material mixed in" />
-                <list_entry value="grade5" icon="presets/transport/way/tracktype_grade5.svg" short_description="Soft: soil/sand/grass" />
+                <list_entry value="grade1" icon="presets/transport/way/tracktype_grade1.svg" short_description="Solid: Usually a paved or sealed surface" />
+                <list_entry value="grade2" icon="presets/transport/way/tracktype_grade2.svg" short_description="Solid but unpaved: Usually an unpaved track with surface of gravel" />
+                <list_entry value="grade3" icon="presets/transport/way/tracktype_grade3.svg" short_description="Mostly Solid: Even mixture of hard and soft materials. Almost always an unpaved track" />
+                <list_entry value="grade4" icon="presets/transport/way/tracktype_grade4.svg" short_description="Mostly Soft: Almost always an unpaved track prominently with soil/sand/grass, but with some hard or compacted materials mixed in" />
+                <list_entry value="grade5" icon="presets/transport/way/tracktype_grade5.svg" short_description="Soft: Almost always an unimproved track lacking hard materials, same as surrounding soil" />
             </combo>
             <key key="highway" value="track" />
             <optional>
