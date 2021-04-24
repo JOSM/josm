@@ -1939,9 +1939,10 @@
             <key key="waterway" value="canal" />
             <text key="name" text="Name" />
             <optional>
+                <combo key="canal" text="Type" values="qanat" values_searchable="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
-                <combo key="tunnel" text="Tunnel" values="culvert,flooded,yes" />
-                <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" values_context="usage" />
+                <combo key="tunnel" text="Tunnel" values="culvert,flooded,yes" values_searchable="true" />
+                <combo key="usage" text="Usage" values="transportation,transmission,irrigation,headrace,tailrace,spillway" values_context="usage" values_searchable="true" />
                 <text key="width" text="Width (meters)" />
                 <reference ref="wikipedia_wikidata" />
                 <check key="lock" text="Lock" disable_off="true" />
