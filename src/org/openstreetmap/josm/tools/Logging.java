@@ -11,6 +11,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -495,7 +496,7 @@ public final class Logging {
                 return;
             }
 
-            String msg = String.format("%09.3f %s%s", startup.elapsed() / 1000., getPrefix(record), record.getMessage());
+            String msg = String.format(Locale.ROOT, "%09.3f %s%s", startup.elapsed() / 1000., getPrefix(record), record.getMessage());
 
             // Only remember first line of message
             int idx = msg.indexOf('\n');

@@ -95,7 +95,7 @@ public final class ShowStatusReportAction extends JosmAction {
         if (!buildNumber.isEmpty()) {
             text.format("OS Build number: %s%n", buildNumber);
         }
-        text.format("Memory Usage: %d MB / %d MB (%d MB allocated, but free)%n",
+        text.format(Locale.ROOT, "Memory Usage: %d MB / %d MB (%d MB allocated, but free)%n",
                 Runtime.getRuntime().totalMemory() / 1024 / 1024,
                 Runtime.getRuntime().maxMemory() / 1024 / 1024,
                 Runtime.getRuntime().freeMemory() / 1024 / 1024);
@@ -113,7 +113,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 if (dm != null) {
                     AffineTransform transform = gd.getDefaultConfiguration().getDefaultTransform();
                     // Java 11: use DisplayMode#toString
-                    text.format(" %d\u00D7%d (scaling %.2f\u00D7%.2f)",
+                    text.format(Locale.ROOT, " %d\u00D7%d (scaling %.2f\u00D7%.2f)",
                             dm.getWidth(), dm.getHeight(), transform.getScaleX(), transform.getScaleY());
                 }
             }
@@ -140,6 +140,8 @@ public final class ShowStatusReportAction extends JosmAction {
                 text.format("System property %s: %s%n", name, value);
             }
         }
+        text.format("Locale info: %s%n", Locale.getDefault().toString());
+        text.format("Numbers with default locale: %s -> %d%n", Integer.toString(1_234_567_890), 1_234_567_890);
 
         if (PlatformManager.isPlatformUnixoid()) {
             PlatformHookUnixoid platform = (PlatformHookUnixoid) PlatformManager.getPlatform();
