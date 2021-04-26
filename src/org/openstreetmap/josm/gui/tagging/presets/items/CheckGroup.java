@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.osm.Tag;
@@ -34,8 +35,14 @@ public class CheckGroup extends TaggingPresetItem {
         int rows = (int) Math.ceil(checks.size() / ((double) columns));
         JPanel panel = new JPanel(new GridLayout(rows, columns));
 
+        int i = 0;
         for (Check check : checks) {
             check.addToPanel(panel, support);
+            i++;
+        }
+        for (; i < rows * columns; i++) {
+            // fill remaining cells, see #20792
+            panel.add(new JLabel());
         }
 
         p.add(panel, GBC.eol());
