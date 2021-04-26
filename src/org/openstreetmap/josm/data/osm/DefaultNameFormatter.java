@@ -49,6 +49,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     private static final List<NameFormatterHook> formatHooks = new LinkedList<>();
 
+    private static final List<String> HIGHWAY_RAILWAY_WATERWAY_LANDUSE_BUILDING = Arrays.asList(
+            marktr("highway"), marktr("railway"), marktr("waterway"), marktr("landuse"), marktr("building"));
+
     /**
      * Replies the unique instance of this formatter
      *
@@ -235,7 +238,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     n = formatAddress(way);
                 }
                 if (n == null) {
-                    for (String key : Arrays.asList(marktr("highway"), marktr("railway"), marktr("waterway"), marktr("landuse"), marktr("building"))) {
+                    for (String key : HIGHWAY_RAILWAY_WATERWAY_LANDUSE_BUILDING) {
                         if (way.hasKey(key) && !way.isKeyFalse(key)) {
                             /* I18N: first is highway, railway, waterway, landuse or building type, second is the type itself */
                             n = way.isKeyTrue(key) ? tr(key) : tr("{0} ({1})", trcLazy(key, way.get(key)), tr(key));
