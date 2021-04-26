@@ -60,6 +60,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     /** The image currently displayed */
     private transient BufferedImage image;
 
+    /** The image currently displayed after applying {@link #imageProcessor} */
+    private transient BufferedImage processedImage;
+
     /**
      * Process the image before it is being displayed
      */
@@ -379,6 +382,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                         }
 
                         ImageDisplay.this.image = img;
+                        updateProcessedImage();
                         // This will clear the loading info box
                         ImageDisplay.this.oldEntry = ImageDisplay.this.entry;
                         visibleRect = new VisRect(0, 0, width, height);
@@ -744,6 +748,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             this.entry = entry;
             if (entry == null) {
                 image = null;
+                updateProcessedImage();
                 this.oldEntry = null;
             }
             errorLoading = false;
@@ -777,7 +782,12 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     @Override
     public void filterChanged() {
+        updateProcessedImage();
         repaint();
+    }
+
+    private void updateProcessedImage() {
+        processedImage = image == null ? null : imageProcessor.process(image);
     }
 
     @Override
@@ -789,7 +799,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         boolean errorLoading;
 
         synchronized (this) {
-            image = this.image;
+            image = this.processedImage;
             entry = this.entry;
             oldEntry = this.oldEntry;
             visibleRect = this.visibleRect;
@@ -837,10 +847,6 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                     image = ImageProvider.toBufferedImage(image, r);
                     r.x = r.y = 0;
                 }
-            }
-
-            if (image != null) {
-                image = imageProcessor.process(image);
             }
 
             g.drawImage(image,
