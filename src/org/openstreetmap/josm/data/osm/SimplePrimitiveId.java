@@ -56,7 +56,7 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type);
+        return Long.hashCode(id) + 31 * Objects.hashCode(type);
     }
 
     @Override
