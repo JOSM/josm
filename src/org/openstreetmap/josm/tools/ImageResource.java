@@ -191,6 +191,10 @@ public class ImageResource {
             } else {
                 if (baseImage == null) throw new AssertionError();
                 ImageIcon icon = new ImageIcon(baseImage);
+                if (dim.width == icon.getIconWidth() && dim.height == icon.getIconHeight()) {
+                    return icon;
+                }
+
                 img = resizeMode.createBufferedImage(dim, new Dimension(icon.getIconWidth(), icon.getIconHeight()),
                         null, icon.getImage());
             }
