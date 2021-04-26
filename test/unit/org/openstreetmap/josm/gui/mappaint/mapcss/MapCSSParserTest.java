@@ -131,8 +131,7 @@ class MapCSSParserTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "way[railway][bridge=yes]::bridges { z-index: 1; casting-width: 4; casing-color: #797979 }",
-            "way[bridge=yes]::bridges { set .bridge }\nway[railway].bridge::bridges { z-index: 1; casting-width: 4; casing-color: #797979 }",
-            "way[bridge=yes] { set .bridge }\nway[railway].bridge::bridges { z-index: 1; casting-width: 4; casing-color: #797979 }"
+            "way[bridge=yes]::bridges { set .bridge }\nway[railway].bridge::bridges { z-index: 1; casting-width: 4; casing-color: #797979 }"
     })
     void testLayerMatching(String cssString) {
         MapCSSStyleSource css = new MapCSSStyleSource(cssString);

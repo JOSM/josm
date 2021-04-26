@@ -690,13 +690,7 @@ public final class ConditionFactory {
 
         @Override
         public boolean applies(Environment env) {
-            return Environment.DEFAULT_LAYER.equals(env.layer)
-                    ? applies(env, env.layer)
-                    : applies(env, env.layer) || applies(env, Environment.DEFAULT_LAYER);
-        }
-
-        private boolean applies(Environment env, String layer) {
-            Cascade cascade = env.getCascade(layer);
+            Cascade cascade = env.getCascade();
             return cascade != null && (not ^ cascade.containsKey(id));
         }
 
