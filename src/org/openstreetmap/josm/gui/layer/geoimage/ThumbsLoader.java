@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
+import org.apache.commons.jcs3.engine.behavior.ICache;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -93,7 +94,7 @@ public class ThumbsLoader implements Runnable {
     }
 
     private BufferedImage loadThumb(ImageEntry entry) {
-        final String cacheIdent = entry.getFile().toString()+':'+maxSize;
+        final String cacheIdent = entry.getFile().toString() + ICache.NAME_COMPONENT_DELIMITER + maxSize;
 
         if (!cacheOff && cache != null) {
             try {

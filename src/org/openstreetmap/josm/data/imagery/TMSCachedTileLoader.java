@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
+import org.apache.commons.jcs3.engine.behavior.ICache;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
@@ -110,7 +111,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
 
     @Override
     public void clearCache(TileSource source) {
-        this.cache.remove(source.getName() + ':');
+        this.cache.remove(source.getName() + ICache.NAME_COMPONENT_DELIMITER);
     }
 
     /**

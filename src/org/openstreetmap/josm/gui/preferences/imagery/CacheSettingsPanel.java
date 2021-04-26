@@ -27,6 +27,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.jcs3.access.CacheAccess;
+import org.apache.commons.jcs3.engine.behavior.ICache;
 import org.apache.commons.jcs3.engine.stats.behavior.ICacheStats;
 import org.apache.commons.jcs3.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs3.engine.stats.behavior.IStats;
@@ -155,7 +156,7 @@ public class CacheSettingsPanel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         int row = ret.convertRowIndexToModel(ret.getEditingRow());
                         tableModel.setValueAt("0", row, 1);
-                        cache.remove(ret.getValueAt(row, 0).toString() + ':');
+                        cache.remove(ret.getValueAt(row, 0).toString() + ICache.NAME_COMPONENT_DELIMITER);
                     }
                 });
         TableColumn tableColumn = ret.getColumnModel().getColumn(2);

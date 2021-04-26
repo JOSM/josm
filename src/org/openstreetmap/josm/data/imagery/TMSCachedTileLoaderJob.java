@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
+import org.apache.commons.jcs3.engine.behavior.ICache;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -83,7 +84,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     public String getCacheKey() {
         if (tile != null) {
             TileSource tileSource = tile.getTileSource();
-            return Optional.ofNullable(tileSource.getName()).orElse("").replace(':', '_') + ':'
+            return Optional.ofNullable(tileSource.getName()).orElse("").replace(ICache.NAME_COMPONENT_DELIMITER, "_")
+                    + ICache.NAME_COMPONENT_DELIMITER
                     + tileSource.getTileId(tile.getZoom(), tile.getXtile(), tile.getYtile());
         }
         return null;
