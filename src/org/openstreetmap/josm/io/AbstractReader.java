@@ -594,7 +594,7 @@ public abstract class AbstractReader {
          * @param n node
          * @throws IllegalDataException in case of invalid data
          */
-        void accept(Node n) throws IllegalDataException;
+        void accept(NodeData n) throws IllegalDataException;
     }
 
     @FunctionalInterface
@@ -605,7 +605,7 @@ public abstract class AbstractReader {
          * @param nodeIds collection of resulting node ids
          * @throws IllegalDataException in case of invalid data
          */
-        void accept(Way w, Collection<Long> nodeIds) throws IllegalDataException;
+        void accept(WayData w, Collection<Long> nodeIds) throws IllegalDataException;
     }
 
     @FunctionalInterface
@@ -616,7 +616,7 @@ public abstract class AbstractReader {
          * @param members collection of resulting members
          * @throws IllegalDataException in case of invalid data
          */
-        void accept(Relation r, Collection<RelationMemberData> members) throws IllegalDataException;
+        void accept(RelationData r, Collection<RelationMemberData> members) throws IllegalDataException;
     }
 
     private static boolean areLatLonDefined(String lat, String lon) {
@@ -642,9 +642,8 @@ public abstract class AbstractReader {
     }
 
     private Node addNode(NodeData nd, NodeReader nodeReader) throws IllegalDataException {
-        Node n = (Node) buildPrimitive(nd);
-        nodeReader.accept(n);
-        return n;
+        nodeReader.accept(nd);
+        return (Node) buildPrimitive(nd);
     }
 
     protected final Node parseNode(double lat, double lon, CommonReader commonReader, NodeReader nodeReader)
@@ -690,34 +689,32 @@ public abstract class AbstractReader {
     protected final Way parseWay(CommonReader commonReader, WayReader wayReader) throws IllegalDataException {
         WayData wd = new WayData(0);
         commonReader.accept(wd);
-        Way w = (Way) buildPrimitive(wd);
 
         Collection<Long> nodeIds = new ArrayList<>();
-        wayReader.accept(w, nodeIds);
-        if (w.isDeleted() && !nodeIds.isEmpty()) {
-            Logging.info(tr("Deleted way {0} contains nodes", Long.toString(w.getUniqueId())));
+        wayReader.accept(wd, nodeIds);
+        if (wd.isDeleted() && !nodeIds.isEmpty()) {
+            Logging.info(tr("Deleted way {0} contains nodes", Long.toString(wd.getUniqueId())));
             nodeIds = new ArrayList<>();
         }
         ways.put(wd.getUniqueId(), nodeIds);
-        return w;
+        return (Way) buildPrimitive(wd);
     }
 
     protected final Relation parseRelation(CommonReader commonReader, RelationReader relationReader) throws IllegalDataException {
         RelationData rd = new RelationData(0);
         commonReader.accept(rd);
-        Relation r = (Relation) buildPrimitive(rd);
 
         Collection<RelationMemberData> members = new ArrayList<>();
-        relationReader.accept(r, members);
-        if (r.isDeleted() && !members.isEmpty()) {
-            Logging.info(tr("Deleted relation {0} contains members", Long.toString(r.getUniqueId())));
+        relationReader.accept(rd, members);
+        if (rd.isDeleted() && !members.isEmpty()) {
+            Logging.info(tr("Deleted relation {0} contains members", Long.toString(rd.getUniqueId())));
             members = new ArrayList<>();
         }
         relations.put(rd.getUniqueId(), members);
-        return r;
+        return (Relation) buildPrimitive(rd);
     }
 
-    protected final RelationMemberData parseRelationMember(Relation r, String ref, String type, String role) throws IllegalDataException {
+    protected final RelationMemberData parseRelationMember(RelationData r, String ref, String type, String role) throws IllegalDataException {
         if (ref == null) {
             throw new IllegalDataException(tr("Missing attribute ''ref'' on member in relation {0}.",
                     Long.toString(r.getUniqueId())));
@@ -730,7 +727,7 @@ public abstract class AbstractReader {
         }
     }
 
-    protected final RelationMemberData parseRelationMember(Relation r, long id, String type, String role) throws IllegalDataException {
+    protected final RelationMemberData parseRelationMember(RelationData r, long id, String type, String role) throws IllegalDataException {
         if (id == 0) {
             throw new IllegalDataException(tr("Incomplete <member> specification with ref=0"));
         }

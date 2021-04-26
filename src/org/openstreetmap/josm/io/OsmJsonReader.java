@@ -18,10 +18,10 @@ import javax.json.stream.JsonParser.Event;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
-import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.Tagged;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
@@ -143,7 +143,7 @@ public class OsmJsonReader extends AbstractReader {
         parseWay(wd -> readCommon(item, wd), (w, nodeIds) -> readWayNodesAndTags(item, w, nodeIds));
     }
 
-    private static void readWayNodesAndTags(JsonObject item, Way w, Collection<Long> nodeIds) {
+    private static void readWayNodesAndTags(JsonObject item, WayData w, Collection<Long> nodeIds) {
         for (JsonValue v : item.getJsonArray("nodes")) {
             nodeIds.add(((JsonNumber) v).longValue());
         }
@@ -154,7 +154,7 @@ public class OsmJsonReader extends AbstractReader {
         parseRelation(rd -> readCommon(item, rd), (r, members) -> readRelationMembersAndTags(item, r, members));
     }
 
-    private void readRelationMembersAndTags(JsonObject item, Relation r, Collection<RelationMemberData> members)
+    private void readRelationMembersAndTags(JsonObject item, RelationData r, Collection<RelationMemberData> members)
             throws IllegalDataException {
         JsonArray jsonArray = item.getJsonArray("members");
         if (jsonArray != null) {

@@ -569,7 +569,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     private void updateTagged() {
         // 'area' is not really uninteresting (putting it in that list may have unpredictable side effects)
         // but it's clearly not enough to consider an object as tagged (see #9261)
-        updateFlagsNoLock(FLAG_TAGGED, keys()
+        updateFlagsNoLock(FLAG_TAGGED, hasKeys() && keys()
                 .anyMatch(key -> !isUninterestingKey(key) && !"area".equals(key)));
     }
 
