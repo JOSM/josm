@@ -53,8 +53,11 @@
         <combo key="incline" text="Incline" values="10%,-10%,10°,-10°,up,down" />
     </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width">
-        <reference ref="highway_yesno" />
-        <checkgroup columns="2">
+        <checkgroup columns="4">
+            <check key="bridge" text="Bridge" disable_off="true" />
+            <check key="tunnel" text="Tunnel" disable_off="true" />
+            <check key="embankment" text="Embankment" disable_off="true" />
+            <check key="cutting" text="Cutting" disable_off="true" />
             <check key="oneway" text="Oneway" />
             <check key="lit" text="Lit" />
         </checkgroup>
