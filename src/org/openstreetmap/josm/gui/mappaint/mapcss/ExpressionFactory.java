@@ -59,7 +59,8 @@ public final class ExpressionFactory {
                 if (args.isEmpty()) {
                     return identity;
                 } else if (args.size() == 1) {
-                    return unaryOperator.applyAsDouble(Cascade.convertTo(args.get(0).evaluate(env), Double.class));
+                    Double arg = Cascade.convertTo(args.get(0).evaluate(env), Double.class);
+                    return arg == null ? null : unaryOperator.applyAsDouble(arg);
                 } else {
                     return args.stream()
                             .map(arg -> Cascade.convertTo(arg.evaluate(env), Double.class))
