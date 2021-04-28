@@ -236,7 +236,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     }
 
     /** The thread that reads the images. */
-    private class LoadImageRunnable implements Runnable, ImageObserver {
+    protected class LoadImageRunnable implements Runnable, ImageObserver {
 
         private final ImageEntry entry;
         private final File file;
@@ -743,6 +743,13 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
      * @since 13220
      */
     public void setImage(ImageEntry entry) {
+        LoadImageRunnable runnable = setImage0(entry);
+        if (runnable != null) {
+            new Thread(runnable, LoadImageRunnable.class.getName()).start();
+        }
+    }
+
+    protected LoadImageRunnable setImage0(ImageEntry entry) {
         synchronized (this) {
             this.oldEntry = this.entry;
             this.entry = entry;
@@ -754,9 +761,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             errorLoading = false;
         }
         repaint();
-        if (entry != null) {
-            new Thread(new LoadImageRunnable(entry), LoadImageRunnable.class.getName()).start();
-        }
+        return entry != null ? new LoadImageRunnable(entry) : null;
     }
 
     /**
