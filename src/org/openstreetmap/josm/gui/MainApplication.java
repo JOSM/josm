@@ -1073,8 +1073,8 @@ public class MainApplication {
             } catch (ExceptionInInitializerError e) {
                 Logging.log(Logging.LEVEL_ERROR, null, e);
             }
-        } else if (PlatformManager.isPlatformOsx() && javaVersion < 16) {
-            // Workaround for JDK-8251377: JTabPanel active tab is unreadable in Big Sur, see #20075
+        } else if (PlatformManager.isPlatformOsx() && javaVersion < 17) {
+            // Workaround for JDK-8251377: JTabPanel active tab is unreadable in Big Sur, see #20075, see #20821
             // os.version will return 10.16, or 11.0 depending on environment variable
             // https://twitter.com/BriceDutheil/status/1330926649269956612
             final String macOSVersion = getSystemProperty("os.version");
