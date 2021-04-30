@@ -254,8 +254,7 @@ public class NoteData implements Data {
     }
 
     private static User getCurrentUser() {
-        UserIdentityManager userMgr = UserIdentityManager.getInstance();
-        return User.createOsmUser(userMgr.getUserId(), userMgr.getUserName());
+        return UserIdentityManager.getInstance().asUser();
     }
 
     /**
