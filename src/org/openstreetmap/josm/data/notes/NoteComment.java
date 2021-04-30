@@ -39,7 +39,7 @@ public class NoteComment {
     }
 
     /** Sorts note comments strictly by creation date */
-    public static final Comparator<NoteComment> DATE_COMPARATOR = Comparator.comparing(n -> n.commentTimestamp);
+    public static final Comparator<NoteComment> DATE_COMPARATOR = Comparator.nullsLast(Comparator.comparing(n -> n.commentTimestamp));
 
     /**
      * @param createDate The time at which this comment was added

@@ -52,15 +52,11 @@ public class Note {
     public static final Comparator<Note> DATE_COMPARATOR = Comparator.comparing(n -> n.createdAt);
 
     /** Sorts notes by user, then creation date */
-    public static final Comparator<Note> USER_COMPARATOR = (n1, n2) -> {
-        String n1User = n1.getFirstComment().getUser().getName();
-        String n2User = n2.getFirstComment().getUser().getName();
-        return n1User.equals(n2User) ? DATE_COMPARATOR.compare(n1, n2) : n1User.compareTo(n2User);
-    };
+    public static final Comparator<Note> USER_COMPARATOR =
+            Comparator.comparing(Note::getUserName, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(DATE_COMPARATOR);
 
     /** Sorts notes by the last modified date */
-    public static final Comparator<Note> LAST_ACTION_COMPARATOR =
-            (n1, n2) -> NoteComment.DATE_COMPARATOR.compare(n1.getLastComment(), n2.getLastComment());
+    public static final Comparator<Note> LAST_ACTION_COMPARATOR = Comparator.comparing(Note::getLastComment, NoteComment.DATE_COMPARATOR);
 
     private long id;
     private LatLon latLon;
@@ -180,6 +176,10 @@ public class Note {
      */
     public NoteComment getFirstComment() {
         return comments.isEmpty() ? null : comments.get(0);
+    }
+
+    private String getUserName() {
+        return getFirstComment() == null ? null : getFirstComment().getUser().getName();
     }
 
     /**
