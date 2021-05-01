@@ -90,6 +90,7 @@ public final class DateUtils {
         } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
                 checkLayout(str, "xxxx:xx:xx xx:xx:xx") ||
+                checkLayout(str, "xxxx/xx/xx xx:xx:xx") ||
                 checkLayout(str, "xxxx-xx-xx xx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xx xx:xx:xx UTC") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx") ||
@@ -114,6 +115,7 @@ public final class DateUtils {
         } else if (checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx") ||
                 checkLayout(str, "xxxx:xx:xx xx:xx:xx.xxx") ||
+                checkLayout(str, "xxxx/xx/xx xx:xx:xx.xxx") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx+xx:00") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx.xxx-xx:00")) {
             final ZonedDateTime local = ZonedDateTime.of(
