@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -175,7 +176,7 @@ public class NmeaReader implements IGpxReader {
 
     private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS", Locale.ENGLISH);
 
-    private Date readTime(String p) throws IllegalDataException {
+    private Instant readTime(String p) throws IllegalDataException {
         // NMEA defines time with "a variable number of digits for decimal-fraction of seconds"
         // This variable decimal fraction cannot be parsed by SimpleDateFormat
         Matcher m = DATE_TIME_PATTERN.matcher(p);
@@ -189,7 +190,7 @@ public class NmeaReader implements IGpxReader {
             date += String.format(".%03d", (int) milliseconds);
             Date d = rmcTimeFmt.parse(date, new ParsePosition(0));
             if (d != null)
-                return d;
+                return d.toInstant();
         }
         throw new IllegalDataException("Date is malformed: '" + p + "'");
     }
@@ -354,7 +355,7 @@ public class NmeaReader implements IGpxReader {
 
                 // time
                 accu = e[GGA.TIME.position];
-                Date d = readTime(currentDate+accu);
+                Instant instant = readTime(currentDate+accu);
 
                 if ((ps.pTime == null) || (currentwp == null) || !ps.pTime.equals(accu)) {
                     // this node is newer than the previous, create a new waypoint.
@@ -365,7 +366,7 @@ public class NmeaReader implements IGpxReader {
                 if (!currentwp.attr.containsKey("time")) {
                     // As this sentence has no complete time only use it
                     // if there is no time so far
-                    currentwp.setInstant(d.toInstant());
+                    currentwp.setInstant(instant);
                 }
                 // elevation
                 accu = e[GGA.HEIGHT_UNTIS.position];
@@ -485,7 +486,7 @@ public class NmeaReader implements IGpxReader {
                 currentDate = e[RMC.DATE.position];
                 String time = e[RMC.TIME.position];
 
-                Date d = readTime(currentDate+time);
+                Instant instant = readTime(currentDate+time);
 
                 if (ps.pTime == null || currentwp == null || !ps.pTime.equals(time)) {
                     // this node is newer than the previous, create a new waypoint.
@@ -493,7 +494,7 @@ public class NmeaReader implements IGpxReader {
                     currentwp = new WayPoint(latLon);
                 }
                 // time: this sentence has complete time so always use it.
-                currentwp.setInstant(d.toInstant());
+                currentwp.setInstant(instant);
                 // speed
                 accu = e[RMC.SPEED.position];
                 if (!accu.isEmpty() && !currentwp.attr.containsKey("speed")) {

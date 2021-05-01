@@ -6,12 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.net.HttpURLConnection;
-import java.text.DateFormat;
+import java.time.Instant;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -214,11 +214,11 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * @param changesetId changeset ID
      * @param d changeset date
      */
-    protected void handleUploadConflictForClosedChangeset(long changesetId, Date d) {
+    protected void handleUploadConflictForClosedChangeset(long changesetId, Instant d) {
         String msg = tr("<html>Uploading <strong>failed</strong> because you have been using<br>"
                 + "changeset {0} which was already closed at {1}.<br>"
                 + "Please upload again with a new or an existing open changeset.</html>",
-                changesetId, DateUtils.formatDateTime(d, DateFormat.SHORT, DateFormat.SHORT)
+                changesetId, DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.SHORT).format(d)
         );
         JOptionPane.showMessageDialog(
                 MainApplication.getMainFrame(),
@@ -292,7 +292,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
             p = Pattern.compile("The changeset (\\d+) was closed at (.*)");
             m = p.matcher(errorHeader);
             if (m.matches()) {
-                handleUploadConflictForClosedChangeset(Long.parseLong(m.group(1)), DateUtils.fromString(m.group(2)));
+                handleUploadConflictForClosedChangeset(Long.parseLong(m.group(1)), DateUtils.parseInstant(m.group(2)));
                 return;
             }
         }

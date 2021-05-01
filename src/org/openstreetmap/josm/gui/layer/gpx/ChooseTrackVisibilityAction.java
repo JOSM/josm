@@ -15,7 +15,6 @@ import java.awt.event.MouseListener;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -327,7 +326,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             if (c instanceof JComponent) {
                 JComponent jc = (JComponent) c;
                 Object value = getValueAt(row, col);
-                jc.setToolTipText(col == 2 ? Arrays.toString((Date[]) value) : String.valueOf(value));
+                jc.setToolTipText(col == 2 ? Arrays.toString((Instant[]) value) : String.valueOf(value));
                 if (content.length > row
                         && content[row].length > 5
                         && content[row][5] instanceof IGpxTrack) {

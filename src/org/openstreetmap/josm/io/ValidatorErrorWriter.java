@@ -7,9 +7,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,6 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Class to write a collection of validator errors out to XML.
@@ -64,7 +63,7 @@ public class ValidatorErrorWriter extends XmlWriter {
      */
     public void write(Collection<TestError> validationErrors) throws IOException {
         Set<Test> analysers = validationErrors.stream().map(TestError::getTester).collect(Collectors.toCollection(TreeSet::new));
-        String timestamp = DateUtils.fromDate(new Date());
+        String timestamp = Instant.now().toString();
 
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.println("<analysers generator='JOSM' timestamp='"+timestamp+"'>");

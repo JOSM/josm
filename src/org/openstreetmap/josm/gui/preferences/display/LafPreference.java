@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
-import java.text.DateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -176,11 +178,11 @@ public class LafPreference implements SubPreferenceSetting {
         dynamicButtons.setSelected(ToggleDialog.PROP_DYNAMIC_BUTTONS.get());
         panel.add(dynamicButtons, GBC.eop().insets(20, 0, 0, 0));
 
-        Date today = new Date();
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
         isoDates.setToolTipText(tr("Format dates according to {0}. Today''s date will be displayed as {1} instead of {2}",
                 tr("ISO 8601"),
-                DateUtils.newIsoDateFormat().format(today),
-                DateFormat.getDateInstance(DateFormat.SHORT).format(today)));
+                today.toString(),
+                DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).format(today)));
         isoDates.setSelected(DateUtils.PROP_ISO_DATES.get());
         panel.add(isoDates, GBC.eop().insets(20, 0, 0, 0));
 

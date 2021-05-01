@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -337,9 +336,9 @@ class GpxDataTest {
         WayPoint p3 = new WayPoint(LatLon.NORTH_POLE);
         WayPoint p4 = new WayPoint(LatLon.NORTH_POLE);
         WayPoint p5 = new WayPoint(LatLon.NORTH_POLE);
-        p1.setInstant(new Date(200020).toInstant());
-        p2.setInstant(new Date(100020).toInstant());
-        p4.setInstant(new Date(500020).toInstant());
+        p1.setInstant(Instant.ofEpochMilli(200020));
+        p2.setInstant(Instant.ofEpochMilli(100020));
+        p4.setInstant(Instant.ofEpochMilli(500020));
         data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p1, p2)), Collections.emptyMap()));
         data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p3, p4, p5)), Collections.emptyMap()));
 

@@ -25,13 +25,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -478,7 +477,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     panel.add(GBC.glue(5, 0), GBC.std());
                     String value = e.getValue();
                     if ("lastModification".equals(e.getKey()) || "expirationTime".equals(e.getKey())) {
-                        value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(value)));
+                        value = Instant.ofEpochMilli(Long.parseLong(value)).toString();
                     }
                     panel.add(layer.createTextField(value), GBC.eol().fill(GBC.HORIZONTAL));
 

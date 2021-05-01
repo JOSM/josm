@@ -15,9 +15,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -92,7 +92,7 @@ class AutosaveTaskTest {
     void testGetNewLayerFile() throws IOException {
         Files.createDirectories(task.getAutosaveDir());
         AutosaveLayerInfo<?> info = new AutosaveLayerInfo<>(new OsmDataLayer(new DataSet(), "layer", null));
-        Date fixed = Date.from(ZonedDateTime.of(2016, 1, 1, 1, 2, 3, 456_000_000, ZoneId.systemDefault()).toInstant());
+        Instant fixed = ZonedDateTime.of(2016, 1, 1, 1, 2, 3, 456_000_000, ZoneId.systemDefault()).toInstant();
 
         AutosaveTask.PROP_INDEX_LIMIT.put(5);
         for (int i = 0; i <= AutosaveTask.PROP_INDEX_LIMIT.get() + 2; i++) {

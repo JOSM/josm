@@ -15,7 +15,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -923,11 +922,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     private final transient Stack<ZoomData> zoomUndoBuffer = new Stack<>();
     private final transient Stack<ZoomData> zoomRedoBuffer = new Stack<>();
-    private Date zoomTimestamp = new Date();
+    private long zoomTimestamp = System.currentTimeMillis();
 
     private void pushZoomUndo(EastNorth center, double scale) {
-        Date now = new Date();
-        if ((now.getTime() - zoomTimestamp.getTime()) > (Config.getPref().getDouble("zoom.undo.delay", 1.0) * 1000)) {
+        long now = System.currentTimeMillis();
+        if ((now - zoomTimestamp) > (Config.getPref().getDouble("zoom.undo.delay", 1.0) * 1000)) {
             zoomUndoBuffer.push(new ZoomData(center, scale));
             if (zoomUndoBuffer.size() > Config.getPref().getInt("zoom.undo.max", 50)) {
                 zoomUndoBuffer.remove(0);

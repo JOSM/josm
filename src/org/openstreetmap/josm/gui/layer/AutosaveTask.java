@@ -13,6 +13,7 @@ import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -189,11 +190,11 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         }
     }
 
-    protected File getNewLayerFile(AutosaveLayerInfo<?> layer, Date now, int startIndex) {
+    protected File getNewLayerFile(AutosaveLayerInfo<?> layer, Instant now, int startIndex) {
         int index = startIndex;
         while (true) {
             String filename = String.format(Locale.ENGLISH, "%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
-                    layer.layerFileName, now, index == 0 ? "" : ('_' + Integer.toString(index)));
+                    layer.layerFileName, Date.from(now), index == 0 ? "" : ('_' + Integer.toString(index)));
             File result = new File(autosaveDir, filename + '.' +
                     (layer.layer instanceof NoteLayer ?
                             Config.getPref().get("autosave.notes.extension", "osn") :
@@ -233,7 +234,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         try {
             Data data = info.layer.getData();
             if (data != null && changedData.remove(data)) {
-                File file = getNewLayerFile(info, new Date(), 0);
+                File file = getNewLayerFile(info, Instant.now(), 0);
                 if (file != null) {
                     info.backupFiles.add(file);
                     info.layer.autosave(file);
