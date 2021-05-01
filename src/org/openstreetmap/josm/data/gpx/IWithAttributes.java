@@ -57,6 +57,15 @@ public interface IWithAttributes {
     Map<String, Object> getAttributes();
 
     /**
+     * Returns whether the {@link GpxExtensionCollection} instance has been created yet, should be overridden.
+     * The instance will usually be created on first call of {@link #getExtensions()}.
+     * @return whether the {@link GpxExtensionCollection} instance has been created yet
+     */
+    default boolean hasExtensions() {
+        return getExtensions() != null;
+    }
+
+    /**
      * Returns the extensions
      * @return the extensions
      */

@@ -506,7 +506,9 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     currentState = states.pop();
                     if (!currentTrackSeg.isEmpty()) {
                         GpxTrackSegment seg = new GpxTrackSegment(currentTrackSeg);
-                        seg.getExtensions().addAll(currentExtensionCollection);
+                        if (!currentExtensionCollection.isEmpty()) {
+                            seg.getExtensions().addAll(currentExtensionCollection);
+                        }
                         currentTrack.add(seg);
                     }
                     currentExtensionCollection.clear();
@@ -518,7 +520,9 @@ public class GpxReader implements GpxConstants, IGpxReader {
                     currentState = states.pop();
                     convertUrlToLink(currentTrackAttr);
                     GpxTrack trk = new GpxTrack(new ArrayList<>(currentTrack), currentTrackAttr);
-                    trk.getExtensions().addAll(currentTrackExtensionCollection);
+                    if (!currentTrackExtensionCollection.isEmpty()) {
+                        trk.getExtensions().addAll(currentTrackExtensionCollection);
+                    }
                     data.addTrack(trk);
                     currentTrackExtensionCollection.clear();
                     break;

@@ -104,6 +104,9 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
     }
 
     private Color getColorFromExtension() {
+        if (!hasExtensions()) {
+            return null;
+        }
         GpxExtension gpxd = getExtensions().find("gpxd", "color");
         if (gpxd != null) {
             colorFormat = ColorFormat.GPXD;

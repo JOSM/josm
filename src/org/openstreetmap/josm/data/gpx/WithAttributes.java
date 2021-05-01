@@ -24,7 +24,7 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
     /**
      * The "exts" collection contains all extensions.
      */
-    private final GpxExtensionCollection exts = new GpxExtensionCollection(this);
+    private GpxExtensionCollection exts;
 
     /**
      * Returns the Object value to which the specified key is mapped,
@@ -86,7 +86,15 @@ public class WithAttributes implements IWithAttributes, GpxConstants {
     }
 
     @Override
+    public boolean hasExtensions() {
+        return exts != null;
+    }
+
+    @Override
     public GpxExtensionCollection getExtensions() {
+        if (exts == null) {
+            exts = new GpxExtensionCollection(this);
+        }
         return exts;
     }
 

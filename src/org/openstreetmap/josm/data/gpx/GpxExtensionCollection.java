@@ -22,7 +22,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
 
     private static final long serialVersionUID = 1L;
 
-    private final Stack<GpxExtension> childStack = new Stack<>();
+    private Stack<GpxExtension> childStack;
     private IWithAttributes parent;
 
     /**
@@ -46,6 +46,9 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
      * @param atts the attributes
      */
     public void openChild(String namespaceURI, String qName, Attributes atts) {
+        if (childStack == null) {
+            childStack = new Stack<>();
+        }
         GpxExtension child = new GpxExtension(namespaceURI, qName, atts);
         if (!childStack.isEmpty()) {
             childStack.lastElement().getExtensions().add(child);
@@ -62,7 +65,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
      * @param value the value
      */
     public void closeChild(String qName, String value) {
-        if (childStack.isEmpty())
+        if (childStack == null || childStack.isEmpty())
             throw new InvalidArgumentException("Can't close child " + qName + ", no element in stack.");
 
         GpxExtension child = childStack.pop();
@@ -258,7 +261,10 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
 
     @Override
     public void clear() {
-        childStack.clear();
+        if (childStack != null) {
+            childStack.clear();
+            childStack = null;
+        }
         super.clear();
     }
 
