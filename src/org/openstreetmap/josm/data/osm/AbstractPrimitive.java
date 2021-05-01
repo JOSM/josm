@@ -135,6 +135,12 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     protected volatile short flags = FLAG_VISIBLE;   // visible per default
 
+    /**
+     * The mappaint cache index for this primitive.
+     * This field belongs to {@code OsmPrimitive}, but due to Java's memory layout alignment, see #20830.
+     */
+    protected short mappaintCacheIdx;
+
     /*-------------------
      * OTHER PROPERTIES
      *-------------------*/

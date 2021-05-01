@@ -145,7 +145,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * MAPPAINT
      *--------*/
     private StyleCache mappaintStyle;
-    private short mappaintCacheIdx;
 
     @Override
     public final StyleCache getCachedStyle() {
