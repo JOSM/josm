@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.widgets.DateEditorWithSlider;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.date.Interval;
 
 /**
  * A panel that allows the user to input a date range he wants to filter the GPX data for.
@@ -50,20 +51,12 @@ public class DateFilterPanel extends JPanel {
         prefDateMax = preferencePrefix+".maxtime";
         this.layer = layer;
 
-        final Instant startTime, endTime;
-        Instant[] bounds = layer.data.getMinMaxTimeForAllTracks();
-        if (bounds.length == 0) {
-            startTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant();
-            endTime = Instant.now();
-        } else {
-            startTime = bounds[0];
-            endTime = bounds[1];
-        }
-
-        dateFrom.setDate(startTime);
-        dateTo.setDate(endTime);
-        dateFrom.setRange(startTime, endTime);
-        dateTo.setRange(startTime, endTime);
+        Interval interval = layer.data.getMinMaxTimeForAllTracks()
+                .orElseGet(() -> new Interval(ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant(), Instant.now()));
+        dateFrom.setDate(interval.getStart());
+        dateTo.setDate(interval.getEnd());
+        dateFrom.setRange(interval.getStart(), interval.getEnd());
+        dateTo.setRange(interval.getStart(), interval.getEnd());
 
         add(noTimestampCb, GBC.std().grid(1, 1).insets(0, 0, 5, 0));
         add(dateFrom, GBC.std().grid(2, 1).fill(GBC.HORIZONTAL));

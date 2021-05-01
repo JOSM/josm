@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.ListeningCollection;
+import org.openstreetmap.josm.tools.date.Interval;
 
 /**
  * Objects of this class represent a gpx file with tracks, waypoints and routes.
@@ -717,26 +718,26 @@ public class GpxData extends WithAttributes implements Data {
     /**
      * returns minimum and maximum timestamps in the track
      * @param trk track to analyze
-     * @return  minimum and maximum dates in array of 2 elements
+     * @return minimum and maximum as interval
      */
-    public static Instant[] getMinMaxTimeForTrack(IGpxTrack trk) {
+    public static Optional<Interval> getMinMaxTimeForTrack(IGpxTrack trk) {
         final LongSummaryStatistics statistics = trk.getSegments().stream()
                 .flatMap(seg -> seg.getWayPoints().stream())
                 .mapToLong(WayPoint::getTimeInMillis)
                 .summaryStatistics();
         return statistics.getCount() == 0 || (statistics.getMin() == 0 && statistics.getMax() == 0)
-                ? null
-                : new Instant[]{Instant.ofEpochMilli(statistics.getMin()), Instant.ofEpochMilli(statistics.getMax())};
+                ? Optional.empty()
+                : Optional.of(new Interval(Instant.ofEpochMilli(statistics.getMin()), Instant.ofEpochMilli(statistics.getMax())));
     }
 
     /**
     * Returns minimum and maximum timestamps for all tracks
     * Warning: there are lot of track with broken timestamps,
     * so we just ignore points from future and from year before 1970 in this method
-    * @return minimum and maximum dates in array of 2 elements
+    * @return minimum and maximum as interval
     * @since 7319
     */
-    public synchronized Instant[] getMinMaxTimeForAllTracks() {
+    public synchronized Optional<Interval> getMinMaxTimeForAllTracks() {
         long now = System.currentTimeMillis();
         final LongSummaryStatistics statistics = tracks.stream()
                 .flatMap(trk -> trk.getSegments().stream())
@@ -745,8 +746,8 @@ public class GpxData extends WithAttributes implements Data {
                 .filter(t -> t > 0 && t <= now)
                 .summaryStatistics();
         return statistics.getCount() == 0
-                ? new Instant[0]
-                : new Instant[]{Instant.ofEpochMilli(statistics.getMin()), Instant.ofEpochMilli(statistics.getMax())};
+                ? Optional.empty()
+                : Optional.of(new Interval(Instant.ofEpochMilli(statistics.getMin()), Instant.ofEpochMilli(statistics.getMax())));
     }
 
     /**

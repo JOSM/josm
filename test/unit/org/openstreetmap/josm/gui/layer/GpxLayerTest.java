@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -213,15 +212,6 @@ public class GpxLayerTest {
 
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         assertEquals("2016-01-03 12:59:58 \u2013 13:00:00 (2.0 s)", GpxLayer.getTimespanForTrack(getMinimalGpxData().tracks.iterator().next()));
-    }
-
-    /**
-     * Unit test of {@link GpxLayer#formatTimespan}.
-     */
-    @Test
-    void testFormatTimespan() {
-        Instant[] timespan = {Instant.parse("2021-03-01T17:53:16Z"), Instant.parse("2021-04-03T08:19:19Z")};
-        assertEquals("2021-03-01 17:53:16 \u2013 2021-04-03 08:19:19 (32 days 14 h)", GpxLayer.formatTimespan(timespan));
     }
 
     /**

@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.date.Interval;
 import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -329,7 +330,7 @@ class GpxDataTest {
      */
     @Test
     void testGetMinMaxTimeForAllTracks() {
-        assertEquals(0, data.getMinMaxTimeForAllTracks().length);
+        assertFalse(data.getMinMaxTimeForAllTracks().isPresent());
 
         WayPoint p1 = new WayPoint(LatLon.NORTH_POLE);
         WayPoint p2 = new WayPoint(LatLon.NORTH_POLE);
@@ -342,10 +343,10 @@ class GpxDataTest {
         data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p1, p2)), Collections.emptyMap()));
         data.addTrack(new GpxTrack(Arrays.asList(Arrays.asList(p3, p4, p5)), Collections.emptyMap()));
 
-        Instant[] times = data.getMinMaxTimeForAllTracks();
-        assertEquals(times.length, 2);
-        assertEquals(Instant.ofEpochMilli(100020), times[0]);
-        assertEquals(Instant.ofEpochMilli(500020), times[1]);
+        Interval times = data.getMinMaxTimeForAllTracks().orElse(null);
+        assertEquals("1970-01-01T00:01:40.020Z/1970-01-01T00:08:20.020Z", times.toString());
+        assertEquals(Instant.ofEpochMilli(100020), times.getStart());
+        assertEquals(Instant.ofEpochMilli(500020), times.getEnd());
     }
 
     /**

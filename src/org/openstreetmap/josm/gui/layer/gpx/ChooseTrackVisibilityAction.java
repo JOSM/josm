@@ -53,6 +53,7 @@ import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.date.Interval;
 
 /**
  * allows the user to choose which of the downloaded tracks should be displayed.
@@ -87,7 +88,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             Map<String, Object> attr = trk.getAttributes();
             String name = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_NAME)).orElse("");
             String desc = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_DESC)).orElse("");
-            Instant[] time = GpxData.getMinMaxTimeForTrack(trk);
+            Interval time = GpxData.getMinMaxTimeForTrack(trk).orElse(null);
             String url = (String) Optional.ofNullable(attr.get("url")).orElse("");
             tracks[i] = new Object[]{name, desc, time, trk.length(), url, trk};
             i++;
@@ -139,7 +140,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         TableRowSorter<DefaultTableModel> rowSorter = new TableRowSorter<>();
         t.setRowSorter(rowSorter);
         rowSorter.setModel(model);
-        rowSorter.setComparator(2, Comparator.comparing((Instant[] d) -> d == null ? Instant.MIN : d[0]));
+        rowSorter.setComparator(2, Comparator.comparing((Interval d) -> d == null ? Instant.MIN : d.getStart()));
         rowSorter.setComparator(3, Comparator.comparingDouble(length -> (double) length));
         // default column widths
         t.getColumnModel().getColumn(0).setPreferredWidth(220);
@@ -149,8 +150,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             @Override
             public Component getTableCellRendererComponent(
                     JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                if (value instanceof Instant[]) {
-                    value = GpxLayer.formatTimespan(((Instant[]) value));
+                if (value instanceof Interval) {
+                    value = ((Interval) value).format();
                 }
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
@@ -326,7 +327,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             if (c instanceof JComponent) {
                 JComponent jc = (JComponent) c;
                 Object value = getValueAt(row, col);
-                jc.setToolTipText(col == 2 ? Arrays.toString((Instant[]) value) : String.valueOf(value));
+                jc.setToolTipText(String.valueOf(value));
                 if (content.length > row
                         && content[row].length > 5
                         && content[row][5] instanceof IGpxTrack) {

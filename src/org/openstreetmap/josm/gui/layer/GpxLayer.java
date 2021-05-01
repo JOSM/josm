@@ -39,7 +39,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.date.DateUtils;
+import org.openstreetmap.josm.tools.date.Interval;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -52,8 +52,6 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -156,32 +154,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      * @return The timespan as a string
      */
     public static String getTimespanForTrack(IGpxTrack trk) {
-        Instant[] bounds = GpxData.getMinMaxTimeForTrack(trk);
-        return bounds != null ? formatTimespan(bounds) : "";
-    }
-
-    /**
-     * Formats the timespan of the given track as a human readable string
-     * @param bounds The bounds to format, i.e., an array containing the min/max date
-     * @return The timespan as a string
-     */
-    public static String formatTimespan(Instant[] bounds) {
-        String ts = "";
-        DateTimeFormatter df = DateUtils.getDateFormatter(FormatStyle.SHORT);
-        String earliestDate = df.format(bounds[0]);
-        String latestDate = df.format(bounds[1]);
-
-        if (earliestDate.equals(latestDate)) {
-            DateTimeFormatter tf = DateUtils.getTimeFormatter(FormatStyle.SHORT);
-            ts += earliestDate + ' ';
-            ts += tf.format(bounds[0]) + " \u2013 " + tf.format(bounds[1]);
-        } else {
-            DateTimeFormatter dtf = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM);
-            ts += dtf.format(bounds[0]) + " \u2013 " + dtf.format(bounds[1]);
-        }
-
-        ts += String.format(" (%s)", Utils.getDurationString(bounds[1].toEpochMilli() - bounds[0].toEpochMilli()));
-        return ts;
+        return GpxData.getMinMaxTimeForTrack(trk).map(Interval::format).orElse("");
     }
 
     @Override
@@ -353,10 +326,10 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
         long from = fromDate.toEpochMilli();
         long to = toDate.toEpochMilli();
         for (IGpxTrack trk : data.getTracks()) {
-            Instant[] t = GpxData.getMinMaxTimeForTrack(trk);
+            Interval t = GpxData.getMinMaxTimeForTrack(trk).orElse(null);
 
             if (t == null) continue;
-            long tm = t[1].toEpochMilli();
+            long tm = t.getEnd().toEpochMilli();
             trackVisibility[i] = (tm == 0 && showWithoutDate) || (from <= tm && tm <= to);
             i++;
         }

@@ -59,6 +59,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Stopwatch;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.date.Interval;
 
 /**
  * Class that helps to draw large set of GPS tracks with different colors and options
@@ -564,14 +565,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         }
         double now = System.currentTimeMillis()/1000.0;
         if (colored == ColorMode.TIME) {
-            Instant[] bounds = data.getMinMaxTimeForAllTracks();
-            if (bounds.length >= 2) {
-                minval = bounds[0].getEpochSecond();
-                maxval = bounds[1].getEpochSecond();
-            } else {
-                minval = 0;
-                maxval = now;
-            }
+            Interval interval = data.getMinMaxTimeForAllTracks().orElse(new Interval(Instant.EPOCH, Instant.now()));
+            minval = interval.getStart().getEpochSecond();
+            maxval = interval.getEnd().getEpochSecond();
             dateScale.setRange(minval, maxval);
         }
 
