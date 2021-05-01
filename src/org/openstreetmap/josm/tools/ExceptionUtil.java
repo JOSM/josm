@@ -10,11 +10,11 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.ParseException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -397,10 +397,10 @@ public final class ExceptionUtil {
             Matcher m = Pattern.compile("The changeset (\\d+) was closed at (.*)").matcher(msg);
             if (m.matches()) {
                 long changesetId = Long.parseLong(m.group(1));
-                Date closeDate = null;
+                Instant closeDate = null;
                 try {
-                    closeDate = DateUtils.newOsmApiDateTimeFormat().parse(m.group(2));
-                } catch (ParseException ex) {
+                    closeDate = DateUtils.parseInstant(m.group(2));
+                } catch (UncheckedParseException ex) {
                     Logging.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
                     Logging.error(ex);
                 }
@@ -414,7 +414,7 @@ public final class ExceptionUtil {
                             "<html>Closing of changeset <strong>{0}</strong> failed<br>"
                             +" because it has already been closed on {1}.",
                             changesetId,
-                            DateUtils.formatDateTime(closeDate, DateFormat.DEFAULT, DateFormat.DEFAULT)
+                            formatClosedOn(closeDate)
                     );
                 }
                 return msg;
@@ -444,8 +444,12 @@ public final class ExceptionUtil {
                 "<html>Failed to upload to changeset <strong>{0}</strong><br>"
                 +"because it has already been closed on {1}.",
                 e.getChangesetId(),
-                e.getClosedOn() == null ? "?" : DateUtils.formatDateTime(e.getClosedOn(), DateFormat.DEFAULT, DateFormat.DEFAULT)
+                e.getClosedOn() == null ? "?" : formatClosedOn(e.getClosedOn())
         );
+    }
+
+    private static String formatClosedOn(Instant closedOn) {
+        return DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.SHORT).format(closedOn.atZone(ZoneId.systemDefault()));
     }
 
     /**

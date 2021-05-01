@@ -109,7 +109,7 @@ class ExceptionUtilTest {
                 ExceptionUtil.explainChangesetClosedException(new ChangesetClosedException("")));
 
         assertEquals("<html>Failed to upload to changeset <strong>1</strong><br>because it has already been closed on 2016-01-01 00:00:00.",
-                ExceptionUtil.explainChangesetClosedException(new ChangesetClosedException(1, DateUtils.fromString("2016-01-01"), null)));
+                ExceptionUtil.explainChangesetClosedException(new ChangesetClosedException(1, DateUtils.parseInstant("2016-01-01"), null)));
     }
 
     /**

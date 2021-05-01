@@ -3,12 +3,12 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.text.ParseException;
-import java.util.Date;
+import java.time.Instant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -65,7 +65,7 @@ public class ChangesetClosedException extends OsmTransferException {
     /** the changeset id */
     private long changesetId;
     /** the date on which the changeset was closed */
-    private Date closedOn;
+    private Instant closedOn;
     /** the source */
     private Source source;
 
@@ -75,8 +75,8 @@ public class ChangesetClosedException extends OsmTransferException {
         if (m.matches()) {
             changesetId = Long.parseLong(m.group(1));
             try {
-                closedOn = DateUtils.newOsmApiDateTimeFormat().parse(m.group(2));
-            } catch (ParseException ex) {
+                closedOn = DateUtils.parseInstant(m.group(2));
+            } catch (UncheckedParseException ex) {
                 Logging.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
                 Logging.error(ex);
             }
@@ -128,11 +128,11 @@ public class ChangesetClosedException extends OsmTransferException {
      * @param closedOn the date the changeset was closed on
      * @param source the source for the exception
      */
-    public ChangesetClosedException(long changesetId, Date closedOn, Source source) {
+    public ChangesetClosedException(long changesetId, Instant closedOn, Source source) {
         super("");
         this.source = source == null ? Source.UNSPECIFIED : source;
         this.changesetId = changesetId;
-        this.closedOn = DateUtils.cloneDate(closedOn);
+        this.closedOn = closedOn;
     }
 
     /**
@@ -149,8 +149,8 @@ public class ChangesetClosedException extends OsmTransferException {
      *
      * @return the date the changeset was closed. May be null if the date isn't known.
      */
-    public Date getClosedOn() {
-        return DateUtils.cloneDate(closedOn);
+    public Instant getClosedOn() {
+        return closedOn;
     }
 
     /**

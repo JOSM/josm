@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.Date;
@@ -75,6 +76,7 @@ public final class DateUtils {
      * Parses the given date string quickly, regardless of current locale.
      * @param str the date string
      * @return the parsed instant
+     * @throws UncheckedParseException if the date does not match any of the supported date formats
      */
     public static Instant parseInstant(String str) {
         // "2007-07-25T09:26:24{Z|{+|-}01[:00]}"
@@ -248,17 +250,6 @@ public final class DateUtils {
     }
 
     /**
-     * Returns a new {@code SimpleDateFormat} for date and time, according to format used in OSM API errors.
-     * @return a new date format, for date and time, to use for OSM API error handling.
-     * @since 7299
-     */
-    public static SimpleDateFormat newOsmApiDateTimeFormat() {
-        // Example: "2010-09-07 14:39:41 UTC".
-        // Always parsed with US locale regardless of the current locale in JOSM
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US);
-    }
-
-    /**
      * Returns the date format to be used for current user, based on user preferences.
      * @param dateStyle The date style as described in {@link DateFormat#getDateInstance}. Ignored if "ISO dates" option is set
      * @return The date format
@@ -366,6 +357,16 @@ public final class DateUtils {
     }
 
     /**
+     * Differs from {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME} by using ' ' instead of 'T' to separate date/time.
+     */
+    private static final DateTimeFormatter ISO_LOCAL_DATE_TIME = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .append(DateTimeFormatter.ISO_LOCAL_DATE)
+                .appendLiteral(' ')
+                .append(DateTimeFormatter.ISO_LOCAL_TIME)
+                .toFormatter();
+
+    /**
      * Returns the date/time formatter to be used for current user, based on user preferences.
      * @param dateStyle The date style. Ignored if "ISO dates" option is set.
      * @param timeStyle The time style. Ignored if "ISO dates" option is set.
@@ -373,7 +374,7 @@ public final class DateUtils {
      */
     public static DateTimeFormatter getDateTimeFormatter(FormatStyle dateStyle, FormatStyle timeStyle) {
         DateTimeFormatter formatter = PROP_ISO_DATES.get()
-                ? DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                ? ISO_LOCAL_DATE_TIME
                 : DateTimeFormatter.ofLocalizedDateTime(dateStyle, timeStyle);
         return formatter.withZone(ZoneId.systemDefault());
     }
