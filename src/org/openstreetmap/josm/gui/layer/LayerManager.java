@@ -44,7 +44,7 @@ public class LayerManager {
         void layerAdded(LayerAddEvent e);
 
         /**
-         * Notifies this listener that a alayer was just removed.
+         * Notifies this listener that a layer was just removed.
          * <p>
          * Listeners are called in the EDT thread after the layer was removed.
          * Use {@link LayerRemoveEvent#scheduleRemoval(Collection)} to remove more layers.
