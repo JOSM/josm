@@ -223,22 +223,19 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
      */
     public void writeDataSources(DataSet ds) {
         for (DataSource s : ds.getDataSources()) {
-            out.println("  <bounds minlat='"
-                    + DecimalDegreesCoordinateFormat.INSTANCE.latToString(s.bounds.getMin())
-                    +"' minlon='"
-                    + DecimalDegreesCoordinateFormat.INSTANCE.lonToString(s.bounds.getMin())
-                    +"' maxlat='"
-                    + DecimalDegreesCoordinateFormat.INSTANCE.latToString(s.bounds.getMax())
-                    +"' maxlon='"
-                    + DecimalDegreesCoordinateFormat.INSTANCE.lonToString(s.bounds.getMax())
-                    +"' origin='"+XmlWriter.encode(s.origin)+"' />");
+            out.append("  <bounds minlat='").append(DecimalDegreesCoordinateFormat.INSTANCE.latToString(s.bounds.getMin()));
+            out.append("' minlon='").append(DecimalDegreesCoordinateFormat.INSTANCE.lonToString(s.bounds.getMin()));
+            out.append("' maxlat='").append(DecimalDegreesCoordinateFormat.INSTANCE.latToString(s.bounds.getMax()));
+            out.append("' maxlon='").append(DecimalDegreesCoordinateFormat.INSTANCE.lonToString(s.bounds.getMax()));
+            out.append("' origin='").append(XmlWriter.encode(s.origin)).append("' />");
+            out.println();
         }
     }
 
     void writeLatLon(LatLon ll) {
         if (ll != null) {
-            out.print(" lat='"+LatLon.cDdHighPrecisionFormatter.format(ll.lat())+
-                     "' lon='"+LatLon.cDdHighPrecisionFormatter.format(ll.lon())+'\'');
+            out.append(" lat='").append(LatLon.cDdHighPrecisionFormatter.format(ll.lat())).append("'");
+            out.append(" lon='").append(LatLon.cDdHighPrecisionFormatter.format(ll.lon())).append("'");
         }
     }
 
@@ -263,7 +260,8 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         } else {
             out.println(">");
             for (int i = 0; i < w.getNodesCount(); ++i) {
-                out.println("    <nd ref='"+w.getNodeId(i) +"' />");
+                out.append("    <nd ref='").append(String.valueOf(w.getNodeId(i))).append("' />");
+                out.println();
             }
             addTags(w, "way", false);
         }
@@ -280,8 +278,9 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             for (int i = 0; i < e.getMembersCount(); ++i) {
                 out.print("    <member type='");
                 out.print(e.getMemberType(i).getAPIName());
-                out.println("' ref='"+e.getMemberId(i)+"' role='" +
-                        XmlWriter.encode(e.getRole(i)) + "' />");
+                out.append("' ref='").append(String.valueOf(e.getMemberId(i)));
+                out.append("' role='").append(XmlWriter.encode(e.getRole(i))).append("' />");
+                out.println();
             }
             addTags(e, "relation", false);
         }
@@ -292,27 +291,27 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
      * @param cs changeset
      */
     public void visit(Changeset cs) {
-        out.print("  <changeset id='"+cs.getId()+'\'');
+        out.append("  <changeset id='").append(String.valueOf(cs.getId())).append("'");
         if (cs.getUser() != null) {
-            out.print(" user='"+ XmlWriter.encode(cs.getUser().getName()) +'\'');
-            out.print(" uid='"+cs.getUser().getId() +'\'');
+            out.append(" user='").append(XmlWriter.encode(cs.getUser().getName())).append("'");
+            out.append(" uid='").append(String.valueOf(cs.getUser().getId())).append("'");
         }
         Instant createdDate = cs.getCreatedAt();
         if (createdDate != null) {
-            out.print(" created_at='"+ createdDate +'\'');
+            out.append(" created_at='").append(String.valueOf(createdDate)).append("'");
         }
         Instant closedDate = cs.getClosedAt();
         if (closedDate != null) {
-            out.print(" closed_at='"+ closedDate +'\'');
+            out.append(" closed_at='").append(String.valueOf(closedDate)).append("'");
         }
-        out.print(" open='"+ (cs.isOpen() ? "true" : "false") +'\'');
+        out.append(" open='").append(cs.isOpen() ? "true" : "false").append("'");
         if (cs.getMin() != null) {
-            out.print(" min_lon='"+ DecimalDegreesCoordinateFormat.INSTANCE.lonToString(cs.getMin()) +'\'');
-            out.print(" min_lat='"+ DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMin()) +'\'');
+            out.append(" min_lon='").append(DecimalDegreesCoordinateFormat.INSTANCE.lonToString(cs.getMin())).append("'");
+            out.append(" min_lat='").append(DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMin())).append("'");
         }
         if (cs.getMax() != null) {
-            out.print(" max_lon='"+ DecimalDegreesCoordinateFormat.INSTANCE.lonToString(cs.getMax()) +'\'');
-            out.print(" max_lat='"+ DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMax()) +'\'');
+            out.append(" max_lon='").append(DecimalDegreesCoordinateFormat.INSTANCE.lonToString(cs.getMax())).append("'");
+            out.append(" max_lat='").append(DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMax())).append("'");
         }
         out.println(">");
         addTags(cs, "changeset", false); // also writes closing </changeset>
@@ -328,8 +327,9 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             List<Entry<String, String>> entries = new ArrayList<>(osm.getKeys().entrySet());
             entries.sort(byKeyComparator);
             for (Entry<String, String> e : entries) {
-                out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
-                        "' v='"+XmlWriter.encode(e.getValue())+ "' />");
+                out.append("    <tag k='").append(XmlWriter.encode(e.getKey()));
+                out.append("' v='").append(XmlWriter.encode(e.getValue())).append("' />");
+                out.println();
             }
             out.println("  </" + tagname + '>');
         } else if (tagOpen) {
@@ -346,9 +346,9 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
      * @param tagname XML tag matching osm primitive (node, way, relation)
      */
     protected void addCommon(IPrimitive osm, String tagname) {
-        out.print("  <"+tagname);
+        out.append("  <").append(tagname);
         if (osm.getUniqueId() != 0) {
-            out.print(" id='"+ osm.getUniqueId()+'\'');
+            out.append(" id='").append(String.valueOf(osm.getUniqueId())).append("'");
         } else
             throw new IllegalStateException(tr("Unexpected id 0 for osm primitive found"));
         if (!isOsmChange) {
@@ -360,33 +360,33 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
                     action = "modify";
                 }
                 if (action != null) {
-                    out.print(" action='"+action+'\'');
+                    out.append(" action='").append(action).append("'");
                 }
             }
             if (!osm.isTimestampEmpty()) {
-                out.print(" timestamp='"+osm.getInstant()+'\'');
+                out.append(" timestamp='").append(String.valueOf(osm.getInstant())).append("'");
             }
             // user and visible added with 0.4 API
             if (osm.getUser() != null) {
                 if (osm.getUser().isLocalUser()) {
-                    out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+'\'');
+                    out.append(" user='").append(XmlWriter.encode(osm.getUser().getName())).append("'");
                 } else if (osm.getUser().isOsmUser()) {
                     // uid added with 0.6
-                    out.print(" uid='"+ osm.getUser().getId()+'\'');
-                    out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+'\'');
+                    out.append(" uid='").append(String.valueOf(osm.getUser().getId())).append("'");
+                    out.append(" user='").append(XmlWriter.encode(osm.getUser().getName())).append("'");
                 }
             }
             if (withVisible) {
-                out.print(" visible='"+osm.isVisible()+'\'');
+                out.append(" visible='").append(String.valueOf(osm.isVisible())).append("'");
             }
         }
         if (osm.getVersion() != 0) {
-            out.print(" version='"+osm.getVersion()+'\'');
+            out.append(" version='").append(String.valueOf(osm.getVersion())).append("'");
         }
         if (this.changeset != null && this.changeset.getId() != 0) {
-            out.print(" changeset='"+this.changeset.getId()+'\'');
+            out.append(" changeset='").append(String.valueOf(this.changeset.getId())).append("'");
         } else if (osm.getChangesetId() > 0 && !osm.isNew()) {
-            out.print(" changeset='"+osm.getChangesetId()+'\'');
+            out.append(" changeset='").append(String.valueOf(osm.getChangesetId())).append("'");
         }
     }
 }
