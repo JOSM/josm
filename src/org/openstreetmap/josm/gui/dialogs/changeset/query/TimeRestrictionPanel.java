@@ -9,10 +9,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -230,16 +230,16 @@ public class TimeRestrictionPanel extends JPanel implements RestrictionPanel {
         if (rbClosedAfter.isSelected()) {
             LocalDate d1 = valClosedAfterDate1.getDate();
             LocalTime d2 = valClosedAfterTime1.getTime();
-            final Date d3 = new Date(d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            final Instant d3 = d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant();
             query.closedAfter(d3);
         } else if (rbClosedAfterAndCreatedBefore.isSelected()) {
             LocalDate d1 = valClosedAfterDate2.getDate();
             LocalTime d2 = valClosedAfterTime2.getTime();
-            Date d3 = new Date(d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            Instant d3 = d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant();
 
             d1 = valCreatedBeforeDate.getDate();
             d2 = valCreatedBeforeTime.getTime();
-            Date d4 = new Date(d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+            Instant d4 = d1.atTime(d2).atZone(ZoneId.systemDefault()).toInstant();
 
             query.closedAfterAndCreatedBefore(d3, d4);
         }

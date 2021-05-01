@@ -3,13 +3,11 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.ParseException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,6 +19,7 @@ import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -44,9 +43,9 @@ public class ChangesetQuery {
     /** the bounding box this query is restricted to. null, if no restriction to a bounding box applies */
     private Bounds bounds;
     /** the date after which changesets have been closed this query is restricted to. null, if no restriction to closure date applies */
-    private Date closedAfter;
+    private Instant closedAfter;
     /** the date before which changesets have been created this query is restricted to. null, if no restriction to creation date applies */
-    private Date createdBefore;
+    private Instant createdBefore;
     /** indicates whether only open changesets are queried. null, if no restrictions regarding open changesets apply */
     private Boolean open;
     /** indicates whether only closed changesets are queried. null, if no restrictions regarding closed changesets apply */
@@ -154,8 +153,8 @@ public class ChangesetQuery {
      *         {@code null}, if no restriction to closure date applies
      * @since 14039
      */
-    public Date getClosedAfter() {
-        return DateUtils.cloneDate(closedAfter);
+    public Instant getClosedAfter() {
+        return closedAfter;
     }
 
     /**
@@ -165,8 +164,8 @@ public class ChangesetQuery {
      *         {@code null}, if no restriction to creation date applies
      * @since 14039
      */
-    public Date getCreatedBefore() {
-        return DateUtils.cloneDate(createdBefore);
+    public Instant getCreatedBefore() {
+        return createdBefore;
     }
 
     /**
@@ -269,9 +268,9 @@ public class ChangesetQuery {
      * @return the restricted changeset query
      * @throws IllegalArgumentException if d is null
      */
-    public ChangesetQuery closedAfter(Date d) {
+    public ChangesetQuery closedAfter(Instant d) {
         CheckParameterUtil.ensureParameterNotNull(d, "d");
-        this.closedAfter = DateUtils.cloneDate(d);
+        this.closedAfter = d;
         return this;
     }
 
@@ -286,11 +285,11 @@ public class ChangesetQuery {
      * @throws IllegalArgumentException if closedAfter is null
      * @throws IllegalArgumentException if createdBefore is null
      */
-    public ChangesetQuery closedAfterAndCreatedBefore(Date closedAfter, Date createdBefore) {
+    public ChangesetQuery closedAfterAndCreatedBefore(Instant closedAfter, Instant createdBefore) {
         CheckParameterUtil.ensureParameterNotNull(closedAfter, "closedAfter");
         CheckParameterUtil.ensureParameterNotNull(createdBefore, "createdBefore");
-        this.closedAfter = DateUtils.cloneDate(closedAfter);
-        this.createdBefore = DateUtils.cloneDate(createdBefore);
+        this.closedAfter = closedAfter;
+        this.createdBefore = createdBefore;
         return this;
     }
 
@@ -356,15 +355,13 @@ public class ChangesetQuery {
             if (sb.length() > 0) {
                 sb.append('&');
             }
-            DateFormat df = DateUtils.newIsoDateTimeFormat();
-            sb.append("time=").append(df.format(closedAfter));
-            sb.append(',').append(df.format(createdBefore));
+            sb.append("time=").append(closedAfter);
+            sb.append(',').append(createdBefore);
         } else if (closedAfter != null) {
             if (sb.length() > 0) {
                 sb.append('&');
             }
-            DateFormat df = DateUtils.newIsoDateTimeFormat();
-            sb.append("time=").append(df.format(closedAfter));
+            sb.append("time=").append(closedAfter);
         }
 
         if (open != null) {
@@ -465,29 +462,28 @@ public class ChangesetQuery {
             }
         }
 
-        protected Date parseDate(String value, String parameter) throws ChangesetQueryUrlException {
+        protected Instant parseDate(String value, String parameter) throws ChangesetQueryUrlException {
             if (value == null || value.trim().isEmpty())
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value));
-            DateFormat formatter = DateUtils.newIsoDateTimeFormat();
             try {
-                return formatter.parse(value);
-            } catch (ParseException e) {
+                return DateUtils.parseInstant(value);
+            } catch (UncheckedParseException e) {
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", parameter, value), e);
             }
         }
 
-        protected Date[] parseTime(String value) throws ChangesetQueryUrlException {
+        protected Instant[] parseTime(String value) throws ChangesetQueryUrlException {
             String[] dates = value.split(",", -1);
             if (dates.length == 0 || dates.length > 2)
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "time", value));
             if (dates.length == 1)
-                return new Date[]{parseDate(dates[0], "time")};
+                return new Instant[]{parseDate(dates[0], "time")};
             else if (dates.length == 2)
-                return new Date[]{parseDate(dates[0], "time"), parseDate(dates[1], "time")};
-            return new Date[]{};
+                return new Instant[]{parseDate(dates[0], "time"), parseDate(dates[1], "time")};
+            return new Instant[]{};
         }
 
         protected Collection<Long> parseLongs(String value) {
@@ -523,7 +519,7 @@ public class ChangesetQuery {
                     csQuery.beingClosed(parseBoolean(entry.getValue(), "closed"));
                     break;
                 case "time":
-                    Date[] dates = parseTime(entry.getValue());
+                    Instant[] dates = parseTime(entry.getValue());
                     switch(dates.length) {
                     case 1:
                         csQuery.closedAfter(dates[0]);

@@ -150,8 +150,7 @@ class ChangesetQueryUrlParserTest {
         q = parser.parse("time=2009-12-25T10:00:00Z");
         assertNotNull(q);
         assertNotNull(q.getClosedAfter());
-        OffsetDateTime cal = q.getClosedAfter().toInstant().atOffset(ZoneOffset.UTC);
-        assertEquals(OffsetDateTime.of(2009, 12, 25, 10, 0, 0, 0, ZoneOffset.UTC), cal);
+        assertEquals(OffsetDateTime.of(2009, 12, 25, 10, 0, 0, 0, ZoneOffset.UTC).toInstant(), q.getClosedAfter());
 
         // OK
         q = parser.parse("time=2009-12-25T10:00:00Z,2009-11-25T10:00:00Z");
