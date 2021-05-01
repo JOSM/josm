@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +29,8 @@ import org.openstreetmap.josm.tools.date.DateUtils;
 public class DateEditorWithSlider extends JPanel {
     private final JSpinner spinner;
     private final JSlider slider;
-    private Date dateMin;
-    private Date dateMax;
+    private Instant dateMin;
+    private Instant dateMax;
     private static final int MAX_SLIDER = 300;
     private boolean watchSlider = true;
 
@@ -75,18 +76,18 @@ public class DateEditorWithSlider extends JPanel {
         add(spinner, GBC.std().insets(10, 0, 0, 0));
         add(slider, GBC.eol().insets(10, 0, 0, 0).fill(GBC.HORIZONTAL));
 
-        dateMin = new Date(0);
-        dateMax = new Date();
+        dateMin = Instant.EPOCH;
+        dateMax = Instant.now();
     }
 
     protected Date dateFromInt(int value) {
         double k = 1.0*value/MAX_SLIDER;
-        return new Date((long) (dateMax.getTime()*k+ dateMin.getTime()*(1-k)));
+        return new Date((long) (dateMax.toEpochMilli()*k+ dateMin.toEpochMilli()*(1-k)));
     }
 
     protected int intFromDate(Date date) {
-        return (int) (300.0*(date.getTime()-dateMin.getTime()) /
-                (dateMax.getTime()-dateMin.getTime()));
+        return (int) (300.0*(date.getTime()-dateMin.getEpochSecond()) /
+                (dateMax.getEpochSecond()-dateMin.getEpochSecond()));
     }
 
     /**
@@ -94,25 +95,25 @@ public class DateEditorWithSlider extends JPanel {
      * @param dateMin The min date
      * @param dateMax The max date
      */
-    public void setRange(Date dateMin, Date dateMax) {
-        this.dateMin = DateUtils.cloneDate(dateMin);
-        this.dateMax = DateUtils.cloneDate(dateMax);
+    public void setRange(Instant dateMin, Instant dateMax) {
+        this.dateMin = dateMin;
+        this.dateMax = dateMax;
     }
 
     /**
      * Sets the slider to the given value
      * @param date The date
      */
-    public void setDate(Date date) {
-        spinner.setValue(DateUtils.cloneDate(date));
+    public void setDate(Instant date) {
+        spinner.setValue(Date.from(date));
     }
 
     /**
      * Gets the date that was selected by the user
      * @return The date
      */
-    public Date getDate() {
-        return DateUtils.cloneDate((Date) spinner.getValue());
+    public Instant getDate() {
+        return ((Date) spinner.getValue()).toInstant();
     }
 
     /**

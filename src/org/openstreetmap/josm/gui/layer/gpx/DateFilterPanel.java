@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -51,14 +50,14 @@ public class DateFilterPanel extends JPanel {
         prefDateMax = preferencePrefix+".maxtime";
         this.layer = layer;
 
-        final Date startTime, endTime;
+        final Instant startTime, endTime;
         Instant[] bounds = layer.data.getMinMaxTimeForAllTracks();
         if (bounds.length == 0) {
-            startTime = Date.from(ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant());
-            endTime = new Date();
+            startTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant();
+            endTime = Instant.now();
         } else {
-            startTime = Date.from(bounds[0]);
-            endTime = Date.from(bounds[1]);
+            startTime = bounds[0];
+            endTime = bounds[1];
         }
 
         dateFrom.setDate(startTime);
@@ -108,8 +107,8 @@ public class DateFilterPanel extends JPanel {
      * Called by other components when it is correct time to save date filtering parameters
      */
     public void saveInPrefs() {
-        Config.getPref().putLong(prefDateMin, dateFrom.getDate().getTime());
-        Config.getPref().putLong(prefDateMax, dateTo.getDate().getTime());
+        Config.getPref().putLong(prefDateMin, dateFrom.getDate().toEpochMilli());
+        Config.getPref().putLong(prefDateMax, dateTo.getDate().toEpochMilli());
         Config.getPref().putBoolean(prefDate0, noTimestampCb.isSelected());
     }
 
@@ -119,9 +118,9 @@ public class DateFilterPanel extends JPanel {
      */
     public void loadFromPrefs() {
         long t1 = Config.getPref().getLong(prefDateMin, 0);
-        if (t1 != 0) dateFrom.setDate(new Date(t1));
+        if (t1 != 0) dateFrom.setDate(Instant.ofEpochMilli(t1));
         long t2 = Config.getPref().getLong(prefDateMax, 0);
-        if (t2 != 0) dateTo.setDate(new Date(t2));
+        if (t2 != 0) dateTo.setDate(Instant.ofEpochMilli(t2));
         noTimestampCb.setSelected(Config.getPref().getBoolean(prefDate0, false));
     }
 
@@ -134,8 +133,8 @@ public class DateFilterPanel extends JPanel {
     }
 
     private void filterTracksByDate() {
-        Date from = dateFrom.getDate();
-        Date to = dateTo.getDate();
+        Instant from = dateFrom.getDate();
+        Instant to = dateTo.getDate();
         layer.filterTracksByDate(from, to, noTimestampCb.isSelected());
     }
 

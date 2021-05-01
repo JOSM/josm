@@ -57,7 +57,6 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -349,10 +348,10 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
      * @param toDate The max date
      * @param showWithoutDate Include tracks that don't have any date set..
      */
-    public void filterTracksByDate(Date fromDate, Date toDate, boolean showWithoutDate) {
+    public void filterTracksByDate(Instant fromDate, Instant toDate, boolean showWithoutDate) {
         int i = 0;
-        long from = fromDate.getTime();
-        long to = toDate.getTime();
+        long from = fromDate.toEpochMilli();
+        long to = toDate.toEpochMilli();
         for (IGpxTrack trk : data.getTracks()) {
             Instant[] t = GpxData.getMinMaxTimeForTrack(trk);
 
