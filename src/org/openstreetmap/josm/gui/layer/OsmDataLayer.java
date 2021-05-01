@@ -848,7 +848,8 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      * @since 15419
      */
     public static String gpxVal(OsmPrimitive prim, String key) {
-        return Optional.ofNullable(prim.get(GpxConstants.GPX_PREFIX + key)).orElse(prim.get(key));
+        String val = prim.get(GpxConstants.GPX_PREFIX + key);
+        return val != null ? val : prim.get(key);
     }
 
     /**
@@ -873,7 +874,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
 
         // Position info
 
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE);
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE, null);
 
         try {
             String v;
@@ -888,14 +889,14 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             Logging.error(e);
         }
 
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_MAGVAR);
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_GEOIDHEIGHT);
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_MAGVAR, null);
+        addDoubleIfPresent(wpt, n, GpxConstants.PT_GEOIDHEIGHT, null);
 
         // Description info
 
-        addStringIfPresent(wpt, n, GpxConstants.GPX_NAME);
-        addStringIfPresent(wpt, n, GpxConstants.GPX_DESC, "description");
-        addStringIfPresent(wpt, n, GpxConstants.GPX_CMT, "comment");
+        addStringIfPresent(wpt, n, GpxConstants.GPX_NAME, null, null);
+        addStringIfPresent(wpt, n, GpxConstants.GPX_DESC, "description", null);
+        addStringIfPresent(wpt, n, GpxConstants.GPX_CMT, "comment", null);
         addStringIfPresent(wpt, n, GpxConstants.GPX_SRC, "source", "source:position");
 
         Collection<GpxLink> links = Stream.of("link", "url", "website", "contact:website")
@@ -905,11 +906,11 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
                 .collect(Collectors.toList());
         wpt.put(GpxConstants.META_LINKS, links);
 
-        addStringIfPresent(wpt, n, GpxConstants.PT_SYM, "wpt_symbol");
-        addStringIfPresent(wpt, n, GpxConstants.PT_TYPE);
+        addStringIfPresent(wpt, n, GpxConstants.PT_SYM, "wpt_symbol", null);
+        addStringIfPresent(wpt, n, GpxConstants.PT_TYPE, null, null);
 
         // Accuracy info
-        addStringIfPresent(wpt, n, GpxConstants.PT_FIX, "gps:fix");
+        addStringIfPresent(wpt, n, GpxConstants.PT_FIX, "gps:fix", null);
         addIntegerIfPresent(wpt, n, GpxConstants.PT_SAT, "gps:sat");
         addDoubleIfPresent(wpt, n, GpxConstants.PT_HDOP, "gps:hdop");
         addDoubleIfPresent(wpt, n, GpxConstants.PT_VDOP, "gps:vdop");
@@ -932,54 +933,55 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         }
     }
 
-    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
-        List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
-        possibleKeys.add(0, gpxKey);
-        for (String key : possibleKeys) {
-            String value = gpxVal(p, key);
-            if (value != null) {
-                try {
-                    int i = Integer.parseInt(value);
-                    // Sanity checks
-                    if ((!GpxConstants.PT_SAT.equals(gpxKey) || i >= 0) &&
-                        (!GpxConstants.PT_DGPSID.equals(gpxKey) || (0 <= i && i <= 1023))) {
-                        wpt.put(gpxKey, value);
-                        break;
-                    }
-                } catch (NumberFormatException e) {
-                    Logging.trace(e);
-                }
-            }
+    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String osmKey) {
+        String value = gpxVal(p, gpxKey);
+        if (value == null && osmKey != null) {
+            value = gpxVal(p, osmKey);
         }
-    }
-
-    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
-        List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
-        possibleKeys.add(0, gpxKey);
-        for (String key : possibleKeys) {
-            String value = gpxVal(p, key);
-            if (value != null) {
-                try {
-                    double d = Double.parseDouble(value);
-                    // Sanity checks
-                    if (!GpxConstants.PT_MAGVAR.equals(gpxKey) || (0.0 <= d && d < 360.0)) {
-                        wpt.put(gpxKey, value);
-                        break;
-                    }
-                } catch (NumberFormatException e) {
-                    Logging.trace(e);
-                }
-            }
-        }
-    }
-
-    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
-        Stream.concat(Stream.of(gpxKey), Arrays.stream(osmKeys))
-                .map(key -> gpxVal(p, key))
+        if (value != null) {
+            try {
+                int i = Integer.parseInt(value);
                 // Sanity checks
-                .filter(value -> value != null && (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value)))
-                .findFirst()
-                .ifPresent(value -> wpt.put(gpxKey, value));
+                if ((!GpxConstants.PT_SAT.equals(gpxKey) || i >= 0) &&
+                        (!GpxConstants.PT_DGPSID.equals(gpxKey) || (0 <= i && i <= 1023))) {
+                    wpt.put(gpxKey, value);
+                }
+            } catch (NumberFormatException e) {
+                Logging.trace(e);
+            }
+        }
+    }
+
+    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String osmKey) {
+        String value = gpxVal(p, gpxKey);
+        if (value == null && osmKey != null) {
+            value = gpxVal(p, osmKey);
+        }
+        if (value != null) {
+            try {
+                double d = Double.parseDouble(value);
+                // Sanity checks
+                if (!GpxConstants.PT_MAGVAR.equals(gpxKey) || (0.0 <= d && d < 360.0)) {
+                    wpt.put(gpxKey, value);
+                }
+            } catch (NumberFormatException e) {
+                Logging.trace(e);
+            }
+        }
+    }
+
+    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String osmKey, String osmKey2) {
+        String value = gpxVal(p, gpxKey);
+        if (value == null && osmKey != null) {
+            value = gpxVal(p, osmKey);
+        }
+        if (value == null && osmKey2 != null) {
+            value = gpxVal(p, osmKey2);
+        }
+        // Sanity checks
+        if (value != null && (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value))) {
+            wpt.put(gpxKey, value);
+        }
     }
 
     /**
