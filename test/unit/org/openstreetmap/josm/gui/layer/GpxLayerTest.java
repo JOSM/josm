@@ -221,7 +221,7 @@ public class GpxLayerTest {
     @Test
     void testFormatTimespan() {
         Instant[] timespan = {Instant.parse("2021-03-01T17:53:16Z"), Instant.parse("2021-04-03T08:19:19Z")};
-        assertEquals("2021-03-01T17:53:16 \u2013 2021-04-03T08:19:19 (32 days 14 h)", GpxLayer.formatTimespan(timespan));
+        assertEquals("2021-03-01 17:53:16 \u2013 2021-04-03 08:19:19 (32 days 14 h)", GpxLayer.formatTimespan(timespan));
     }
 
     /**
