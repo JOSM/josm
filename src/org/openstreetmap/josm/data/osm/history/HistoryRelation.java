@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.data.osm.history;
 
 import java.text.MessageFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -34,7 +34,7 @@ public class HistoryRelation extends HistoryOsmPrimitive {
      *
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp) {
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Instant timestamp) {
         super(id, version, visible, user, changesetId, timestamp);
     }
 
@@ -52,7 +52,7 @@ public class HistoryRelation extends HistoryOsmPrimitive {
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) {
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Instant timestamp, boolean checkHistoricParams) {
         super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
     }
 
@@ -69,7 +69,7 @@ public class HistoryRelation extends HistoryOsmPrimitive {
      *
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Date timestamp,
+    public HistoryRelation(long id, long version, boolean visible, User user, long changesetId, Instant timestamp,
             List<RelationMemberData> members) {
         this(id, version, visible, user, changesetId, timestamp);
         if (members != null) {

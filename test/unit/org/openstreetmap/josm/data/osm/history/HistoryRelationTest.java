@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.osm.history;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ class HistoryRelationTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    private static HistoryRelation create(Date d) {
+    private static HistoryRelation create(Instant d) {
         return new HistoryRelation(
                 1,    // id
                 2,    // version
@@ -46,7 +46,7 @@ class HistoryRelationTest {
      */
     @Test
     void testHistoryRelation() {
-        Date d = new Date();
+        Instant d = Instant.now();
         HistoryRelation rel = create(d);
 
         assertEquals(1, rel.getId());
@@ -55,7 +55,7 @@ class HistoryRelationTest {
         assertEquals("testuser", rel.getUser().getName());
         assertEquals(3, rel.getUser().getId());
         assertEquals(4, rel.getChangesetId());
-        assertEquals(d, rel.getTimestamp());
+        assertEquals(d, rel.getInstant());
     }
 
     /**
@@ -63,7 +63,7 @@ class HistoryRelationTest {
      */
     @Test
     void testGetType() {
-        assertEquals(OsmPrimitiveType.RELATION, create(new Date()).getType());
+        assertEquals(OsmPrimitiveType.RELATION, create(Instant.now()).getType());
     }
 
     /**
@@ -72,9 +72,9 @@ class HistoryRelationTest {
     @Test
     void testGetDisplayName() {
         HistoryNameFormatter hnf = DefaultNameFormatter.getInstance();
-        HistoryRelation rel0 = create(new Date()); // 0 member
-        HistoryRelation rel1 = create(new Date()); // 1 member
-        HistoryRelation rel2 = create(new Date()); // 2 members
+        HistoryRelation rel0 = create(Instant.now()); // 0 member
+        HistoryRelation rel1 = create(Instant.now()); // 1 member
+        HistoryRelation rel2 = create(Instant.now()); // 2 members
 
         rel1.addMember(new RelationMemberData(null, OsmPrimitiveType.NODE, 1));
         rel2.addMember(new RelationMemberData(null, OsmPrimitiveType.NODE, 1));

@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -30,7 +30,7 @@ public class HistoryNode extends HistoryOsmPrimitive {
      * @param coords the coordinates
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords) {
+    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Instant timestamp, LatLon coords) {
         this(id, version, visible, user, changesetId, timestamp, coords, true);
     }
 
@@ -49,7 +49,7 @@ public class HistoryNode extends HistoryOsmPrimitive {
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Date timestamp, LatLon coords,
+    public HistoryNode(long id, long version, boolean visible, User user, long changesetId, Instant timestamp, LatLon coords,
             boolean checkHistoricParams) {
         super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
         setCoords(coords);

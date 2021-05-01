@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.osm.history;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +31,7 @@ class HistoryNodeTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    private static HistoryNode create(Date d) {
+    private static HistoryNode create(Instant d) {
         return new HistoryNode(
                 1L,   // id
                 2L,   // version
@@ -48,7 +48,7 @@ class HistoryNodeTest {
      */
     @Test
     void testHistoryNode() {
-        Date d = new Date();
+        Instant d = Instant.now();
         HistoryNode node = create(d);
 
         assertEquals(1, node.getId());
@@ -57,7 +57,7 @@ class HistoryNodeTest {
         assertEquals("testuser", node.getUser().getName());
         assertEquals(3, node.getUser().getId());
         assertEquals(4, node.getChangesetId());
-        assertEquals(d, node.getTimestamp());
+        assertEquals(d, node.getInstant());
     }
 
     /**
@@ -65,7 +65,7 @@ class HistoryNodeTest {
      */
     @Test
     void testGetType() {
-        assertEquals(OsmPrimitiveType.NODE, create(new Date()).getType());
+        assertEquals(OsmPrimitiveType.NODE, create(Instant.now()).getType());
     }
 
     /**
@@ -85,7 +85,7 @@ class HistoryNodeTest {
      */
     @Test
     void testGetDisplayName() {
-        HistoryNode node = create(new Date());
+        HistoryNode node = create(Instant.now());
         HistoryNameFormatter hnf = DefaultNameFormatter.getInstance();
         assertEquals("1 (0.0, 0.0)", node.getDisplayName(hnf));
         LatLon ll = node.getCoords();

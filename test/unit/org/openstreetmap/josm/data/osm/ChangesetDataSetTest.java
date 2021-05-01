@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -39,7 +39,7 @@ class ChangesetDataSetTest {
     @Test
     void testIterator() {
         final ChangesetDataSet cds = new ChangesetDataSet();
-        HistoryNode prim1 = new HistoryNode(1, 1, true, User.getAnonymous(), 1, new Date(), LatLon.ZERO);
+        HistoryNode prim1 = new HistoryNode(1, 1, true, User.getAnonymous(), 1, Instant.now(), LatLon.ZERO);
         cds.put(prim1, ChangesetModificationType.CREATED);
         Iterator<ChangesetDataSetEntry> it = cds.iterator();
         assertTrue(it.hasNext());
@@ -61,14 +61,14 @@ class ChangesetDataSetTest {
     @Test
     void testGetEntry() {
         final ChangesetDataSet cds = new ChangesetDataSet();
-        HistoryNode prim1 = new HistoryNode(1, 1, true, User.getAnonymous(), 1, new Date(), LatLon.ZERO);
+        HistoryNode prim1 = new HistoryNode(1, 1, true, User.getAnonymous(), 1, Instant.now(), LatLon.ZERO);
         cds.put(prim1, ChangesetModificationType.CREATED);
-        HistoryNode prim2 = new HistoryNode(1, 2, true, User.getAnonymous(), 1, new Date(), LatLon.ZERO);
+        HistoryNode prim2 = new HistoryNode(1, 2, true, User.getAnonymous(), 1, Instant.now(), LatLon.ZERO);
         prim2.put("highway", "stop");
         cds.put(prim2, ChangesetModificationType.UPDATED);
         assertEquals(prim1, cds.getFirstEntry(prim1.getPrimitiveId()).getPrimitive());
         assertEquals(prim2, cds.getLastEntry(prim1.getPrimitiveId()).getPrimitive());
-        HistoryNode prim3 = new HistoryNode(1, 3, false, User.getAnonymous(), 1, new Date(), null);
+        HistoryNode prim3 = new HistoryNode(1, 3, false, User.getAnonymous(), 1, Instant.now(), null);
 
         cds.put(prim3, ChangesetModificationType.DELETED);
         assertEquals(prim1, cds.getFirstEntry(prim1.getPrimitiveId()).getPrimitive());

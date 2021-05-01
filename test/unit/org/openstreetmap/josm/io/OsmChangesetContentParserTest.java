@@ -115,7 +115,7 @@ class OsmChangesetContentParserTest {
         assertEquals(1, p.getId());
         assertEquals(1, p.getVersion());
         assertEquals(1, p.getChangesetId());
-        assertNotNull(p.getTimestamp());
+        assertNotNull(p.getInstant());
         assertEquals(ChangesetModificationType.CREATED, ds.getModificationType(p.getPrimitiveId()));
         assertTrue(ds.isCreated(p.getPrimitiveId()));
     }
@@ -145,7 +145,7 @@ class OsmChangesetContentParserTest {
         assertEquals(1, p.getId());
         assertEquals(1, p.getVersion());
         assertEquals(1, p.getChangesetId());
-        assertNotNull(p.getTimestamp());
+        assertNotNull(p.getInstant());
         assertEquals(ChangesetModificationType.UPDATED, ds.getModificationType(p.getPrimitiveId()));
         assertTrue(ds.isUpdated(p.getPrimitiveId()));
     }
@@ -175,7 +175,7 @@ class OsmChangesetContentParserTest {
         assertEquals(1, p.getId());
         assertEquals(1, p.getVersion());
         assertEquals(1, p.getChangesetId());
-        assertNotNull(p.getTimestamp());
+        assertNotNull(p.getInstant());
         assertEquals(ChangesetModificationType.DELETED, ds.getModificationType(p.getPrimitiveId()));
         assertTrue(ds.isDeleted(p.getPrimitiveId()));
     }
@@ -217,7 +217,7 @@ class OsmChangesetContentParserTest {
         assertEquals(1, p.getId());
         assertEquals(1, p.getVersion());
         assertEquals(1, p.getChangesetId());
-        assertNotNull(p.getTimestamp());
+        assertNotNull(p.getInstant());
         assertEquals(ChangesetModificationType.CREATED, ds.getModificationType(p.getPrimitiveId()));
         assertTrue(ds.isCreated(p.getPrimitiveId()));
         assertEquals("a.value", p.get("a.key"));
@@ -227,7 +227,7 @@ class OsmChangesetContentParserTest {
         assertEquals(2, w.getId());
         assertEquals(2, w.getVersion());
         assertEquals(1, w.getChangesetId());
-        assertNotNull(w.getTimestamp());
+        assertNotNull(w.getInstant());
         assertEquals(ChangesetModificationType.UPDATED, ds.getModificationType(w.getPrimitiveId()));
         assertTrue(ds.isUpdated(w.getPrimitiveId()));
         assertEquals(2, w.getNumNodes());
@@ -238,7 +238,7 @@ class OsmChangesetContentParserTest {
         assertEquals(3, r.getId());
         assertEquals(3, r.getVersion());
         assertEquals(1, r.getChangesetId());
-        assertNotNull(r.getTimestamp());
+        assertNotNull(r.getInstant());
         assertEquals(ChangesetModificationType.DELETED, ds.getModificationType(r.getPrimitiveId()));
         assertTrue(ds.isDeleted(r.getPrimitiveId()));
     }

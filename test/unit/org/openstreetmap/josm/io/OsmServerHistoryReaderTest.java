@@ -17,6 +17,8 @@ import org.openstreetmap.josm.spi.preferences.Config;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
+import java.time.Instant;
+
 /**
  * Unit tests of {@link OsmServerHistoryReader} class.
  */
@@ -49,7 +51,7 @@ public class OsmServerHistoryReaderTest {
         assertEquals(5, h.getNumVersions());
         assertEquals(1, h.getLatest().getNumKeys());
         assertEquals(65565982, h.getLatest().getChangesetId());
-        assertEquals(1545089885000L, h.getLatest().getTimestamp().getTime());
+        assertEquals(Instant.ofEpochMilli(1545089885000L), h.getLatest().getInstant());
     }
 
     /**
@@ -64,7 +66,7 @@ public class OsmServerHistoryReaderTest {
         assertEquals(14, h.getNumVersions());
         assertEquals(10, h.getLatest().getNumKeys());
         assertEquals(26368284, h.getLatest().getChangesetId());
-        assertEquals(1414429134000L, h.getLatest().getTimestamp().getTime());
+        assertEquals(Instant.ofEpochMilli(1414429134000L), h.getLatest().getInstant());
     }
 
     /**
@@ -79,6 +81,6 @@ public class OsmServerHistoryReaderTest {
         assertEquals(3, h.getNumVersions());
         assertEquals(0, h.getLatest().getNumKeys());
         assertEquals(486501, h.getLatest().getChangesetId());
-        assertEquals(1194886166000L, h.getLatest().getTimestamp().getTime());
+        assertEquals(Instant.ofEpochMilli(1194886166000L), h.getLatest().getInstant());
     }
 }

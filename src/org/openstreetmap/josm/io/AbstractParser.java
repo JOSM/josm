@@ -3,7 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Date;
+import java.time.Instant;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -131,7 +131,7 @@ public abstract class AbstractParser extends DefaultHandler {
         }
 
         String v = getMandatoryAttributeString(atts, "timestamp");
-        Date timestamp = DateUtils.fromString(v);
+        Instant timestamp = DateUtils.parseInstant(v);
         HistoryOsmPrimitive primitive = null;
         if (type == OsmPrimitiveType.NODE) {
             Double lat = getAttributeDouble(atts, "lat");

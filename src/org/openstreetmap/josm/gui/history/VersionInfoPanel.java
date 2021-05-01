@@ -10,9 +10,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.text.DateFormat;
+import java.time.Instant;
+import java.time.format.FormatStyle;
 import java.util.Collections;
-import java.util.Date;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -169,7 +169,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener, Destroya
         return model.getPointInTime(pointInTimeType);
     }
 
-    protected String getInfoText(final Date timestamp, final long version, final boolean isLatest) {
+    protected String getInfoText(final Instant timestamp, final long version, final boolean isLatest) {
         String text;
         if (isLatest) {
             OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
@@ -180,7 +180,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener, Destroya
         } else {
             String date = "?";
             if (timestamp != null) {
-                date = DateUtils.formatDateTime(timestamp, DateFormat.SHORT, DateFormat.SHORT);
+                date = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.SHORT).format(timestamp);
             }
             text = tr(
                     "<html>Version <strong>{0}</strong> created on <strong>{1}</strong></html>",
@@ -225,7 +225,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener, Destroya
         HistoryOsmPrimitive primitive = getPrimitive();
         if (primitive != null) {
             Changeset cs = primitive.getChangeset();
-            update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion(), primitive.getPrimitiveId());
+            update(cs, model.isLatest(primitive), primitive.getInstant(), primitive.getVersion(), primitive.getPrimitiveId());
         }
     }
 
@@ -235,8 +235,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener, Destroya
      * @param isLatest whether this relates to a not yet committed changeset
      */
     public void update(final OsmPrimitive primitive, final boolean isLatest) {
-        Date timestamp = Date.from(primitive.getInstant());
-        update(Changeset.fromPrimitive(primitive), isLatest, timestamp, primitive.getVersion(), primitive.getPrimitiveId());
+        update(Changeset.fromPrimitive(primitive), isLatest, primitive.getInstant(), primitive.getVersion(), primitive.getPrimitiveId());
     }
 
     /**
@@ -248,7 +247,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener, Destroya
      * @param id the id and type of the primitive
      * @since 14432
      */
-    public void update(final Changeset cs, final boolean isLatest, final Date timestamp, final long version, final PrimitiveId id) {
+    public void update(final Changeset cs, final boolean isLatest, final Instant timestamp, final long version, final PrimitiveId id) {
         lblInfo.setText(getInfoText(timestamp, version, isLatest));
         primitiveId = id;
 

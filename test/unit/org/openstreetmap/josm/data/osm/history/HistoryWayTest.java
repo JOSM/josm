@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ class HistoryWayTest {
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
 
-    private static HistoryWay create(Date d) {
+    private static HistoryWay create(Instant d) {
         return new HistoryWay(
                 1,    // id
                 2,    // version
@@ -48,7 +48,7 @@ class HistoryWayTest {
      */
     @Test
     void testHistoryWay() {
-        Date d = new Date();
+        Instant d = Instant.now();
         HistoryWay way = create(d);
 
         assertEquals(1, way.getId());
@@ -57,7 +57,7 @@ class HistoryWayTest {
         assertEquals("testuser", way.getUser().getName());
         assertEquals(3, way.getUser().getId());
         assertEquals(4, way.getChangesetId());
-        assertEquals(d, way.getTimestamp());
+        assertEquals(d, way.getInstant());
 
         assertEquals(0, way.getNumNodes());
     }
@@ -67,12 +67,12 @@ class HistoryWayTest {
      */
     @Test
     void testGetType() {
-        assertEquals(OsmPrimitiveType.WAY, create(new Date()).getType());
+        assertEquals(OsmPrimitiveType.WAY, create(Instant.now()).getType());
     }
 
     @Test
     void testNodeManipulation() {
-        HistoryWay way = create(new Date());
+        HistoryWay way = create(Instant.now());
 
         way.addNode(1);
         assertEquals(1, way.getNumNodes());
@@ -92,7 +92,7 @@ class HistoryWayTest {
 
     @Test
     void testIterating() {
-        HistoryWay way = create(new Date());
+        HistoryWay way = create(Instant.now());
 
         way.addNode(1);
         way.addNode(2);
@@ -109,9 +109,9 @@ class HistoryWayTest {
     @Test
     void testGetDisplayName() {
         HistoryNameFormatter hnf = DefaultNameFormatter.getInstance();
-        HistoryWay way0 = create(new Date()); // no node
-        HistoryWay way1 = create(new Date()); // 1 node
-        HistoryWay way2 = create(new Date()); // 2 nodes
+        HistoryWay way0 = create(Instant.now()); // no node
+        HistoryWay way1 = create(Instant.now()); // 1 node
+        HistoryWay way2 = create(Instant.now()); // 2 nodes
 
         way1.addNode(1);
         way2.addNode(1);

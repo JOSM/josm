@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -159,7 +158,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                 // If the history has been loaded and a timestamp is known
                 if (history != null && date != null) {
                     // Lookup for the primitive version at the specified timestamp
-                    HistoryOsmPrimitive hp = history.getByDate(Date.from(date));
+                    HistoryOsmPrimitive hp = history.getByDate(date);
                     if (hp != null) {
                         PrimitiveData data;
 

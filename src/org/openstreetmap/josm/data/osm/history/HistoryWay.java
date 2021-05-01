@@ -3,9 +3,9 @@ package org.openstreetmap.josm.data.osm.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @param timestamp the timestamp (!= null required if {@code checkHistoricParams} is true)
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp) {
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Instant timestamp) {
         super(id, version, visible, user, changesetId, timestamp);
     }
 
@@ -52,7 +52,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @throws IllegalArgumentException if preconditions are violated
      * @since 5440
      */
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, boolean checkHistoricParams) {
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Instant timestamp, boolean checkHistoricParams) {
         super(id, version, visible, user, changesetId, timestamp, checkHistoricParams);
     }
 
@@ -68,7 +68,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
      * @param nodeIdList the node ids (!= null required)
      * @throws IllegalArgumentException if preconditions are violated
      */
-    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Date timestamp, List<Long> nodeIdList) {
+    public HistoryWay(long id, long version, boolean visible, User user, long changesetId, Instant timestamp, List<Long> nodeIdList) {
         this(id, version, visible, user, changesetId, timestamp);
         CheckParameterUtil.ensureParameterNotNull(nodeIdList, "nodeIdList");
         this.nodeIds.addAll(nodeIdList);
