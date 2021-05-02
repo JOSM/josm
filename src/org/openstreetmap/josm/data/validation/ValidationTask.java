@@ -1,21 +1,24 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.layer.ValidatorLayer;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
-import org.openstreetmap.josm.gui.util.GuiHelper;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import javax.swing.JOptionPane;
+
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.layer.ValidatorLayer;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * Asynchronous task for running a collection of tests against a collection of primitives
@@ -100,6 +103,16 @@ public class ValidationTask extends PleaseWaitRunnable {
                 if (canceled) return;
                 error.updateIgnored();
             }
+        }
+
+        if (errors.stream().anyMatch(e -> !e.getPrimitives().stream().allMatch(OsmPrimitive::isDrawable))) {
+            final String msg = "<b>" + tr("Validation results contain elements hidden by a filter.") + "</b><br/>"
+                    + tr("Please review active filters to see the hidden results.");
+            GuiHelper.runInEDT(() -> new Notification(msg)
+                    .setDuration(Notification.TIME_LONG)
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .setHelpTopic("Dialog/Validator")
+                    .show());
         }
     }
 
