@@ -11,6 +11,8 @@ import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 
+import javax.annotation.Nullable;
+
 /**
  * A map note. It always has at least one comment since a comment is required to create a note on osm.org.
  * @since 7451
@@ -158,6 +160,7 @@ public class Note {
      * @return the last comment, or {@code null}
      * @since 11821
      */
+    @Nullable
     public NoteComment getLastComment() {
         return comments.isEmpty() ? null : comments.get(comments.size()-1);
     }
@@ -174,10 +177,12 @@ public class Note {
      * Returns the comment that was submitted by the user when creating the note
      * @return First comment object
      */
+    @Nullable
     public NoteComment getFirstComment() {
         return comments.isEmpty() ? null : comments.get(0);
     }
 
+    @Nullable
     private String getUserName() {
         return getFirstComment() == null ? null : getFirstComment().getUser().getName();
     }

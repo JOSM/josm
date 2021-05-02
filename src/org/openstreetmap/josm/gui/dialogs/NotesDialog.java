@@ -247,17 +247,18 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
             return true;
         }
         return Pattern.compile("\\s+").splitAsStream(filter).allMatch(string -> {
+            NoteComment lastComment = note.getLastComment();
             switch (string) {
                 case "open":
                     return note.getState() == State.OPEN;
                 case "closed":
                     return note.getState() == State.CLOSED;
                 case "reopened":
-                    return note.getLastComment().getNoteAction() == NoteComment.Action.REOPENED;
+                    return lastComment != null && lastComment.getNoteAction() == NoteComment.Action.REOPENED;
                 case "new":
                     return note.getId() < 0;
                 case "modified":
-                    return note.getLastComment().isNew();
+                    return lastComment != null && lastComment.isNew();
                 default:
                     return note.getComments().toString().contains(string);
             }
