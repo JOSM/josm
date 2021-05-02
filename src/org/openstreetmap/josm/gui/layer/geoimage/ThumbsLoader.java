@@ -74,7 +74,7 @@ public class ThumbsLoader implements Runnable {
     @Override
     public void run() {
         Logging.debug("Load Thumbnails");
-        tracker = new MediaTracker(MainApplication.getMap().mapView);
+        tracker = new MediaTracker(MainApplication.isDisplayingMapView() ? MainApplication.getMap().mapView : MainApplication.getMainPanel());
         for (ImageEntry entry : data) {
             if (stop) return;
 
