@@ -52,7 +52,7 @@ public class PluginHandlerTestIT {
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public static JOSMTestRules test = new JOSMTestRules().main().projection().preferences().https()
-            .timeout(10 * 60 * 1000);
+            .territories().timeout(10 * 60 * 1000);
 
     /**
      * Setup test
@@ -105,11 +105,18 @@ public class PluginHandlerTestIT {
         layerExceptions = filterKnownErrors(layerExceptions);
         noRestartExceptions = filterKnownErrors(noRestartExceptions);
 
-        String msg = Arrays.toString(invalidManifestEntries.entrySet().toArray()) + '\n' +
-                     Arrays.toString(loadingExceptions.entrySet().toArray()) + '\n' +
-                Arrays.toString(layerExceptions.entrySet().toArray()) + '\n'
-                + Arrays.toString(noRestartExceptions.entrySet().toArray());
-        assertTrue(invalidManifestEntries.isEmpty() && loadingExceptions.isEmpty() && layerExceptions.isEmpty(), msg);
+        String msg = errMsg("invalidManifestEntries", invalidManifestEntries) + '\n' +
+                errMsg("loadingExceptions", loadingExceptions) + '\n' +
+                errMsg("layerExceptions", layerExceptions) + '\n' +
+                errMsg("noRestartExceptions", noRestartExceptions);
+        assertTrue(invalidManifestEntries.isEmpty()
+                && loadingExceptions.isEmpty()
+                && layerExceptions.isEmpty()
+                && noRestartExceptions.isEmpty(), msg);
+    }
+
+    private static String errMsg(String type, Map<String, ?> map) {
+        return type + ": " + Arrays.toString(map.entrySet().toArray());
     }
 
     private static void testCompletelyRestartlessPlugins(List<PluginInformation> loadedPlugins,
