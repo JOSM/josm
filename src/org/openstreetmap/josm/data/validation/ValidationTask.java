@@ -105,7 +105,7 @@ public class ValidationTask extends PleaseWaitRunnable {
             }
         }
 
-        if (errors.stream().anyMatch(e -> !e.getPrimitives().stream().allMatch(OsmPrimitive::isDrawable))) {
+        if (errors.stream().anyMatch(e -> e.getPrimitives().stream().anyMatch(OsmPrimitive::isDisabledAndHidden))) {
             final String msg = "<b>" + tr("Validation results contain elements hidden by a filter.") + "</b><br/>"
                     + tr("Please review active filters to see the hidden results.");
             GuiHelper.runInEDT(() -> new Notification(msg)
