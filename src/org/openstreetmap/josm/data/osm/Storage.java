@@ -8,6 +8,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.tools.Utils;
@@ -401,12 +402,12 @@ public class Storage<T> extends AbstractSet<T> {
         return new Hash<O, O>() {
             @Override
             public int getHashCode(O t) {
-                return t.hashCode();
+                return Objects.hashCode(t);
             }
 
             @Override
             public boolean equals(O t1, O t2) {
-                return t1.equals(t2);
+                return Objects.equals(t1, t2);
             }
         };
     }
