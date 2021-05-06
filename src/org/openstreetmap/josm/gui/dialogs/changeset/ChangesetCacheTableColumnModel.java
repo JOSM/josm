@@ -34,8 +34,8 @@ public class ChangesetCacheTableColumnModel extends DefaultTableColumnModel {
         // column 1 - Upload comment
         createColumn(1, tr("Comment"), 200, -1);
 
-        // column 2 - Open
-        createColumn(2, tr("Open"), 25, -1);
+        // column 2 - Status
+        createColumn(2, tr("Status"), 25, -1);
 
         // column 3 - User
         createColumn(3, tr("Author"), 50, -1);
