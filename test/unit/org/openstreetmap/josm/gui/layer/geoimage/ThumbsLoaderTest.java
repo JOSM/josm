@@ -15,6 +15,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * Unit tests of {@link ThumbsLoader} class.
  */
@@ -38,6 +41,12 @@ class ThumbsLoaderTest {
             imageEntries = StreamUtils.toStream(stream).map(Path::toFile).map(ImageEntry::new).collect(Collectors.toList());
         }
         new ThumbsLoader(imageEntries).run();
+        for (ImageEntry imageEntry : imageEntries) {
+            assertNotNull(imageEntry.getThumbnail());
+            assertEquals(ThumbsLoader.maxSize, Math.max(
+                    imageEntry.getThumbnail().getWidth(null),
+                    imageEntry.getThumbnail().getHeight(null)));
+        }
     }
 
 }
