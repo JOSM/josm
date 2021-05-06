@@ -17,7 +17,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -36,7 +35,6 @@ import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
-import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -250,32 +248,11 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                         return;
                     }
 
-                    boolean switchedDim = false;
-                    if (ExifReader.orientationNeedsCorrection(entry.getExifOrientation())) {
-                        if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
-                            width = img.getHeight(null);
-                            height = img.getWidth(null);
-                            switchedDim = true;
-                        }
-                        final BufferedImage rot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                        final AffineTransform xform = ExifReader.getRestoreOrientationTransform(
-                                entry.getExifOrientation(),
-                                img.getWidth(null),
-                                img.getHeight(null));
-                        final Graphics2D g = rot.createGraphics();
-                        g.drawImage(img, xform, null);
-                        g.dispose();
-                        img = rot;
-                    }
-
                     ImageDisplay.this.image = img;
                     updateProcessedImage();
                     // This will clear the loading info box
                     ImageDisplay.this.oldEntry = ImageDisplay.this.entry;
                     visibleRect = new VisRect(0, 0, width, height);
-
-                    Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
-                            entry.getFile().getPath(), width, height, width * height * 4 / 1024 / 1024, switchedDim);
 
                     selectedRect = null;
                     errorLoading = false;

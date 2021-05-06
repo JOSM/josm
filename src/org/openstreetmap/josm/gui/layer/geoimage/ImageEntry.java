@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.util.Objects;
 
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
+import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -138,8 +141,12 @@ public final class ImageEntry extends GpxImageEntry {
      */
     public BufferedImage read(Dimension target) throws IOException {
         Logging.info(tr("Loading {0}", getFile().getPath()));
-        return ImageProvider.read(getFile(), false, false,
+        BufferedImage image = ImageProvider.read(getFile(), false, false,
                 r -> target == null ? r.getDefaultReadParam() : withSubsampling(r, target));
+        Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
+                getFile().getPath(), image.getWidth(), image.getHeight(), image.getWidth() * image.getHeight() * 4 / 1024 / 1024,
+                ExifReader.orientationSwitchesDimensions(getExifOrientation()));
+        return applyExifRotation(image);
     }
 
     private ImageReadParam withSubsampling(ImageReader reader, Dimension target) {
@@ -156,5 +163,21 @@ public final class ImageEntry extends GpxImageEntry {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private BufferedImage applyExifRotation(BufferedImage img) {
+        Integer exifOrientation = getExifOrientation();
+        if (!ExifReader.orientationNeedsCorrection(exifOrientation)) {
+            return img;
+        }
+        boolean switchesDimensions = ExifReader.orientationSwitchesDimensions(exifOrientation);
+        int width = switchesDimensions ? img.getHeight() : img.getWidth();
+        int height = switchesDimensions ? img.getWidth() : img.getHeight();
+        BufferedImage rotated = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        AffineTransform transform = ExifReader.getRestoreOrientationTransform(exifOrientation, img.getWidth(), img.getHeight());
+        Graphics2D g = rotated.createGraphics();
+        g.drawImage(img, transform, null);
+        g.dispose();
+        return rotated;
     }
 }
