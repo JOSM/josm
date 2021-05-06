@@ -1,12 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.geoimage;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.geom.AffineTransform;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,10 +14,9 @@ import org.apache.commons.jcs3.engine.behavior.ICache;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay.VisRect;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Stopwatch;
 
 /**
  * Loads thumbnail previews for a list of images from a {@link GeoImageLayer}.
@@ -35,7 +29,6 @@ public class ThumbsLoader implements Runnable {
     public volatile boolean stop;
     private final Collection<ImageEntry> data;
     private final GeoImageLayer layer;
-    private MediaTracker tracker;
     private ICacheAccess<String, BufferedImageCacheEntry> cache;
     private final boolean cacheOff = Config.getPref().getBoolean("geoimage.noThumbnailCache", false);
 
@@ -73,8 +66,9 @@ public class ThumbsLoader implements Runnable {
 
     @Override
     public void run() {
-        Logging.debug("Load Thumbnails");
-        tracker = new MediaTracker(MainApplication.isDisplayingMapView() ? MainApplication.getMap().mapView : MainApplication.getMainPanel());
+        int count = 0;
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Logging.debug("Loading {0} thumbnails", data.size());
         for (ImageEntry entry : data) {
             if (stop) return;
 
@@ -86,7 +80,9 @@ public class ThumbsLoader implements Runnable {
                     layer.updateBufferAndRepaint();
                 }
             }
+            count++;
         }
+        Logging.debug("Loaded {0} thumbnails in {1}", count, stopwatch);
         if (layer != null) {
             layer.thumbsLoaded();
             layer.updateBufferAndRepaint();
@@ -100,7 +96,7 @@ public class ThumbsLoader implements Runnable {
             try {
                 BufferedImageCacheEntry cacheEntry = cache.get(cacheIdent);
                 if (cacheEntry != null && cacheEntry.getImage() != null) {
-                    Logging.debug(" from cache");
+                    Logging.debug("{0} from cache", cacheIdent);
                     return cacheEntry.getImage();
                 }
             } catch (IOException e) {
@@ -108,69 +104,29 @@ public class ThumbsLoader implements Runnable {
             }
         }
 
-        Image img = Toolkit.getDefaultToolkit().createImage(entry.getFile().getPath());
-        tracker.addImage(img, 0);
+        BufferedImage img;
         try {
-            tracker.waitForID(0);
-        } catch (InterruptedException e) {
-            Logging.error(" InterruptedException while loading thumb");
-            Thread.currentThread().interrupt();
-            return null;
-        }
-        if (tracker.isErrorID(1) || img.getWidth(null) <= 0 || img.getHeight(null) <= 0) {
-            Logging.error(" Invalid image");
+            img = entry.read(new Dimension(maxSize, maxSize));
+        } catch (IOException e) {
+            Logging.warn("Failed to load geoimage thumb");
+            Logging.warn(e);
             return null;
         }
 
-        final int w = img.getWidth(null);
-        final int h = img.getHeight(null);
-        final int hh, ww;
-        final Integer exifOrientation = entry.getExifOrientation();
-        if (exifOrientation != null && ExifReader.orientationSwitchesDimensions(exifOrientation)) {
-            ww = h;
-            hh = w;
-        } else {
-            ww = w;
-            hh = h;
-        }
-
-        Rectangle targetSize = ImageDisplay.calculateDrawImageRectangle(
-                new VisRect(0, 0, ww, hh),
-                new Rectangle(0, 0, maxSize, maxSize));
-        BufferedImage scaledBI = new BufferedImage(targetSize.width, targetSize.height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = scaledBI.createGraphics();
-
-        final AffineTransform scale = AffineTransform.getScaleInstance((double) targetSize.width / ww, (double) targetSize.height / hh);
-        if (exifOrientation != null) {
-            final AffineTransform restoreOrientation = ExifReader.getRestoreOrientationTransform(exifOrientation, w, h);
-            scale.concatenate(restoreOrientation);
-        }
-
-        while (!g.drawImage(img, scale, null)) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                Logging.warn("InterruptedException while drawing thumb");
-                Thread.currentThread().interrupt();
-            }
-        }
-        g.dispose();
-        tracker.removeImage(img);
-
-        if (scaledBI.getWidth() <= 0 || scaledBI.getHeight() <= 0) {
+        if (img.getWidth() <= 0 || img.getHeight() <= 0) {
             Logging.error(" Invalid image");
             return null;
         }
 
         if (!cacheOff && cache != null) {
             try {
-                cache.put(cacheIdent, BufferedImageCacheEntry.pngEncoded(scaledBI));
+                cache.put(cacheIdent, BufferedImageCacheEntry.pngEncoded(img));
             } catch (UncheckedIOException e) {
                 Logging.warn("Failed to save geoimage thumb to cache");
                 Logging.warn(e);
             }
         }
 
-        return scaledBI;
+        return img;
     }
 }
