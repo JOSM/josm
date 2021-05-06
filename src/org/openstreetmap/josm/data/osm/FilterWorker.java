@@ -43,7 +43,7 @@ public final class FilterWorker {
      * @param all the collection of primitives for that the filter state should be updated
      * @param filterMatcher the FilterMatcher
      * @return true, if the filter state (normal / disabled / hidden) of any primitive has changed in the process
-     * @since xxx (generics)
+     * @since 17862 (generics)
      */
     public static <T extends IPrimitive & IFilterablePrimitive> boolean executeFilters(Collection<T> all, FilterMatcher filterMatcher) {
         boolean changed;
@@ -84,7 +84,7 @@ public final class FilterWorker {
      * @param filterMatcher the FilterMatcher
      * @return true, if the filter state (normal / disabled / hidden)
      * of the primitive has changed in the process
-     * @since xxx (generics)
+     * @since 17862 (generics)
      */
     public static <T extends IPrimitive & IFilterablePrimitive> boolean executeFilters(T primitive, FilterMatcher filterMatcher) {
         return doExecuteFilters(Collections.singleton(primitive), filterMatcher);

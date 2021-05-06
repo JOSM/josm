@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * A Mapbox Vector Tile Layer
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public final class Layer implements Destroyable {
     private static final class ValueFields<T> {

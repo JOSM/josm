@@ -26,7 +26,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 /**
  * Test class for {@link MapboxVectorTileSource}
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 class MapboxVectorTileSourceTest {
     @RegisterExtension

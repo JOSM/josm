@@ -90,7 +90,7 @@ public class ElemStyles implements PreferenceChangedListener {
      * and therefore should only be used with layers that have specific drawing requirements.
      *
      * @param sources The style sources (these cannot be added to, or removed from)
-     * @since xxx
+     * @since 17862
      */
     public ElemStyles(Collection<StyleSource> sources) {
         this.styleSources.addAll(sources);

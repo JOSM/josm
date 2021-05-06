@@ -40,7 +40,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * Test class for {@link ProtobufParser} and {@link ProtobufRecord}
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 class ProtobufTest {
     /**

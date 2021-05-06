@@ -26,13 +26,13 @@ import javax.json.JsonValue;
  * Mapbox style layers
  * @author Taylor Smock
  * @see <a href="https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/">https://docs.mapbox.com/mapbox-gl-js/style-spec/layers/</a>
- * @since xxx
+ * @since 17862
  */
 public class Layers {
     /**
      * The layer type. This affects the rendering.
      * @author Taylor Smock
-     * @since xxx
+     * @since 17862
      */
     enum Type {
         /** Filled polygon with an (optional) border */

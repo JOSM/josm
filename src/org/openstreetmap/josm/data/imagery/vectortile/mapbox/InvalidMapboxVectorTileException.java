@@ -5,7 +5,7 @@ package org.openstreetmap.josm.data.imagery.vectortile.mapbox;
  * Thrown when a mapbox vector tile does not match specifications.
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class InvalidMapboxVectorTileException extends RuntimeException {
     /**

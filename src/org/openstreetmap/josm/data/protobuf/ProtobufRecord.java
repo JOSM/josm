@@ -11,7 +11,7 @@ import org.openstreetmap.josm.tools.Utils;
  * A protobuf record, storing the {@link WireType}, the parsed field number, and the bytes for it.
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class ProtobufRecord implements AutoCloseable {
     private static final byte[] EMPTY_BYTES = {};

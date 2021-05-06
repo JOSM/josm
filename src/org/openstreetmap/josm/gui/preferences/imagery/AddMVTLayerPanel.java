@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * A panel for adding Mapbox Vector Tile layers
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class AddMVTLayerPanel extends AddImageryPanel {
     private final JosmTextField mvtZoom = new JosmTextField();

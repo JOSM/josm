@@ -24,7 +24,7 @@ final class RelationSortUtils {
      * determine, if the way i is a roundabout and if yes, what type of roundabout
      * @param member relation member
      * @return roundabout type
-     * @since xxx (generics)
+     * @since 17862 (generics)
      */
     static Direction roundaboutType(IRelationMember<?> member) {
         if (member == null || !member.isWay()) return NONE;
@@ -36,7 +36,7 @@ final class RelationSortUtils {
      * @param w The way to check
      * @param <W> The way type
      * @return The roundabout type
-     * @since xxx (generics)
+     * @since 17862 (generics)
      */
     static <W extends IWay<?>> Direction roundaboutType(W w) {
         if (w != null && w.hasTag("junction", "circular", "roundabout")) {

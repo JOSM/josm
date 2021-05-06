@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * The base class for Vector primitives
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public abstract class VectorPrimitive extends AbstractPrimitive implements DataLayer<String> {
     private VectorDataSet dataSet;

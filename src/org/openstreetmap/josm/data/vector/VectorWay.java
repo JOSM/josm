@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
  * The "Way" type for a Vector layer
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class VectorWay extends VectorPrimitive implements IWay<VectorNode> {
     private static final UniqueIdGenerator WAY_GENERATOR = new UniqueIdGenerator();

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Supporting class for creating the GUI for a preset item.
  *
- * @since xxx
+ * @since 17609
  */
 public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProvider {
 
@@ -28,7 +28,7 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
 
     /**
      * Interface to notify listeners that a preset item input as changed.
-     * @since xxx
+     * @since 17610
      */
     public interface ChangeListener {
         /**

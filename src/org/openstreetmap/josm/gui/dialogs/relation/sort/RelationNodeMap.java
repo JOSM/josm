@@ -69,7 +69,7 @@ public class RelationNodeMap<T extends IRelationMember<? extends IPrimitive>> {
      * Gets the start node of the member, respecting the direction role.
      * @param m The relation member.
      * @return <code>null</code> if the member is no way, the node otherwise.
-     * @since xxx (generics)
+     * @since 17862 (generics)
      */
     public static INode firstOnewayNode(IRelationMember<?> m) {
         if (!m.isWay()) return null;

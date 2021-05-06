@@ -25,7 +25,7 @@ import java.util.stream.Stream;
  * @param <W> type representing OSM ways
  * @param <R> type representing OSM relations
  * @param <D> The dataset type
- * @since xxx
+ * @since 17862
  */
 @FunctionalInterface
 public interface IDataSelectionListener<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>,
@@ -47,7 +47,7 @@ public interface IDataSelectionListener<O extends IPrimitive, N extends INode, W
      * @param <W> type representing OSM ways
      * @param <R> type representing OSM relations
      * @param <D> The dataset type
-     * @since xxx generics
+     * @since 17862 (generics)
      */
     interface SelectionChangeEvent<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>,
               D extends OsmData<O, N, W, R>> {
@@ -112,7 +112,7 @@ public interface IDataSelectionListener<O extends IPrimitive, N extends INode, W
      * @param <W> type representing OSM ways
      * @param <R> type representing OSM relations
      * @param <D> The dataset type
-     * @since 12048, xxx (generics)
+     * @since 12048, 17862 (generics)
      */
     abstract class AbstractSelectionEvent<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>,
              D extends OsmData<O, N, W, R>> implements SelectionChangeEvent<O, N, W, R, D> {
@@ -145,7 +145,7 @@ public interface IDataSelectionListener<O extends IPrimitive, N extends INode, W
      * @param <W> type representing OSM ways
      * @param <R> type representing OSM relations
      * @param <D> The dataset type
-     * @since xxx (generics)
+     * @since 17862 (generics)
      */
     class SelectionReplaceEvent<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>, D extends OsmData<O, N, W, R>>
         extends AbstractSelectionEvent<O, N, W, R, D> {
@@ -202,7 +202,7 @@ public interface IDataSelectionListener<O extends IPrimitive, N extends INode, W
      * @param <W> type representing OSM ways
      * @param <R> type representing OSM relations
      * @param <D> The dataset type
-     * @since xxx (generics)
+     * @since 17862 (generics)
      */
     class SelectionAddEvent<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>, D extends OsmData<O, N, W, R>>
         extends AbstractSelectionEvent<O, N, W, R, D> {
@@ -257,7 +257,7 @@ public interface IDataSelectionListener<O extends IPrimitive, N extends INode, W
      * @param <W> type representing OSM ways
      * @param <R> type representing OSM relations
      * @param <D> The dataset type
-     * @since 12048, xxx (generics)
+     * @since 12048, 17862 (generics)
      */
     class SelectionRemoveEvent<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>, D extends OsmData<O, N, W, R>>
         extends AbstractSelectionEvent<O, N, W, R, D> {
@@ -313,7 +313,7 @@ public interface IDataSelectionListener<O extends IPrimitive, N extends INode, W
      * @param <W> type representing OSM ways
      * @param <R> type representing OSM relations
      * @param <D> The dataset type
-     * @since xxx (generics)
+     * @since 17862 (generics)
      */
     class SelectionToggleEvent<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>, D extends OsmData<O, N, W, R>>
         extends AbstractSelectionEvent<O, N, W, R, D> {

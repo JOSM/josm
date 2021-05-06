@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Logging;
  * @author Taylor Smock
  * @param <N> The node type
  * @param <W> The way type
- * @since xxx
+ * @since 17862
  */
 public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparable<IWaySegment<N, W>> {
 

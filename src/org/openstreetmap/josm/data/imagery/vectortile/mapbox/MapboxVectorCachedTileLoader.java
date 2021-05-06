@@ -21,7 +21,7 @@ import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 /**
  * A TileLoader class for MVT tiles
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class MapboxVectorCachedTileLoader implements TileLoader, CachedTileLoader {
     protected final ICacheAccess<String, BufferedImageCacheEntry> cache;

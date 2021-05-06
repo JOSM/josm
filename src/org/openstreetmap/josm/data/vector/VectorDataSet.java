@@ -44,7 +44,7 @@ import java.util.stream.Stream;
  * A data class for Vector Data
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, VectorWay, VectorRelation>,
        IDataSelectionEventSource<VectorPrimitive, VectorNode, VectorWay, VectorRelation, VectorDataSet> {

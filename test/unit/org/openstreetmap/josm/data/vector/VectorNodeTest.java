@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test class for {@link VectorNode}
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 class VectorNodeTest {
     @RegisterExtension

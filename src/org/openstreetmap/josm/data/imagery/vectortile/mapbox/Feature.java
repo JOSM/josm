@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.Utils;
  * A Feature for a {@link Layer}
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class Feature {
     private static final byte ID_FIELD = 1;

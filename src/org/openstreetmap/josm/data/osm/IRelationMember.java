@@ -70,7 +70,7 @@ public interface IRelationMember<P extends IPrimitive> extends PrimitiveId {
     /**
      * Returns the relation member as a way.
      * @return Member as a way
-     * @since xxx
+     * @since 17862
      */
     default IWay<?> getWay() {
         return (IWay<?>) getMember();

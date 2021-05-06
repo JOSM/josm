@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
  * The "Relation" type for vectors
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class VectorRelation extends VectorPrimitive implements IRelation<VectorRelationMember> {
     private static final UniqueIdGenerator RELATION_ID_GENERATOR = new UniqueIdGenerator();

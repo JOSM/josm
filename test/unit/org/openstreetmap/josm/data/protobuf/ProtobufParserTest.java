@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test class for {@link ProtobufParser}
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 class ProtobufParserTest {
     /**

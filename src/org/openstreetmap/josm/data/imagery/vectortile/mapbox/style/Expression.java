@@ -14,7 +14,7 @@ import javax.json.JsonValue;
  * A Mapbox vector style expression (immutable)
  * @author Taylor Smock
  * @see <a href="https://docs.mapbox.com/mapbox-gl-js/style-spec/expressions/">https://docs.mapbox.com/mapbox-gl-js/style-spec/expressions/</a>
- * @since xxx
+ * @since 17862
  */
 public final class Expression {
     /** An empty expression to use */

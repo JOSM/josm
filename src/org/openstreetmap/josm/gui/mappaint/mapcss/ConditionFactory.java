@@ -876,7 +876,7 @@ public final class ConditionFactory {
          * @param e The MapCSS environment
          * @return {@code true} if the object is highlighted
          * @see IPrimitive#isHighlighted
-         * @since xxx
+         * @since 17862
          */
         static boolean highlighted(Environment e) {
             return e.osm.isHighlighted();

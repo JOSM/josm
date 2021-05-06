@@ -196,7 +196,7 @@ public class RelationSorter {
      * Sorts a list of members by connectivity
      * @param defaultMembers The members to sort
      * @return A sorted list of the same members
-     * @since xxx (signature change, generics)
+     * @since 17862 (signature change, generics)
      */
     public static <T extends IRelationMember<? extends IPrimitive>> List<T> sortMembersByConnectivity(List<T> defaultMembers) {
         List<T> newMembers;

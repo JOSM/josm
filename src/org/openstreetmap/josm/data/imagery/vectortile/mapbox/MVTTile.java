@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * A class for Mapbox Vector Tiles
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
     private final ListenerList<TileListener> listenerList = ListenerList.create();

@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * Tile Source handling for Mapbox Vector Tile sources
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class MapboxVectorTileSource extends JosmTemplatedTMSTileSource {
     private final MapboxVectorStyle styleSource;

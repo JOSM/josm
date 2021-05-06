@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.Logging;
  * A basic Protobuf parser
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class ProtobufParser implements AutoCloseable {
     /**

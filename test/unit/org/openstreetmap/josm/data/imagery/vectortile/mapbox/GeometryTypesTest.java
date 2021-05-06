@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 /**
  * Test class for {@link GeometryTypes}
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 class GeometryTypesTest {
     @Test

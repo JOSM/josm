@@ -24,7 +24,7 @@ import org.openstreetmap.josm.data.imagery.vectortile.mapbox.InvalidMapboxVector
  *
  * @author Taylor Smock
  * @see <a href="https://docs.mapbox.com/mapbox-gl-js/style-spec/sources/">https://docs.mapbox.com/mapbox-gl-js/style-spec/sources/</a>
- * @since xxx
+ * @since 17862
  */
 public class Source {
     /**

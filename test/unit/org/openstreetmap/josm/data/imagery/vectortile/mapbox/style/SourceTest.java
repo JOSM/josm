@@ -25,7 +25,7 @@ import org.openstreetmap.josm.data.imagery.vectortile.mapbox.InvalidMapboxVector
 /**
  * Test class for {@link Source}
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class SourceTest {
     @Test

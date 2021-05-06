@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test class for {@link VectorWay}
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 class VectorWayTest {
     @Test

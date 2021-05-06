@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmData;
  * @param <W> type representing OSM ways
  * @param <R> type representing OSM relations
  * @param <D> The dataset type
- * @since xxx
+ * @since 17862
  */
 public interface IDataSelectionEventSource<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>,
        D extends OsmData<O, N, W, R>> {

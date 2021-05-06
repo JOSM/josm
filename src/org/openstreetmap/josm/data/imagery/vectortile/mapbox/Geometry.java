@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * A class to generate geometry for a vector tile
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class Geometry {
     final Collection<Shape> shapes = new ArrayList<>();

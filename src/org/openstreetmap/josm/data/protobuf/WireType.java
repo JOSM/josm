@@ -5,7 +5,7 @@ package org.openstreetmap.josm.data.protobuf;
  * The WireTypes
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public enum WireType {
     /**

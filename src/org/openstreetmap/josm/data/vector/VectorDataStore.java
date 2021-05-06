@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * A data store for Vector Data sets
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, VectorWay, VectorRelation> implements Destroyable {
     private static final String JOSM_MERGE_TYPE_KEY = "josm_merge_type";

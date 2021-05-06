@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.imagery.vectortile.mapbox;
 /**
  * Command integers for Mapbox Vector Tiles
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public enum Command {
     /**

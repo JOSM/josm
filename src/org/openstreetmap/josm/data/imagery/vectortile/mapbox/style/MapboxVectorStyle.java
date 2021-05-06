@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.Logging;
  *
  * @author Taylor Smock
  * @see <a href="https://docs.mapbox.com/mapbox-gl-js/style-spec/">https://docs.mapbox.com/mapbox-gl-js/style-spec/</a>
- * @since xxx
+ * @since 17862
  */
 public class MapboxVectorStyle {
 

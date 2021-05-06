@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.Logging;
 /**
  * A class that stores data (essentially a simple {@link DataSet})
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 class DataStore<O extends IPrimitive, N extends INode, W extends IWay<N>, R extends IRelation<?>> {
     /**

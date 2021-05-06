@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 /**
  * The "Node" type of a vector layer
  *
- * @since xxx
+ * @since 17862
  */
 public class VectorNode extends VectorPrimitive implements INode {
     private static final UniqueIdGenerator ID_GENERATOR = new UniqueIdGenerator();

@@ -5,7 +5,7 @@ package org.openstreetmap.josm.data.imagery.vectortile.mapbox.style;
  * The "source type" for the data (Mapbox Vector Style specification)
  *
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public enum SourceType {
     VECTOR,

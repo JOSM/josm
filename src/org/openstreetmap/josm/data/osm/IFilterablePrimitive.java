@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.osm;
 /**
  * An interface used to indicate that a primitive is filterable
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public interface IFilterablePrimitive {
     /**

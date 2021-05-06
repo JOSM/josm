@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Items that MAY be used to figure out if a file or server response MAY BE a Mapbox Vector Tile
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public final class MVTFile {
     /**

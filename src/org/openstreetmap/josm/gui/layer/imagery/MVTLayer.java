@@ -59,7 +59,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 /**
  * A layer for Mapbox Vector Tiles
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class MVTLayer extends AbstractCachedTileSourceLayer<MapboxVectorTileSource> implements TileListener {
     private static final String CACHE_REGION_NAME = "MVT";

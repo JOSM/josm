@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Layer;
 /**
  * An interface that is used to draw vector tiles, instead of using images
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public interface VectorTile {
     /**

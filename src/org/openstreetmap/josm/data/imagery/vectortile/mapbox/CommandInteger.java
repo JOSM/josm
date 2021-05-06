@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 /**
  * An indicator for a command to be executed
  * @author Taylor Smock
- * @since xxx
+ * @since 17862
  */
 public class CommandInteger {
     private final Command type;
