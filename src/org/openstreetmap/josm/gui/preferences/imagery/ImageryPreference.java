@@ -97,7 +97,9 @@ public final class ImageryPreference extends ExtensibleTabPreferenceSetting {
         addSettingsSection(p, tr("TMS Settings"), tmsSettings, GBC.eol().fill(HORIZONTAL));
 
         p.add(new JPanel(), GBC.eol().fill(BOTH));
-        return GuiHelper.setDefaultIncrement(new JScrollPane(p));
+        JScrollPane scrollPane = new JScrollPane(p);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        return GuiHelper.setDefaultIncrement(scrollPane);
     }
 
     @Override

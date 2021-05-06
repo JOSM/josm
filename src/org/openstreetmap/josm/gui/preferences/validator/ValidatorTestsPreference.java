@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -89,8 +90,10 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
             test.addGui(testPanel);
         }
 
+        JScrollPane scrollPane = GuiHelper.embedInVerticalScrollPane(testPanel);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         gui.getValidatorPreference().addSubTab(this, tr("Tests"),
-                GuiHelper.embedInVerticalScrollPane(testPanel),
+                scrollPane,
                 tr("Choose tests to enable"));
     }
 

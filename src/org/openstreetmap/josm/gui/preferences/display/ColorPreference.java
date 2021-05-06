@@ -374,7 +374,6 @@ public class ColorPreference extends ExtensibleTabPreferenceSetting implements L
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panel.add(colorFilter, GBC.eol().insets(0, 0, 0, 5).fill(HORIZONTAL));
         JScrollPane scrollpane = new JScrollPane(colors);
-        scrollpane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         panel.add(scrollpane, GBC.eol().fill(BOTH));
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         panel.add(buttonPanel, GBC.eol().insets(5, 0, 5, 5).fill(HORIZONTAL));

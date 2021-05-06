@@ -260,6 +260,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements ExpertMod
             super(preferencePanel.getComponent());
             this.preferenceSetting = preferencePanel.getTabPreferenceSetting();
             GuiHelper.setDefaultIncrement(this);
+            setBorder(BorderFactory.createEmptyBorder());
         }
 
         @Override

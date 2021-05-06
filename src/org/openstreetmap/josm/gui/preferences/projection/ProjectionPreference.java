@@ -20,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -369,7 +370,6 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
 
         unitsCombo.setSelectedItem(SystemOfMeasurement.getSystemOfMeasurement());
 
-        projPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5, 5, 0, 5));
         projPanel.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
@@ -413,7 +413,9 @@ public class ProjectionPreference extends DefaultTabPreferenceSetting {
         projPanel.add(unitsCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0, 5, 5, 5));
         projPanel.add(GBC.glue(1, 1), GBC.std().fill(GBC.HORIZONTAL).weight(1.0, 1.0));
 
-        gui.createPreferenceTab(this).add(projPanel.getVerticalScrollPane(), GBC.std().fill());
+        JScrollPane scrollPane = projPanel.getVerticalScrollPane();
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        gui.createPreferenceTab(this).add(scrollPane, GBC.std().fill());
 
         selectedProjectionChanged(pc);
     }
