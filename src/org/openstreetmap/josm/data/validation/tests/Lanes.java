@@ -96,6 +96,6 @@ public class Lanes extends Test.TagTest {
 
     @Override
     public boolean isPrimitiveUsable(OsmPrimitive p) {
-        return p.isTagged() && p instanceof Way && p.hasTag("highway")  && super.isPrimitiveUsable(p);
+        return p.isTagged() && p instanceof Way && p.hasTag("highway") && super.isPrimitiveUsable(p);
     }
 }
