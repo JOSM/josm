@@ -47,6 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1547,6 +1548,49 @@ public class ImageProvider {
      * @since 7132
      */
     public static BufferedImage read(File input, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        return read(input, readMetadata, enforceTransparency, ImageReader::getDefaultReadParam);
+    }
+
+    /**
+     * Returns a <code>BufferedImage</code> as the result of decoding
+     * a supplied <code>File</code> with an <code>ImageReader</code>
+     * chosen automatically from among those currently registered.
+     * The <code>File</code> is wrapped in an
+     * <code>ImageInputStream</code>.  If no registered
+     * <code>ImageReader</code> claims to be able to read the
+     * resulting stream, <code>null</code> is returned.
+     *
+     * <p> The current cache settings from <code>getUseCache</code>and
+     * <code>getCacheDirectory</code> will be used to control caching in the
+     * <code>ImageInputStream</code> that is created.
+     *
+     * <p> Note that there is no <code>read</code> method that takes a
+     * filename as a <code>String</code>; use this method instead after
+     * creating a <code>File</code> from the filename.
+     *
+     * <p> This method does not attempt to locate
+     * <code>ImageReader</code>s that can read directly from a
+     * <code>File</code>; that may be accomplished using
+     * <code>IIORegistry</code> and <code>ImageReaderSpi</code>.
+     *
+     * @param input a <code>File</code> to read from.
+     * @param readMetadata if {@code true}, makes sure to read image metadata to detect transparency color, if any.
+     * In that case the color can be retrieved later through {@link #PROP_TRANSPARENCY_COLOR}.
+     * Always considered {@code true} if {@code enforceTransparency} is also {@code true}
+     * @param enforceTransparency if {@code true}, makes sure to read image metadata and, if the image does not
+     * provide an alpha channel but defines a {@code TransparentColor} metadata node, that the resulting image
+     * has a transparency set to {@code TRANSLUCENT} and uses the correct transparent color.
+     * @param readParamFunction a function to compute the read parameters from the image reader
+     *
+     * @return a <code>BufferedImage</code> containing the decoded contents of the input, or <code>null</code>.
+     *
+     * @throws IllegalArgumentException if <code>input</code> is <code>null</code>.
+     * @throws IOException if an error occurs during reading.
+     * @see BufferedImage#getProperty
+     * @since xxx
+     */
+    public static BufferedImage read(File input, boolean readMetadata, boolean enforceTransparency,
+                                     Function<ImageReader, ImageReadParam> readParamFunction) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(input, "input");
         if (!input.canRead()) {
             throw new IIOException("Can't read input file!");
@@ -1556,7 +1600,7 @@ public class ImageProvider {
         if (stream == null) {
             throw new IIOException("Can't create an ImageInputStream!");
         }
-        BufferedImage bi = read(stream, readMetadata, enforceTransparency);
+        BufferedImage bi = read(stream, readMetadata, enforceTransparency, readParamFunction);
         if (bi == null) {
             stream.close();
         }
@@ -1686,6 +1730,11 @@ public class ImageProvider {
      * @since 7132
      */
     public static BufferedImage read(ImageInputStream stream, boolean readMetadata, boolean enforceTransparency) throws IOException {
+        return read(stream, readMetadata, enforceTransparency, ImageReader::getDefaultReadParam);
+    }
+
+    private static BufferedImage read(ImageInputStream stream, boolean readMetadata, boolean enforceTransparency,
+                                      Function<ImageReader, ImageReadParam> readParamFunction) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(stream, "stream");
 
         Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
@@ -1694,8 +1743,8 @@ public class ImageProvider {
         }
 
         ImageReader reader = iter.next();
-        ImageReadParam param = reader.getDefaultReadParam();
         reader.setInput(stream, true, !readMetadata && !enforceTransparency);
+        ImageReadParam param = readParamFunction.apply(reader);
         BufferedImage bi = null;
         try { // NOPMD
             bi = reader.read(0, param);

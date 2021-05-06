@@ -9,7 +9,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -21,17 +20,16 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -39,9 +37,7 @@ import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ExifReader;
-import org.openstreetmap.josm.tools.HiDPISupport;
 import org.openstreetmap.josm.tools.ImageProcessor;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -78,9 +74,6 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     /** When a selection is done, the rectangle of the selection (in image coordinates) */
     private VisRect selectedRect;
 
-    /** The tracker to load the images */
-    private final MediaTracker tracker = new MediaTracker(this);
-
     private final ImgDisplayMouseListener imgMouseListener = new ImgDisplayMouseListener();
 
     private String emptyText;
@@ -103,13 +96,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     private static final DoubleProperty MAX_ZOOM =
         new DoubleProperty("geoimage.maximum-zoom-scale", 2.0);
 
-    /** Use bilinear filtering **/
-    private static final BooleanProperty BILIN_DOWNSAMP =
-        new BooleanProperty("geoimage.bilinear-downsampling-progressive", true);
-    private static final BooleanProperty BILIN_UPSAMP =
-        new BooleanProperty("geoimage.bilinear-upsampling", false);
-    private static double bilinUpper;
-    private static double bilinLower;
+    /** Maximum width (in pixels) for loading images **/
+    private static final IntegerProperty MAX_WIDTH =
+        new IntegerProperty("geoimage.maximum-width", 6000);
 
     /** Show a background for the error text (may be hard on eyes) */
     private static final BooleanProperty ERROR_MESSAGE_BACKGROUND = new BooleanProperty("geoimage.message.error.background", false);
@@ -120,13 +109,6 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             e.getKey().equals(AGPIFO_STYLE.getKey())) {
             dragButton = AGPIFO_STYLE.get() ? 1 : 3;
             zoomButton = dragButton == 1 ? 3 : 1;
-        }
-        if (e == null ||
-            e.getKey().equals(MAX_ZOOM.getKey()) ||
-            e.getKey().equals(BILIN_DOWNSAMP.getKey()) ||
-            e.getKey().equals(BILIN_UPSAMP.getKey())) {
-            bilinUpper = (BILIN_UPSAMP.get() ? 2*MAX_ZOOM.get() : (BILIN_DOWNSAMP.get() ? 0.5 : 0));
-            bilinLower = (BILIN_DOWNSAMP.get() ? 0 : 1);
         }
     }
 
@@ -236,125 +218,31 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     }
 
     /** The thread that reads the images. */
-    protected class LoadImageRunnable implements Runnable, ImageObserver {
+    protected class LoadImageRunnable implements Runnable {
 
         private final ImageEntry entry;
-        private final File file;
 
         LoadImageRunnable(ImageEntry entry) {
             this.entry = entry;
-            this.file = entry.getFile();
-        }
-
-        @Override
-        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if (((infoflags & ImageObserver.WIDTH) == ImageObserver.WIDTH) &&
-                ((infoflags & ImageObserver.HEIGHT) == ImageObserver.HEIGHT)) {
-                synchronized (entry) {
-                    entry.setWidth(width);
-                    entry.setHeight(height);
-                    entry.notifyAll();
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private boolean updateImageEntry(Image img) {
-            if (img == null) {
-                synchronized (ImageDisplay.this) {
-                    errorLoading = true;
-                    ImageDisplay.this.repaint();
-                    return false;
-                }
-            }
-            if (!(entry.getWidth() > 0 && entry.getHeight() > 0)) {
-                synchronized (entry) {
-                    int width = img.getWidth(this);
-                    int height = img.getHeight(this);
-
-                    if (!(entry.getWidth() > 0 && entry.getHeight() > 0) && width > 0 && height > 0) {
-                        // dimensions not in metadata but already present in image, so observer won't be called
-                        entry.setWidth(width);
-                        entry.setHeight(height);
-                        entry.notifyAll();
-                    }
-
-                    long now = System.currentTimeMillis();
-                    while (!(entry.getWidth() > 0 && entry.getHeight() > 0)) {
-                        try {
-                            entry.wait(1000);
-                            if (this.entry != ImageDisplay.this.entry)
-                                return false;
-                            if (System.currentTimeMillis() - now > 10000)
-                                synchronized (ImageDisplay.this) {
-                                    errorLoading = true;
-                                    ImageDisplay.this.repaint();
-                                    return false;
-                                }
-                        } catch (InterruptedException e) {
-                            Logging.trace(e);
-                            Logging.warn("InterruptedException in {0} while getting properties of image {1}",
-                                    getClass().getSimpleName(), file.getPath());
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-            }
-            return true;
-        }
-
-        private boolean mayFitMemory(long amountWanted) {
-            return amountWanted < (
-                   Runtime.getRuntime().maxMemory() -
-                   Runtime.getRuntime().totalMemory() +
-                   Runtime.getRuntime().freeMemory());
         }
 
         @Override
         public void run() {
-            BufferedImage img;
             try {
-                img = ImageIO.read(file);
-
-                if (!updateImageEntry(img))
-                    return;
-
-                int width = entry.getWidth();
-                int height = entry.getHeight();
-
-                if (mayFitMemory(((long) width)*height*4*2)) {
-                    Logging.info(tr("Loading {0}", file.getPath()));
-                    tracker.addImage(img, 1);
-
-                    // Wait for the end of loading
-                    while (!tracker.checkID(1, true)) {
-                        if (this.entry != ImageDisplay.this.entry) {
-                            // The file has changed
-                            tracker.removeImage(img);
-                            return;
-                        }
-                        try {
-                            Thread.sleep(5);
-                        } catch (InterruptedException e) {
-                            Logging.trace(e);
-                            Logging.warn("InterruptedException in {0} while loading image {1}",
-                                    getClass().getSimpleName(), file.getPath());
-                            Thread.currentThread().interrupt();
-                        }
+                Dimension target = new Dimension(MAX_WIDTH.get(), MAX_WIDTH.get());
+                BufferedImage img = entry.read(target);
+                if (img == null) {
+                    synchronized (ImageDisplay.this) {
+                        errorLoading = true;
+                        ImageDisplay.this.repaint();
+                        return;
                     }
-                    if (tracker.isErrorID(1)) {
-                        Logging.warn("Abort loading of {0} since tracker errored with 1", file);
-                        // the tracker catches OutOfMemory conditions
-                        tracker.removeImage(img);
-                        img = null;
-                    } else {
-                        tracker.removeImage(img);
-                    }
-                } else {
-                    Logging.warn("Abort loading of {0} since it might not fit into memory", file);
-                    img = null;
                 }
+
+                int width = img.getWidth();
+                int height = img.getHeight();
+                entry.setWidth(width);
+                entry.setHeight(height);
 
                 synchronized (ImageDisplay.this) {
                     if (this.entry != ImageDisplay.this.entry) {
@@ -362,37 +250,35 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                         return;
                     }
 
-                    if (img != null) {
-                        boolean switchedDim = false;
-                        if (ExifReader.orientationNeedsCorrection(entry.getExifOrientation())) {
-                            if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
-                                width = img.getHeight(null);
-                                height = img.getWidth(null);
-                                switchedDim = true;
-                            }
-                            final BufferedImage rot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-                            final AffineTransform xform = ExifReader.getRestoreOrientationTransform(
-                                    entry.getExifOrientation(),
-                                    img.getWidth(null),
-                                    img.getHeight(null));
-                            final Graphics2D g = rot.createGraphics();
-                            g.drawImage(img, xform, null);
-                            g.dispose();
-                            img = rot;
+                    boolean switchedDim = false;
+                    if (ExifReader.orientationNeedsCorrection(entry.getExifOrientation())) {
+                        if (ExifReader.orientationSwitchesDimensions(entry.getExifOrientation())) {
+                            width = img.getHeight(null);
+                            height = img.getWidth(null);
+                            switchedDim = true;
                         }
-
-                        ImageDisplay.this.image = img;
-                        updateProcessedImage();
-                        // This will clear the loading info box
-                        ImageDisplay.this.oldEntry = ImageDisplay.this.entry;
-                        visibleRect = new VisRect(0, 0, width, height);
-
-                        Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
-                                file.getPath(), width, height, width*height*4/1024/1024, switchedDim);
+                        final BufferedImage rot = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                        final AffineTransform xform = ExifReader.getRestoreOrientationTransform(
+                                entry.getExifOrientation(),
+                                img.getWidth(null),
+                                img.getHeight(null));
+                        final Graphics2D g = rot.createGraphics();
+                        g.drawImage(img, xform, null);
+                        g.dispose();
+                        img = rot;
                     }
 
+                    ImageDisplay.this.image = img;
+                    updateProcessedImage();
+                    // This will clear the loading info box
+                    ImageDisplay.this.oldEntry = ImageDisplay.this.entry;
+                    visibleRect = new VisRect(0, 0, width, height);
+
+                    Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
+                            entry.getFile().getPath(), width, height, width * height * 4 / 1024 / 1024, switchedDim);
+
                     selectedRect = null;
-                    errorLoading = (img == null);
+                    errorLoading = false;
                 }
                 ImageDisplay.this.repaint();
             } catch (IOException ex) {
@@ -745,7 +631,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     public void setImage(ImageEntry entry) {
         LoadImageRunnable runnable = setImage0(entry);
         if (runnable != null) {
-            new Thread(runnable, LoadImageRunnable.class.getName()).start();
+            MainApplication.worker.execute(runnable);
         }
     }
 
@@ -820,39 +706,6 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         if (image != null && (entry != null || oldEntry != null)) {
             Rectangle r = new Rectangle(visibleRect);
             Rectangle target = calculateDrawImageRectangle(visibleRect, size);
-            double scale = target.width / (double) r.width; // pixel ratio is 1:1
-
-            if (selectedRect == null && !visibleRect.isDragUpdate &&
-                bilinLower < scale && scale < bilinUpper) {
-                try {
-                    BufferedImage bi = ImageProvider.toBufferedImage(image, r);
-                    if (bi != null) {
-                        r.x = r.y = 0;
-                        double hiDPIScale = HiDPISupport.getHiDPIScale();
-                        int width = (int) (target.width * hiDPIScale);
-                        int height = (int) (target.height * hiDPIScale);
-                        // See https://community.oracle.com/docs/DOC-983611 - The Perils of Image.getScaledInstance()
-                        // Pre-scale image when downscaling by more than two times to avoid aliasing from default algorithm
-                        bi = ImageProvider.createScaledImage(bi, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                        r.width = width;
-                        r.height = height;
-                        image = bi;
-                    }
-                } catch (OutOfMemoryError oom) {
-                    Logging.trace(oom);
-                    // fall-back to the non-bilinear scaler
-                    r.x = visibleRect.x;
-                    r.y = visibleRect.y;
-                }
-            } else {
-                // if target and r cause drawImage to scale image region to a tmp buffer exceeding
-                // its bounds, it will silently fail; crop with r first in such cases
-                // (might be impl. dependent, exhibited by openjdk 1.8.0_151)
-                if (scale*(r.x+r.width) > Short.MAX_VALUE || scale*(r.y+r.height) > Short.MAX_VALUE) {
-                    image = ImageProvider.toBufferedImage(image, r);
-                    r.x = r.y = 0;
-                }
-            }
 
             g.drawImage(image,
                     target.x, target.y, target.x + target.width, target.y + target.height,
