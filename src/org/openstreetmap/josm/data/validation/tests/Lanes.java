@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -95,6 +96,6 @@ public class Lanes extends Test.TagTest {
 
     @Override
     public boolean isPrimitiveUsable(OsmPrimitive p) {
-        return p.isTagged() && super.isPrimitiveUsable(p);
+        return p.isTagged() && p instanceof Way && p.hasTag("highway")  && super.isPrimitiveUsable(p);
     }
 }
