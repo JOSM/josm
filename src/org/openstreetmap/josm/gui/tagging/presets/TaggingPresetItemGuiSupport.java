@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.tagging.presets;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -106,7 +107,8 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
 
     @Override
     public boolean evaluateCondition(SearchCompiler.Match condition) {
-        throw new UnsupportedOperationException();
+        Tagged tagged = Tagged.ofTags(changedTagsSupplier.get());
+        return condition.match(tagged);
     }
 
     /**

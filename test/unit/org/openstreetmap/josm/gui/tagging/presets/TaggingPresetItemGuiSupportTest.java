@@ -36,6 +36,7 @@ class TaggingPresetItemGuiSupportTest {
     @Test
     void testTemplate() throws Exception {
         ArrayList<Tag> tags = new ArrayList<>(Arrays.asList(
+                new Tag("route", "bus"),
                 new Tag("name", "xxx"),
                 new Tag("from", "Foo"),
                 new Tag("to", "Bar")));
@@ -44,6 +45,8 @@ class TaggingPresetItemGuiSupportTest {
 
         TaggingPresetItemGuiSupport support = TaggingPresetItemGuiSupport.create(false, primitives, () -> tags);
         TemplateEntry templateEntry = new TemplateParser("Bus {ref}: {from} -> {to}").parse();
+        assertEquals("Bus 42: Foo -> Bar", templateEntry.getText(support));
+        templateEntry = new TemplateParser("?{route=train 'Train'|route=bus 'Bus'|'X'} {ref}: {from} -> {to}").parse();
         assertEquals("Bus 42: Foo -> Bar", templateEntry.getText(support));
     }
 }

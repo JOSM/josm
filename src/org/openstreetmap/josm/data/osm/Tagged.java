@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -231,6 +232,16 @@ public interface Tagged {
      */
     default boolean isKeyFalse(String key) {
         return OsmUtils.isFalse(get(key));
+    }
+
+
+    /**
+     * Returns a Tagged instance for the given tag collection
+     * @param tags the tag collection
+     * @return a Tagged instance for the given tag collection
+     */
+    static Tagged ofTags(Collection<Tag> tags) {
+        return ofMap(tags.stream().collect(Collectors.toMap(Tag::getKey, Tag::getValue, (a, b) -> a)));
     }
 
     /**
