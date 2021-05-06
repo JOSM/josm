@@ -870,6 +870,17 @@ public final class ConditionFactory {
             }
             return e.osm.isSelected();
         }
+
+        /**
+         * Check if the object is highlighted (i.e., is hovered over)
+         * @param e The MapCSS environment
+         * @return {@code true} if the object is highlighted
+         * @see IPrimitive#isHighlighted
+         * @since xxx
+         */
+        static boolean highlighted(Environment e) {
+            return e.osm.isHighlighted();
+        }
     }
 
     /**
@@ -887,6 +898,7 @@ public final class ConditionFactory {
             PseudoClassCondition.register("closed2", PseudoClasses::closed2);
             PseudoClassCondition.register("completely_downloaded", PseudoClasses::completely_downloaded);
             PseudoClassCondition.register("connection", PseudoClasses::connection);
+            PseudoClassCondition.register("highlighted", PseudoClasses::highlighted);
             PseudoClassCondition.register("inDownloadedArea", PseudoClasses::inDownloadedArea);
             PseudoClassCondition.register("modified", PseudoClasses::modified);
             PseudoClassCondition.register("new", PseudoClasses::_new);

@@ -10,9 +10,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelationMember;
+import org.openstreetmap.josm.data.osm.IWay;
 
 /**
  * Auxiliary class for relation sorting.
@@ -26,15 +27,16 @@ import org.openstreetmap.josm.data.osm.Way;
  * (that are shared by other members).
  *
  * @author Christiaan Welvaart &lt;cjw@time4t.net&gt;
- * @since 1785
+ * @param <T> The type of {@link IRelationMember}
+ * @since 1785, xxx (generics)
  */
-public class RelationNodeMap {
+public class RelationNodeMap<T extends IRelationMember<? extends IPrimitive>> {
 
     private static final String ROLE_BACKWARD = "backward";
 
     private static class NodesWays {
-        public final Map<Node, Set<Integer>> nodes = new TreeMap<>();
-        public final Map<Integer, Set<Node>> ways = new TreeMap<>();
+        public final Map<INode, Set<Integer>> nodes = new TreeMap<>();
+        public final Map<Integer, Set<INode>> ways = new TreeMap<>();
         public final boolean oneWay;
 
         NodesWays(boolean oneWay) {
@@ -56,7 +58,7 @@ public class RelationNodeMap {
      * Used to keep track of what members are done.
      */
     private final Set<Integer> remaining = new TreeSet<>();
-    private final Map<Integer, Set<Node>> remainingOneway = new TreeMap<>();
+    private final Map<Integer, Set<INode>> remainingOneway = new TreeMap<>();
 
     /**
      * All members that are incomplete or not a way
@@ -67,8 +69,9 @@ public class RelationNodeMap {
      * Gets the start node of the member, respecting the direction role.
      * @param m The relation member.
      * @return <code>null</code> if the member is no way, the node otherwise.
+     * @since xxx (generics)
      */
-    public static Node firstOnewayNode(RelationMember m) {
+    public static INode firstOnewayNode(IRelationMember<?> m) {
         if (!m.isWay()) return null;
         if (ROLE_BACKWARD.equals(m.getRole())) {
             return m.getWay().lastNode();
@@ -81,7 +84,7 @@ public class RelationNodeMap {
      * @param m The relation member.
      * @return <code>null</code> if the member is no way, the node otherwise.
      */
-    public static Node lastOnewayNode(RelationMember m) {
+    public static INode lastOnewayNode(IRelationMember<?> m) {
         if (!m.isWay()) return null;
         if (ROLE_BACKWARD.equals(m.getRole())) {
             return m.getWay().firstNode();
@@ -89,17 +92,17 @@ public class RelationNodeMap {
         return m.getWay().lastNode();
     }
 
-    RelationNodeMap(List<RelationMember> members) {
+    RelationNodeMap(List<T> members) {
         for (int i = 0; i < members.size(); ++i) {
-            RelationMember m = members.get(i);
+            T m = members.get(i);
             if (m.getMember().isIncomplete() || !m.isWay() || m.getWay().getNodesCount() < 2) {
                 notSortable.add(i);
                 continue;
             }
 
-            Way w = m.getWay();
+            IWay<?> w = m.getWay();
             if (RelationSortUtils.roundaboutType(w) != NONE) {
-                for (Node nd : w.getNodes()) {
+                for (INode nd : w.getNodes()) {
                     addPair(nd, i);
                 }
             } else if (RelationSortUtils.isOneway(m)) {
@@ -118,34 +121,34 @@ public class RelationNodeMap {
         remaining.addAll(map.ways.keySet());
     }
 
-    private void addPair(Node n, int i) {
+    private void addPair(INode n, int i) {
         map.nodes.computeIfAbsent(n, k -> new TreeSet<>()).add(i);
         map.ways.computeIfAbsent(i, k -> new TreeSet<>()).add(n);
     }
 
-    private void addNodeWayMap(Node n, int i) {
+    private void addNodeWayMap(INode n, int i) {
         onewayMap.nodes.computeIfAbsent(n, k -> new TreeSet<>()).add(i);
     }
 
-    private void addWayNodeMap(Node n, int i) {
+    private void addWayNodeMap(INode n, int i) {
         onewayMap.ways.computeIfAbsent(i, k -> new TreeSet<>()).add(n);
     }
 
-    private void addNodeWayMapReverse(Node n, int i) {
+    private void addNodeWayMapReverse(INode n, int i) {
         onewayReverseMap.nodes.computeIfAbsent(n, k -> new TreeSet<>()).add(i);
     }
 
-    private void addWayNodeMapReverse(Node n, int i) {
+    private void addWayNodeMapReverse(INode n, int i) {
         onewayReverseMap.ways.computeIfAbsent(i, k -> new TreeSet<>()).add(n);
     }
 
-    private void addRemainingForward(Node n, int i) {
+    private void addRemainingForward(INode n, int i) {
         remainingOneway.computeIfAbsent(i, k -> new TreeSet<>()).add(n);
     }
 
     private Integer firstOneway;
-    private Node lastOnewayNode;
-    private Node firstCircular;
+    private INode lastOnewayNode;
+    private INode firstCircular;
 
     /**
      * Return a relation member that is linked to the member 'i', but has not been popped yet.
@@ -158,7 +161,7 @@ public class RelationNodeMap {
         if (firstOneway != null) return popForwardOnewayPart(way);
 
         if (map.ways.containsKey(way)) {
-            for (Node n : map.ways.get(way)) {
+            for (INode n : map.ways.get(way)) {
                 Integer i = deleteAndGetAdjacentNode(map, n);
                 if (i != null) return i;
 
@@ -176,7 +179,7 @@ public class RelationNodeMap {
 
     private Integer popForwardOnewayPart(Integer way) {
         if (onewayMap.ways.containsKey(way)) {
-            Node exitNode = onewayMap.ways.get(way).iterator().next();
+            INode exitNode = onewayMap.ways.get(way).iterator().next();
 
             if (checkIfEndOfLoopReached(exitNode)) {
                 lastOnewayNode = exitNode;
@@ -201,7 +204,7 @@ public class RelationNodeMap {
     // Check if the given node can be the end of the loop (i.e. it has
     // an outgoing bidirectional or multiple outgoing oneways, or we
     // looped back to our first circular node)
-    private boolean checkIfEndOfLoopReached(Node n) {
+    private boolean checkIfEndOfLoopReached(INode n) {
         return map.nodes.containsKey(n)
                 || (onewayMap.nodes.containsKey(n) && (onewayMap.nodes.get(n).size() > 1))
                 || ((firstCircular != null) && (firstCircular == n));
@@ -209,14 +212,14 @@ public class RelationNodeMap {
 
     private Integer popBackwardOnewayPart(int way) {
         if (lastOnewayNode != null) {
-            Set<Node> nodes = new TreeSet<>();
+            Set<INode> nodes = new TreeSet<>();
             if (onewayReverseMap.ways.containsKey(way)) {
                 nodes.addAll(onewayReverseMap.ways.get(way));
             }
             if (map.ways.containsKey(way)) {
                 nodes.addAll(map.ways.get(way));
             }
-            for (Node n : nodes) {
+            for (INode n : nodes) {
                 if (n == lastOnewayNode) { //if oneway part ends
                     firstOneway = null;
                     lastOnewayNode = null;
@@ -247,20 +250,20 @@ public class RelationNodeMap {
      * @param n node
      * @return node next to n
      */
-    private Integer deleteAndGetAdjacentNode(NodesWays nw, Node n) {
+    private Integer deleteAndGetAdjacentNode(NodesWays nw, INode n) {
         Integer j = findAdjacentWay(nw, n);
         if (j == null) return null;
         deleteWayNode(nw, j, n);
         return j;
     }
 
-    private static Integer findAdjacentWay(NodesWays nw, Node n) {
+    private static Integer findAdjacentWay(NodesWays nw, INode n) {
         Set<Integer> adj = nw.nodes.get(n);
         if (adj == null || adj.isEmpty()) return null;
         return adj.iterator().next();
     }
 
-    private void deleteWayNode(NodesWays nw, Integer way, Node n) {
+    private void deleteWayNode(NodesWays nw, Integer way, INode n) {
         if (nw.oneWay) {
             doneOneway(way);
         } else {
@@ -285,7 +288,7 @@ public class RelationNodeMap {
 
         if (remainingOneway.isEmpty()) return null;
         for (Integer i : remainingOneway.keySet()) { //find oneway, which is connected to more than one way (is between two oneway loops)
-            for (Node n : onewayReverseMap.ways.get(i)) {
+            for (INode n : onewayReverseMap.ways.get(i)) {
                 if (onewayReverseMap.nodes.containsKey(n) && onewayReverseMap.nodes.get(n).size() > 1) {
                     doneOneway(i);
                     firstCircular = n;
@@ -305,8 +308,8 @@ public class RelationNodeMap {
      * @param i member key
      */
     private void doneOneway(Integer i) {
-        Set<Node> nodesForward = remainingOneway.get(i);
-        for (Node n : nodesForward) {
+        Set<INode> nodesForward = remainingOneway.get(i);
+        for (INode n : nodesForward) {
             if (onewayMap.nodes.containsKey(n)) {
                 onewayMap.nodes.get(n).remove(i);
             }
@@ -319,8 +322,8 @@ public class RelationNodeMap {
 
     private void done(Integer i) {
         remaining.remove(i);
-        Set<Node> nodes = map.ways.get(i);
-        for (Node n : nodes) {
+        Set<INode> nodes = map.ways.get(i);
+        for (INode n : nodes) {
             boolean result = map.nodes.get(n).remove(i);
             if (!result) throw new AssertionError();
         }

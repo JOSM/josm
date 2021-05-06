@@ -86,6 +86,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
+import org.openstreetmap.josm.data.imagery.vectortile.VectorTile;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -109,6 +110,7 @@ import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChan
 import org.openstreetmap.josm.gui.layer.imagery.IncreaseZoomAction;
 import org.openstreetmap.josm.gui.layer.imagery.LoadAllTilesAction;
 import org.openstreetmap.josm.gui.layer.imagery.LoadErroneousTilesAction;
+import org.openstreetmap.josm.gui.layer.imagery.MVTLayer;
 import org.openstreetmap.josm.gui.layer.imagery.ReprojectionTile;
 import org.openstreetmap.josm.gui.layer.imagery.ShowErrorsAction;
 import org.openstreetmap.josm.gui.layer.imagery.TileAnchor;
@@ -888,7 +890,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (coordinateConverter.requiresReprojection()) {
                 tile = new ReprojectionTile(tileSource, x, y, zoom);
             } else {
-                tile = new Tile(tileSource, x, y, zoom);
+                tile = createTile(tileSource, x, y, zoom);
             }
             tileCache.addTile(tile);
         }
@@ -1041,7 +1043,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     img = getLoadedTileImage(tile);
                     anchorImage = getAnchor(tile, img);
                 }
-                if (img == null || anchorImage == null) {
+                if (img == null || anchorImage == null || (tile instanceof VectorTile && !tile.isLoaded())) {
                     miss = true;
                 }
             }
@@ -1050,7 +1052,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 return;
             }
 
-            img = applyImageProcessors(img);
+            if (img != null) {
+                img = applyImageProcessors(img);
+            }
 
             TileAnchor anchorScreen = coordinateConverter.getScreenAnchorForTile(tile);
             synchronized (paintMutex) {
@@ -1862,7 +1866,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
                 for (int x = minX; x <= maxX; x++) {
                     for (int y = minY; y <= maxY; y++) {
-                        requestedTiles.add(new Tile(tileSource, x, y, currentZoomLevel));
+                        requestedTiles.add(createTile(tileSource, x, y, currentZoomLevel));
                     }
                 }
             }
@@ -1968,6 +1972,20 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return SaveActionBase.createAndOpenSaveFileChooser(tr("Save WMS file"), WMSLayerImporter.FILE_FILTER);
     }
 
+    /**
+     * Create a new tile. Added to allow use of custom {@link Tile} objects.
+     *
+     * @param source Tile source
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @param zoom Zoom level
+     * @return The new {@link Tile}
+     * @since xxx
+     */
+    public Tile createTile(T source, int x, int y, int zoom) {
+        return new Tile(source, x, y, zoom);
+    }
+
     @Override
     public synchronized void destroy() {
         super.destroy();
@@ -1988,6 +2006,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             allocateCacheMemory();
             if (memory != null) {
                 doPaint(graphics);
+                if (AbstractTileSourceLayer.this instanceof MVTLayer) {
+                    AbstractTileSourceLayer.this.paint(graphics.getDefaultGraphics(), graphics.getMapView(), graphics.getMapView()
+                      .getRealBounds());
+                }
             } else {
                 Graphics g = graphics.getDefaultGraphics();
                 Color oldColor = g.getColor();

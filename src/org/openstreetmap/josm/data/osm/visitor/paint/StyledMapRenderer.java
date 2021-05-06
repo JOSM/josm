@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -1637,13 +1638,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         RenderBenchmarkCollector benchmark = benchmarkFactory.get();
         BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
-
         try {
-            if (data.getReadLock().tryLock(1, TimeUnit.SECONDS)) {
+            Lock readLock = data.getReadLock();
+            if (readLock.tryLock(1, TimeUnit.SECONDS)) {
                 try {
                     paintWithLock(data, renderVirtualNodes, benchmark, bbox);
                 } finally {
-                    data.getReadLock().unlock();
+                    readLock.unlock();
                 }
             } else {
                 Logging.warn("Cannot paint layer {0}: It is locked.");

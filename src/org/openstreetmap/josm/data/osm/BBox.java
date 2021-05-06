@@ -174,6 +174,16 @@ public class BBox implements IBounds {
      * @param extraSpace the value to extend the primitives bbox. Unit is in LatLon degrees.
      */
     public void addPrimitive(OsmPrimitive primitive, double extraSpace) {
+        this.addPrimitive((IPrimitive) primitive, extraSpace);
+    }
+
+    /**
+     * Extends this bbox to include the bbox of the primitive extended by extraSpace.
+     * @param primitive an primitive
+     * @param extraSpace the value to extend the primitives bbox. Unit is in LatLon degrees.
+     * @since xxx
+     */
+    public void addPrimitive(IPrimitive primitive, double extraSpace) {
         IBounds primBbox = primitive.getBBox();
         add(primBbox.getMinLon() - extraSpace, primBbox.getMinLat() - extraSpace);
         add(primBbox.getMaxLon() + extraSpace, primBbox.getMaxLat() + extraSpace);
@@ -455,8 +465,9 @@ public class BBox implements IBounds {
     /**
      * Returns an immutable version of this bbox, i.e., modifying calls throw an {@link UnsupportedOperationException}.
      * @return an immutable version of this bbox
+     * @since xxx (interface)
      */
-    BBox toImmutable() {
+    public BBox toImmutable() {
         return new Immutable(this);
     }
 
@@ -472,7 +483,7 @@ public class BBox implements IBounds {
         }
 
         @Override
-        BBox toImmutable() {
+        public BBox toImmutable() {
             return this;
         }
     }

@@ -86,6 +86,17 @@ public class ElemStyles implements PreferenceChangedListener {
     }
 
     /**
+     * Constructs a new {@code ElemStyles} with specific style sources. This does not listen to preference changes,
+     * and therefore should only be used with layers that have specific drawing requirements.
+     *
+     * @param sources The style sources (these cannot be added to, or removed from)
+     * @since xxx
+     */
+    public ElemStyles(Collection<StyleSource> sources) {
+        this.styleSources.addAll(sources);
+    }
+
+    /**
      * Clear the style cache for all primitives of all DataSets.
      */
     public void clearCached() {
@@ -151,69 +162,71 @@ public class ElemStyles implements PreferenceChangedListener {
      * @since 13810 (signature)
      */
     public Pair<StyleElementList, Range> getStyleCacheWithRange(IPrimitive osm, double scale, NavigatableComponent nc) {
-        if (!osm.isCachedStyleUpToDate() || scale <= 0) {
-            osm.setCachedStyle(StyleCache.EMPTY_STYLECACHE);
-        } else {
-            Pair<StyleElementList, Range> lst = osm.getCachedStyle().getWithRange(scale, osm.isSelected());
-            if (lst.a != null)
-                return lst;
-        }
-        Pair<StyleElementList, Range> p = getImpl(osm, scale, nc);
-        if (osm instanceof INode && isDefaultNodes()) {
-            if (p.a.isEmpty()) {
-                if (TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
-                    p.a = DefaultStyles.DEFAULT_NODE_STYLELIST_TEXT;
-                } else {
-                    p.a = DefaultStyles.DEFAULT_NODE_STYLELIST;
-                }
+        synchronized (osm.getStyleCacheSyncObject()) {
+            if (!osm.isCachedStyleUpToDate() || scale <= 0) {
+                osm.setCachedStyle(StyleCache.EMPTY_STYLECACHE);
             } else {
-                boolean hasNonModifier = false;
-                boolean hasText = false;
-                for (StyleElement s : p.a) {
-                    if (s instanceof BoxTextElement) {
-                        hasText = true;
+                Pair<StyleElementList, Range> lst = osm.getCachedStyle().getWithRange(scale, osm.isSelected());
+                if (lst.a != null)
+                    return lst;
+            }
+            Pair<StyleElementList, Range> p = getImpl(osm, scale, nc);
+            if (osm instanceof INode && isDefaultNodes()) {
+                if (p.a.isEmpty()) {
+                    if (TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
+                        p.a = DefaultStyles.DEFAULT_NODE_STYLELIST_TEXT;
                     } else {
-                        if (!s.isModifier) {
-                            hasNonModifier = true;
+                        p.a = DefaultStyles.DEFAULT_NODE_STYLELIST;
+                    }
+                } else {
+                    boolean hasNonModifier = false;
+                    boolean hasText = false;
+                    for (StyleElement s : p.a) {
+                        if (s instanceof BoxTextElement) {
+                            hasText = true;
+                        } else {
+                            if (!s.isModifier) {
+                                hasNonModifier = true;
+                            }
+                        }
+                    }
+                    if (!hasNonModifier) {
+                        p.a = new StyleElementList(p.a, DefaultStyles.SIMPLE_NODE_ELEMSTYLE);
+                        if (!hasText && TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
+                            p.a = new StyleElementList(p.a, DefaultStyles.SIMPLE_NODE_TEXT_ELEMSTYLE);
                         }
                     }
                 }
-                if (!hasNonModifier) {
-                    p.a = new StyleElementList(p.a, DefaultStyles.SIMPLE_NODE_ELEMSTYLE);
-                    if (!hasText && TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
-                        p.a = new StyleElementList(p.a, DefaultStyles.SIMPLE_NODE_TEXT_ELEMSTYLE);
-                    }
-                }
-            }
-        } else if (osm instanceof IWay && isDefaultLines()) {
-            boolean hasProperLineStyle = false;
-            for (StyleElement s : p.a) {
-                if (s.isProperLineStyle()) {
-                    hasProperLineStyle = true;
-                    break;
-                }
-            }
-            if (!hasProperLineStyle) {
-                LineElement line = LineElement.UNTAGGED_WAY;
-                for (StyleElement element : p.a) {
-                    if (element instanceof AreaElement) {
-                        line = LineElement.createSimpleLineStyle(((AreaElement) element).color, true);
+            } else if (osm instanceof IWay && isDefaultLines()) {
+                boolean hasProperLineStyle = false;
+                for (StyleElement s : p.a) {
+                    if (s.isProperLineStyle()) {
+                        hasProperLineStyle = true;
                         break;
                     }
                 }
-                p.a = new StyleElementList(p.a, line);
+                if (!hasProperLineStyle) {
+                    LineElement line = LineElement.UNTAGGED_WAY;
+                    for (StyleElement element : p.a) {
+                        if (element instanceof AreaElement) {
+                            line = LineElement.createSimpleLineStyle(((AreaElement) element).color, true);
+                            break;
+                        }
+                    }
+                    p.a = new StyleElementList(p.a, line);
+                }
             }
+            StyleCache style = osm.getCachedStyle() != null ? osm.getCachedStyle() : StyleCache.EMPTY_STYLECACHE;
+            try {
+                osm.setCachedStyle(style.put(p.a, p.b, osm.isSelected()));
+            } catch (RangeViolatedError e) {
+                throw new AssertionError("Range violated: " + e.getMessage()
+                  + " (object: " + osm.getPrimitiveId() + ", current style: " + osm.getCachedStyle()
+                  + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b + ')', e);
+            }
+            osm.declareCachedStyleUpToDate();
+            return p;
         }
-        StyleCache style = osm.getCachedStyle() != null ? osm.getCachedStyle() : StyleCache.EMPTY_STYLECACHE;
-        try {
-            osm.setCachedStyle(style.put(p.a, p.b, osm.isSelected()));
-        } catch (RangeViolatedError e) {
-            throw new AssertionError("Range violated: " + e.getMessage()
-                    + " (object: " + osm.getPrimitiveId() + ", current style: "+osm.getCachedStyle()
-                    + ", scale: " + scale + ", new stylelist: " + p.a + ", new range: " + p.b + ')', e);
-        }
-        osm.declareCachedStyleUpToDate();
-        return p;
     }
 
     /**
@@ -376,7 +389,6 @@ public class ElemStyles implements PreferenceChangedListener {
      * @since 13810 (signature)
      */
     public Pair<StyleElementList, Range> generateStyles(IPrimitive osm, double scale, boolean pretendWayIsClosed) {
-
         List<StyleElement> sl = new ArrayList<>();
         MultiCascade mc = new MultiCascade();
         Environment env = new Environment(osm, mc, null, null);

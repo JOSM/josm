@@ -38,6 +38,7 @@
             <xs:enumeration value="wms_endpoint" />
             <xs:enumeration value="wmts" />
             <xs:enumeration value="tms" />
+            <xs:enumeration value="mvt" />
             <xs:enumeration value="bing" />
             <xs:enumeration value="scanex" />
         </xs:restriction>
@@ -647,7 +648,7 @@
                             <xs:element name="id" minOccurs="1" maxOccurs="1" type="tns:id" />
                             <!-- Historic id for the imagery source -->
                             <xs:element name="oldid" minOccurs="0" maxOccurs="unbounded" type="tns:oldid" />
-                            <!-- The type. Can be tms, wms and html. In addition, there are the special types bing and scanex 
+                            <!-- The type. Can be mvt, tms, wms and html. In addition, there are the special types bing and scanex
                                 with hardcoded behaviour. -->
                             <xs:element name="type" minOccurs="1" maxOccurs="1" type="tns:type" />
                             <!-- To define as default server for this type -->

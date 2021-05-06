@@ -61,7 +61,9 @@ public class ImageryInfo extends
         /** A WMS endpoint entry only stores the WMS server info, without layer, which are chosen later by the user. **/
         WMS_ENDPOINT("wms_endpoint"),
         /** WMTS stores GetCapabilities URL. Does not store any information about the layer **/
-        WMTS("wmts");
+        WMTS("wmts"),
+        /** Mapbox Vector Tiles entry*/
+        MVT("mvt");
 
         private final String typeString;
 
@@ -654,7 +656,7 @@ public class ImageryInfo extends
         defaultMaxZoom = 0;
         defaultMinZoom = 0;
         for (ImageryType type : ImageryType.values()) {
-            Matcher m = Pattern.compile(type.getTypeString()+"(?:\\[(?:(\\d+)[,-])?(\\d+)\\])?:(.*)").matcher(url);
+            Matcher m = Pattern.compile(type.getTypeString()+"(?:\\[(?:(\\d+)[,-])?(\\d+)])?:(.*)").matcher(url);
             if (m.matches()) {
                 this.url = m.group(3);
                 this.sourceType = type;
@@ -669,7 +671,7 @@ public class ImageryInfo extends
         }
 
         if (serverProjections.isEmpty()) {
-            Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(url.toUpperCase(Locale.ENGLISH));
+            Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)}.*").matcher(url.toUpperCase(Locale.ENGLISH));
             if (m.matches()) {
                 setServerProjections(Arrays.asList(m.group(1).split(",", -1)));
             }

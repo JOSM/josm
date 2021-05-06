@@ -1,0 +1,111 @@
+{
+  "version":8,
+  "name":"Mapillary",
+  "owner":"Mapillary",
+  "id":"mapillary",
+  "sources":{
+      "mapillary-source":{
+        "type":"vector",
+        "tiles":[
+            "https://tiles3.mapillary.com/v0.1/{z}/{x}/{y}.mvt"
+        ],
+        "maxzoom":14
+      },
+      "mapillary-features-source": {
+        "maxzoom": 20,
+        "minzoom": 14,
+        "tiles": [ "https://a.mapillary.com/v3/map_features?tile={z}/{x}/{y}&client_id=_apiKey_&layers=points&per_page=1000" ],
+        "type": "vector"
+      },
+      "mapillary-traffic-signs-source": {
+        "maxzoom": 20,
+        "minzoom": 14,
+        "tiles": [ "https://a.mapillary.com/v3/map_features?tile={z}/{x}/{y}&client_id=_apiKey_&layers=trafficsigns&per_page=1000" ],
+        "type": "vector"
+      }
+  },
+  "layers":[
+    {
+      "filter": [ "==", "pano", 1 ],
+      "id": "mapillary-panos",
+      "type": "circle",
+      "source": "mapillary-source",
+      "source-layer": "mapillary-images",
+      "minzoom": 17,
+      "paint": {
+        "circle-color": "#05CB63",
+        "circle-opacity": 0.5,
+        "circle-radius": 18
+      }
+    },
+    {
+      "id": "mapillary-dots",
+      "type": "circle",
+      "source": "mapillary-source",
+      "source-layer": "mapillary-images",
+      "interactive": true,
+      "minzoom": 14,
+      "paint": {
+        "circle-color": "#05CB63",
+        "circle-radius": 6
+      }
+    },
+    {
+      "id": "mapillary-lines",
+      "type": "line",
+      "source": "mapillary-source",
+      "source-layer": "mapillary-sequences",
+      "minzoom": 6,
+      "paint": {
+        "line-color": "#05CB63",
+        "line-width": 2
+      }
+    },
+    {
+      "id": "mapillary-overview",
+      "type": "circle",
+      "source": "mapillary-source",
+      "source-layer": "mapillary-sequence-overview",
+      "maxzoom": 6,
+      "paint": {
+        "circle-radius": 4,
+        "circle-opacity": 0.6,
+        "circle-color": "#05CB63"
+      }
+    },
+    {
+      "id": "mapillary-features",
+      "type": "symbol",
+      "source": "mapillary-features-source",
+      "source-layer": "mapillary-map-features",
+      "interactive": true,
+      "minzoom": 14,
+      "layout": {
+        "icon-image": "{value}",
+        "icon-allow-overlap": true,
+        "symbol-avoid-edges": true
+      },
+      "paint": {
+        "text-color": "#fff",
+        "text-halo-color": "#000"
+      }
+    },
+    {
+      "id": "mapillary-traffic-signs",
+      "type": "symbol",
+      "source": "mapillary-traffic-signs-source",
+      "source-layer": "mapillary-map-features",
+      "interactive": true,
+      "minzoom": 14,
+      "layout": {
+        "icon-image": "{value}",
+        "icon-allow-overlap": true,
+        "symbol-avoid-edges": true
+      },
+      "paint": {
+        "text-color": "#fff",
+        "text-halo-color": "#000"
+      }
+    }
+  ]
+}

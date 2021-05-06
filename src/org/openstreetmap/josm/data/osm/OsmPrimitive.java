@@ -329,22 +329,11 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
         }
     }
 
-    /**
-     * Make the primitive disabled (e.g.&nbsp;if a filter applies).
-     *
-     * To enable the primitive again, use unsetDisabledState.
-     * @param hidden if the primitive should be completely hidden from view or
-     *             just shown in gray color.
-     * @return true, any flag has changed; false if you try to set the disabled
-     * state to the value that is already preset
-     */
+    @Override
     public boolean setDisabledState(boolean hidden) {
         boolean locked = writeLock();
         try {
-            int oldFlags = flags;
-            updateFlagsNoLock(FLAG_DISABLED, true);
-            updateFlagsNoLock(FLAG_HIDE_IF_DISABLED, hidden);
-            return oldFlags != flags;
+            return super.setDisabledState(hidden);
         } finally {
             writeUnlock(locked);
         }
@@ -355,32 +344,14 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
      * Afterwards, the primitive is displayed normally and can be selected again.
      * @return {@code true} if a change occurred
      */
+    @Override
     public boolean unsetDisabledState() {
         boolean locked = writeLock();
         try {
-            int oldFlags = flags;
-            updateFlagsNoLock(FLAG_DISABLED, false);
-            updateFlagsNoLock(FLAG_HIDE_IF_DISABLED, false);
-            return oldFlags != flags;
+            return super.unsetDisabledState();
         } finally {
             writeUnlock(locked);
         }
-    }
-
-    /**
-     * Set binary property used internally by the filter mechanism.
-     * @param isExplicit new "disabled type" flag value
-     */
-    public void setDisabledType(boolean isExplicit) {
-        updateFlags(FLAG_DISABLED_TYPE, isExplicit);
-    }
-
-    /**
-     * Set binary property used internally by the filter mechanism.
-     * @param isExplicit new "hidden type" flag value
-     */
-    public void setHiddenType(boolean isExplicit) {
-        updateFlags(FLAG_HIDDEN_TYPE, isExplicit);
     }
 
     /**
@@ -400,22 +371,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Template
     @Override
     public boolean isDisabledAndHidden() {
         return ((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0);
-    }
-
-    /**
-     * Get binary property used internally by the filter mechanism.
-     * @return {@code true} if this object has the "hidden type" flag enabled
-     */
-    public boolean getHiddenType() {
-        return (flags & FLAG_HIDDEN_TYPE) != 0;
-    }
-
-    /**
-     * Get binary property used internally by the filter mechanism.
-     * @return {@code true} if this object has the "disabled type" flag enabled
-     */
-    public boolean getDisabledType() {
-        return (flags & FLAG_DISABLED_TYPE) != 0;
     }
 
     @Override

@@ -312,6 +312,7 @@ public class ImageryProvidersPanel extends JPanel {
         activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.WMS));
         activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.TMS));
         activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.WMTS));
+        activeToolbar.add(new NewEntryAction(ImageryInfo.ImageryType.MVT));
         activeToolbar.add(remove);
         activePanel.add(activeToolbar, BorderLayout.EAST);
         add(activePanel, GBC.eol().fill(GridBagConstraints.BOTH).weight(2.0, 0.4).insets(5, 0, 0, 5));
@@ -440,6 +441,9 @@ public class ImageryProvidersPanel extends JPanel {
             case WMTS:
                 icon = /* ICON(dialogs/) */ "add_wmts";
                 break;
+            case MVT:
+                icon = /* ICON(dialogs/) */ "add_mvt";
+                break;
             default:
                 break;
             }
@@ -459,6 +463,9 @@ public class ImageryProvidersPanel extends JPanel {
                 break;
             case WMTS:
                 p = new AddWMTSLayerPanel();
+                break;
+            case MVT:
+                p = new AddMVTLayerPanel();
                 break;
             default:
                 throw new IllegalStateException("Type " + type + " not supported");
@@ -741,7 +748,7 @@ public class ImageryProvidersPanel extends JPanel {
     private static boolean confirmEulaAcceptance(PreferenceTabbedPane gui, String eulaUrl) {
         URL url;
         try {
-            url = new URL(eulaUrl.replaceAll("\\{lang\\}", LanguageInfo.getWikiLanguagePrefix()));
+            url = new URL(eulaUrl.replaceAll("\\{lang}", LanguageInfo.getWikiLanguagePrefix()));
             JosmEditorPane htmlPane;
             try {
                 htmlPane = new JosmEditorPane(url);
@@ -749,7 +756,7 @@ public class ImageryProvidersPanel extends JPanel {
                 Logging.trace(e1);
                 // give a second chance with a default Locale 'en'
                 try {
-                    url = new URL(eulaUrl.replaceAll("\\{lang\\}", ""));
+                    url = new URL(eulaUrl.replaceAll("\\{lang}", ""));
                     htmlPane = new JosmEditorPane(url);
                 } catch (IOException e2) {
                     Logging.debug(e2);

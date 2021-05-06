@@ -57,6 +57,7 @@ public class RelationMember implements IRelationMember<OsmPrimitive> {
      * @return Member as way
      * @since 1937
      */
+    @Override
     public Way getWay() {
         return (Way) member;
     }

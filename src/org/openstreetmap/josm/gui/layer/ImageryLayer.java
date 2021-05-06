@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
+import org.openstreetmap.josm.gui.layer.imagery.MVTLayer;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProcessor;
@@ -168,6 +169,8 @@ public abstract class ImageryLayer extends Layer {
         case BING:
         case SCANEX:
             return new TMSLayer(info);
+        case MVT:
+            return new MVTLayer(info);
         default:
             throw new AssertionError(tr("Unsupported imagery type: {0}", info.getImageryType()));
         }

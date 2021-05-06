@@ -66,4 +66,13 @@ public interface IRelationMember<P extends IPrimitive> extends PrimitiveId {
      * @since 13766 (IRelationMember)
      */
     P getMember();
+
+    /**
+     * Returns the relation member as a way.
+     * @return Member as a way
+     * @since xxx
+     */
+    default IWay<?> getWay() {
+        return (IWay<?>) getMember();
+    }
 }

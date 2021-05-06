@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @since 4099
  */
-public abstract class AbstractPrimitive implements IPrimitive {
+public abstract class AbstractPrimitive implements IPrimitive, IFilterablePrimitive {
 
     /**
      * This flag shows, that the properties have been changed by the user
@@ -352,6 +352,18 @@ public abstract class AbstractPrimitive implements IPrimitive {
         }
     }
 
+    /**
+     * Update flags
+     * @param flag The flag to update
+     * @param value The value to set
+     * @return {@code true} if the flags have changed
+     */
+    protected boolean updateFlagsChanged(short flag, boolean value) {
+        int oldFlags = flags;
+        updateFlags(flag, value);
+        return oldFlags != flags;
+    }
+
     @Override
     public void setModified(boolean modified) {
         updateFlags(FLAG_MODIFIED, modified);
@@ -407,6 +419,42 @@ public abstract class AbstractPrimitive implements IPrimitive {
     @Override
     public boolean isIncomplete() {
         return (flags & FLAG_INCOMPLETE) != 0;
+    }
+
+    @Override
+    public boolean getHiddenType() {
+        return (flags & FLAG_HIDDEN_TYPE) != 0;
+    }
+
+    @Override
+    public boolean getDisabledType() {
+        return (flags & FLAG_DISABLED_TYPE) != 0;
+    }
+
+    @Override
+    public boolean setDisabledState(boolean hidden) {
+        // Store as variables to avoid short circuit boolean return
+        final boolean flagDisabled = updateFlagsChanged(FLAG_DISABLED, true);
+        final boolean flagHideIfDisabled = updateFlagsChanged(FLAG_HIDE_IF_DISABLED, hidden);
+        return flagDisabled || flagHideIfDisabled;
+    }
+
+    @Override
+    public boolean unsetDisabledState() {
+        // Store as variables to avoid short circuit boolean return
+        final boolean flagDisabled = updateFlagsChanged(FLAG_DISABLED, false);
+        final boolean flagHideIfDisabled = updateFlagsChanged(FLAG_HIDE_IF_DISABLED, false);
+        return flagDisabled || flagHideIfDisabled;
+    }
+
+    @Override
+    public void setDisabledType(boolean isExplicit) {
+        updateFlags(FLAG_DISABLED_TYPE, isExplicit);
+    }
+
+    @Override
+    public void setHiddenType(boolean isExplicit) {
+        updateFlags(FLAG_HIDDEN_TYPE, isExplicit);
     }
 
     protected String getFlagsAsString() {

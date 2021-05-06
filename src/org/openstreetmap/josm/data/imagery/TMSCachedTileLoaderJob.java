@@ -10,6 +10,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -33,6 +34,8 @@ import org.openstreetmap.josm.data.cache.CacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener;
 import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
+import org.openstreetmap.josm.data.imagery.vectortile.VectorTile;
+import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTFile;
 import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -149,7 +152,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private boolean isNotImage(Map<String, List<String>> headers, int statusCode) {
         if (statusCode == 200 && headers.containsKey("Content-Type") && !headers.get("Content-Type").isEmpty()) {
             String contentType = headers.get("Content-Type").stream().findAny().get();
-            if (contentType != null && !contentType.startsWith("image")) {
+            if (contentType != null && !contentType.startsWith("image") && !MVTFile.MIMETYPE.contains(contentType.toLowerCase(Locale.ROOT))) {
                 Logging.warn("Image not returned for tile: " + url + " content type was: " + contentType);
                 // not an image - do not store response in cache, so next time it will be queried again from the server
                 return true;
@@ -320,10 +323,11 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private boolean tryLoadTileImage(CacheEntry object) throws IOException {
         if (object != null) {
             byte[] content = object.getContent();
-            if (content.length > 0) {
+            if (content.length > 0 || tile instanceof VectorTile) {
                 try (ByteArrayInputStream in = new ByteArrayInputStream(content)) {
                     tile.loadImage(in);
-                    if (tile.getImage() == null) {
+                    if ((!(tile instanceof VectorTile) && tile.getImage() == null)
+                        || ((tile instanceof VectorTile) && !tile.isLoaded())) {
                         String s = new String(content, StandardCharsets.UTF_8);
                         Matcher m = SERVICE_EXCEPTION_PATTERN.matcher(s);
                         if (m.matches()) {

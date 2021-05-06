@@ -392,6 +392,15 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
     }
 
     /**
+     * Get an object to synchronize the style cache on. This <i>should</i> be a field that does not change during paint.
+     * By default, it returns the current object, but should be overriden to avoid some performance issues.
+     * @return A non-{@code null} object to synchronize on when painting
+     */
+    default Object getStyleCacheSyncObject() {
+        return this;
+    }
+
+    /**
      * Replies the display name of a primitive formatted by <code>formatter</code>
      * @param formatter formatter to use
      *

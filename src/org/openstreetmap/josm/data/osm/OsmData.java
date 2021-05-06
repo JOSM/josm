@@ -350,7 +350,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
      * @return selected nodes
      */
     default Collection<N> getSelectedNodes() {
-        return new SubclassFilteredCollection<>(getSelected(), Node.class::isInstance);
+        return new SubclassFilteredCollection<>(getSelected(), INode.class::isInstance);
     }
 
     /**
@@ -358,7 +358,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
      * @return selected ways
      */
     default Collection<W> getSelectedWays() {
-        return new SubclassFilteredCollection<>(getSelected(), Way.class::isInstance);
+        return new SubclassFilteredCollection<>(getSelected(), IWay.class::isInstance);
     }
 
     /**
@@ -366,7 +366,7 @@ public interface OsmData<O extends IPrimitive, N extends INode, W extends IWay<N
      * @return selected relations
      */
     default Collection<R> getSelectedRelations() {
-        return new SubclassFilteredCollection<>(getSelected(), Relation.class::isInstance);
+        return new SubclassFilteredCollection<>(getSelected(), IRelation.class::isInstance);
     }
 
     /**

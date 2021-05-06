@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelationMember;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -194,12 +196,12 @@ public class RelationSorter {
      * Sorts a list of members by connectivity
      * @param defaultMembers The members to sort
      * @return A sorted list of the same members
+     * @since xxx (signature change, generics)
      */
-    public static List<RelationMember> sortMembersByConnectivity(List<RelationMember> defaultMembers) {
+    public static <T extends IRelationMember<? extends IPrimitive>> List<T> sortMembersByConnectivity(List<T> defaultMembers) {
+        List<T> newMembers;
 
-        List<RelationMember> newMembers;
-
-        RelationNodeMap map = new RelationNodeMap(defaultMembers);
+        RelationNodeMap<T> map = new RelationNodeMap<>(defaultMembers);
         // List of groups of linked members
         //
         List<LinkedList<Integer>> allGroups = new ArrayList<>();
