@@ -106,7 +106,7 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
 
     @Override
     public boolean evaluateCondition(SearchCompiler.Match condition) {
-        return selected.stream().anyMatch(condition);
+        throw new UnsupportedOperationException();
     }
 
     /**
