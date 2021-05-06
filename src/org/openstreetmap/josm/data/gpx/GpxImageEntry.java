@@ -571,7 +571,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
             elevation = tmp.elevation;
             gpsTime = tmp.gpsTime;
             exifImgDir = tmp.exifImgDir;
-            isNewGpsData = tmp.isNewGpsData;
+            isNewGpsData = isNewGpsData || tmp.isNewGpsData;
             tmp = null;
         }
         tmpUpdated();

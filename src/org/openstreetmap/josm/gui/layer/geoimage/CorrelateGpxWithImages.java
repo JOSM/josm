@@ -1090,10 +1090,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // Construct a list of images that have a date, and sort them on the date.
             List<ImageEntry> dateImgLst = getSortedImgList();
             // Create a temporary copy for each image
-            for (ImageEntry ie : dateImgLst) {
+            dateImgLst.forEach(ie -> {
                 ie.createTmp();
-                ie.getTmp().setPos(null);
-            }
+                ie.getTmp().unflagNewGpsData();
+            });
 
             GpxDataWrapper selGpx = selectedGPX(false);
             if (selGpx == null)

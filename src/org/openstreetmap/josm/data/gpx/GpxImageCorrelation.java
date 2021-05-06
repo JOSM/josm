@@ -229,7 +229,7 @@ public final class GpxImageCorrelation {
                     break;
                 }
                 long tagms = TimeUnit.MINUTES.toMillis(tagTime);
-                if (curTmp.getPos() == null &&
+                if (!curTmp.hasNewGpsData() &&
                         (Math.abs(time - curWpTime) <= tagms
                         || Math.abs(prevWpTime - time) <= tagms)) {
                     if (prevWp != null && time < curWpTime - half) {
@@ -255,7 +255,7 @@ public final class GpxImageCorrelation {
                 if (imgTime < prevWpTime) {
                     break;
                 }
-                if (curTmp.getPos() == null) {
+                if (!curTmp.hasNewGpsData()) {
                     // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless variable
                     double timeDiff = (double) (imgTime - prevWpTime) / Math.abs(curWpTime - prevWpTime);
                     curTmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
