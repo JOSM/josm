@@ -1191,7 +1191,6 @@ public class MainApplication {
                 && Toolkit.getDefaultToolkit().getDesktopProperty("gnome.Xft/Antialias") == null
                 && Toolkit.getDefaultToolkit().getDesktopProperty("fontconfig/Antialias") == null) {
             UIManager.getLookAndFeelDefaults().put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            UIManager.getLookAndFeelDefaults().put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
     }
 
