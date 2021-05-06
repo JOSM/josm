@@ -3,6 +3,9 @@ package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -84,6 +87,15 @@ public class JosmEditorPane extends JEditorPane implements Destroyable {
             setContentType(type);
         }
         return conn.getContent();
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        // Force antialiasing within the JosmEditorPane for antialiased bullet points
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        super.paintComponent(g2d);
+        g2d.dispose();
     }
 
     /**

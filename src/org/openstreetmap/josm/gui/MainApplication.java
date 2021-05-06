@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
@@ -1163,6 +1164,8 @@ public class MainApplication {
         scaleFonts(Config.getPref().getDouble("gui.scale.list.font", 1.0),
                 "List.font");
         // "Table.font" see org.openstreetmap.josm.gui.util.TableHelper.setFont
+
+        setupTextAntiAliasing();
     }
 
     private static void scaleFonts(double factor, String... fonts) {
@@ -1175,6 +1178,20 @@ public class MainApplication {
                 font = font.deriveFont((float) (font.getSize2D() * factor));
                 UIManager.put(key, new FontUIResource(font));
             }
+        }
+    }
+
+    private static void setupTextAntiAliasing() {
+        // On Linux and running on Java 9+, enable text anti aliasing
+        // if not yet enabled and if neither running on Gnome or KDE desktop
+        if (PlatformManager.isPlatformUnixoid()
+                && Utils.getJavaVersion() >= 9
+                && UIManager.getLookAndFeelDefaults().get(RenderingHints.KEY_TEXT_ANTIALIASING) == null
+                && System.getProperty("awt.useSystemAAFontSettings") == null
+                && Toolkit.getDefaultToolkit().getDesktopProperty("gnome.Xft/Antialias") == null
+                && Toolkit.getDefaultToolkit().getDesktopProperty("fontconfig/Antialias") == null) {
+            UIManager.getLookAndFeelDefaults().put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            UIManager.getLookAndFeelDefaults().put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
     }
 
