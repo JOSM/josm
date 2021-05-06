@@ -53,7 +53,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     /** Color Preference for selected objects */
     private Color selectedColor;
     private Color relationSelectedColor;
-    /** Color Preference for hightlighted objects */
+    /** Color Preference for highlighted objects */
     private Color highlightColor;
     /** Color Preference for inactive objects */
     private Color inactiveColor;
