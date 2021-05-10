@@ -371,7 +371,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentData != null) {
-                ClipboardUtils.copyString(currentData.getSelectedImage().getFile().toString());
+                ClipboardUtils.copyString(String.valueOf(currentData.getSelectedImage().getFile()));
             }
         }
     }
@@ -460,7 +460,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             setNextEnabled(data.hasNextImage());
             setPreviousEnabled(data.hasPreviousImage());
             btnDelete.setEnabled(true);
-            btnDeleteFromDisk.setEnabled(true);
+            btnDeleteFromDisk.setEnabled(entry.getFile() != null);
             btnCopyPath.setEnabled(true);
 
             if (imageChanged) {
@@ -468,8 +468,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 // (e.g. to update the OSD).
                 imgDisplay.setImage(entry);
             }
-            setTitle(tr("Geotagged Images") + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
-            StringBuilder osd = new StringBuilder(entry.getFile() != null ? entry.getFile().getName() : "");
+            setTitle(tr("Geotagged Images") + (!entry.getDisplayName().isEmpty() ? " - " + entry.getDisplayName() : ""));
+            StringBuilder osd = new StringBuilder(entry.getDisplayName());
             if (entry.getElevation() != null) {
                 osd.append(tr("\nAltitude: {0} m", Math.round(entry.getElevation())));
             }

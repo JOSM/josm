@@ -209,6 +209,14 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     }
 
     /**
+     * Returns a display name for this entry
+     * @return a display name for this entry
+     */
+    public String getDisplayName() {
+        return file == null ? "" : file.getName();
+    }
+
+    /**
      * Returns EXIF orientation
      * @return EXIF orientation
      */

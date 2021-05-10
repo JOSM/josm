@@ -701,7 +701,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             JList<String> imgList = new JList<>(new AbstractListModel<String>() {
                 @Override
                 public String getElementAt(int i) {
-                    return yLayer.getImageData().getImages().get(i).getFile().getName();
+                    return yLayer.getImageData().getImages().get(i).getDisplayName();
                 }
 
                 @Override

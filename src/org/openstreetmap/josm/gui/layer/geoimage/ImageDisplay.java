@@ -702,7 +702,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                 g.drawRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
             }
             if (errorLoading) {
-                String loadingStr = tr("Error on file {0}", entry.getFile().getName());
+                String loadingStr = tr("Error on file {0}", entry.getDisplayName());
                 Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(loadingStr, g);
                 g.drawString(loadingStr,
                         (int) ((size.width - noImageSize.getWidth()) / 2),
@@ -748,9 +748,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             // The image is not necessarily null when loading anymore. If the oldEntry is not the same as the new entry,
             // we are probably still loading the image. (oldEntry gets set to entry when the image finishes loading).
             if (!errorLoading) {
-                errorMessage = tr("Loading {0}", entry.getFile().getName());
+                errorMessage = tr("Loading {0}", entry.getDisplayName());
             } else {
-                errorMessage = tr("Error on file {0}", entry.getFile().getName());
+                errorMessage = tr("Error on file {0}", entry.getDisplayName());
             }
         } else {
             errorMessage = null;

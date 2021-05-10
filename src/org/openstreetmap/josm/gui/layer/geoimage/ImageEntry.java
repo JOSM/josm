@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -28,7 +30,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  * Stores info about each image, with an optional thumbnail
  * @since 2662
  */
-public final class ImageEntry extends GpxImageEntry {
+public class ImageEntry extends GpxImageEntry {
 
     private Image thumbnail;
     private ImageData dataSet;
@@ -140,13 +142,18 @@ public final class ImageEntry extends GpxImageEntry {
      * @throws IOException if any I/O error occurs
      */
     public BufferedImage read(Dimension target) throws IOException {
-        Logging.info(tr("Loading {0}", getFile().getPath()));
-        BufferedImage image = ImageProvider.read(getFile(), false, false,
+        URL imageUrl = getImageUrl();
+        Logging.info(tr("Loading {0}", imageUrl));
+        BufferedImage image = ImageProvider.read(imageUrl, false, false,
                 r -> target == null ? r.getDefaultReadParam() : withSubsampling(r, target));
         Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
-                getFile().getPath(), image.getWidth(), image.getHeight(), image.getWidth() * image.getHeight() * 4 / 1024 / 1024,
+                imageUrl, image.getWidth(), image.getHeight(), image.getWidth() * image.getHeight() * 4 / 1024 / 1024,
                 ExifReader.orientationSwitchesDimensions(getExifOrientation()));
         return applyExifRotation(image);
+    }
+
+    protected URL getImageUrl() throws MalformedURLException {
+        return getFile().toURI().toURL();
     }
 
     private ImageReadParam withSubsampling(ImageReader reader, Dimension target) {
