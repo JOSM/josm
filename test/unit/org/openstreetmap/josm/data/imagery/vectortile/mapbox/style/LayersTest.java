@@ -298,7 +298,7 @@ class LayersTest {
           .build());
         assertEquals("node::random-layer-id{icon-image:concat(\"something/\",tag(\"value\"),\"/random/\",tag(\"value2\"));"
           + "icon-offset-x:2.0;icon-offset-y:3.0;icon-opacity:0.5;icon-rotation:30.0;text-color:#fffff0;text:something;"
-          + "font-family:\"SansSerif\";font-weight:normal;font-style:normal;text-halo-color:#ffffff;text-halo-radius:16;"
+          + "font-family:\"SansSerif\";font-weight:normal;font-style:normal;text-halo-color:#ffffff;text-halo-radius:8;"
           + "text-opacity:0.6;font-size:25;}", fullTwoIconImagePlaceholderExtraLineLayer.toString());
     }
 
