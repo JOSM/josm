@@ -234,7 +234,6 @@ public interface Tagged {
         return OsmUtils.isFalse(get(key));
     }
 
-
     /**
      * Returns a Tagged instance for the given tag collection
      * @param tags the tag collection
