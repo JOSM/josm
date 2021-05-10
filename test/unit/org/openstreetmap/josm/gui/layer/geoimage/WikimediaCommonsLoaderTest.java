@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
@@ -54,7 +53,6 @@ class WikimediaCommonsLoaderTest {
         image.read(null); // load the image from commons.wikimedia.org
     }
 
-    @NotNull
     private WireMockServer mockHttp() {
         String xml = "" +
                 "<api batchcomplete=\"\">\n" +
