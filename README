@@ -67,7 +67,7 @@ This is an overview of the files and directories in the JOSM code repository:
 - native/                   OS-specific files
   - linux/                  files useful for Linux distributions, including Appdata files, .desktop
                             files, Debian/Ubuntu scripts, man pages, icons, etc.
-  - macosx/                 files needed to create the MacOS X package
+  - macosx/                 files needed to create the MacOS package
   - windows/                files needed to create the Windows installer
 - nodist/                   files not included in JOSM binary
   - data/                   data files that are useful for development, but not distributed
@@ -150,7 +150,6 @@ This is an overview of the files and directories in the JOSM code repository:
 - tools/                    libraries and tools that help in the development process
     - animal-sniffer-ant-tasks.jar
                             used to build and check code signatures to ensure plugins binary compatibility 
-    - appbundler-1.0ea.jar  used to build Mac OS X package
     - checkstyle/           libs and config files for checkstyle (automatically detects code style
                             problems in source code); can be launched as an ant target in build.xml
     - ivy/                  Apache Ivy binary, configuration file, and downloaded dependencies 
@@ -158,7 +157,6 @@ This is an overview of the files and directories in the JOSM code repository:
     - japicc/               used to generate a compatibility report between optimized jar and normal one
     - spotbugs/             libs and config files for spotbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
-    - xmltask.jar           used to edit XML files from Ant for the OSX package
 
 Third party libraries
 ---------------------
