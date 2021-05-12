@@ -18,7 +18,6 @@ import java.util.stream.IntStream;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
@@ -320,36 +319,6 @@ public class VersionTable extends JTable implements ChangeListener, Destroyable 
         @Override
         public void itemStateChanged(ItemEvent e) {
             fireEditingStopped();
-        }
-    }
-
-    /**
-     * Renderer for history version labels, allowing to define horizontal alignment.
-     */
-    public static class AlignedRenderer extends JLabel implements TableCellRenderer {
-
-        /**
-         * Constructs a new {@code AlignedRenderer}.
-         * @param hAlignment Horizontal alignment. One of the following constants defined in SwingConstants:
-         *        LEFT, CENTER (the default for image-only labels), RIGHT, LEADING (the default for text-only labels) or TRAILING
-         */
-        public AlignedRenderer(int hAlignment) {
-            setHorizontalAlignment(hAlignment);
-        }
-
-        AlignedRenderer() {
-            this(SwingConstants.LEADING);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-                int row, int column) {
-            String v = "";
-            if (value != null) {
-                v = value.toString();
-            }
-            setText(v);
-            return this;
         }
     }
 

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -41,7 +40,7 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         TableColumn col = new TableColumn(COL_VERSION);
         /* translation note: 3 letter abbr. for "Version" */
         col.setHeaderValue(tr("Ver"));
-        col.setCellRenderer(new VersionTable.AlignedRenderer(SwingConstants.CENTER));
+        col.setCellRenderer(new VersionTableCellRenderer());
         col.setResizable(false);
         addColumn(col);
         // column 1 - Reference
