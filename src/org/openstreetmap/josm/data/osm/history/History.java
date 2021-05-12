@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -186,6 +187,25 @@ public class History {
         return versions.stream()
                 .filter(primitive -> primitive.matches(id, version))
                 .findFirst().orElse(null);
+    }
+
+    /**
+     * Replies the history primitive which changed the given key.
+     * @param version the version
+     * @param key the OSM key
+     * @return the history primitive which changed the given key
+     */
+    public HistoryOsmPrimitive getWhichChangedTag(long version, String key) {
+        HistoryOsmPrimitive primitive = getByVersion(version);
+        if (primitive == null) {
+            return null;
+        }
+        for (int i = versions.indexOf(primitive); i > 0; i--) {
+            if (!Objects.equals(versions.get(i).get(key), versions.get(i - 1).get(key))) {
+                return versions.get(i);
+            }
+        }
+        return versions.get(0);
     }
 
     /**

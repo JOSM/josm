@@ -83,6 +83,18 @@ public final class TagTableModel extends AbstractTableModel {
     }
 
     /**
+     * Returns the history primitive which changed the given key.
+     * @param key the OSM key
+     * @return the history primitive which changed the given key
+     */
+    public HistoryOsmPrimitive getWhichChangedTag(String key) {
+        HistoryOsmPrimitive primitive = model.getPointInTime(pointInTimeType);
+        if (primitive == null)
+            return null;
+        return model.getHistory().getWhichChangedTag(primitive.getVersion(), key);
+    }
+
+    /**
      * Determines if a tag exists in the opposite point in time for the given key.
      * @param key tag key
      * @return {@code true} if a tag exists for the given key
@@ -141,7 +153,7 @@ public final class TagTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return 3;
     }
 
     TwoColumnDiff.Item.DiffItemType getDiffItemType(String key, boolean isValue) {

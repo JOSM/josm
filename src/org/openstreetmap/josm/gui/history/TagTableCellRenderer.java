@@ -6,9 +6,13 @@ import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * The {@link TableCellRenderer} for a list of tags in {@link HistoryBrowser}
@@ -42,6 +46,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         TagTableModel model = getTagTableModel(table);
 
         String text = "";
+        String tooltip = null;
         if (model.hasTag(key)) {
             switch(column) {
             case TagTableColumnModel.COLUMN_KEY:
@@ -52,12 +57,19 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
                 // the value column
                 text = model.getValue(key);
                 break;
+            case TagTableColumnModel.COLUMN_VERSION:
+                HistoryOsmPrimitive primitive = model.getWhichChangedTag(key);
+                if (primitive != null) {
+                    text = "v" + primitive.getVersion();
+                    tooltip = tr("Key ''{0}'' was changed in version {1}", key, primitive.getVersion());
+                }
             default: // Do nothing
             }
         }
 
         setText(text);
-        setToolTipText(text);
+        setToolTipText(tooltip != null ? tooltip : text);
+        setHorizontalAlignment(column == TagTableColumnModel.COLUMN_VERSION ? SwingConstants.TRAILING : SwingConstants.LEADING);
         TwoColumnDiff.Item.DiffItemType diffItemType = model.getDiffItemType(key, column == TagTableColumnModel.COLUMN_VALUE);
         GuiHelper.setBackgroundReadable(this, diffItemType.getColor(isSelected, table.hasFocus()));
         return this;
