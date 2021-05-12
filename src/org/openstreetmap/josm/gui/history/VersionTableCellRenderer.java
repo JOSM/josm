@@ -1,10 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
+import java.awt.Color;
 import java.awt.Component;
 
 /**
@@ -27,6 +29,12 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
             v = value.toString();
         }
         setText(v);
+        Color color = ((VersionTableModel) table.getModel()).getVersionColor(row);
+        if (color != null) {
+            setBorder(BorderFactory.createMatteBorder(0, 2, 0, 0, color));
+        } else {
+            setBorder(null);
+        }
         return this;
     }
 }

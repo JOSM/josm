@@ -20,6 +20,8 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import java.awt.Color;
+
 /**
  * Unit tests of {@link HistoryBrowserModel} class.
  */
@@ -171,5 +173,8 @@ class HistoryBrowserModelTest {
         // members only for relations
         assertEquals(1, model.getRelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME).getRowCount());
         assertEquals(1, model.getRelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME).getRowCount());
+        assertEquals(new Color(0xff0000), model.getVersionColor(0));
+        assertEquals(new Color(0xff00e5), model.getVersionColor(1));
+        assertNull(model.getVersionColor(2));
     }
 }

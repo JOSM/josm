@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.history;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -47,6 +48,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
 
         String text = "";
         String tooltip = null;
+        setBorder(null);
         if (model.hasTag(key)) {
             switch(column) {
             case TagTableColumnModel.COLUMN_KEY:
@@ -62,6 +64,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
                 if (primitive != null) {
                     text = "v" + primitive.getVersion();
                     tooltip = tr("Key ''{0}'' was changed in version {1}", key, primitive.getVersion());
+                    setBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, model.getVersionColor(primitive)));
                 }
             default: // Do nothing
             }

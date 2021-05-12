@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import java.awt.Color;
 import java.time.format.FormatStyle;
 
 import javax.swing.table.AbstractTableModel;
@@ -75,6 +76,15 @@ public final class VersionTableModel extends AbstractTableModel {
         default:
             return null;
         }
+    }
+
+    /**
+     * Returns the color for the primitive in the given row
+     * @param row row number
+     * @return the color for the primitive in the given row
+     */
+    public Color getVersionColor(int row) {
+        return model.getVersionColor(row);
     }
 
     @Override

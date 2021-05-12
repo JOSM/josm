@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -92,6 +93,15 @@ public final class TagTableModel extends AbstractTableModel {
         if (primitive == null)
             return null;
         return model.getHistory().getWhichChangedTag(primitive.getVersion(), key);
+    }
+
+    /**
+     * Returns the color for the given primitive timestamp
+     * @param primitive the history primitive
+     * @return the color for the given primitive timestamp
+     */
+    public Color getVersionColor(HistoryOsmPrimitive primitive) {
+        return model.getVersionColor(primitive);
     }
 
     /**
