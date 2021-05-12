@@ -114,13 +114,13 @@ public class JOSMFixture {
         pref.resetToInitialState();
         pref.enableSaveOnPut(false);
         I18n.init();
-        // initialize the plaform hook, and
+        // initialize the platform hook, and
         // call the really early hook before we anything else
         PlatformManager.getPlatform().preStartupHook();
 
         Logging.setLogLevel(Logging.LEVEL_INFO);
         pref.init(false);
-        String url = Config.getPref().get("osm-server.url");
+        String url = OsmApi.getOsmApi().getServerUrl();
         if (url == null || url.isEmpty() || isProductionApiUrl(url)) {
             Config.getPref().put("osm-server.url", "https://api06.dev.openstreetmap.org/api");
         }
