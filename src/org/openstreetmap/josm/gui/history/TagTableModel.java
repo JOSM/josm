@@ -143,4 +143,16 @@ public final class TagTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return 2;
     }
+
+    TwoColumnDiff.Item.DiffItemType getDiffItemType(String key, boolean isValue) {
+        if ((!hasTag(key) && isCurrentPointInTime()) || (!oppositeHasTag(key) && isReferencePointInTime())) {
+            return TwoColumnDiff.Item.DiffItemType.DELETED;
+        } else if ((!oppositeHasTag(key) && isCurrentPointInTime()) || (!hasTag(key) && isReferencePointInTime())) {
+            return TwoColumnDiff.Item.DiffItemType.INSERTED;
+        } else if (isValue && hasTag(key) && oppositeHasTag(key) && !hasSameValueAsOpposite(key)) {
+            return TwoColumnDiff.Item.DiffItemType.CHANGED;
+        } else {
+            return TwoColumnDiff.Item.DiffItemType.EMPTY;
+        }
+    }
 }

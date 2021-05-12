@@ -31,22 +31,6 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setOpaque(true);
     }
 
-    protected void setBackgroundReadable(String key, TagTableModel model, boolean isSelected, boolean hasFocus, boolean isValue) {
-        final TwoColumnDiff.Item.DiffItemType diffItemType;
-        if ((!model.hasTag(key) && model.isCurrentPointInTime())
-                || (!model.oppositeHasTag(key) && model.isReferencePointInTime())) {
-            diffItemType = TwoColumnDiff.Item.DiffItemType.DELETED;
-        } else if ((!model.oppositeHasTag(key) && model.isCurrentPointInTime())
-                || (!model.hasTag(key) && model.isReferencePointInTime())) {
-            diffItemType = TwoColumnDiff.Item.DiffItemType.INSERTED;
-        } else if (isValue && model.hasTag(key) && model.oppositeHasTag(key) && !model.hasSameValueAsOpposite(key)) {
-            diffItemType = TwoColumnDiff.Item.DiffItemType.CHANGED;
-        } else {
-            diffItemType = TwoColumnDiff.Item.DiffItemType.EMPTY;
-        }
-        GuiHelper.setBackgroundReadable(this, diffItemType.getColor(isSelected, hasFocus));
-    }
-
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
@@ -74,7 +58,8 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
 
         setText(text);
         setToolTipText(text);
-        setBackgroundReadable(key, model, isSelected, table.hasFocus(), column == TagTableColumnModel.COLUMN_VALUE);
+        TwoColumnDiff.Item.DiffItemType diffItemType = model.getDiffItemType(key, column == TagTableColumnModel.COLUMN_VALUE);
+        GuiHelper.setBackgroundReadable(this, diffItemType.getColor(isSelected, table.hasFocus()));
         return this;
     }
 
