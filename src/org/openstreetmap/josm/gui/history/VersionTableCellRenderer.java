@@ -29,7 +29,9 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
             v = value.toString();
         }
         setText(v);
-        Color color = ((VersionTableModel) table.getModel()).getVersionColor(row);
+        Color color = table.getModel() instanceof VersionTableModel
+                ? ((VersionTableModel) table.getModel()).getVersionColor(row)
+                : null;
         if (color != null) {
             setBorder(BorderFactory.createMatteBorder(0, 2, 0, 0, color));
         } else {
