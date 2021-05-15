@@ -27,6 +27,8 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.HyperlinkEvent;
 
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -95,6 +97,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         CommentModelListener commentModelListener = new CommentModelListener(hcbUploadComment, changesetCommentModel);
         hcbUploadComment.getEditor().addActionListener(commentModelListener);
         hcbUploadComment.getEditorComponent().addFocusListener(commentModelListener);
+        hcbUploadComment.getEditorComponent().getDocument().addDocumentListener(commentModelListener);
         pnl.add(hcbUploadComment, GBC.eol().fill(GBC.HORIZONTAL));
         pnl.add(uploadCommentFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
         return pnl;
@@ -132,6 +135,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);
         hcbUploadSource.getEditor().addActionListener(sourceModelListener);
         hcbUploadSource.getEditorComponent().addFocusListener(sourceModelListener);
+        hcbUploadSource.getEditorComponent().getDocument().addDocumentListener(sourceModelListener);
         pnl.add(hcbUploadSource, GBC.eol().fill(GBC.HORIZONTAL));
         pnl.add(hcbUploadSourceFeedback, GBC.eol().insets(0, 3, 0, 0).fill(GBC.HORIZONTAL));
         if (obtainSourceAutomatically.isSelected()) {
@@ -349,7 +353,7 @@ public class BasicUploadSettingsPanel extends JPanel {
     /**
      * Updates the changeset comment model upon changes in the input field.
      */
-    static class CommentModelListener extends FocusAdapter implements ActionListener {
+    static class CommentModelListener extends FocusAdapter implements ActionListener, DocumentListener {
 
         private final HistoryComboBox source;
         private final ChangesetCommentModel destination;
@@ -359,14 +363,33 @@ public class BasicUploadSettingsPanel extends JPanel {
             this.destination = destination;
         }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
+        private void setComment() {
             destination.setComment(source.getText());
         }
 
         @Override
+        public void actionPerformed(ActionEvent e) {
+            setComment();
+        }
+
+        @Override
         public void focusLost(FocusEvent e) {
-            destination.setComment(source.getText());
+            setComment();
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            setComment();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            setComment();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            setComment();
         }
     }
 
