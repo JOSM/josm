@@ -21,6 +21,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -255,7 +256,9 @@ public class Text extends KeyedItem {
             textField.setForeground(Color.BLUE);
             support.addListener((source, key, newValue) -> {
                 if (source != this) {
-                    textField.setItem(valueTemplate.getText(support));
+                    String valueTemplateText = valueTemplate.getText(support);
+                    Logging.trace("Evaluating value_template {0} for key {1} => {2}", valueTemplate, key, valueTemplateText);
+                    SwingUtilities.invokeLater(() -> textField.setItem(valueTemplateText));
                 }
             });
         }
