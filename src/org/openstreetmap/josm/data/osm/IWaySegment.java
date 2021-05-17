@@ -43,7 +43,7 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
      * @see #getSecondNode()
      */
     public int getUpperIndex() {
-        return lowerIndex;
+        return lowerIndex + 1;
     }
 
     /**
