@@ -211,6 +211,9 @@ class NotificationManager {
             private final Notification note;
 
             ShowNoteHelpAction(Notification note) {
+                super(tr("Help"));
+                putValue(SHORT_DESCRIPTION, tr("Show help information"));
+                new ImageProvider("help").getResource().attachImageIcon(this, true);
                 this.note = note;
             }
 
@@ -247,11 +250,8 @@ class NotificationManager {
 
             JToolBar tbHelp = null;
             if (note.getHelpTopic() != null) {
-                JButton btnHelp = new JButton(tr("Help"));
-                btnHelp.setIcon(ImageProvider.get("help"));
-                btnHelp.setToolTipText(tr("Show help information"));
+                JButton btnHelp = new JButton(new ShowNoteHelpAction(note));
                 HelpUtil.setHelpContext(btnHelp, note.getHelpTopic());
-                btnHelp.addActionListener(new ShowNoteHelpAction(note));
                 btnHelp.setOpaque(false);
                 tbHelp = new JToolBar();
                 tbHelp.setFloatable(false);
