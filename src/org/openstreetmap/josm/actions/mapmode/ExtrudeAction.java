@@ -431,11 +431,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             } else if (alt) {
                 mode = Mode.create_new;
                 // create a new segment and then select and extrude the new segment
-                getLayerManager().getEditDataSet().setSelected(selectedSegment.way);
+                getLayerManager().getEditDataSet().setSelected(selectedSegment.getWay());
                 alwaysCreateNodes = true;
             } else {
                 mode = Mode.extrude;
-                getLayerManager().getEditDataSet().setSelected(selectedSegment.way);
+                getLayerManager().getEditDataSet().setSelected(selectedSegment.getWay());
                 alwaysCreateNodes = shift;
             }
         }
@@ -590,11 +590,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             EastNorth a = ws.getFirstNode().getEastNorth();
             EastNorth b = ws.getSecondNode().getEastNorth();
             n.setEastNorth(Geometry.closestPointToSegment(a, b, n.getEastNorth()));
-            Way wnew = new Way(ws.way);
-            wnew.addNode(ws.lowerIndex+1, n);
-            DataSet ds = ws.way.getDataSet();
+            Way wnew = new Way(ws.getWay());
+            wnew.addNode(ws.getLowerIndex() +1, n);
+            DataSet ds = ws.getWay().getDataSet();
             UndoRedoHandler.getInstance().add(new SequenceCommand(tr("Add a new node to an existing way"),
-                    new AddCommand(ds, n), new ChangeNodesCommand(ds, ws.way, wnew.getNodes())));
+                    new AddCommand(ds, n), new ChangeNodesCommand(ds, ws.getWay(), wnew.getNodes())));
             wnew.setNodes(null); // see #19885
 
         }
@@ -640,18 +640,18 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         DataSet ds = getLayerManager().getEditDataSet();
         // create extrusion
         Collection<Command> cmds = new LinkedList<>();
-        Way wnew = new Way(selectedSegment.way);
+        Way wnew = new Way(selectedSegment.getWay());
         boolean wayWasModified = false;
         boolean wayWasSingleSegment = wnew.getNodesCount() == 2;
-        int insertionPoint = selectedSegment.lowerIndex + 1;
+        int insertionPoint = selectedSegment.getUpperIndex();
 
         //find if the new points overlap existing segments (in case of 90 degree angles)
-        Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
+        Node prevNode = getPreviousNode(selectedSegment.getLowerIndex());
         boolean nodeOverlapsSegment = prevNode != null && Geometry.segmentsParallel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
         // segmentAngleZero marks subset of nodeOverlapsSegment.
         // nodeOverlapsSegment is true if angle between segments is 0 or PI, segmentAngleZero only if angle is 0
         boolean segmentAngleZero = prevNode != null && Math.abs(Geometry.getCornerAngle(prevNode.getEastNorth(), initialN1en, newN1en)) < 1e-5;
-        boolean hasOtherWays = hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
+        boolean hasOtherWays = hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.getWay());
         List<Node> changedNodes = new ArrayList<>();
         if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
             //move existing node
@@ -678,10 +678,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         }
 
         //find if the new points overlap existing segments (in case of 90 degree angles)
-        Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
+        Node nextNode = getNextNode(selectedSegment.getUpperIndex());
         nodeOverlapsSegment = nextNode != null && Geometry.segmentsParallel(initialN2en, nextNode.getEastNorth(), initialN2en, newN2en);
         segmentAngleZero = nextNode != null && Math.abs(Geometry.getCornerAngle(nextNode.getEastNorth(), initialN2en, newN2en)) < 1e-5;
-        hasOtherWays = hasNodeOtherWays(selectedSegment.getSecondNode(), selectedSegment.way);
+        hasOtherWays = hasNodeOtherWays(selectedSegment.getSecondNode(), selectedSegment.getWay());
 
         if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
             //move existing node
@@ -713,7 +713,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         }
         if (wayWasModified) {
             // we only need to change the way if its node list was really modified
-            cmds.add(new ChangeNodesCommand(selectedSegment.way, wnew.getNodes()));
+            cmds.add(new ChangeNodesCommand(selectedSegment.getWay(), wnew.getNodes()));
         }
         wnew.setNodes(null); // see #19885
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
@@ -823,7 +823,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
 
         //add directions parallel to neighbor segments
-        Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
+        Node prevNode = getPreviousNode(selectedSegment.getLowerIndex());
         if (prevNode != null) {
             EastNorth en = prevNode.getEastNorth();
             possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
@@ -832,7 +832,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     ), initialN1en, en, false));
         }
 
-        Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
+        Node nextNode = getNextNode(selectedSegment.getUpperIndex());
         if (nextNode != null) {
             EastNorth en = nextNode.getEastNorth();
             possibleMoveDirections.add(new ReferenceSegment(new EastNorth(
@@ -870,8 +870,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * @return {@code true} if dual alignment conditions are satisfied
      */
     private boolean checkDualAlignConditions() {
-        Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
-        Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
+        Node prevNode = getPreviousNode(selectedSegment.getLowerIndex());
+        Node nextNode = getNextNode(selectedSegment.getUpperIndex());
         if (prevNode == null || nextNode == null) {
             return false;
         }
@@ -905,7 +905,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 ), initialN1en, initialN2en, true));
 
         // set neighboring segments
-        Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
+        Node prevNode = getPreviousNode(selectedSegment.getLowerIndex());
         if (prevNode != null) {
             EastNorth prevNodeEn = prevNode.getEastNorth();
             dualAlignSegment1 = new ReferenceSegment(new EastNorth(
@@ -914,7 +914,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 ), initialN1en, prevNodeEn, false);
         }
 
-        Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
+        Node nextNode = getNextNode(selectedSegment.getUpperIndex());
         if (nextNode != null) {
             EastNorth nextNodeEn = nextNode.getEastNorth();
             dualAlignSegment2 = new ReferenceSegment(new EastNorth(
@@ -974,8 +974,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     private int getPreviousNodeIndex(int index) {
         if (index > 0)
             return index - 1;
-        else if (selectedSegment.way.isClosed())
-            return selectedSegment.way.getNodesCount() - 2;
+        else if (selectedSegment.getWay().isClosed())
+            return selectedSegment.getWay().getNodesCount() - 2;
         else
             return -1;
     }
@@ -988,7 +988,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     private Node getPreviousNode(int index) {
         int indexPrev = getPreviousNodeIndex(index);
         if (indexPrev >= 0)
-            return selectedSegment.way.getNode(indexPrev);
+            return selectedSegment.getWay().getNode(indexPrev);
         else
             return null;
     }
@@ -999,10 +999,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * @return index of next node or <code>-1</code> if there are no nodes there.
      */
     private int getNextNodeIndex(int index) {
-        int count = selectedSegment.way.getNodesCount();
+        int count = selectedSegment.getWay().getNodesCount();
         if (index < count - 1)
             return index + 1;
-        else if (selectedSegment.way.isClosed())
+        else if (selectedSegment.getWay().isClosed())
             return 1;
         else
             return -1;
@@ -1016,7 +1016,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
     private Node getNextNode(int index) {
         int indexNext = getNextNodeIndex(index);
         if (indexNext >= 0)
-            return selectedSegment.way.getNode(indexNext);
+            return selectedSegment.getWay().getNode(indexNext);
         else
             return null;
     }

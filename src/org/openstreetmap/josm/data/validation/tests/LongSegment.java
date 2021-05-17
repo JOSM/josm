@@ -106,7 +106,7 @@ public class LongSegment extends Test {
         if (reported.add(waySegment)) {
             errors.add(TestError.builder(this, Severity.WARNING, LONG_SEGMENT)
                     .message(tr("Long segments"), marktr("Very long segment of {0} kilometers"), length.intValue())
-                    .primitives(waySegment.way)
+                    .primitives(waySegment.getWay())
                     .highlightWaySegments(Collections.singleton(waySegment))
                     .build());
         }

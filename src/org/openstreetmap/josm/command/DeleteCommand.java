@@ -478,32 +478,32 @@ public class DeleteCommand extends Command {
      * @since 12718
      */
     public static Command deleteWaySegment(WaySegment ws) {
-        if (ws.way.getNodesCount() < 3)
-            return delete(Collections.singleton(ws.way), false);
+        if (ws.getWay().getNodesCount() < 3)
+            return delete(Collections.singleton(ws.getWay()), false);
 
-        if (ws.way.isClosed()) {
+        if (ws.getWay().isClosed()) {
             // If the way is circular (first and last nodes are the same), the way shouldn't be splitted
 
             List<Node> n = new ArrayList<>();
 
-            n.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount() - 1));
-            n.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
+            n.addAll(ws.getWay().getNodes().subList(ws.getUpperIndex(), ws.getWay().getNodesCount() - 1));
+            n.addAll(ws.getWay().getNodes().subList(0, ws.getUpperIndex()));
 
-            return new ChangeNodesCommand(ws.way, n);
+            return new ChangeNodesCommand(ws.getWay(), n);
         }
 
         List<Node> n1 = new ArrayList<>();
         List<Node> n2 = new ArrayList<>();
 
-        n1.addAll(ws.way.getNodes().subList(0, ws.lowerIndex + 1));
-        n2.addAll(ws.way.getNodes().subList(ws.lowerIndex + 1, ws.way.getNodesCount()));
+        n1.addAll(ws.getWay().getNodes().subList(0, ws.getUpperIndex()));
+        n2.addAll(ws.getWay().getNodes().subList(ws.getUpperIndex(), ws.getWay().getNodesCount()));
 
         if (n1.size() < 2) {
-            return new ChangeNodesCommand(ws.way, n2);
+            return new ChangeNodesCommand(ws.getWay(), n2);
         } else if (n2.size() < 2) {
-            return new ChangeNodesCommand(ws.way, n1);
+            return new ChangeNodesCommand(ws.getWay(), n1);
         } else {
-            return SplitWayCommand.splitWay(ws.way, Arrays.asList(n1, n2), Collections.<OsmPrimitive>emptyList());
+            return SplitWayCommand.splitWay(ws.getWay(), Arrays.asList(n1, n2), Collections.<OsmPrimitive>emptyList());
         }
     }
 

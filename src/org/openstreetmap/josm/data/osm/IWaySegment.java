@@ -18,16 +18,33 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparable<IWaySegment<N, W>> {
 
+    private final W way;
+    private final int lowerIndex;
+
     /**
      * The way.
      */
-    public final W way;
+    public W getWay() {
+        return way;
+    }
 
     /**
-     * The index of one of the 2 nodes in the way.  The other node has the
-     * index <code>lowerIndex + 1</code>.
+     * The index of the first of the 2 nodes in the way.
+     * @see #getUpperIndex()
+     * @see #getFirstNode()
      */
-    public final int lowerIndex;
+    public int getLowerIndex() {
+        return lowerIndex;
+    }
+
+    /**
+     * The index of the second of the 2 nodes in the way.
+     * @see #getLowerIndex()
+     * @see #getSecondNode()
+     */
+    public int getUpperIndex() {
+        return lowerIndex;
+    }
 
     /**
      * Constructs a new {@code IWaySegment}.
@@ -48,7 +65,7 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
      * @return the first node
      */
     public N getFirstNode() {
-        return way.getNode(lowerIndex);
+        return way.getNode(getLowerIndex());
     }
 
     /**
@@ -56,7 +73,7 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
      * @return the second node
      */
     public N getSecondNode() {
-        return way.getNode(lowerIndex + 1);
+        return way.getNode(getUpperIndex());
     }
 
     /**

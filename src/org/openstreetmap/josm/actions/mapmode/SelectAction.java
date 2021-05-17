@@ -1214,10 +1214,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 Pair<Node, Node> vnp = null, wnp = new Pair<>(null, null);
 
                 for (WaySegment ws : mv.getNearestWaySegments(p, mv.isSelectablePredicate)) {
-                    Way w = ws.way;
+                    Way w = ws.getWay();
 
-                    wnp.a = w.getNode(ws.lowerIndex);
-                    wnp.b = w.getNode(ws.lowerIndex + 1);
+                    wnp.a = w.getNode(ws.getLowerIndex());
+                    wnp.b = w.getNode(ws.getUpperIndex());
                     MapViewPoint p1 = mv.getState().getPointFor(wnp.a);
                     MapViewPoint p2 = mv.getState().getPointFor(wnp.b);
                     if (WireframeMapRenderer.isLargeSegment(p1, p2, virtualSpace)) {
@@ -1256,9 +1256,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             Collection<Command> virtualCmds = new LinkedList<>();
             virtualCmds.add(new AddCommand(ds, virtualNode));
             for (WaySegment virtualWay : virtualWays) {
-                Way w = virtualWay.way;
+                Way w = virtualWay.getWay();
                 List<Node> modNodes = w.getNodes();
-                modNodes.add(virtualWay.lowerIndex + 1, virtualNode);
+                modNodes.add(virtualWay.getUpperIndex(), virtualNode);
                 virtualCmds.add(new ChangeNodesCommand(ds, w, modNodes));
             }
             virtualCmds.add(new MoveCommand(ds, virtualNode, startEN, currentEN));

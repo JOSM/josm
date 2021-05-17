@@ -99,6 +99,6 @@ public final class WaySegment extends IWaySegment<Node, Way> {
 
     @Override
     public String toString() {
-        return "WaySegment [way=" + way.getUniqueId() + ", lowerIndex=" + lowerIndex + ']';
+        return "WaySegment [way=" + getWay().getUniqueId() + ", lowerIndex=" + getLowerIndex() + ']';
     }
 }

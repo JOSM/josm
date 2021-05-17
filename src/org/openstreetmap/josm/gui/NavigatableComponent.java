@@ -1258,7 +1258,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             // put selected waysegs within each distance group first
             // makes the order of nearestList dependent on current selection state
             for (WaySegment ws : wss) {
-                (ws.way.isSelected() ? nearestList : unselected).add(ws);
+                (ws.getWay().isSelected() ? nearestList : unselected).add(ws);
             }
             nearestList.addAll(unselected);
             unselected.clear();
@@ -1306,7 +1306,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 if (wayseg == null) {
                     wayseg = ws;
                 }
-                if (ntsel == null && ws.way.isSelected()) {
+                if (ntsel == null && ws.getWay().isSelected()) {
                     ntsel = ws;
                 }
             }
@@ -1341,7 +1341,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 if (wayseg == null) {
                     wayseg = ws;
                 }
-                if (useSelected && ws.way.isSelected()) {
+                if (useSelected && ws.getWay().isSelected()) {
                     return ws;
                 }
                 if (preferredRefs != null && !preferredRefs.isEmpty()) {
@@ -1349,7 +1349,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     if (preferredRefs.contains(ws.getFirstNode()) || preferredRefs.contains(ws.getSecondNode())) {
                         return ws;
                     }
-                    Collection<OsmPrimitive> wayRefs = ws.way.getReferrers();
+                    Collection<OsmPrimitive> wayRefs = ws.getWay().getReferrers();
                     // prefer member of the given relations
                     for (OsmPrimitive ref: preferredRefs) {
                         if (ref instanceof Relation && wayRefs.contains(ref)) {
@@ -1391,8 +1391,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
         List<Way> nearestList = getNearestWaySegmentsImpl(p, predicate).values().stream()
                 .flatMap(Collection::stream)
-                .filter(ws -> wset.add(ws.way))
-                .map(ws -> ws.way)
+                .filter(ws -> wset.add(ws.getWay()))
+                .map(ws -> ws.getWay())
                 .collect(Collectors.toList());
         if (ignore != null) {
             nearestList.removeAll(ignore);
@@ -1427,7 +1427,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final Way getNearestWay(Point p, Predicate<OsmPrimitive> predicate) {
         WaySegment nearestWaySeg = getNearestWaySegment(p, predicate);
-        return (nearestWaySeg == null) ? null : nearestWaySeg.way;
+        return (nearestWaySeg == null) ? null : nearestWaySeg.getWay();
     }
 
     /**
@@ -1545,9 +1545,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
         if (ws == null) return osm;
 
-        if ((ws.way.isSelected() && useSelected) || osm == null) {
+        if ((ws.getWay().isSelected() && useSelected) || osm == null) {
             // either (no _selected_ nearest node found, if desired) or no nearest node was found
-            osm = ws.way;
+            osm = ws.getWay();
         } else {
             int maxWaySegLenSq = 3*PROP_SNAP_DISTANCE.get();
             maxWaySegLenSq *= maxWaySegLenSq;
@@ -1559,7 +1559,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             // is p closer to the middle of wayseg  than  to the nearest node?
             if (wp1.distanceSq(wp2) < maxWaySegLenSq &&
                     p.distanceSq(project(0.5, wp1, wp2)) < p.distanceSq(getPoint2D((Node) osm))) {
-                osm = ws.way;
+                osm = ws.getWay();
             }
         }
         return osm;
@@ -1602,8 +1602,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         // add nearby ways
         List<OsmPrimitive> nearestList = getNearestWaySegmentsImpl(p, predicate).values().stream()
                 .flatMap(Collection::stream)
-                .filter(ws -> wset.add(ws.way))
-                .map(ws -> ws.way)
+                .filter(ws -> wset.add(ws.getWay()))
+                .map(ws -> ws.getWay())
                 .collect(Collectors.toList());
 
         // add nearby nodes

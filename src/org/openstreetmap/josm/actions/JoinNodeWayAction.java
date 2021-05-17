@@ -107,7 +107,7 @@ public class JoinNodeWayAction extends JosmAction {
             EastNorth en = node.getEastNorth();
             for (WaySegment ws : wss) {
                 // Maybe cleaner to pass a "isSelected" predicate to getNearestWaySegments, but this is less invasive.
-                if (restrictToSelectedWays && !ws.way.isSelected()) {
+                if (restrictToSelectedWays && !ws.getWay().isSelected()) {
                     continue;
                 }
                 /* perpendicular distance squared
@@ -134,16 +134,16 @@ public class JoinNodeWayAction extends JosmAction {
                 for (WaySegment ws : entry.getValue()) {
                     // only use the closest WaySegment of each way and ignore those that already contain the node
                     if (!ws.getFirstNode().equals(node) && !ws.getSecondNode().equals(node)
-                            && !seenWays.contains(ws.way)) {
+                            && !seenWays.contains(ws.getWay())) {
                         if (usedDist == null)
                             usedDist = entry.getKey();
-                        MultiMap<Integer, Node> innerMap = data.get(ws.way);
+                        MultiMap<Integer, Node> innerMap = data.get(ws.getWay());
                         if (innerMap == null) {
                             innerMap = new MultiMap<>();
-                            data.put(ws.way, innerMap);
+                            data.put(ws.getWay(), innerMap);
                         }
-                        innerMap.put(ws.lowerIndex, node);
-                        seenWays.add(ws.way);
+                        innerMap.put(ws.getLowerIndex(), node);
+                        seenWays.add(ws.getWay());
                     }
                 }
             }

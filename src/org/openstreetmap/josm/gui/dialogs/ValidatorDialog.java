@@ -561,7 +561,7 @@ public class ValidatorDialog extends ToggleDialog
 
         @Override
         public void visit(WaySegment ws) {
-            if (ws.lowerIndex < 0 || ws.lowerIndex + 1 >= ws.way.getNodesCount())
+            if (ws.getLowerIndex() < 0 || ws.getUpperIndex() >= ws.getWay().getNodesCount())
                 return;
             visit(ws.getFirstNode());
             visit(ws.getSecondNode());

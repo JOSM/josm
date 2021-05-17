@@ -106,7 +106,7 @@ public class OverlappingWays extends Test {
                 Map<String, Set<WaySegment>> grouped = new HashMap<>();
                 for (WaySegment ws : duplicated) {
                     // order in set is important
-                    grouped.computeIfAbsent(OsmUtils.getLayer(ws.way), k -> new LinkedHashSet<>()).add(ws);
+                    grouped.computeIfAbsent(OsmUtils.getLayer(ws.getWay()), k -> new LinkedHashSet<>()).add(ws);
                 }
                 grouped.values().forEach(group -> analyseOverlaps(group, seenWays));
             }
@@ -121,7 +121,7 @@ public class OverlappingWays extends Test {
         if (ways <= 1)
             return;
 
-        List<Way> currentWays = duplicated.stream().map(ws -> ws.way).collect(Collectors.toList());
+        List<Way> currentWays = duplicated.stream().map(ws -> ws.getWay()).collect(Collectors.toList());
         Collection<WaySegment> highlight;
         if ((highlight = seenWays.get(currentWays)) != null) {
             /* this combination of ways was seen before, just add highlighted segment */
@@ -133,23 +133,23 @@ public class OverlappingWays extends Test {
             int countOther = 0;
             int numAreas = 0;
             for (WaySegment ws : duplicated) {
-                boolean isArea = ws.way.concernsArea();
-                if (ws.way.hasKey(HIGHWAY)) {
+                boolean isArea = ws.getWay().concernsArea();
+                if (ws.getWay().hasKey(HIGHWAY)) {
                     if (!isArea) {
                         countHighway++;
                     }
-                } else if (ws.way.hasKey(RAILWAY)) {
+                } else if (ws.getWay().hasKey(RAILWAY)) {
                     if (!isArea) {
                         countRailway++;
                     }
-                } else if (ws.way.hasKey(WATERWAY)) {
+                } else if (ws.getWay().hasKey(WATERWAY)) {
                     if (!isArea) {
                         countWaterway++;
                     }
                 } else {
-                    if (ws.way.getInterestingTags().isEmpty() && parentMultipolygonConcernsArea(ws.way))
+                    if (ws.getWay().getInterestingTags().isEmpty() && parentMultipolygonConcernsArea(ws.getWay()))
                         isArea = true;
-                    if (!isArea && isOtherLinear(ws.way)) {
+                    if (!isArea && isOtherLinear(ws.getWay())) {
                         countOther++;
                     }
                 }

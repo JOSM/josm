@@ -1290,7 +1290,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (!way.isHighlighted() && highlightWaySegments != null) {
             MapViewPath highlightSegs = null;
             for (WaySegment ws : highlightWaySegments) {
-                if (ws.way != way || ws.lowerIndex < offset) {
+                if (ws.getWay() != way || ws.getLowerIndex() < offset) {
                     continue;
                 }
                 if (highlightSegs == null) {

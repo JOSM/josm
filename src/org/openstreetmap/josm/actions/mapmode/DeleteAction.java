@@ -417,11 +417,11 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         case segment:
             return DeleteCommand.deleteWaySegment(parameters.nearestSegment);
         case way:
-            return DeleteCommand.delete(Collections.singleton(parameters.nearestSegment.way), false, silent);
+            return DeleteCommand.delete(Collections.singleton(parameters.nearestSegment.getWay()), false, silent);
         case way_with_nodes:
-            return DeleteCommand.delete(Collections.singleton(parameters.nearestSegment.way), true, silent);
+            return DeleteCommand.delete(Collections.singleton(parameters.nearestSegment.getWay()), true, silent);
         case way_with_references:
-            return DeleteCommand.deleteWithReferences(Collections.singleton(parameters.nearestSegment.way), true);
+            return DeleteCommand.deleteWithReferences(Collections.singleton(parameters.nearestSegment.getWay()), true);
         default:
             return null;
         }

@@ -148,7 +148,7 @@ public abstract class AbstractMapRenderer implements Rendering {
             // drawing them over the existing ones works fine (at least in their current simple style)
             path = new GeneralPath();
             for (WaySegment wseg: data.getHighlightedVirtualNodes()) {
-                if (wseg.way.isUsable() && !wseg.way.isDisabled()) {
+                if (wseg.getWay().isUsable() && !wseg.getWay().isDisabled()) {
                     Way tmpWay = wseg.toWay();
                     visitVirtual(path, tmpWay);
                     tmpWay.setNodes(null);

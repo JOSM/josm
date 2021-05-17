@@ -462,9 +462,9 @@ public class ImproveWayAccuracyAction extends MapMode implements DataSelectionLi
 
                 // Adding the node to all segments found
                 for (WaySegment virtualSegment : virtualSegments) {
-                    Way w = virtualSegment.way;
+                    Way w = virtualSegment.getWay();
                     List<Node> modNodes = w.getNodes();
-                    modNodes.add(virtualSegment.lowerIndex + 1, virtualNode);
+                    modNodes.add(virtualSegment.getUpperIndex(), virtualNode);
                     virtualCmds.add(new ChangeNodesCommand(w, modNodes));
                 }
 

@@ -365,20 +365,20 @@ public abstract class CrossingWays extends Test {
                     List<WaySegment> highlight;
 
                     if (!es1.intersects(es2)
-                            || (!findSelfCrossingOnly && ignoreWaySegmentCombination(es1.way, es2.way))) {
+                            || (!findSelfCrossingOnly && ignoreWaySegmentCombination(es1.getWay(), es2.getWay()))) {
                         continue;
                     }
 
                     prims = new ArrayList<>();
-                    prims.add(es1.way);
-                    if (es1.way != es2.way)
-                        prims.add(es2.way);
+                    prims.add(es1.getWay());
+                    if (es1.getWay() != es2.getWay())
+                        prims.add(es2.getWay());
                     if ((highlight = seenWays.get(prims)) == null) {
                         highlight = new ArrayList<>();
                         highlight.add(es1);
                         highlight.add(es2);
 
-                        final MessageHelper message = createMessage(es1.way, es2.way);
+                        final MessageHelper message = createMessage(es1.getWay(), es2.getWay());
                         errors.add(TestError.builder(this, Severity.WARNING, message.code)
                                 .message(message.message)
                                 .primitives(prims)
@@ -436,12 +436,12 @@ public abstract class CrossingWays extends Test {
                 for (WaySegment es2 : segments) {
 
                     List<WaySegment> highlight;
-                    if (es2.way == w // reported by CrossingWays.SelfIntersection
+                    if (es2.getWay() == w // reported by CrossingWays.SelfIntersection
                             || (findSharedWaySegments && !es1.isSimilar(es2))
                             || (!findSharedWaySegments && !es1.intersects(es2)))
                         continue;
 
-                    List<Way> prims = Arrays.asList(es1.way, es2.way);
+                    List<Way> prims = Arrays.asList(es1.getWay(), es2.getWay());
                     if ((highlight = crossingWays.get(prims)) == null) {
                         highlight = new ArrayList<>();
                         highlight.add(es1);

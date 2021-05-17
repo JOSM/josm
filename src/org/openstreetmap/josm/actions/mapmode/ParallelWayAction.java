@@ -507,16 +507,16 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
 
         sourceWays.removeIf(w -> w.isIncomplete() || w.isEmpty());
 
-        if (!sourceWays.contains(referenceSegment.way)) {
+        if (!sourceWays.contains(referenceSegment.getWay())) {
             clearSourceWays();
-            addSourceWay(referenceSegment.way);
+            addSourceWay(referenceSegment.getWay());
         }
 
         try {
             int referenceWayIndex = -1;
             int i = 0;
             for (Way w : sourceWays) {
-                if (w == referenceSegment.way) {
+                if (w == referenceSegment.getWay()) {
                     referenceWayIndex = i;
                     break;
                 }

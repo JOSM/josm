@@ -41,12 +41,12 @@ class WaySegmentTest {
         w.addNode(n1);
         w.addNode(n4);
         w.addNode(n1);
-        Assert.assertEquals(WaySegment.forNodePair(w, n1, n2).lowerIndex, 0);
-        Assert.assertEquals(WaySegment.forNodePair(w, n1, n3).lowerIndex, 2);
-        Assert.assertEquals(WaySegment.forNodePair(w, n1, n4).lowerIndex, 4);
-        Assert.assertEquals(WaySegment.forNodePair(w, n4, n1).lowerIndex, 5);
+        Assert.assertEquals(WaySegment.forNodePair(w, n1, n2).getLowerIndex(), 0);
+        Assert.assertEquals(WaySegment.forNodePair(w, n1, n3).getLowerIndex(), 2);
+        Assert.assertEquals(WaySegment.forNodePair(w, n1, n4).getLowerIndex(), 4);
+        Assert.assertEquals(WaySegment.forNodePair(w, n4, n1).getLowerIndex(), 5);
         try {
-            Assert.assertEquals(WaySegment.forNodePair(w, n3, n4).lowerIndex, 5);
+            Assert.assertEquals(WaySegment.forNodePair(w, n3, n4).getLowerIndex(), 5);
             throw new IllegalStateException("Expecting IllegalArgumentException");
         } catch (IllegalArgumentException expected) {
             System.out.println("Expected exception: " + expected.getMessage());

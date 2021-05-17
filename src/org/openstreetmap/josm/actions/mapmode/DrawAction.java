@@ -693,14 +693,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         Map<Way, List<Integer>> insertPoints = new HashMap<>();
         for (WaySegment ws : wss) {
             List<Integer> is;
-            if (insertPoints.containsKey(ws.way)) {
-                is = insertPoints.get(ws.way);
+            if (insertPoints.containsKey(ws.getWay())) {
+                is = insertPoints.get(ws.getWay());
             } else {
                 is = new ArrayList<>();
-                insertPoints.put(ws.way, is);
+                insertPoints.put(ws.getWay(), is);
             }
 
-            is.add(ws.lowerIndex);
+            is.add(ws.getLowerIndex());
         }
 
         Set<Pair<Node, Node>> segSet = new HashSet<>();
@@ -858,7 +858,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         if (!ctrl && currentMouseNode == null) {
             List<WaySegment> wss = mv.getNearestWaySegments(mousePos, OsmPrimitive::isSelectable);
             for (WaySegment ws : wss) {
-                mouseOnExistingWays.add(ws.way);
+                mouseOnExistingWays.add(ws.getWay());
             }
         }
 
