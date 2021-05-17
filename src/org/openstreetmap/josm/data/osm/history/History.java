@@ -191,14 +191,16 @@ public class History {
 
     /**
      * Replies the history primitive which changed the given key.
-     * @param version the version
+     * @param primitive the reference primitive (the history up to and including this primitive is considered)
      * @param key the OSM key
+     * @param isLatest whether this relates to a not yet committed changeset
      * @return the history primitive which changed the given key
      */
-    public HistoryOsmPrimitive getWhichChangedTag(long version, String key) {
-        HistoryOsmPrimitive primitive = getByVersion(version);
+    public HistoryOsmPrimitive getWhichChangedTag(HistoryOsmPrimitive primitive, String key, boolean isLatest) {
         if (primitive == null) {
             return null;
+        } else if (isLatest && !Objects.equals(getLatest().get(key), primitive.get(key))) {
+            return primitive;
         }
         for (int i = versions.indexOf(primitive); i > 0; i--) {
             if (!Objects.equals(versions.get(i).get(key), versions.get(i - 1).get(key))) {

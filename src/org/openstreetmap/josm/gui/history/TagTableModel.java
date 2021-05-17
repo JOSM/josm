@@ -92,7 +92,16 @@ public final class TagTableModel extends AbstractTableModel {
         HistoryOsmPrimitive primitive = model.getPointInTime(pointInTimeType);
         if (primitive == null)
             return null;
-        return model.getHistory().getWhichChangedTag(primitive.getVersion(), key);
+        return model.getHistory().getWhichChangedTag(primitive, key, model.isLatest(primitive));
+    }
+
+    /**
+     * Returns a version string for the given primitive, {@code "*"} if it is {@linkplain HistoryBrowserModel#isLatest is latest}.
+     * @param primitive the history primitive
+     * @return a version string for the given primitive
+     */
+    public String getVersionString(HistoryOsmPrimitive primitive) {
+        return model.isLatest(primitive) ? "*" : "v" + primitive.getVersion();
     }
 
     /**

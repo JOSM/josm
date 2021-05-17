@@ -713,6 +713,6 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      * @return the color for the given primitive timestamp
      */
     public Color getVersionColor(HistoryOsmPrimitive primitive) {
-        return dateScale.getColor(primitive.getInstant().toEpochMilli());
+        return dateScale.getColor(isLatest(primitive) ? System.currentTimeMillis() : primitive.getInstant().toEpochMilli());
     }
 }

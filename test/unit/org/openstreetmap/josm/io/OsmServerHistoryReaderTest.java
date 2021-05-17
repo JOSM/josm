@@ -67,12 +67,11 @@ public class OsmServerHistoryReaderTest {
         assertEquals(10, h.getLatest().getNumKeys());
         assertEquals(26368284, h.getLatest().getChangesetId());
         assertEquals(Instant.ofEpochMilli(1414429134000L), h.getLatest().getInstant());
-        System.out.println(h.getByVersion(14).keySet());
-        assertEquals(11, h.getWhichChangedTag(14, "bicycle").getVersion());
-        assertEquals(1, h.getWhichChangedTag(10, "bicycle").getVersion());
-        assertEquals(5, h.getWhichChangedTag(14, "created_by").getVersion());
-        assertEquals(2, h.getWhichChangedTag(4, "created_by").getVersion());
-        assertEquals(1, h.getWhichChangedTag(1, "highway").getVersion());
+        assertEquals(11, h.getWhichChangedTag(h.getByVersion(14), "bicycle", false).getVersion());
+        assertEquals(1, h.getWhichChangedTag(h.getByVersion(10), "bicycle", false).getVersion());
+        assertEquals(5, h.getWhichChangedTag(h.getByVersion(14), "created_by", false).getVersion());
+        assertEquals(2, h.getWhichChangedTag(h.getByVersion(4), "created_by", false).getVersion());
+        assertEquals(1, h.getWhichChangedTag(h.getByVersion(1), "highway", false).getVersion());
     }
 
     /**

@@ -62,7 +62,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
             case TagTableColumnModel.COLUMN_VERSION:
                 HistoryOsmPrimitive primitive = model.getWhichChangedTag(key);
                 if (primitive != null) {
-                    text = "v" + primitive.getVersion();
+                    text = model.getVersionString(primitive);
                     tooltip = tr("Key ''{0}'' was changed in version {1}", key, primitive.getVersion());
                     setBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, model.getVersionColor(primitive)));
                 }
