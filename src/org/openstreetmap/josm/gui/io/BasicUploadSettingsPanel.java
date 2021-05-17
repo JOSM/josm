@@ -23,6 +23,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
@@ -364,7 +365,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         }
 
         private void setComment() {
-            destination.setComment(source.getText());
+            SwingUtilities.invokeLater(() -> destination.setComment(source.getText()));
         }
 
         @Override
