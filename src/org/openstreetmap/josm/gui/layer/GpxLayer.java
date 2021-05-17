@@ -528,7 +528,7 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
 
     @Override
     public boolean isModified() {
-        return data.isModified();
+        return data != null && data.isModified();
     }
 
     @Override
