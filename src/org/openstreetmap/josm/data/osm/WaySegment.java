@@ -39,19 +39,6 @@ public final class WaySegment extends IWaySegment<Node, Way> {
         throw new IllegalArgumentException("Node pair is not part of way!");
     }
 
-    @Override
-    public Node getFirstNode() {
-        // This is kept for binary compatibility
-        return super.getFirstNode();
-    }
-
-    @Override
-    public Node getSecondNode() {
-        // This is kept for binary compatibility
-        return super.getSecondNode();
-    }
-
-
     /**
      * Returns this way segment as complete way.
      * @return the way segment as {@code Way}
@@ -62,39 +49,6 @@ public final class WaySegment extends IWaySegment<Node, Way> {
         w.addNode(getFirstNode());
         w.addNode(getSecondNode());
         return w;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        // This is kept for binary compatibility
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        // This is kept for binary compatibility
-        return super.hashCode();
-    }
-
-    /**
-     * Checks whether this segment crosses other segment
-     *
-     * @param s2 The other segment
-     * @return true if both segments crosses
-     */
-    public boolean intersects(WaySegment s2) {
-        // This is kept for binary compatibility
-        return super.intersects(s2);
-    }
-
-    /**
-     * Checks whether this segment and another way segment share the same points
-     * @param s2 The other segment
-     * @return true if other way segment is the same or reverse
-     */
-    public boolean isSimilar(WaySegment s2) {
-        // This is kept for binary compatibility
-        return super.isSimilar(s2);
     }
 
     @Override
