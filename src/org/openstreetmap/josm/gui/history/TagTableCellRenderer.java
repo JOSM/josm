@@ -66,6 +66,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
                     tooltip = tr("Key ''{0}'' was changed in version {1}", key, primitive.getVersion());
                     setBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, model.getVersionColor(primitive)));
                 }
+                break;
             default: // Do nothing
             }
         }
