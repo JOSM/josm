@@ -186,14 +186,14 @@ Build-Date: ${build.tstamp}
     <target name="javacc" depends="init" unless="javacc.notRequired" description="Compile the MapCSS compiler">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
         <mkdir dir="${mapcss.dir}/parsergen"/>
-        <java classname="javacc" fork="true" failonerror="true">
+        <java classname="javacc" fork="true" dir="${mapcss.dir}" failonerror="true">
             <classpath path="${tools.dir}/javacc"/>
             <classpath refid="javacc.classpath"/>
             <arg value="-DEBUG_PARSER=false"/>
             <arg value="-DEBUG_TOKEN_MANAGER=false"/>
             <arg value="-JDK_VERSION=1.${java.lang.version}"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
-            <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
+            <arg value="-UNICODE_INPUT=true"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </java>
     </target>
