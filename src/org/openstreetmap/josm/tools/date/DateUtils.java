@@ -244,7 +244,9 @@ public final class DateUtils {
      * Returns a new {@code SimpleDateFormat} for date and time, according to <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a>.
      * @return a new ISO 8601 date format, for date and time.
      * @since 7299
+     * @deprecated Use {@link Instant#toString()}
      */
+    @Deprecated
     public static SimpleDateFormat newIsoDateTimeFormat() {
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
     }
