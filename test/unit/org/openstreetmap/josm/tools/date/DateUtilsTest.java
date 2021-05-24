@@ -243,6 +243,8 @@ public class DateUtilsTest {
             DateFormat f2 = DateUtils.getDateFormat(DateFormat.SHORT);
             assertNotNull(f1);
             assertNotEquals(f1, f2);
+            DateUtils.PROP_ISO_DATES.put(true);
+            assertEquals("2006-01-02", DateUtils.getDateFormatter(null).format(Instant.parse("2006-01-02T15:04:05.777Z")));
         } finally {
             DateUtils.PROP_ISO_DATES.put(iso);
         }
@@ -261,6 +263,10 @@ public class DateUtilsTest {
             DateFormat f2 = DateUtils.getTimeFormat(DateFormat.SHORT);
             assertNotNull(f1);
             assertNotEquals(f1, f2);
+            DateUtils.PROP_ISO_DATES.put(true);
+            assertEquals("15:04:05.777", DateUtils.getTimeFormatter(null).format(Instant.parse("2006-01-02T15:04:05.777Z")));
+            assertEquals("15:04:05", DateUtils.getTimeFormatter(null).format(Instant.parse("2006-01-02T15:04:05Z")));
+            assertEquals("15:04:00", DateUtils.getTimeFormatter(null).format(Instant.parse("2006-01-02T15:04:00Z")));
         } finally {
             DateUtils.PROP_ISO_DATES.put(iso);
         }
@@ -279,7 +285,7 @@ public class DateUtilsTest {
      */
     @Test
     void testDateTimeFormatter() {
-        Instant instant = Instant.parse("2006-01-02T15:04:05Z");
+        Instant instant = Instant.parse("2006-01-02T15:04:05.777Z");
         Boolean iso = DateUtils.PROP_ISO_DATES.get();
         try {
             assertNotNull(DateUtils.getDateFormatter(FormatStyle.SHORT).format(instant));
@@ -289,6 +295,12 @@ public class DateUtilsTest {
             assertNotNull(DateUtils.getDateFormatter(FormatStyle.SHORT).format(instant));
             assertNotNull(DateUtils.getTimeFormatter(FormatStyle.SHORT).format(instant));
             assertNotNull(DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.SHORT).format(instant));
+            DateUtils.PROP_ISO_DATES.put(true);
+            assertEquals("2006-01-02 15:04:05.777", DateUtils.getDateTimeFormatter(null, null).format(instant));
+            assertEquals(Instant.parse("2006-01-02T15:04:05.000Z"),
+                    DateUtils.getDateTimeFormatter(null, null).parse("2006-01-02 15:04:05", Instant::from));
+            assertEquals(Instant.parse("2006-01-02T15:04:00.000Z"),
+                    DateUtils.getDateTimeFormatter(null, null).parse("2006-01-02 15:04", Instant::from));
         } finally {
             DateUtils.PROP_ISO_DATES.put(iso);
         }
