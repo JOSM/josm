@@ -86,18 +86,18 @@ class Tag2LinkTest {
     @Test
     void testImageCommonsImage() {
         Tag2Link.getLinksForTag("image", "File:Witten Brücke Gasstraße.jpg", this::addLink);
-        checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Witten%20Br%C3%BCcke%20Gasstra%C3%9Fe.jpg");
+        checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File%3AWitten_Br%C3%BCcke_Gasstra%C3%9Fe.jpg");
         links.clear();
         // non-regression test for #19754
         Tag2Link.getLinksForTag("image", "File:Foo.jpg;File:Bar.jpg", this::addLink);
-        checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Foo.jpg",
-                "View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File:Bar.jpg");
+        checkLinks("View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File%3AFoo.jpg",
+                "View image on Wikimedia Commons // https://commons.wikimedia.org/wiki/File%3ABar.jpg");
         links.clear();
         // non-regression test for #19771
         Tag2Link.getLinksForTag("image", "File:Côte de granite rose - Trégastel à Ploumanac'h - 20190723 - 025.jpg", this::addLink);
         checkLinks("View image on Wikimedia Commons // " +
                 "https://commons.wikimedia.org/wiki/" +
-                "File:C%C3%B4te%20de%20granite%20rose%20-%20Tr%C3%A9gastel%20%C3%A0%20Ploumanac'h%20-%2020190723%20-%20025.jpg");
+                "File%3AC%C3%B4te_de_granite_rose_-_Tr%C3%A9gastel_%C3%A0_Ploumanac%27h_-_20190723_-_025.jpg");
     }
 
     /**
@@ -106,7 +106,7 @@ class Tag2LinkTest {
     @Test
     void testImageCommonsCategory() {
         Tag2Link.getLinksForTag("image", "category:JOSM", this::addLink);
-        checkLinks("View category on Wikimedia Commons // https://commons.wikimedia.org/wiki/category:JOSM");
+        checkLinks("View category on Wikimedia Commons // https://commons.wikimedia.org/wiki/category%3AJOSM");
     }
 
     /**

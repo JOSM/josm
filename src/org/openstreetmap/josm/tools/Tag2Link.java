@@ -26,7 +26,6 @@ import javax.json.JsonArray;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 
-import com.google.gdata.util.common.base.PercentEscaper;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
@@ -217,7 +216,9 @@ public final class Tag2Link {
     }
 
     private static String getWikimediaCommonsUrl(String i) {
-        return "https://commons.wikimedia.org/wiki/" + new PercentEscaper(PercentEscaper.SAFEPATHCHARS_URLENCODER, false).escape(i);
+        i = i.replace(' ', '_');
+        i = Utils.encodeUrl(i);
+        return "https://commons.wikimedia.org/wiki/" + i;
     }
 
     private static String getLinkName(String url, String fallback) {
