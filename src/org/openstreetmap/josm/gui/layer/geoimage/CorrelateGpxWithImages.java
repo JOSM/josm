@@ -28,13 +28,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -597,9 +595,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
             }
         }
 
+        private SimpleDateFormat getDateTimeFormat() {
+            return (SimpleDateFormat) DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
+        }
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            SimpleDateFormat dateFormat = (SimpleDateFormat) DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.MEDIUM);
+            SimpleDateFormat dateFormat = getDateTimeFormat();
 
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(new JLabel(tr("<html>Take a photo of your GPS receiver while it displays the time.<br>"
@@ -772,10 +774,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
             imgDisp.setImage(img);
             Instant date = img.getExifInstant();
             if (date != null) {
-                DateTimeFormatter df = DateUtils.getDateTimeFormatter(FormatStyle.SHORT, FormatStyle.MEDIUM)
-                        .withZone(ZoneOffset.UTC); // EXIF data does not contain timezone information and is read as UTC
-                lbExifTime.setText(df.format(date));
-                tfGpsTime.setText(df.format(date));
+                DateFormat df = getDateTimeFormat();
+                df.setTimeZone(DateUtils.UTC); // EXIF data does not contain timezone information and is read as UTC
+                lbExifTime.setText(df.format(Date.from(date)));
+                tfGpsTime.setText(df.format(Date.from(date)));
                 tfGpsTime.setCaretPosition(tfGpsTime.getText().length());
                 tfGpsTime.setEnabled(true);
                 tfGpsTime.requestFocus();
