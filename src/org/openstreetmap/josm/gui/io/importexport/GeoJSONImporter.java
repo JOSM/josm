@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Locale;
 
+import javax.json.JsonException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -22,6 +24,7 @@ import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.GeoJSONReader;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * GeoJSON file importer.
@@ -51,11 +54,12 @@ public class GeoJSONImporter extends FileImporter {
             DataSet data = GeoJSONReader.parseDataSet(fileInputStream, progressMonitor);
             progressMonitor.worked(1);
             MainApplication.getLayerManager().addLayer(new OsmDataLayer(data, file.getName(), file));
-        } catch (IOException | IllegalArgumentException | IllegalDataException e) {
+        } catch (IOException | IllegalArgumentException | IllegalDataException | JsonException e) {
             Logging.error("Error while reading json file!");
             Logging.error(e);
-            GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(
-                null, tr("Error loading geojson file {0}", file.getAbsolutePath()), tr("Error"), JOptionPane.WARNING_MESSAGE));
+            String message = tr("Error loading geojson file {0}", file.getAbsolutePath())
+                    + tr(" ({0})", Utils.getSizeString(file.length(), Locale.getDefault()));
+            GuiHelper.runInEDT(() -> JOptionPane.showMessageDialog(null, message, tr("Error"), JOptionPane.WARNING_MESSAGE));
         } finally {
             progressMonitor.finishTask();
         }
