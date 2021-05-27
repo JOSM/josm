@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.protobuf.ProtobufPacked;
@@ -110,7 +111,7 @@ public class Feature {
             Object value = layer.getValue(number.intValue());
             if (value instanceof Double || value instanceof Float) {
                 // reset grouping if the instance is a singleton
-                final NumberFormat numberFormat = NumberFormat.getNumberInstance();
+                final NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.ROOT);
                 final boolean grouping = numberFormat.isGroupingUsed();
                 try {
                     numberFormat.setGroupingUsed(false);

@@ -12,9 +12,12 @@ import static org.openstreetmap.josm.data.imagery.vectortile.mapbox.LayerTest.ge
 import static org.openstreetmap.josm.data.imagery.vectortile.mapbox.LayerTest.getLayer;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 
 /**
  * Test class for {@link Feature}
@@ -50,7 +53,7 @@ class FeatureTest {
         // This is the float we are adding
         // 49 74 24 00 == 1_000_000f
         // 3f 80 00 00 == 1f
-        byte[] newBytes = new byte[] {0x22, 0x09, 0x15, 0x00, 0x24, 0x74, 0x49};
+        byte[] newBytes = new byte[] {0x22, 0x05, 0x15, 0x00, 0x24, 0x74, 0x49};
         byte[] copyBytes = Arrays.copyOf(getSimpleFeatureLayerBytes(), getSimpleFeatureLayerBytes().length + newBytes.length - 4);
         // Change last few bytes
         System.arraycopy(newBytes, 0, copyBytes, 25, newBytes.length);
@@ -77,6 +80,45 @@ class FeatureTest {
         Feature feature = layer.getFeatures().iterator().next();
         checkDefaultGeometry(feature);
         assertEquals("1000000", feature.getTags().get("a"));
+    }
+
+    /**
+     * Non-regression test for #20933 (Russian)
+     * @see #testNumberGroupingDecimalEn()
+     */
+    @I18n("ru")
+    @Test
+    void testNumberGroupingDecimalRu() {
+        testNumberGroupingDecimal();
+    }
+
+    /**
+     * Non-regression test for #20933 (English)
+     * @see #testNumberGroupingDecimalRu()
+     */
+    @I18n("en")
+    @Test
+    void testNumberGroupingDecimalEn() {
+        testNumberGroupingDecimal();
+    }
+
+    /**
+     * Common parts for non-regression tests for #20933
+     * @see #testNumberGroupingDecimalEn()
+     * @see #testNumberGroupingDecimalRu()
+     */
+    private void testNumberGroupingDecimal() {
+        byte[] newBytes = new byte[] {0x22, 0x09, 0x19, -45, 0x4D, 0x62, 0x10, 0x58, -71, 0x67, 0x40};
+        byte[] copyBytes = Arrays.copyOf(getSimpleFeatureLayerBytes(), getSimpleFeatureLayerBytes().length + newBytes.length - 4);
+        // Change last few bytes
+        System.arraycopy(newBytes, 0, copyBytes, 25, newBytes.length);
+        // Update the length of the record
+        copyBytes[1] = (byte) (copyBytes[1] + newBytes.length - 4);
+        Layer layer = assertDoesNotThrow(() -> getLayer(copyBytes));
+        layer.getKey(0);
+        List<Feature> features = new ArrayList<>(layer.getFeatures());
+        assertEquals(1, features.size());
+        assertEquals("189.792", features.get(0).getTags().get("a"));
     }
 
     private void testCreation(byte[] bytes) {
