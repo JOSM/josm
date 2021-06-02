@@ -141,12 +141,11 @@ public final class Cascade {
      * @param klass The class
      * @return The converted object or <code>null</code> if the conversion failed
      */
-    @SuppressWarnings("unchecked")
     public static <T> T convertTo(Object o, Class<T> klass) {
         if (o == null)
             return null;
         if (klass.isInstance(o))
-            return (T) o;
+            return klass.cast(o);
 
         return GENERIC_PARSER.supports(klass)
                 ? GENERIC_PARSER.parse(klass, o)
