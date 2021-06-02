@@ -90,7 +90,7 @@ jobs:
           path: |
             ~/.ivy2/cache/
             ~/work/josm/josm/tools/
-          key: ${{ runner.os }}-ivy2-${{ hashFiles('ivy.xml') }}
+          key: ${{ runner.os }}-ivy2-${{ hashFiles('build.xml', 'ivy.xml', 'tools/ivy.xml') }}
 
       - name: Setup Java ${{ matrix.java }}
         uses: actions/setup-java@v1.4.3
