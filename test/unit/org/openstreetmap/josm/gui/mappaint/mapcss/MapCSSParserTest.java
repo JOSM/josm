@@ -614,7 +614,6 @@ class MapCSSParserTest {
                 "null0: -tag(does_not_exist);" +
                 "null1: tag(x1) + tag(x2);" +
                 "null2: 3 + tag(does_not_exist) + 5;" +
-                "rounding: concat(\"ele=\", round(tag(\"ele\")*100)/100);" +
                 "}");
         source.loadStyleSource();
         MultiCascade mc = new MultiCascade();
@@ -628,7 +627,6 @@ class MapCSSParserTest {
         assertNull(mc.getCascade(null).get("null0"));
         assertNull(mc.getCascade(null).get("null1"));
         assertEquals(8.0, mc.getCascade(null).get("null2"));
-        assertEquals(8.0, mc.getCascade(null).get("rounding"));
     }
 
     @Test
