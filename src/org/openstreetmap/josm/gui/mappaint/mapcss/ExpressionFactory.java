@@ -227,7 +227,7 @@ public final class ExpressionFactory {
         FACTORY_MAP.put("rgb", Factory.of(float.class, float.class, float.class, null, Functions::rgb));
         FACTORY_MAP.put("rgba", Factory.of(float.class, float.class, float.class, float.class, Functions::rgba));
         FACTORY_MAP.put("role", Factory.ofEnv(Functions::role));
-        FACTORY_MAP.put("round", Factory.of(Math::acos));
+        FACTORY_MAP.put("round", Factory.of(Math::round));
         FACTORY_MAP.put("setting", Factory.ofEnv(String.class, Functions::setting));
         FACTORY_MAP.put("signum", Factory.of(Math::signum));
         FACTORY_MAP.put("sin", Factory.of(Math::sin));

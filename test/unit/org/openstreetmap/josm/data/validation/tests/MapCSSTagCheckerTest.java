@@ -424,8 +424,10 @@ class MapCSSTagCheckerTest {
     }
 
     /**
-     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19053">Bug #19053</a>.
-     * Mapcss rule with group.
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/19053">Bug #19053</a> and
+     * <a href="https://josm.openstreetmap.de/ticket/20957">Bug #20957</a>
+     * - MapCSS rule with group.
+     * - MapCSS functions round, tag, *, /
      * @throws ParseException if a parsing error occurs
      */
     @Test
@@ -433,13 +435,20 @@ class MapCSSTagCheckerTest {
         final MapCSSTagChecker test = buildTagChecker(
                 "*[ele][ele =~ /^-?[0-9]+\\.[0-9][0-9][0-9]+$/] {"
                         + "throwWarning: tr(\"{0}\",\"{0.tag}\");"
+                        + "fixAdd: concat(\"ele=\", round(tag(\"ele\")*100)/100);"
                         + "group: tr(\"Unnecessary amount of decimal places\");" + "}");
         final OsmPrimitive p = OsmUtils.createPrimitive("node ele=12.123456");
+        new DataSet(p);
         final Collection<TestError> errors = test.getErrorsForPrimitive(p, false);
         assertEquals(1, errors.size());
         assertEquals("Unnecessary amount of decimal places", errors.iterator().next().getMessage());
         assertEquals("3000_ele=12.123456", errors.iterator().next().getIgnoreSubGroup());
         assertEquals("3000_Unnecessary amount of decimal places", errors.iterator().next().getIgnoreGroup());
+        Command fix = errors.iterator().next().getFix();
+        assertNotNull(fix);
+        assertEquals("12.123456", p.get("ele"));
+        fix.executeCommand();
+        assertEquals("12.12", p.get("ele"));
     }
 
 }

@@ -614,6 +614,7 @@ class MapCSSParserTest {
                 "null0: -tag(does_not_exist);" +
                 "null1: tag(x1) + tag(x2);" +
                 "null2: 3 + tag(does_not_exist) + 5;" +
+                "rounding: concat(\"ele=\", round(tag(\"ele\")*100)/100);" +
                 "}");
         source.loadStyleSource();
         MultiCascade mc = new MultiCascade();
@@ -627,6 +628,7 @@ class MapCSSParserTest {
         assertNull(mc.getCascade(null).get("null0"));
         assertNull(mc.getCascade(null).get("null1"));
         assertEquals(8.0, mc.getCascade(null).get("null2"));
+        assertEquals(8.0, mc.getCascade(null).get("rounding"));
     }
 
     @Test
@@ -736,5 +738,17 @@ class MapCSSParserTest {
         MultiCascade mc = new MultiCascade();
         source.apply(mc, OsmUtils.createPrimitive("node"), 20, false);
         assertNull(mc.getCascade(null).get("name"));
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/20957">Bug #20957</a>.
+     */
+    @Test
+    void testTicket20957() {
+        MapCSSStyleSource source = new MapCSSStyleSource("node {fixAdd: concat(\"ele=\", round(tag(\"ele\")*100)/100)}");
+        source.loadStyleSource();
+        MultiCascade mc = new MultiCascade();
+        source.apply(mc, OsmUtils.createPrimitive("node ele=12.123456"), 20, false);
+        assertEquals("ele=12.12", mc.getCascade(null).get("fixAdd"));
     }
 }
