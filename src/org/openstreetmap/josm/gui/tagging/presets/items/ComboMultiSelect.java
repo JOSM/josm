@@ -396,6 +396,14 @@ public abstract class ComboMultiSelect extends KeyedItem {
     @Override
     public void addCommands(List<Tag> changedTags) {
         String value = getSelectedValue();
+
+        // no change if same as before
+        if (originalValue == null) {
+            if (value.isEmpty())
+                return;
+        } else if (value.equals(originalValue.toString()))
+            return;
+
         if (isUseLastAsDefault()) {
             LAST_VALUES.put(key, value);
         }
