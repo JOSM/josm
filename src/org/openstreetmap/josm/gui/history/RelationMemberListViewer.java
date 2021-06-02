@@ -28,13 +28,23 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 public class RelationMemberListViewer extends HistoryViewerPanel {
 
     @Override
-    protected JTable buildTable(PointInTimeType pointInTimeType) {
+    protected JTable buildReferenceTable() {
+        return buildTable(PointInTimeType.REFERENCE_POINT_IN_TIME, "table.referencememberlisttable");
+    }
+
+    @Override
+    protected JTable buildCurrentTable() {
+        return buildTable(PointInTimeType.CURRENT_POINT_IN_TIME, "table.currentmemberlisttable");
+    }
+
+    private JTable buildTable(PointInTimeType pointInTimeType, String name) {
         final DiffTableModel tableModel = model.getRelationMemberTableModel(pointInTimeType);
         final RelationMemberTableColumnModel columnModel = new RelationMemberTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
         TableHelper.setFont(table, getClass());
         tableModel.addTableModelListener(new ReversedChangeListener(
                 table, columnModel, tr("The members of this relation are in reverse order")));
+        table.setName(name);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         enableSemanticSelectionSynchronization(table.getSelectionModel(),
