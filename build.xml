@@ -20,7 +20,6 @@
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="lib.dir"   location="${base.dir}/lib"/>
         <property name="tools.dir" location="${base.dir}/tools"/>
-        <property name="tools.ivy" location="${tools.dir}/ivy.xml"/>
         <property name="ivy.jar.dir" location="${tools.dir}/ivy"/>
         <property name="ivy.jar.file" location="${ivy.jar.dir}/ivy-${ivy.version}.jar"/>
         <mkdir dir="${ivy.jar.dir}"/>
@@ -184,7 +183,7 @@ Build-Date: ${build.tstamp}
         </exec>
     </target>
     <target name="javacc" depends="init" unless="javacc.notRequired" description="Compile the MapCSS compiler">
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
+        <ivy:cachepath log="download-only" pathid="javacc.classpath" conf="javacc"/>
         <mkdir dir="${mapcss.dir}/parsergen"/>
         <java classname="javacc" fork="true" dir="${mapcss.dir}" failonerror="true">
             <classpath path="${tools.dir}/javacc"/>
@@ -209,8 +208,8 @@ Build-Date: ${build.tstamp}
         </javac>
     </target>
     <target name="compile" depends="init,javacc,compile-cots" unless="compile.notRequired" description="Compile JOSM">
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone.classpath" conf="errorprone"/>
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac"/>
+        <ivy:cachepath log="download-only" pathid="errorprone.classpath" conf="errorprone"/>
+        <ivy:cachepath log="download-only" pathid="errorprone_javac.classpath" conf="errorprone_javac"/>
         <!-- JOSM -->
         <javac sourcepath="" srcdir="${src.dir}" fork="yes"
             excludes="com/**,org/apache/commons/**,**/package-info.java"
@@ -514,7 +513,7 @@ Build-Date: ${build.tstamp}
     </target>
     <!-- ProGuard does not woth with Java 17 yet: https://github.com/Guardsquare/proguard/issues/132 -->
     <target name="dist-optimized" depends="dist" unless="isJava17" description="Build an optimized JOSM distribution file">
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="proguard.classpath" conf="proguard"/>
+        <ivy:cachepath log="download-only" pathid="proguard.classpath" conf="proguard"/>
         <taskdef resource="proguard/ant/task.properties" classpathref="proguard.classpath"/>
         <proguard>
         -injars ${dist.jar}
@@ -583,7 +582,7 @@ Build-Date: ${build.tstamp}
         <local name="dir"/>
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="animal.classpath" conf="animal"/>
+        <ivy:cachepath log="download-only" pathid="animal.classpath" conf="animal"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
             <classpath refid="animal.classpath"/>
         </typedef>
@@ -825,7 +824,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="checkstyle-compile" depends="init" description="Compile Checkstyle rules">
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="checkstyle.classpath" conf="checkstyle"/>
+        <ivy:cachepath log="download-only" pathid="checkstyle.classpath" conf="checkstyle"/>
         <mkdir dir="${checkstyle-build.dir}"/>
         <javac sourcepath="" srcdir="${checkstyle.dir}/src" failonerror="true"
             destdir="${checkstyle-build.dir}" release="${java.lang.version}" debug="on"
@@ -859,7 +858,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="spotbugs" depends="dist" description="Run SpotBugs on the source files">
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="spotbugs.classpath" conf="spotbugs"/>
+        <ivy:cachepath log="download-only" pathid="spotbugs.classpath" conf="spotbugs"/>
         <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="spotbugs.classpath"/>
         <spotbugs output="xml"
                 outputFile="spotbugs-josm.xml"
@@ -875,7 +874,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="pmd" depends="init" description="Run PMD on the source files">
-        <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="pmd.classpath" conf="pmd"/>
+        <ivy:cachepath log="download-only" pathid="pmd.classpath" conf="pmd"/>
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.classpath"/>
         <pmd shortFilenames="true" cacheLocation="${pmd.dir}/cache" encoding="UTF-8">
             <sourceLanguage name="java" version="${java.lang.version}" />
@@ -1080,7 +1079,7 @@ Build-Date: ${build.tstamp}
     <target name="bootstrap-workspace" description="Copy libraries from ivy cache to workspace folders for IDE" depends="resolve">
         <delete dir="${lib.dir}"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[type].[ext]" conf="compile,runtime,sources,test"/>
-        <ivy:retrieve pattern="${lib.dir}/tools/[artifact]-[type].[ext]" conf="javacc,checkstyle,pmd,spotbugs,errorprone" file="${tools.ivy}"/>
+        <ivy:retrieve pattern="${lib.dir}/tools/[artifact]-[type].[ext]" conf="javacc,checkstyle,pmd,spotbugs,errorprone"/>
     </target>
     <target name="ivy-report" description="Generate Ivy reports of dependency resolving" depends="resolve">
         <ivy:report todir="${tools.dir}/ivy-report" graph="false"/>

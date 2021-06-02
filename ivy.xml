@@ -12,10 +12,20 @@
         <conf name="commonslang" description="Apache Commons Lang test library"/>
         <conf name="jmockit" description="JMockit test library"/>
         <conf name="jacocoant" description="Jacoco Ant test library"/>
+        <conf name="javacc" description="Everything needed for running JavaCC"/>
+        <conf name="checkstyle" description="Everything needed for running Checkstyle"/>
+        <conf name="proguard" description="Everything needed for running ProGuard"/>
+        <conf name="pmd" description="Everything needed for running PMD"/>
+        <conf name="spotbugs" description="Everything needed for running SpotBugs"/>
+        <conf name="errorprone" description="Everything needed for running error-prone"/>
+        <conf name="errorprone_javac" description="Everything needed for running javac from error-prone"/>
+        <conf name="animal" description="Everything needed for running Animal Sniffer"/>
         <!--  Meta configurations used in build scripts -->
         <conf name="runtime" description="Libraries only needed at runtime" extends="implementation,api,runtimeOnly"/>
         <conf name="compile" description="Libraries needed only for compilation" extends="implementation,api,provided"/>
+        <conf name="compile-tools" description="Tools only needed for compilation" extends="javacc,proguard,errorprone,errorprone_javac"/>
         <conf name="test" description="Libraries only needed for testing" extends="compile,runtime,commonslang,jmockit"/>
+        <conf name="test-tools" description="Tools only needed for testing" extends="checkstyle,pmd,spotbugs,animal"/>
         <conf name="sources" description="Source code of used libraries"/>
     </configurations>
     <dependencies>
@@ -51,7 +61,30 @@
         <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.6">
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
         </dependency>
-        <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49.a"/>
+        <!-- jmockit->default -->
+        <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49.a" transitive="false"/>
+        <!-- javacc->default -->
+        <dependency conf="javacc->default" org="net.java.dev.javacc" name="javacc" rev="7.0.10"/>
+        <!-- checkstyle->default -->
+        <dependency conf="checkstyle->default" org="com.puppycrawl.tools" name="checkstyle" rev="8.36"/>
+        <!-- proguard->default -->
+        <dependency conf="proguard->default" org="com.guardsquare" name="proguard-ant" rev="7.1.0-beta3"/>
+        <!-- pmd->default -->
+        <dependency conf="pmd->default" org="net.sourceforge.pmd" name="pmd-core" rev="6.20.0"/>
+        <dependency conf="pmd->default" org="net.sourceforge.pmd" name="pmd-java" rev="6.20.0"/>
+        <dependency conf="pmd->default" org="net.sourceforge.saxon" name="saxon" rev="9.1.0.8">
+            <artifact name="saxon" type="jar"/>
+            <artifact name="saxon" type="jar" maven:classifier="dom"/>
+        </dependency>
+        <!-- spotbugs->default -->
+        <dependency conf="spotbugs->default" org="com.github.spotbugs" name="spotbugs" rev="4.2.1"/>
+        <dependency conf="spotbugs->default" org="com.github.spotbugs" name="spotbugs-ant" rev="4.2.1"/>
+        <!-- errorprone->default -->
+        <dependency conf="errorprone->default" org="com.google.errorprone" name="error_prone_core" rev="2.7.1"/>
+        <!-- errorprone->default -->
+        <dependency conf="errorprone_javac->default" org="com.google.errorprone" name="javac" rev="9+181-r4173-1"/>
+        <!-- animal->default -->
+        <dependency conf="animal->default" org="org.codehaus.mojo" name="animal-sniffer-ant-tasks" rev="1.20"/>
         <!-- test->default -->
         <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.2.1"/>
         <dependency conf="test->default" org="com.ginsberg" name="junit5-system-exit" rev="1.1.1"/>
