@@ -330,10 +330,9 @@ Build-Date: ${build.tstamp}
             <pathelement path="${build.dir}"/>
             <pathelement path="${resources.dir}"/>
         </path>
-        <ivy:retrieve log="download-only" pattern="${test.dir}/lib/[artifact].[ext]" conf="jmockit"/>
-        <ivy:retrieve log="download-only" pattern="${tools.dir}/[artifact].[ext]" conf="commonslang"/>
-        <ivy:retrieve log="download-only" pattern="${tools.dir}/[conf].[ext]" conf="jacocoant"/>
-        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpath="${tools.dir}/jacocoant.jar" />
+        <ivy:cachepath log="download-only" pathid="jmockit.classpath" conf="jmockit"/>
+        <ivy:cachepath log="download-only" pathid="jacocoant.classpath" conf="jacocoant"/>
+        <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpathref="jacocoant.classpath"/>
     </target>
     <target name="test-clean" depends="init-properties" description="Delete all built test files">
         <delete dir="${test.dir}/build"/>
@@ -400,7 +399,7 @@ Build-Date: ${build.tstamp}
 	                <fork>
 	                    <jvmarg value="${jacocoagent@{testfamily}@{testITsuffix}}" if:set="jacocoagent@{testfamily}@{testITsuffix}" />
 	                    <jvmarg value="-Dfile.encoding=UTF-8"/>
-	                    <jvmarg value="-javaagent:${test.dir}/lib/jmockit.jar"/>
+	                    <jvmarg value="-javaagent:${toString:jmockit.classpath}"/>
 	                    <jvmarg value="-Djunit.jupiter.extensions.autodetection.enabled=true"/>
 	                    <jvmarg value="-Djunit.jupiter.execution.parallel.enabled=true"/>
 	                    <jvmarg value="--add-modules" if:set="isJava9" unless:set="isJava11" />
@@ -751,7 +750,7 @@ Build-Date: ${build.tstamp}
             <classpath>
                 <pathelement path="${build.dir}"/>
                 <pathelement path="${test.dir}/build/unit"/>
-                <pathelement path="${commons-lang3.jar}"/>
+                <path refid="commonslang.classpath"/>
             </classpath>
         </javac>
     </target>
@@ -766,7 +765,7 @@ Build-Date: ${build.tstamp}
                 <classpath>
                     <pathelement path="${build.dir}"/>
                     <pathelement path="${script-build.dir}"/>
-                    <pathelement path="${commons-lang3.jar}"/>
+                    <path refid="commonslang.classpath"/>
                 </classpath>
                 <arg value="--type"/>
                 <arg value="@{type}"/>
@@ -791,7 +790,7 @@ Build-Date: ${build.tstamp}
             <classpath>
                 <pathelement path="${build.dir}"/>
                 <pathelement path="${script-build.dir}"/>
-                <pathelement path="${commons-lang3.jar}"/>
+                <path refid="commonslang.classpath"/>
             </classpath>
             <arg value="--noeli"/>
             <arg value="-p"/>
@@ -990,6 +989,7 @@ Build-Date: ${build.tstamp}
         <ivy:cachepath log="download-only" pathid="runtime.path" conf="runtime"/>
         <ivy:cachefileset log="download-only" setid="runtime.fileset" conf="runtime"/>
         <ivy:cachepath log="download-only" pathid="test.path" conf="test"/>
+        <ivy:cachepath log="download-only" pathid="commonslang.classpath" conf="commonslang"/>
     </target>
     <target name="extract-libraries" depends="resolve" description="Extract libraries to build dir">
         <unzip dest="${build.dir}">
