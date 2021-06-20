@@ -3669,8 +3669,6 @@
             <space />
             <key key="leisure" value="dog_park" />
             <text key="name" text="Name" />
-            <check key="area" text="Area" />
-            <combo key="barrier" text="Barrier" values="fence,wall" />
             <reference ref="oh_wheelchair" />
             <check key="lit" text="Lit" />
         </item> <!-- Dog Park -->
