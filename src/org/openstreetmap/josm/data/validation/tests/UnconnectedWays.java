@@ -143,7 +143,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         protected boolean isCandidate(OsmPrimitive p) {
-            return p.hasKey("waterway");
+            return p.hasTagDifferent("waterway", "dam", "lock_gate", "weir");
         }
     }
 
