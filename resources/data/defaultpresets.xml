@@ -1468,8 +1468,10 @@
         </item> <!-- Highway Milestone -->
         <item name="Named Junction" name_context="junction=yes" icon="presets/vehicle/junction.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:junction=yes" />
-            <key key="junction" value="yes" />
+			<space />
             <label text="Used in some countries for a named road junction who’s name serves for local orientation." />
+			<space />
+            <key key="junction" value="yes" />
             <text key="name" text="Name" />
         </item> <!-- Named Junction -->
         <separator/>
@@ -1972,6 +1974,7 @@
         <separator/>
         <item name="Spring" icon="presets/landmark/spring.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:natural=spring" />
+			<space />
             <label text="A point where groundwater naturally flows to the surface of the earth from underground." />
             <space />
             <key key="natural" value="spring" />
@@ -2061,6 +2064,7 @@
         <separator/>
         <item name="Water" name_context="natural" icon="presets/nautical/water.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=water" />
+			<space />
             <label text="A body of standing water, such as a lake or pond." />
             <space />
             <key key="natural" value="water" />
@@ -2075,6 +2079,7 @@
         </item> <!-- Water -->
         <item name="Coastline" icon="presets/nautical/coast_line.svg" type="way,closedway" preset_name_label="true">
             <link wiki="Tag:natural=coastline" />
+			<space />
             <label text="Line between the sea and land (with the water on the right side of the way)." />
             <space />
             <key key="natural" value="coastline" />
@@ -2091,6 +2096,7 @@
         <separator/>
         <item name="Wetland" icon="presets/landuse/wetland.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=wetland" />
+			<space />
             <label text="Waterlogged area, either permanently or seasonally with vegetation." />
             <space />
             <key key="natural" value="wetland" />
@@ -2100,6 +2106,7 @@
         </item> <!-- Wetland -->
         <item name="Mud" icon="presets/landuse/mud.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=mud" />
+			<space />
             <label text="Large area covered with mud." />
             <space />
             <key key="natural" value="mud" />
@@ -2107,6 +2114,7 @@
         </item> <!-- Mud -->
         <item name="Beach" icon="presets/nautical/beach.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=beach" />
+			<space />
             <label text="A flat area of sand, gravel or pebble next to water." />
             <space />
             <key key="natural" value="beach" />
@@ -2122,6 +2130,7 @@
         </item> <!-- Beach -->
         <item name="Bay" icon="presets/nautical/bay.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=bay" />
+			<space />
             <label text="An area of water mostly surrounded by land but with level connection to the ocean or a lake." />
             <space />
             <key key="natural" value="bay" />
@@ -2132,6 +2141,7 @@
         </item> <!-- Bay -->
         <item name="Cape" icon="presets/nautical/cape.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=cape" />
+			<space />
             <label text="A prominent, elevated piece of land sticking out into the sea or large lake." />
             <space />
             <key key="natural" value="cape" />
@@ -3511,6 +3521,7 @@
         <separator/>
         <item name="Information Office" icon="presets/misc/information/informationoffice.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:information=office" />
+			<space />
             <label text="An office where you can get information about a town or region." />
             <space />
             <key key="tourism" value="information" />
@@ -3521,6 +3532,7 @@
         </item> <!-- Information Office -->
         <item name="Map" icon="presets/misc/information/map.svg" type="node" preset_name_label="true">
             <link wiki="Tag:information=map" />
+			<space />
             <label text="A board with a map." />
             <space />
             <key key="tourism" value="information" />
@@ -3543,6 +3555,7 @@
             <link wiki="Tag:information=board" />
             <space />
             <label text="A board with information." />
+			<space />
             <key key="tourism" value="information" />
             <key key="information" value="board" />
             <text key="name" text="Name" />
@@ -3551,6 +3564,7 @@
         </item> <!-- Information Board -->
         <item name="Guidepost" icon="presets/misc/information/guidepost.svg" type="node" preset_name_label="true">
             <link wiki="Tag:information=guidepost" />
+			<space />
             <label text="A Signpost/Guidepost to indicate the directions to different destinations." />
             <space />
             <key key="tourism" value="information" />
@@ -3586,6 +3600,7 @@
         </item> <!-- Route marker -->
         <item name="Information Terminal" icon="presets/misc/information/information.svg" type="node" preset_name_label="true">
             <link wiki="Tag:information=terminal" />
+			<space />
             <label text="Information access via electronic methods." />
             <space />
             <key key="tourism" value="information" />
@@ -3599,6 +3614,7 @@
         </item> <!-- Information Terminal -->
         <item name="Audio Guide" icon="presets/misc/information/audioguide.svg" type="node" preset_name_label="true">
             <link wiki="Tag:information=audioguide" />
+			<space />
             <label text="Information using headphones or a mobile phone." />
             <space />
             <key key="tourism" value="information" />
@@ -4117,6 +4133,7 @@
         </item> <!-- Town Hall -->
         <item name="Community Centre" icon="presets/service/community_centre.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:amenity=community_centre" />
+			<space />
             <label text="Community Centre" />
             <space />
             <key key="amenity" value="community_centre" />
@@ -7964,6 +7981,7 @@
             <space />
             <label text="A farm within a bigger settlement" />
             <label text="(please use isolated_dwelling for an isolated farm)" />
+			<space />
             <key key="place" value="farm" />
             <reference ref="name_wikipedia_wikidata" />
             <reference ref="population_postcode_website" />
@@ -7985,6 +8003,7 @@
     <group name="Geography" icon="presets/landmark/peak.svg">
         <item name="Peak" icon="presets/landmark/peak.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=peak" />
+			<space />
             <label text="The top (summit) of a mountain or hill." />
             <space />
             <key key="natural" value="peak" />
@@ -7993,6 +8012,7 @@
         </item> <!-- Peak -->
         <item name="Saddle" icon="presets/landmark/saddle.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=saddle" />
+			<space />
             <label text="A saddle point between mountains or hills." />
             <space/>
             <key key="natural" value="saddle" />
@@ -8001,6 +8021,7 @@
         </item> <!-- Saddle -->
         <item name="Glacier" icon="presets/landmark/glacier.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=glacier" />
+			<space />
             <label text="A persistent body of dense ice that is constantly moving under its own weight." />
             <space />
             <key key="natural" value="glacier" />
@@ -8009,6 +8030,7 @@
         </item> <!-- Glacier -->
         <item name="Volcano" icon="presets/landmark/volcano.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=volcano" />
+			<space />
             <label text="A volcano, either dormant, extinct or active." />
             <space />
             <key key="natural" value="volcano" />
@@ -8021,6 +8043,7 @@
         </item> <!-- Volcano -->
         <item name="Ridge" icon="presets/landmark/ridge.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=ridge" />
+			<space />
             <label text="A mountain or hill ridge." />
             <space />
             <key key="natural" value="ridge" />
@@ -8029,6 +8052,7 @@
         </item> <!-- Ridge -->
         <item name="Valley" icon="presets/landmark/valley.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=valley" />
+			<space />
             <label text="A low area between hills." />
             <space />
             <key key="natural" value="valley" />
@@ -8036,6 +8060,7 @@
         </item> <!-- Valley -->
         <item name="Cliff" icon="presets/misc/cliff.svg" type="node,way,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=cliff" />
+			<space />
             <label text="A steep rock face exposure, with a significant vertical, or near vertical (leave the lower face to the right of the way)." />
             <space />
             <key key="natural" value="cliff" />
@@ -8061,6 +8086,7 @@
         </item> <!-- Sinkhole -->
         <item name="Cave Entrance" icon="presets/landmark/cave_entrance.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:natural=cave_entrance" />
+			<space />
             <label text="The entrance to a cave." />
             <space />
             <key key="natural" value="cave_entrance" />
@@ -8108,6 +8134,7 @@
         </item> <!-- Shrub -->
         <item name="Tree" icon="presets/landmark/trees.svg" type="node" preset_name_label="true">
             <link wiki="Tag:natural=tree" />
+			<space />
             <label text="A single tree." />
             <space />
             <key key="natural" value="tree" />
@@ -8132,6 +8159,7 @@
         </item> <!-- Tree -->
         <item name="Tree Row" icon="presets/landmark/tree_row.svg" type="way" preset_name_label="true">
             <link wiki="Tag:natural=tree_row" />
+			<space />
             <label text="A line of trees." />
             <space />
             <key key="natural" value="tree_row" />
@@ -8144,6 +8172,7 @@
 		<separator />
         <item name="Wood" icon="presets/landmark/forest.svg" type="closedway,multipolygon" name_context="natural" preset_name_label="true">
             <link wiki="Tag:natural=wood" />
+			<space />
             <label text="Woodland where timber production does not dominate use." />
             <space />
             <key key="natural" value="wood" />
@@ -8165,6 +8194,7 @@
         </item> <!-- Cutline -->
         <item name="Grassland" icon="presets/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=grassland" />
+			<space />
             <label text="Where vegetation is dominated by grasses (Poaceae) and other herbaceous (non-woody) plants. Excludes cultivated areas and wetlands." />
             <space />
             <key key="natural" value="grassland" />
@@ -8180,6 +8210,7 @@
         <separator/>
         <item name="Scree" icon="presets/landuse/scree.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=scree" />
+			<space />
             <label text="An accumulation of loose angular rocks." />
             <space />
             <key key="natural" value="scree" />
@@ -8187,6 +8218,7 @@
         </item> <!-- Scree -->
         <item name="Shingle" icon="presets/landuse/shingle.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=shingle" />
+			<space />
             <label text="An accumulation of loose rounded rocks on a beach or riverbed." />
             <space />
             <key key="natural" value="shingle" />
@@ -8194,6 +8226,7 @@
         </item> <!-- Shingle -->
         <item name="Fell" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=fell" />
+			<space />
             <label text="Bare upper lying uncultivated land principally covered with grass and often grazed." />
             <space />
             <key key="natural" value="fell" />
@@ -8201,6 +8234,7 @@
         </item> <!-- Fell -->
         <item name="Scrub" icon="presets/landuse/scrub.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=scrub" />
+			<space />
             <label text="Bare lower lying uncultivated land with bushes but little or no tree cover." />
             <space />
             <key key="natural" value="scrub" />
@@ -8211,6 +8245,7 @@
         </item> <!-- Scrub -->
         <item name="Heath" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=heath" />
+			<space />
             <label text="Bare lower lying uncultivated land with a shrubland habitat found mainly on free-draining infertile, acidic soils, and is characterised by open, low-growing woody vegetation." />
             <space />
             <key key="natural" value="heath" />
@@ -8218,6 +8253,7 @@
         </item> <!-- Heath -->
         <item name="Sand" icon="presets/landuse/sand.svg" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=sand" />
+			<space />
             <label text="Large area covered with sand." />
             <space />
             <key key="natural" value="sand" />
@@ -8225,6 +8261,7 @@
         </item> <!-- Sand -->
         <item name="Bare Rock" type="closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:natural=bare_rock" />
+			<space />
             <label text="For areas of solid visible rock that is sparsely vegetated or not vegetated at all." />
             <space />
             <key key="natural" value="bare_rock" />
@@ -8232,6 +8269,7 @@
         </item> <!-- Bare Rock -->
         <item name="Rock" icon="presets/misc/rock.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:natural=rock" />
+			<space />
             <label text="A notable rock or group of rocks, with at least one of them firmly attached to the underlying bedrock." />
             <space />
             <key key="natural" value="rock" />
@@ -8242,6 +8280,7 @@
         </item> <!-- Rock -->
         <item name="Stone" icon="presets/misc/stone.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:natural=stone" />
+			<space />
             <label text="A single notable free-standing rock, which may differ from the composition of the terrain it lies in." />
             <space />
             <key key="natural" value="stone" />
