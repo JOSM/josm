@@ -4900,6 +4900,10 @@ node[natural=reef] {
     icon-image: "presets/landmark/reef.svg";
     set icon_z17;
 }
+node[natural=shrub] {
+    icon-image: "presets/landmark/shrub.svg";
+    set icon_z17;
+}
 node[natural=tree] {
     icon-image: "presets/landmark/trees.svg";
     set icon_z17;
