@@ -4230,6 +4230,10 @@ node[aeroway=holding_position] {
     icon-image: "presets/transport/airport/holding_position.svg";
     set icon_z17;
 }
+way[aeroway=holding_position] {
+    width: 1;
+    color: aeroway_marking#D6CE08;
+}
 node[aeroway=hangar] {
     icon-image: "presets/transport/airport/hangar.svg";
     set icon_z17;
