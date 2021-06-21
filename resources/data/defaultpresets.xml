@@ -250,7 +250,7 @@
     </chunk>
     <chunk id="parking_name_type_ref">
         <text key="name" text="Name" />
-        <combo key="parking" text="Type" values="multi-storey,surface,underground,rooftop,street_side,lane" values_context="parking" />
+        <combo key="parking" text="Type" values="carports,garage_boxes,lane,multi-storey,rooftop,sheds,street_side,surface,underground" values_context="parking" />
         <text key="ref" text="Reference number" />
     </chunk>
     <chunk id="parking_access_fee_operator_surface_smoothness">
@@ -2557,6 +2557,9 @@
             <space />
             <reference ref="maxstay" />
             <reference ref="supervised_lit_oh" />
+            <space />
+            <label text="Only for street side parking: "/>
+            <combo key="parking:orientation" text="Orientation" values="diagonal,parallel,perpendicular" />
         </item> <!-- Parking -->
         <item name="Parking Space" icon="presets/vehicle/parking/parking_space.svg" type="node,closedway" preset_name_label="true">
             <link wiki="Tag:amenity=parking_space" />
@@ -2756,6 +2759,9 @@
             <reference ref="supervised_lit_oh" />
             <reference ref="maxstay" />
             <check key="covered" text="Covered (with roof)" />
+            <space />
+            <label text="Only for street side parking: "/>
+            <combo key="parking:orientation" text="Orientation" values="diagonal,parallel,perpendicular" />
         </item> <!-- Parking -->
         <item name="Motorcycle Dealer" icon="presets/vehicle/motorbike.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:shop=motorcycle" />
