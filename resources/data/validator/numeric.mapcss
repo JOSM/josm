@@ -28,7 +28,19 @@
   assertNoMatch: "node layer=+5"; /* this is an invalid value, but this case is already covered by the previous rule */
 }
 
-*[building:levels][building:levels !~ /^(([0-9]|[1-9][0-9]*)(\.5)?)$/],
+/* negative values, #21026 */
+*[building:levels^="-"] {
+  throwError: tr("negative {0} value", "{0.key}");
+  set negative_value;
+  assertMatch: "node building:levels=-1";
+  assertNoMatch: "node building:levels=+1";
+  assertNoMatch: "node building:levels=1";
+  assertNoMatch: "node building:levels=foo";
+  assertMatch: "node building:levels=-foo";
+  assertNoMatch: "node level=-1";
+}
+
+*[building:levels][building:levels !~ /^(([0-9]|[1-9][0-9]*)(\.5)?)$/]!.negative_value,
 *[level][level !~ /^((((-*[1-9]|[0-9])|-*[1-9][0-9]*)(\.5)?)|-0\.5)(;((((-*[1-9]|[0-9])|-*[1-9][0-9]*)(\.5)?)|-0\.5))*$/] { /* all numbers from -∞ to ∞ in 0.5 steps, optional multiple values separated by a ; */
   throwWarning: tr("{0} should have numbers only with optional .5 increments", "{0.key}");
   assertMatch: "node level=one";
@@ -222,7 +234,7 @@
 *[maxlength][maxlength !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxlength_separator_autofix!.maxlength_meter_autofix!.maxlength_foot_autofix,
 *[width        ][width !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.width_separator_autofix!.width_meter_autofix!.width_foot_autofix,
 *[maxwidth  ][maxwidth !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxwidth_separator_autofix!.maxwidth_meter_autofix!.maxwidth_foot_autofix {
-  throwWarning: tr("unusual value of {0}: meters is default; point is decimal separator; if units, put space then unit", "{0.key}");
+  throwWarning: tr("unusual value of {0}: {1} is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}", "meters");
   assertMatch: "node height=medium";
   assertMatch: "node maxheight=-5";
   assertMatch: "node maxlength=0";
@@ -268,7 +280,7 @@
 
 *[maxaxleload][maxaxleload !~ /^([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)$/]!.maxaxleload_separator_autofix,
 *[maxweight][maxweight !~ /^([0-9]+(\.[0-9]+)?( (t|kg|st|lbs))?)$/]!.maxweight_separator_autofix {
-  throwWarning: tr("unusual value of {0}: tonne is default; point is decimal separator; if units, put space then unit", "{0.key}");
+  throwWarning: tr("unusual value of {0}: {1} is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}", "tonne");
   assertMatch: "node maxaxleload=something";
   assertMatch: "node maxweight=-5";
   assertNoMatch: "node maxaxleload=2";
@@ -279,7 +291,7 @@
 way[maxspeed][maxspeed !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/],
 way[maxspeed:forward][maxspeed:forward !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/],
 way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|walk|[1-9][0-9]*( [a-z]+)?|[A-Z][A-Z]:(urban|rural|living_street|motorway))$/] {
-  throwWarning: tr("unusual value of {0}", "{0.key}");
+  throwWarning: tr("unusual value of {0}: {1} is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}", "km/h");
   assertMatch: "way maxspeed=something";
   assertMatch: "way maxspeed=-50";
   assertMatch: "way maxspeed=0";
@@ -306,7 +318,7 @@ way[maxspeed:backward][maxspeed:backward !~ /^(signals|none|unposted|variable|wa
   assertNoMatch: "node distance=4";
 }
 *[distance][distance !~ /^(([0-9]+(\.[0-9]+)?( (m|km|mi|nmi))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.distance_separator_autofix {
-  throwWarning: tr("unusual value of {0}: kilometers is default; point is decimal separator; if units, put space then unit", "{0.key}");
+  throwWarning: tr("unusual value of {0}: {1} is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}", "kilometers");
   assertMatch: "way distance=something";
   assertMatch: "way distance=-5";
   assertMatch: "way distance=5.";
