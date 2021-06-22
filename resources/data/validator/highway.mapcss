@@ -188,3 +188,10 @@ way[turn:lanes:both_ways:backward][turn:lanes:both_ways:backward !~ /^(none|((sh
   assertMatch: "way turn:lanes=left;none|right"; /* "none" needs to be a solo value */
   assertNoMatch: "way turn:lanes:forward=sharp_left;left|left;through;slight_right|slight_right;right";
 }
+
+/* #20442 traffic signals or similar on roundabouts */
+node[highway=traffic_signals                     ][ traffic_signals=signal] < way[highway][junction=roundabout],
+node[highway=~/^(traffic_signals|stop|give_way)$/][!traffic_signals       ] < way[highway][junction=roundabout] {
+  throwWarning: tr("{0} without right of way", "{1.tag}");
+  suggestAlternative: "junction=circular";
+}
