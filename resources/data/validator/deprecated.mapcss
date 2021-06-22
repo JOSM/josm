@@ -2264,4 +2264,12 @@ way[shoulder=none] {
   fixChangeKey: "service:bicycle:chaintool => service:bicycle:chain_tool";
 }
 
+/* #20434 */
+*[building:roof:shape] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "roof:shape";
+  group: tr("deprecated tagging");
+  fixChangeKey: "building:roof:shape => roof:shape";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
