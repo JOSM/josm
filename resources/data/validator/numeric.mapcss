@@ -62,7 +62,8 @@
   assertNoMatch: "node level=-0.5;0";
   assertNoMatch: "node level=-1;-0.5";
   assertNoMatch: "node building:levels=1.5";
-  assertMatch: "node building:levels=-1";
+  assertNoMatch: "node building:levels=-1"; /* tested already by rule above "negative values" and excluded here via !.negative_value in selector */
+  assertMatch: "node building:levels=1A";
   assertNoMatch: "node building:levels=0"; /* valid because there can be building:levels:underground > 0 or roof:levels > 0 */
 }
 
