@@ -2256,4 +2256,12 @@ way[shoulder=none] {
   fixChangeKey: "amenity => diplomatic";
 }
 
+/* #11019 */
+*[service:bicycle:chaintool] {
+  throwWarning: tr("{0} is deprecated", "{0.key}");
+  suggestAlternative: "service:bicycle:chain_tool";
+  group: tr("deprecated tagging");
+  fixChangeKey: "service:bicycle:chaintool => service:bicycle:chain_tool";
+}
+
 /* When tags are deprecated they should be added to ignoretags.cfg too. */

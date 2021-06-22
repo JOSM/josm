@@ -2826,7 +2826,9 @@
             <text key="brand" text="Brand" />
             <text key="operator" text="Operator" />
             <reference ref="oh" />
+            <check key="service:bicycle:stand" text="Stand" />
             <check key="service:bicycle:pump" text="Free bicycle pump" />
+            <check key="service:bicycle:tools" text="Tools" text_context="bicycle_repair_station"/>
             <check key="service:bicycle:chain_tool" text="Chain tool" />
             </optional>
         </item> <!-- Public Bicycle Repair Station -->
