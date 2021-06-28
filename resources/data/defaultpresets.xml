@@ -8685,11 +8685,9 @@
             <preset_link preset_name="Building part" />
             <roles>
                 <role key="outline" text="Outline of building" requisite="required" type="way,closedway,multipolygon" />
-                <role key="part" text="Inner segment" requisite="required" type="way,closedway" />
+                <role key="part" text="Inner segment" requisite="required" type="way,closedway,multipolygon" />
                 <role key="ridge" text="Roof ridge" requisite="optional" type="way,closedway" />
                 <role key="edge" text="Roof edge" requisite="optional" type="way,closedway" />
-                <role key="entrance" text="Entrance" requisite="optional" type="node" />
-                <role key="level_-?\d+" text="Building level" regexp="true" requisite="optional" type="relation" />
             </roles>
         </item> <!-- Building -->
         <item name="Site" type="relation" preset_name_label="true">
