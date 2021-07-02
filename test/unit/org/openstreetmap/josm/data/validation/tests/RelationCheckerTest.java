@@ -148,14 +148,11 @@ class RelationCheckerTest {
         Relation r = createRelation("type=building");
         r.addMember(new RelationMember("outline", new Way()));
         r.addMember(new RelationMember("part", new Way()));
-        r.addMember(new RelationMember("level_-12", new Relation()));
-        r.addMember(new RelationMember("level_0", new Relation()));
-        r.addMember(new RelationMember("level_12", new Relation()));
-        r.addMember(new RelationMember("level_x", new Relation())); // fails
+        r.addMember(new RelationMember("level_-12", new Relation())); // fails (old tagging schema, #21048)
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role 'level_x' is not among expected values 'outline/part/ridge/edge/entrance/level_-?\\d+'",
+        assertEquals("Role 'level_x' is not among expected values 'outline/part/ridge/edge'",
                 errors.get(0).getDescription());
     }
 
