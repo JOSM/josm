@@ -1,5 +1,4 @@
 *[access][highway=proposed],
-*[motor_vehicle?][!vehicle][!access][bicycle_road!=yes][highway =~ /^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|unclassified|residential|service|living_street)$/],
 *[bridge=no],
 *[building=no],
 *[elevation="0"],
@@ -11,6 +10,11 @@
   assertMatch: "way layer=0";
   assertMatch: "way bridge=no";
   assertMatch: "way highway=proposed access=no";
+}
+
+/* #19996 */
+*[motor_vehicle?][!vehicle][!access][bicycle_road!=yes][highway =~ /^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link)$/] {
+  throwOther: tr("{0} is optional on {1}", "{0.tag}", "{4.tag}");
   assertMatch: "way highway=motorway motor_vehicle=yes";
   assertNoMatch: "way highway=motorway access=no motor_vehicle=yes";
 }
