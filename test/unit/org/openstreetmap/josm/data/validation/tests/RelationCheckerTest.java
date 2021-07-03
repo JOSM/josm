@@ -152,7 +152,7 @@ class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role 'level_x' is not among expected values 'outline/part/ridge/edge'",
+        assertEquals("Role 'level_-12' is not among expected values 'outline/part/ridge/edge'",
                 errors.get(0).getDescription());
     }
 
