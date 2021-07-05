@@ -8729,7 +8729,7 @@
             <link wiki="Relation:enforcement" />
             <space />
             <key key="type" value="enforcement" />
-            <combo key="enforcement" text="Type of enforcement" values="check,maxheight,maxspeed,maxweight,mindistance,toll,traffic_signals" />
+            <combo key="enforcement" text="Type" values="average_speed,check,maxheight,maxspeed,maxweight,mindistance,toll,traffic_signals" />
             <text key="maxheight" text="Max. height (meters, only if enforcement=maxheight)" />
             <text key="maxweight" text="Max. weight (tonnes, only if enforcement=maxweight)" />
             <text key="maxspeed" text="Max. speed (km/h, only if enforcement=maxspeed)" />
@@ -8738,6 +8738,7 @@
                 <role key="from" text="node on way where enforcement starts" requisite="required" type="node" />
                 <role key="to" text="where enforcement ends" requisite="optional" type="node" />
                 <role key="force" text="traffic light or barrier that stops you" requisite="optional" type="node" />
+                <role key="section" text="section (only if enforcement=average_speed)" requisite="optional" type="way" />
             </roles>
         </item> <!-- Enforcement -->
         <separator/>
