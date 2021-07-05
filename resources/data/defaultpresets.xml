@@ -8757,7 +8757,7 @@
                 <role key="device" text="location of enforcement device" requisite="required" type="node,way,closedway" />
                 <role key="from" text="node on way where enforcement starts" requisite="required" type="node" />
                 <role key="to" text="where enforcement ends" requisite="optional" type="node" />
-                <role key="section" text="ways forming the section of messurement" requisite="required" type="way" />
+                <role key="section" text="ways forming the section of messurement" requisite="required" type="way" member_expression="highway" />
             </roles>
         </item> <!-- Enforcement (average speed) -->
         <separator/>
