@@ -8729,18 +8729,31 @@
             <link wiki="Relation:enforcement" />
             <space />
             <key key="type" value="enforcement" />
-            <combo key="enforcement" text="Type" values="average_speed,check,maxheight,maxspeed,maxweight,mindistance,toll,traffic_signals" />
+            <combo key="enforcement" text="Type" values="check,maxheight,maxspeed,maxweight,mindistance,toll,traffic_signals" match="keyvalue!" />
             <text key="maxheight" text="Max. height (meters, only if enforcement=maxheight)" />
-            <text key="maxweight" text="Max. weight (tonnes, only if enforcement=maxweight)" />
             <text key="maxspeed" text="Max. speed (km/h, only if enforcement=maxspeed)" />
+            <text key="maxweight" text="Max. weight (tonnes, only if enforcement=maxweight)" />
+            <text key="mindistance" text="Min. vehicle distance (meters, only if enforcement=mindistance)" />
             <roles>
                 <role key="device" text="location of enforcement device" requisite="required" type="node,way,closedway" />
                 <role key="from" text="node on way where enforcement starts" requisite="required" type="node" />
                 <role key="to" text="where enforcement ends" requisite="optional" type="node" />
                 <role key="force" text="traffic light or barrier that stops you" requisite="optional" type="node" />
-                <role key="section" text="section (only if enforcement=average_speed)" requisite="optional" type="way" />
             </roles>
         </item> <!-- Enforcement -->
+        <item name="Enforcement (average speed)" icon="presets/vehicle/restriction/speed_camera.svg" type="relation" preset_name_label="true">
+            <link wiki="Relation:enforcement" />
+            <space />
+            <key key="type" value="enforcement" />
+            <key key="enforcement" value="average_speed" />
+            <text key="maxspeed" text="Max. speed (km/h)" />
+            <roles>
+                <role key="device" text="location of enforcement device" requisite="required" type="node,way,closedway" />
+                <role key="from" text="node on way where enforcement starts" requisite="required" type="node" />
+                <role key="to" text="where enforcement ends" requisite="optional" type="node" />
+                <role key="section" text="ways forming the section of messurement" requisite="required" type="way" />
+            </roles>
+        </item> <!-- Enforcement (average speed) -->
         <separator/>
         <group name="Routes" icon="presets/misc/route.svg">
             <item name="Bicycle Route" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
