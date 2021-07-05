@@ -3882,9 +3882,14 @@ area[landuse=garages] {
 area[landuse=farmyard] {
     fill-color: farmyard#f0f0f0;
 }
-area[landuse=retail],
-area[landuse=commercial] {
+area[landuse=education] {
+    fill-color: education#f7efb7;
+}
+area[landuse=retail] {
     fill-color: retail#ffc4ee;
+}
+area[landuse=commercial] {
+    fill-color: commercial#ffc4ee;
 }
 area[landuse=industrial] {
     fill-color: industrial#ecd8ff;

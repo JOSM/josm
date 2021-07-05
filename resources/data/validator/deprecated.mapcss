@@ -964,6 +964,7 @@ node[type][pipeline=marker] {
   suggestAlternative: "amenity=college";
   suggestAlternative: "amenity=school";
   suggestAlternative: "amenity=university";
+  suggestAlternative: "landuse=education";
   group: tr("deprecated tagging");
 }
 *[shop=gallery] {
@@ -2270,6 +2271,16 @@ way[shoulder=none] {
   suggestAlternative: "roof:shape";
   group: tr("deprecated tagging");
   fixChangeKey: "building:roof:shape => roof:shape";
+}
+
+/* #20959 */
+*[landuse=school] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=college";
+  suggestAlternative: "amenity=school";
+  suggestAlternative: "amenity=university";
+  suggestAlternative: "landuse=education";
+  group: tr("deprecated tagging");
 }
 
 /* When tags are deprecated they should be added to ignoretags.cfg too. */
