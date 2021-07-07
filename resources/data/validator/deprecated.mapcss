@@ -2285,7 +2285,7 @@ way[shoulder=none] {
 
 /* #20637 */
 *[role] {
-  throwWarning: tr("{0} as a tag on an object. Roles are specified in the relation''s member lists instead.", "{0.tag}", "{0.key}");
+  throwWarning: tr("{0} as a tag on an object. Roles are specified in the relation members list instead.", "{0.tag}", "{0.key}");
   assertMatch: "node role=stop";
 }
 
