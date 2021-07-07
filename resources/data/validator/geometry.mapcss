@@ -139,6 +139,12 @@ way:closed[power=line] {
   throwWarning: tr("{0} on a closed way. Should be used on an unclosed way.", "{1.tag}"); 
 }
 
+/* #20902 */
+relation[area?] {
+  throwWarning: tr("{0} on a relation", "{0.key}");
+  fixRemove: "{0.key}";
+}
+
 /* #14395, #17025, #19506 */
 way[highway][area!=yes][!tunnel][!covered] > node {
   set node_in_highway;

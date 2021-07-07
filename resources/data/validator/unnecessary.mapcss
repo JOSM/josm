@@ -19,12 +19,12 @@
   assertNoMatch: "way highway=motorway access=no motor_vehicle=yes";
 }
 
-area:closed[amenity ][area?][!highway],
-area:closed[building][area?],
-area:closed[landuse ][area?][!highway],
-area:closed[leisure ][area?][!highway][leisure!=track][leisure!=slipway],
-area:closed[natural ][area?],
-area:closed[shop    ][area?] {
+way:closed[amenity ][area?][!highway],
+way:closed[building][area?],
+way:closed[landuse ][area?][!highway],
+way:closed[leisure ][area?][!highway][leisure!=track][leisure!=slipway],
+way:closed[natural ][area?],
+way:closed[shop    ][area?] {
   throwWarning: tr("{0} is unnecessary for {1}", "{2.tag}", "{1.key}");
   group: tr("unnecessary tag");
   fixRemove: "{2.key}";

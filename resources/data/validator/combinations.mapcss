@@ -344,31 +344,46 @@ relation[type=multipolygon] >[role="inner"] way[area][eval(number_of_tags()) = 1
   group: tr("suspicious tag combination");
 }
 
-/* only {0.key}, #11104, #12422, #14950, #19572 */
-*[lanes][eval(number_of_tags()) = 1],
-*[surface][eval(number_of_tags()) = 1],
-*[access][eval(number_of_tags()) = 1],
-*[area][eval(number_of_tags()) = 1]!.area_yes_autofix,
-*[name][eval(number_of_tags()) = 1],
-*[ref][eval(number_of_tags()) = 1],
-*[lit][eval(number_of_tags()) = 1] {
+/* only {0.key}, #11104, #12422, #14950, #19572, #20902 */
+/* relations excluded as there is a test for missing type=* plus several other test depending on the type exist */
+node[access][eval(number_of_tags()) = 1],
+way[access][eval(number_of_tags()) = 1],
+node[area][eval(number_of_tags()) = 1]!.area_yes_autofix,
+way[area][eval(number_of_tags()) = 1]!.area_yes_autofix,
+node[lanes][eval(number_of_tags()) = 1],
+way[lanes][eval(number_of_tags()) = 1],
+node[layer][eval(number_of_tags()) = 1],
+way[layer][eval(number_of_tags()) = 1],
+way[level][eval(number_of_tags()) = 1], /* nodes might be valid, e.g. start and end nodes of steps */
+node[lit][eval(number_of_tags()) = 1],
+way[lit][eval(number_of_tags()) = 1],
+node[name][eval(number_of_tags()) = 1],
+way[name][eval(number_of_tags()) = 1],
+node[ref][eval(number_of_tags()) = 1],
+way[ref][eval(number_of_tags()) = 1],
+node[surface][eval(number_of_tags()) = 1],
+way[surface][eval(number_of_tags()) = 1] {
   throwWarning: tr("incomplete object: only {0}", "{0.key}");
   set only_one_tag;
   group: tr("missing tag");
 }
 /* only {0.key} and {1.key} */
-*[name][area][eval(number_of_tags()) = 2],
-*[name][ref][eval(number_of_tags()) = 2] {
+node[name][area][eval(number_of_tags()) = 2],
+way[name][area][eval(number_of_tags()) = 2],
+node[name][ref][eval(number_of_tags()) = 2],
+way[name][ref][eval(number_of_tags()) = 2] {
   throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.key}");
   group: tr("missing tag");
 }
 /* only {0.tag}, #15269 */
-*[tourism=attraction][eval(number_of_tags()) = 1] {
+node[tourism=attraction][eval(number_of_tags()) = 1], 
+way[tourism=attraction][eval(number_of_tags()) = 1] {
   throwWarning: tr("incomplete object: only {0}", "{0.tag}");
   group: tr("missing tag");
 }
 /* only {0.key} and {1.tag} */
-*[name][tourism=attraction][eval(number_of_tags()) = 2] {
+node[name][tourism=attraction][eval(number_of_tags()) = 2],
+way[name][tourism=attraction][eval(number_of_tags()) = 2] {
   throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.tag}");
   group: tr("missing tag");
 }
