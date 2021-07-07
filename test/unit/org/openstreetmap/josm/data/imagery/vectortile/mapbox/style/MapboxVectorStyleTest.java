@@ -161,7 +161,7 @@ public class MapboxVectorStyleTest {
         // Ensure that we don't have images saved in the ImageProvider cache
         ImageProvider.clearCache();
         int hiDpiScalar = hiDpi ? 2 : 1;
-        String spritePath = new File(this.spritesDirectory, "sprite").getPath();
+        String spritePath = this.spritesDirectory + "/sprite";
         MapboxVectorStyle style = new MapboxVectorStyle(getJson(JsonObject.class,
           MessageFormat.format(BASE_STYLE, "sprite_test", "\"sprite\":\"file:/" + spritePath + "\"")));
         assertEquals("file:/" + spritePath, style.getSpriteUrl());
@@ -237,7 +237,7 @@ public class MapboxVectorStyleTest {
 
     @Test
     void testMapillaryStyle() {
-        final String file = Paths.get("file:", TestUtils.getTestDataRoot(), "mapillary.json").toString();
+        final String file = "file:/" + TestUtils.getTestDataRoot() + "/mapillary.json";
         final MapboxVectorStyle style = MapboxVectorStyle.getMapboxVectorStyle(file);
         assertNotNull(style);
         // There are three "sources" in the mapillary.json file
