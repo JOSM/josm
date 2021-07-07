@@ -133,6 +133,49 @@
   assertNoMatch: "node maxheight=4";
 }
 
+*[roof:height][roof:height =~ /^0*(\.0*)?( (m|ft))?$/][roof:shape=flat] {
+  throwWarning: tr("{0} is unnecessary for {1}", "{0.tag}", "{2.tag}");
+  group: tr("unnecessary tag");
+  fixRemove: "{0.key}";
+  set zero_roof_height_flat;
+  assertMatch: "node roof:height=0 roof:shape=flat";
+  assertMatch: "node roof:shape=flat roof:height=\"00.00000 ft\" roof:shape=flat";
+  assertNoMatch: "node roof:shape=flat roof:height=2 m roof:shape=flat";
+  assertNoMatch: "node roof:height=0 roof:shape=gabled";
+}
+*[roof:height][roof:height =~ /^[0-9]+(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/]!.zero_roof_height_flat {
+  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
+  set roof_height_meter_autofix;
+  fixAdd: concat("roof:height=", get(regexp_match("([0-9.]+)( )*(.+)",tag("roof:height")),1)," m");
+  assertMatch: "node roof:height=6.78 meters";
+  assertMatch: "node roof:height=5  metre";
+  assertMatch: "node roof:height=2m";
+  assertNoMatch: "node roof:height=2 m";
+  assertNoMatch: "node roof:height=5";
+}
+*[roof:height][roof:height =~ /^[0-9]+(\.[0-9]+)?(( )*(foot|Foot|feet|Feet)|ft)$/]!.zero_roof_height_flat {
+  throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
+  set roof_height_foot_autofix;
+  fixAdd: concat("roof:height=", get(regexp_match("([0-9.]+)( )*(.+)",tag("roof:height")),1)," ft");
+  assertMatch: "node roof:height=6.78 foot";
+  assertMatch: "node roof:height=5  Feet";
+  assertMatch: "node roof:height=2ft";
+  assertNoMatch: "node roof:height=2 ft";
+  assertNoMatch: "node roof:height=5";
+}
+*[roof:height][roof:height =~ /^[0-9]+,[0-9][0-9]?( (m|ft))?$/] {
+  throwWarning: tr("unusual value of {0}: use . instead of , as decimal separator", "{0.key}");
+  fixAdd: concat("roof:height=", replace(tag("roof:height"), ",", "."));
+  set roof_height_separator_autofix;
+  assertMatch: "node roof:height=5,5";
+  assertMatch: "node roof:height=12,00";
+  assertMatch: "node roof:height=12,5 ft";
+  assertNoMatch: "node roof:height=12,000";
+  assertNoMatch: "node roof:height=3,50,5";
+  assertNoMatch: "node roof:height=3.5";
+  assertNoMatch: "node roof:height=4";
+}
+
 *[maxlength][maxlength =~ /^[1-9][0-9]*(\.[0-9]+)?(( )*(metre|metres|meter|meters|Metre|Metres|Meter|Meters)|m)$/] {
   throwWarning: tr("unusual value of {0}: use abbreviation for unit and space between value and unit", "{0.key}");
   set maxlength_meter_autofix;
@@ -230,11 +273,12 @@
   assertNoMatch: "node maxwidth=4";
 }
 
-*[height      ][height !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.height_separator_autofix!.height_meter_autofix!.height_foot_autofix,
-*[maxheight][maxheight !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxheight_separator_autofix!.maxheight_meter_autofix!.maxheight_foot_autofix,
-*[maxlength][maxlength !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxlength_separator_autofix!.maxlength_meter_autofix!.maxlength_foot_autofix,
-*[width        ][width !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.width_separator_autofix!.width_meter_autofix!.width_foot_autofix,
-*[maxwidth  ][maxwidth !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxwidth_separator_autofix!.maxwidth_meter_autofix!.maxwidth_foot_autofix {
+*[height     ][height      !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.height_separator_autofix!.height_meter_autofix!.height_foot_autofix,
+*[maxheight  ][maxheight   !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxheight_separator_autofix!.maxheight_meter_autofix!.maxheight_foot_autofix,
+*[roof:height][roof:height !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/]!.roof_height_separator_autofix!.roof_height_meter_autofix!.roof_height_foot_autofix!.zero_roof_height_flat,
+*[maxlength  ][maxlength   !~ /^(([1-9][0-9]*(\.[0-9]+)?( (m|ft))?)|([0-9]+\'(([0-9]|10|11)(\.[0-9]*)?\")?)|none|default|below_default)$/]!.maxlength_separator_autofix!.maxlength_meter_autofix!.maxlength_foot_autofix,
+*[width      ][width       !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.width_separator_autofix!.width_meter_autofix!.width_foot_autofix,
+*[maxwidth   ][maxwidth    !~ /^(([0-9]+(\.[0-9]+)?( (m|ft))?)|([0-9]+\'([0-9]+(\.[0-9]+)?\")?))$/]!.maxwidth_separator_autofix!.maxwidth_meter_autofix!.maxwidth_foot_autofix {
   throwWarning: tr("unusual value of {0}: {1} is default; only positive values; point is decimal separator; if units, put space then unit", "{0.key}", "meters");
   assertMatch: "node height=medium";
   assertMatch: "node maxheight=-5";
