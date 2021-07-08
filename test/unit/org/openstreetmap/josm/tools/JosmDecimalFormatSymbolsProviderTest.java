@@ -5,10 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -26,6 +30,16 @@ class JosmDecimalFormatSymbolsProviderTest {
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
+
+    @BeforeAll
+    static void beforeAll() throws IOException {
+        if (Utils.getJavaVersion() >= 9) {
+            assertEquals("SPI,JRE,CLDR", System.getProperty("java.locale.providers"), "This test must be launched with -Djava.locale.providers=SPI,JRE,CLDR");
+            try (InputStream in = I18n.class.getResourceAsStream("/META-INF/services/java.text.spi.DecimalFormatSymbolsProvider")) {
+                assertEquals("org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider", new String(Utils.readBytesFromStream(in), StandardCharsets.UTF_8).trim());
+            }
+        }
+    }
 
     @Test
     void testGroupingSeparator() {
