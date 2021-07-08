@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -18,7 +17,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +34,11 @@ import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
+import org.awaitility.Awaitility;
+import org.awaitility.Durations;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.io.TempDir;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -49,11 +52,6 @@ import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.awaitility.Awaitility;
-import org.awaitility.Durations;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test class for {@link MapboxVectorStyle}
@@ -161,10 +159,10 @@ public class MapboxVectorStyleTest {
         // Ensure that we don't have images saved in the ImageProvider cache
         ImageProvider.clearCache();
         int hiDpiScalar = hiDpi ? 2 : 1;
-        String spritePath = this.spritesDirectory + "/sprite";
+        String spritePath = this.spritesDirectory.toURI() + "sprite";
         MapboxVectorStyle style = new MapboxVectorStyle(getJson(JsonObject.class,
-          MessageFormat.format(BASE_STYLE, "sprite_test", "\"sprite\":\"file:/" + spritePath + "\"")));
-        assertEquals("file:/" + spritePath, style.getSpriteUrl());
+          MessageFormat.format(BASE_STYLE, "sprite_test", "\"sprite\":\"" + spritePath + "\"")));
+        assertEquals(spritePath, style.getSpriteUrl());
 
         AtomicBoolean saveFinished = new AtomicBoolean();
         MainApplication.worker.execute(() -> saveFinished.set(true));
