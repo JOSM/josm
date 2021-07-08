@@ -437,6 +437,7 @@ Build-Date: ${build.tstamp}
 	                    <sysproperty key="junit.jupiter.execution.parallel.mode.default" value="${junit.jupiter.execution.parallel.mode.default}" if:set="junit.jupiter.execution.parallel.mode.default"/>
 	                    <sysproperty key="junit.jupiter.execution.parallel.mode.classes.default" value="${junit.jupiter.execution.parallel.mode.classes.default}" if:set="junit.jupiter.execution.parallel.mode.classes.default"/>
 	                </fork>
+                    <listener type="legacy-brief" sendSysOut="true" sendSysErr="true"/>
                     <listener type="legacy-plain" />
                     <listener type="legacy-xml" />
                 </testclasses>
