@@ -13,6 +13,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -180,11 +182,16 @@ public class DownloadFileTask extends PleaseWaitRunnable {
      * @throws IOException if any I/O error occurs
      */
     public static void unzipFileRecursively(File file, String dir) throws IOException {
+        Path dirPath = Paths.get(dir);
         try (ZipFile zf = new ZipFile(file, StandardCharsets.UTF_8)) {
             Enumeration<? extends ZipEntry> es = zf.entries();
             while (es.hasMoreElements()) {
                 ZipEntry ze = es.nextElement();
                 File newFile = new File(dir, ze.getName());
+                // Checks for Zip Slip Vulnerability (CWE-22 / path traversal)
+                if (!newFile.toPath().normalize().startsWith(dirPath)) {
+                    throw new IOException("Bad zip entry - Invalid or malicious file, potential CWE-22 attack");
+                }
                 if (ze.isDirectory()) {
                     Utils.mkDirs(newFile);
                 } else try (InputStream is = zf.getInputStream(ze)) {
