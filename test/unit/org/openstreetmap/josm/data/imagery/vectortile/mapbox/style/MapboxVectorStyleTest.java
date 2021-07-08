@@ -68,7 +68,7 @@ public class MapboxVectorStyleTest {
     JOSMTestRules rules = new JOSMTestRules();
 
     /** The base information */
-    private static final String BASE_STYLE = "'{'\"version\":8,\"name\":\"test style\",\"owner\":\"josm test\",\"id\":\"{0}\",{1}'}'";
+    private static final String BASE_STYLE = "'{'\"version\":8,\"name\":\"test_style\",\"owner\":\"josm test\",\"id\":\"{0}\",{1}'}'";
     /** Source 1 */
     private static final String SOURCE1 = "\"source1\":{\"type\":\"vector\",\"tiles\":[\"https://example.org/{z}/{x}/{y}.mvt\"]}";
     /** Layer 1 */
@@ -176,7 +176,7 @@ public class MapboxVectorStyleTest {
                 int finalX = x;
                 int finalY = y;
                 BufferedImage image = (BufferedImage) assertDoesNotThrow(
-                  () -> ImageProvider.get(new File("test style", MessageFormat.format("({0},{1})", finalX, finalY)).getPath()))
+                  () -> ImageProvider.get(new File("test_style", MessageFormat.format("({0},{1})", finalX, finalY)).getPath()))
                   .getImage();
                 assertEquals(3 * hiDpiScalar, image.getWidth(null));
                 assertEquals(3 * hiDpiScalar, image.getHeight(null));
