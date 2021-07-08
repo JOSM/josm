@@ -12,8 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -73,7 +73,8 @@ class KeyboardUtilsTest {
         testgetCharactersForKeyE00("pt_BR", '\'');
         testgetCharactersForKeyE00("de", deadCircumflex, deadCircumflex2);
         testgetCharactersForKeyE00("cs", ';');
-        testgetCharactersForKeyE00("he");
+        testgetCharactersForKeyE00("he", ';');
+        testgetCharactersForKeyE00("iw", ';');
         testgetCharactersForKeyE00("hu", '0');
         testgetCharactersForKeyE00("pl");
         testgetCharactersForKeyE00("bs", '¸');
