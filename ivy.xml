@@ -27,10 +27,10 @@
         <dependency conf="api->default" org="org.apache.commons" name="commons-compress" rev="1.20"/>
         <dependency conf="api->default" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
         <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.9"/>
-        <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.10"/>
-        <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.15.0" transitive="false"/>
-        <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.23.2"/>
-        <dependency conf="api->default" org="oauth.signpost" name="signpost-core" rev="2.0.0"/>
+        <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
+        <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.16.0" transitive="false"/>
+        <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.23.4"/>
+        <dependency conf="api->default" org="oauth.signpost" name="signpost-core" rev="2.1.1"/>
         <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2021.3.21"/>
         <!-- sources->sources -->
         <dependency conf="sources->sources" org="org.openstreetmap.jmapviewer" name="jmapviewer" rev="2.15"/>
@@ -40,32 +40,32 @@
         <dependency conf="sources->sources" org="org.apache.commons" name="commons-compress" rev="1.20"/>
         <dependency conf="sources->sources" org="com.google.code.findbugs" name="jsr305" rev="3.0.2"/>
         <dependency conf="sources->sources" org="org.tukaani" name="xz" rev="1.9"/>
-        <dependency conf="sources->sources" org="com.adobe.xmp" name="xmpcore" rev="6.1.10"/>
-        <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.15.0" transitive="false"/>
-        <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.23.2"/>
-        <dependency conf="sources->sources" org="oauth.signpost" name="signpost-core" rev="2.0.0"/>
+        <dependency conf="sources->sources" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
+        <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.16.0" transitive="false"/>
+        <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.23.4"/>
+        <dependency conf="sources->sources" org="oauth.signpost" name="signpost-core" rev="2.1.1"/>
         <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2021.3.21"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->
         <!-- commonslang->default -->
-        <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.11"/>
+        <dependency conf="commonslang->default" org="org.apache.commons" name="commons-lang3" rev="3.12.0"/>
         <!-- jacocoant->default -->
-        <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.6">
+        <dependency conf="jacocoant->default" org="org.jacoco" name="org.jacoco.ant" rev="0.8.7">
             <artifact name="org.jacoco.ant" type="jar" maven:classifier="nodeps"/>
         </dependency>
         <dependency conf="jmockit->default" org="org.jmockit" name="jmockit" rev="1.49.a"/>
         <!-- test->default -->
-        <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.2.1"/>
+        <dependency conf="test->default" org="com.github.spotbugs" name="spotbugs-annotations" rev="4.3.0"/>
         <dependency conf="test->default" org="com.ginsberg" name="junit5-system-exit" rev="1.1.1"/>
         <dependency conf="test->default" org="com.github.tomakehurst" name="wiremock" rev="2.27.2"/>
-        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.102"/>
-        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.7.1"/>
-        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.7.1"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.7.1"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.7.1"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.7.1"/>
-        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.7.1"/>
+        <dependency conf="test->default" org="io.github.classgraph" name="classgraph" rev="4.8.110"/>
+        <dependency conf="test->default" org="org.junit.platform" name="junit-platform-launcher" rev="1.7.2"/>
+        <dependency conf="test->default" org="org.junit.vintage" name="junit-vintage-engine" rev="5.7.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-params" rev="5.7.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-api" rev="5.7.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-engine" rev="5.7.2"/>
+        <dependency conf="test->default" org="org.junit.jupiter" name="junit-jupiter-migrationsupport" rev="5.7.2"/>
         <dependency conf="test->default" org="net.trajano.commons" name="commons-testing" rev="2.1.0"/>
-        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.5.5"/>
-        <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.11"/>
-        <dependency conf="test->default" org="org.awaitility" name="awaitility" rev="4.0.3"/>
+        <dependency conf="test->default" org="nl.jqno.equalsverifier" name="equalsverifier" rev="3.6.1"/>
+        <dependency conf="test->default" org="org.apache.commons" name="commons-lang3" rev="3.12.0"/>
+        <dependency conf="test->default" org="org.awaitility" name="awaitility" rev="4.1.0"/>
     </dependencies>
 </ivy-module>
