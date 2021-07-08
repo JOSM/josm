@@ -217,28 +217,34 @@ public class MapboxVectorStyle {
             return;
         }
         final File toSave = new File(location, name);
-        try (OutputStream fileOutputStream = Files.newOutputStream(toSave.toPath())) {
-            if (object instanceof String) {
-                fileOutputStream.write(((String) object).getBytes(StandardCharsets.UTF_8));
-            } else if (object instanceof MapCSSStyleSource) {
-                MapCSSStyleSource source = (MapCSSStyleSource) object;
-                try (InputStream inputStream = source.getSourceInputStream()) {
-                    int byteVal = inputStream.read();
-                    do {
-                        fileOutputStream.write(byteVal);
-                        byteVal = inputStream.read();
-                    } while (byteVal > -1);
-                    source.url = "file:/" + toSave.getAbsolutePath().replace('\\', '/');
-                    if (source.isLoaded()) {
-                        source.loadStyleSource();
+        try {
+            if (object instanceof BufferedImage) {
+                // This directory is checked first when getting images
+                if (!ImageIO.write((BufferedImage) object, "png", toSave)) {
+                    Logging.warn("No appropriate PNG writer could be found");
+                }
+            } else {
+                try (OutputStream fileOutputStream = Files.newOutputStream(toSave.toPath())) {
+                    if (object instanceof String) {
+                        fileOutputStream.write(((String) object).getBytes(StandardCharsets.UTF_8));
+                    } else if (object instanceof MapCSSStyleSource) {
+                        MapCSSStyleSource source = (MapCSSStyleSource) object;
+                        try (InputStream inputStream = source.getSourceInputStream()) {
+                            int byteVal = inputStream.read();
+                            do {
+                                fileOutputStream.write(byteVal);
+                                byteVal = inputStream.read();
+                            } while (byteVal > -1);
+                            source.url = "file:/" + toSave.getAbsolutePath().replace('\\', '/');
+                            if (source.isLoaded()) {
+                                source.loadStyleSource();
+                            }
+                        }
                     }
                 }
-            } else if (object instanceof BufferedImage) {
-                // This directory is checked first when getting images
-                ImageIO.write((BufferedImage) object, "png", toSave);
             }
         } catch (IOException e) {
-            Logging.info(e);
+            Logging.warn(e);
         }
     }
 
