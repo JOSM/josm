@@ -58,6 +58,7 @@ echo "Building and signin app"
     jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/macosx/JOSM.icns --type app-image --dest app \
+    --java-options "--add-exports=java.base/sun.security.action=ALL-UNNAMED" \
     --java-options "--add-exports=java.desktop/com.apple.eawt=ALL-UNNAMED" \
     --java-options "--add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED" \
     --java-options "--add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED" \
