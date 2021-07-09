@@ -359,26 +359,13 @@ public class OsmOAuthAuthorizationClient {
         parameters.put("oauth_token", requestToken.getKey());
         parameters.put("oauth_callback", "");
         parameters.put("authenticity_token", sessionId.token);
-        if (privileges.isAllowWriteApi()) {
-            parameters.put("allow_write_api", "yes");
-        }
-        if (privileges.isAllowWriteGpx()) {
-            parameters.put("allow_write_gpx", "yes");
-        }
-        if (privileges.isAllowReadGpx()) {
-            parameters.put("allow_read_gpx", "yes");
-        }
-        if (privileges.isAllowWritePrefs()) {
-            parameters.put("allow_write_prefs", "yes");
-        }
-        if (privileges.isAllowReadPrefs()) {
-            parameters.put("allow_read_prefs", "yes");
-        }
-        if (privileges.isAllowModifyNotes()) {
-            parameters.put("allow_write_notes", "yes");
-        }
-
-        parameters.put("commit", "Save changes");
+        parameters.put("allow_write_api", booleanParam(privileges.isAllowWriteApi()));
+        parameters.put("allow_write_gpx", booleanParam(privileges.isAllowWriteGpx()));
+        parameters.put("allow_read_gpx", booleanParam(privileges.isAllowReadGpx()));
+        parameters.put("allow_write_prefs", booleanParam(privileges.isAllowWritePrefs()));
+        parameters.put("allow_read_prefs", booleanParam(privileges.isAllowReadPrefs()));
+        parameters.put("allow_write_notes", booleanParam(privileges.isAllowModifyNotes()));
+        parameters.put("allow_write_diary", booleanParam(privileges.isAllowWriteDiary()));
 
         String request = buildPostRequest(parameters);
         try {
@@ -404,6 +391,10 @@ public class OsmOAuthAuthorizationClient {
                 connection = null;
             }
         }
+    }
+
+    private static String booleanParam(boolean param) {
+        return param ? "1" : "0";
     }
 
     /**

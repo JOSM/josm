@@ -12,6 +12,7 @@ public class OsmPrivileges {
     private boolean allowReadPrefs;
     private boolean allowWritePrefs;
     private boolean allowModifyNotes;
+    private boolean allowWriteDiary;
 
     /**
      * Determines if the client is allowed to modify the map.
@@ -107,5 +108,23 @@ public class OsmPrivileges {
      */
     public void setAllowModifyNotes(boolean allowModifyNotes) {
         this.allowModifyNotes = allowModifyNotes;
+    }
+
+    /**
+     * Determines if the client is allowed to write diary.
+     * @return {@code true} if the client is allowed to write diary, {@code false} otherwise
+     * @since 17972
+     */
+    public boolean isAllowWriteDiary() {
+        return allowWriteDiary;
+    }
+
+    /**
+     * Sets whether the client is allowed to write diary.
+     * @param allowWriteDiary {@code true} if the client is allowed to write diary, {@code false} otherwise
+     * @since 17972
+     */
+    public void setAllowWriteDiary(boolean allowWriteDiary) {
+        this.allowWriteDiary = allowWriteDiary;
     }
 }
