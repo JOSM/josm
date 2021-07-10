@@ -103,7 +103,7 @@ public final class SearchCompilerQueryWizard {
             final String key = ((SearchCompiler.KeyValue) match).getKey();
             final String value = ((SearchCompiler.KeyValue) match).getValue();
             if ("newer".equals(key)) {
-                return "(newer:" + quote("{{date:" + value + "}}") + ")";
+                return "(newer:" + quote(value) + ")";
             }
             return "[~" + quote(key) + "~" + quote(value) + "]";
         } else if (match instanceof SearchCompiler.ExactKeyValue) {

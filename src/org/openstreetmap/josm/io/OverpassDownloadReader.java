@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -222,7 +223,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
                     default:
                         Logging.warn("Unsupported syntax: " + matcher.group(1));
                 }
-            } catch (UncheckedParseException | IOException | NoSuchElementException | IndexOutOfBoundsException ex) {
+            } catch (UncheckedParseException | DateTimeParseException | IOException | NoSuchElementException | IndexOutOfBoundsException ex) {
                 final String msg = tr("Failed to evaluate {0}", matcher.group());
                 Logging.log(Logging.LEVEL_WARN, msg, ex);
                 matcher.appendReplacement(sb, "// " + msg + "\n");

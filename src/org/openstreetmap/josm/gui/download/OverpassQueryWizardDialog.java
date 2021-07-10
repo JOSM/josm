@@ -68,7 +68,6 @@ public final class OverpassQueryWizardDialog extends SearchDialog {
                 break;
             default:
                 super.buttonAction(buttonIndex, evt);
-
         }
     }
 

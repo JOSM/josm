@@ -216,6 +216,15 @@ class SearchCompilerQueryWizardTest {
     }
 
     /**
+     * Test "newer" query.
+     */
+    @Test
+    void testNewer() {
+        assertQueryEquals("  nwr(newer:\"2021-05-30T20:00:00Z\");\n",
+                "newer:\"2021-05-30T20:00:00Z\"");
+    }
+
+    /**
      * Test building an Overpass query based on a preset name.
      */
     @Test
