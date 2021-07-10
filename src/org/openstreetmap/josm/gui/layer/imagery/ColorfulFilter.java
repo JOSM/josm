@@ -37,58 +37,76 @@ public class ColorfulFilter implements BufferedImageOp {
 
     @Override
     public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-        if (src.getWidth() == 0 || src.getHeight() == 0 || src.getType() == BufferedImage.TYPE_CUSTOM) {
+        if (src.getWidth() == 0 || src.getHeight() == 0) {
             return src;
         }
 
-        BufferedImage dest = Optional.ofNullable(dst).orElseGet(() -> createCompatibleDestImage(src, null));
         int type = src.getType();
 
-        if (type == BufferedImage.TYPE_BYTE_INDEXED) {
-            return filterIndexed(src, dest);
-        }
-
-        DataBuffer srcBuffer = src.getRaster().getDataBuffer();
-        DataBuffer destBuffer = dest.getRaster().getDataBuffer();
-        if (!(srcBuffer instanceof DataBufferByte) || !(destBuffer instanceof DataBufferByte)) {
-            Logging.trace("Cannot apply color filter: Images do not use DataBufferByte.");
-            return src;
-        }
-
-        if (type != dest.getType()) {
-            Logging.trace("Cannot apply color filter: Src / Dest differ in type (" + type + '/' + dest.getType() + ')');
-            return src;
-        }
-        int redOffset;
-        int greenOffset;
-        int blueOffset;
-        int alphaOffset = 0;
         switch (type) {
+        case BufferedImage.TYPE_BYTE_INDEXED:
         case BufferedImage.TYPE_3BYTE_BGR:
-            blueOffset = 0;
-            greenOffset = 1;
-            redOffset = 2;
-            break;
         case BufferedImage.TYPE_4BYTE_ABGR:
         case BufferedImage.TYPE_4BYTE_ABGR_PRE:
-            blueOffset = 1;
-            greenOffset = 2;
-            redOffset = 3;
-            break;
         case BufferedImage.TYPE_INT_ARGB:
         case BufferedImage.TYPE_INT_ARGB_PRE:
-            redOffset = 0;
-            greenOffset = 1;
-            blueOffset = 2;
-            alphaOffset = 3;
-            break;
-        default:
-            Logging.trace("Cannot apply color filter: Source image is of wrong type (" + type + ").");
-            return src;
+
+            BufferedImage dest = Optional.ofNullable(dst).orElseGet(() -> createCompatibleDestImage(src, null));
+
+            if (type == BufferedImage.TYPE_BYTE_INDEXED) {
+                try {
+                    return filterIndexed(src, dest);
+                } catch (IllegalArgumentException ex) {
+                    Logging.warn(ex);
+                    break;
+                }
+            }
+
+            DataBuffer srcBuffer = src.getRaster().getDataBuffer();
+            DataBuffer destBuffer = dest.getRaster().getDataBuffer();
+            if (!(srcBuffer instanceof DataBufferByte) || !(destBuffer instanceof DataBufferByte)) {
+                Logging.trace("Images do not use DataBufferByte. Filtering RGB values instead.");
+                break;
+            }
+
+            if (type != dest.getType()) {
+                Logging.trace("Src / Dest differ in type (" + type + '/' + dest.getType() + "). Filtering RGB values instead.");
+                break;
+            }
+
+            int redOffset;
+            int greenOffset;
+            int blueOffset;
+            int alphaOffset = 0;
+            switch (type) {
+            case BufferedImage.TYPE_3BYTE_BGR:
+                blueOffset = 0;
+                greenOffset = 1;
+                redOffset = 2;
+                break;
+            case BufferedImage.TYPE_4BYTE_ABGR:
+            case BufferedImage.TYPE_4BYTE_ABGR_PRE:
+                blueOffset = 1;
+                greenOffset = 2;
+                redOffset = 3;
+                break;
+            case BufferedImage.TYPE_INT_ARGB:
+            case BufferedImage.TYPE_INT_ARGB_PRE:
+                redOffset = 0;
+                greenOffset = 1;
+                blueOffset = 2;
+                alphaOffset = 3;
+                break;
+            default:
+                return doFilterRGB(src);
+            }
+
+            doFilter((DataBufferByte) srcBuffer, (DataBufferByte) destBuffer, redOffset, greenOffset, blueOffset,
+                    alphaOffset, src.getAlphaRaster() != null);
+            return dest;
         }
-        doFilter((DataBufferByte) srcBuffer, (DataBufferByte) destBuffer, redOffset, greenOffset, blueOffset,
-                alphaOffset, src.getAlphaRaster() != null);
-        return dest;
+
+        return doFilterRGB(src);
     }
 
     /**
@@ -160,15 +178,49 @@ public class ColorfulFilter implements BufferedImageOp {
         }
     }
 
-    private byte mix(int color, double luminosity) {
+    private BufferedImage doFilterRGB(BufferedImage src) {
+        int w = src.getWidth();
+        int h = src.getHeight();
+
+        int[] arr = src.getRGB(0, 0, w, h, null, 0, w);
+        int argb, a, r, g, b;
+        double luminosity;
+
+        for (int i = 0; i < arr.length; i++) {
+            argb = arr[i];
+            a = (argb >> 24) & 0xff;
+            r = (argb >> 16) & 0xff;
+            g = (argb >> 8) & 0xff;
+            b = argb & 0xff;
+            luminosity = r * LUMINOSITY_RED + g * LUMINOSITY_GREEN + b * LUMINOSITY_BLUE;
+            r = mixInt(r, luminosity);
+            g = mixInt(g, luminosity);
+            b = mixInt(b, luminosity);
+            argb = a;
+            argb = (argb << 8) + r;
+            argb = (argb << 8) + g;
+            argb = (argb << 8) + b;
+            arr[i] = argb;
+        }
+
+        BufferedImage dest = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        dest.setRGB(0, 0, w, h, arr, 0, w);
+        return dest;
+    }
+
+    private int mixInt(int color, double luminosity) {
         int val = (int) (colorfulness * color + (1 - colorfulness) * luminosity);
         if (val < 0) {
             return 0;
         } else if (val > 0xff) {
-            return (byte) 0xff;
+            return 0xff;
         } else {
-            return (byte) val;
+            return val;
         }
+    }
+
+    private byte mix(int color, double luminosity) {
+        return (byte) mixInt(color, luminosity);
     }
 
     @Override

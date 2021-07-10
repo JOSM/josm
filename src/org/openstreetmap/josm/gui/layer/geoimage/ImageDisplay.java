@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
@@ -100,6 +101,30 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     /** Show a background for the error text (may be hard on eyes) */
     private static final BooleanProperty ERROR_MESSAGE_BACKGROUND = new BooleanProperty("geoimage.message.error.background", false);
+
+    private updateImageThread updateImageThreadInstance;
+
+    private class updateImageThread extends Thread {
+        private boolean restart;
+
+        @Override
+        public void run() {
+            updateProcessedImage();
+            if (restart) {
+                restart = false;
+                run();
+            }
+        }
+
+        public void restart() {
+            restart = true;
+            if (!isAlive()) {
+                restart = false;
+                updateImageThreadInstance = new updateImageThread();
+                updateImageThreadInstance.start();
+            }
+        }
+    }
 
     @Override
     public void preferenceChanged(PreferenceChangeEvent e) {
@@ -650,12 +675,17 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
 
     @Override
     public void filterChanged() {
-        updateProcessedImage();
-        repaint();
+        if (updateImageThreadInstance != null) {
+            updateImageThreadInstance.restart();
+        } else {
+            updateImageThreadInstance = new updateImageThread();
+            updateImageThreadInstance.start();
+        }
     }
 
     private void updateProcessedImage() {
         processedImage = image == null ? null : imageProcessor.process(image);
+        GuiHelper.runInEDT(() -> repaint());
     }
 
     @Override

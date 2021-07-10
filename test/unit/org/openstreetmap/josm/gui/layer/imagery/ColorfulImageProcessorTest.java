@@ -97,7 +97,8 @@ class ColorfulImageProcessorTest {
                     BufferedImage.TYPE_3BYTE_BGR,
                     BufferedImage.TYPE_4BYTE_ABGR,
                     BufferedImage.TYPE_4BYTE_ABGR_PRE,
-                    BufferedImage.TYPE_BYTE_INDEXED }) {
+                    BufferedImage.TYPE_BYTE_INDEXED,
+                    BufferedImage.TYPE_BYTE_BINARY}) {
                 assertTrue(runProcessing(data, type));
             }
         }
@@ -122,7 +123,7 @@ class ColorfulImageProcessorTest {
     }
 
     private BufferedImage createImage(Color color, int type) {
-        BufferedImage image = type == BufferedImage.TYPE_BYTE_INDEXED
+        BufferedImage image = type == BufferedImage.TYPE_BYTE_INDEXED || type == BufferedImage.TYPE_BYTE_BINARY
                 ? new BufferedImage(TEST_IMAGE_SIZE, TEST_IMAGE_SIZE, type, COLOR_MODEL)
                 : new BufferedImage(TEST_IMAGE_SIZE, TEST_IMAGE_SIZE, type);
         Graphics2D graphics = image.createGraphics();
