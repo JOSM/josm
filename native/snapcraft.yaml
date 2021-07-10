@@ -15,7 +15,7 @@ description: |
  from using them in creative, productive or unexpected ways.
 confinement: strict
 grade: devel
-icon: linux/tested/usr/share/icons/hicolor/128x128/apps/josm.png
+icon: native/linux/tested/usr/share/icons/hicolor/128x128/apps/josm.png
 
 apps:
  josm:
@@ -30,7 +30,7 @@ parts:
             dist.dir: $SNAPCRAFT_PART_INSTALL
         source: .
         install: |
-            cp -a linux/tested/usr/share/applications/josm.desktop $SNAPCRAFT_PART_INSTALL/
+            cp -a native/linux/tested/usr/share/applications/josm.desktop $SNAPCRAFT_PART_INSTALL/
             cat<<'EOF' > $SNAPCRAFT_PART_INSTALL/josm-launch
             #!/bin/sh
             # ensure font-config is happy

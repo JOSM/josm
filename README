@@ -61,14 +61,14 @@ This is an overview of the files and directories in the JOSM code repository:
 - ide                       IDE-specific files
   - eclipse/                preconfigured Eclipse configuration files
   - netbeans/               preconfigured Netbeans project
-- josm.jnlp                 Java Web Start launcher file (used on the website for the tested version)
-- josm-latest.jnlp          Java Web Start launcher file (used on the website for the latest version)
 - LICENSE                   the JOSM license terms
 - native/                   OS-specific files
   - linux/                  files useful for Linux distributions, including Appdata files, .desktop
                             files, Debian/Ubuntu scripts, man pages, icons, etc.
   - macosx/                 files needed to create the MacOS package
   - windows/                files needed to create the Windows installer
+  - josm.jnlp               Java Web Start launcher file (used on the website for the tested version)
+  - josm-latest.jnlp        Java Web Start launcher file (used on the website for the latest version)
 - nodist/                   files not included in JOSM binary
   - data/                   data files that are useful for development, but not distributed
     - exif-direction-example.jpg
