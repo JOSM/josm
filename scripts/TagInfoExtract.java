@@ -1,5 +1,4 @@
 // License: GPL. For details, see LICENSE file.
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -248,7 +247,6 @@ public class TagInfoExtract {
                 }
             }
         }
-
     }
 
     private class Presets extends Extractor {
@@ -265,6 +263,7 @@ public class TagInfoExtract {
 
         List<TagInfoTag> convertPresets(Iterable<TaggingPreset> presets, String descriptionPrefix, boolean addImages) {
             final List<TagInfoTag> tags = new ArrayList<>();
+            final Map<Tag, TagInfoTag> requiredTags = new LinkedHashMap<>();
             final Map<Tag, TagInfoTag> optionalTags = new LinkedHashMap<>();
             for (TaggingPreset preset : presets) {
                 preset.data.stream()
@@ -277,32 +276,37 @@ public class TagInfoExtract {
                             for (String value : values(item)) {
                                 Set<TagInfoTag.Type> types = TagInfoTag.Type.forPresetTypes(preset.types);
                                 if (item.isKeyRequired()) {
-                                    tags.add(new TagInfoTag(descriptionPrefix + preset.getName(), item.key, value, types,
-                                            addImages && preset.iconName != null ? options.findImageUrl(preset.iconName) : null));
+                                    fillTagsMap(requiredTags, item, value, preset.getName(), types,
+                                            descriptionPrefix + TagInfoTag.REQUIRED_FOR_COUNT + ": ",
+                                            addImages && preset.iconName != null ? options.findImageUrl(preset.iconName) : null);
                                 } else if (Presets.class.equals(getClass())) { // not for ExternalPresets
-                                    optionalTags.compute(new Tag(item.key, value), (osmTag, tagInfoTag) -> {
-                                        if (tagInfoTag == null) {
-                                            String description = descriptionPrefix + TagInfoTag.OPTIONAL_FOR_COUNT + ": " + preset.getName();
-                                            return new TagInfoTag(description, item.key, value, types, null);
-                                        } else {
-                                            tagInfoTag.descriptions.add(preset.getName());
-                                            tagInfoTag.objectTypes.addAll(types);
-                                            return tagInfoTag;
-                                        }
-                                    });
+                                    fillTagsMap(optionalTags, item, value, preset.getName(), types,
+                                            descriptionPrefix + TagInfoTag.OPTIONAL_FOR_COUNT + ": ", null);
                                 }
                             }
                         });
             }
+            tags.addAll(requiredTags.values());
             tags.addAll(optionalTags.values());
             return tags;
+        }
+
+        private void fillTagsMap(Map<Tag, TagInfoTag> optionalTags, KeyedItem item, String value, String presetName, Set<TagInfoTag.Type> types, String descriptionPrefix, String iconUrl) {
+            optionalTags.compute(new Tag(item.key, value), (osmTag, tagInfoTag) -> {
+                if (tagInfoTag == null) {
+                    return new TagInfoTag(descriptionPrefix + presetName, item.key, value, types, iconUrl);
+                } else {
+                    tagInfoTag.descriptions.add(presetName);
+                    tagInfoTag.objectTypes.addAll(types);
+                    return tagInfoTag;
+                }
+            });
         }
 
         private Collection<String> values(KeyedItem item) {
             final Collection<String> values = item.getValues();
             return values.isEmpty() || values.size() > 50 ? Collections.singleton(null) : values;
         }
-
     }
 
     private class ExternalPresets extends Presets {
@@ -327,7 +331,6 @@ public class TagInfoExtract {
                     Logging.warn("Skipping {0} due to error", source.url);
                     Logging.warn(ex);
                 }
-
             }
             writeJson("JOSM user presets", "Tags supported by the user contributed presets in the OSM editor JOSM", tags);
         }
@@ -490,7 +493,6 @@ public class TagInfoExtract {
                 }
                 return Optional.empty();
             }
-
         }
 
         private class WayChecker extends Checker {
@@ -509,12 +511,10 @@ public class TagInfoExtract {
                 Environment env = applyStylesheet(osm);
                 LineElement les = LineElement.createLine(env);
                 if (les != null) {
-                    if (!generateImage) return Optional.of("");
-                    return Optional.of(createImage(les, "way", nc));
+                    return Optional.of(generateImage ? createImage(les, "way", nc) : "");
                 }
                 return Optional.empty();
             }
-
         }
 
         private class AreaChecker extends Checker {
@@ -550,6 +550,7 @@ public class TagInfoExtract {
      * POJO representing a <a href="https://wiki.openstreetmap.org/wiki/Taginfo/Projects">Taginfo tag</a>.
      */
     private static class TagInfoTag {
+        static final String REQUIRED_FOR_COUNT = "Required for {count}";
         static final String OPTIONAL_FOR_COUNT = "Optional for {count}";
         final Collection<String> descriptions = new ArrayList<>();
         final String key;
@@ -572,6 +573,7 @@ public class TagInfoExtract {
             if (!descriptions.isEmpty()) {
                 final int size = descriptions.size();
                 object.add("description", String.join(", ", Utils.limit(descriptions, 8, "..."))
+                        .replace(REQUIRED_FOR_COUNT, size > 3 ? "Required for " + size : "Required for")
                         .replace(OPTIONAL_FOR_COUNT, size > 3 ? "Optional for " + size : "Optional for"));
             }
             object.add("key", key);
@@ -604,10 +606,7 @@ public class TagInfoExtract {
             }
 
             static Set<TagInfoTag.Type> forPresetTypes(Set<TaggingPresetType> types) {
-                if (types == null) {
-                    return Collections.emptySet();
-                }
-                return types.stream()
+                return types == null ? Collections.emptySet() : types.stream()
                         .map(Type::forPresetType)
                         .collect(Collectors.toCollection(() -> EnumSet.noneOf(Type.class)));
             }
