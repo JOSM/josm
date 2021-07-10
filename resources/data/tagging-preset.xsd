@@ -300,6 +300,7 @@
         </attribute>
         <attributeGroup ref="tns:attributes.text" />
         <attribute name="name" use="prohibited" />
+        <anyAttribute processContents="skip" />
     </complexType>
 
     <complexType name="label">
