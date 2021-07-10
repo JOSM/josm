@@ -164,6 +164,7 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
      */
     public void shutdown() {
         if (!downloadExecutor.equals(DEFAULT_DOWNLOAD_JOB_DISPATCHER)) {
+            cancelOutstandingTasks();
             downloadExecutor.shutdown();
         }
     }

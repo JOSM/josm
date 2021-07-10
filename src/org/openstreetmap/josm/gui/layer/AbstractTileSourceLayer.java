@@ -1828,7 +1828,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     /**
      * Task responsible for precaching imagery along the gpx track
-     *
+     * @since 8526
      */
     public class PrecacheTask implements TileLoaderListener {
         private final ProgressMonitor progressMonitor;
@@ -1849,7 +1849,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             this.tileLoader = getTileLoaderFactory().makeTileLoader(this, getHeaders(tileSource), minimumTileExpire);
             if (this.tileLoader instanceof TMSCachedTileLoader) {
                 ((TMSCachedTileLoader) this.tileLoader).setDownloadExecutor(
-                        TMSCachedTileLoader.getNewThreadPoolExecutor("Precache downloader"));
+                        TMSCachedTileLoader.getNewThreadPoolExecutor("precache-downloader-%d"));
             }
             requestedTiles = new ConcurrentSkipListSet<>(
                     (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getKey(), o2.getKey()));
@@ -1873,7 +1873,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
             this.totalCount = requestedTiles.size();
             this.progressMonitor.setTicksCount(requestedTiles.size());
-
         }
 
         /**
@@ -1896,11 +1895,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * cancel the task
          */
         public void cancel() {
-            if (tileLoader instanceof TMSCachedTileLoader) {
-                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
-                cachedTileLoader.cancelOutstandingTasks();
-                cachedTileLoader.shutdown();
-            }
+            shutdownTmsTileLoader();
         }
 
         @Override
@@ -1916,32 +1911,26 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             } else {
                 Logging.warn("Tile loading failure: " + tile + " - " + tile.getErrorMessage());
             }
-            if (tileLoader instanceof TMSCachedTileLoader) {
-                TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
-                cachedTileLoader.cancelOutstandingTasks();
-                cachedTileLoader.shutdown();
+            if (isFinished()) {
+                shutdownTmsTileLoader();
             }
         }
 
-        /**
-         * Returns tile loader that is used to load the tiles.
-         * @return tile loader that is used to load the tiles
-         */
-        public TileLoader getTileLoader() {
-            return tileLoader;
+        private void shutdownTmsTileLoader() {
+            if (tileLoader instanceof TMSCachedTileLoader) {
+                ((TMSCachedTileLoader) tileLoader).shutdown();
+            }
         }
 
         /**
          * Execute the download
          */
         public void run() {
-            TileLoader loader = getTileLoader();
             for (Tile t: requestedTiles) {
                 if (!progressMonitor.isCanceled()) {
-                    loader.createTileLoaderJob(t).submit();
+                    tileLoader.createTileLoaderJob(t).submit();
                 }
             }
-
         }
     }
 
@@ -1992,8 +1981,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         MapView.removeZoomChangeListener(this);
         adjustAction.destroy();
         if (tileLoader instanceof TMSCachedTileLoader) {
-            TMSCachedTileLoader cachedTileLoader = (TMSCachedTileLoader) tileLoader;
-            cachedTileLoader.shutdown();
+            ((TMSCachedTileLoader) tileLoader).shutdown();
         }
     }
 
