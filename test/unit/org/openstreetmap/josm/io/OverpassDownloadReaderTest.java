@@ -119,8 +119,12 @@ public class OverpassDownloadReaderTest {
      */
     @Test
     public void testDateNewer() {
-        final String query = getExpandedQuery("type:node and newer:3minutes");
+        String query = getExpandedQuery("type:node and newer:3minutes");
         String statement = query.substring(query.indexOf("node(newer:\"") + 12, query.lastIndexOf("\");"));
+        assertNotNull(DateUtils.fromString(statement));
+
+        query = getExpandedQuery("type:node and newer:\"2021-05-30T20:00:00Z\"");
+        statement = query.substring(query.indexOf("node(newer:\"") + 12, query.lastIndexOf("\");"));
         assertNotNull(DateUtils.fromString(statement));
     }
 

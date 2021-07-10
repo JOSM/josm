@@ -45,6 +45,7 @@ import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Read content from an Overpass server.
@@ -242,7 +243,16 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         return c.lat()+ "," + c.lon();
     }
 
-    static String date(String humanDuration, LocalDateTime from) {
+    static String date(String dateOrHumanDuration, LocalDateTime from) {
+        try {
+            return DateUtils.parseInstant(dateOrHumanDuration).toString();
+        } catch (UncheckedParseException e) {
+            Logging.trace(e);
+        }
+        return duration(dateOrHumanDuration, from);
+    }
+
+    static String duration(String humanDuration, LocalDateTime from) {
         // Convert to ISO 8601. Replace months by X temporarily to avoid conflict with minutes
         String duration = humanDuration.toLowerCase(Locale.ENGLISH).replace(" ", "")
                 .replaceAll("years?", "Y").replaceAll("months?", "X").replaceAll("weeks?", "W")

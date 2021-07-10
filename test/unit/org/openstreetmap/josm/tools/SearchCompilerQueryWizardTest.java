@@ -220,7 +220,10 @@ class SearchCompilerQueryWizardTest {
      */
     @Test
     void testNewer() {
-        assertQueryEquals("  nwr(newer:\"2021-05-30T20:00:00Z\");\n",
+        assertQueryEquals("  nwr(newer:\"{{date:3minutes}}\");\n",
+                "newer:3minutes");
+
+        assertQueryEquals("  nwr(newer:\"{{date:2021-05-30T20:00:00Z}}\");\n",
                 "newer:\"2021-05-30T20:00:00Z\"");
     }
 
