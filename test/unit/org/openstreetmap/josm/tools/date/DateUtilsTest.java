@@ -104,6 +104,14 @@ public class DateUtilsTest {
         assertEquals(473385600000L, DateUtils.fromString("1985").getTime());
     }
 
+    @Test
+    void testRtklib() {
+        // examples taken from rtklib .pos files
+        assertEquals("2019-04-21T08:20:32Z", DateUtils.parseInstant("2019/04/21 08:20:32").toString());
+        assertEquals("2019-06-08T08:23:12.123Z", DateUtils.parseInstant("2019/06/08 08:23:12.123").toString());
+        assertEquals("2021-03-30T15:04:01.123456Z", DateUtils.parseInstant("2021/03/30 15:04:01.123456").toString());
+    }
+
     /**
      * Verifies that parsing an illegal date throws a {@link UncheckedParseException}
      */

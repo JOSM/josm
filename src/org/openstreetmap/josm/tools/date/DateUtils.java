@@ -135,6 +135,17 @@ public final class DateUtils {
                 return local.plusHours(str.charAt(23) == '+' ? -plusHr : plusHr).toInstant();
             }
             return local.toInstant();
+        } else if (checkLayout(str, "xxxx/xx/xx xx:xx:xx.xxxxxx")) {
+            return ZonedDateTime.of(
+                parsePart4(str, 0),
+                parsePart2(str, 5),
+                parsePart2(str, 8),
+                parsePart2(str, 11),
+                parsePart2(str, 14),
+                parsePart2(str, 17),
+                parsePart6(str, 20) * 1_000,
+                ZoneOffset.UTC
+            ).toInstant();
         } else {
             // example date format "18-AUG-08 13:33:03"
             SimpleDateFormat f = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
@@ -229,6 +240,15 @@ public final class DateUtils {
 
     private static int parsePart4(String str, int off) {
         return 1000 * num(str.charAt(off)) + 100 * num(str.charAt(off + 1)) + 10 * num(str.charAt(off + 2)) + num(str.charAt(off + 3));
+    }
+
+    private static int parsePart6(String str, int off) {
+        return 100000 * num(str.charAt(off))
+              + 10000 * num(str.charAt(off + 1))
+               + 1000 * num(str.charAt(off + 2))
+                + 100 * num(str.charAt(off + 3))
+                 + 10 * num(str.charAt(off + 4))
+                      + num(str.charAt(off + 5));
     }
 
     /**

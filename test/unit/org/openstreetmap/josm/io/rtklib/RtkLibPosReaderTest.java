@@ -75,4 +75,14 @@ class RtkLibPosReaderTest {
         RtkLibPosReader in = read("nodist/data/rtklib_example2.pos");
         assertEquals(6, in.getNumberOfCoordinates());
     }
+
+    /**
+     * Tests reading another RTKLib pos file with yet another different date format.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    void testReader3() throws Exception {
+        RtkLibPosReader in = read("nodist/data/rtklib_example3.pos");
+        assertEquals(1, in.getNumberOfCoordinates());
+    }
 }
