@@ -22,14 +22,16 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
     private final int lowerIndex;
 
     /**
-     * The way.
+     * Returns the way.
+     * @return the way
      */
     public W getWay() {
         return way;
     }
 
     /**
-     * The index of the first of the 2 nodes in the way.
+     * Returns the index of the first of the 2 nodes in the way.
+     * @return index of the first of the 2 nodes in the way
      * @see #getUpperIndex()
      * @see #getFirstNode()
      */
@@ -38,7 +40,8 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
     }
 
     /**
-     * The index of the second of the 2 nodes in the way.
+     * Returns the index of the second of the 2 nodes in the way.
+     * @return the index of the second of the 2 nodes in the way
      * @see #getLowerIndex()
      * @see #getSecondNode()
      */
@@ -61,6 +64,15 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
     }
 
     /**
+     * Determines if the segment is usable (node not deleted).
+     * @return {@code true} if the segment is usable
+     * @since 17986
+     */
+    public boolean isUsable() {
+        return getUpperIndex() < way.getNodesCount();
+    }
+
+    /**
      * Returns the first node of the way segment.
      * @return the first node
      */
@@ -78,6 +90,8 @@ public class IWaySegment<N extends INode, W extends IWay<N>> implements Comparab
 
     /**
      * Determines and returns the way segment for the given way and node pair.
+     * @param <N> type of node
+     * @param <W> type of way
      * @param way way
      * @param first first node
      * @param second second node
