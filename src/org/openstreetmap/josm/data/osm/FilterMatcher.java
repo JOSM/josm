@@ -209,11 +209,11 @@ public class FilterMatcher {
 
     private static boolean allParentMultipolygonsFiltered(IPrimitive primitive, boolean hidden) {
         boolean isExplicit = false;
-        for (Relation r : new SubclassFilteredCollection<IPrimitive, Relation>(
-                primitive.getReferrers(), IPrimitive::isMultipolygon)) {
+        for (IRelation<?> r : new SubclassFilteredCollection<IPrimitive, IRelation<?>>(
+                primitive.getReferrers(), i -> i.isMultipolygon() && i instanceof IFilterablePrimitive)) {
             if (!isFiltered(r, hidden))
                 return false;
-            isExplicit |= isFilterExplicit(r, hidden);
+            isExplicit |= isFilterExplicit((IFilterablePrimitive) r, hidden);
         }
         return isExplicit;
     }
