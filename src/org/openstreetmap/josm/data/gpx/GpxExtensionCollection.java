@@ -68,7 +68,7 @@ public class GpxExtensionCollection extends ArrayList<GpxExtension> {
         if (childStack == null || childStack.isEmpty()) {
             Logging.warn("Can''t close child ''{0}'', no element in stack.", qName);
             return;
-		}
+        }
 
         GpxExtension child = childStack.pop();
         String childQN = child.getQualifiedName();
