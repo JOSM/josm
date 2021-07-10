@@ -619,6 +619,10 @@ way[highway=service][!area?] {
     width: 1;
     color: service#809bc0;
 }
+way[highway=busway] {
+    width: 2;
+    color: bus#89cbeb;
+}
 way[highway=bridleway] {
     width: 1;
     color: horse#a18559;
