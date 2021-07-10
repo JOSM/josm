@@ -299,7 +299,7 @@ public class MainLayerManager extends LayerManager {
             return new ArrayList<>();
         }
 
-        if (layer == activeLayer || layer == osmDataLayer) {
+        if (!MainApplication.worker.isShutdown() && (layer == activeLayer || layer == osmDataLayer)) {
             Layer nextActive = suggestNextActiveLayer(layer);
             setActiveLayer(nextActive, true);
         }
