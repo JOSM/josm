@@ -202,34 +202,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
         this();
         copyFrom.getReadLock().lock();
         try {
-            Map<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
-            for (Node n : copyFrom.getNodes()) {
-                Node newNode = new Node(n);
-                primMap.put(n, newNode);
-                addPrimitive(newNode);
-            }
-            for (Way w : copyFrom.getWays()) {
-                Way newWay = new Way(w, false, false);
-                primMap.put(w, newWay);
-                List<Node> newNodes = w.getNodes().stream()
-                        .map(n -> (Node) primMap.get(n))
-                        .collect(Collectors.toList());
-                newWay.setNodes(newNodes);
-                addPrimitive(newWay);
-            }
-            // Because relations can have other relations as members we first clone all relations
-            // and then get the cloned members
-            Collection<Relation> relations = copyFrom.getRelations();
-            for (Relation r : relations) {
-                Relation newRelation = new Relation(r, false, false);
-                primMap.put(r, newRelation);
-                addPrimitive(newRelation);
-            }
-            for (Relation r : relations) {
-                ((Relation) primMap.get(r)).setMembers(r.getMembers().stream()
-                        .map(rm -> new RelationMember(rm.getRole(), primMap.get(rm.getMember())))
-                        .collect(Collectors.toList()));
-            }
+            clonePrimitives(copyFrom.getNodes(), copyFrom.getWays(), copyFrom.getRelations());
             DataSourceAddedEvent addedEvent = new DataSourceAddedEvent(this,
                     new LinkedHashSet<>(dataSources), copyFrom.dataSources.stream());
             for (DataSource source : copyFrom.dataSources) {
@@ -257,6 +230,43 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                 addPrimitive(o);
             }
         });
+    }
+
+    /**
+     * Clones the specified primitives into this data set.
+     * @param nodes nodes to clone
+     * @param ways ways to clone
+     * @param relations relations to clone
+     * @since 17981
+     */
+    public void clonePrimitives(Iterable<Node> nodes, Iterable<Way> ways, Iterable<Relation> relations) {
+        Map<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
+        for (Node n : nodes) {
+            Node newNode = new Node(n);
+            primMap.put(n, newNode);
+            addPrimitive(newNode);
+        }
+        for (Way w : ways) {
+            Way newWay = new Way(w, false, false);
+            primMap.put(w, newWay);
+            List<Node> newNodes = w.getNodes().stream()
+                    .map(n -> (Node) primMap.get(n))
+                    .collect(Collectors.toList());
+            newWay.setNodes(newNodes);
+            addPrimitive(newWay);
+        }
+        // Because relations can have other relations as members we first clone all relations
+        // and then get the cloned members
+        for (Relation r : relations) {
+            Relation newRelation = new Relation(r, false, false);
+            primMap.put(r, newRelation);
+            addPrimitive(newRelation);
+        }
+        for (Relation r : relations) {
+            ((Relation) primMap.get(r)).setMembers(r.getMembers().stream()
+                    .map(rm -> new RelationMember(rm.getRole(), primMap.get(rm.getMember())))
+                    .collect(Collectors.toList()));
+        }
     }
 
     /**
@@ -504,6 +514,22 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
             store.addPrimitive(primitive);
             firePrimitivesAdded(Collections.singletonList(primitive), false);
         });
+    }
+
+    /**
+     * Adds recursively a primitive, and all its children, to the dataset.
+     *
+     * @param primitive the primitive.
+     * @throws IllegalStateException if the dataset is read-only
+     * @since 17981
+     */
+    public void addPrimitiveRecursive(OsmPrimitive primitive) {
+        if (primitive instanceof Way) {
+            ((Way) primitive).getNodes().forEach(n -> addPrimitiveRecursive(n));
+        } else if (primitive instanceof Relation) {
+            ((Relation) primitive).getMembers().forEach(m -> addPrimitiveRecursive(m.getMember()));
+        }
+        addPrimitive(primitive);
     }
 
     /**

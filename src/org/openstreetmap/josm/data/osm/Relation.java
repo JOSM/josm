@@ -398,11 +398,9 @@ public final class Relation extends OsmPrimitive implements IRelation<RelationMe
     }
 
     /**
-     * Replies the set of  {@link OsmPrimitive}s referred to by at least one
-     * member of this relation
+     * Replies the set of {@link OsmPrimitive}s referred to by at least one member of this relation.
      *
-     * @return the set of  {@link OsmPrimitive}s referred to by at least one
-     * member of this relation
+     * @return the set of {@link OsmPrimitive}s referred to by at least one member of this relation
      * @see #getMemberPrimitivesList()
      */
     public Set<OsmPrimitive> getMemberPrimitives() {

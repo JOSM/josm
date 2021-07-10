@@ -186,7 +186,7 @@ public class DataSetMerger {
 
                 List<OsmPrimitive> referrers = target.getReferrers();
                 if (referrers.isEmpty()) {
-                    resetPrimitive(target);
+                    IPrimitive.resetPrimitiveChildren(target);
                     target.mergeFrom(source);
                     target.setDeleted(true);
                     it.remove();
@@ -211,20 +211,12 @@ public class DataSetMerger {
             // There are some more objects rest in the objectsToDelete set
             // This can be because of cross-referenced relations.
             for (OsmPrimitive osm: objectsToDelete) {
-                resetPrimitive(osm);
+                IPrimitive.resetPrimitiveChildren(osm);
             }
             for (OsmPrimitive osm: objectsToDelete) {
                 osm.setDeleted(true);
                 osm.mergeFrom(sourceDataSet.getPrimitiveById(osm.getPrimitiveId()));
             }
-        }
-    }
-
-    private static void resetPrimitive(OsmPrimitive osm) {
-        if (osm instanceof Way) {
-            ((Way) osm).setNodes(null);
-        } else if (osm instanceof Relation) {
-            ((Relation) osm).setMembers(null);
         }
     }
 

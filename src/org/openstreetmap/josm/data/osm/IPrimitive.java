@@ -532,4 +532,17 @@ public interface IPrimitive extends IQuadBucketType, Tagged, PrimitiveId, Stylab
         return (!hasKeys() && !other.hasKeys())
                 || getInterestingTags().equals(other.getInterestingTags());
     }
+
+    /**
+     * Resets primitive children, if applicable.
+     * @param p primitive
+     * @since 17981
+     */
+    static void resetPrimitiveChildren(IPrimitive p) {
+        if (p instanceof IWay<?>) {
+            ((IWay<?>) p).setNodes(null);
+        } else if (p instanceof IRelation<?>) {
+            ((IRelation<?>) p).setMembers(null);
+        }
+    }
 }

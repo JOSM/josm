@@ -17,8 +17,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ExpressionFactory;
@@ -62,7 +60,7 @@ final class MapCSSTagCheckerAsserts {
             }
             checksToRun.add(Collections.singleton(check));
             // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
-            addPrimitive(ds, p);
+            ds.addPrimitiveRecursive(p);
             final Collection<TestError> pErrors = MapCSSTagChecker.getErrorsForPrimitive(p, true, checksToRun);
             Logging.debug("- Errors: {0}", pErrors);
             final boolean isError = pErrors.stream().anyMatch(e -> e.getTester() instanceof MapCSSTagChecker.MapCSSTagCheckerAndRule
@@ -87,15 +85,6 @@ final class MapCSSTagCheckerAsserts {
     public static void clear() {
         previousChecks.clear();
         previousChecks.trimToSize();
-    }
-
-    private static void addPrimitive(DataSet ds, OsmPrimitive p) {
-        if (p instanceof Way) {
-            ((Way) p).getNodes().forEach(n -> addPrimitive(ds, n));
-        } else if (p instanceof Relation) {
-            ((Relation) p).getMembers().forEach(m -> addPrimitive(ds, m.getMember()));
-        }
-        ds.addPrimitive(p);
     }
 
     private static LatLon getLocation(MapCSSTagCheckerRule check) {

@@ -23,6 +23,7 @@ import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -192,12 +193,7 @@ public class DeleteCommand extends Command {
                 if (osm.isDeleted())
                     throw new IllegalArgumentException(osm + " is already deleted");
                 clonedPrimitives.put(osm, osm.save());
-
-                if (osm instanceof Way) {
-                    ((Way) osm).setNodes(null);
-                } else if (osm instanceof Relation) {
-                    ((Relation) osm).setMembers(null);
-                }
+                IPrimitive.resetPrimitiveChildren(osm);
             }
 
             for (OsmPrimitive osm : toDelete) {

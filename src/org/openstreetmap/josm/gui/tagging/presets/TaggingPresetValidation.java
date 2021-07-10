@@ -1,13 +1,24 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
+import static java.util.Collections.singleton;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import javax.swing.JLabel;
+
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.FilterModel;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -16,15 +27,8 @@ import org.openstreetmap.josm.data.validation.tests.OpeningHourTest;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
-
-import javax.swing.JLabel;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Validates the preset user input a the given primitive.
@@ -73,24 +77,17 @@ interface TaggingPresetValidation {
     }
 
     static OsmPrimitive applyChangedTags(OsmPrimitive original, List<Tag> changedTags) {
-        OsmPrimitive primitive = clone(original);
-        new DataSet(primitive);
-        Command command = TaggingPreset.createCommand(Collections.singleton(primitive), changedTags);
+        DataSet ds = new DataSet();
+        Collection<OsmPrimitive> primitives = FilterModel.getAffectedPrimitives(singleton(original));
+        ds.clonePrimitives(
+                new SubclassFilteredCollection<>(primitives, INode.class::isInstance),
+                new SubclassFilteredCollection<>(primitives, IWay.class::isInstance),
+                new SubclassFilteredCollection<>(primitives, IRelation.class::isInstance));
+        OsmPrimitive primitive = ds.getPrimitiveById(original.getOsmPrimitiveId());
+        Command command = TaggingPreset.createCommand(singleton(primitive), changedTags);
         if (command != null) {
             command.executeCommand();
         }
         return primitive;
-    }
-
-    static OsmPrimitive clone(OsmPrimitive original) {
-        if (original instanceof Node) {
-            return new Node(((Node) original));
-        } else if (original instanceof Way) {
-            return new Way(((Way) original), false, false);
-        } else if (original instanceof Relation) {
-            return new Relation(((Relation) original), false, false);
-        } else {
-            throw new IllegalStateException();
-        }
     }
 }
