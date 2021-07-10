@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -325,7 +326,7 @@ public class TagInfoExtract {
                     Logging.info("Loading {0}", source.url);
                     Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, false);
                     final List<TagInfoTag> t = convertPresets(presets, source.title + " ", false);
-                    Logging.info("Converting {0} presets of {1}", t.size(), source.title);
+                    Logging.info("Converted {0} presets of {1} to {2} tags", presets.size(), source.title, t.size());
                     tags.addAll(t);
                 } catch (Exception ex) {
                     Logging.warn("Skipping {0} due to error", source.url);
@@ -606,7 +607,7 @@ public class TagInfoExtract {
             }
 
             static Set<TagInfoTag.Type> forPresetTypes(Set<TaggingPresetType> types) {
-                return types == null ? Collections.emptySet() : types.stream()
+                return types == null ? new HashSet<>() : types.stream()
                         .map(Type::forPresetType)
                         .collect(Collectors.toCollection(() -> EnumSet.noneOf(Type.class)));
             }
