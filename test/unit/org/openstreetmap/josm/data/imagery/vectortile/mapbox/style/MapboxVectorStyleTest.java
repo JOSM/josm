@@ -237,19 +237,19 @@ public class MapboxVectorStyleTest {
     void testMapillaryStyle() {
         final String file = "file:/" + TestUtils.getTestDataRoot() + "/mapillary.json";
         final MapboxVectorStyle style = MapboxVectorStyle.getMapboxVectorStyle(file);
-        assertNotNull(style);
+        assertNotNull(style, file);
         // There are three "sources" in the mapillary.json file
         assertEquals(3, style.getSources().size());
         final ElemStyles mapillarySource = style.getSources().entrySet().stream()
           .filter(source -> "mapillary-source".equals(source.getKey().getName())).map(
             Map.Entry::getValue).findAny().orElse(null);
-        assertNotNull(mapillarySource);
+        assertNotNull(mapillarySource, style.toString());
         mapillarySource.getStyleSources().forEach(StyleSource::loadStyleSource);
         assertEquals(1, mapillarySource.getStyleSources().size());
         final MapCSSStyleSource mapillaryCssSource = (MapCSSStyleSource) mapillarySource.getStyleSources().get(0);
-        assertTrue(mapillaryCssSource.getErrors().isEmpty());
+        assertTrue(mapillaryCssSource.getErrors().isEmpty(), mapillaryCssSource.getErrors().toString());
         final MapCSSRule mapillaryOverview = getRule(mapillaryCssSource, "node", "mapillary-overview");
-        assertNotNull(mapillaryOverview);
+        assertNotNull(mapillaryOverview, mapillaryCssSource.toString());
         assertInInstructions(mapillaryOverview.declaration.instructions, "symbol-shape", new Keyword("circle"));
         assertInInstructions(mapillaryOverview.declaration.instructions, "symbol-fill-color", ColorHelper.html2color("#05CB63"));
         assertInInstructions(mapillaryOverview.declaration.instructions, "symbol-fill-opacity", 0.6f);

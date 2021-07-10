@@ -281,4 +281,12 @@ public class MapboxVectorStyle {
     public int hashCode() {
         return Objects.hash(this.name, this.version, this.glyphUrl, this.spriteUrl, this.sources);
     }
+
+    @Override
+    public String toString() {
+        return "MapboxVectorStyle [version=" + version + ", " + (name != null ? "name=" + name + ", " : "")
+                + (spriteUrl != null ? "spriteUrl=" + spriteUrl + ", " : "")
+                + (glyphUrl != null ? "glyphUrl=" + glyphUrl + ", " : "")
+                + (sources != null ? "sources=" + sources : "") + "]";
+    }
 }
