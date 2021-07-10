@@ -83,7 +83,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
         private GpxExtensionCollection currentExtensionCollection;
         private GpxExtensionCollection currentTrackExtensionCollection;
         private Stack<State> states;
-        private final Stack<String> elements = new Stack<>();
+        private final Stack<String[]> elements = new Stack<>();
 
         private StringBuilder accumulator = new StringBuilder();
 
@@ -132,7 +132,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
 
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-            elements.push(localName);
+            elements.push(new String[] { namespaceURI, localName, qName });
             switch(currentState) {
             case INIT:
                 states.push(currentState);
@@ -609,9 +609,10 @@ public class GpxReader implements GpxConstants, IGpxReader {
         }
 
         void tryToFinish() throws SAXException {
-            List<String> remainingElements = new ArrayList<>(elements);
+            List<String[]> remainingElements = new ArrayList<>(elements);
             for (int i = remainingElements.size() - 1; i >= 0; i--) {
-                endElement(null, remainingElements.get(i), remainingElements.get(i));
+                String[] e = remainingElements.get(i);
+                endElement(e[0], e[1], e[2]);
             }
             endDocument();
         }
