@@ -45,7 +45,7 @@ class ValidatorErrorWriterTest {
         doTest(Arrays.asList(TestError.builder(new RightAngleBuildingTest(), Severity.OTHER, 3701)
                 .message("Building with an almost square angle")
                 .primitives(new Node(LatLon.NORTH_POLE)).build()),
-                  "  <analyser timestamp='\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z' name='Almost right angle buildings'>"
+                  "  <analyser timestamp='\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3,9}Z' name='Almost right angle buildings'>"
                 + "    <class id='1' level='3'>"
                 + "      <classtext lang='en' title='Building with an almost square angle'/>"
                 + "    </class>"
@@ -65,7 +65,7 @@ class ValidatorErrorWriterTest {
         String xml = new String(baos.toByteArray(), StandardCharsets.UTF_8);
         assertTrue(xml.trim().replace("\r", "").replace("\n", "")
                 .matches("<\\?xml version='1.0' encoding='UTF-8'\\?>" +
-                        "<analysers generator='JOSM' timestamp='\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z'>" +
+                        "<analysers generator='JOSM' timestamp='\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3,9}Z'>" +
                         content +
                         "</analysers>"), xml);
     }
