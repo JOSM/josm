@@ -237,9 +237,10 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
      * @param nodes nodes to clone
      * @param ways ways to clone
      * @param relations relations to clone
-     * @since 17981
+     * @return the map of cloned primitives indexed by their original version
+     * @since 18001
      */
-    public void clonePrimitives(Iterable<Node> nodes, Iterable<Way> ways, Iterable<Relation> relations) {
+    public Map<OsmPrimitive, OsmPrimitive> clonePrimitives(Iterable<Node> nodes, Iterable<Way> ways, Iterable<Relation> relations) {
         Map<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
         for (Node n : nodes) {
             Node newNode = new Node(n);
@@ -267,6 +268,7 @@ public final class DataSet implements OsmData<OsmPrimitive, Node, Way, Relation>
                     .map(rm -> new RelationMember(rm.getRole(), primMap.get(rm.getMember())))
                     .collect(Collectors.toList()));
         }
+        return primMap;
     }
 
     /**

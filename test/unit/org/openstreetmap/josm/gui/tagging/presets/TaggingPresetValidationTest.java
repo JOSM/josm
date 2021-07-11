@@ -1,20 +1,25 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Arrays;
+import java.util.Locale;
+
+import javax.swing.JLabel;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import javax.swing.JLabel;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for {@code TaggingPresetValidation}
@@ -30,6 +35,7 @@ class TaggingPresetValidationTest {
 
     @BeforeEach
     void setUp() {
+        Locale.setDefault(Locale.ENGLISH);
         OsmValidator.initialize();
     }
 
@@ -37,7 +43,7 @@ class TaggingPresetValidationTest {
      * Tests {@link TaggingPresetValidation#validate}
      */
     @Test
-    void validate() {
+    void testValidate() {
         JLabel label = new JLabel();
         OsmPrimitive primitive = OsmUtils.createPrimitive("way incline=10m width=1mm opening_hours=\"Mo-Fr 8-10\"");
         new DataSet(primitive);
@@ -51,5 +57,17 @@ class TaggingPresetValidationTest {
                 "<li>unusual value of incline, use x% or x° or up or down instead</li>" +
                 "<li>suspicious tag combination (width on suspicious object)</li>" +
                 "<li>suspicious tag combination (incline on suspicious object)</li></ul>", label.getToolTipText());
+    }
+
+    /**
+     * Tests {@link TaggingPresetValidation#applyChangedTags}
+     */
+    @Test
+    void testApplyChangedTags() {
+        OsmPrimitive primitive = OsmUtils.createPrimitive("way incline=10m width=1mm opening_hours=\"Mo-Fr 8-10\"");
+        new DataSet(primitive);
+        OsmPrimitive clone = TaggingPresetValidation.applyChangedTags(primitive, Arrays.asList(new Tag("incline", "20m")));
+        assertEquals("20m", clone.get("incline"));
+        assertEquals("1mm", clone.get("width"));
     }
 }

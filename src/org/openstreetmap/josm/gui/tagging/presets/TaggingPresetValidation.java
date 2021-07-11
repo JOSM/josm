@@ -79,11 +79,11 @@ interface TaggingPresetValidation {
     static OsmPrimitive applyChangedTags(OsmPrimitive original, List<Tag> changedTags) {
         DataSet ds = new DataSet();
         Collection<OsmPrimitive> primitives = FilterModel.getAffectedPrimitives(singleton(original));
-        ds.clonePrimitives(
+        OsmPrimitive primitive = ds.clonePrimitives(
                 new SubclassFilteredCollection<>(primitives, INode.class::isInstance),
                 new SubclassFilteredCollection<>(primitives, IWay.class::isInstance),
-                new SubclassFilteredCollection<>(primitives, IRelation.class::isInstance));
-        OsmPrimitive primitive = ds.getPrimitiveById(original.getOsmPrimitiveId());
+                new SubclassFilteredCollection<>(primitives, IRelation.class::isInstance))
+                .get(original);
         Command command = TaggingPreset.createCommand(singleton(primitive), changedTags);
         if (command != null) {
             command.executeCommand();
