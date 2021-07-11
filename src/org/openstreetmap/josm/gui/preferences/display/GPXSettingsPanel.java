@@ -250,7 +250,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
      * @param value the value or <code>null</code> to remove key
      */
     public static void putLayerPrefLocal(GpxLayer layer, String key, String value) {
-        if (layer == null) return;
+        if (layer == null || layer.data == null) return;
         putLayerPrefLocal(layer.data, key, value);
     }
 
