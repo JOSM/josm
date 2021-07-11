@@ -410,7 +410,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         public void stateChanged(ChangeEvent e) {
             if (!(e.getSource() instanceof ChangesetCommentModel)) return;
             String newComment = ((ChangesetCommentModel) e.getSource()).getComment();
-            if (!destination.getText().equals(newComment)) {
+            if (!destination.getText().trim().equals(newComment)) {
                 destination.setText(newComment);
             }
         }

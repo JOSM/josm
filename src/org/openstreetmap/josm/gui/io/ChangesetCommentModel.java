@@ -24,7 +24,7 @@ public class ChangesetCommentModel extends ChangeNotifier {
      */
     public void setComment(String comment) {
         String oldValue = this.comment;
-        this.comment = comment == null ? "" : comment;
+        this.comment = comment == null ? "" : comment.trim();
         if (!Objects.equals(oldValue, this.comment)) {
             fireStateChanged();
         }
