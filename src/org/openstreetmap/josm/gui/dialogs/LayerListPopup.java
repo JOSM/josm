@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toCollection;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -8,9 +10,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -81,7 +82,8 @@ public class LayerListPopup extends JPopupMenu {
         List<Action> actions;
         if (selectedLayers.size() == 1) {
             Action[] entries = selectedLayers.get(0).getMenuEntries();
-            actions = entries != null ? Arrays.asList(entries) : Collections.emptyList();
+            // Since we may add to the array later, we cannot use Arrays.asList -- it prohibits the use of `add` or `remove`.
+            actions = entries != null ? Stream.of(entries).collect(toCollection(ArrayList::new)) : emptyList();
         } else {
             // Very simple algorithm - first selected layer has actions order as in getMenuEntries, actions from other layers go to the end
             actions = new ArrayList<>();
