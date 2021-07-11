@@ -51,7 +51,7 @@ class ValidatorErrorWriterTest {
                 + "    </class>"
                 + "    <error class='1'>"
                 + "      <location lat='90\\.0' lon='0\\.0'/>"
-                + "      <node id='-1' visible='true' lat='90\\.0' lon='0\\.0' />"
+                + "      <node id='-\\d+' visible='true' lat='90\\.0' lon='0\\.0' />"
                 + "      <text lang='en' value='null'/>"
                 + "    </error>"
                 + "  </analyser>");
