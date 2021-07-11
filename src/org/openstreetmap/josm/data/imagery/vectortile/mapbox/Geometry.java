@@ -24,6 +24,7 @@ public class Geometry {
      * Create a {@link Geometry} for a {@link Feature}
      * @param geometryType The type of geometry
      * @param commands The commands used to create the geometry
+     * @throws IllegalArgumentException if arguments are not understood or if the shoelace formula returns 0 for a polygon ring.
      */
     public Geometry(GeometryTypes geometryType, List<CommandInteger> commands) {
         if (geometryType == GeometryTypes.POINT) {
@@ -33,8 +34,7 @@ public class Geometry {
                 if (command.getType() == Command.MoveTo && operations.length % 2 == 0 && operations.length > 0) {
                     for (int i = 0; i < operations.length / 2; i++) {
                         // Just using Ellipse2D since it extends Shape
-                        shapes.add(new Ellipse2D.Float(operations[2 * i],
-                                operations[2 * i + 1], 0, 0));
+                        shapes.add(new Ellipse2D.Float(operations[2 * i], operations[2 * i + 1], 0, 0));
                     }
                 } else {
                     throw new IllegalArgumentException(tr("{0} with {1} arguments is not understood", geometryType, operations.length));

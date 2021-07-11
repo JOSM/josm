@@ -431,6 +431,7 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public String toString() {
-        return rules.stream().map(MapCSSRule::toString).collect(Collectors.joining("\n"));
+        // Avoids ConcurrentModificationException
+        return new ArrayList<>(rules).stream().map(MapCSSRule::toString).collect(Collectors.joining("\n"));
     }
 }

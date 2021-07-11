@@ -4,6 +4,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.InvalidPathException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public class MapboxVectorTileSource extends JosmTemplatedTMSTileSource {
             if (object.containsKey("version") && object.containsKey("layers") && object.containsKey("sources")) {
                 mapBoxVectorStyle = MapboxVectorStyle.getMapboxVectorStyle(info.getUrl());
             }
-        } catch (IOException | JsonException e) {
+        } catch (IOException | InvalidPathException | JsonException e) {
             Logging.trace(e);
         }
         this.styleSource = mapBoxVectorStyle;

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery.vectortile.mapbox;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 /**
@@ -30,7 +31,7 @@ public class CommandInteger {
 
     /**
      * Add a parameter
-     * @param parameterInteger The parameter to add (converted to {@link short}).
+     * @param parameterInteger The parameter to add (converted to {@code short}).
      */
     public void addParameter(Number parameterInteger) {
         this.parameters[added++] = parameterInteger.shortValue();
@@ -57,6 +58,11 @@ public class CommandInteger {
      * @return The expected parameter size
      */
     public boolean hasAllExpectedParameters() {
-            return this.added >= this.parameters.length;
+        return this.added >= this.parameters.length;
+    }
+
+    @Override
+    public String toString() {
+        return "CommandInteger [type=" + type + ", parameters=" + Arrays.toString(parameters) + ']';
     }
 }

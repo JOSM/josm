@@ -1,11 +1,26 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.vector;
 
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
+
+import java.awt.Shape;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.josm.data.IQuadBucketType;
 import org.openstreetmap.josm.data.imagery.vectortile.VectorTile;
+import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Feature;
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.Layer;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.INode;
@@ -20,17 +35,6 @@ import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * A data store for Vector Data sets
@@ -94,7 +98,7 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
         List<VectorRelationMember> members = RelationSorter.sortMembersByConnectivity(relation.getMembers());
         Collection<VectorWay> relationWayList = members.stream().map(VectorRelationMember::getMember)
           .filter(VectorWay.class::isInstance)
-          .map(VectorWay.class::cast).collect(Collectors.toCollection(ArrayList::new));
+          .map(VectorWay.class::cast).collect(toCollection(ArrayList::new));
         // Only support way-only relations
         if (relationWayList.size() != relation.getMemberPrimitivesList().size()) {
             return relation;
@@ -205,8 +209,7 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
       Collection<VectorPrimitive> featureObjects, Path2D shape) {
         final PathIterator pathIterator = shape.getPathIterator(null);
         final List<VectorWay> ways = pathIteratorToObjects(tile, layer, featureObjects, pathIterator).stream()
-          .filter(VectorWay.class::isInstance).map(VectorWay.class::cast).collect(
-            Collectors.toList());
+          .filter(VectorWay.class::isInstance).map(VectorWay.class::cast).collect(toList());
         // These nodes technically do not exist, so we shouldn't show them
         ways.stream().flatMap(way -> way.getNodes().stream())
           .filter(prim -> !prim.isTagged() && prim.getReferrers(true).size() == 1 && prim.getId() <= 0)
@@ -257,10 +260,8 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
 
     private <T extends Tile & VectorTile> VectorRelation areaToRelation(T tile, Layer layer,
       Collection<VectorPrimitive> featureObjects, Area area) {
-        final PathIterator pathIterator = area.getPathIterator(null);
-        final List<VectorPrimitive> members = pathIteratorToObjects(tile, layer, featureObjects, pathIterator);
         VectorRelation vectorRelation = new VectorRelation(layer.getName());
-        for (VectorPrimitive member : members) {
+        for (VectorPrimitive member : pathIteratorToObjects(tile, layer, featureObjects, area.getPathIterator(null))) {
             final String role;
             if (member instanceof VectorWay && ((VectorWay) member).isClosed()) {
                 role = Geometry.isClockwise(((VectorWay) member).getNodes()) ? "outer" : "inner";
@@ -279,71 +280,79 @@ public class VectorDataStore extends DataStore<VectorPrimitive, VectorNode, Vect
      */
     public <T extends Tile & VectorTile> void addDataTile(T tile) {
         for (Layer layer : tile.getLayers()) {
-            layer.getFeatures().forEach(feature -> {
-                org.openstreetmap.josm.data.imagery.vectortile.mapbox.Geometry geometry = feature
-                  .getGeometryObject();
-                List<VectorPrimitive> featureObjects = new ArrayList<>();
-                List<VectorPrimitive> primaryFeatureObjects = new ArrayList<>();
-                geometry.getShapes().forEach(shape -> {
-                    final VectorPrimitive primitive;
-                    if (shape instanceof Ellipse2D) {
-                        primitive = pointToNode(tile, layer, featureObjects,
-                          (int) ((Ellipse2D) shape).getCenterX(), (int) ((Ellipse2D) shape).getCenterY());
-                    } else if (shape instanceof Path2D) {
-                        primitive = pathToWay(tile, layer, featureObjects, (Path2D) shape).stream().findFirst()
-                          .orElse(null);
-                    } else if (shape instanceof Area) {
-                        primitive = areaToRelation(tile, layer, featureObjects, (Area) shape);
-                        primitive.put(RELATION_TYPE, MULTIPOLYGON_TYPE);
-                    } else {
-                        // We shouldn't hit this, but just in case
-                        throw new UnsupportedOperationException();
-                    }
-                    primaryFeatureObjects.add(primitive);
-                });
-                final VectorPrimitive primitive;
-                if (primaryFeatureObjects.size() == 1) {
-                    primitive = primaryFeatureObjects.get(0);
-                    if (primitive instanceof IRelation && !primitive.isMultipolygon()) {
-                        primitive.put(JOSM_MERGE_TYPE_KEY, "merge");
-                    }
-                } else if (!primaryFeatureObjects.isEmpty()) {
-                    VectorRelation relation = new VectorRelation(layer.getName());
-                    primaryFeatureObjects.stream().map(prim -> new VectorRelationMember("", prim))
-                      .forEach(relation::addRelationMember);
-                    primitive = relation;
-                } else {
-                    return;
-                }
-                primitive.setId(feature.getId());
-                // Version 1 <i>and</i> 2 <i>do not guarantee</i> that non-zero ids are unique
-                // We depend upon unique ids in the data store
-                if (feature.getId() != 0 && this.primitivesMap.containsKey(primitive.getPrimitiveId())) {
-                    // This, unfortunately, makes a new string
-                    primitive.put(ORIGINAL_ID, Long.toString(feature.getId()));
-                    primitive.setId(primitive.getIdGenerator().generateUniqueId());
-                }
-                if (feature.getTags() != null) {
-                    feature.getTags().forEach(primitive::put);
-                }
-                featureObjects.forEach(this::addPrimitive);
-                primaryFeatureObjects.forEach(this::addPrimitive);
+            for (Feature feature : layer.getFeatures()) {
                 try {
-                    this.addPrimitive(primitive);
-                } catch (JosmRuntimeException e) {
-                    Logging.error("{0}/{1}/{2}: {3}", tile.getZoom(), tile.getXtile(), tile.getYtile(), primitive.get("key"));
-                    throw e;
+                    addFeatureData(tile, layer, feature);
+                } catch (IllegalArgumentException e) {
+                    Logging.error("Cannot add vector data for feature {0} of tile {1}: {2}", feature, tile, e.getMessage());
+                    Logging.error(e);
                 }
-            });
+            }
         }
         // Replace original_ids with the same object (reduce memory usage)
         // Strings aren't interned automatically in some GC implementations
-        Collection<IPrimitive> primitives = this.getAllPrimitives().stream().filter(p -> p.hasKey(ORIGINAL_ID))
-                .collect(Collectors.toList());
-        List<String> toReplace = primitives.stream().map(p -> p.get(ORIGINAL_ID)).filter(Objects::nonNull).collect(Collectors.toList());
+        Collection<IPrimitive> primitives = this.getAllPrimitives().stream().filter(p -> p.hasKey(ORIGINAL_ID)).collect(toList());
+        List<String> toReplace = primitives.stream().map(p -> p.get(ORIGINAL_ID)).filter(Objects::nonNull).collect(toList());
         primitives.stream().filter(p -> toReplace.contains(p.get(ORIGINAL_ID)))
                 .forEach(p -> p.put(ORIGINAL_ID, toReplace.stream().filter(shared -> shared.equals(p.get(ORIGINAL_ID)))
                         .findAny().orElse(null)));
+    }
+
+    private <T extends Tile & VectorTile> void addFeatureData(T tile, Layer layer, Feature feature) {
+        List<VectorPrimitive> featureObjects = new ArrayList<>();
+        List<VectorPrimitive> primaryFeatureObjects = feature.getGeometryObject().getShapes().stream()
+                .map(shape -> shapeToPrimaryFeatureObject(tile, layer, shape, featureObjects)).collect(toList());
+        final VectorPrimitive primitive;
+        if (primaryFeatureObjects.size() == 1) {
+            primitive = primaryFeatureObjects.get(0);
+            if (primitive instanceof IRelation && !primitive.isMultipolygon()) {
+                primitive.put(JOSM_MERGE_TYPE_KEY, "merge");
+            }
+        } else if (!primaryFeatureObjects.isEmpty()) {
+            VectorRelation relation = new VectorRelation(layer.getName());
+            primaryFeatureObjects.stream().map(prim -> new VectorRelationMember("", prim))
+              .forEach(relation::addRelationMember);
+            primitive = relation;
+        } else {
+            return;
+        }
+        primitive.setId(feature.getId());
+        // Version 1 <i>and</i> 2 <i>do not guarantee</i> that non-zero ids are unique
+        // We depend upon unique ids in the data store
+        if (feature.getId() != 0 && this.primitivesMap.containsKey(primitive.getPrimitiveId())) {
+            // This, unfortunately, makes a new string
+            primitive.put(ORIGINAL_ID, Long.toString(feature.getId()));
+            primitive.setId(primitive.getIdGenerator().generateUniqueId());
+        }
+        if (feature.getTags() != null) {
+            feature.getTags().forEach(primitive::put);
+        }
+        featureObjects.forEach(this::addPrimitive);
+        primaryFeatureObjects.forEach(this::addPrimitive);
+        try {
+            this.addPrimitive(primitive);
+        } catch (JosmRuntimeException e) {
+            Logging.error("{0}/{1}/{2}: {3}", tile.getZoom(), tile.getXtile(), tile.getYtile(), primitive.get("key"));
+            throw e;
+        }
+    }
+
+    private <T extends Tile & VectorTile> VectorPrimitive shapeToPrimaryFeatureObject(
+            T tile, Layer layer, Shape shape, List<VectorPrimitive> featureObjects) {
+        final VectorPrimitive primitive;
+        if (shape instanceof Ellipse2D) {
+            primitive = pointToNode(tile, layer, featureObjects,
+                    (int) ((Ellipse2D) shape).getCenterX(), (int) ((Ellipse2D) shape).getCenterY());
+        } else if (shape instanceof Path2D) {
+            primitive = pathToWay(tile, layer, featureObjects, (Path2D) shape).stream().findFirst().orElse(null);
+        } else if (shape instanceof Area) {
+            primitive = areaToRelation(tile, layer, featureObjects, (Area) shape);
+            primitive.put(RELATION_TYPE, MULTIPOLYGON_TYPE);
+        } else {
+            // We shouldn't hit this, but just in case
+            throw new UnsupportedOperationException(Objects.toString(shape));
+        }
+        return primitive;
     }
 
     @Override

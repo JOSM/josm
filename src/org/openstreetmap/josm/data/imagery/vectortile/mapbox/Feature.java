@@ -166,11 +166,21 @@ public class Feature {
     /**
      * Get the an object with shapes for the geometry
      * @return An object with usable geometry information
+     * @throws IllegalArgumentException if the geometry object cannot be created because arguments are not understood
+     *                                  or the shoelace formula returns 0 for a polygon ring.
      */
     public Geometry getGeometryObject() {
         if (this.geometryObject == null) {
             this.geometryObject = new Geometry(this.getGeometryType(), this.getGeometry());
         }
         return this.geometryObject;
+    }
+
+    @Override
+    public String toString() {
+        return "Feature [geometry=" + geometry + ", "
+                + "geometryType=" + geometryType + ", id=" + id + ", "
+                + (tags != null ? "tags=" + tags + ", " : "")
+                + (geometryObject != null ? "geometryObject=" + geometryObject : "") + ']';
     }
 }
