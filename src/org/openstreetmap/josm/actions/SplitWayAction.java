@@ -35,15 +35,6 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
-import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
-import org.openstreetmap.josm.data.osm.event.DataSetListener;
-import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
-import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
-import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
-import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
-import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
-import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -154,7 +145,7 @@ public class SplitWayAction extends JosmAction {
             final Way wayToKeep = SplitWayCommand.Strategy.keepLongestChunk().determineWayToKeep(newWays);
 
             if (ExpertToggleAction.isExpert() && !selectedWay.isNew()) {
-                final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(selectedWay, newWays, wayToKeep, selectedNodes, sel);
+                final ExtendedDialog dialog = new SegmentToKeepSelectionDialog(selectedWay, newWays, wayToKeep, sel);
                 dialog.toggleEnable("way.split.segment-selection-dialog");
                 if (!dialog.toggleCheckState()) {
                     dialog.setModal(false);
@@ -173,27 +164,21 @@ public class SplitWayAction extends JosmAction {
      */
     static class SegmentToKeepSelectionDialog extends ExtendedDialog {
         static final AtomicInteger DISPLAY_COUNT = new AtomicInteger();
+        final transient Way selectedWay;
+        final transient List<Way> newWays;
         final JList<Way> list;
-        transient Way selectedWay;
-        transient List<Way> newWays;
-        transient Way wayToKeep;
         final transient List<OsmPrimitive> selection;
-        final transient List<Node> selectedNodes;
-        private final SplitWayDataSetListener dataSetListener;
+        final transient Way wayToKeep;
 
-        SegmentToKeepSelectionDialog(Way selectedWay, List<Way> newWays, Way wayToKeep, List<Node> selectedNodes, List<OsmPrimitive> selection) {
+        SegmentToKeepSelectionDialog(Way selectedWay, List<Way> newWays, Way wayToKeep, List<OsmPrimitive> selection) {
             super(MainApplication.getMainFrame(), tr("Which way segment should reuse the history of {0}?", selectedWay.getId()),
                     new String[]{tr("Ok"), tr("Cancel")}, true);
 
             this.selectedWay = selectedWay;
             this.newWays = newWays;
-            this.selectedNodes = selectedNodes;
             this.selection = selection;
             this.wayToKeep = wayToKeep;
             this.list = new JList<>(newWays.toArray(new Way[0]));
-            this.dataSetListener = new SplitWayDataSetListener();
-            selectedWay.getDataSet().addDataSetListener(dataSetListener);
-
             configureList();
 
             setButtonIcons("ok", "cancel");
@@ -224,11 +209,8 @@ public class SplitWayAction extends JosmAction {
         }
 
         protected void setHighlightedWaySegments(Collection<WaySegment> segments) {
-            DataSet ds = selectedWay.getDataSet();
-            if (ds != null) {
-                ds.setHighlightedWaySegments(segments);
-                MainApplication.getMap().mapView.repaint();
-            }
+            selectedWay.getDataSet().setHighlightedWaySegments(segments);
+            MainApplication.getMap().mapView.repaint();
         }
 
         @Override
@@ -238,10 +220,6 @@ public class SplitWayAction extends JosmAction {
                 DISPLAY_COUNT.incrementAndGet();
                 list.setSelectedValue(wayToKeep, true);
             } else {
-                DataSet ds = selectedWay.getDataSet();
-                if (ds != null) {
-                    ds.removeDataSetListener(dataSetListener);
-                }
                 setHighlightedWaySegments(Collections.emptyList());
                 DISPLAY_COUNT.decrementAndGet();
                 if (getValue() != 1) {
@@ -254,60 +232,9 @@ public class SplitWayAction extends JosmAction {
         protected void buttonAction(int buttonIndex, ActionEvent evt) {
             super.buttonAction(buttonIndex, evt);
             toggleSaveState(); // necessary since #showDialog() does not handle it due to the non-modal dialog
-            if (getValue() == 1 && selectedWay.getDataSet() != null) {
+            if (getValue() == 1) {
                 doSplitWay(selectedWay, list.getSelectedValue(), newWays, selection);
             }
-        }
-
-        private class SplitWayDataSetListener implements DataSetListener {
-
-            @Override
-            public void primitivesAdded(PrimitivesAddedEvent event) {
-            }
-
-            @Override
-            public void primitivesRemoved(PrimitivesRemovedEvent event) {
-                if (event.getPrimitives().stream().anyMatch(p -> p instanceof Way)) {
-                    updateWaySegments();
-                }
-            }
-
-            @Override
-            public void tagsChanged(TagsChangedEvent event) {}
-
-            @Override
-            public void nodeMoved(NodeMovedEvent event) {}
-
-            @Override
-            public void wayNodesChanged(WayNodesChangedEvent event) {
-                updateWaySegments();
-            }
-
-            @Override
-            public void relationMembersChanged(RelationMembersChangedEvent event) {}
-
-            @Override
-            public void otherDatasetChange(AbstractDatasetChangedEvent event) {}
-
-            @Override
-            public void dataChanged(DataChangedEvent event) {}
-
-            private void updateWaySegments() {
-                if (!selectedWay.isUsable()) {
-                    setVisible(false);
-                    return;
-                }
-                newWays = SplitWayCommand.createNewWaysFromChunks(selectedWay,
-                        SplitWayCommand.buildSplitChunks(selectedWay, selectedNodes));
-                if (list.getSelectedIndex() < newWays.size()) {
-                    wayToKeep = newWays.get(list.getSelectedIndex());
-                } else {
-                    wayToKeep = SplitWayCommand.Strategy.keepLongestChunk().determineWayToKeep(newWays);
-                }
-                list.setListData(newWays.toArray(new Way[0]));
-                list.setSelectedValue(wayToKeep, true);
-            }
-
         }
     }
 
