@@ -223,10 +223,10 @@ public class NoteData implements Data {
         if (Logging.isDebugEnabled()) {
             Logging.debug("closing note {0} with comment: {1}", note.getId(), text);
         }
-        NoteComment comment = new NoteComment(Instant.now(), getCurrentUser(), text, NoteComment.Action.CLOSED, true);
-        note.addComment(comment);
+        Instant now = Instant.now();
+        note.addComment(new NoteComment(now, getCurrentUser(), text, NoteComment.Action.CLOSED, true));
         note.setState(State.CLOSED);
-        note.setClosedAt(Instant.now());
+        note.setClosedAt(now);
         dataUpdated();
     }
 

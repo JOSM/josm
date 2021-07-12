@@ -403,9 +403,11 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener, No
                 return;
             }
             Note note = displayList.getSelectedValue();
-            int selectedIndex = displayList.getSelectedIndex();
-            noteData.closeNote(note, dialog.getInputText());
-            noteData.setSelectedNote(model.getElementAt(selectedIndex));
+            if (note != null) {
+                int selectedIndex = displayList.getSelectedIndex();
+                noteData.closeNote(note, dialog.getInputText());
+                noteData.setSelectedNote(model.getElementAt(selectedIndex));
+            }
         }
     }
 
