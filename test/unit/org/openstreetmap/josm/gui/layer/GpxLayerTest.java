@@ -1,13 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +28,8 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -259,5 +263,50 @@ public class GpxLayerTest {
     void testGetChangesetSourceTag() {
         assertEquals("survey", new GpxLayer(new GpxData(), "", true).getChangesetSourceTag());
         assertNull(new GpxLayer(new GpxData(), "", false).getChangesetSourceTag());
+    }
+
+    /**
+     * Checks that potential operations that could be called after destroy() are harmless
+     */
+    @Test
+    void testRobustnessAfterDestroy() {
+        GpxData data = new GpxData();
+        GpxLayer layer = new GpxLayer(data, "1", false);
+        GpxLayer otherLayer = new GpxLayer(new GpxData(), "2", false);
+        assertEquals(data, layer.getData());
+        assertTrue(layer.isMergable(otherLayer));
+        assertTrue(layer.hasColor());
+        assertTrue(layer.isSavable());
+        assertTrue(layer.checkSaveConditions());
+        assertFalse(layer.isModified());
+        assertFalse(layer.requiresSaveToFile());
+        assertNull(layer.getChangesetSourceTag());
+        assertNull(layer.getAssociatedFile());
+
+        layer.destroy();
+
+        assertNull(layer.getData());
+        assertNull(layer.getColor());
+        assertFalse(layer.hasColor());
+        assertFalse(layer.isMergable(otherLayer));
+        assertFalse(layer.isSavable());
+        assertFalse(layer.checkSaveConditions());
+        assertFalse(layer.isModified());
+        assertFalse(layer.requiresSaveToFile());
+        assertNull(layer.getChangesetSourceTag());
+        assertNull(layer.getAssociatedFile());
+        Object infoComponent = layer.getInfoComponent();
+        assertTrue(infoComponent instanceof JScrollPane);
+        Component view = ((JScrollPane) infoComponent).getViewport().getView();
+        assertTrue(view instanceof HtmlPanel);
+        String text = ((HtmlPanel) view).getEditorPane().getText().trim();
+        assertTrue(text.startsWith("<html>"), text);
+        assertTrue(text.endsWith("</html>"), text);
+        assertEquals("<html><br></html>", layer.getToolTipText());
+        assertDoesNotThrow(() -> layer.jumpToNextMarker());
+        assertDoesNotThrow(() -> layer.jumpToPreviousMarker());
+        assertDoesNotThrow(() -> layer.visitBoundingBox(new BoundingXYVisitor()));
+        assertDoesNotThrow(() -> layer.filterTracksByDate(null, null, false));
+        assertDoesNotThrow(() -> layer.projectionChanged(new CustomProjection(), new CustomProjection()));
     }
 }
