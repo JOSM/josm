@@ -11,11 +11,11 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.json.Json;
@@ -36,12 +36,17 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
+import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil;
+import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolverModel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -328,14 +333,25 @@ public class GeoJSONReader extends AbstractReader {
     }
 
     /**
-     * Replace all existing tags in primitive by the values given in the GeoJSON feature.
+     * Merge existing tags in primitive (if any) with the values given in the GeoJSON feature.
      * @param feature the GeoJSON feature
      * @param primitive the OSM primitive
      */
     private static void fillTagsFromFeature(final JsonObject feature, final OsmPrimitive primitive) {
         if (feature != null) {
-            primitive.setKeys(getTags(feature));
+            TagCollection featureTags = getTags(feature);
+            primitive.setKeys(new TagMap(primitive.isTagged() ? mergeAllTagValues(primitive, featureTags) : featureTags));
         }
+    }
+
+    private static TagCollection mergeAllTagValues(final OsmPrimitive primitive, TagCollection featureTags) {
+        TagCollection tags = TagCollection.from(primitive).union(featureTags);
+        TagConflictResolutionUtil.applyAutomaticTagConflictResolution(tags);
+        TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing(tags, Arrays.asList(primitive));
+        TagConflictResolverModel tagModel = new TagConflictResolverModel();
+        tagModel.populate(new TagCollection(tags), tags.getKeysWithMultipleValues());
+        tagModel.actOnDecisions((k, d) -> d.keepAll());
+        return tagModel.getAllResolutions();
     }
 
     private static void parseUnknown(final JsonObject object) {
@@ -346,8 +362,8 @@ public class GeoJSONReader extends AbstractReader {
         Logging.warn(tr("Geometry of feature {0} is null", feature));
     }
 
-    private static Map<String, String> getTags(final JsonObject feature) {
-        final Map<String, String> tags = new TreeMap<>();
+    private static TagCollection getTags(final JsonObject feature) {
+        final TagCollection tags = new TagCollection();
 
         if (feature.containsKey(PROPERTIES) && !feature.isNull(PROPERTIES)) {
             JsonValue properties = feature.get(PROPERTIES);
@@ -356,7 +372,7 @@ public class GeoJSONReader extends AbstractReader {
                     final JsonValue value = stringJsonValueEntry.getValue();
 
                     if (value instanceof JsonString) {
-                        tags.put(stringJsonValueEntry.getKey(), ((JsonString) value).getString());
+                        tags.add(new Tag(stringJsonValueEntry.getKey(), ((JsonString) value).getString()));
                     } else if (value instanceof JsonObject) {
                         Logging.warn(
                             "The GeoJSON contains an object with property '" + stringJsonValueEntry.getKey()
@@ -364,7 +380,7 @@ public class GeoJSONReader extends AbstractReader {
                                 + "'. That key-value pair is ignored!"
                         );
                     } else if (value.getValueType() != JsonValue.ValueType.NULL) {
-                        tags.put(stringJsonValueEntry.getKey(), value.toString());
+                        tags.add(new Tag(stringJsonValueEntry.getKey(), value.toString()));
                     }
                 }
             }

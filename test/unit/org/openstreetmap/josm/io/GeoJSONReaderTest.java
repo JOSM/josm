@@ -216,6 +216,25 @@ class GeoJSONReaderTest {
     }
 
     /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/21044">Bug #21044</a>.
+     * @throws Exception in case of error
+     */
+    @Test
+    void testTicket21044Duplicates() throws Exception {
+        try (InputStream in = TestUtils.getRegressionDataStream(21044, "test.geojson")) {
+            final List<OsmPrimitive> primitives = new ArrayList<>(
+                    new GeoJSONReader().doParseDataSet(in, null).getPrimitives(it -> true));
+            assertEquals(1, primitives.size());
+            OsmPrimitive primitive = primitives.get(0);
+            assertTrue(primitive instanceof Node);
+            Node n = (Node) primitive;
+            assertNull(n.get("addr:building"));
+            assertEquals("06883", n.get("addr:postcode"));
+            assertEquals("22;26", n.get("addr:housenumber"));
+        }
+    }
+
+    /**
      * Tests error reporting for an invalid FeatureCollection
      * @throws Exception in case of error
      */
@@ -228,5 +247,4 @@ class GeoJSONReaderTest {
             assertEquals("java.lang.IllegalArgumentException: features must be ARRAY, but is OBJECT", exception.getMessage());
         }
     }
-
 }

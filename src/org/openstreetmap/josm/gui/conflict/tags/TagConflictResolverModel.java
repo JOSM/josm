@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -297,5 +298,14 @@ public class TagConflictResolverModel extends DefaultTableModel {
      */
     public final Set<String> getKeysWithConflicts() {
         return new HashSet<>(keysWithConflicts);
+    }
+
+    /**
+     * Perform an action on all decisions, useful to perform a global decision (keep all, keep none, etc.)
+     * @param action action to perform on decision
+     * @since 18007
+     */
+    public final void actOnDecisions(BiConsumer<String, MultiValueResolutionDecision> action) {
+        decisions.forEach(action::accept);
     }
 }
