@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -17,6 +19,10 @@ class TagMapTest {
     void testToString() {
         assertEquals("TagMap[]", new TagMap().toString());
         assertEquals("TagMap[key=val]", new TagMap(new String[]{"key", "val"}).toString());
-        assertEquals("TagMap[key=val,foo=bar]", new TagMap(new String[]{"key", "val", "foo", "bar"}).toString());
+        TagMap foobar = new TagMap(new String[]{"key", "val", "foo", "bar"});
+        assertEquals("TagMap[key=val,foo=bar]", foobar.toString());
+        assertEquals("TagMap[key=val,foo=bar]", new TagMap(foobar).toString());
+        TagCollection coll = new TagCollection(Arrays.asList(new Tag("a", "b")));
+        assertEquals("TagMap[a=b]", new TagMap(coll).toString());
     }
 }

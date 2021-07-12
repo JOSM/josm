@@ -6,7 +6,6 @@ import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -74,7 +73,6 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
         public void remove() {
             throw new UnsupportedOperationException();
         }
-
     }
 
     /**
@@ -102,7 +100,6 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
         public int size() {
             return tags.length / 2;
         }
-
     }
 
     /**
@@ -157,7 +154,8 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
      * @param tags The tags
      * @since 10736
      */
-    public TagMap(Collection<Tag> tags) {
+    public TagMap(Iterable<Tag> tags) {
+        this.tags = EMPTY_TAGS;
         for (Tag tag : tags) {
             put(tag.getKey(), tag.getValue());
         }
