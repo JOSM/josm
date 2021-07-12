@@ -38,7 +38,6 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -288,14 +287,8 @@ public class AutoScaleAction extends JosmAction {
         if (getLayerManager().getActiveLayer() == null) {
             return null;
         }
-        try {
-            List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
-            if (!layers.isEmpty())
-                return layers.get(0);
-        } catch (IllegalStateException e) {
-            Logging.error(e);
-        }
-        return null;
+        List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
+        return layers.isEmpty() ? null : layers.get(0);
     }
 
     private static void modeProblem(ValidatorBoundingXYVisitor v) {
@@ -402,7 +395,7 @@ public class AutoScaleAction extends JosmAction {
             setEnabled(ds != null && !ds.selectionEmpty());
             break;
         case LAYER:
-            setEnabled(getFirstSelectedLayer() != null);
+            setEnabled(map != null && getFirstSelectedLayer() != null);
             break;
         case CONFLICT:
             setEnabled(map != null && map.conflictDialog.getSelectedConflict() != null);
