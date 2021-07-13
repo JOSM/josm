@@ -19,8 +19,8 @@ import java.awt.image.ColorModel;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
-import java.awt.image.RenderedImage;
 import java.awt.image.RGBImageFilter;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -582,30 +582,6 @@ public class ImageProvider {
     public ImageProvider setSuppressWarnings(boolean suppressWarnings) {
         this.suppressWarnings = suppressWarnings;
         return this;
-    }
-
-    /**
-     * Add an additional class loader to search image for.
-     * @param additionalClassLoader class loader to add to the internal set
-     * @return {@code true} if the set changed as a result of the call
-     * @since 12870
-     * @deprecated Use ResourceProvider#addAdditionalClassLoader
-     */
-    @Deprecated
-    public static boolean addAdditionalClassLoader(ClassLoader additionalClassLoader) {
-        return ResourceProvider.addAdditionalClassLoader(additionalClassLoader);
-    }
-
-    /**
-     * Add a collection of additional class loaders to search image for.
-     * @param additionalClassLoaders class loaders to add to the internal set
-     * @return {@code true} if the set changed as a result of the call
-     * @since 12870
-     * @deprecated Use ResourceProvider#addAdditionalClassLoaders
-     */
-    @Deprecated
-    public static boolean addAdditionalClassLoaders(Collection<ClassLoader> additionalClassLoaders) {
-        return ResourceProvider.addAdditionalClassLoaders(additionalClassLoaders);
     }
 
     /**

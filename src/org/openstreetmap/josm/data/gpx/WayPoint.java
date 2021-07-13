@@ -133,18 +133,6 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     /**
      * Sets the {@link #PT_TIME} attribute to the specified time.
      *
-     * @param time the time to set
-     * @since 9383
-     * @deprecated Use {@link #setInstant(Instant)}
-     */
-    @Deprecated
-    public void setTime(Date time) {
-        setInstant(time.toInstant());
-    }
-
-    /**
-     * Sets the {@link #PT_TIME} attribute to the specified time.
-     *
      * @param ts seconds from the epoch
      * @since 13210
      * @deprecated Use {@link #setInstant(Instant)}

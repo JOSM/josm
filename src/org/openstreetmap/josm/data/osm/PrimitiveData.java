@@ -6,11 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
@@ -78,19 +76,6 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         StringBuilder builder = new StringBuilder();
         builder.append(id).append(' ').append(Arrays.toString(keys)).append(' ').append(getFlagsAsString());
         return builder.toString();
-    }
-
-    /**
-     * Returns a filtered list for a given primitive type.
-     * @param <T> primitive type
-     * @param list list to filter
-     * @param type primitive type
-     * @return a filtered list for given primitive type
-     * @deprecated Use {@link Collection#stream()} instead
-     */
-    @Deprecated
-    public static <T extends PrimitiveData> List<T> getFilteredList(Collection<T> list, OsmPrimitiveType type) {
-        return list.stream().filter(p -> type.getDataClass().isInstance(p)).collect(Collectors.toList());
     }
 
     @Override

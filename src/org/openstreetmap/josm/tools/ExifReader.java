@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.DateTimeException;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -42,18 +41,6 @@ public final class ExifReader {
      * Returns the date/time from the given JPEG file.
      * @param filename The JPEG file to read
      * @return The date/time read in the EXIF section, or {@code null} if not found
-     * @deprecated Use {@link #readInstant(File)}
-     */
-    @Deprecated
-    public static Date readTime(File filename) {
-        Instant instant = readInstant(filename);
-        return instant == null ? null : Date.from(instant);
-    }
-
-    /**
-     * Returns the date/time from the given JPEG file.
-     * @param filename The JPEG file to read
-     * @return The date/time read in the EXIF section, or {@code null} if not found
      */
     public static Instant readInstant(File filename) {
         try {
@@ -63,19 +50,6 @@ public final class ExifReader {
             Logging.error(e);
         }
         return null;
-    }
-
-    /**
-     * Returns the date/time from the given JPEG file.
-     * @param metadata The EXIF metadata
-     * @return The date/time read in the EXIF section, or {@code null} if not found
-     * @since 11745
-     * @deprecated Use {@link #readInstant(Metadata)}
-     */
-    @Deprecated
-    public static Date readTime(Metadata metadata) {
-        Instant instant = readInstant(metadata);
-        return instant == null ? null : Date.from(instant);
     }
 
     /**

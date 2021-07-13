@@ -317,39 +317,6 @@ public class OSMDownloadSource implements DownloadSource<List<IDownloadSourceTyp
             return true;
         }
 
-        /**
-         * Replies true if the user selected to download OSM data
-         *
-         * @return true if the user selected to download OSM data
-         * @deprecated since 16503 -- use {@code getDownloadType(OsmDataDownloadType.class).getCheckBox().isSelected()}
-         */
-        @Deprecated
-        public boolean isDownloadOsmData() {
-            return getDownloadType(OsmDataDownloadType.class).getCheckBox().isSelected();
-        }
-
-        /**
-         * Replies true if the user selected to download GPX data
-         *
-         * @return true if the user selected to download GPX data
-         * @deprecated since 16503 -- use {@code getDownloadType(GpsDataDownloadType.class).getCheckBox().isSelected()}
-         */
-        @Deprecated
-        public boolean isDownloadGpxData() {
-            return getDownloadType(GpsDataDownloadType.class).getCheckBox().isSelected();
-        }
-
-        /**
-         * Replies true if user selected to download notes
-         *
-         * @return true if user selected to download notes
-         * @deprecated since 16503 -- use {@code getDownloadType(NotesDataDownloadType.class).getCheckBox().isSelected()}
-         */
-        @Deprecated
-        public boolean isDownloadNotes() {
-            return getDownloadType(NotesDataDownloadType.class).getCheckBox().isSelected();
-        }
-
         @Override
         public Icon getIcon() {
             return ImageProvider.get("download");

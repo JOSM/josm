@@ -38,7 +38,7 @@ public enum OnlineResource {
     public final String getLocName() {
         return locName;
     }
-    
+
     /**
      * Replies the offline icon.
      * @return the offline icon
@@ -81,19 +81,5 @@ public enum OnlineResource {
                 return false;
         }
         return url.startsWith(baseUrl.substring(baseUrl.indexOf("://")), url.indexOf("://"));
-    }
-
-    /**
-     * Ensures resource is not accessed in offline mode.
-     * @param downloadString The attempted download string
-     * @param ignore ignored
-     * @throws OfflineAccessException if resource is accessed in offline mode, in any protocol
-     * @deprecated use {@link NetworkManager#isOffline(String)}
-     */
-    @Deprecated
-    public final void checkOfflineAccess(String downloadString, String ignore) {
-        if (NetworkManager.isOffline(downloadString)) {
-            throw OfflineAccessException.forResource(downloadString);
-        }
     }
 }

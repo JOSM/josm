@@ -137,17 +137,6 @@ public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimit
     }
 
     /**
-     * removes the conflict registered for {@link OsmPrimitive} <code>my</code> if any
-     *
-     * @param my  the primitive
-     * @deprecated use {@link #removeForMy(OsmPrimitive)}
-     */
-    @Deprecated
-    public void remove(OsmPrimitive my) {
-        removeForMy(my);
-    }
-
-    /**
      * Replies the conflict for the {@link OsmPrimitive} <code>my</code>, null
      * if no such conflict exists.
      *

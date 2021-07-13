@@ -244,26 +244,4 @@ public class GpxTrack extends WithAttributes implements IGpxTrack {
     public void invalidate() {
         colorCache = null;
     }
-
-    /**
-     * A listener that listens to GPX track changes.
-     * @deprecated use {@link IGpxTrack.GpxTrackChangeListener} instead
-     */
-    @Deprecated
-    @FunctionalInterface
-    interface GpxTrackChangeListener {
-        void gpxDataChanged(GpxTrackChangeEvent e);
-    }
-
-    /**
-     * A track change event for the current track.
-     * @deprecated use {@link IGpxTrack.GpxTrackChangeEvent} instead
-     */
-    @Deprecated
-    static class GpxTrackChangeEvent extends IGpxTrack.GpxTrackChangeEvent {
-        GpxTrackChangeEvent(IGpxTrack source) {
-            super(source);
-        }
-    }
-
 }

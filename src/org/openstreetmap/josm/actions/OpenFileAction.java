@@ -82,7 +82,7 @@ public class OpenFileAction extends DiskAccessAction {
             return;
         File[] files = fc.getSelectedFiles();
         OpenFileTask task = new OpenFileTask(Arrays.asList(files), fc.getFileFilter());
-        task.setRecordHistory(true);
+        task.setOptions(Options.RECORD_HISTORY);
         MainApplication.worker.submit(task);
     }
 
@@ -100,20 +100,6 @@ public class OpenFileAction extends DiskAccessAction {
      */
     public static Future<?> openFiles(List<File> fileList) {
         return openFiles(fileList, (Options[]) null);
-    }
-
-    /**
-     * Open a list of files. The complete list will be passed to batch importers.
-     * @param fileList A list of files
-     * @param recordHistory {@code true} to save filename in history (default: false)
-     * @return the future task
-     * @since 11986 (return task)
-     * @deprecated Since 17534, use {@link OpenFileAction#openFiles(List, Options...)} with {@link Options#RECORD_HISTORY} instead.
-     */
-    @Deprecated
-    public static Future<?> openFiles(List<File> fileList, boolean recordHistory) {
-        Options[] options = recordHistory ? new Options[] {Options.RECORD_HISTORY} : null;
-        return openFiles(fileList, options);
     }
 
     /**
@@ -180,20 +166,6 @@ public class OpenFileAction extends DiskAccessAction {
          */
         public OpenFileTask(List<File> files, FileFilter fileFilter) {
             this(files, fileFilter, tr("Opening files"));
-        }
-
-        /**
-         * Sets whether to save filename in history (for list of recently opened files).
-         * @param recordHistory {@code true} to save filename in history (default: false)
-         * @deprecated since 17534 (use {@link #setOptions} instead).
-         */
-        @Deprecated
-        public void setRecordHistory(boolean recordHistory) {
-            if (recordHistory) {
-                this.options.add(Options.RECORD_HISTORY);
-            } else {
-                this.options.remove(Options.RECORD_HISTORY);
-            }
         }
 
         /**

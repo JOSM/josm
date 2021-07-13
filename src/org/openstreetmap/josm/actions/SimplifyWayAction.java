@@ -324,33 +324,6 @@ public class SimplifyWayAction extends JosmAction {
      *
      * @param w the way to simplify
      * @return The sequence of commands to run
-     * @since 6411
-     * @deprecated Replaced by {@link #createSimplifyCommand(Way)}. You can also use {@link #simplifyWays(List, double)} directly.
-     */
-    @Deprecated
-    public final SequenceCommand simplifyWay(Way w) {
-        return createSimplifyCommand(w);
-    }
-
-    /**
-     * Creates the SequenceCommand to simplify a way with a given threshold.
-     *
-     * @param w the way to simplify
-     * @param threshold the max error threshold
-     * @return The sequence of commands to run
-     * @since 6411
-     * @deprecated Replaced by {@link #createSimplifyCommand(Way, double)}. You can also use {@link #simplifyWays(List, double)} directly.
-     */
-    @Deprecated
-    public static SequenceCommand simplifyWay(Way w, double threshold) {
-        return createSimplifyCommand(w, threshold);
-    }
-
-    /**
-     * Creates the SequenceCommand to simplify a way with default threshold.
-     *
-     * @param w the way to simplify
-     * @return The sequence of commands to run
      * @since 15419
      */
     public static SequenceCommand createSimplifyCommand(Way w) {

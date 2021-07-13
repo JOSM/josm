@@ -227,16 +227,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /**
      * Returns EXIF time
      * @return EXIF time
-     * @deprecated Use {@link #getExifInstant}
-     */
-    @Deprecated
-    public Date getExifTime() {
-        return getDefensiveDate(exifTime);
-    }
-
-    /**
-     * Returns EXIF time
-     * @return EXIF time
+     * @since 17715
      */
     public Instant getExifInstant() {
         return exifTime;
@@ -265,6 +256,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /**
      * Returns the EXIF GPS time.
      * @return the EXIF GPS time
+     * @since 17715
      */
     public Instant getExifGpsInstant() {
         return exifGpsTime;
@@ -364,37 +356,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /**
      * Sets EXIF time.
      * @param exifTime EXIF time
-     * @deprecated Use {@link #setExifTime(Instant)}
-     */
-    @Deprecated
-    public void setExifTime(Date exifTime) {
-        this.exifTime = exifTime == null ? null : exifTime.toInstant();
-    }
-
-    /**
-     * Sets the EXIF GPS time.
-     * @param exifGpsTime the EXIF GPS time
-     * @since 6392
-     * @deprecated Use {@link #setExifGpsTime(Instant)}
-     */
-    @Deprecated
-    public void setExifGpsTime(Date exifGpsTime) {
-        this.exifGpsTime = exifGpsTime == null ? null : exifGpsTime.toInstant();
-    }
-
-    /**
-     * Sets the GPS time.
-     * @param gpsTime the GPS time
-     * @deprecated Use {@link #setGpsTime(Instant)}
-     */
-    @Deprecated
-    public void setGpsTime(Date gpsTime) {
-        this.gpsTime = gpsTime == null ? null : gpsTime.toInstant();
-    }
-
-    /**
-     * Sets EXIF time.
-     * @param exifTime EXIF time
+     * @since 17715
      */
     public void setExifTime(Instant exifTime) {
         this.exifTime = exifTime;
@@ -403,6 +365,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /**
      * Sets the EXIF GPS time.
      * @param exifGpsTime the EXIF GPS time
+     * @since 17715
      */
     public void setExifGpsTime(Instant exifGpsTime) {
         this.exifGpsTime = exifGpsTime;
@@ -411,6 +374,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
     /**
      * Sets the GPS time.
      * @param gpsTime the GPS time
+     * @since 17715
      */
     public void setGpsTime(Instant gpsTime) {
         this.gpsTime = gpsTime;

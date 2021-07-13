@@ -52,17 +52,6 @@ public abstract class AbstractInfoAction extends JosmAction {
         super(name, iconName, tooltip, shortcut, register, toolbarId, installAdapters);
     }
 
-    /**
-     * Asks user confirmation before launching a large number of browser windows.
-     * @param numBrowsers the number of browser windows to open
-     * @return {@code true} if the user confirms, {@code false} otherwise
-     * @deprecated use {@link OpenBrowserAction#confirmLaunchMultiple(int)}
-     */
-    @Deprecated
-    public static boolean confirmLaunchMultiple(int numBrowsers) {
-        return OpenBrowserAction.confirmLaunchMultiple(numBrowsers);
-    }
-
     protected void launchInfoBrowsersForSelectedPrimitivesAndNote() {
         List<IPrimitive> primitivesToShow = new ArrayList<>();
         OsmData<?, ?, ?, ?> ds = getLayerManager().getActiveData();
