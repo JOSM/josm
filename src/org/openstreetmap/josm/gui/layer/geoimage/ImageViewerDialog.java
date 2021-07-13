@@ -608,7 +608,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        showLayer(e.getSource().getActiveLayer());
+        if (!MainApplication.worker.isShutdown()) {
+            showLayer(e.getSource().getActiveLayer());
+        }
     }
 
     private void registerOnLayer(Layer layer) {
