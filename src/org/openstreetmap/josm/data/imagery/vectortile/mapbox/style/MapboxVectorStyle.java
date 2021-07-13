@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,10 +24,8 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
 import org.openstreetmap.josm.data.imagery.vectortile.mapbox.InvalidMapboxVectorTileException;
@@ -59,8 +58,7 @@ public class MapboxVectorStyle {
             try (CachedFile style = new CachedFile(url);
                     BufferedReader reader = style.getContentReader();
                     JsonReader jsonReader = Json.createReader(reader)) {
-                JsonStructure structure = jsonReader.read();
-                return new MapboxVectorStyle(structure.asJsonObject());
+                return new MapboxVectorStyle(jsonReader.read().asJsonObject());
             } catch (IOException e) {
                 Logging.error(e);
             }
@@ -99,8 +97,8 @@ public class MapboxVectorStyle {
             this.glyphUrl = jsonObject.getString("glyphs", null);
             final List<Source> sourceList;
             if (jsonObject.containsKey("sources") && jsonObject.get("sources").getValueType() == JsonValue.ValueType.OBJECT) {
-                final JsonObject sourceObj = jsonObject.getJsonObject("sources");
-                sourceList = sourceObj.entrySet().stream().filter(entry -> entry.getValue().getValueType() == JsonValue.ValueType.OBJECT)
+                sourceList = jsonObject.getJsonObject("sources").entrySet().stream()
+                  .filter(entry -> entry.getValue().getValueType() == JsonValue.ValueType.OBJECT)
                   .map(entry -> {
                       try {
                           return new Source(entry.getKey(), entry.getValue().asJsonObject());
@@ -118,8 +116,8 @@ public class MapboxVectorStyle {
             }
             final List<Layers> layers;
             if (jsonObject.containsKey("layers") && jsonObject.get("layers").getValueType() == JsonValue.ValueType.ARRAY) {
-                JsonArray lArray = jsonObject.getJsonArray("layers");
-                layers = lArray.stream().filter(JsonObject.class::isInstance).map(JsonObject.class::cast).map(obj -> new Layers(id, obj))
+                layers = jsonObject.getJsonArray("layers").stream()
+                  .filter(JsonObject.class::isInstance).map(JsonObject.class::cast).map(obj -> new Layers(id, obj))
                   .collect(Collectors.toList());
             } else {
                 layers = Collections.emptyList();
@@ -129,7 +127,7 @@ public class MapboxVectorStyle {
                 .findFirst(), LinkedHashMap::new, Collectors.toList()));
             // Abuse HashMap null (null == default)
             this.sources = new LinkedHashMap<>();
-            for (Map.Entry<Optional<Source>, List<Layers>> entry : sourceLayer.entrySet()) {
+            for (Entry<Optional<Source>, List<Layers>> entry : sourceLayer.entrySet()) {
                 final Source source = entry.getKey().orElse(null);
                 final String data = entry.getValue().stream().map(Layers::toString).collect(Collectors.joining());
                 final String metaData = "meta{title:" + (source == null ? "Generated Style" :
@@ -158,13 +156,13 @@ public class MapboxVectorStyle {
     private void fetchSprites() {
         // HiDPI images first -- if this succeeds, don't bother with the lower resolution (JOSM has no method to switch)
         try (CachedFile spriteJson = new CachedFile(this.spriteUrl + "@2x.json");
-          CachedFile spritePng = new CachedFile(this.spriteUrl + "@2x.png")) {
+             CachedFile spritePng = new CachedFile(this.spriteUrl + "@2x.png")) {
             if (parseSprites(spriteJson, spritePng)) {
                 return;
             }
         }
         try (CachedFile spriteJson = new CachedFile(this.spriteUrl + ".json");
-        CachedFile spritePng = new CachedFile(this.spriteUrl + ".png")) {
+             CachedFile spritePng = new CachedFile(this.spriteUrl + ".png")) {
             parseSprites(spriteJson, spritePng);
         }
     }
@@ -192,7 +190,7 @@ public class MapboxVectorStyle {
             Logging.error(e);
             return false;
         }
-        for (Map.Entry<String, JsonValue> entry : spriteObject.entrySet()) {
+        for (Entry<String, JsonValue> entry : spriteObject.entrySet()) {
             final JsonObject info = entry.getValue().asJsonObject();
             int width = info.getInt("width");
             int height = info.getInt("height");
@@ -217,6 +215,7 @@ public class MapboxVectorStyle {
             return;
         }
         final File toSave = new File(location, name);
+        Logging.debug("Saving {0} to {1}...", object.getClass().getSimpleName(), toSave);
         try {
             if (object instanceof BufferedImage) {
                 // This directory is checked first when getting images

@@ -94,8 +94,7 @@ public class MapCSSStyleSource extends StyleSource {
      */
     static final Set<String> SUPPORTED_KEYS = new HashSet<>();
     static {
-        Field[] declaredFields = StyleKeys.class.getDeclaredFields();
-        for (Field f : declaredFields) {
+        for (Field f : StyleKeys.class.getDeclaredFields()) {
             try {
                 SUPPORTED_KEYS.add((String) f.get(null));
                 if (!f.getName().toLowerCase(Locale.ENGLISH).replace('_', '-').equals(f.get(null))) {

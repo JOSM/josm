@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -126,9 +127,7 @@ public class MapboxVectorStyleTest {
         MapCSSStyleSource styleSource1 = (MapCSSStyleSource) sources.get(source1).getStyleSources().get(0);
         MapCSSStyleSource styleSource2 = (MapCSSStyleSource) sources.get(source2).getStyleSources().get(0);
 
-        AtomicBoolean saveFinished = new AtomicBoolean();
-        MainApplication.worker.execute(() -> saveFinished.set(true));
-        Awaitility.await().atMost(Durations.ONE_SECOND).until(saveFinished::get);
+        awaitSaveFinished();
 
         assertTrue(styleSource1.url.endsWith("source1.mapcss"));
         assertTrue(styleSource2.url.endsWith("source2.mapcss"));
@@ -138,6 +137,12 @@ public class MapboxVectorStyleTest {
 
         assertEquals(styleSource1, mapCSSStyleSource1);
         assertEquals(styleSource2, mapCSSStyleSource2);
+    }
+
+    private static void awaitSaveFinished() {
+        AtomicBoolean saveFinished = new AtomicBoolean();
+        MainApplication.worker.execute(() -> saveFinished.set(true));
+        Awaitility.await().atMost(Durations.ONE_SECOND).until(saveFinished::get);
     }
 
     @Test
@@ -164,9 +169,7 @@ public class MapboxVectorStyleTest {
           MessageFormat.format(BASE_STYLE, "sprite_test", "\"sprite\":\"" + spritePath + "\"")));
         assertEquals(spritePath, style.getSpriteUrl());
 
-        AtomicBoolean saveFinished = new AtomicBoolean();
-        MainApplication.worker.execute(() -> saveFinished.set(true));
-        Awaitility.await().atMost(Durations.ONE_SECOND).until(saveFinished::get);
+        awaitSaveFinished();
 
         int scalar = 28; // 255 / 9 (could be 4, but this was a nicer number)
         for (int x = 0; x < 3; x++) {
@@ -245,8 +248,12 @@ public class MapboxVectorStyleTest {
             Map.Entry::getValue).findAny().orElse(null);
         assertNotNull(mapillarySource, style.toString());
         mapillarySource.getStyleSources().forEach(StyleSource::loadStyleSource);
-        assertEquals(1, mapillarySource.getStyleSources().size());
-        final MapCSSStyleSource mapillaryCssSource = (MapCSSStyleSource) mapillarySource.getStyleSources().get(0);
+        List<StyleSource> styleSources = mapillarySource.getStyleSources();
+        assertEquals(1, styleSources.size());
+        final MapCSSStyleSource mapillaryCssSource = (MapCSSStyleSource) styleSources.get(0);
+
+        awaitSaveFinished();
+
         assertTrue(mapillaryCssSource.getErrors().isEmpty(), mapillaryCssSource.getErrors().toString());
         final MapCSSRule mapillaryOverview = getRule(mapillaryCssSource, "node", "mapillary-overview");
         assertNotNull(mapillaryOverview, mapillaryCssSource.toString());
