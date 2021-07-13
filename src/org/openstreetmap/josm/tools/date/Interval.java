@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.date;
 
-import org.openstreetmap.josm.tools.Utils;
-
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Objects;
+
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A timespan defined by a start and end instant.
@@ -16,6 +16,11 @@ public final class Interval {
     private final Instant start;
     private final Instant end;
 
+    /**
+     * Constructs a new {@code Interval}
+     * @param start start instant
+     * @param end end instant
+     */
     public Interval(Instant start, Instant end) {
         this.start = start;
         this.end = end;
@@ -53,10 +58,18 @@ public final class Interval {
         return ts;
     }
 
+    /**
+     * Returns start instant.
+     * @return start instant
+     */
     public Instant getStart() {
         return start;
     }
 
+    /**
+     * Returns end instant.
+     * @return end instant
+     */
     public Instant getEnd() {
         return end;
     }

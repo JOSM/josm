@@ -261,17 +261,6 @@ public final class DateUtils {
     }
 
     /**
-     * Returns a new {@code SimpleDateFormat} for date and time, according to <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a>.
-     * @return a new ISO 8601 date format, for date and time.
-     * @since 7299
-     * @deprecated Use {@link Instant#toString()}
-     */
-    @Deprecated
-    public static SimpleDateFormat newIsoDateTimeFormat() {
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
-    }
-
-    /**
      * Returns the date format to be used for current user, based on user preferences.
      * @param dateStyle The date style as described in {@link DateFormat#getDateInstance}. Ignored if "ISO dates" option is set
      * @return The date format
@@ -295,19 +284,6 @@ public final class DateUtils {
                 ? DateTimeFormatter.ISO_LOCAL_DATE
                 : DateTimeFormatter.ofLocalizedDate(dateStyle);
         return formatter.withZone(ZoneId.systemDefault());
-    }
-
-    /**
-     * Returns the date format used for GPX waypoints.
-     * @return the date format used for GPX waypoints
-     * @since 14055
-     * @deprecated Use {@link Instant#toString()}
-     */
-    @Deprecated
-    public static DateFormat getGpxFormat() {
-        SimpleDateFormat result = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        result.setTimeZone(UTC);
-        return result;
     }
 
     /**
