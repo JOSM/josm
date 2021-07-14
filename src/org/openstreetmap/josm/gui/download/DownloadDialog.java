@@ -439,9 +439,6 @@ public class DownloadDialog extends JDialog {
         downloadSourcesTab.getAllPanels().forEach(AbstractDownloadSourcePanel::rememberSettings);
         downloadSourcesTab.getSelectedPanel().ifPresent(panel -> DOWNLOAD_SOURCE_TAB.put(panel.getSimpleName()));
         DOWNLOAD_ZOOMTODATA.put(cbZoomToDownloadedData.isSelected());
-        if (currentBounds != null) {
-            Config.getPref().put("osm-download.bounds", currentBounds.encodeAsString(";"));
-        }
     }
 
     /**

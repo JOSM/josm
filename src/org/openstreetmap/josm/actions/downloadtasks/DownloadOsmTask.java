@@ -44,6 +44,7 @@ import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.io.UrlPatterns.OsmUrlPattern;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -211,6 +212,12 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
     protected Collection<OsmPrimitive> searchPotentiallyDeletedPrimitives(DataSet ds) {
         return downloadTask.searchPrimitivesToUpdate(currentBounds, ds);
+    }
+
+    protected final void rememberDownloadedBounds(Bounds bounds) {
+        if (bounds != null) {
+            Config.getPref().put("osm-download.bounds", bounds.encodeAsString(";"));
+        }
     }
 
     /**
@@ -505,6 +512,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 }
             }
 
+            rememberDownloadedBounds(currentBounds);
             rememberDownloadedData(dataSet);
             loadData(newLayerName, currentBounds);
         }
