@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.openstreetmap.josm.tools.ImageProcessor;
 
 /**
- * This class holds the filter settings for an imagery layer.
+ * This class holds the filter settings for an imagery.
  * @author Michael Zangl
  * @since 10547
  */
@@ -46,7 +46,7 @@ public class ImageryFilterSettings implements ImageProcessor {
     }
 
     /**
-     * Sets the sharpen level for the layer.
+     * Sets the sharpen level for the imagery.
      * <code>1</code> means no change in sharpness.
      * Values in range 0..1 blur the image.
      * Values above 1 are used to sharpen the image.

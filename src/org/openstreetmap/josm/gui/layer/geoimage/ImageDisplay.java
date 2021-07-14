@@ -43,6 +43,7 @@ import org.openstreetmap.josm.tools.Logging;
  * GUI component to display an image (photograph).
  *
  * Offers basic mouse interaction (zoom, drag) and on-screen text.
+ * @since 2566
  */
 public class ImageDisplay extends JComponent implements Destroyable, PreferenceChangedListener, FilterChangeListener {
 
@@ -102,9 +103,9 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     /** Show a background for the error text (may be hard on eyes) */
     private static final BooleanProperty ERROR_MESSAGE_BACKGROUND = new BooleanProperty("geoimage.message.error.background", false);
 
-    private updateImageThread updateImageThreadInstance;
+    private UpdateImageThread updateImageThreadInstance;
 
-    private class updateImageThread extends Thread {
+    private class UpdateImageThread extends Thread {
         private boolean restart;
 
         @Override
@@ -120,7 +121,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
             restart = true;
             if (!isAlive()) {
                 restart = false;
-                updateImageThreadInstance = new updateImageThread();
+                updateImageThreadInstance = new UpdateImageThread();
                 updateImageThreadInstance.start();
             }
         }
@@ -596,12 +597,17 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     }
 
     /**
-     * Constructs a new {@code ImageDisplay}.
+     * Constructs a new {@code ImageDisplay} with no image processor.
      */
     public ImageDisplay() {
         this(image -> image);
     }
 
+    /**
+     * Constructs a new {@code ImageDisplay} with a given image processor.
+     * @param imageProcessor image processor
+     * @since 17740
+     */
     public ImageDisplay(ImageProcessor imageProcessor) {
         addMouseListener(imgMouseListener);
         addMouseWheelListener(imgMouseListener);
@@ -678,7 +684,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
         if (updateImageThreadInstance != null) {
             updateImageThreadInstance.restart();
         } else {
-            updateImageThreadInstance = new updateImageThread();
+            updateImageThreadInstance = new UpdateImageThread();
             updateImageThreadInstance.start();
         }
     }
@@ -731,7 +737,7 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
                 g.setColor(Color.black);
                 g.drawRect(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
             }
-            if (errorLoading) {
+            if (errorLoading && entry != null) {
                 String loadingStr = tr("Error on file {0}", entry.getDisplayName());
                 Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(loadingStr, g);
                 g.drawString(loadingStr,

@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -115,9 +116,14 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         }
     }
 
-    private static JButton createNavigationButton(JosmAction action, Dimension buttonDim) {
+    private static JButton createButton(AbstractAction action, Dimension buttonDim) {
         JButton btn = new JButton(action);
         btn.setPreferredSize(buttonDim);
+        return btn;
+    }
+
+    private static JButton createNavigationButton(AbstractAction action, Dimension buttonDim) {
+        JButton btn = createButton(action, buttonDim);
         btn.setEnabled(false);
         return btn;
     }
@@ -132,14 +138,9 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         btnFirst = createNavigationButton(imageFirstAction, buttonDim);
         btnPrevious = createNavigationButton(imagePreviousAction, buttonDim);
 
-        btnDelete = new JButton(imageRemoveAction);
-        btnDelete.setPreferredSize(buttonDim);
-
-        btnDeleteFromDisk = new JButton(imageRemoveFromDiskAction);
-        btnDeleteFromDisk.setPreferredSize(buttonDim);
-
-        btnCopyPath = new JButton(imageCopyPathAction);
-        btnCopyPath.setPreferredSize(buttonDim);
+        btnDelete = createButton(imageRemoveAction, buttonDim);
+        btnDeleteFromDisk = createButton(imageRemoveFromDiskAction, buttonDim);
+        btnCopyPath = createButton(imageCopyPathAction, buttonDim);
 
         btnNext = createNavigationButton(imageNextAction, buttonDim);
         btnLast = createNavigationButton(imageLastAction, buttonDim);
@@ -150,8 +151,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         JButton btnZoomBestFit = new JButton(imageZoomAction);
         btnZoomBestFit.setPreferredSize(buttonDim);
 
-        btnCollapse = new JButton(imageCollapseAction);
-        btnCollapse.setPreferredSize(new Dimension(20, 20));
+        btnCollapse = createButton(imageCollapseAction, new Dimension(20, 20));
         btnCollapse.setAlignmentY(Component.TOP_ALIGNMENT);
 
         JPanel buttons = new JPanel();
@@ -168,7 +168,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         buttons.add(Box.createRigidArea(new Dimension(7, 0)));
         buttons.add(btnCopyPath);
         buttons.add(Box.createRigidArea(new Dimension(7, 0)));
-        buttons.add(new JButton(visibilityAction));
+        buttons.add(createButton(visibilityAction, buttonDim));
 
         JPanel bottomPane = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();

@@ -5,11 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
+import org.openstreetmap.josm.gui.dialogs.layer.LayerVisibilityAction.OpacitySlider;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayerTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -51,14 +52,17 @@ class LayerVisibilityActionTest {
 
         // now check values
         action.updateValues();
-        assertEquals(1.0, action.opacitySlider.getRealValue(), 1e-15);
-        assertEquals("OpacitySlider [getRealValue()=1.0]", action.opacitySlider.toString());
+        OpacitySlider opacitySlider = action.sliders.stream()
+                .filter(x -> x instanceof OpacitySlider).map(x -> (OpacitySlider) x).findFirst().get();
 
-        action.opacitySlider.setRealValue(.5);
+        assertEquals(1.0, opacitySlider.getRealValue(), 1e-15);
+        assertEquals("OpacitySlider [getRealValue()=1.0]", opacitySlider.toString());
+
+        opacitySlider.setRealValue(.5);
         action.updateValues();
 
-        assertEquals(0.5, action.opacitySlider.getRealValue(), 1e-15);
-        assertEquals("OpacitySlider [getRealValue()=0.5]", action.opacitySlider.toString());
+        assertEquals(0.5, opacitySlider.getRealValue(), 1e-15);
+        assertEquals("OpacitySlider [getRealValue()=0.5]", opacitySlider.toString());
 
         action.setVisibleFlag(false);
         action.updateValues();
@@ -69,15 +73,15 @@ class LayerVisibilityActionTest {
         assertTrue(layer.isVisible());
 
         // layer stays visible during adjust
-        action.opacitySlider.slider.setValueIsAdjusting(true);
-        action.opacitySlider.setRealValue(0);
+        opacitySlider.slider.setValueIsAdjusting(true);
+        opacitySlider.setRealValue(0);
         assertEquals(0, layer.getOpacity(), 1e-15);
         layer.setOpacity(.1); // to make layer.isVisible work
         assertTrue(layer.isVisible());
         layer.setOpacity(0);
 
-        action.opacitySlider.slider.setValueIsAdjusting(false);
-        action.opacitySlider.setRealValue(0);
+        opacitySlider.slider.setValueIsAdjusting(false);
+        opacitySlider.setRealValue(0);
         assertEquals(0, layer.getOpacity(), 1e-15);
         layer.setOpacity(.1); // to make layer.isVisible work
         assertFalse(layer.isVisible());
@@ -87,7 +91,7 @@ class LayerVisibilityActionTest {
         // Opacity reset when it was 0 and user set layer to visible.
         action.setVisibleFlag(true);
         action.updateValues();
-        assertEquals(1.0, action.opacitySlider.getRealValue(), 1e-15);
+        assertEquals(1.0, opacitySlider.getRealValue(), 1e-15);
         assertEquals(1.0, layer.getOpacity(), 1e-15);
     }
 }
