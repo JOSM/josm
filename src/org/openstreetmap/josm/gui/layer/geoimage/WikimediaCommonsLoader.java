@@ -1,6 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.geoimage;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -9,15 +19,6 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Mediawiki;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Loads geocoded images from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> for the given bounding box.
@@ -58,8 +59,15 @@ public class WikimediaCommonsLoader extends PleaseWaitRunnable {
         // do nothing
     }
 
-    public static class Action extends JosmAction {
-        public Action() {
+    /**
+     * Load images from Wikimedia Commons
+     * @since 18021
+     */
+    public static class WikimediaCommonsLoadImagesAction extends JosmAction {
+        /**
+         * Constructs a new {@code WikimediaCommonsLoadImagesAction}
+         */
+        public WikimediaCommonsLoadImagesAction() {
             super(tr("Load images from Wikimedia Commons"), "wikimedia_commons", null, null, false);
         }
 
@@ -74,5 +82,4 @@ public class WikimediaCommonsLoader extends PleaseWaitRunnable {
             setEnabled(MainApplication.isDisplayingMapView());
         }
     }
-
 }

@@ -129,7 +129,7 @@ import org.openstreetmap.josm.gui.io.OnlineResourceMenu;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
-import org.openstreetmap.josm.gui.layer.geoimage.WikimediaCommonsLoader;
+import org.openstreetmap.josm.gui.layer.geoimage.WikimediaCommonsLoader.WikimediaCommonsLoadImagesAction;
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
@@ -748,7 +748,7 @@ public class MainMenu extends JMenuBar {
         add(fileMenu, downloadPrimitive);
         add(fileMenu, searchNotes);
         add(fileMenu, downloadNotesInView);
-        add(fileMenu, new WikimediaCommonsLoader.Action());
+        add(fileMenu, new WikimediaCommonsLoadImagesAction());
         add(fileMenu, downloadReferrers);
         add(fileMenu, update);
         add(fileMenu, updateSelection);

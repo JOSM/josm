@@ -1,21 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.geoimage;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import java.net.URL;
-import java.util.List;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.net.URL;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit test of {@link WikimediaCommonsLoader}
@@ -50,7 +52,6 @@ class WikimediaCommonsLoaderTest {
         assertEquals("File:ISS053-E-105875_-_View_of_Earth.jpg", image.getDisplayName());
         assertEquals(new URL("https://upload.wikimedia.org/wikipedia/commons/e/e8/ISS053-E-105875_-_View_of_Earth.jpg"),
                 image.getImageUrl());
-        image.read(null); // load the image from commons.wikimedia.org
     }
 
     private WireMockServer mockHttp() {
