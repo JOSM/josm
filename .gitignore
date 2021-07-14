@@ -1,0 +1,16 @@
+*.iml
+/checkstyle-josm.xml
+/.idea/
+/build/
+/build2/
+/dist/
+/javadoc
+# Ignore developer-provided jvm argument -Djosm.home=josmHome directory
+/josmHome
+/resources/CONTRIBUTION
+/resources/LICENSE
+/resources/README
+/resources/REVISION
+/resources/data/projection/
+/src/org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/
+/tools/ivy/
