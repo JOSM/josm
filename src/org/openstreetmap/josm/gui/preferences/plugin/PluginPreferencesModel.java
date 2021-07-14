@@ -139,8 +139,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
      */
     public List<PluginInformation> getSelectedPlugins() {
         return availablePlugins.stream()
-                .filter(pi -> selectedPluginsMap.get(pi) != null)
-                .filter(selectedPluginsMap::get)
+                .filter(pi -> selectedPluginsMap.get(pi) == Boolean.TRUE)
                 .collect(Collectors.toList());
     }
 
