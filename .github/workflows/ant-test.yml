@@ -2,7 +2,7 @@ name: Java CI Test
 env:
   junit_platform_version: '1.7.2'
   # ANT_HOME is also our ant version
-  ANT_HOME: 'apache-ant-1.10.10'
+  ANT_HOME: 'apache-ant-1.10.11'
 on:
   - push
   - pull_request
