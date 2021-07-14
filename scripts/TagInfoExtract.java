@@ -280,7 +280,7 @@ public class TagInfoExtract {
                                     fillTagsMap(requiredTags, item, value, preset.getName(), types,
                                             descriptionPrefix + TagInfoTag.REQUIRED_FOR_COUNT + ": ",
                                             addImages && preset.iconName != null ? options.findImageUrl(preset.iconName) : null);
-                                } else if (Presets.class.equals(getClass())) { // not for ExternalPresets
+                                } else {
                                     fillTagsMap(optionalTags, item, value, preset.getName(), types,
                                             descriptionPrefix + TagInfoTag.OPTIONAL_FOR_COUNT + ": ", null);
                                 }
