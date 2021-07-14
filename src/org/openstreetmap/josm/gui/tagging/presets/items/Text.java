@@ -257,8 +257,11 @@ public class Text extends KeyedItem {
             support.addListener((source, key, newValue) -> {
                 if (source != this) {
                     String valueTemplateText = valueTemplate.getText(support);
-                    Logging.trace("Evaluating value_template {0} for key {1} => {2}", valueTemplate, key, valueTemplateText);
-                    SwingUtilities.invokeLater(() -> textField.setItem(valueTemplateText));
+                    Logging.trace("Evaluating value_template {0} for key {1} from {2} with new value {3} => {4}",
+                            valueTemplate, key, source, newValue, valueTemplateText);
+                    if (!textField.getText().equals(valueTemplateText)) {
+                        SwingUtilities.invokeLater(() -> textField.setItem(valueTemplateText));
+                    }
                 }
             });
         }
