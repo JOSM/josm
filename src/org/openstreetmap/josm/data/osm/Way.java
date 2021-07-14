@@ -605,11 +605,7 @@ public final class Way extends OsmPrimitive implements IWay<Node> {
         clearCachedStyle();
     }
 
-    /**
-     * Replies true if this way has incomplete nodes, false otherwise.
-     * @return true if this way has incomplete nodes, false otherwise.
-     * @since 2587
-     */
+    @Override
     public boolean hasIncompleteNodes() {
         return Arrays.stream(nodes).anyMatch(Node::isIncomplete);
     }

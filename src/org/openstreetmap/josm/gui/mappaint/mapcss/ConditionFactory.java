@@ -849,6 +849,10 @@ public final class ConditionFactory {
         static boolean completely_downloaded(Environment e) {
             if (e.osm instanceof IRelation<?>) {
                 return !((IRelation<?>) e.osm).hasIncompleteMembers();
+            } else if (e.osm instanceof IWay<?>) {
+                return !((IWay<?>) e.osm).hasIncompleteNodes();
+            } else if (e.osm instanceof INode) {
+                return ((INode) e.osm).isLatLonKnown();
             } else {
                 return true;
             }

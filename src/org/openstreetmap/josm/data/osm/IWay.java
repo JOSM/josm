@@ -132,4 +132,13 @@ public interface IWay<N extends INode> extends IPrimitive {
      * @since 13922
      */
     boolean isInnerNode(INode n);
+
+    /**
+     * Replies true if this way has incomplete nodes, false otherwise.
+     * @return true if this way has incomplete nodes, false otherwise.
+     * @since 18019
+     */
+    default boolean hasIncompleteNodes() {
+        return false;
+    }
 }

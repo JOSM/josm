@@ -210,7 +210,7 @@ area:closed[landuse=reservoir]                        ⊇  area:closed.water_are
   throwWarning: tr("Water area inside water area");
 }
 
-area:closed:areaStyle ⧉ area:closed:areaStyle {
+area:completely_downloaded:closed:areaStyle ⧉ area:completely_downloaded:closed:areaStyle {
   throwOther: tr("Overlapping Areas");
 }
 
