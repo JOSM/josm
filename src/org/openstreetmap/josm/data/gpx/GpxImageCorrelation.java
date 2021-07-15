@@ -168,7 +168,7 @@ public final class GpxImageCorrelation {
                 }
             }
         }
-        if (trkTag) {
+        if (trkTag && prevWp != null) {
             ret += matchPoints(images, prevWp, prevWpTime, prevWp, prevWpTime, offset, false, trkTagTime, true);
         }
         return ret;

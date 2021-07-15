@@ -21,6 +21,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +41,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -98,6 +101,7 @@ import org.openstreetmap.josm.io.IGpxReader;
 import org.openstreetmap.josm.io.nmea.NmeaReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IPreferences;
+import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -111,14 +115,14 @@ import org.xml.sax.SAXException;
  * Then it correlates the images of the layer with that GPX file.
  * @since 2566
  */
-public class CorrelateGpxWithImages extends AbstractAction {
+public class CorrelateGpxWithImages extends AbstractAction implements Destroyable {
 
-    private static final List<GpxData> loadedGpxData = new ArrayList<>();
+    private static MutableComboBoxModel<GpxDataWrapper> gpxModel;
+    private static boolean forceTags;
 
     private final transient GeoImageLayer yLayer;
     private transient GpxTimezone timezone;
     private transient GpxTimeOffset delta;
-    private static boolean forceTags;
 
     /**
      * Constructs a new {@code CorrelateGpxWithImages} action.
@@ -128,7 +132,6 @@ public class CorrelateGpxWithImages extends AbstractAction {
         super(tr("Correlate to GPX"));
         new ImageProvider("dialogs/geoimage/gpx2img").getResource().attachImageIcon(this, true);
         this.yLayer = layer;
-        MainApplication.getLayerManager().addLayerChangeListener(new GpxLayerAddedListener());
     }
 
     private final class SyncDialogWindowListener extends WindowAdapter {
@@ -231,7 +234,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     private static class GpxDataWrapper {
-        private final String name;
+        private String name;
         private final GpxData data;
         private final File file;
 
@@ -241,14 +244,29 @@ public class CorrelateGpxWithImages extends AbstractAction {
             this.file = file;
         }
 
+        void setName(String name) {
+            this.name = name;
+            forEachLayer(CorrelateGpxWithImages::repaintCombobox);
+        }
+
         @Override
         public String toString() {
             return name;
         }
     }
 
+    private static class NoGpxDataWrapper extends GpxDataWrapper {
+        NoGpxDataWrapper() {
+            super(null, null, null);
+        }
+
+        @Override
+        public String toString() {
+            return tr("<No GPX track loaded yet>");
+        }
+    }
+
     private ExtendedDialog syncDialog;
-    private MutableComboBoxModel<GpxDataWrapper> gpxModel;
     private JPanel outerPanel;
     private JosmComboBox<GpxDataWrapper> cbGpx;
     private JosmTextField tfTimezone;
@@ -278,21 +296,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             try {
                 outerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                for (int i = gpxModel.getSize() - 1; i >= 0; i--) {
-                    GpxDataWrapper wrapper = gpxModel.getElementAt(i);
-                    if (sel.equals(wrapper.file)) {
-                        gpxModel.setSelectedItem(wrapper);
-                        if (!sel.getName().equals(wrapper.name)) {
-                            JOptionPane.showMessageDialog(
-                                    MainApplication.getMainFrame(),
-                                    tr("File {0} is loaded yet under the name \"{1}\"", sel.getName(), wrapper.name),
-                                    tr("Error"),
-                                    JOptionPane.ERROR_MESSAGE
-                            );
-                        }
-                        return;
-                    }
-                }
+                removeDuplicates(sel);
                 GpxData data = null;
                 try (InputStream iStream = Compression.getUncompressedFileInputStream(sel)) {
                     IGpxReader reader = gpxFilter.accept(sel) ? new GpxReader(iStream) : new NmeaReader(iStream);
@@ -320,13 +324,10 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     return;
                 }
 
-                loadedGpxData.add(data);
-                if (gpxModel.getElementAt(0).file == null) {
-                    gpxModel.removeElementAt(0);
-                }
                 GpxDataWrapper elem = new GpxDataWrapper(sel.getName(), data, sel);
                 gpxModel.addElement(elem);
                 gpxModel.setSelectedItem(elem);
+                statusBarUpdater.matchAndUpdateStatusBar();
             } finally {
                 outerPanel.setCursor(Cursor.getDefaultCursor());
             }
@@ -525,7 +526,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 forceTags = cForce.isSelected(); // This setting is not supposed to be saved permanently
 
-                statusBarUpdater.updateStatusBar();
+                statusBarUpdater.matchAndUpdateStatusBar();
                 yLayer.updateBufferAndRepaint();
             }
         }
@@ -766,7 +767,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 isOk = true;
 
             }
-            statusBarUpdater.updateStatusBar();
+            statusBarUpdater.matchAndUpdateStatusBar();
             yLayer.updateBufferAndRepaint();
         }
 
@@ -789,19 +790,18 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
-    private class GpxLayerAddedListener implements LayerChangeListener {
+    private static class GpxLayerAddedListener implements LayerChangeListener {
         @Override
         public void layerAdded(LayerAddEvent e) {
-            if (syncDialog != null && syncDialog.isVisible()) {
-                Layer layer = e.getAddedLayer();
-                if (layer instanceof GpxLayer) {
-                    GpxLayer gpx = (GpxLayer) layer;
-                    GpxDataWrapper gdw = new GpxDataWrapper(gpx.getName(), gpx.data, gpx.data.storageFile);
-                    if (gpxModel.getElementAt(0).file == null) {
-                        gpxModel.removeElementAt(0);
-                    }
-                    gpxModel.addElement(gdw);
-                }
+            Layer layer = e.getAddedLayer();
+            if (layer instanceof GpxLayer) {
+                GpxLayer gpx = (GpxLayer) layer;
+                File file = gpx.data.storageFile;
+                removeDuplicates(file);
+                GpxDataWrapper gdw = new GpxDataWrapper(gpx.getName(), gpx.data, file);
+                gpx.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
+                gpxModel.addElement(gdw);
+                forEachLayer(CorrelateGpxWithImages::repaintCombobox);
             }
         }
 
@@ -816,32 +816,42 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        // Construct the list of loaded GPX tracks
-        gpxModel = new DefaultComboBoxModel<>();
-        GpxDataWrapper defaultItem = null;
-        for (GpxLayer cur : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class).stream()
-                .filter(GpxLayer::isLocalFile).collect(Collectors.toList())) {
-            GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), cur.data, cur.data.storageFile);
-            gpxModel.addElement(gdw);
-            if (cur == yLayer.gpxLayer || (defaultItem == null && gdw.file != null)) {
-                defaultItem = gdw;
-            }
-        }
-        for (GpxData data : loadedGpxData) {
-            GpxDataWrapper gdw = new GpxDataWrapper(data.storageFile.getName(), data, data.storageFile);
-            gpxModel.addElement(gdw);
-            if (defaultItem == null && gdw.file != null) { // select first GPX track associated to a file
-                defaultItem = gdw;
-            }
+    private static class GpxLayerRenamedListener implements PropertyChangeListener {
+        private GpxDataWrapper gdw;
+        GpxLayerRenamedListener(GpxDataWrapper gdw) {
+            this.gdw = gdw;
         }
 
-        GpxDataWrapper nogdw = new GpxDataWrapper(tr("<No GPX track loaded yet>"), null, null);
-        if (gpxModel.getSize() == 0) {
-            gpxModel.addElement(nogdw);
-        } else if (defaultItem != null) {
-            gpxModel.setSelectedItem(defaultItem);
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            if (Layer.NAME_PROP.equals(e.getPropertyName())) {
+                gdw.setName(e.getNewValue().toString());
+            }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        NoGpxDataWrapper nogdw = new NoGpxDataWrapper();
+        if (gpxModel == null) {
+            // Construct the list of loaded GPX tracks
+            gpxModel = new DefaultComboBoxModel<>();
+            GpxDataWrapper defaultItem = null;
+            for (GpxLayer cur : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class)) {
+                GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), cur.data, cur.data.storageFile);
+                cur.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
+                gpxModel.addElement(gdw);
+                if (cur == yLayer.gpxLayer || defaultItem == null) {
+                    defaultItem = gdw;
+                }
+            }
+
+            if (gpxModel.getSize() == 0) {
+                gpxModel.addElement(nogdw);
+            } else if (defaultItem != null) {
+                gpxModel.setSelectedItem(defaultItem);
+            }
+            MainApplication.getLayerManager().addLayerChangeListener(new GpxLayerAddedListener());
         }
 
         JPanel panelCb = new JPanel();
@@ -1009,13 +1019,14 @@ public class CorrelateGpxWithImages extends AbstractAction {
         cbExifImg.addItemListener(statusBarUpdaterWithRepaint);
         cbTaggedImg.addItemListener(statusBarUpdaterWithRepaint);
 
-        statusBarUpdater.updateStatusBar();
+        statusBarUpdater.matchAndUpdateStatusBar();
         yLayer.updateBufferAndRepaint();
 
         outerPanel = new JPanel(new BorderLayout());
         outerPanel.add(statusBar, BorderLayout.PAGE_END);
 
         if (!GraphicsEnvironment.isHeadless()) {
+            forEachLayer(CorrelateGpxWithImages::closeDialog);
             syncDialog = new ExtendedDialog(
                     MainApplication.getMainFrame(),
                     tr("Correlate images with GPX track"),
@@ -1033,6 +1044,20 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
     }
 
+    private static void removeDuplicates(File file) {
+        for (int i = gpxModel.getSize() - 1; i >= 0; i--) {
+            GpxDataWrapper wrapper = gpxModel.getElementAt(i);
+            if (wrapper instanceof NoGpxDataWrapper || (file != null && file.equals(wrapper.file))) {
+                gpxModel.removeElement(wrapper);
+            }
+        }
+    }
+
+    private static void forEachLayer(Consumer<CorrelateGpxWithImages> action) {
+        MainApplication.getLayerManager().getLayersOfType(GeoImageLayer.class)
+                .forEach(geo -> action.accept(geo.getGpxCorrelateAction()));
+    }
+
     private final transient StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
     private final transient StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
 
@@ -1045,12 +1070,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         @Override
         public void insertUpdate(DocumentEvent ev) {
-            updateStatusBar();
+            matchAndUpdateStatusBar();
         }
 
         @Override
         public void removeUpdate(DocumentEvent ev) {
-            updateStatusBar();
+            matchAndUpdateStatusBar();
         }
 
         @Override
@@ -1060,22 +1085,24 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         @Override
         public void itemStateChanged(ItemEvent e) {
-            updateStatusBar();
+            matchAndUpdateStatusBar();
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            updateStatusBar();
+            matchAndUpdateStatusBar();
         }
 
-        public void updateStatusBar() {
-            statusBarText.setText(statusText());
-            if (doRepaint) {
-                yLayer.updateBufferAndRepaint();
+        public void matchAndUpdateStatusBar() {
+            if (syncDialog != null && syncDialog.isVisible()) {
+                statusBarText.setText(matchAndGetStatusText());
+                if (doRepaint) {
+                    yLayer.updateBufferAndRepaint();
+                }
             }
         }
 
-        private String statusText() {
+        private String matchAndGetStatusText() {
             try {
                 timezone = GpxTimezone.parseTimezone(tfTimezone.getText().trim());
                 delta = GpxTimeOffset.parseOffset(tfOffset.getText().trim());
@@ -1198,7 +1225,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     lblMatches.setText(statusBarText.getText() + "<br>" + trn("(Time difference of {0} day)",
                             "Time difference of {0} days", Math.abs(dayOffset), Math.abs(dayOffset)));
 
-                    statusBarUpdater.updateStatusBar();
+                    statusBarUpdater.matchAndUpdateStatusBar();
                     yLayer.updateBufferAndRepaint();
                 }
             }
@@ -1250,6 +1277,21 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     static class NoGpxTimestamps extends Exception {
+    }
+
+    void closeDialog() {
+        if (syncDialog != null) {
+            syncDialog.setVisible(false);
+            new SyncDialogWindowListener().windowDeactivated(null);
+            syncDialog.dispose();
+            syncDialog = null;
+        }
+    }
+
+    void repaintCombobox() {
+        if (cbGpx != null) {
+            cbGpx.repaint();
+        }
     }
 
     /**
@@ -1317,7 +1359,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
             tfOffset.getDocument().addDocumentListener(statusBarUpdater);
 
-            statusBarUpdater.updateStatusBar();
+            statusBarUpdater.matchAndUpdateStatusBar();
             yLayer.updateBufferAndRepaint();
         }
     }
@@ -1345,7 +1387,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     private GpxDataWrapper selectedGPX(boolean complain) {
         Object item = gpxModel.getSelectedItem();
 
-        if (item == null || ((GpxDataWrapper) item).file == null) {
+        if (item == null || ((GpxDataWrapper) item).data == null) {
             if (complain) {
                 JOptionPane.showMessageDialog(MainApplication.getMainFrame(), tr("You should select a GPX track"),
                         tr("No selected GPX track"), JOptionPane.ERROR_MESSAGE);
@@ -1353,6 +1395,16 @@ public class CorrelateGpxWithImages extends AbstractAction {
             return null;
         }
         return (GpxDataWrapper) item;
+    }
+
+    @Override
+    public void destroy() {
+        if (cbGpx != null) {
+            // Force the JCombobox to remove its eventListener from the static GpxDataWrapper
+            cbGpx.setModel(new DefaultComboBoxModel<GpxDataWrapper>());
+            cbGpx = null;
+        }
+        closeDialog();
     }
 
 }

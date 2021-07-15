@@ -81,6 +81,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     GpxLayer gpxLayer;
     GpxLayer gpxFauxLayer;
 
+    private CorrelateGpxWithImages gpxCorrelateAction;
+
     private final Icon icon = ImageProvider.get("dialogs/geoimage/photo-marker");
     private final Icon selectedIcon = ImageProvider.get("dialogs/geoimage/photo-marker-selected");
 
@@ -405,7 +407,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         entries.add(LayerListDialog.getInstance().createMergeLayerAction(this));
         entries.add(new RenameLayerAction(null, this));
         entries.add(SeparatorLayerAction.INSTANCE);
-        entries.add(new CorrelateGpxWithImages(this));
+        entries.add(getGpxCorrelateAction());
         entries.add(new ShowThumbnailAction(this));
         if (!menuAdditions.isEmpty()) {
             entries.add(SeparatorLayerAction.INSTANCE);
@@ -851,6 +853,10 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     public synchronized void destroy() {
         super.destroy();
         stopLoadThumbs();
+        if (gpxCorrelateAction != null) {
+            gpxCorrelateAction.destroy();
+            gpxCorrelateAction = null;
+        }
         MapView mapView = MainApplication.getMap().mapView;
         mapView.removeMouseListener(mouseAdapter);
         mapView.removeMouseMotionListener(mouseMotionAdapter);
@@ -941,6 +947,17 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      */
     public GpxLayer getGpxLayer() {
         return gpxLayer;
+    }
+
+    /**
+     * Returns the gpxCorrelateAction
+     * @return the gpxCorrelateAction
+     */
+    public CorrelateGpxWithImages getGpxCorrelateAction() {
+        if (gpxCorrelateAction == null) {
+            gpxCorrelateAction = new CorrelateGpxWithImages(this);
+        }
+        return gpxCorrelateAction;
     }
 
     /**
