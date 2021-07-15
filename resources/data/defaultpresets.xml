@@ -4772,6 +4772,7 @@
             <check key="fireplace" text="Fireplace" />
             <combo key="shelter_type" text="Type of shelter" values_context="shelter" values_searchable="true">
                 <list_entry value="basic_hut" icon="presets/accommodation/basic_hut.svg" />
+                <list_entry value="gazebo" icon="presets/accommodation/basic_hut.svg" />
                 <list_entry value="lean_to" icon="presets/accommodation/shelter_lean_to.svg" />
                 <list_entry value="picnic_shelter" icon="presets/accommodation/shelter_picnic.svg" />
                 <list_entry value="public_transport" icon="presets/accommodation/shelter_public_transport.svg" />
