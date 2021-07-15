@@ -1670,7 +1670,7 @@
             <link wiki="Tag:barrier=wall" />
             <key key="barrier" value="wall" />
             <reference ref="optional_height" />
-            <combo key="wall" text="Type" values="castle_wall,dry_stone,flood_wall,noise_barrier,seawall" values_searchable="true" />
+            <combo key="wall" text="Type" values="brick,castle_wall,dry_stone,flood_wall,noise_barrier,seawall,stone" values_searchable="true" />
             <combo key="material" text="Material" values="adobe,brick,concrete,glass,masonry,metal,plastic,reinforced_concrete,steel,stone,wood" />
         </item> <!-- Wall -->
         <item name="City Wall" icon="presets/barrier/city_wall.svg" type="way,closedway,multipolygon" preset_name_label="true">
@@ -2072,7 +2072,21 @@
             <space />
             <key key="natural" value="water" />
             <text key="name" text="Name" />
-            <combo key="water" text="Water Body" values="basin,canal,lake,lagoon,oxbow,pond,reservoir,river,lock,wastewater" match="key" values_searchable="true" />
+            <combo key="water" text="Water Body" match="key" values_searchable="true" >
+                <list_entry value="stream" icon="presets/nautical/waterway_stream.svg" />
+                <list_entry value="river" icon="presets/nautical/waterway_river.svg" />
+                <list_entry value="canal" icon="presets/nautical/waterway_canal.svg" />
+                <list_entry value="drain" icon="presets/nautical/waterway_drain.svg" />
+                <list_entry value="ditch" icon="presets/nautical/waterway_ditch.svg" />
+                <list_entry value="pond" />
+                <list_entry value="lake" />
+                <list_entry value="lagoon" />
+                <list_entry value="oxbow" />
+                <list_entry value="lock" icon="presets/nautical/lock_gate.svg" />
+                <list_entry value="basin" icon="presets/landuse/basin.svg" />
+                <list_entry value="reservoir" icon="presets/landuse/reservoir.svg" />
+                <list_entry value="wastewater" />
+            </combo>
             <check key="salt" text="Salt Water" disable_off="true" />
             <check key="intermittent" text="Intermittent (contains not permanently water)" disable_off="true" />
             <check key="tidal" text="In the tidal range" disable_off="true" />
@@ -4407,16 +4421,16 @@
                 <text key="ref" text="Reference" />
                 <combo key="water_source" text="Water source">
                     <list_entry value="main" short_description="Hydrant is fed by the local distribution network." />
-                    <list_entry value="groundwater" short_description="A water well." />
-                    <list_entry value="stream" />
-                    <list_entry value="river" />
-                    <list_entry value="canal" />
-                    <list_entry value="drain" />
-                    <list_entry value="ditch" />
+                    <list_entry value="groundwater" icon="presets/landmark/water_well.svg" icon_size="24" short_description="A water well." />
+                    <list_entry value="stream" icon="presets/nautical/waterway_stream.svg" icon_size="24" />
+                    <list_entry value="river" icon="presets/nautical/waterway_river.svg" icon_size="24" />
+                    <list_entry value="canal" icon="presets/nautical/waterway_canal.svg" icon_size="24" />
+                    <list_entry value="drain" icon="presets/nautical/waterway_drain.svg" icon_size="24" />
+                    <list_entry value="ditch" icon="presets/nautical/waterway_ditch.svg" icon_size="24" />
                     <list_entry value="pond" />
                     <list_entry value="lake" />
-                    <list_entry value="water_tank" />
-                    <list_entry value="swimming_pool" />
+                    <list_entry value="water_tank" icon="presets/emergency/water_tank.svg" icon_size="24" />
+                    <list_entry value="swimming_pool" icon="presets/sport/swimming.svg" icon_size="24" />
                 </combo>
                 <combo key="fire_hydrant:position" text="Hydrant Position" values_context="hydrant position" >
                     <list_entry value="lane" short_description="on the side of a road lane" />
