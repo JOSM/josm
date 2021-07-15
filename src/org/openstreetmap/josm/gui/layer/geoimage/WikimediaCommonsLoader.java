@@ -51,7 +51,9 @@ public class WikimediaCommonsLoader extends PleaseWaitRunnable {
 
     @Override
     protected void finish() {
-        MainApplication.getLayerManager().addLayer(layer);
+        if (layer != null) {
+            MainApplication.getLayerManager().addLayer(layer);
+        }
     }
 
     @Override
