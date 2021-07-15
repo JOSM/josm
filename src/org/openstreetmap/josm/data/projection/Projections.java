@@ -361,7 +361,7 @@ public final class Projections {
      * @return the corresponding projection, if the code is known, null otherwise
      */
     public static Projection getProjectionByCode(String code) {
-        return projectionsByCodeCache.computeIfAbsent(code, Projections::computeProjectionByCode);
+        return code != null ? projectionsByCodeCache.computeIfAbsent(code, Projections::computeProjectionByCode) : null;
     }
 
     private static Projection computeProjectionByCode(String code) {
