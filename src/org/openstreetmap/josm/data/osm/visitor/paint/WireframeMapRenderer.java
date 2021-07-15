@@ -69,6 +69,8 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Primiti
     protected boolean fillTaggedNode;
     /** Preference: should multiply connected nodes be filled */
     protected boolean fillConnectionNode;
+    /** Preference: should relation ways be shown with outlines */
+    protected boolean useRelatedWayStroke;
     /** Preference: size of selected nodes */
     protected int selectedNodeSize;
     /** Preference: size of unselected nodes */
@@ -139,6 +141,8 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Primiti
         fillUnselectedNode = settings.isFillUnselectedNode();
         fillConnectionNode = settings.isFillConnectionNode();
         fillTaggedNode = settings.isFillTaggedNode();
+        useRelatedWayStroke =
+                Config.getPref().getBoolean("mappaint.wireframe.show-relation-outlines", true);
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 Config.getPref().getBoolean("mappaint.wireframe.use-antialiasing", false) ?
@@ -375,7 +379,11 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Primiti
                     }
                 }
 
-                g.draw(relatedWayStroke.createStrokedShape(path));
+                if (useRelatedWayStroke) {
+                    g.draw(relatedWayStroke.createStrokedShape(path));
+                } else {
+                    g.draw(path);
+                }
             }
         }
     }
