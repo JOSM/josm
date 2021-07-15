@@ -90,13 +90,6 @@ jobs:
         with:
           path: artifacts
 
-      - name: Publish Test Report with junit-report-annotations-action
-        uses: ashley-taylor/junit-report-annotations-action@1.3
-        if: ${{ always() }}
-        with:
-          path: 'artifacts/**/*.xml'
-          access-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Publish Test Report with action-junit-report
         if: ${{ always() }}
         uses: mikepenz/action-junit-report@v2
