@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,7 +85,7 @@ public final class Projections {
 
     private static final Set<String> allCodes = new HashSet<>();
     private static final Map<String, Supplier<Projection>> projectionSuppliersByCode = new HashMap<>();
-    private static final Map<String, Projection> projectionsByCodeCache = new HashMap<>();
+    private static final Map<String, Projection> projectionsByCodeCache = new ConcurrentHashMap<>();
 
     /*********************************
      * Registry for custom projection
