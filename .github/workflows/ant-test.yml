@@ -73,18 +73,38 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Ant reports for JOSM ${{ needs.createrelease.outputs.josm_revision }} on java ${{ matrix.java }} on ${{ matrix.os }}
-          path: 'test/report/*.txt'
+          path: |
+            test/report/*.txt
+            test/report/TEST*.xml
+
+  publish-test-results:
+    name: "Publish Unit Tests Results"
+    needs: test
+    runs-on: ubuntu-latest
+    # the test job might be skipped, we don't need to run this job then
+    if: success() || failure()
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
 
       - name: Publish Test Report with junit-report-annotations-action
         uses: ashley-taylor/junit-report-annotations-action@1.3
         if: ${{ always() }}
         with:
-          path: 'test/report/TEST*.xml'
+          path: 'artifacts/**/*.xml'
           access-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish Test Report with action-junit-report
         if: ${{ always() }}
         uses: mikepenz/action-junit-report@v2
         with:
-          report_paths: 'test/report/TEST*.xml'
+          report_paths: 'artifacts/**/*.xml'
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Test Report with publish-unit-test-result-action
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        with:
+          files: 'artifacts/**/*.xml'
