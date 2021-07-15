@@ -19,21 +19,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -52,10 +46,8 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.io.importexport.ImageImporter;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToMarkerLayer;
@@ -64,7 +56,6 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -224,164 +215,12 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     }
 
     /**
-     * Loads a set of images, while displaying a dialog that indicates what the plugin is currently doing.
-     * In facts, this object is instantiated with a list of files. These files may be JPEG files or
-     * directories. In case of directories, they are scanned to find all the images they contain.
-     * Then all the images that have be found are loaded as ImageEntry instances.
-     */
-    static final class Loader extends PleaseWaitRunnable {
-
-        private boolean canceled;
-        private GeoImageLayer layer;
-        private final Collection<File> selection;
-        private final Set<String> loadedDirectories = new HashSet<>();
-        private final Set<String> errorMessages;
-        private final GpxLayer gpxLayer;
-
-        Loader(Collection<File> selection, GpxLayer gpxLayer) {
-            super(tr("Extracting GPS locations from EXIF"));
-            this.selection = selection;
-            this.gpxLayer = gpxLayer;
-            errorMessages = new LinkedHashSet<>();
-        }
-
-        private void rememberError(String message) {
-            this.errorMessages.add(message);
-        }
-
-        @Override
-        protected void realRun() throws IOException {
-
-            progressMonitor.subTask(tr("Starting directory scan"));
-            Collection<File> files = new ArrayList<>();
-            try {
-                addRecursiveFiles(files, selection);
-            } catch (IllegalStateException e) {
-                Logging.debug(e);
-                rememberError(e.getMessage());
-            }
-
-            if (canceled)
-                return;
-            progressMonitor.subTask(tr("Read photos..."));
-            progressMonitor.setTicksCount(files.size());
-
-            // read the image files
-            List<ImageEntry> entries = new ArrayList<>(files.size());
-
-            for (File f : files) {
-
-                if (canceled) {
-                    break;
-                }
-
-                progressMonitor.subTask(tr("Reading {0}...", f.getName()));
-                progressMonitor.worked(1);
-
-                ImageEntry e = new ImageEntry(f);
-                e.extractExif();
-                entries.add(e);
-            }
-            layer = new GeoImageLayer(entries, gpxLayer);
-            files.clear();
-        }
-
-        private void addRecursiveFiles(Collection<File> files, Collection<File> sel) {
-            boolean nullFile = false;
-
-            for (File f : sel) {
-
-                if (canceled) {
-                    break;
-                }
-
-                if (f == null) {
-                    nullFile = true;
-
-                } else if (f.isDirectory()) {
-                    String canonical = null;
-                    try {
-                        canonical = f.getCanonicalPath();
-                    } catch (IOException e) {
-                        Logging.error(e);
-                        rememberError(tr("Unable to get canonical path for directory {0}\n",
-                                f.getAbsolutePath()));
-                    }
-
-                    if (canonical == null || loadedDirectories.contains(canonical)) {
-                        continue;
-                    } else {
-                        loadedDirectories.add(canonical);
-                    }
-
-                    File[] children = f.listFiles(ImageImporter.FILE_FILTER_WITH_FOLDERS);
-                    if (children != null) {
-                        progressMonitor.subTask(tr("Scanning directory {0}", f.getPath()));
-                        addRecursiveFiles(files, Arrays.asList(children));
-                    } else {
-                        rememberError(tr("Error while getting files from directory {0}\n", f.getPath()));
-                    }
-
-                } else {
-                    files.add(f);
-                }
-            }
-
-            if (nullFile) {
-                throw new IllegalStateException(tr("One of the selected files was null"));
-            }
-        }
-
-        private String formatErrorMessages() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("<html>");
-            if (errorMessages.size() == 1) {
-                sb.append(Utils.escapeReservedCharactersHTML(errorMessages.iterator().next()));
-            } else {
-                sb.append(Utils.joinAsHtmlUnorderedList(errorMessages));
-            }
-            sb.append("</html>");
-            return sb.toString();
-        }
-
-        @Override protected void finish() {
-            if (!errorMessages.isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        MainApplication.getMainFrame(),
-                        formatErrorMessages(),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                        );
-            }
-            if (layer != null) {
-                MainApplication.getLayerManager().addLayer(layer);
-
-                if (!canceled && !layer.getImageData().getImages().isEmpty()) {
-                    boolean noGeotagFound = true;
-                    for (ImageEntry e : layer.getImageData().getImages()) {
-                        if (e.getPos() != null) {
-                            noGeotagFound = false;
-                        }
-                    }
-                    if (noGeotagFound) {
-                        new CorrelateGpxWithImages(layer).actionPerformed(null);
-                    }
-                }
-            }
-        }
-
-        @Override protected void cancel() {
-            canceled = true;
-        }
-    }
-
-    /**
      * Create a GeoImageLayer asynchronously
      * @param files the list of image files to display
      * @param gpxLayer the gpx layer
      */
     public static void create(Collection<File> files, GpxLayer gpxLayer) {
-        MainApplication.worker.execute(new Loader(files, gpxLayer));
+        MainApplication.worker.execute(new ImagesLoader(files, gpxLayer));
     }
 
     @Override
@@ -399,7 +238,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     @Override
     public Action[] getMenuEntries() {
-
         List<Action> entries = new ArrayList<>();
         entries.add(LayerListDialog.getInstance().createShowHideLayerAction());
         entries.add(LayerListDialog.getInstance().createDeleteLayerAction());
@@ -420,7 +258,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         entries.add(new LayerListPopup.InfoAction(this));
 
         return entries.toArray(new Action[0]);
-
     }
 
     /**
@@ -446,7 +283,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 + "</html>";
     }
 
-    @Override public Object getInfoComponent() {
+    @Override
+    public Object getInfoComponent() {
         return infoText();
     }
 
@@ -548,10 +386,10 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 startLoadThumbs();
             }
 
-            if (null == offscreenBuffer || offscreenBuffer.getWidth() != width  // reuse the old buffer if possible
+            if (null == offscreenBuffer
+                    || offscreenBuffer.getWidth() != width  // reuse the old buffer if possible
                     || offscreenBuffer.getHeight() != height) {
-                offscreenBuffer = new BufferedImage(width, height,
-                        BufferedImage.TYPE_INT_ARGB);
+                offscreenBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 updateOffscreenBuffer = true;
             }
 
@@ -969,10 +807,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         if (gpxLayer != null) return getGpxLayer();
         if (gpxFauxLayer == null) {
             GpxData gpxData = new GpxData();
-            List<ImageEntry> imageList = data.getImages();
-            for (ImageEntry image : imageList) {
-                WayPoint twaypoint = new WayPoint(image.getPos());
-                gpxData.addWaypoint(twaypoint);
+            for (ImageEntry image : data.getImages()) {
+                gpxData.addWaypoint(new WayPoint(image.getPos()));
             }
             gpxFauxLayer = new GpxLayer(gpxData);
         }
