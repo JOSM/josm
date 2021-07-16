@@ -904,6 +904,7 @@ node[highway=footway],
 node[highway=path],
 node[highway=pedestrian],
 node[highway=bus_guideway],
+node[highway=busway],
 node[highway=platform] {
     icon-image: "presets/misc/deprecated.svg";
     set icon_z17;
@@ -5495,6 +5496,7 @@ way|z18-[highway=track][setting("highway_labels")],
 way|z18-[highway=cycleway][setting("highway_labels")],
 way|z18-[highway=bridleway][setting("highway_labels")],
 way|z18-[highway=bus_guideway][setting("highway_labels")],
+way|z18-[highway=busway][setting("highway_labels")],
 way|z18-[highway=raceway][setting("highway_labels")],
 way|z18-[highway=construction][setting("highway_labels")],
 way|z18-[highway=road][setting("highway_labels")] {
@@ -5552,6 +5554,9 @@ way|z18-[highway=bridleway][setting("highway_labels")] {
 }
 way|z18-[highway=bus_guideway][setting("highway_labels")] {
     text-halo-color: rail#404040;
+}
+way|z18-[highway=busway][setting("highway_labels")] {
+    text-halo-color: bus#89cbeb;
 }
 way|z18-[highway=raceway][setting("highway_labels")] {
     text-halo-color: raceway#ff80ff;
