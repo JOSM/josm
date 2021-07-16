@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Dialog used to manually adjust timezone and offset for GPX correlation.
- * @since 18043 (extracted from CorrelateGpxWithImages)
+ * @since 18043 (extracted from {@link CorrelateGpxWithImages})
  */
 public class AdjustTimezoneAndOffsetDialog extends ExtendedDialog {
 
