@@ -24,14 +24,11 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -71,7 +68,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.actions.DiskAccessAction;
-import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
@@ -81,24 +77,17 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.io.importexport.ImageImporter;
-import org.openstreetmap.josm.gui.io.importexport.NMEAImporter;
-import org.openstreetmap.josm.gui.io.importexport.RtkLibImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.gpx.GpxDataHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
-import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
-import org.openstreetmap.josm.io.Compression;
-import org.openstreetmap.josm.io.GpxReader;
-import org.openstreetmap.josm.io.IGpxReader;
-import org.openstreetmap.josm.io.nmea.NmeaReader;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -108,7 +97,6 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.date.DateUtils;
-import org.xml.sax.SAXException;
 
 /**
  * This class displays the window to select the GPX file and the offset (timezone + delta).
@@ -279,57 +267,29 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
     // remember the last number of matched photos
     private int lastNumMatched;
 
-    /** This class is called when the user doesn't find the GPX file he needs in the files that have
+    /**
+     * This class is called when the user doesn't find the GPX file he needs in the files that have
      * been loaded yet. It displays a FileChooser dialog to select the GPX file to be loaded.
      */
     private class LoadGpxDataActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            ExtensionFileFilter gpxFilter = GpxImporter.getFileFilter();
-            AbstractFileChooser fc = new FileChooserManager(true, null).createFileChooser(false, null,
-                    Arrays.asList(gpxFilter, NMEAImporter.FILE_FILTER, RtkLibImporter.FILE_FILTER), gpxFilter, JFileChooser.FILES_ONLY)
-                    .openFileChooser();
-            if (fc == null)
-                return;
-            File sel = fc.getSelectedFile();
-
-            try {
-                outerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                removeDuplicates(sel);
-                GpxData data = null;
-                try (InputStream iStream = Compression.getUncompressedFileInputStream(sel)) {
-                    IGpxReader reader = gpxFilter.accept(sel) ? new GpxReader(iStream) : new NmeaReader(iStream);
-                    reader.parse(false);
-                    data = reader.getGpxData();
-                    data.storageFile = sel;
-
-                } catch (SAXException ex) {
-                    Logging.error(ex);
-                    JOptionPane.showMessageDialog(
-                            MainApplication.getMainFrame(),
-                            tr("Error while parsing {0}", sel.getName())+": "+ex.getMessage(),
-                            tr("Error"),
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                    return;
-                } catch (IOException ex) {
-                    Logging.error(ex);
-                    JOptionPane.showMessageDialog(
-                            MainApplication.getMainFrame(),
-                            tr("Could not read \"{0}\"", sel.getName())+'\n'+ex.getMessage(),
-                            tr("Error"),
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                    return;
+            File sel = GpxDataHelper.chooseGpxDataFile();
+            if (sel != null) {
+                try {
+                    outerPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    removeDuplicates(sel);
+                    GpxData data = GpxDataHelper.loadGpxData(sel);
+                    if (data != null) {
+                        GpxDataWrapper elem = new GpxDataWrapper(sel.getName(), data, sel);
+                        gpxModel.addElement(elem);
+                        gpxModel.setSelectedItem(elem);
+                        statusBarUpdater.matchAndUpdateStatusBar();
+                    }
+                } finally {
+                    outerPanel.setCursor(Cursor.getDefaultCursor());
                 }
-
-                GpxDataWrapper elem = new GpxDataWrapper(sel.getName(), data, sel);
-                gpxModel.addElement(elem);
-                gpxModel.setSelectedItem(elem);
-                statusBarUpdater.matchAndUpdateStatusBar();
-            } finally {
-                outerPanel.setCursor(Cursor.getDefaultCursor());
             }
         }
     }
@@ -1406,5 +1366,4 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         }
         closeDialog();
     }
-
 }
