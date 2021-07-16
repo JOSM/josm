@@ -51,7 +51,7 @@ public class AdvancedCorrelationSettingsDialog extends ExtendedDialog {
     /**
      * Constructs a new {@code AdvancedCorrelationSettingsDialog}.
      * @param parent The parent element that will be used for position and maximum size
-     * @param forceTags
+     * @param forceTags Initial value of forced tagging of all pictures
      */
     public AdvancedCorrelationSettingsDialog(Component parent, boolean forceTags) {
         super(parent, tr("Advanced settings"), tr("OK"), tr("Cancel"));
