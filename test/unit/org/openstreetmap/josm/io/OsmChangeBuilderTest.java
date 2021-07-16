@@ -6,28 +6,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link OsmChangeBuilder}
  */
+@BasicPreferences
 class OsmChangeBuilderTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static void shouldFail(Runnable r) {
         try {
             r.run();

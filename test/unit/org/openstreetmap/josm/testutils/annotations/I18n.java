@@ -1,22 +1,23 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.testutils.annotations;
 
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.support.AnnotationSupport;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.platform.commons.support.AnnotationSupport;
+
 /**
  * Enables the i18n module for this test.
  * @author Taylor Smock
  * @see org.openstreetmap.josm.testutils.JOSMTestRules#i18n(String)
+ * @since 17914
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

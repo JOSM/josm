@@ -31,10 +31,9 @@ import org.openstreetmap.josm.data.vector.VectorDataSet;
 import org.openstreetmap.josm.data.vector.VectorNode;
 import org.openstreetmap.josm.data.vector.VectorWay;
 import org.openstreetmap.josm.io.Compression;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Test class for {@link ProtobufParser} and {@link ProtobufRecord}
@@ -58,9 +57,6 @@ class ProtobufTest {
         }
         return byteArray;
     }
-
-    @RegisterExtension
-    JOSMTestRules josmTestRules = new JOSMTestRules().preferences();
 
     private Number bytesToVarInt(int... bytes) {
         byte[] byteArray = new byte[bytes.length];
@@ -107,6 +103,7 @@ class ProtobufTest {
         assertEquals(0, Integer.parseInt(testSequence.getTags().get("pano")));
     }
 
+    @BasicPreferences
     @Test
     void testRead_17_26028_50060() throws IOException {
         File vectorTile = Paths.get(TestUtils.getTestDataRoot(), "pbf", "openinframap", "17", "26028", "50060.pbf")

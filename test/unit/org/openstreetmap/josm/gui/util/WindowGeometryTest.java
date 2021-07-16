@@ -15,27 +15,22 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.util.WindowGeometry.WindowGeometryException;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Unit tests of {@link WindowGeometry} class.
  */
+@BasicPreferences
 class WindowGeometryTest {
-    /**
-     * Some of this depends on preferences.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Test of {@link WindowGeometry#centerInWindow} method.
      */
@@ -61,36 +56,11 @@ class WindowGeometryTest {
     /**
      * Test of {@link WindowGeometry.WindowGeometryException} class.
      */
-    @Test
-    void testWindowGeometryException1() {
-        Config.getPref().put("test", null);
-        assertThrows(WindowGeometryException.class, () -> new WindowGeometry("test"));
-    }
-
-    /**
-     * Test of {@link WindowGeometry.WindowGeometryException} class.
-     */
-    @Test
-    void testWindowGeometryException2() {
-        Config.getPref().put("test", "");
-        assertThrows(WindowGeometryException.class, () -> new WindowGeometry("test"));
-    }
-
-    /**
-     * Test of {@link WindowGeometry.WindowGeometryException} class.
-     */
-    @Test
-    void testWindowGeometryException3() {
-        Config.getPref().put("test", "x=not_a_number");
-        assertThrows(WindowGeometryException.class, () -> new WindowGeometry("test"));
-    }
-
-    /**
-     * Test of {@link WindowGeometry.WindowGeometryException} class.
-     */
-    @Test
-    void testWindowGeometryException4() {
-        Config.getPref().put("test", "wrong_pattern");
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", "x=not_a_number", "wrong_pattern"})
+    void testWindowGeometryException(String badValue) {
+        Config.getPref().put("test", badValue);
         assertThrows(WindowGeometryException.class, () -> new WindowGeometry("test"));
     }
 
@@ -99,7 +69,7 @@ class WindowGeometryTest {
      * @throws WindowGeometryException never
      */
     @Test
-    void testWindowGeometryException5() throws WindowGeometryException {
+    void testWindowGeometryExceptionNoThrow() throws WindowGeometryException {
         Config.getPref().put("test", "x=15,y=55,width=200,height=100");
         assertNotNull(new WindowGeometry("test"));
     }

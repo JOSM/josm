@@ -11,8 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Iterator;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -20,22 +18,15 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link OsmReader} class.
  */
+@BasicPreferences
 class OsmJsonReaderTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Parse JSON.
      * @param osm OSM data in JSON format, without header/footer

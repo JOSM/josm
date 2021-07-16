@@ -3,33 +3,22 @@ package org.openstreetmap.josm.gui.datatransfer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.gui.datatransfer.data.TagTransferData;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link TagTransferable} class.
  */
 class TagTransferableTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Test of {@link TagTransferable#isDataFlavorSupported} method.
      */

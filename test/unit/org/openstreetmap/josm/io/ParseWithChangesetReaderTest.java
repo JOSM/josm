@@ -10,29 +10,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Additional unit tests for {@link OsmReader}.
  */
+@BasicPreferences
 class ParseWithChangesetReaderTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static DataSet getDataSet(String doc) throws IOException, IllegalDataException {
         try (InputStream is = new ByteArrayInputStream(doc.getBytes(StandardCharsets.UTF_8))) {
             return OsmReader.parseDataSet(is, null);

@@ -1,7 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.vector;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.INode;
@@ -9,18 +20,9 @@ import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link VectorWay}
@@ -49,6 +51,7 @@ class VectorWayTest {
     }
 
     @Test
+    @BasicPreferences
     void testNodes() {
         VectorNode node1 = new VectorNode("test");
         VectorNode node2 = new VectorNode("test");

@@ -8,22 +8,21 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link SelectionEventManager}
  * @author Michael Zangl
  * @since 12048
  */
+@BasicPreferences
 class SelectionEventManagerTest {
     private final class SelectionListener implements DataSelectionListener {
         private Collection<? extends OsmPrimitive> newSelection;
@@ -38,12 +37,6 @@ class SelectionEventManagerTest {
             this.newSelection = event.getSelection();
         }
     }
-
-    /**
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Tests that events in the active layer are propagated.

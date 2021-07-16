@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.io;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -14,30 +14,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.xml.sax.SAXException;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 
 /**
  * Tests the {@link GpxReader}.
  */
+@BasicPreferences
 public class GpxReaderTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Parses a GPX file and returns the parsed data
      * @param filename the GPX file to parse

@@ -7,26 +7,19 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.CustomProjection.Polarity;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link CustomProjection}.
  * @author Michael Zangl
  */
+// Need pref to load pref
+@BasicPreferences
 class CustomProjectionTest {
-    /**
-     * Need pref to load pref.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Test {@link CustomProjection#parseAngle(String, String)}
      * @throws ProjectionConfigurationException in case of error

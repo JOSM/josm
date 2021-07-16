@@ -5,26 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.swing.JTable;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link MemberTableLinkedCellRenderer} class.
  */
+@BasicPreferences
 class MemberTableLinkedCellRendererTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Unit test of {@link MemberTableLinkedCellRenderer#MemberTableLinkedCellRenderer}.
      */

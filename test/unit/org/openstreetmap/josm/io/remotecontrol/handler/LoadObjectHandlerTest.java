@@ -8,28 +8,18 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link LoadObjectHandler} class.
  */
 class LoadObjectHandlerTest {
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static LoadObjectHandler newHandler(String url) throws RequestHandlerBadRequestException {
         LoadObjectHandler req = new LoadObjectHandler();
         if (url != null)
@@ -68,6 +58,7 @@ class LoadObjectHandlerTest {
      * Unit test for nominal request - local data file.
      */
     @Test
+    @BasicPreferences
     void testNominalRequest() {
         WireMockServer wiremock = TestUtils.getWireMockServer();
         wiremock.addStubMapping(get(urlEqualTo("/capabilities")).willReturn(aResponse().withStatusMessage("OK")

@@ -14,29 +14,23 @@ import java.util.List;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.AutomaticChoice;
 import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.AutomaticChoiceGroup;
 import org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.AutomaticCombine;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Unit tests of {@link TagConflictResolutionUtil} class.
  */
+@BasicPreferences
 class TagConflictResolutionUtilTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static HashSet<String> newHashSet(String... values) {
         return Arrays.stream(values).collect(Collectors.toCollection(HashSet::new));
     }

@@ -13,28 +13,18 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Utils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link CustomConfigurator}.
  */
+@BasicPreferences
 class CustomConfiguratorTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Test method for {@link CustomConfigurator#exportPreferencesKeysToFile}.
      * @throws IOException if any I/O error occurs

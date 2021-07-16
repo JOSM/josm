@@ -3,8 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -12,22 +10,15 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * JUnit Test of "Duplicate relation" validation test.
  */
+@BasicPreferences
 class DuplicateRelationTest {
-
-    /**
-     * Setup test by initializing JOSM preferences and projection.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     static class ExpectedResult {
         final int code;
         final boolean fixable;

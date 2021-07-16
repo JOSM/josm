@@ -7,14 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.CancelAction;
@@ -27,28 +25,20 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.QueryA
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.RemoveFromCacheAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager.ShowDetailAction;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 
 import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link ChangesetCacheManager} class.
  */
+@BasicPreferences
 class ChangesetCacheManagerTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Unit test of {@link ChangesetCacheManager#destroyInstance}.
      */

@@ -8,28 +8,20 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link TagMergeModel} class.
  */
 @SuppressWarnings("unchecked")
+// Needed to due to OSM primitive dependencies
+@BasicPreferences
 class TagMergeModelTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     protected Set<PropertyChangeListener> getListeners(TagMergeModel model) throws ReflectiveOperationException {
         return (Set<PropertyChangeListener>) TestUtils.getPrivateField(model, "listeners");
     }

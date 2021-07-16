@@ -10,27 +10,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URL;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test of {@link WikimediaCommonsLoader}
  */
+@BasicPreferences
 class WikimediaCommonsLoaderTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Unit test of {@link WikimediaCommonsLoader}
      *

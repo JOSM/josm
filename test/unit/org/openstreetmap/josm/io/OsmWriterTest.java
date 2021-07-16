@@ -16,9 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -28,20 +25,15 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.UploadPolicy;
 import org.openstreetmap.josm.data.osm.User;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link OsmWriter} class.
  */
+@BasicPreferences
 class OsmWriterTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Unit test of {@link OsmWriter#byIdComparator}.
      */

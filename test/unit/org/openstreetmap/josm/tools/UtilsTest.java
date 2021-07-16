@@ -21,24 +21,13 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link Utils} class.
  */
 class UtilsTest {
-    /**
-     * Use default, basic test rules.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules();
-
     /**
      * Tests that {@code Utils} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs

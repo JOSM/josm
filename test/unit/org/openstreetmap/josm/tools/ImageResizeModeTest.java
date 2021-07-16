@@ -7,24 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Dimension;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link ImageResizeMode} class.
  */
+@BasicPreferences
 class ImageResizeModeTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     final Dimension image = new Dimension(64, 48);
     final Dimension smallImage = new Dimension(14, 10);
 

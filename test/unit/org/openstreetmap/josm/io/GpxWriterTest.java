@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -24,22 +22,15 @@ import org.openstreetmap.josm.data.gpx.GpxExtensionCollection;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the {@link GpxWriter}.
  */
+@BasicPreferences
 public class GpxWriterTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static void testSingleWaypoint(Consumer<WayPoint> consumer, String atts) throws IOException {
         GpxData gpx = new GpxData();
         WayPoint waypoint = new WayPoint(LatLon.ZERO);

@@ -8,27 +8,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.InputStream;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link DuplicateAction} class.
  */
+// TMS layer needs prefs. Platform for LayerListDialog shortcuts.
+@BasicPreferences
 class DuplicateActionTest {
-    /**
-     * TMS layer needs prefs. Platform for LayerListDialog shortcuts.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/4539">#4539</a>.
      * @throws Exception if an error occurs

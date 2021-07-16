@@ -1,27 +1,25 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.vector;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import org.junit.jupiter.api.Test;
+
 /**
  * Test class for {@link VectorRelation}
  * @author Taylor Smock
  * @since 17862
  */
+@BasicPreferences
 class VectorRelationTest {
-    @RegisterExtension
-    JOSMTestRules rule = new JOSMTestRules();
-
     @Test
     void testMembers() {
         VectorNode node1 = new VectorNode("test");

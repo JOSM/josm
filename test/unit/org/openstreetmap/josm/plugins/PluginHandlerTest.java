@@ -16,33 +16,24 @@ import java.util.stream.Stream;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferenceTest;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.plugins.PluginHandler.DeprecatedPlugin;
 import org.openstreetmap.josm.plugins.PluginHandler.PluginInformationAction;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link PluginHandler} class.
  */
+@BasicPreferences
 class PluginHandlerTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Unit test of methods {@link DeprecatedPlugin#equals} and {@link DeprecatedPlugin#hashCode}.
      */

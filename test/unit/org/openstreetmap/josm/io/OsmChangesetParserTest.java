@@ -8,17 +8,15 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link OsmChangesetParser} class.
  */
+@BasicPreferences
 class OsmChangesetParserTest {
 
     private static final String BEGIN =
@@ -53,13 +51,6 @@ class OsmChangesetParserTest {
     private static final String END =
         "</changeset>" +
         "</osm>";
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     private static List<Changeset> parse(String cs) throws IllegalDataException {
         return OsmChangesetParser.parse(new ByteArrayInputStream(cs.getBytes(StandardCharsets.UTF_8)), NullProgressMonitor.INSTANCE);

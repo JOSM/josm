@@ -6,30 +6,29 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Unit tests of {@link UserIdentityManager} class.
  */
+@BasicPreferences
 class UserIdentityManagerTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     private static UserInfo newUserInfo() {
         return newUserInfo(1, "a description");
     }
@@ -179,11 +178,26 @@ class UserIdentityManagerTest {
         assertThrows(IllegalArgumentException.class, () -> UserIdentityManager.getInstance().setFullyIdentified("test", null));
     }
 
-    /**
-     * Preferences include neither an url nor a user name => we have an anonymous user
-     */
-    @Test
-    void testInitFromPreferences1() {
+    static Stream<Arguments> testInitFromPreferences() {
+        return Stream.of(
+          Arguments.of((Function<UserIdentityManager, Boolean>) UserIdentityManager::isAnonymous,
+            new String[] {"osm-server.url", null, "osm-server.username", null},
+            "Preferences include neither an url nor a user name => we have an anonymous user"),
+          Arguments.of((Function<UserIdentityManager, Boolean>) UserIdentityManager::isAnonymous,
+            new String[] {"osm-server.url", "http://api.openstreetmap.org", "osm-server.username", null},
+            "Preferences include neither an url nor a user name => we have an anonymous user"),
+          Arguments.of((Function<UserIdentityManager, Boolean>) UserIdentityManager::isPartiallyIdentified,
+            new String[] {"osm-server.url", "http://api.openstreetmap.org", "osm-server.username", "test"},
+            "Preferences include an user name => we have a partially identified user")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void testInitFromPreferences(Function<UserIdentityManager, Boolean> verifier, String[] config, String failureMessage) {
+        if (config.length % 2 != 0) {
+            fail("The arguments must be paired");
+        }
         UserIdentityManager im = UserIdentityManager.getInstance();
 
         // reset it
@@ -193,62 +207,13 @@ class UserIdentityManagerTest {
         Config.getPref().removePreferenceChangeListener(im);
 
         try {
-            Config.getPref().put("osm-server.url", null);
-            Config.getPref().put("osm-server.username", null);
+            for (int i = 0; i < config.length / 2; i++) {
+                Config.getPref().put(config[2 * i], config[2 * i + 1]);
+            }
 
             im.initFromPreferences();
 
-            assertTrue(im.isAnonymous());
-        } finally {
-            Config.getPref().addPreferenceChangeListener(im);
-        }
-    }
-
-    /**
-     * Preferences include neither an url nor a user name => we have an anonymous user
-     */
-    @Test
-    void testInitFromPreferences2() {
-        UserIdentityManager im = UserIdentityManager.getInstance();
-
-        // reset it
-        im.setAnonymous();
-
-        // for this test we disable the listener
-        Config.getPref().removePreferenceChangeListener(im);
-
-        try {
-            Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
-            Config.getPref().put("osm-server.username", null);
-
-            im.initFromPreferences();
-
-            assertTrue(im.isAnonymous());
-        } finally {
-            Config.getPref().addPreferenceChangeListener(im);
-        }
-    }
-
-    /**
-     * Preferences include an user name => we have a partially identified user
-     */
-    @Test
-    void testInitFromPreferences3() {
-        UserIdentityManager im = UserIdentityManager.getInstance();
-
-        // for this test we disable the listener
-        Config.getPref().removePreferenceChangeListener(im);
-
-        try {
-            // reset it
-            im.setAnonymous();
-
-            Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
-            Config.getPref().put("osm-server.username", "test");
-
-            im.initFromPreferences();
-
-            assertTrue(im.isPartiallyIdentified());
+            assertTrue(verifier.apply(im), failureMessage);
         } finally {
             Config.getPref().addPreferenceChangeListener(im);
         }
@@ -258,6 +223,8 @@ class UserIdentityManagerTest {
      * Preferences include an user name which is different from the current
      * user name and we are currently fully identifed => josm user becomes
      * partially identified
+     *
+     * Note: Test #4 since the other three are parameterized
      */
     @Test
     void testInitFromPreferences4() {

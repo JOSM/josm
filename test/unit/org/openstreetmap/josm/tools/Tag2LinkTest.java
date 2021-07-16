@@ -6,15 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Test {@link Tag2Link}
  */
+@BasicPreferences
 class Tag2LinkTest {
 
     List<String> links = new ArrayList<>();
@@ -26,13 +24,6 @@ class Tag2LinkTest {
     void checkLinks(String... expected) {
         Assert.assertEquals(Arrays.asList(expected), links);
     }
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Unit test of function {@link Tag2Link#initialize()}.

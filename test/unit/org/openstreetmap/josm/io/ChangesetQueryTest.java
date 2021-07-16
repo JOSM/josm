@@ -1,10 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -15,15 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Unit tests of {@link ChangesetQuery}
  */
+@BasicPreferences
 class ChangesetQueryTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Unit tests of {@link ChangesetQuery#getQueryString()}
      */

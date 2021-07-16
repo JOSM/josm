@@ -6,25 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.io.CredentialDialog.CredentialPanel;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link CredentialDialog} class.
  */
+@BasicPreferences
 class CredentialDialogTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Test of {@link CredentialDialog.CredentialPanel} class.
      */

@@ -3,26 +3,17 @@ package org.openstreetmap.josm.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import net.trajano.commons.testing.UtilityClassTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link PreferencesUtils}.
  */
+@BasicPreferences
 class PreferencesUtilsTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Setup test.
      */

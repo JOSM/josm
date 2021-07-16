@@ -8,26 +8,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JPanel;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test {@link ExpertToggleAction}
  * @author Michael Zangl
  * @since 11224
  */
+// We need prefs to store expert mode state.
+@BasicPreferences
 class ExpertToggleActionTest {
-    /**
-     * We need prefs to store expert mode state.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Test {@link ExpertToggleAction#addVisibilitySwitcher(java.awt.Component)}
      * and {@link ExpertToggleAction#removeVisibilitySwitcher(java.awt.Component)}

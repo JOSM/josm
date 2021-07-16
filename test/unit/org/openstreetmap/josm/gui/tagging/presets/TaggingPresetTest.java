@@ -1,19 +1,21 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.presets;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.EnumSet;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import java.util.EnumSet;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@code TaggingPreset}
@@ -29,9 +31,10 @@ class TaggingPresetTest {
 
     /**
      * Tests {@link TaggingPreset#test(IPrimitive)}
+     * @throws SearchParseError never
      */
     @Test
-    void test() throws Exception {
+    void test() throws SearchParseError {
         Key key = new Key();
         key.key = "railway";
         key.value = "tram_stop";

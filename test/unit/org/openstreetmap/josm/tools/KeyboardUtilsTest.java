@@ -13,22 +13,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link KeyboardUtils} class.
  */
 class KeyboardUtilsTest {
-    /**
-     * Initializes test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules();
-
     /**
      * Checks that definition of extended characters is correct
      */

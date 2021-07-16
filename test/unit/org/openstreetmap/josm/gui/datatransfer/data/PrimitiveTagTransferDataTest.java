@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -17,22 +15,17 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.WayData;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test {@link PrimitiveTagTransferData}
  * @author Michael Zangl
  */
+// Only required due to OSM primitive dependencies
+@BasicPreferences
 class PrimitiveTagTransferDataTest {
-    /**
-     * Prefs only required because of the dependencies of OSM primitives.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     private static boolean isHeterogeneousSource(PrimitiveData... t) {
         return new PrimitiveTagTransferData(Arrays.asList(t)).isHeterogeneousSource();
     }

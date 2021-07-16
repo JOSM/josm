@@ -13,25 +13,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageDisplay.VisRect;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link ImageDisplay} class.
  */
+@BasicPreferences
 class ImageDisplayTest {
-    /**
-     * We need prefs for this.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Unit test of {@link ImageDisplay#calculateDrawImageRectangle}.
      */

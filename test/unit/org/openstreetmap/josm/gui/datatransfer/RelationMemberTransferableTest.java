@@ -3,8 +3,9 @@ package org.openstreetmap.josm.gui.datatransfer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import static org.openstreetmap.josm.gui.datatransfer.RelationMemberTransferable.RELATION_MEMBER_DATA;
 
 import java.awt.datatransfer.DataFlavor;
@@ -12,29 +13,19 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link RelationMemberTransferable} class.
  */
 class RelationMemberTransferableTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Test of {@link RelationMemberTransferable#getTransferDataFlavors()} method.
      */
@@ -63,6 +54,7 @@ class RelationMemberTransferableTest {
      * @throws UnsupportedFlavorException never
      */
     @Test
+    @BasicPreferences
     void testGetTransferDataNominal() throws UnsupportedFlavorException {
         RelationMemberTransferable rmt = new RelationMemberTransferable(Collections.singleton(new RelationMember("test", new Node(1))));
         assertEquals("node 1 test # incomplete\n", rmt.getTransferData(DataFlavor.stringFlavor));

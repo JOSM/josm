@@ -17,29 +17,19 @@ import java.util.function.Supplier;
 import javax.swing.JOptionPane;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.io.UploadDialog.UploadAction;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link UploadDialog} class.
  */
+@BasicPreferences
 class UploadDialogTest {
-
-    /**
-     * Setup tests
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     private static class MockUploadDialog extends JOptionPane implements IUploadDialog {
         private final String source;
         private final String comment;

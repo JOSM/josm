@@ -1,40 +1,31 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.openstreetmap.josm.TestUtils;
+
+import org.junit.jupiter.api.Test;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Unit tests of {@link XmlUtils} class.
  */
 class XmlUtilsTest {
-
-    /**
-     * Use default, basic test rules.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules();
-
     private static final String EXPECTED = "External Entity: Failed to read external document 'passwd', " +
             "because 'file' access is not allowed due to restriction set by the accessExternalDTD property.";
 

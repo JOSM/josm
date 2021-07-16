@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -15,21 +14,15 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.TagCondition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.Op;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.SimpleKeyValueCondition;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * This test universally tests all {@link Condition}s.
  * @author Michael Zangl
  */
+// We need prefs for nodes
+@BasicPreferences
 class ConditionTest {
-    /**
-     * We need prefs for nodes.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
     private OsmPrimitive node0;
     private OsmPrimitive node1;
     private OsmPrimitive node2;

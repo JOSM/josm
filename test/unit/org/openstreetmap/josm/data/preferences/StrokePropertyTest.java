@@ -6,25 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.BasicStroke;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test {@link StrokeProperty}
  * @author Michael Zangl
  */
+// This is a preference test
+@BasicPreferences
 class StrokePropertyTest {
-    /**
-     * This is a preference test
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     /**
      * Test {@link StrokeProperty#get()}
      */

@@ -18,9 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -42,25 +39,22 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.junit.Assert;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Unit tests for class {@link SearchCompiler}.
  */
+// We need prefs for this. We access preferences when creating OSM primitives
+@BasicPreferences
+@Timeout(30)
 class SearchCompilerTest {
-
-    /**
-     * We need prefs for this. We access preferences when creating OSM primitives.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(30000);
-
     private static final class SearchContext {
         final DataSet ds = new DataSet();
         final Node n1 = new Node(LatLon.ZERO);

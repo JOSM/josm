@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Collections;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -16,23 +15,14 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link DownloadAlongTrackAction} class.
  */
+@BasicPreferences
 class DownloadAlongTrackActionTest {
-
-    /**
-     * The test rules for this test
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
     private static PleaseWaitRunnable createTask(String file) throws Exception {
         // click "Download" when presented with the appropriate HelpAwareOptionPane
         final HelpAwareOptionPaneMocker haMocker = new HelpAwareOptionPaneMocker(Collections.singletonMap(

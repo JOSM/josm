@@ -16,9 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -31,23 +28,20 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.tools.Logging;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * JUnit Test of "Opening hours" validation test.
  * @see OpeningHourTest
  */
+@I18n
+@BasicPreferences
 class OpeningHourTestTest {
-    /**
-     * We need preferences for this. We check strings so we need i18n.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
-
     private OpeningHourTest openingHourTest;
 
     /**

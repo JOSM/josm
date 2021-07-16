@@ -8,28 +8,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.awt.Insets;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog.StatisticsInfo;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog.StatisticsInfoTable;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog.StatisticsTableModel;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link PasteTagsConflictResolverDialog} class.
  */
+// Needed to due to OSM primitive dependencies
+@BasicPreferences
 class PasteTagsConflictResolverDialogTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     /**
      * Unit test of {@link PasteTagsConflictResolverDialog#PANE_TITLES}.
      */

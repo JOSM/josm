@@ -7,11 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Tests for {@link ListenableWeakReference}
@@ -19,12 +15,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 12181
  */
 class ListenableWeakReferenceTest {
-    /**
-     * Default test rules.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
     private Object object;
     private boolean called;
 

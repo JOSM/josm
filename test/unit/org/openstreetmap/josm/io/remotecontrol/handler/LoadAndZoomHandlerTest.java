@@ -5,24 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link LoadAndZoomHandler} class.
  */
 class LoadAndZoomHandlerTest {
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static LoadAndZoomHandler newHandler(String url) throws RequestHandlerBadRequestException {
         LoadAndZoomHandler req = new LoadAndZoomHandler();
         if (url != null)
@@ -65,6 +56,7 @@ class LoadAndZoomHandlerTest {
      * @throws Exception if any error occurs
      */
     @Test
+    @BasicPreferences
     void testNominalRequest() throws Exception {
         assertDoesNotThrow(() -> newHandler("https://localhost?bottom=0&top=0&left=1&right=1").handle());
     }

@@ -16,16 +16,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests of {@link TagCollection}.
  * @author Michael Zangl
  */
+// We need prefs for using primitives
+@BasicPreferences
 class TagCollectionTest {
     private final Tag tagA = new Tag("k", "v");
     private final Tag tagB = new Tag("k", "b");
@@ -34,13 +34,6 @@ class TagCollectionTest {
     private final Tag tagEmpty = new Tag("k", "");
     private final Tag tagNullKey = new Tag(null, "b");
     private final Tag tagNullValue = new Tag("k2", null);
-
-    /**
-     * We need prefs for using primitives
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     private void assertTagCounts(TagCollection collection, int a, int b, int c, int d) {
         assertEquals(a, collection.getTagOccurrence(tagA));

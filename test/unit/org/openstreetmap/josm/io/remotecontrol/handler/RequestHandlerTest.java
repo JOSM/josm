@@ -8,26 +8,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link RequestHandler} class.
  */
 class RequestHandlerTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     Map<String, String> getRequestParameter(String url) throws RequestHandlerBadRequestException {
         final RequestHandler req = new RequestHandler() {
             @Override

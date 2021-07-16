@@ -8,27 +8,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import net.trajano.commons.testing.UtilityClassTestUtil;
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.apache.commons.jcs3.auxiliary.disk.block.BlockDiskCacheAttributes;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import net.trajano.commons.testing.UtilityClassTestUtil;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * Unit tests for class {@link JCSCacheManager}.
  */
+@Timeout(20)
+@BasicPreferences
 class JCSCacheManagerTest {
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20000);
-
     /**
      * Tests that {@code JCSCacheManager} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs

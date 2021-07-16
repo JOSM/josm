@@ -12,18 +12,22 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.AbstractSetting;
 import org.openstreetmap.josm.spi.preferences.ListListSetting;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
-import org.openstreetmap.josm.spi.preferences.AbstractSetting;
-import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.spi.preferences.MapListSetting;
+import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for class {@link PreferencesWriter}.
  */
+// This is a preference test
+@BasicPreferences
 class PreferencesWriterTest {
 
     private static <T extends AbstractSetting<?>> T setting(T s, long time) {

@@ -16,12 +16,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
+import org.junit.jupiter.api.Test;
 
 /**
  * Basic tests for the clipboard utils class.
@@ -65,13 +61,6 @@ class ClipboardUtilsTest {
             throw new UnsupportedFlavorException(flavor);
         }
     }
-
-    /**
-     * No dependencies
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
 
     /**
      * Test {@link ClipboardUtils#getClipboard()}

@@ -8,9 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -19,13 +16,16 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link PropertiesMergeModel}.
  */
+// Needed to due to OSM primitive dependencies
+@BasicPreferences
 class PropertiesMergeModelTest {
 
     private abstract static class TestChangeListener implements ChangeListener {
@@ -49,15 +49,8 @@ class PropertiesMergeModelTest {
     /**
      * Setup test.
      */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
-    /**
-     * Setup test.
-     */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         model = new PropertiesMergeModel();
     }
 

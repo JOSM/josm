@@ -11,8 +11,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationType;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -21,24 +19,18 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.XmlParsingException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link OsmChangesetContentParser}.
  */
+@BasicPreferences
 class OsmChangesetContentParserTest {
-
-    /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     private static void shouldFail(Runnable r) {
         try {
             r.run();
