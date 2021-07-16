@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
@@ -55,15 +53,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.ListSelectionModel;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -84,6 +79,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.geoimage.AdjustTimezoneAndOffsetDialog.AdjustListener;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDataHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
@@ -93,7 +89,6 @@ import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -777,7 +772,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
     }
 
     private static class GpxLayerRenamedListener implements PropertyChangeListener {
-        private GpxDataWrapper gdw;
+        private final GpxDataWrapper gdw;
         GpxLayerRenamedListener(GpxDataWrapper gdw) {
             this.gdw = gdw;
         }
@@ -971,6 +966,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         statusBarText.setFont(statusBarText.getFont().deriveFont(Font.PLAIN, 8));
         statusBar.add(statusBarText);
 
+        RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
         tfTimezone.addFocusListener(repaintTheMap);
         tfOffset.addFocusListener(repaintTheMap);
 
@@ -1029,17 +1025,17 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         }
 
         @Override
-        public void insertUpdate(DocumentEvent ev) {
+        public void insertUpdate(DocumentEvent e) {
             matchAndUpdateStatusBar();
         }
 
         @Override
-        public void removeUpdate(DocumentEvent ev) {
+        public void removeUpdate(DocumentEvent e) {
             matchAndUpdateStatusBar();
         }
 
         @Override
-        public void changedUpdate(DocumentEvent ev) {
+        public void changedUpdate(DocumentEvent e) {
             // Do nothing
         }
 
@@ -1097,8 +1093,6 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         }
     }
 
-    private final transient RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
-
     private class RepaintTheMapListener implements FocusListener {
         @Override
         public void focusGained(FocusEvent e) { // do nothing
@@ -1116,123 +1110,43 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
     private class AdjustActionListener implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
 
             final GpxTimeOffset offset = GpxTimeOffset.milliseconds(
                     delta.getMilliseconds() + Math.round(timezone.getHours() * TimeUnit.HOURS.toMillis(1)));
             final int dayOffset = offset.getDayOffset();
             final Pair<GpxTimezone, GpxTimeOffset> timezoneOffsetPair = offset.withoutDayOffset().splitOutTimezone();
 
-            // Info Labels
-            final JLabel lblMatches = new JLabel();
-
-            // Timezone Slider
-            // The slider allows to switch timezon from -12:00 to 12:00 in 30 minutes steps. Therefore the range is -24 to 24.
-            final JLabel lblTimezone = new JLabel();
-            final JSlider sldTimezone = new JSlider(-24, 24, 0);
-            sldTimezone.setPaintLabels(true);
-            Dictionary<Integer, JLabel> labelTable = new Hashtable<>();
-            // CHECKSTYLE.OFF: ParenPad
-            for (int i = -12; i <= 12; i += 6) {
-                labelTable.put(i * 2, new JLabel(new GpxTimezone(i).formatTimezone()));
-            }
-            // CHECKSTYLE.ON: ParenPad
-            sldTimezone.setLabelTable(labelTable);
-
-            // Minutes Slider
-            final JLabel lblMinutes = new JLabel();
-            final JSlider sldMinutes = new JSlider(-15, 15, 0);
-            sldMinutes.setPaintLabels(true);
-            sldMinutes.setMajorTickSpacing(5);
-
-            // Seconds slider
-            final JLabel lblSeconds = new JLabel();
-            final JSlider sldSeconds = new JSlider(-600, 600, 0);
-            sldSeconds.setPaintLabels(true);
-            labelTable = new Hashtable<>();
-            // CHECKSTYLE.OFF: ParenPad
-            for (int i = -60; i <= 60; i += 30) {
-                labelTable.put(i * 10, new JLabel(GpxTimeOffset.seconds(i).formatOffset()));
-            }
-            // CHECKSTYLE.ON: ParenPad
-            sldSeconds.setLabelTable(labelTable);
-            sldSeconds.setMajorTickSpacing(300);
-
             // This is called whenever one of the sliders is moved.
-            // It updates the labels and also calls the "match photos" code
-            class SliderListener implements ChangeListener {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    timezone = new GpxTimezone(sldTimezone.getValue() / 2.);
+            // It calls the "match photos" code
+            AdjustListener listener = (tz, min, sec) -> {
+                timezone = tz;
 
-                    lblTimezone.setText(tr("Timezone: {0}", timezone.formatTimezone()));
-                    lblMinutes.setText(tr("Minutes: {0}", sldMinutes.getValue()));
-                    lblSeconds.setText(tr("Seconds: {0}", GpxTimeOffset.milliseconds(100L * sldSeconds.getValue()).formatOffset()));
+                delta = GpxTimeOffset.milliseconds(100L * sec
+                        + TimeUnit.MINUTES.toMillis(min)
+                        + TimeUnit.DAYS.toMillis(dayOffset));
 
-                    delta = GpxTimeOffset.milliseconds(100L * sldSeconds.getValue()
-                            + TimeUnit.MINUTES.toMillis(sldMinutes.getValue())
-                            + TimeUnit.DAYS.toMillis(dayOffset));
+                tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
+                tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
 
-                    tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
-                    tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
+                tfTimezone.setText(timezone.formatTimezone());
+                tfOffset.setText(delta.formatOffset());
 
-                    tfTimezone.setText(timezone.formatTimezone());
-                    tfOffset.setText(delta.formatOffset());
+                tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
+                tfOffset.getDocument().addDocumentListener(statusBarUpdater);
 
-                    tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
-                    tfOffset.getDocument().addDocumentListener(statusBarUpdater);
+                statusBarUpdater.matchAndUpdateStatusBar();
+                yLayer.updateBufferAndRepaint();
 
-                    lblMatches.setText(statusBarText.getText() + "<br>" + trn("(Time difference of {0} day)",
-                            "Time difference of {0} days", Math.abs(dayOffset), Math.abs(dayOffset)));
-
-                    statusBarUpdater.matchAndUpdateStatusBar();
-                    yLayer.updateBufferAndRepaint();
-                }
-            }
-
-            // Put everything together
-            JPanel p = new JPanel(new GridBagLayout());
-            p.setPreferredSize(new Dimension(400, 230));
-            p.add(lblMatches, GBC.eol().fill());
-            p.add(lblTimezone, GBC.eol().fill());
-            p.add(sldTimezone, GBC.eol().fill().insets(0, 0, 0, 10));
-            p.add(lblMinutes, GBC.eol().fill());
-            p.add(sldMinutes, GBC.eol().fill().insets(0, 0, 0, 10));
-            p.add(lblSeconds, GBC.eol().fill());
-            p.add(sldSeconds, GBC.eol().fill());
-
-            // If there's an error in the calculation the found values
-            // will be off range for the sliders. Catch this error
-            // and inform the user about it.
-            try {
-                sldTimezone.setValue((int) (timezoneOffsetPair.a.getHours() * 2));
-                sldMinutes.setValue((int) (timezoneOffsetPair.b.getSeconds() / 60));
-                final long deciSeconds = timezoneOffsetPair.b.getMilliseconds() / 100;
-                sldSeconds.setValue((int) (deciSeconds % 600));
-            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                Logging.warn(e);
-                JOptionPane.showMessageDialog(MainApplication.getMainFrame(),
-                        tr("An error occurred while trying to match the photos to the GPX track."
-                                +" You can adjust the sliders to manually match the photos."),
-                                tr("Matching photos to track failed"),
-                                JOptionPane.WARNING_MESSAGE);
-            }
-
-            // Call the sliderListener once manually so labels get adjusted
-            new SliderListener().stateChanged(null);
-            // Listeners added here, otherwise it tries to match three times
-            // (when setting the default values)
-            sldTimezone.addChangeListener(new SliderListener());
-            sldMinutes.addChangeListener(new SliderListener());
-            sldSeconds.addChangeListener(new SliderListener());
+                return statusBarText.getText();
+            };
 
             // There is no way to cancel this dialog, all changes get applied
             // immediately. Therefore "Close" is marked with an "OK" icon.
             // Settings are only saved temporarily to the layer.
-            new ExtendedDialog(MainApplication.getMainFrame(),
-                    tr("Adjust timezone and offset"),
-                    tr("Close")).
-                    setContent(p).setButtonIcons("ok").showDialog();
+            new AdjustTimezoneAndOffsetDialog(MainApplication.getMainFrame(),
+                    timezoneOffsetPair.a, timezoneOffsetPair.b, dayOffset)
+            .adjustListener(listener).showDialog();
         }
     }
 
@@ -1283,7 +1197,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
     private class AutoGuessActionListener implements ActionListener {
 
         @Override
-        public void actionPerformed(ActionEvent arg0) {
+        public void actionPerformed(ActionEvent e) {
             GpxDataWrapper gpxW = selectedGPX(true);
             if (gpxW == null)
                 return;
