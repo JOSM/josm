@@ -8,10 +8,12 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link NameFinder} class.
  */
+@BasicPreferences
 class NameFinderTest {
 
     // CHECKSTYLE.OFF: LineLength
