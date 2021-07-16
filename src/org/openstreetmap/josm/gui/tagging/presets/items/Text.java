@@ -21,7 +21,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -249,20 +248,16 @@ public class Text extends KeyedItem {
     }
 
     private void setupListeners(AutoCompletingTextField textField, TaggingPresetItemGuiSupport support) {
-        textField.getDocument().addDocumentListener(DocumentAdapter.create(ignore ->
-                support.fireItemValueModified(this, key, textField.getText())));
-
-        if (valueTemplate != null) {
+        if (valueTemplate == null) { // only fire on normal fields
+            textField.getDocument().addDocumentListener(DocumentAdapter.create(ignore ->
+                    support.fireItemValueModified(this, key, textField.getText())));
+        } else { // only listen on calculated fields
             textField.setForeground(Color.BLUE);
             support.addListener((source, key, newValue) -> {
-                if (source != this) {
-                    String valueTemplateText = valueTemplate.getText(support);
-                    Logging.trace("Evaluating value_template {0} for key {1} from {2} with new value {3} => {4}",
-                            valueTemplate, key, source, newValue, valueTemplateText);
-                    if (!textField.getText().equals(valueTemplateText)) {
-                        SwingUtilities.invokeLater(() -> textField.setItem(valueTemplateText));
-                    }
-                }
+                String valueTemplateText = valueTemplate.getText(support);
+                Logging.trace("Evaluating value_template {0} for key {1} from {2} with new value {3} => {4}",
+                        valueTemplate, key, source, newValue, valueTemplateText);
+                textField.setItem(valueTemplateText);
             });
         }
     }
