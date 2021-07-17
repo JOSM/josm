@@ -77,8 +77,8 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
     /**
      * The real content, just to add a border
      */
-    protected final JPanel content = new JPanel();
-    protected final List<VisibilityMenuEntry> sliders = new ArrayList<>();
+    final JPanel content = new JPanel();
+    final List<VisibilityMenuEntry> sliders = new ArrayList<>();
 
     /**
      * Creates a new {@link LayerVisibilityAction}

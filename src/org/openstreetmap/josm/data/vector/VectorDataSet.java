@@ -1,25 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.vector;
 
-import org.openstreetmap.josm.data.DataSource;
-import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTTile;
-import org.openstreetmap.josm.data.osm.BBox;
-import org.openstreetmap.josm.data.osm.DataSelectionListener;
-import org.openstreetmap.josm.data.osm.DownloadPolicy;
-import org.openstreetmap.josm.data.osm.HighlightUpdateListener;
-import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.OsmData;
-import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.Storage;
-import org.openstreetmap.josm.data.osm.UploadPolicy;
-import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.event.IDataSelectionEventSource;
-import org.openstreetmap.josm.data.osm.event.IDataSelectionListener;
-import org.openstreetmap.josm.gui.mappaint.ElemStyles;
-import org.openstreetmap.josm.tools.ListenerList;
-import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +20,25 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.imagery.vectortile.mapbox.MVTTile;
+import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
+import org.openstreetmap.josm.data.osm.DownloadPolicy;
+import org.openstreetmap.josm.data.osm.HighlightUpdateListener;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.OsmData;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.Storage;
+import org.openstreetmap.josm.data.osm.UploadPolicy;
+import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.event.IDataSelectionEventSource;
+import org.openstreetmap.josm.data.osm.event.IDataSelectionListener;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
+import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * A data class for Vector Data
@@ -242,8 +242,8 @@ public class VectorDataSet implements OsmData<VectorPrimitive, VectorNode, Vecto
      */
     public Stream<VectorPrimitive> getPrimitivesById(PrimitiveId... primitiveIds) {
         final Storage<MVTTile> dataStore = this.getBestZoomDataStore().orElse(null);
-        final Stream<VectorDataStore> dataStoreStream = dataStore != null ? dataStore.stream().map(MVTTile::getData) : Stream.empty();
-        return Stream.concat(dataStoreStream, Stream.of(this.customDataStore)).map(VectorDataStore::getPrimitivesMap)
+        return Stream.concat(dataStore != null ? dataStore.stream().map(MVTTile::getData) : Stream.empty(),
+                Stream.of(this.customDataStore)).map(VectorDataStore::getPrimitivesMap)
                 .flatMap(m -> Stream.of(primitiveIds).map(m::get)).filter(Objects::nonNull);
     }
 

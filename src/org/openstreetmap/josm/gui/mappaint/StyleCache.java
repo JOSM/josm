@@ -45,11 +45,15 @@ public final class StyleCache {
         StyleCache s = new StyleCache(this);
 
         if (selected) {
-            s.selectedStyle = (s.selectedStyle == null ? new DividedScale<StyleElementList>() : s.selectedStyle).put(o, r);
+            s.selectedStyle = scale(s.selectedStyle).put(o, r);
         } else {
-            s.plainStyle = (s.plainStyle == null ? new DividedScale<StyleElementList>() : s.plainStyle).put(o, r);
+            s.plainStyle = scale(s.plainStyle).put(o, r);
         }
         return s.intern();
+    }
+
+    private static DividedScale<StyleElementList> scale(DividedScale<StyleElementList> scale) {
+        return scale == null ? new DividedScale<>() : scale;
     }
 
     /**
