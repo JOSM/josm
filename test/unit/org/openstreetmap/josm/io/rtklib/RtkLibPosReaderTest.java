@@ -50,20 +50,28 @@ class RtkLibPosReaderTest {
         assertEquals(137, in.getNumberOfCoordinates());
 
         List<WayPoint> wayPoints = new ArrayList<>(in.getGpxData().tracks.iterator().next().getSegments().iterator().next().getWayPoints());
-        assertEquals(DateUtils.parseInstant("2019-06-08T08:23:12.000Z"), wayPoints.get(0).get(GpxConstants.PT_TIME));
+        WayPoint wp0 = wayPoints.get(0);
+        assertEquals(DateUtils.parseInstant("2019-06-08T08:23:12.000Z"), wp0.get(GpxConstants.PT_TIME));
         assertEquals(DateUtils.parseInstant("2019-06-08T08:23:12.300Z"), wayPoints.get(1).get(GpxConstants.PT_TIME));
         assertEquals(DateUtils.parseInstant("2019-06-08T08:23:12.600Z"), wayPoints.get(2).get(GpxConstants.PT_TIME));
-        assertEquals(wayPoints.get(0).getInstant(), wayPoints.get(0).get(GpxConstants.PT_TIME));
+        assertEquals(wp0.getInstant(), wp0.get(GpxConstants.PT_TIME));
 
-        assertEquals(Instant.parse("2019-06-08T08:23:12.000Z"), wayPoints.get(0).getInstant());
+        assertEquals(Instant.parse("2019-06-08T08:23:12.000Z"), wp0.getInstant());
         assertEquals(Instant.parse("2019-06-08T08:23:12.300Z"), wayPoints.get(1).getInstant());
         assertEquals(Instant.parse("2019-06-08T08:23:12.600Z"), wayPoints.get(2).getInstant());
 
-        assertEquals(new LatLon(46.948881673, -1.484757046), wayPoints.get(0).getCoor());
-        assertEquals(5, wayPoints.get(0).get(GpxConstants.RTKLIB_Q));
-        assertEquals("92.3955", wayPoints.get(0).get(GpxConstants.PT_ELE));
-        assertEquals("2", wayPoints.get(0).get(GpxConstants.PT_SAT));
-        assertEquals("2.2090015", wayPoints.get(0).get(GpxConstants.PT_HDOP).toString().trim());
+        assertEquals(new LatLon(46.948881673, -1.484757046), wp0.getCoor());
+        assertEquals(5, wp0.get(GpxConstants.RTKLIB_Q));
+        assertEquals("92.3955", wp0.get(GpxConstants.PT_ELE));
+        assertEquals("2", wp0.get(GpxConstants.PT_SAT));
+        assertEquals("1.8191757", wp0.get(GpxConstants.PT_HDOP).toString().trim());
+
+        assertEquals("1.5620", wp0.get(GpxConstants.RTKLIB_SDN));
+        assertEquals("0.9325", wp0.get(GpxConstants.RTKLIB_SDE));
+        assertEquals("0.8167", wp0.get(GpxConstants.RTKLIB_SDU));
+        assertEquals("-0.7246", wp0.get(GpxConstants.RTKLIB_SDNE));
+        assertEquals("0.7583", wp0.get(GpxConstants.RTKLIB_SDEU));
+        assertEquals("0.6573", wp0.get(GpxConstants.RTKLIB_SDUN));
     }
 
     /**

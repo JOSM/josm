@@ -82,14 +82,14 @@ public class RtkLibPosReader implements IGpxReader {
                             currentwp.put(GpxConstants.PT_SAT, fields[IDX_NS]);
                             currentwp.put(GpxConstants.RTKLIB_SDN, fields[IDX_SDN]);
                             currentwp.put(GpxConstants.RTKLIB_SDE, fields[IDX_SDE]);
-                            currentwp.put(GpxConstants.RTKLIB_SDE, fields[IDX_SDU]);
+                            currentwp.put(GpxConstants.RTKLIB_SDU, fields[IDX_SDU]);
                             currentwp.put(GpxConstants.RTKLIB_SDNE, fields[IDX_SDNE]);
                             currentwp.put(GpxConstants.RTKLIB_SDEU, fields[IDX_SDEU]);
                             currentwp.put(GpxConstants.RTKLIB_SDUN, fields[IDX_SDUN]);
                             currentwp.put(GpxConstants.RTKLIB_AGE, fields[IDX_AGE]);
                             currentwp.put(GpxConstants.RTKLIB_RATIO, fields[IDX_RATIO]);
                             double sdn = Double.parseDouble(fields[IDX_SDN]);
-                            double sde = Double.parseDouble(fields[IDX_SDN]);
+                            double sde = Double.parseDouble(fields[IDX_SDE]);
                             currentwp.put(GpxConstants.PT_HDOP, (float) Math.sqrt(sdn*sdn + sde*sde));
                             waypoints.add(currentwp);
                             success++;
