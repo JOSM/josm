@@ -58,9 +58,6 @@ This is an overview of the files and directories in the JOSM code repository:
 - build.xml                 ant build file (standard way to create a JOSM binary)
 - CONTRIBUTION              list of major code contributors
 - gpl-2.0.txt, gpl-3.0.txt  full text of the GNU General Public License
-- ide                       IDE-specific files
-  - eclipse/                preconfigured Eclipse configuration files
-  - netbeans/               preconfigured Netbeans project
 - LICENSE                   the JOSM license terms
 - native/                   OS-specific files
   - linux/                  files useful for Linux distributions, including Appdata files, .desktop
@@ -147,14 +144,15 @@ This is an overview of the files and directories in the JOSM code repository:
     - lib/                  libraries needed for (some of) the tests, including JUnit
     - performance/          performance tests (source code)
     - unit/                 unit tests (source code)
-- tools/                    libraries and tools that help in the development process
-    - animal-sniffer-ant-tasks.jar
-                            used to build and check code signatures to ensure plugins binary compatibility 
+- tools/                    libraries, tools and configuration files that help in the development process
     - checkstyle/           libs and config files for checkstyle (automatically detects code style
                             problems in source code); can be launched as an ant target in build.xml
+    - eclipse/              preconfigured Eclipse configuration files
     - ivy/                  Apache Ivy binary, configuration file, and downloaded dependencies 
     - jacocoant.jar         used to include coverage data into JUnit test reports
     - japicc/               used to generate a compatibility report between optimized jar and normal one
+    - netbeans/             preconfigured Netbeans project
+    - pmd/                  config files for PMD (source code analyzer, finds common programming flaws)
     - spotbugs/             libs and config files for spotbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
 
