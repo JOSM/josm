@@ -365,28 +365,58 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         }
     }
 
+    /**
+     * Construct the list of loaded GPX tracks
+     * @param nogdw Data wrapper with no GPX data
+     */
+    private void constructGpxModel(NoGpxDataWrapper nogdw) {
+        gpxModel = new DefaultComboBoxModel<>();
+        GpxDataWrapper defaultItem = null;
+        for (GpxLayer cur : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class)) {
+            GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), cur.data, cur.data.storageFile);
+            cur.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
+            gpxModel.addElement(gdw);
+            if (cur == yLayer.gpxLayer || defaultItem == null) {
+                defaultItem = gdw;
+            }
+        }
+
+        if (gpxModel.getSize() == 0) {
+            gpxModel.addElement(nogdw);
+        } else if (defaultItem != null) {
+            gpxModel.setSelectedItem(defaultItem);
+        }
+        MainApplication.getLayerManager().addLayerChangeListener(new GpxLayerAddedListener());
+    }
+
+    static GpxTimezone loadTimezone() {
+        try {
+            String tz = Config.getPref().get("geoimage.timezone");
+            if (!tz.isEmpty()) {
+                return GpxTimezone.parseTimezone(tz);
+            } else {
+                return new GpxTimezone(TimeUnit.MILLISECONDS.toMinutes(TimeZone.getDefault().getRawOffset()) / 60.); //hours is double
+            }
+        } catch (ParseException e) {
+            Logging.trace(e);
+            return GpxTimezone.ZERO;
+        }
+    }
+
+    static GpxTimeOffset loadDelta() {
+        try {
+            return GpxTimeOffset.parseOffset(Config.getPref().get("geoimage.delta", "0"));
+        } catch (ParseException e) {
+            Logging.trace(e);
+            return GpxTimeOffset.ZERO;
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         NoGpxDataWrapper nogdw = new NoGpxDataWrapper();
         if (gpxModel == null) {
-            // Construct the list of loaded GPX tracks
-            gpxModel = new DefaultComboBoxModel<>();
-            GpxDataWrapper defaultItem = null;
-            for (GpxLayer cur : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class)) {
-                GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), cur.data, cur.data.storageFile);
-                cur.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
-                gpxModel.addElement(gdw);
-                if (cur == yLayer.gpxLayer || defaultItem == null) {
-                    defaultItem = gdw;
-                }
-            }
-
-            if (gpxModel.getSize() == 0) {
-                gpxModel.addElement(nogdw);
-            } else if (defaultItem != null) {
-                gpxModel.setSelectedItem(defaultItem);
-            }
-            MainApplication.getLayerManager().addLayerChangeListener(new GpxLayerAddedListener());
+            constructGpxModel(nogdw);
         }
 
         JPanel panelCb = new JPanel();
@@ -404,27 +434,12 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
 
         JPanel panelTf = new JPanel(new GridBagLayout());
 
-        try {
-            String tz = Config.getPref().get("geoimage.timezone");
-            if (!tz.isEmpty()) {
-                timezone = GpxTimezone.parseTimezone(tz);
-            } else {
-                timezone = new GpxTimezone(TimeUnit.MILLISECONDS.toMinutes(TimeZone.getDefault().getRawOffset()) / 60.); //hours is double
-            }
-        } catch (ParseException e) {
-            timezone = GpxTimezone.ZERO;
-            Logging.trace(e);
-        }
+        timezone = loadTimezone();
 
         tfTimezone = new JosmTextField(10);
         tfTimezone.setText(timezone.formatTimezone());
 
-        try {
-            delta = GpxTimeOffset.parseOffset(Config.getPref().get("geoimage.delta", "0"));
-        } catch (ParseException e) {
-            delta = GpxTimeOffset.ZERO;
-            Logging.trace(e);
-        }
+        delta = loadDelta();
 
         tfOffset = new JosmTextField(10);
         tfOffset.setText(delta.formatOffset());
