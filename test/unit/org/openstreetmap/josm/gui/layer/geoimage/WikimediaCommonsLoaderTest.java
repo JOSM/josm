@@ -10,17 +10,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URL;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.tools.Http1Client;
+import org.openstreetmap.josm.tools.HttpClient;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit test of {@link WikimediaCommonsLoader}
  */
 @BasicPreferences
 class WikimediaCommonsLoaderTest {
+
+    @BeforeAll
+    static void beforeAll() {
+        HttpClient.setFactory(Http1Client::new);
+    }
+
     /**
      * Unit test of {@link WikimediaCommonsLoader}
      *
@@ -44,8 +53,8 @@ class WikimediaCommonsLoaderTest {
                 image.getImageUrl());
     }
 
-    private WireMockServer mockHttp() {
-        String xml = "" +
+    private static WireMockServer mockHttp() {
+        String xml =
                 "<api batchcomplete=\"\">\n" +
                 "<query>\n" +
                 "<geosearch>\n" +
@@ -56,7 +65,7 @@ class WikimediaCommonsLoaderTest {
                 "</api>";
         final WireMockServer wireMock = new WireMockServer(options().dynamicPort());
         wireMock.stubFor(get(urlEqualTo("/w/api.php?format=xml&action=query&list=geosearch" +
-                "&gsnamespace=6&gslimit=500&gsprop=type|name&gsbbox=48.0|11.0|47.0|12.0"))
+                "&gsnamespace=6&gslimit=500&gsprop=type%7Cname&gsbbox=48.0%7C11.0%7C47.0%7C12.0"))
                 .willReturn(aResponse().withBody(xml)));
         return wireMock;
     }

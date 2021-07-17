@@ -930,8 +930,6 @@ way.missing_parent_piste_difficulty:in-downloaded-area!:new {
   throwWarning: tr("No difficulty defined for skiing, add {0}", "piste:difficulty=");
   group: tr("missing tag");
   set missing_piste_difficulty;
-  assertMatch:   "way piste:type=nordic (count(parent_tag("piste:difficulty")) == 0)";
-  assertNoMatch: "way piste:type=nordic (count(parent_tag("piste:difficulty")) == 1)";
   assertNoMatch: "way piste:type=nordic piste:difficulty=easy";
 }
 relation[piste:type =~ /^downhill|nordic|skitour$/][!piste:difficulty] >
@@ -939,8 +937,6 @@ relation[piste:type =~ /^downhill|nordic|skitour$/][!piste:difficulty] >
   throwWarning: tr("No difficulty defined for skiing, add {0}", "piste:difficulty=");
   group: tr("missing tag");
   set missing_piste_difficulty_both;
-  assertMatch:   "way piste:type=nordic (count(parent_tag("piste:difficulty")) == 0)";
-  assertNoMatch: "way piste:type=nordic (count(parent_tag("piste:difficulty")) == 1)";
   assertNoMatch: "way piste:type=nordic piste:difficulty=easy";
 }
 way[piste:type=nordic][!piste:difficulty]!.missing_piste_difficulty!.missing_piste_difficulty_both {

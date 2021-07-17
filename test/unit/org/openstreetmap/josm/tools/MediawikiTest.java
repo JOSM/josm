@@ -33,7 +33,10 @@ class MediawikiTest {
     void testGeoImagesUrl() throws Exception {
         // See https://josm.openstreetmap.de/ticket/21126
         // Checks that URL can be converted to URI, needed for HTTP/2
+        // CHECKSTYLE.OFF: LineLength
         assertEquals(new URI("https://commons.wikimedia.org/w/api.php?format=xml&action=query&list=geosearch&gsnamespace=6&gslimit=500&gsprop=type%7Cname&gsbbox=48.8623665%7C2.3913497%7C48.8600879%7C2.3967605"),
-                new URL(Mediawiki.getGeoImagesUrl("https://commons.wikimedia.org/w/api.php", new Bounds(48.8600879, 2.3913497, 48.8623665, 2.3967605))).toURI());
+                new URL(Mediawiki.getGeoImagesUrl("https://commons.wikimedia.org/w/api.php",
+                        new Bounds(48.8600879, 2.3913497, 48.8623665, 2.3967605))).toURI());
+        // CHECKSTYLE.ON: LineLength
     }
 }

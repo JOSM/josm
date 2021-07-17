@@ -316,7 +316,7 @@ public class ImageData implements Data {
      * Remove the image from the list and optionnally trigger update listener
      * @param img the {@link ImageEntry} to remove
      * @param fireUpdateEvent if {@code true}, notifies listeners of image update
-     * @since xxx
+     * @since 18049
      */
     public void removeImage(ImageEntry img, boolean fireUpdateEvent) {
         data.remove(img);
