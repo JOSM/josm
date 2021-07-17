@@ -30,6 +30,11 @@ jobs:
       run: |
         ant checkstyle
 
+    - name: Upload report
+      uses: actions/upload-artifact@v2
+      with:
+        path: checkstyle-josm.xml
+
     - uses: jwgmeligmeyling/checkstyle-github-action@master
       with:
         path: '**/checkstyle-josm.xml'

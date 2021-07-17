@@ -30,6 +30,11 @@ jobs:
       run: |
         ant pmd
 
+    - name: Upload report
+      uses: actions/upload-artifact@v2
+      with:
+        path: pmd-josm.xml
+
     - uses: jwgmeligmeyling/pmd-github-action@master
       with:
         path: '**/pmd-josm.xml'
