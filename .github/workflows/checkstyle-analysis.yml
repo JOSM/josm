@@ -18,6 +18,14 @@ jobs:
       with:
           fetch-depth: 256
 
+    - name: Cache
+      uses: actions/cache@v2.0.0
+      with:
+        path: |
+          ~/.ivy2/cache/
+          ~/work/josm/josm/tools/
+        key: ${{ runner.os }}-ivy2-${{ hashFiles('build.xml', 'ivy.xml', 'tools/ivy.xml') }}
+
     - name: Run Checkstyle with Ant
       run: |
         ant checkstyle
