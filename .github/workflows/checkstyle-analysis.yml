@@ -1,0 +1,27 @@
+name: "Checkstyle"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ master ]
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+          fetch-depth: 256
+
+    - name: Run Checkstyle with Ant
+      run: |
+        ant checkstyle
+
+    - uses: jwgmeligmeyling/checkstyle-github-action@master
+      with:
+        path: '**/checkstyle-josm.xml'
