@@ -865,6 +865,7 @@ Build-Date: ${build.tstamp}
         <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="spotbugs.classpath"/>
         <spotbugs output="xml"
                 outputFile="spotbugs-josm.xml"
+                sourcePath="${src.dir}"
                 classpath="${toString:spotbugs.classpath}"
                 pluginList=""
                 excludeFilter="${spotbugs.dir}/josm-filter.xml"
