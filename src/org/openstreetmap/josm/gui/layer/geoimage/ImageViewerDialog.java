@@ -343,10 +343,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                         .getValue();
 
                 if (result == 2) {
-                    currentData.removeSelectedImages();
                     for (ImageEntry delete : toDelete) {
                         if (Utils.deleteFile(delete.getFile())) {
-                            Logging.info("File " + delete.getFile() + " deleted.");
+                            currentData.removeImage(delete, false);
+                            Logging.info("File {0} deleted.", delete.getFile());
                         } else {
                             JOptionPane.showMessageDialog(
                                     MainApplication.getMainFrame(),
@@ -356,6 +356,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                                     );
                         }
                     }
+                    currentData.notifyImageUpdate();
+                    currentData.updateSelectedImage();
                 }
             }
         }

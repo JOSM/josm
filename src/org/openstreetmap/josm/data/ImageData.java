@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -266,22 +264,10 @@ public class ImageData implements Data {
 
     /**
      * Remove the current selected image from the list
-     */
-    public void removeSelectedImage() {
-        List<ImageEntry> selectedImages = getSelectedImages();
-        if (selectedImages.size() > 1) {
-            throw new IllegalStateException(tr("Multiple images have been selected"));
-        }
-        removeImages(selectedImages);
-    }
-
-    /**
-     * Remove the current selected image from the list
      * @since 15348
      */
     public void removeSelectedImages() {
-        List<ImageEntry> selectedImages = getSelectedImages();
-        removeImages(selectedImages);
+        removeImages(getSelectedImages());
     }
 
     private void removeImages(List<ImageEntry> selectedImages) {
@@ -289,13 +275,22 @@ public class ImageData implements Data {
             return;
         }
         for (ImageEntry img: getSelectedImages()) {
-            data.remove(img);
-            this.geoImages.remove(img);
+            removeImage(img, false);
         }
-        if (selectedImagesIndex.get(0) >= data.size()) {
-            setSelectedImageIndex(data.size() - 1);
+        updateSelectedImage();
+    }
+
+    /**
+     * Update the selected image after removal of one or more images.
+     * @since 18049
+     */
+    public void updateSelectedImage() {
+        int size = data.size();
+        Integer firstSelectedImageIndex = selectedImagesIndex.get(0);
+        if (firstSelectedImageIndex >= size) {
+            setSelectedImageIndex(size - 1);
         } else {
-            setSelectedImageIndex(selectedImagesIndex.get(0), true);
+            setSelectedImageIndex(firstSelectedImageIndex, true);
         }
     }
 
@@ -306,8 +301,7 @@ public class ImageData implements Data {
      * @since 15333
      */
     public boolean isImageSelected(ImageEntry image) {
-        int index = data.indexOf(image);
-        return selectedImagesIndex.contains(index);
+        return selectedImagesIndex.contains(data.indexOf(image));
     }
 
     /**
@@ -315,9 +309,21 @@ public class ImageData implements Data {
      * @param img the {@link ImageEntry} to remove
      */
     public void removeImage(ImageEntry img) {
+        removeImage(img, true);
+    }
+
+    /**
+     * Remove the image from the list and optionnally trigger update listener
+     * @param img the {@link ImageEntry} to remove
+     * @param fireUpdateEvent if {@code true}, notifies listeners of image update
+     * @since xxx
+     */
+    public void removeImage(ImageEntry img, boolean fireUpdateEvent) {
         data.remove(img);
         this.geoImages.remove(img);
-        notifyImageUpdate();
+        if (fireUpdateEvent) {
+            notifyImageUpdate();
+        }
     }
 
     /**

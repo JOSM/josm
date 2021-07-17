@@ -54,7 +54,7 @@ class ImageDataTest {
         assertNull(data.getSelectedImage());
         assertFalse(data.hasNextImage());
         assertFalse(data.hasPreviousImage());
-        data.removeSelectedImage();
+        data.removeSelectedImages();
     }
 
     @Test
@@ -181,16 +181,6 @@ class ImageDataTest {
     }
 
     @Test
-    void testRemoveSelectedImage() {
-        List<ImageEntry> list = getOneImage();
-        ImageData data = new ImageData(list);
-        data.selectFirstImage();
-        data.removeSelectedImage();
-        assertEquals(0, data.getImages().size());
-        assertEquals(0, data.getSelectedImages().size());
-    }
-
-    @Test
     void testRemoveSelectedImages() {
         List<ImageEntry> list = getOneImage();
         list.add(new ImageEntry());
@@ -260,7 +250,7 @@ class ImageDataTest {
         }};
         data.addImageDataUpdateListener(listener);
         data.selectFirstImage();
-        data.removeSelectedImage();
+        data.removeSelectedImages();
     }
 
     @Test
