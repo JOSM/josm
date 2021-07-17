@@ -94,14 +94,7 @@ public class Mediawiki {
      */
     public void searchGeoImages(Bounds bounds, BiConsumer<String, LatLon> imageConsumer)
             throws IOException, ParserConfigurationException, SAXException, XPathExpressionException {
-        final URL url = new URL(baseUrl +
-                "?format=xml" +
-                "&action=query" +
-                "&list=geosearch" +
-                "&gsnamespace=6" +
-                "&gslimit=500" +
-                "&gsprop=type|name" +
-                "&gsbbox=" + bounds.getMaxLat() + "|" + bounds.getMinLon() + "|" + bounds.getMinLat() + "|" + bounds.getMaxLon());
+        final URL url = new URL(getGeoImagesUrl(baseUrl, bounds));
         final Document document = getDocument(url);
         final XPath xPath = XPathFactory.newInstance().newXPath();
         NodeList nodes = (NodeList) xPath.evaluate("/api/query/geosearch/gs", document, XPathConstants.NODESET);
@@ -112,6 +105,25 @@ public class Mediawiki {
             double lon = Double.parseDouble(attributes.getNamedItem("lon").getNodeValue());
             imageConsumer.accept(title, new LatLon(lat, lon));
         }
+    }
+
+    /**
+     * Returns the URL for searching geolocated images in given bounds.
+     * @param baseUrl The wiki base URL
+     * @param bounds the bounds of the search area
+     * @return the URL for searching geolocated images in given bounds
+     * @since 18046
+     */
+    public static String getGeoImagesUrl(String baseUrl, Bounds bounds) {
+        String sep = Utils.encodeUrl("|");
+        return baseUrl +
+                "?format=xml" +
+                "&action=query" +
+                "&list=geosearch" +
+                "&gsnamespace=6" +
+                "&gslimit=500" +
+                "&gsprop=type" + sep + "name" +
+                "&gsbbox=" + bounds.getMaxLat() + sep + bounds.getMinLon() + sep + bounds.getMinLat() + sep + bounds.getMaxLon();
     }
 
     /**
