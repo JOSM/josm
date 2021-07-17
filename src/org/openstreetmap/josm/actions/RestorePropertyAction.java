@@ -55,7 +55,7 @@ public class RestorePropertyAction extends AbstractAction {
         if (primitive == null) return;
 
         Map<String, String> changes = TableHelper.selectedIndices(selectionModel).boxed()
-                .collect(HashMap::new, (m,i)->m.put(keyFn.apply(i), valueFn.apply(i)), HashMap::putAll);
+                .collect(HashMap::new, (m, i) -> m.put(keyFn.apply(i), valueFn.apply(i)), HashMap::putAll);
         ChangePropertyCommand command = new ChangePropertyCommand(Collections.singleton(primitive), changes);
         UndoRedoHandler.getInstance().add(command);
     }

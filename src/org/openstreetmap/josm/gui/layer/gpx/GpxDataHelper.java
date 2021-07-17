@@ -33,6 +33,10 @@ import org.xml.sax.SAXException;
  */
 public final class GpxDataHelper {
 
+    private GpxDataHelper() {
+        // Hide public constructor
+    }
+
     /**
      * Opens a file chooser to let the user select a "GPX data" file and returns it.
      * @return the file chosen by the user, or {@code null}

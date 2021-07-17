@@ -58,7 +58,7 @@ class SynchronizeTimeFromPhotoDialog extends ExtendedDialog {
      * @param parent The parent element that will be used for position and maximum size
      * @param images list of image entries
      */
-    public SynchronizeTimeFromPhotoDialog(Component parent, List<ImageEntry> images) {
+    SynchronizeTimeFromPhotoDialog(Component parent, List<ImageEntry> images) {
         super(parent, tr("Synchronize time from a photo of the GPS receiver"), tr("OK"), tr("Cancel"));
         setButtonIcons("ok", "cancel");
         setContent(buildContent(images));

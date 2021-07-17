@@ -41,10 +41,10 @@ final class ImagesLoader extends PleaseWaitRunnable {
 
     /**
      * Constructs a new {@code ImagesLoader}.
-     * @param selection
-     * @param gpxLayer
+     * @param selection image files to load
+     * @param gpxLayer associated GPX layer
      */
-    public ImagesLoader(Collection<File> selection, GpxLayer gpxLayer) {
+    ImagesLoader(Collection<File> selection, GpxLayer gpxLayer) {
         super(tr("Extracting GPS locations from EXIF"));
         this.selection = selection;
         this.gpxLayer = gpxLayer;

@@ -61,6 +61,7 @@ final class AnnotationUtils {
                     ((Collection<?>) field.get(null)).clear();
                 } catch (UnsupportedOperationException e) {
                     // Probably an unmodifiable collection
+                    System.err.println("Unable to clear " + field);
                 }
             } else if (!isFinal) {
                 // Only reset static fields, but not final static fields

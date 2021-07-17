@@ -50,13 +50,15 @@ class TaggingPresetValidationTest {
 
         TaggingPresetValidation.validate(primitive, label);
 
+        // CHECKSTYLE.OFF: LineLength
         assertTrue(label.isVisible());
         assertEquals("<html><ul>" +
-                "<li>Opening hours syntax (Hours without minutes)</li>" +
-                "<li>unusual value of width: meters is default; only positive values; point is decimal separator; if units, put space then unit</li>" +
-                "<li>unusual value of incline, use x% or x° or up or down instead</li>" +
-                "<li>suspicious tag combination (width on suspicious object)</li>" +
-                "<li>suspicious tag combination (incline on suspicious object)</li></ul>", label.getToolTipText());
+            "<li>Opening hours syntax (Hours without minutes)</li>" +
+            "<li>unusual value of width: meters is default; only positive values; point is decimal separator; if units, put space then unit</li>" +
+            "<li>unusual value of incline, use x% or x° or up or down instead</li>" +
+            "<li>suspicious tag combination (width on suspicious object)</li>" +
+            "<li>suspicious tag combination (incline on suspicious object)</li></ul>", label.getToolTipText());
+        // CHECKSTYLE.ON: LineLength
     }
 
     /**

@@ -132,7 +132,7 @@ public class GpxReader implements GpxConstants, IGpxReader {
 
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-            elements.push(new String[] { namespaceURI, localName, qName });
+            elements.push(new String[] {namespaceURI, localName, qName});
             switch(currentState) {
             case INIT:
                 states.push(currentState);

@@ -292,7 +292,8 @@ public class TagInfoExtract {
             return tags;
         }
 
-        private void fillTagsMap(Map<Tag, TagInfoTag> optionalTags, KeyedItem item, String value, String presetName, Set<TagInfoTag.Type> types, String descriptionPrefix, String iconUrl) {
+        private void fillTagsMap(Map<Tag, TagInfoTag> optionalTags, KeyedItem item, String value,
+                String presetName, Set<TagInfoTag.Type> types, String descriptionPrefix, String iconUrl) {
             optionalTags.compute(new Tag(item.key, value), (osmTag, tagInfoTag) -> {
                 if (tagInfoTag == null) {
                     return new TagInfoTag(descriptionPrefix + presetName, item.key, value, types, iconUrl);

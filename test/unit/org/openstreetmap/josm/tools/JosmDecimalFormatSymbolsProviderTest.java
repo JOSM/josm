@@ -34,9 +34,11 @@ class JosmDecimalFormatSymbolsProviderTest {
     @BeforeAll
     static void beforeAll() throws IOException {
         if (Utils.getJavaVersion() >= 9) {
-            assertEquals("SPI,JRE,CLDR", System.getProperty("java.locale.providers"), "This test must be launched with -Djava.locale.providers=SPI,JRE,CLDR");
+            assertEquals("SPI,JRE,CLDR", System.getProperty("java.locale.providers"),
+                    "This test must be launched with -Djava.locale.providers=SPI,JRE,CLDR");
             try (InputStream in = I18n.class.getResourceAsStream("/META-INF/services/java.text.spi.DecimalFormatSymbolsProvider")) {
-                assertEquals("org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider", new String(Utils.readBytesFromStream(in), StandardCharsets.UTF_8).trim());
+                assertEquals("org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider",
+                        new String(Utils.readBytesFromStream(in), StandardCharsets.UTF_8).trim());
             }
         }
     }
