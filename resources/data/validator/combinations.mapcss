@@ -913,3 +913,52 @@ way[highway=living_street][maxspeed][maxspeed!~/mph/][get(split(" ", tag(maxspee
   assertMatch: "way highway=living_street maxspeed=30";
   assertMatch: "way highway=living_street maxspeed=\"20 mph\"";
 }
+
+/* piste subtags, see #17606 */
+way[piste:type=nordic][!piste:grooming] {
+  throwWarning: tr("No grooming defined for {0} skiing, add {1}", "nordic", "piste:grooming=");
+  group: tr("missing tag");
+  assertMatch:   "way piste:type=nordic";
+  assertNoMatch: "way piste:type=nordic piste:grooming=classic";
+}
+
+way[piste:type =~ /^downhill|nordic|skitour$/][!piste:difficulty][count(parent_tags("piste:difficulty")) == 0] {
+  set missing_parent_piste_difficulty;
+}
+way.missing_parent_piste_difficulty:new,
+way.missing_parent_piste_difficulty:in-downloaded-area!:new {
+  throwWarning: tr("No difficulty defined for skiing, add {0}", "piste:difficulty=");
+  group: tr("missing tag");
+  set missing_piste_difficulty;
+  assertMatch:   "way piste:type=nordic (count(parent_tag("piste:difficulty")) == 0)";
+  assertNoMatch: "way piste:type=nordic (count(parent_tag("piste:difficulty")) == 1)";
+  assertNoMatch: "way piste:type=nordic piste:difficulty=easy";
+}
+relation[piste:type =~ /^downhill|nordic|skitour$/][!piste:difficulty] >
+ way[!piste:difficulty]!.missing_piste_difficulty {
+  throwWarning: tr("No difficulty defined for skiing, add {0}", "piste:difficulty=");
+  group: tr("missing tag");
+  set missing_piste_difficulty_both;
+  assertMatch:   "way piste:type=nordic (count(parent_tag("piste:difficulty")) == 0)";
+  assertNoMatch: "way piste:type=nordic (count(parent_tag("piste:difficulty")) == 1)";
+  assertNoMatch: "way piste:type=nordic piste:difficulty=easy";
+}
+way[piste:type=nordic][!piste:difficulty]!.missing_piste_difficulty!.missing_piste_difficulty_both {
+  throwOther: tr("No difficulty defined for skiing, add {0}", "piste:difficulty=");
+  group: tr("missing tag");
+  assertMatch:   "way piste:type=nordic";
+  assertNoMatch: "way piste:type=nordic piste:difficulty=easy";
+}
+
+relation[piste:type =~ /^downhill|nordic|skitour$/][!piste:difficulty] {
+  throwOther: tr("No difficulty defined for skiing, add {0}", "piste:difficulty=");
+  group: tr("missing tag");
+  assertMatch:   "relation piste:type=nordic";
+  assertNoMatch: "relation piste:type=nordic piste:difficulty=easy";
+}
+relation[piste:type=nordic][!piste:grooming]{
+  throwOther: tr("No grooming defined for {0} skiing, add {1}", "nordic", "piste:grooming=");
+  group: tr("missing tag");
+  assertMatch:   "relation piste:type=nordic";
+  assertNoMatch: "relation piste:type=nordic piste:grooming=classic";
+}
