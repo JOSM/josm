@@ -128,7 +128,7 @@ public class ImageData implements Data {
      * @since 15333
      */
     public List<ImageEntry> getSelectedImages() {
-        return selectedImagesIndex.stream().filter(i -> i > -1).map(data::get).collect(Collectors.toList());
+        return selectedImagesIndex.stream().filter(i -> i > -1 && i < data.size()).map(data::get).collect(Collectors.toList());
     }
 
     /**
