@@ -16,6 +16,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -54,6 +55,7 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.ShowHideButtonListener;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
@@ -565,21 +567,16 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
             buttonsHide = new JButton(ImageProvider.get("misc", buttonHiding != ButtonHidingType.ALWAYS_SHOWN
                 ? /* ICON(misc/)*/ "buttonhide" :  /* ICON(misc/)*/ "buttonshow"));
-            buttonsHide.setToolTipText(tr("Toggle dynamic buttons"));
-            buttonsHide.setBorder(BorderFactory.createEmptyBorder());
-            buttonsHide.addActionListener(e -> {
+            addButton(buttonsHide, tr("Toggle dynamic buttons"), e -> {
                 JRadioButtonMenuItem item = (buttonHiding == ButtonHidingType.DYNAMIC) ? alwaysShown : dynamic;
                 item.setSelected(true);
                 item.getAction().actionPerformed(null);
             });
-            add(buttonsHide);
 
             // show the pref button if applicable
             if (preferenceClass != null) {
-                JButton pref = new JButton(ImageProvider.get("preference_small", ImageProvider.ImageSizes.SMALLICON));
-                pref.setToolTipText(tr("Open preferences for this panel"));
-                pref.setBorder(BorderFactory.createEmptyBorder());
-                pref.addActionListener(e -> {
+                addButton(new JButton(ImageProvider.get("preference_small", ImageProvider.ImageSizes.SMALLICON)),
+                        tr("Open preferences for this panel"), e -> {
                     final PreferenceDialog p = new PreferenceDialog(MainApplication.getMainFrame());
                     SwingUtilities.invokeLater(() -> {
                         if (TabPreferenceSetting.class.isAssignableFrom(preferenceClass)) {
@@ -590,35 +587,41 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     });
                     p.setVisible(true);
                 });
-                add(pref);
             }
 
+            // show the help button
+            addButton(new JButton(ImageProvider.get("help", ImageProvider.ImageSizes.SMALLICON)),
+                    tr("Open help for this panel"), e -> {
+                HelpBrowser.setUrlForHelpTopic(helpTopic());
+            });
+
             // show the sticky button
-            JButton sticky = new JButton(ImageProvider.get("misc", "sticky"));
-            sticky.setToolTipText(tr("Undock the panel"));
-            sticky.setBorder(BorderFactory.createEmptyBorder());
-            sticky.addActionListener(e -> {
+            addButton(new JButton(ImageProvider.get("misc", "sticky")), tr("Undock the panel"), e -> {
                 detach();
                 if (dialogsPanel != null) {
                     dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
                 }
             });
-            add(sticky);
 
             // show the close button
-            JButton close = new JButton(ImageProvider.get("misc", "close"));
-            close.setToolTipText(tr("Close this panel. You can reopen it with the buttons in the left toolbar."));
-            close.setBorder(BorderFactory.createEmptyBorder());
-            close.addActionListener(e -> {
+            addButton(new JButton(ImageProvider.get("misc", "close")),
+                    tr("Close this panel. You can reopen it with the buttons in the left toolbar."), e -> {
                 hideDialog();
                 if (dialogsPanel != null) {
                     dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
                 }
                 hideNotify();
             });
-            add(close);
+
             setToolTipText(tr("Click to minimize/maximize the panel content"));
             setTitle(toggleDialogName);
+        }
+
+        protected final Component addButton(JButton button, String tooltip, ActionListener actionListener) {
+            button.setBorder(BorderFactory.createEmptyBorder());
+            button.addActionListener(actionListener);
+            button.setToolTipText(tooltip);
+            return add(button);
         }
 
         public void setTitle(String title) {
