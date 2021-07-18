@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.time.Year;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JButton;
@@ -32,6 +34,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.Compression;
@@ -45,6 +48,9 @@ import org.openstreetmap.josm.tools.GBC;
  * @since 1949
  */
 public class GpxExporter extends FileExporter implements GpxConstants {
+
+    private static final List<Class<? extends Layer>> SUPPORTED_LAYERS = Arrays.asList(
+            GpxLayer.class, OsmDataLayer.class, GeoImageLayer.class);
 
     private static final String GPL_WARNING = "<html><font color='red' size='-2'>"
         + tr("Note: GPL is not compatible with the OSM license. Do not upload GPL licensed tracks.") + "</html>";
@@ -72,9 +78,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
     @Override
     public boolean acceptFile(File pathname, Layer layer) {
-        if (!(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
-            return false;
-        return super.acceptFile(pathname, layer);
+        return isSupportedLayer(layer) ? super.acceptFile(pathname, layer) : false;
     }
 
     @Override
@@ -89,7 +93,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
     private void exportData(File file, Layer layer, boolean quiet) throws IOException {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-        if (!(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
+        if (!isSupportedLayer(layer))
             throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer
                     .getClass().getName()));
         CheckParameterUtil.ensureParameterNotNull(file, "file");
@@ -119,6 +123,8 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         // conversion of OsmDataLayer (if needed) will be done after the dialog is closed.
         if (layer instanceof GpxLayer) {
             gpxData = ((GpxLayer) layer).data;
+        } else if (layer instanceof GeoImageLayer) {
+            gpxData = ((GeoImageLayer) layer).getFauxGpxData();
         } else {
             gpxData = new GpxData();
         }
@@ -269,11 +275,32 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         }
     }
 
+    /**
+     * Returns the list of supported layers.
+     * @return the list of supported layers
+     * @since 18068
+     */
+    public static List<Class<? extends Layer>> getSupportedLayers() {
+        return SUPPORTED_LAYERS;
+    }
+
+    /**
+     * Determines if the given layer is supported by this action.
+     * @param layer layer to test
+     * @return {@code true} if the given layer is supported by this action
+     * @since 18068
+     */
+    public static boolean isSupportedLayer(Layer layer) {
+        return SUPPORTED_LAYERS.stream().anyMatch(c -> c.isInstance(layer));
+    }
+
     private static GpxData getGpxData(Layer layer, File file) {
         if (layer instanceof OsmDataLayer) {
             return ((OsmDataLayer) layer).toGpxData();
         } else if (layer instanceof GpxLayer) {
             return ((GpxLayer) layer).data;
+        } else if (layer instanceof GeoImageLayer) {
+            return ((GeoImageLayer) layer).getFauxGpxData();
         }
         return OsmDataLayer.toGpxData(MainApplication.getLayerManager().getEditDataSet(), file);
     }

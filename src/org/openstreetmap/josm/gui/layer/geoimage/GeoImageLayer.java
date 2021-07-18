@@ -256,6 +256,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         entries.add(getGpxCorrelateAction());
         if (ExpertToggleAction.isExpert()) {
             entries.add(new EditImagesSequenceAction(this));
+            entries.add(new LayerGpxExportAction(this));
         }
         entries.add(new ShowThumbnailAction(this));
         if (!menuAdditions.isEmpty()) {

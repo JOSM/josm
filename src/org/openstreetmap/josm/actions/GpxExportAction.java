@@ -16,10 +16,9 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
+import org.openstreetmap.josm.gui.io.importexport.GpxExporter;
 import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -58,11 +57,11 @@ public class GpxExportAction extends DiskAccessAction {
 
     /**
      * Get the layer to export.
-     * @return The layer to export, either a {@link GpxLayer} or {@link OsmDataLayer}.
+     * @return The layer to export, if supported, otherwise {@code null}.
      */
     protected Layer getLayer() {
         Layer layer = getLayerManager().getActiveLayer();
-        return (layer instanceof GpxLayer || layer instanceof OsmDataLayer) ? layer : null;
+        return GpxExporter.isSupportedLayer(layer) ? layer : null;
     }
 
     @Override
@@ -85,19 +84,18 @@ public class GpxExportAction extends DiskAccessAction {
     /**
      * Exports a layer to a file. Launches a file chooser to request the user to enter a file name.
      *
-     * <code>layer</code> must not be null. <code>layer</code> must be an instance of
-     * {@link OsmDataLayer} or {@link GpxLayer}.
+     * <code>layer</code> must not be null. <code>layer</code> must be of a supported type.
      *
      * @param layer the layer
      * @throws IllegalArgumentException if layer is null
-     * @throws IllegalArgumentException if layer is neither an instance of {@link OsmDataLayer}
-     *  nor of {@link GpxLayer}
+     * @throws IllegalArgumentException if layer is not of a supported type.
+     * @see GpxExporter#isSupportedLayer
      */
     public void export(Layer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-        if (!(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
-            throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.",
-                    layer.getClass().getName()));
+        if (!GpxExporter.isSupportedLayer(layer))
+            throw new IllegalArgumentException(MessageFormat.format("Expected instance of {0}. Got ''{1}''.",
+                    GpxExporter.getSupportedLayers(), layer.getClass().getName()));
 
         File file = createAndOpenSaveFileChooser(tr("Export GPX file"), GpxImporter.getFileFilter());
         if (file == null)
