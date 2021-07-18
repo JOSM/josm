@@ -29,6 +29,7 @@
         <dependency conf="api->default" org="org.tukaani" name="xz" rev="1.9"/>
         <dependency conf="api->default" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
         <dependency conf="api->default" org="com.drewnoakes" name="metadata-extractor" rev="2.16.0" transitive="false"/>
+        <dependency conf="api->default" org="com.formdev" name="svgSalamander" rev="1.1.2.4"/>
         <dependency conf="api->default" org="ch.poole" name="OpeningHoursParser" rev="0.23.4"/>
         <dependency conf="api->default" org="oauth.signpost" name="signpost-core" rev="2.1.1"/>
         <dependency conf="api->default" org="org.webjars.npm" name="tag2link" rev="2021.3.21"/>
@@ -42,6 +43,7 @@
         <dependency conf="sources->sources" org="org.tukaani" name="xz" rev="1.9"/>
         <dependency conf="sources->sources" org="com.adobe.xmp" name="xmpcore" rev="6.1.11"/>
         <dependency conf="sources->sources" org="com.drewnoakes" name="metadata-extractor" rev="2.16.0" transitive="false"/>
+        <dependency conf="sources->default" org="com.formdev" name="svgSalamander" rev="1.1.2.4"/>
         <dependency conf="sources->sources" org="ch.poole" name="OpeningHoursParser" rev="0.23.4"/>
         <dependency conf="sources->sources" org="oauth.signpost" name="signpost-core" rev="2.1.1"/>
         <dependency conf="sources->default" org="org.webjars.npm" name="tag2link" rev="2021.3.21"/><!-- sources->default sic! (tag2link-sources.jar is empty, see #19335) -->

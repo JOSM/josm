@@ -169,7 +169,6 @@ There are some third party libraries which are directly included in the source c
     src/org/openstreetmap/josm/data/validation/routines
     -> http://commons.apache.org/proper/commons-validator
 * SVG Salamander: Support for SVG image format
-    src/com/kitfox/svg
     -> https://github.com/blackears/svgSalamander
 * Metadata Extractor: Read EXIF Metadata of photos
     -> https://github.com/drewnoakes/metadata-extractor

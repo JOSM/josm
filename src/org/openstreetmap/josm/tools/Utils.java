@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -68,8 +69,6 @@ import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.spi.preferences.Config;
 
-import com.kitfox.svg.xml.XMLParseUtil;
-
 /**
  * Basic utils, that can be useful in different parts of the program.
  */
@@ -97,6 +96,19 @@ public final class Utils {
     // Constants backported from Java 9, see https://bugs.openjdk.java.net/browse/JDK-4477961
     private static final double TO_DEGREES = 180.0 / Math.PI;
     private static final double TO_RADIANS = Math.PI / 180.0;
+
+    /**
+     * A reference to {@code Map.ofEntries()} available since Java 9
+     */
+    static final Method mapOfEntries = mapOfEntriesMethod();
+
+    private static Method mapOfEntriesMethod() {
+        try {
+            return Map.class.getMethod("ofEntries", Map.Entry[].class);
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
 
     private Utils() {
         // Hide default constructor for utils classes
@@ -658,7 +670,20 @@ public final class Utils {
      *     How to Prevent Your Java Collections From Wasting Memory</a>
      */
     public static <K, V> Map<K, V> toUnmodifiableMap(Map<K, V> map) {
-        return XMLParseUtil.toUnmodifiableMap(map);
+        if (map == null || map.isEmpty()) {
+            return Collections.emptyMap();
+        } else if (map.size() == 1) {
+            final Map.Entry<K, V> entry = map.entrySet().iterator().next();
+            return Collections.singletonMap(entry.getKey(), entry.getValue());
+        } else if (mapOfEntries != null) {
+            try {
+                // Java 9: use Map.ofEntries(...)
+                return (Map<K, V>) mapOfEntries.invoke(null, new Object[]{map.entrySet().toArray(new Map.Entry[0])});
+            } catch (Exception ignore) {
+                Logging.trace(ignore);
+            }
+        }
+        return Collections.unmodifiableMap(map);
     }
 
     /**
