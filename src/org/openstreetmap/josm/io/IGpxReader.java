@@ -4,10 +4,11 @@ package org.openstreetmap.josm.io;
 import java.io.IOException;
 
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.io.rtklib.RtkLibPosReader;
 import org.xml.sax.SAXException;
 
 /**
- * Abstraction of {@code GpxReader} and {@code NmeaReader}.
+ * Abstraction of {@code GpxReader}, {@code NmeaReader} and {@link RtkLibPosReader}
  * @since 14010
  */
 public interface IGpxReader {

@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
@@ -34,10 +35,8 @@ public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLay
 
     @Override
     public Collection<Layer> getDependencies() {
-        if (layer.getGpxLayer() != null)
-            return Collections.singleton((Layer) layer.getGpxLayer());
-        else
-            return Collections.emptySet();
+        GpxLayer gpxLayer = layer.getGpxLayer();
+        return gpxLayer != null ? Collections.singleton(gpxLayer) : Collections.emptySet();
     }
 
     @Override

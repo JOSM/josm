@@ -555,7 +555,7 @@ public class MainLayerManager extends LayerManager {
             if (layer instanceof GpxLayer) {
                 result.add(((GpxLayer) layer).data);
             } else if (layer instanceof GeoImageLayer) {
-                result.add(((GeoImageLayer) layer).getFauxGpxLayer().data);
+                result.add(((GeoImageLayer) layer).getFauxGpxData());
             }
         }
         return result;
