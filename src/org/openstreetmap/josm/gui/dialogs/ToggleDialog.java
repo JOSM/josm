@@ -599,7 +599,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             sticky.setBorder(BorderFactory.createEmptyBorder());
             sticky.addActionListener(e -> {
                 detach();
-                dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                if (dialogsPanel != null) {
+                    dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                }
             });
             add(sticky);
 
@@ -609,7 +611,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             close.setBorder(BorderFactory.createEmptyBorder());
             close.addActionListener(e -> {
                 hideDialog();
-                dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                if (dialogsPanel != null) {
+                    dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                }
                 hideNotify();
             });
             add(close);
