@@ -41,11 +41,16 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
+import org.openstreetmap.josm.data.gpx.GpxImageCorrelationSettings;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.data.gpx.GpxTimeOffset;
 import org.openstreetmap.josm.data.gpx.GpxTimezone;
@@ -76,7 +81,7 @@ import org.openstreetmap.josm.tools.Pair;
  * Then it correlates the images of the layer with that GPX file.
  * @since 2566
  */
-public class CorrelateGpxWithImages extends AbstractAction implements Destroyable {
+public class CorrelateGpxWithImages extends AbstractAction implements ExpertModeChangeListener, Destroyable {
 
     private static MutableComboBoxModel<GpxDataWrapper> gpxModel;
     private static boolean forceTags;
@@ -93,6 +98,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         super(tr("Correlate to GPX"));
         new ImageProvider("dialogs/geoimage/gpx2img").getResource().attachImageIcon(this, true);
         this.yLayer = layer;
+        ExpertToggleAction.addExpertModeChangeListener(this);
     }
 
     private final class SyncDialogWindowListener extends WindowAdapter {
@@ -236,6 +242,8 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
     private JCheckBox cbTaggedImg;
     private JCheckBox cbShowThumbs;
     private JLabel statusBarText;
+    private JSeparator sepDirectionPosition;
+    private ImageDirectionPositionPanel pDirectionPosition;
 
     // remember the last number of matched photos
     private int lastNumMatched;
@@ -555,6 +563,17 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         gbc.gridy = y;
         panelTf.add(cbShowThumbs, gbc);
 
+        gbc = GBC.eol().fill(GBC.HORIZONTAL).insets(0, 12, 0, 0);
+        sepDirectionPosition = new JSeparator(SwingConstants.HORIZONTAL);
+        panelTf.add(sepDirectionPosition, gbc);
+
+        gbc = GBC.eol();
+        gbc.gridwidth = 3;
+        pDirectionPosition = ImageDirectionPositionPanel.forGpxTrace();
+        panelTf.add(pDirectionPosition, gbc);
+
+        expertChanged(ExpertToggleAction.isExpert());
+
         final JPanel statusBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         statusBar.setBorder(BorderFactory.createLoweredBevelBorder());
         statusBarText = new JLabel(" ");
@@ -562,6 +581,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         statusBar.add(statusBarText);
 
         RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
+        pDirectionPosition.addFocusListenerOnComponent(repaintTheMap);
         tfTimezone.addFocusListener(repaintTheMap);
         tfOffset.addFocusListener(repaintTheMap);
 
@@ -569,6 +589,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         tfOffset.getDocument().addDocumentListener(statusBarUpdater);
         cbExifImg.addItemListener(statusBarUpdaterWithRepaint);
         cbTaggedImg.addItemListener(statusBarUpdaterWithRepaint);
+        pDirectionPosition.addChangeListenerOnComponents(statusBarUpdaterWithRepaint);
 
         statusBarUpdater.matchAndUpdateStatusBar();
         yLayer.updateBufferAndRepaint();
@@ -595,6 +616,19 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
         }
     }
 
+    @Override
+    public void expertChanged(boolean isExpert) {
+        if (sepDirectionPosition != null) {
+            sepDirectionPosition.setVisible(isExpert);
+        }
+        if (pDirectionPosition != null) {
+            pDirectionPosition.setVisible(isExpert);
+        }
+        if (syncDialog != null) {
+            syncDialog.pack();
+        }
+    }
+
     private static void removeDuplicates(File file) {
         for (int i = gpxModel.getSize() - 1; i >= 0; i--) {
             GpxDataWrapper wrapper = gpxModel.getElementAt(i);
@@ -612,7 +646,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
     private final transient StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
     private final transient StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
 
-    private class StatusBarUpdater implements DocumentListener, ItemListener, ActionListener {
+    private class StatusBarUpdater implements DocumentListener, ItemListener, ChangeListener, ActionListener {
         private final boolean doRepaint;
 
         StatusBarUpdater(boolean doRepaint) {
@@ -636,6 +670,11 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
 
         @Override
         public void itemStateChanged(ItemEvent e) {
+            matchAndUpdateStatusBar();
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
             matchAndUpdateStatusBar();
         }
 
@@ -680,7 +719,10 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
                 return tr("No gpx selected");
 
             final long offsetMs = ((long) (timezone.getHours() * TimeUnit.HOURS.toMillis(1))) + delta.getMilliseconds(); // in milliseconds
-            lastNumMatched = GpxImageCorrelation.matchGpxTrack(dateImgLst, selGpx.data, offsetMs, forceTags);
+            lastNumMatched = GpxImageCorrelation.matchGpxTrack(dateImgLst, selGpx.data,
+                    pDirectionPosition.isVisible() ?
+                            new GpxImageCorrelationSettings(offsetMs, forceTags, pDirectionPosition.getSettings()) :
+                            new GpxImageCorrelationSettings(offsetMs, forceTags));
 
             return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
                     "<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>",
@@ -868,11 +910,23 @@ public class CorrelateGpxWithImages extends AbstractAction implements Destroyabl
 
     @Override
     public void destroy() {
+        ExpertToggleAction.removeExpertModeChangeListener(this);
         if (cbGpx != null) {
             // Force the JCombobox to remove its eventListener from the static GpxDataWrapper
             cbGpx.setModel(new DefaultComboBoxModel<GpxDataWrapper>());
             cbGpx = null;
         }
+
+        outerPanel = null;
+        tfTimezone = null;
+        tfOffset = null;
+        cbExifImg = null;
+        cbTaggedImg = null;
+        cbShowThumbs = null;
+        statusBarText = null;
+        sepDirectionPosition = null;
+        pDirectionPosition = null;
+
         closeDialog();
     }
 }

@@ -2,12 +2,17 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Correlation logic for {@code CorrelateGpxWithImages}.
@@ -24,19 +29,125 @@ public final class GpxImageCorrelation {
      * All images need a exifTime attribute and the List must be sorted according to these times.
      * @param images images to match
      * @param selectedGpx selected GPX data
-     * @param offset offset
-     * @param forceTags force tagging of all photos, otherwise prefs are used
+     * @param settings correlation settings
      * @return number of matched points
      */
-    public static int matchGpxTrack(List<? extends GpxImageEntry> images, GpxData selectedGpx, long offset, boolean forceTags) {
+    public static int matchGpxTrack(List<? extends GpxImageEntry> images, GpxData selectedGpx, GpxImageCorrelationSettings settings) {
         int ret = 0;
 
+        boolean trkInt, trkTag, segInt, segTag;
+        int trkTime, trkDist, trkTagTime, segTime, segDist, segTagTime;
+
+        if (settings.isForceTags()) {
+            // temporary option to override advanced settings and activate all possible interpolations / tagging methods
+            trkInt = trkTag = segInt = segTag = true;
+            trkTime = trkDist = trkTagTime = segTime = segDist = segTagTime = Integer.MAX_VALUE;
+        } else {
+            // Load the settings
+            trkInt = Config.getPref().getBoolean("geoimage.trk.int", false);
+            trkTime = Config.getPref().getBoolean("geoimage.trk.int.time", false) ?
+                    Config.getPref().getInt("geoimage.trk.int.time.val", 60) : Integer.MAX_VALUE;
+            trkDist = Config.getPref().getBoolean("geoimage.trk.int.dist", false) ?
+                    Config.getPref().getInt("geoimage.trk.int.dist.val", 50) : Integer.MAX_VALUE;
+
+            trkTag = Config.getPref().getBoolean("geoimage.trk.tag", true);
+            trkTagTime = Config.getPref().getBoolean("geoimage.trk.tag.time", true) ?
+                    Config.getPref().getInt("geoimage.trk.tag.time.val", 2) : Integer.MAX_VALUE;
+
+            segInt = Config.getPref().getBoolean("geoimage.seg.int", true);
+            segTime = Config.getPref().getBoolean("geoimage.seg.int.time", true) ?
+                    Config.getPref().getInt("geoimage.seg.int.time.val", 60) : Integer.MAX_VALUE;
+            segDist = Config.getPref().getBoolean("geoimage.seg.int.dist", true) ?
+                    Config.getPref().getInt("geoimage.seg.int.dist.val", 50) : Integer.MAX_VALUE;
+
+            segTag = Config.getPref().getBoolean("geoimage.seg.tag", true);
+            segTagTime = Config.getPref().getBoolean("geoimage.seg.tag.time", true) ?
+                    Config.getPref().getInt("geoimage.seg.tag.time.val", 2) : Integer.MAX_VALUE;
+        }
+
+        final GpxImageDirectionPositionSettings dirpos = settings.getDirectionPositionSettings();
+        final long offset = settings.getOffset();
+
+        boolean isFirst = true;
         long prevWpTime = 0;
         WayPoint prevWp = null;
 
-        List<List<List<WayPoint>>> trks = new ArrayList<>();
+        for (List<List<WayPoint>> segs : loadTracks(selectedGpx.tracks)) {
+            boolean firstSegment = true;
+            for (List<WayPoint> wps : segs) {
+                for (int i = 0; i < wps.size(); i++) {
+                    final WayPoint curWp = wps.get(i);
+                    // Interpolate timestamps in the segment, if one or more waypoints miss them
+                    if (!curWp.hasDate()) {
+                        //check if any of the following waypoints has a timestamp...
+                        if (i > 0 && wps.get(i - 1).hasDate()) {
+                            long prevWpTimeNoOffset = wps.get(i - 1).getTimeInMillis();
+                            double totalDist = 0;
+                            List<Pair<Double, WayPoint>> nextWps = new ArrayList<>();
+                            for (int j = i; j < wps.size(); j++) {
+                                totalDist += wps.get(j - 1).getCoor().greatCircleDistance(wps.get(j).getCoor());
+                                nextWps.add(new Pair<>(totalDist, wps.get(j)));
+                                if (wps.get(j).hasDate()) {
+                                    // ...if yes, interpolate everything in between
+                                    long timeDiff = wps.get(j).getTimeInMillis() - prevWpTimeNoOffset;
+                                    for (Pair<Double, WayPoint> pair : nextWps) {
+                                        pair.b.setTimeInMillis((long) (prevWpTimeNoOffset + (timeDiff * (pair.a / totalDist))));
+                                    }
+                                    break;
+                                }
+                            }
+                            if (!curWp.hasDate()) {
+                                break; //It's pointless to continue with this segment, because none of the following waypoints had a timestamp
+                            }
+                        } else {
+                            // Timestamps on waypoints without preceding timestamps in the same segment can not be interpolated, so try next one
+                            continue;
+                        }
+                    }
 
-        for (IGpxTrack trk : selectedGpx.tracks) {
+                    final long curWpTime = curWp.getTimeInMillis() + offset;
+                    boolean interpolate = true;
+                    int tagTime = 0;
+                    if (i == 0) {
+                        if (firstSegment) {
+                            // First segment of the track, so apply settings for tracks
+                            firstSegment = false;
+                            if (!trkInt || isFirst || prevWp == null ||
+                                    Math.abs(curWpTime - prevWpTime) > TimeUnit.MINUTES.toMillis(trkTime) ||
+                                    prevWp.getCoor().greatCircleDistance(curWp.getCoor()) > trkDist) {
+                                isFirst = false;
+                                interpolate = false;
+                                if (trkTag) {
+                                    tagTime = trkTagTime;
+                                }
+                            }
+                        } else {
+                            // Apply settings for segments
+                            if (!segInt || prevWp == null ||
+                                    Math.abs(curWpTime - prevWpTime) > TimeUnit.MINUTES.toMillis(segTime) ||
+                                    prevWp.getCoor().greatCircleDistance(curWp.getCoor()) > segDist) {
+                                interpolate = false;
+                                if (segTag) {
+                                    tagTime = segTagTime;
+                                }
+                            }
+                        }
+                    }
+                    ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset, interpolate, tagTime, false, dirpos);
+                    prevWp = curWp;
+                    prevWpTime = curWpTime;
+                }
+            }
+        }
+        if (trkTag && prevWp != null) {
+            ret += matchPoints(images, prevWp, prevWpTime, prevWp, prevWpTime, offset, false, trkTagTime, true, dirpos);
+        }
+        return ret;
+    }
+
+    static List<List<List<WayPoint>>> loadTracks(Collection<IGpxTrack> tracks) {
+        List<List<List<WayPoint>>> trks = new ArrayList<>();
+        for (IGpxTrack trk : tracks) {
             List<List<WayPoint>> segs = new ArrayList<>();
             for (IGpxTrackSegment seg : trk.getSegments()) {
                 List<WayPoint> wps = new ArrayList<>(seg.getWayPoints());
@@ -72,106 +183,7 @@ public final class GpxImageCorrelation {
                 return 0;
             return o1.get(0).get(0).compareTo(o2.get(0).get(0));
         });
-
-        boolean trkInt, trkTag, segInt, segTag;
-        int trkTime, trkDist, trkTagTime, segTime, segDist, segTagTime;
-
-        if (forceTags) { //temporary option to override advanced settings and activate all possible interpolations / tagging methods
-            trkInt = trkTag = segInt = segTag = true;
-            trkTime = trkDist = trkTagTime = segTime = segDist = segTagTime = Integer.MAX_VALUE;
-        } else {
-            // Load the settings
-            trkInt = Config.getPref().getBoolean("geoimage.trk.int", false);
-            trkTime = Config.getPref().getBoolean("geoimage.trk.int.time", false) ?
-                    Config.getPref().getInt("geoimage.trk.int.time.val", 60) : Integer.MAX_VALUE;
-            trkDist = Config.getPref().getBoolean("geoimage.trk.int.dist", false) ?
-                    Config.getPref().getInt("geoimage.trk.int.dist.val", 50) : Integer.MAX_VALUE;
-
-            trkTag = Config.getPref().getBoolean("geoimage.trk.tag", true);
-            trkTagTime = Config.getPref().getBoolean("geoimage.trk.tag.time", true) ?
-                    Config.getPref().getInt("geoimage.trk.tag.time.val", 2) : Integer.MAX_VALUE;
-
-            segInt = Config.getPref().getBoolean("geoimage.seg.int", true);
-            segTime = Config.getPref().getBoolean("geoimage.seg.int.time", true) ?
-                    Config.getPref().getInt("geoimage.seg.int.time.val", 60) : Integer.MAX_VALUE;
-            segDist = Config.getPref().getBoolean("geoimage.seg.int.dist", true) ?
-                    Config.getPref().getInt("geoimage.seg.int.dist.val", 50) : Integer.MAX_VALUE;
-
-            segTag = Config.getPref().getBoolean("geoimage.seg.tag", true);
-            segTagTime = Config.getPref().getBoolean("geoimage.seg.tag.time", true) ?
-                    Config.getPref().getInt("geoimage.seg.tag.time.val", 2) : Integer.MAX_VALUE;
-        }
-        boolean isFirst = true;
-
-        for (int t = 0; t < trks.size(); t++) {
-            List<List<WayPoint>> segs = trks.get(t);
-            for (int s = 0; s < segs.size(); s++) {
-                List<WayPoint> wps = segs.get(s);
-                for (int i = 0; i < wps.size(); i++) {
-                    WayPoint curWp = wps.get(i);
-                    // Interpolate timestamps in the segment, if one or more waypoints miss them
-                    if (!curWp.hasDate()) {
-                        //check if any of the following waypoints has a timestamp...
-                        if (i > 0 && wps.get(i - 1).hasDate()) {
-                            long prevWpTimeNoOffset = wps.get(i - 1).getTimeInMillis();
-                            double totalDist = 0;
-                            List<Pair<Double, WayPoint>> nextWps = new ArrayList<>();
-                            for (int j = i; j < wps.size(); j++) {
-                                totalDist += wps.get(j - 1).getCoor().greatCircleDistance(wps.get(j).getCoor());
-                                nextWps.add(new Pair<>(totalDist, wps.get(j)));
-                                if (wps.get(j).hasDate()) {
-                                    // ...if yes, interpolate everything in between
-                                    long timeDiff = wps.get(j).getTimeInMillis() - prevWpTimeNoOffset;
-                                    for (Pair<Double, WayPoint> pair : nextWps) {
-                                        pair.b.setTimeInMillis((long) (prevWpTimeNoOffset + (timeDiff * (pair.a / totalDist))));
-                                    }
-                                    break;
-                                }
-                            }
-                            if (!curWp.hasDate()) {
-                                break; //It's pointless to continue with this segment, because none of the following waypoints had a timestamp
-                            }
-                        } else {
-                            // Timestamps on waypoints without preceding timestamps in the same segment can not be interpolated, so try next one
-                            continue;
-                        }
-                    }
-
-                    final long curWpTime = curWp.getTimeInMillis() + offset;
-                    boolean interpolate = true;
-                    int tagTime = 0;
-                    if (i == 0) {
-                        if (s == 0) { //First segment of the track, so apply settings for tracks
-                            if (!trkInt || isFirst || prevWp == null ||
-                                    Math.abs(curWpTime - prevWpTime) > TimeUnit.MINUTES.toMillis(trkTime) ||
-                                    prevWp.getCoor().greatCircleDistance(curWp.getCoor()) > trkDist) {
-                                isFirst = false;
-                                interpolate = false;
-                                if (trkTag) {
-                                    tagTime = trkTagTime;
-                                }
-                            }
-                        } else { //Apply settings for segments
-                            if (!segInt || prevWp == null ||
-                                    Math.abs(curWpTime - prevWpTime) > TimeUnit.MINUTES.toMillis(segTime) ||
-                                    prevWp.getCoor().greatCircleDistance(curWp.getCoor()) > segDist) {
-                                interpolate = false;
-                                if (segTag) {
-                                    tagTime = segTagTime;
-                                }
-                            }
-                        }
-                    }
-                    ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset, interpolate, tagTime, false);
-                    prevWp = curWp;
-                    prevWpTime = curWpTime;
-                }
-            }
-        }
-        if (trkTag && prevWp != null) {
-            ret += matchPoints(images, prevWp, prevWpTime, prevWp, prevWpTime, offset, false, trkTagTime, true);
-        }
-        return ret;
+        return trks;
     }
 
     static Double getElevation(WayPoint wp) {
@@ -189,7 +201,7 @@ public final class GpxImageCorrelation {
     }
 
     private static int matchPoints(List<? extends GpxImageEntry> images, WayPoint prevWp, long prevWpTime, WayPoint curWp, long curWpTime,
-            long offset, boolean interpolate, int tagTime, boolean isLast) {
+            long offset, boolean interpolate, int tagTime, boolean isLast, GpxImageDirectionPositionSettings dirpos) {
 
         int ret = 0;
 
@@ -217,7 +229,7 @@ public final class GpxImageCorrelation {
             prevElevation = getElevation(prevWp);
         }
 
-        Double curElevation = getElevation(curWp);
+        final Double curElevation = getElevation(curWp);
 
         if (!interpolate || isLast) {
             final long half = Math.abs(curWpTime - prevWpTime) / 2;
@@ -249,19 +261,39 @@ public final class GpxImageCorrelation {
             // This code gives a simple linear interpolation of the coordinates between current and
             // previous track point assuming a constant speed in between
             while (i >= 0) {
-                GpxImageEntry curImg = images.get(i);
-                GpxImageEntry curTmp = curImg.getTmp();
+                final GpxImageEntry curImg = images.get(i);
+                final GpxImageEntry curTmp = curImg.getTmp();
                 final long imgTime = curImg.getExifInstant().toEpochMilli();
                 if (imgTime < prevWpTime) {
                     break;
                 }
                 if (!curTmp.hasNewGpsData()) {
                     // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless variable
-                    double timeDiff = (double) (imgTime - prevWpTime) / Math.abs(curWpTime - prevWpTime);
-                    curTmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
+                    final double timeDiff = (double) (imgTime - prevWpTime) / Math.abs(curWpTime - prevWpTime);
+                    final boolean shiftXY = dirpos.getShiftImageX() != 0d || dirpos.getShiftImageY() != 0d;
+                    final LatLon prevCoor = prevWp.getCoor();
+                    final LatLon curCoor = curWp.getCoor();
+                    LatLon position = prevCoor.interpolate(curCoor, timeDiff);
+                    if (shiftXY || dirpos.isSetImageDirection()) {
+                        double direction = prevCoor.bearing(curCoor);
+                        if (dirpos.isSetImageDirection()) {
+                            curTmp.setExifImgDir((Utils.toDegrees(direction) + dirpos.getImageDirectionAngleOffset()) % 360d);
+                            direction = Utils.toRadians(curTmp.getExifImgDir());
+                        }
+                        if (shiftXY) {
+                            final Projection proj = ProjectionRegistry.getProjection();
+                            final double offsetX = dirpos.getShiftImageX();
+                            final double offsetY = dirpos.getShiftImageY();
+                            final double r = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+                            final double orientation = (direction + LatLon.ZERO.bearing(new LatLon(offsetX, offsetY))) % (2 * Math.PI);
+                            position = proj.eastNorth2latlon(proj.latlon2eastNorth(position)
+                                    .add(r * Math.sin(orientation), r * Math.cos(orientation)));
+                        }
+                    }
+                    curTmp.setPos(position);
                     curTmp.setSpeed(speed);
                     if (curElevation != null && prevElevation != null) {
-                        curTmp.setElevation(prevElevation + (curElevation - prevElevation) * timeDiff);
+                        curTmp.setElevation(prevElevation + (curElevation - prevElevation) * timeDiff + dirpos.getElevationShift());
                     }
                     curTmp.setGpsTime(curImg.getExifInstant().minusMillis(offset));
                     curTmp.flagNewGpsData();

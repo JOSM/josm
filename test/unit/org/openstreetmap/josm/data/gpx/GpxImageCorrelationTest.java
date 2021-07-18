@@ -114,7 +114,7 @@ class GpxImageCorrelationTest {
      */
     @Test
     void testMatchGpxTrack1() {
-        assertEquals(7, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, false));
+        assertEquals(7, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
         assertEquals(null, ib.getPos());
         assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), i0.getPos()); // start of track
         assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos()); // exact match
@@ -166,7 +166,7 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.tag", false);
         s.putBoolean("geoimage.seg.int", false);
 
-        assertEquals(4, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, false));
+        assertEquals(4, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
         assertEquals(null, ib.getPos());
         assertEquals(null, i0.getPos());
         assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos());
@@ -194,7 +194,7 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.tag", false);
         s.putBoolean("geoimage.seg.int", false);
 
-        assertEquals(6, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, false));
+        assertEquals(6, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
         assertEquals(null, ib.getPos());
         assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), i0.getPos());
         assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos());
@@ -216,7 +216,7 @@ class GpxImageCorrelationTest {
      */
     @Test
     void testMatchGpxTrack4() {
-        assertEquals(9, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, true));
+        assertEquals(9, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, true)));
         assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), ib.getPos());
         assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), i0.getPos());
         assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos());
@@ -253,7 +253,7 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.int.time", false);
         s.putBoolean("geoimage.seg.int.dist", false);
 
-        assertEquals(9, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, false));
+        assertEquals(9, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
         assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), ib.getPos());
         assertEquals(new CachedLatLon(47.19286847859621, 8.79732714034617), i0.getPos());
         assertEquals(new CachedLatLon(47.196979885920882, 8.79541271366179), i1.getPos());
@@ -287,7 +287,7 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.tag", false);
         s.putBoolean("geoimage.seg.int", false);
 
-        assertEquals(4, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, false));
+        assertEquals(4, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
     }
 
     /**
@@ -306,7 +306,7 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.tag", false);
         s.putBoolean("geoimage.seg.int", false);
 
-        assertEquals(6, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, false));
+        assertEquals(6, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
     }
 
     /**
@@ -325,7 +325,7 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.tag", false);
         s.putBoolean("geoimage.seg.int", false);
 
-        assertEquals(4, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, false));
+        assertEquals(4, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
     }
 
     /**
@@ -344,7 +344,7 @@ class GpxImageCorrelationTest {
         s.putBoolean("geoimage.seg.tag", false);
         s.putBoolean("geoimage.seg.int", false);
 
-        assertEquals(6, GpxImageCorrelation.matchGpxTrack(images, gpx, 0, false));
+        assertEquals(6, GpxImageCorrelation.matchGpxTrack(images, gpx, new GpxImageCorrelationSettings(0, false)));
     }
 
     /**

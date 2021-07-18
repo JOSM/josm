@@ -14,7 +14,7 @@ public class DefaultTextComponentValidator extends AbstractTextComponentValidato
 
     /**
      * Constructs a new {@code DefaultTextComponentValidator}.
-     * @param tc he text component. Must not be null.
+     * @param tc the text component. Must not be null.
      * @param validFeedback text displayed for valid feedback
      * @param invalidFeedback text displayed for invalid feedback
      */
