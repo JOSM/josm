@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.geoimage;
 
+import static java.util.stream.Collectors.toList;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -20,9 +21,13 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,6 +35,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
@@ -39,7 +45,8 @@ import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.ImageData.ImageDataUpdateListener;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.gpx.GpxImageEntry;
+import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -71,6 +78,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     private final ImageData data;
     GpxLayer gpxLayer;
     GpxLayer gpxFauxLayer;
+    GpxData gpxFauxData;
 
     private CorrelateGpxWithImages gpxCorrelateAction;
 
@@ -246,6 +254,9 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         entries.add(new RenameLayerAction(null, this));
         entries.add(SeparatorLayerAction.INSTANCE);
         entries.add(getGpxCorrelateAction());
+        if (ExpertToggleAction.isExpert()) {
+            entries.add(new EditImagesSequenceAction(this));
+        }
         entries.add(new ShowThumbnailAction(this));
         if (!menuAdditions.isEmpty()) {
             entries.add(SeparatorLayerAction.INSTANCE);
@@ -806,13 +817,25 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     public synchronized GpxLayer getFauxGpxLayer() {
         if (gpxLayer != null) return getGpxLayer();
         if (gpxFauxLayer == null) {
-            GpxData gpxData = new GpxData();
-            for (ImageEntry image : data.getImages()) {
-                gpxData.addWaypoint(new WayPoint(image.getPos()));
-            }
-            gpxFauxLayer = new GpxLayer(gpxData);
+            gpxFauxLayer = new GpxLayer(getFauxGpxData());
         }
         return gpxFauxLayer;
+    }
+
+    /**
+     * Returns a faux GPX data built from the images or the associated GPX layer data.
+     * @return A faux GPX data or the associated GPX layer data
+     * @since 18065
+     */
+    public synchronized GpxData getFauxGpxData() {
+        if (gpxLayer != null) return getGpxLayer().data;
+        if (gpxFauxData == null) {
+            gpxFauxData = new GpxData();
+            gpxFauxData.addTrack(new GpxTrack(Arrays.asList(
+                    data.getImages().stream().map(ImageEntry::asWayPoint).filter(Objects::nonNull).collect(toList())),
+                    Collections.emptyMap()));
+        }
+        return gpxFauxData;
     }
 
     @Override
@@ -868,5 +891,29 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     @Override
     public Data getData() {
         return data;
+    }
+
+    void applyTmp() {
+        data.getImages().forEach(ImageEntry::applyTmp);
+    }
+
+    void discardTmp() {
+        data.getImages().forEach(ImageEntry::discardTmp);
+    }
+
+    /**
+     * Returns a list of images that fulfill the given criteria.
+     * Default setting is to return untagged images, but may be overwritten.
+     * @param exif also returns images with exif-gps info
+     * @param tagged also returns tagged images
+     * @return matching images
+     */
+    List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
+        return data.getImages().stream()
+                .filter(GpxImageEntry::hasExifTime)
+                .filter(e -> e.getExifCoor() == null || exif)
+                .filter(e -> tagged || !e.isTagged() || e.getExifCoor() != null)
+                .sorted(Comparator.comparing(ImageEntry::getExifInstant))
+                .collect(toList());
     }
 }

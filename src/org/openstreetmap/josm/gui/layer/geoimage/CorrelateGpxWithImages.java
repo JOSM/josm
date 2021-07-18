@@ -23,12 +23,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.ParseException;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -51,7 +50,6 @@ import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListene
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelationSettings;
-import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.data.gpx.GpxTimeOffset;
 import org.openstreetmap.josm.data.gpx.GpxTimezone;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -151,9 +149,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
                 break;
             case CANCEL:
                 if (yLayer != null) {
-                    for (ImageEntry ie : yLayer.getImageData().getImages()) {
-                        ie.discardTmp();
-                    }
+                    yLayer.discardTmp();
                     yLayer.updateBufferAndRepaint();
                 }
                 break;
@@ -187,15 +183,12 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
                     MainApplication.getMap().mapView.zoomTo(bbox);
                 }
 
-                for (ImageEntry ie : yLayer.getImageData().getImages()) {
-                    ie.applyTmp();
-                }
-
+                yLayer.applyTmp();
                 yLayer.updateBufferAndRepaint();
 
                 break;
             default:
-                throw new IllegalStateException();
+                throw new IllegalStateException(Integer.toString(result));
             }
         }
     }
@@ -468,9 +461,9 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         JLabel labelPosition = new JLabel(tr("Override position for: "));
 
-        int numAll = getSortedImgList(true, true).size();
-        int numExif = numAll - getSortedImgList(false, true).size();
-        int numTagged = numAll - getSortedImgList(true, false).size();
+        int numAll = yLayer.getSortedImgList(true, true).size();
+        int numExif = numAll - yLayer.getSortedImgList(false, true).size();
+        int numTagged = numAll - yLayer.getSortedImgList(true, false).size();
 
         cbExifImg = new JCheckBox(tr("Images with geo location in exif data ({0}/{1})", numExif, numAll));
         cbExifImg.setEnabled(numExif != 0);
@@ -580,7 +573,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         statusBarText.setFont(statusBarText.getFont().deriveFont(Font.PLAIN, 8));
         statusBar.add(statusBarText);
 
-        RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
+        RepaintTheMapListener repaintTheMap = new RepaintTheMapListener(yLayer);
         pDirectionPosition.addFocusListenerOnComponent(repaintTheMap);
         tfTimezone.addFocusListener(repaintTheMap);
         tfOffset.addFocusListener(repaintTheMap);
@@ -702,17 +695,12 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
             // The selection of images we are about to correlate may have changed.
             // So reset all images.
-            for (ImageEntry ie: yLayer.getImageData().getImages()) {
-                ie.discardTmp();
-            }
+            yLayer.discardTmp();
 
             // Construct a list of images that have a date, and sort them on the date.
             List<ImageEntry> dateImgLst = getSortedImgList();
             // Create a temporary copy for each image
-            dateImgLst.forEach(ie -> {
-                ie.createTmp();
-                ie.getTmp().unflagNewGpsData();
-            });
+            dateImgLst.forEach(ie -> ie.createTmp().unflagNewGpsData());
 
             GpxDataWrapper selGpx = selectedGPX(false);
             if (selGpx == null)
@@ -730,7 +718,14 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         }
     }
 
-    private class RepaintTheMapListener implements FocusListener {
+    static class RepaintTheMapListener implements FocusListener {
+
+        private final GeoImageLayer yLayer;
+
+        RepaintTheMapListener(GeoImageLayer yLayer) {
+            this.yLayer = Objects.requireNonNull(yLayer);
+        }
+
         @Override
         public void focusGained(FocusEvent e) { // do nothing
         }
@@ -876,23 +871,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
     }
 
     private List<ImageEntry> getSortedImgList() {
-        return getSortedImgList(cbExifImg.isSelected(), cbTaggedImg.isSelected());
-    }
-
-    /**
-     * Returns a list of images that fulfill the given criteria.
-     * Default setting is to return untagged images, but may be overwritten.
-     * @param exif also returns images with exif-gps info
-     * @param tagged also returns tagged images
-     * @return matching images
-     */
-    private List<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
-        return yLayer.getImageData().getImages().stream()
-                .filter(GpxImageEntry::hasExifTime)
-                .filter(e -> e.getExifCoor() == null || exif)
-                .filter(e -> tagged || !e.isTagged() || e.getExifCoor() != null)
-                .sorted(Comparator.comparing(ImageEntry::getExifInstant))
-                .collect(Collectors.toList());
+        return yLayer.getSortedImgList(cbExifImg.isSelected(), cbTaggedImg.isSelected());
     }
 
     private GpxDataWrapper selectedGPX(boolean complain) {

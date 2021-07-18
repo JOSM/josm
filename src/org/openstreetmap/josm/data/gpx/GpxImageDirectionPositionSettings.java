@@ -69,4 +69,11 @@ public class GpxImageDirectionPositionSettings {
     public double getElevationShift() {
         return elevationShift;
     }
+
+    @Override
+    public String toString() {
+        return "[setImageDirection=" + setImageDirection
+                + ", imageDirectionAngleOffset=" + imageDirectionAngleOffset + ", shiftImageX=" + shiftImageX
+                + ", shiftImageY=" + shiftImageY + ", elevationShift=" + elevationShift + ']';
+    }
 }

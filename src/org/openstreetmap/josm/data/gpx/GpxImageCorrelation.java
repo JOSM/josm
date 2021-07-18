@@ -25,7 +25,7 @@ public final class GpxImageCorrelation {
     }
 
     /**
-     * Match a list of photos to a gpx track with a given offset.
+     * Match a list of photos to a gpx track with given settings.
      * All images need a exifTime attribute and the List must be sorted according to these times.
      * @param images images to match
      * @param selectedGpx selected GPX data
@@ -34,6 +34,11 @@ public final class GpxImageCorrelation {
      */
     public static int matchGpxTrack(List<? extends GpxImageEntry> images, GpxData selectedGpx, GpxImageCorrelationSettings settings) {
         int ret = 0;
+
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("Correlating {0} images to {1} GPX track segments using {2}",
+                    images.size(), selectedGpx.getTrackSegsCount(), settings);
+        }
 
         boolean trkInt, trkTag, segInt, segTag;
         int trkTime, trkDist, trkTagTime, segTime, segDist, segTagTime;
@@ -72,7 +77,7 @@ public final class GpxImageCorrelation {
         long prevWpTime = 0;
         WayPoint prevWp = null;
 
-        for (List<List<WayPoint>> segs : loadTracks(selectedGpx.tracks)) {
+        for (List<List<WayPoint>> segs : loadTracks(selectedGpx.getTracks())) {
             boolean firstSegment = true;
             for (List<WayPoint> wps : segs) {
                 for (int i = 0; i < wps.size(); i++) {

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.IQuadBucketType;
@@ -511,10 +512,12 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
      * Make a fresh copy and save it in the temporary variable. Use
      * {@link #applyTmp()} or {@link #discardTmp()} if the temporary variable
      * is not needed anymore.
+     * @return the fresh copy.
      */
-    public void createTmp() {
+    public GpxImageEntry createTmp() {
         tmp = new GpxImageEntry(this);
         tmp.tmp = null;
+        return tmp;
     }
 
     /**
@@ -763,5 +766,24 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         if (value != null) {
             setter.accept(value);
         }
+    }
+
+    /**
+     * Returns a {@link WayPoint} representation of this GPX image entry.
+     * @return a {@code WayPoint} representation of this GPX image entry (containing position, instant and elevation)
+     * @since 18065
+     */
+    public WayPoint asWayPoint() {
+        CachedLatLon position = getPos();
+        WayPoint wpt = null;
+        if (position != null) {
+            wpt = new WayPoint(position);
+            wpt.setInstant(Optional.ofNullable(exifGpsTime).orElse(exifTime));
+            Double ele = getElevation();
+            if (ele != null) {
+                wpt.put(GpxConstants.PT_ELE, ele.toString());
+            }
+        }
+        return wpt;
     }
 }

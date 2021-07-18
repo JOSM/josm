@@ -58,4 +58,10 @@ public class GpxImageCorrelationSettings {
     public GpxImageDirectionPositionSettings getDirectionPositionSettings() {
         return directionPositionSettings;
     }
+
+    @Override
+    public String toString() {
+        return "[offset=" + offset + ", forceTags=" + forceTags
+                + ", directionPositionSettings=" + directionPositionSettings + ']';
+    }
 }
