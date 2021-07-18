@@ -35,6 +35,9 @@ jobs:
       with:
         path: spotbugs-josm.xml
 
-    - uses: jwgmeligmeyling/spotbugs-github-action@master
-      with:
-        path: '**/spotbugs-josm.xml'
+    # Disable step, always failing with error message
+    # TypeError: Cannot read property 'sourcepath' of undefined
+    # see https://github.com/jwgmeligmeyling/spotbugs-github-action/issues/15
+    #- uses: jwgmeligmeyling/spotbugs-github-action@master
+    #  with:
+    #    path: '**/spotbugs-josm.xml'
