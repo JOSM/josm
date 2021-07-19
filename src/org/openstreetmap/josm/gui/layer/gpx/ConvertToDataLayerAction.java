@@ -16,8 +16,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.actions.SimplifyWayAction;
-import org.openstreetmap.josm.data.gpx.GpxConstants;
-import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
@@ -71,13 +69,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             List<Way> ways = new ArrayList<>(ds.getWays());
             double err = SimplifyWayAction.askSimplifyWays(ways, tr("Would you like to simplify the ways in the converted layer?"), true);
             if (err > 0) {
-                try {
-                    // Consider the GPX tags uninteresting temporarily, to make sure it doesn't prevent simplification to remove nodes
-                    AbstractPrimitive.getUninterestingKeys().add(GpxConstants.GPX_PREFIX);
-                    SimplifyWayAction.simplifyWays(ways, err);
-                } finally {
-                    AbstractPrimitive.getUninterestingKeys().remove(GpxConstants.GPX_PREFIX);
-                }
+                SimplifyWayAction.simplifyWays(ways, err);
             }
             final OsmDataLayer osmLayer = new OsmDataLayer(ds, tr("Converted from: {0}", layer.getName()), null);
             if (layer.getAssociatedFile() != null) {
