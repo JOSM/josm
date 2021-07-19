@@ -89,6 +89,7 @@ public class Check extends KeyedItem {
         } else {
             p.add(check, GBC.eol()); // Do not fill, see #15104
         }
+        check.addChangeListener(l -> support.fireItemValueModified(this, key, getValue()));
         return true;
     }
 
@@ -98,10 +99,13 @@ public class Check extends KeyedItem {
         if (def == null && check.getState() == initialState) return;
 
         // otherwise change things according to the selected value.
-        changedTags.add(new Tag(key,
-                check.getState() == QuadStateCheckBox.State.SELECTED ? value_on :
-                    check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? value_off :
-                        null));
+        changedTags.add(new Tag(key, getValue()));
+    }
+
+    protected String getValue() {
+        return check.getState() == QuadStateCheckBox.State.SELECTED ? value_on :
+            check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? value_off :
+                null;
     }
 
     @Override
