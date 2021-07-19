@@ -150,7 +150,7 @@ public class UnclosedWays extends Test {
 
         new UnclosedWaysCheck(1102, "landuse", marktr("landuse type {0}")),
         new UnclosedWaysCheck(1103, "amenity", marktr("amenity type {0}"),
-                new HashSet<>(Arrays.asList("bench", "bicycle_parking"))),
+                new HashSet<>(Arrays.asList("bench", "bicycle_parking", "weighbridge"))),
         new UnclosedWaysCheck(1104, "sport",     marktr("sport type {0}"),
                 new HashSet<>(Arrays.asList("water_slide", "climbing", "skiing", "toboggan", "bobsleigh", "karting", "motor", "motocross",
                             "cycling"))),
