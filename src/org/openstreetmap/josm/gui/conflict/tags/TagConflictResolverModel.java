@@ -306,6 +306,6 @@ public class TagConflictResolverModel extends DefaultTableModel {
      * @since 18007
      */
     public final void actOnDecisions(BiConsumer<String, MultiValueResolutionDecision> action) {
-        decisions.forEach(action::accept);
+        decisions.forEach(action);
     }
 }

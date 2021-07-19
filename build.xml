@@ -197,18 +197,7 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </java>
     </target>
-    <target name="compile-cots" depends="init" description="Compile third-party dependencies not retrieved with Ivy">
-        <!-- COTS -->
-        <javac srcdir="${src.dir}" includes="com/kitfox/**" excludes="**/package-info.java" nowarn="on" encoding="iso-8859-1"
-            destdir="${build.dir}" release="${java.lang.version}" debug="on" includeAntRuntime="false">
-            <!-- get rid of "internal proprietary API" warning -->
-            <compilerarg value="-XDignore.symbol.file"/>
-            <classpath>
-                <path refid="runtime.path"/>
-            </classpath>
-        </javac>
-    </target>
-    <target name="compile" depends="init,javacc,compile-cots" unless="compile.notRequired" description="Compile JOSM">
+    <target name="compile" depends="init,javacc" unless="compile.notRequired" description="Compile JOSM">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone.classpath" conf="errorprone"/>
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="errorprone_javac.classpath" conf="errorprone_javac"/>
         <!-- JOSM -->
@@ -965,10 +954,6 @@ Build-Date: ${build.tstamp}
         <copy todir="${modules.dir}" flatten="true">
             <fileset refid="runtime.fileset" />
         </copy>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/svgSalamander.jar" includes="com/kitfox/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/oauth-signpost.jar" includes="oauth/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/commons-jcs.jar" includes="org/apache/commons/jcs3/**/*.class"/>
-        <jar basedir="${build.dir}" level="${clevel}" destfile="${modules.dir}/jmapviewer.jar" includes="org/openstreetmap/gui/**/*.class"/>
         <exec executable="jdeps" dir="${modules.dir}">
             <arg line="-f 'java.*|org.xml.*|org.w3c.*|sun.*|com.sun.*|com.google.*|org.tukaani.*'"/>
             <arg line="-dotoutput dots *.jar"/>
@@ -1041,6 +1026,11 @@ Build-Date: ${build.tstamp}
                 <exclude name="com/drew/metadata/wav/**"/>
                 <exclude name="com/drew/metadata/webp/**"/>
                 <exclude name="com/drew/tools/**"/>
+                <exclude name="com/kitfox/svg/app/ant/**"/>
+                <exclude name="com/kitfox/svg/app/*Dialog*"/>
+                <exclude name="com/kitfox/svg/app/*Frame*"/>
+                <exclude name="com/kitfox/svg/app/*Player*"/>
+                <exclude name="com/kitfox/svg/app/*Viewer*"/>
                 <exclude name="org/apache/commons/compress/PasswordRequiredException*"/>
                 <exclude name="org/apache/commons/compress/archivers/**"/>
                 <exclude name="org/apache/commons/compress/changes/**"/>

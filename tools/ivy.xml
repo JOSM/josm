@@ -18,7 +18,7 @@
         <!-- checkstyle->default -->
         <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.43" conf="checkstyle->default"/>
         <!-- proguard->default -->
-        <dependency org="com.guardsquare" name="proguard-ant" rev="7.1.0-beta3" conf="proguard->default"/>
+        <dependency org="com.guardsquare" name="proguard-ant" rev="7.1.0" conf="proguard->default"/>
         <!-- pmd->default -->
         <dependency org="net.sourceforge.pmd" name="pmd-core" rev="6.20.0" conf="pmd->default"/>
         <dependency org="net.sourceforge.pmd" name="pmd-java" rev="6.20.0" conf="pmd->default"/>

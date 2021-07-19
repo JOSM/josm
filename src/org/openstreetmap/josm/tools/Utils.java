@@ -669,6 +669,7 @@ public final class Utils {
      * @see <a href="https://dzone.com/articles/preventing-your-java-collections-from-wasting-memo">
      *     How to Prevent Your Java Collections From Wasting Memory</a>
      */
+    @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> toUnmodifiableMap(Map<K, V> map) {
         if (map == null || map.isEmpty()) {
             return Collections.emptyMap();
