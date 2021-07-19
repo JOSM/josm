@@ -297,13 +297,18 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
 
     @Override
     public void layerAdded(LayerAddEvent e) {
-        if (e.getAddedLayer() instanceof OsmDataLayer) {
-            registerNewlayer((OsmDataLayer) e.getAddedLayer());
-        } else if (e.getAddedLayer() instanceof NoteLayer) {
-            registerNewlayer((NoteLayer) e.getAddedLayer());
-        } else if (e.getAddedLayer() instanceof AbstractModifiableLayer) {
-            synchronized (layersLock) {
-                layersInfo.add(new AutosaveLayerInfo<>((AbstractModifiableLayer) e.getAddedLayer()));
+        Layer layer = e.getAddedLayer();
+        if (layer.isSavable()) {
+            if (layer instanceof OsmDataLayer) {
+                registerNewlayer((OsmDataLayer) layer);
+            } else if (layer instanceof NoteLayer) {
+                registerNewlayer((NoteLayer) layer);
+            } else if (layer instanceof AbstractModifiableLayer) {
+                synchronized (layersLock) {
+                    layersInfo.add(new AutosaveLayerInfo<>((AbstractModifiableLayer) layer));
+                }
+            } else {
+                Logging.error("Unsupported savable layer type: {0}", layer.getClass().getSimpleName());
             }
         }
     }
