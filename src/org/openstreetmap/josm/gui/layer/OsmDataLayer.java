@@ -761,17 +761,21 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
      */
     public static GpxData toGpxData(DataSet data, File file) {
         GpxData gpxData = new GpxData();
+        fillGpxData(gpxData, data, file, GpxConstants.GPX_PREFIX);
+        return gpxData;
+    }
+
+    protected static void fillGpxData(GpxData gpxData, DataSet data, File file, String gpxPrefix) {
         if (data.getGPXNamespaces() != null) {
             gpxData.getNamespaces().addAll(data.getGPXNamespaces());
         }
         gpxData.storageFile = file;
         Set<Node> doneNodes = new HashSet<>();
-        waysToGpxData(data.getWays(), gpxData, doneNodes);
-        nodesToGpxData(data.getNodes(), gpxData, doneNodes);
-        return gpxData;
+        waysToGpxData(data.getWays(), gpxData, doneNodes, gpxPrefix);
+        nodesToGpxData(data.getNodes(), gpxData, doneNodes, gpxPrefix);
     }
 
-    private static void waysToGpxData(Collection<Way> ways, GpxData gpxData, Set<Node> doneNodes) {
+    private static void waysToGpxData(Collection<Way> ways, GpxData gpxData, Set<Node> doneNodes, String gpxPrefix) {
         /* When the dataset has been obtained from a gpx layer and now is being converted back,
          * the ways have negative ids. The first created way corresponds to the first gpx segment,
          * and has the highest id (i.e., closest to zero).
@@ -790,7 +794,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             GpxExtensionCollection trkExts = new GpxExtensionCollection();
             GpxExtensionCollection segExts = new GpxExtensionCollection();
             for (Entry<String, String> e : w.getKeys().entrySet()) {
-                String k = e.getKey().startsWith(GpxConstants.GPX_PREFIX) ? e.getKey().substring(GpxConstants.GPX_PREFIX.length()) : e.getKey();
+                String k = e.getKey().startsWith(gpxPrefix) ? e.getKey().substring(gpxPrefix.length()) : e.getKey();
                 String v = e.getValue();
                 if (GpxConstants.RTE_TRK_KEYS.contains(k)) {
                     trkAttr.put(k, v);
@@ -798,7 +802,7 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
                     k = GpxConstants.EXTENSION_ABBREVIATIONS.entrySet()
                             .stream()
                             .filter(s -> s.getValue().equals(e.getKey()))
-                            .map(s -> s.getKey().substring(GpxConstants.GPX_PREFIX.length()))
+                            .map(s -> s.getKey().substring(gpxPrefix.length()))
                             .findAny()
                             .orElse(k);
                     if (k.startsWith("extension")) {
@@ -821,10 +825,10 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
                     }
                     continue;
                 }
-                if (!n.isTagged() || containsOnlyGpxTags(n)) {
+                if (!n.isTagged() || containsOnlyGpxTags(n, gpxPrefix)) {
                     doneNodes.add(n);
                 }
-                trkseg.add(nodeToWayPoint(n));
+                trkseg.add(nodeToWayPoint(n, Long.MIN_VALUE, gpxPrefix));
             }
             trk.add(new GpxTrackSegment(trkseg));
             trk.forEach(gpxseg -> gpxseg.getExtensions().addAll(segExts));
@@ -834,52 +838,54 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         });
     }
 
-    private static boolean containsOnlyGpxTags(Tagged t) {
+    private static boolean containsOnlyGpxTags(Tagged t, String gpxPrefix) {
         return t.keys()
-                .allMatch(key -> GpxConstants.WPT_KEYS.contains(key) || key.startsWith(GpxConstants.GPX_PREFIX));
+                .allMatch(key -> GpxConstants.WPT_KEYS.contains(key) || key.startsWith(gpxPrefix));
     }
 
     /**
      * Reads the Gpx key from the given {@link OsmPrimitive}, with or without &quot;gpx:&quot; prefix
      * @param prim OSM primitive
+     * @param gpxPrefix the GPX prefix
      * @param key GPX key without prefix
      * @return the value or <code>null</code> if not present
-     * @since 15419
      */
-    public static String gpxVal(OsmPrimitive prim, String key) {
-        String val = prim.get(GpxConstants.GPX_PREFIX + key);
+    private static String gpxVal(OsmPrimitive prim, String gpxPrefix, String key) {
+        String val = prim.get(gpxPrefix + key);
         return val != null ? val : prim.get(key);
     }
 
     /**
-     * Converts a node to a waypoint.
-     * @param n the {@code Node} to convert
-     * @return {@code WayPoint} object
-     * @since 13210
-     */
-    public static WayPoint nodeToWayPoint(Node n) {
-        return nodeToWayPoint(n, Long.MIN_VALUE);
-    }
-
-    /**
-     * Converts a node to a waypoint.
+     * Converts a node to a waypoint with default {@link GpxConstants#GPX_PREFIX} for tags.
      * @param n the {@code Node} to convert
      * @param time a timestamp value in milliseconds from the epoch.
      * @return {@code WayPoint} object
      * @since 13210
      */
     public static WayPoint nodeToWayPoint(Node n, long time) {
+        return nodeToWayPoint(n, time, GpxConstants.GPX_PREFIX);
+    }
+
+    /**
+     * Converts a node to a waypoint with a configurable GPX prefix for tags.
+     * @param n the {@code Node} to convert
+     * @param time a timestamp value in milliseconds from the epoch.
+     * @param gpxPrefix the GPX prefix for tags
+     * @return {@code WayPoint} object
+     * @since 18078
+     */
+    public static WayPoint nodeToWayPoint(Node n, long time, String gpxPrefix) {
         WayPoint wpt = new WayPoint(n.getCoor());
 
         // Position info
 
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_ELE, null);
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_ELE, null);
 
         try {
             String v;
             if (time > Long.MIN_VALUE) {
                 wpt.setTimeInMillis(time);
-            } else if ((v = gpxVal(n, GpxConstants.PT_TIME)) != null) {
+            } else if ((v = gpxVal(n, gpxPrefix, GpxConstants.PT_TIME)) != null) {
                 wpt.setInstant(DateUtils.parseInstant(v));
             } else if (!n.isTimestampEmpty()) {
                 wpt.setInstant(n.getInstant());
@@ -888,39 +894,39 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             Logging.error(e);
         }
 
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_MAGVAR, null);
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_GEOIDHEIGHT, null);
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_MAGVAR, null);
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_GEOIDHEIGHT, null);
 
         // Description info
 
-        addStringIfPresent(wpt, n, GpxConstants.GPX_NAME, null, null);
-        addStringIfPresent(wpt, n, GpxConstants.GPX_DESC, "description", null);
-        addStringIfPresent(wpt, n, GpxConstants.GPX_CMT, "comment", null);
-        addStringIfPresent(wpt, n, GpxConstants.GPX_SRC, "source", "source:position");
+        addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.GPX_NAME, null, null);
+        addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.GPX_DESC, "description", null);
+        addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.GPX_CMT, "comment", null);
+        addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.GPX_SRC, "source", "source:position");
 
         Collection<GpxLink> links = Stream.of("link", "url", "website", "contact:website")
-                .map(key -> gpxVal(n, key))
+                .map(key -> gpxVal(n, gpxPrefix, key))
                 .filter(Objects::nonNull)
                 .map(GpxLink::new)
                 .collect(Collectors.toList());
         wpt.put(GpxConstants.META_LINKS, links);
 
-        addStringIfPresent(wpt, n, GpxConstants.PT_SYM, "wpt_symbol", null);
-        addStringIfPresent(wpt, n, GpxConstants.PT_TYPE, null, null);
+        addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_SYM, "wpt_symbol", null);
+        addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_TYPE, null, null);
 
         // Accuracy info
-        addStringIfPresent(wpt, n, GpxConstants.PT_FIX, "gps:fix", null);
-        addIntegerIfPresent(wpt, n, GpxConstants.PT_SAT, "gps:sat");
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_HDOP, "gps:hdop");
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_VDOP, "gps:vdop");
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_PDOP, "gps:pdop");
-        addDoubleIfPresent(wpt, n, GpxConstants.PT_AGEOFDGPSDATA, "gps:ageofdgpsdata");
-        addIntegerIfPresent(wpt, n, GpxConstants.PT_DGPSID, "gps:dgpsid");
+        addStringIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_FIX, "gps:fix", null);
+        addIntegerIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_SAT, "gps:sat");
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_HDOP, "gps:hdop");
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_VDOP, "gps:vdop");
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_PDOP, "gps:pdop");
+        addDoubleIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_AGEOFDGPSDATA, "gps:ageofdgpsdata");
+        addIntegerIfPresent(wpt, n, gpxPrefix, GpxConstants.PT_DGPSID, "gps:dgpsid");
 
         return wpt;
     }
 
-    private static void nodesToGpxData(Collection<Node> nodes, GpxData gpxData, Set<Node> doneNodes) {
+    private static void nodesToGpxData(Collection<Node> nodes, GpxData gpxData, Set<Node> doneNodes, String gpxPrefix) {
         List<Node> sortedNodes = new ArrayList<>(nodes);
         sortedNodes.removeAll(doneNodes);
         Collections.sort(sortedNodes);
@@ -928,14 +934,14 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
             if (n.isIncomplete() || n.isDeleted()) {
                 continue;
             }
-            gpxData.waypoints.add(nodeToWayPoint(n));
+            gpxData.waypoints.add(nodeToWayPoint(n, Long.MIN_VALUE, gpxPrefix));
         }
     }
 
-    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String osmKey) {
-        String value = gpxVal(p, gpxKey);
+    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxPrefix, String gpxKey, String osmKey) {
+        String value = gpxVal(p, gpxPrefix, gpxKey);
         if (value == null && osmKey != null) {
-            value = gpxVal(p, osmKey);
+            value = gpxVal(p, gpxPrefix, osmKey);
         }
         if (value != null) {
             try {
@@ -951,10 +957,10 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         }
     }
 
-    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String osmKey) {
-        String value = gpxVal(p, gpxKey);
+    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxPrefix, String gpxKey, String osmKey) {
+        String value = gpxVal(p, gpxPrefix, gpxKey);
         if (value == null && osmKey != null) {
-            value = gpxVal(p, osmKey);
+            value = gpxVal(p, gpxPrefix, osmKey);
         }
         if (value != null) {
             try {
@@ -969,13 +975,13 @@ public class OsmDataLayer extends AbstractOsmDataLayer implements Listener, Data
         }
     }
 
-    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String osmKey, String osmKey2) {
-        String value = gpxVal(p, gpxKey);
+    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxPrefix, String gpxKey, String osmKey, String osmKey2) {
+        String value = gpxVal(p, gpxPrefix, gpxKey);
         if (value == null && osmKey != null) {
-            value = gpxVal(p, osmKey);
+            value = gpxVal(p, gpxPrefix, osmKey);
         }
         if (value == null && osmKey2 != null) {
-            value = gpxVal(p, osmKey2);
+            value = gpxVal(p, gpxPrefix, osmKey2);
         }
         // Sanity checks
         if (value != null && (!GpxConstants.PT_FIX.equals(gpxKey) || GpxConstants.FIX_VALUES.contains(value))) {

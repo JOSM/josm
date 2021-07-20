@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -102,11 +103,19 @@ public class ImageDirectionPositionPanel extends JPanel {
     }
 
     /**
-     * Adds a change listener on all checkboxes and spinners of this panel.
+     * Adds a change listener on all checkboxes of this panel.
+     * @param listener change listener to add
+     * @since 18078
+     */
+    public void addItemListenerOnComponents(ItemListener listener) {
+        cChangeImageDirection.addItemListener(listener);
+    }
+
+    /**
+     * Adds a change listener on all spinners of this panel.
      * @param listener change listener to add
      */
     public void addChangeListenerOnComponents(ChangeListener listener) {
-        cChangeImageDirection.addChangeListener(listener);
         sOffsetDegrees.addChangeListener(listener);
         sX.addChangeListener(listener);
         sY.addChangeListener(listener);

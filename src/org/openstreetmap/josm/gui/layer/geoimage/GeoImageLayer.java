@@ -67,6 +67,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Layer displaying geotagged pictures.
+ * @since 99
  */
 public class GeoImageLayer extends AbstractModifiableLayer implements
         JumpToMarkerLayer, NavigatableComponent.ZoomChangeListener, ImageDataUpdateListener {
@@ -76,7 +77,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     private static volatile List<MapMode> supportedMapModes;
 
     private final ImageData data;
-    GpxLayer gpxLayer;
+    GpxData gpxData;
     GpxLayer gpxFauxLayer;
     GpxData gpxFauxData;
 
@@ -152,9 +153,21 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      * @since 6392
      */
     public GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer, final String name, boolean useThumbs) {
+        this(data, gpxLayer != null ? gpxLayer.data : null, name, useThumbs);
+    }
+
+    /**
+     * Constructs a new {@code GeoImageLayer}.
+     * @param data The list of images to display
+     * @param gpxData The associated GPX data
+     * @param name Layer name
+     * @param useThumbs Thumbnail display flag
+     * @since 18078
+     */
+    public GeoImageLayer(final List<ImageEntry> data, GpxData gpxData, final String name, boolean useThumbs) {
         super(name != null ? name : tr("Geotagged Images"));
         this.data = new ImageData(data);
-        this.gpxLayer = gpxLayer;
+        this.gpxData = gpxData;
         this.useThumbs = useThumbs;
         this.data.addImageDataUpdateListener(this);
     }
@@ -792,11 +805,22 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     }
 
     /**
-     * Returns the associated GPX layer.
-     * @return The associated GPX layer
+     * Returns the associated GPX data if any.
+     * @return The associated GPX data or {@code null}
+     * @since 18078
+     */
+    public GpxData getGpxData() {
+        return gpxData;
+    }
+
+    /**
+     * Returns the associated GPX layer if any.
+     * @return The associated GPX layer or {@code null}
      */
     public GpxLayer getGpxLayer() {
-        return gpxLayer;
+        return gpxData != null ? MainApplication.getLayerManager().getLayersOfType(GpxLayer.class)
+                .stream().filter(l -> gpxData.equals(l.getGpxData()))
+                .findFirst().orElseThrow(() -> new IllegalStateException()) : null;
     }
 
     /**
@@ -816,7 +840,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      * @since 14802
      */
     public synchronized GpxLayer getFauxGpxLayer() {
-        if (gpxLayer != null) return getGpxLayer();
+        GpxLayer gpxLayer = getGpxLayer();
+        if (gpxLayer != null) return gpxLayer;
         if (gpxFauxLayer == null) {
             gpxFauxLayer = new GpxLayer(getFauxGpxData());
         }
@@ -829,7 +854,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      * @since 18065
      */
     public synchronized GpxData getFauxGpxData() {
-        if (gpxLayer != null) return getGpxLayer().data;
+        GpxLayer gpxLayer = getGpxLayer();
+        if (gpxLayer != null) return gpxLayer.data;
         if (gpxFauxData == null) {
             gpxFauxData = new GpxData();
             gpxFauxData.addTrack(new GpxTrack(Arrays.asList(

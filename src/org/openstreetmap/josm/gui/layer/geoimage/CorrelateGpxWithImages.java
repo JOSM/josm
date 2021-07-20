@@ -48,6 +48,9 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
+import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
+import org.openstreetmap.josm.data.gpx.GpxDataContainer;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelation;
 import org.openstreetmap.josm.data.gpx.GpxImageCorrelationSettings;
 import org.openstreetmap.josm.data.gpx.GpxTimeOffset;
@@ -56,7 +59,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -85,6 +88,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
     private static boolean forceTags;
 
     private final transient GeoImageLayer yLayer;
+    private transient CorrelationSupportLayer supportLayer;
     private transient GpxTimezone timezone;
     private transient GpxTimeOffset delta;
 
@@ -152,6 +156,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
                     yLayer.discardTmp();
                     yLayer.updateBufferAndRepaint();
                 }
+                removeSupportLayer();
                 break;
             case AGAIN:
                 actionPerformed(null);
@@ -185,11 +190,19 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
                 yLayer.applyTmp();
                 yLayer.updateBufferAndRepaint();
+                removeSupportLayer();
 
                 break;
             default:
                 throw new IllegalStateException(Integer.toString(result));
             }
+        }
+    }
+
+    private void removeSupportLayer() {
+        if (supportLayer != null) {
+            MainApplication.getLayerManager().removeLayer(supportLayer);
+            supportLayer = null;
         }
     }
 
@@ -229,6 +242,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
     private ExtendedDialog syncDialog;
     private JPanel outerPanel;
     private JosmComboBox<GpxDataWrapper> cbGpx;
+    private JButton buttonSupport;
     private JosmTextField tfTimezone;
     private JosmTextField tfOffset;
     private JCheckBox cbExifImg;
@@ -265,6 +279,16 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
                     outerPanel.setCursor(Cursor.getDefaultCursor());
                 }
             }
+        }
+    }
+
+    private class UseSupportLayerActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            supportLayer = new CorrelationSupportLayer(yLayer.getFauxGpxData());
+            supportLayer.getGpxData().addChangeListener(statusBarUpdaterWithRepaint);
+            MainApplication.getLayerManager().addLayer(supportLayer);
         }
     }
 
@@ -330,20 +354,43 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         @Override
         public void layerAdded(LayerAddEvent e) {
             Layer layer = e.getAddedLayer();
-            if (layer instanceof GpxLayer) {
-                GpxLayer gpx = (GpxLayer) layer;
-                File file = gpx.data.storageFile;
+            if (layer instanceof GpxDataContainer) {
+                GpxData gpx = ((GpxDataContainer) layer).getGpxData();
+                File file = gpx.storageFile;
                 removeDuplicates(file);
-                GpxDataWrapper gdw = new GpxDataWrapper(gpx.getName(), gpx.data, file);
-                gpx.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
+                GpxDataWrapper gdw = new GpxDataWrapper(layer.getName(), gpx, file);
+                layer.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
                 gpxModel.addElement(gdw);
-                forEachLayer(CorrelateGpxWithImages::repaintCombobox);
+                forEachLayer(correlateAction -> {
+                    correlateAction.repaintCombobox();
+                    if (layer.equals(correlateAction.supportLayer)) {
+                        correlateAction.buttonSupport.setEnabled(false);
+                    }
+                });
             }
         }
 
         @Override
         public void layerRemoving(LayerRemoveEvent e) {
-            // Not used
+            Layer layer = e.getRemovedLayer();
+            if (layer instanceof GpxDataContainer) {
+                GpxData removedGpxData = ((GpxDataContainer) layer).getGpxData();
+                for (int i = gpxModel.getSize() - 1; i >= 0; i--) {
+                    if (gpxModel.getElementAt(i).data.equals(removedGpxData)) {
+                        gpxModel.removeElementAt(i);
+                        forEachLayer(correlateAction -> {
+                            correlateAction.repaintCombobox();
+                            if (layer.equals(correlateAction.supportLayer)) {
+                                correlateAction.supportLayer.getGpxData()
+                                    .removeChangeListener(correlateAction.statusBarUpdaterWithRepaint);
+                                correlateAction.supportLayer = null;
+                                correlateAction.buttonSupport.setEnabled(true);
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
         }
 
         @Override
@@ -373,12 +420,15 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
     private void constructGpxModel(NoGpxDataWrapper nogdw) {
         gpxModel = new DefaultComboBoxModel<>();
         GpxDataWrapper defaultItem = null;
-        for (GpxLayer cur : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class)) {
-            GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), cur.data, cur.data.storageFile);
-            cur.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
-            gpxModel.addElement(gdw);
-            if (cur == yLayer.gpxLayer || defaultItem == null) {
-                defaultItem = gdw;
+        for (AbstractModifiableLayer cur : MainApplication.getLayerManager().getLayersOfType(AbstractModifiableLayer.class)) {
+            if (cur instanceof GpxDataContainer) {
+                GpxData data = ((GpxDataContainer) cur).getGpxData();
+                GpxDataWrapper gdw = new GpxDataWrapper(cur.getName(), data, data.storageFile);
+                cur.addPropertyChangeListener(new GpxLayerRenamedListener(gdw));
+                gpxModel.addElement(gdw);
+                if (data.equals(yLayer.gpxData) || defaultItem == null) {
+                    defaultItem = gdw;
+                }
             }
         }
 
@@ -432,6 +482,10 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         JButton buttonOpen = new JButton(tr("Open another GPX trace"));
         buttonOpen.addActionListener(new LoadGpxDataActionListener());
         panelCb.add(buttonOpen);
+
+        buttonSupport = new JButton(tr("Use support layer"));
+        buttonSupport.addActionListener(new UseSupportLayerActionListener());
+        panelCb.add(buttonSupport);
 
         JPanel panelTf = new JPanel(new GridBagLayout());
 
@@ -583,6 +637,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         cbExifImg.addItemListener(statusBarUpdaterWithRepaint);
         cbTaggedImg.addItemListener(statusBarUpdaterWithRepaint);
         pDirectionPosition.addChangeListenerOnComponents(statusBarUpdaterWithRepaint);
+        pDirectionPosition.addItemListenerOnComponents(statusBarUpdaterWithRepaint);
 
         statusBarUpdater.matchAndUpdateStatusBar();
         yLayer.updateBufferAndRepaint();
@@ -611,6 +666,9 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
     @Override
     public void expertChanged(boolean isExpert) {
+        if (buttonSupport != null) {
+            buttonSupport.setVisible(isExpert);
+        }
         if (sepDirectionPosition != null) {
             sepDirectionPosition.setVisible(isExpert);
         }
@@ -639,7 +697,7 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
     private final transient StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
     private final transient StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
 
-    private class StatusBarUpdater implements DocumentListener, ItemListener, ChangeListener, ActionListener {
+    private class StatusBarUpdater implements DocumentListener, ItemListener, ChangeListener, ActionListener, GpxDataChangeListener {
         private final boolean doRepaint;
 
         StatusBarUpdater(boolean doRepaint) {
@@ -673,6 +731,11 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            matchAndUpdateStatusBar();
+        }
+
+        @Override
+        public void gpxDataChanged(GpxDataChangeEvent e) {
             matchAndUpdateStatusBar();
         }
 
@@ -896,6 +959,8 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
             cbGpx = null;
         }
 
+        closeDialog();
+
         outerPanel = null;
         tfTimezone = null;
         tfOffset = null;
@@ -905,7 +970,5 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         statusBarText = null;
         sepDirectionPosition = null;
         pDirectionPosition = null;
-
-        closeDialog();
     }
 }

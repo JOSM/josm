@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Objects;
@@ -39,8 +41,10 @@ public class EditImagesSequenceAction extends JosmAction {
         this.yLayer = Objects.requireNonNull(layer);
         this.pDirectionPosition = ImageDirectionPositionPanel.forImageSequence();
 
+        Updater updater = new Updater();
         pDirectionPosition.addFocusListenerOnComponent(new RepaintTheMapListener(yLayer));
-        pDirectionPosition.addChangeListenerOnComponents(new Updater());
+        pDirectionPosition.addChangeListenerOnComponents(updater);
+        pDirectionPosition.addItemListenerOnComponents(updater);
     }
 
     @Override
@@ -57,10 +61,15 @@ public class EditImagesSequenceAction extends JosmAction {
         yLayer.updateBufferAndRepaint();
     }
 
-    class Updater implements ChangeListener {
+    class Updater implements ChangeListener, ItemListener {
 
         @Override
         public void stateChanged(ChangeEvent e) {
+            matchAndUpdate();
+        }
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
             matchAndUpdate();
         }
 

@@ -33,6 +33,7 @@ import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxDataContainer;
 import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.gpx.IGpxTrack;
 import org.openstreetmap.josm.data.gpx.IGpxTrackSegment;
@@ -66,7 +67,7 @@ import org.openstreetmap.josm.tools.date.Interval;
 /**
  * A layer that displays data from a Gpx file / the OSM gpx downloads.
  */
-public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChangeListener, JumpToMarkerLayer {
+public class GpxLayer extends AbstractModifiableLayer implements GpxDataContainer, ExpertModeChangeListener, JumpToMarkerLayer {
 
     /** GPX data */
     public GpxData data;
@@ -571,6 +572,11 @@ public class GpxLayer extends AbstractModifiableLayer implements ExpertModeChang
 
     @Override
     public Data getData() {
+        return data;
+    }
+
+    @Override
+    public GpxData getGpxData() {
         return data;
     }
 
