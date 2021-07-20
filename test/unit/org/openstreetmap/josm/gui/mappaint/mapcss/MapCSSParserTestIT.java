@@ -1,17 +1,22 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Integration tests of {@link MapCSSParser}.
  */
+@IntegrationTest
 class MapCSSParserTestIT {
 
     /**
@@ -24,10 +29,10 @@ class MapCSSParserTestIT {
     /**
      * Checks Kothic stylesheets
      */
-    @Test
-    @Disabled("parsing fails")
-    void testKothicStylesheets() {
-        new MapCSSStyleSource("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/default.mapcss").loadStyleSource();
-        new MapCSSStyleSource("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/mapink.mapcss").loadStyleSource();
+    @ParameterizedTest
+    @ValueSource(strings = {"default.mapcss", "mapink.mapcss"})
+    void testKothicStylesheets(final String styleFile) {
+        final MapCSSStyleSource style = new MapCSSStyleSource("https://raw.githubusercontent.com/kothic/kothic/master/src/styles/" + styleFile);
+        assertDoesNotThrow((Executable) style::loadStyleSource);
     }
 }

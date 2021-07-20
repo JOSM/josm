@@ -9,9 +9,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.InputStream;
 import java.util.Collection;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -19,20 +17,17 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit test of {@link HighwaysTest}.
  */
+@Main
+@BasicPreferences
+@Projection
 class HighwaysTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeEach
-    public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     private static Way createTestSetting(String highway, String highwayLink) {
         DataSet ds = new DataSet();
 

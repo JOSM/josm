@@ -15,11 +15,13 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHan
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 /**
  * Unit tests of {@link ImageryHandler} class.
  */
 @BasicPreferences
+@LayerEnvironment
 class ImageryHandlerTest {
     private static ImageryHandler newHandler(String url) throws RequestHandlerBadRequestException {
         ImageryHandler req = new ImageryHandler();

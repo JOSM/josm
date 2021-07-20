@@ -16,10 +16,12 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link UnGlueAction}.
  */
+@BasicPreferences
 final class UnGlueActionTest {
 
     /** Class under test. */
@@ -30,7 +32,7 @@ final class UnGlueActionTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Setup test.
@@ -142,3 +144,4 @@ final class UnGlueActionTest {
         }
     }
 }
+

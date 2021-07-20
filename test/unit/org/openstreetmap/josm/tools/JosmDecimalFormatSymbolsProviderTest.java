@@ -14,23 +14,12 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link JosmDecimalFormatSymbolsProvider}.
  */
+@org.openstreetmap.josm.testutils.annotations.I18n
 class JosmDecimalFormatSymbolsProviderTest {
-
-    /**
-     * Setup rule.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
     @BeforeAll
     static void beforeAll() throws IOException {
         if (Utils.getJavaVersion() >= 9) {

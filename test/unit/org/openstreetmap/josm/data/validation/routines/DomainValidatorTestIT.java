@@ -49,6 +49,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -58,6 +59,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @version $Revision: 1723861 $
  */
+@IntegrationTest
 class DomainValidatorTestIT {
 
     /**

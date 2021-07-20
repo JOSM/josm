@@ -14,8 +14,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,6 +30,8 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetsTest;
 import org.openstreetmap.josm.gui.tagging.presets.items.Link;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -39,6 +43,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link TaggingPresetPreference} class.
  */
+@IntegrationTest
+@BasicPreferences
+@Timeout(value = 20, unit = TimeUnit.MINUTES)
 class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase {
 
     /**
@@ -46,7 +53,7 @@ class TaggingPresetPreferenceTestIT extends AbstractExtendedSourceEntryTestCase 
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().https().timeout(10000*120).parameters();
+    public static JOSMTestRules test = new JOSMTestRules().https().parameters();
 
     /**
      * Setup test

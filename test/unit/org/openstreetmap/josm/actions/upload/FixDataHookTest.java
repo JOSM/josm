@@ -22,10 +22,12 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link FixDataHook}.
  */
+@BasicPreferences
 class FixDataHookTest {
 
     /**
@@ -127,3 +129,4 @@ class FixDataHookTest {
         assertTrue(r2.hasKey("space_both"));
     }
 }
+

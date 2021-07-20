@@ -27,6 +27,9 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.tools.Geometry;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -34,13 +37,16 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link JoinNodeWayAction}.
  */
+@BasicPreferences
+@HTTP
+@Territories(Territories.Initialize.ALL)
 final class JoinNodeWayActionTest {
     /**
      * Setup test.
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().main().preferences();
+    public JOSMTestRules test = new JOSMTestRules().projection().main();
 
     private void setupMapView(DataSet ds) {
         // setup a reasonable size for the edit window
@@ -243,3 +249,4 @@ final class JoinNodeWayActionTest {
     }
 
 }
+

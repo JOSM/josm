@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -33,6 +34,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link SelectAction}.
  */
+@BasicPreferences
 class SelectActionTest {
 
     boolean nodesMerged;
@@ -161,3 +163,4 @@ class SelectActionTest {
         TestUtils.superficialEnumCodeCoverage(SelectActionCursor.class);
     }
 }
+

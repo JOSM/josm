@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -36,6 +37,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link SimplifyWayAction}.
  */
+@BasicPreferences
 final class SimplifyWayActionTest {
 
     /** Class under test. */
@@ -107,3 +109,4 @@ final class SimplifyWayActionTest {
         assertEquals(Collections.singleton(n1), deleteCommands.iterator().next().getParticipatingPrimitives());
     }
 }
+

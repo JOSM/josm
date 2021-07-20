@@ -22,12 +22,14 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link MarkerLayer} class.
  */
+@BasicPreferences
 class MarkerLayerTest {
 
     /**
@@ -35,7 +37,7 @@ class MarkerLayerTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().preferences().projection();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Setup tests

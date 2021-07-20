@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -24,11 +26,10 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link ChangeCommand} class.
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Test;
 @I18n
 // We need prefs for nodes.
 @BasicPreferences
+@LayerEnvironment
 class ChangeCommandTest {
     private CommandTestData testData;
 
@@ -68,7 +70,7 @@ class ChangeCommandTest {
         new ChangeCommand(testData.existingNode, newNode).executeCommand();
 
         assertEquals("new", testData.existingNode.get("new"));
-        assertEquals(null, testData.existingNode.get("existing"));
+        assertNull(testData.existingNode.get("existing"));
         assertEquals(LatLon.NORTH_POLE, testData.existingNode.getCoor());
 
         Way newWay = new Way(10);
@@ -88,7 +90,8 @@ class ChangeCommandTest {
         Node newNode = new Node(1);
         newNode.setCoor(LatLon.NORTH_POLE);
 
-        assertThrows(DataIntegrityProblemException.class, () -> new ChangeCommand(testData.existingNode, newNode).executeCommand());
+        final ChangeCommand changeCommand = new ChangeCommand(testData.existingNode, newNode);
+        assertThrows(DataIntegrityProblemException.class, changeCommand::executeCommand);
     }
 
     /**

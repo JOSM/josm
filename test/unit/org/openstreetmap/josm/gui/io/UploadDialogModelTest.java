@@ -10,16 +10,18 @@ import org.junit.jupiter.api.Test;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link UploadDialogModel} class.
  */
+@BasicPreferences
 public class UploadDialogModelTest {
     /**
      * Setup tests
      */
     @RegisterExtension
-    public JOSMTestRules test = new JOSMTestRules().preferences().main();
+    public JOSMTestRules test = new JOSMTestRules().main();
 
     /**
      * Test of {@link UploadDialogModel}.

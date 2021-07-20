@@ -20,10 +20,16 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 
 /**
  * Unit tests for class {@link PurgeAction}.
  */
+@BasicPreferences
+@HTTP
+@Territories(Territories.Initialize.ALL)
 class PurgeActionTest {
 
     /**
@@ -65,3 +71,4 @@ class PurgeActionTest {
         }
     }
 }
+

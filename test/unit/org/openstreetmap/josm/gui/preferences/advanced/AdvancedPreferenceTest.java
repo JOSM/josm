@@ -1,26 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.advanced;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
+import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 
 /**
  * Unit tests of {@link AdvancedPreference} class.
  */
+@FullPreferences
 class AdvancedPreferenceTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
     /**
      * Unit test of {@link AdvancedPreference#AdvancedPreference}.
      */
@@ -34,6 +26,6 @@ class AdvancedPreferenceTest {
      */
     @Test
     void testAddGui() {
-        PreferencesTestUtils.doTestPreferenceSettingAddGui(new AdvancedPreference.Factory(), null);
+        assertDoesNotThrow(() -> PreferencesTestUtils.doTestPreferenceSettingAddGui(new AdvancedPreference.Factory(), null));
     }
 }

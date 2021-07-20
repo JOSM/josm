@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -21,13 +22,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Test of the base {@link Layer} class
  * @author Michael Zangl
  */
+@BasicPreferences
 class LayerTest {
     /**
      * We need projection
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     private Layer testLayer;
 

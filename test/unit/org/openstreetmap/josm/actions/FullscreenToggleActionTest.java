@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Test {@link FullscreenToggleAction}
  */
+@BasicPreferences
 class FullscreenToggleActionTest {
     /**
      * Setup test.
@@ -29,3 +31,4 @@ class FullscreenToggleActionTest {
         action.actionPerformed(null);
     }
 }
+

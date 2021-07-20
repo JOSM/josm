@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.advanced.PreferencesTable.AllSettingsTableModel;
 import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
@@ -25,13 +26,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link PreferencesTable} class.
  */
+@BasicPreferences
 class PreferencesTableTest {
     /**
      * Setup tests
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().assertionsInEDT();
+    public JOSMTestRules test = new JOSMTestRules().assertionsInEDT();
 
     private static PrefEntry newPrefEntry(String value) {
         StringSetting val = new StringSetting(value);

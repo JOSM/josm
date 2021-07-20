@@ -19,6 +19,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowMocker;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -31,6 +32,7 @@ import mockit.MockUp;
 /**
  * Unit tests of {@link DownloadOpenChangesetsTask} class.
  */
+@BasicPreferences
 class DownloadOpenChangesetsTaskTest {
 
     /**
@@ -38,7 +40,7 @@ class DownloadOpenChangesetsTaskTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().devAPI();
+    public JOSMTestRules test = new JOSMTestRules().devAPI();
 
     /**
      * OAuth wizard mocker.

@@ -14,10 +14,12 @@ import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link PlayHeadDragMode}.
  */
+@BasicPreferences
 class PlayHeadDragModeTest {
 
     /**
@@ -46,3 +48,4 @@ class PlayHeadDragModeTest {
         }
     }
 }
+

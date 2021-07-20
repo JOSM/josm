@@ -18,6 +18,7 @@ import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -25,13 +26,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link PluginPreference} class.
  */
+@BasicPreferences
 public class PluginPreferenceTest {
     /**
      * Setup test.
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().assertionsInEDT();
+    public JOSMTestRules test = new JOSMTestRules().assertionsInEDT();
 
     /**
      * Unit test of {@link PluginPreference#PluginPreference}.

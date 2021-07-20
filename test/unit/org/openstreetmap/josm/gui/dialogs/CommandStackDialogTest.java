@@ -16,10 +16,12 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link CommandStackDialog} class.
  */
+@BasicPreferences
 class CommandStackDialogTest {
 
     /**
@@ -27,7 +29,7 @@ class CommandStackDialogTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Unit test of {@link CommandStackDialog} class - empty case.
@@ -113,3 +115,4 @@ class CommandStackDialogTest {
         }
     }
 }
+

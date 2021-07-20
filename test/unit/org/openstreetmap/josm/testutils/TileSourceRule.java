@@ -5,17 +5,11 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static org.openstreetmap.josm.TestUtils.getPrivateStaticField;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-
-import javax.imageio.ImageIO;
 
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -50,8 +44,13 @@ public class TileSourceRule extends WireMockRule {
 
     /**
      * Class defining a tile source for TileSourceRule to mock. Due to the way WireMock is designed, it is far more
-     * straightforward to serve a single image in all tile positions
+     * straightforward to serve a single image in all tile positions.
+     *
+     * @deprecated Please extend {@link org.openstreetmap.josm.testutils.annotations.fake_imagery.ConstSource} instead.
+     * When JUnit 4 support is removed from JOSM, this class will disappear. Until then,
+     * {@link org.openstreetmap.josm.testutils.annotations.fake_imagery.ConstSource} will extend {@link ConstSource}.
      */
+    @Deprecated
     public abstract static class ConstSource {
         /**
          * method for actually generating the payload body bytes, uncached
@@ -101,63 +100,17 @@ public class TileSourceRule extends WireMockRule {
 
     /**
      * A plain color tile source
+     * @deprecated Use {@link org.openstreetmap.josm.testutils.annotations.fake_imagery.ColorSource} instead
      */
-    public static class ColorSource extends ConstSource {
-        protected final Color color;
-        protected final String label;
-        protected final int tileSize;
-
+    @Deprecated
+    public static class ColorSource extends org.openstreetmap.josm.testutils.annotations.fake_imagery.ColorSource {
         /**
          * @param color Color for these tiles
          * @param label text label/name for this source if displayed in JOSM menus
          * @param tileSize Pixel dimension of tiles (usually 256)
          */
         public ColorSource(Color color, String label, int tileSize) {
-            this.color = color;
-            this.label = label;
-            this.tileSize = tileSize;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.color, this.label, this.tileSize, this.getClass());
-        }
-
-        @Override
-        public byte[] generatePayloadBytes() {
-            BufferedImage image = new BufferedImage(this.tileSize, this.tileSize, BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = image.createGraphics();
-            g.setBackground(this.color);
-            g.clearRect(0, 0, image.getWidth(), image.getHeight());
-
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            try {
-                ImageIO.write(image, "png", outputStream);
-            } catch (IOException e) {
-                Logging.trace(e);
-            }
-            return outputStream.toByteArray();
-        }
-
-        @Override
-        public MappingBuilder getMappingBuilder() {
-            return WireMock.get(WireMock.urlMatching(String.format("/%h/(\\d+)/(\\d+)/(\\d+)\\.png", this.hashCode())));
-        }
-
-        @Override
-        public ImageryInfo getImageryInfo(int port) {
-            return new ImageryInfo(
-                this.label,
-                String.format("tms[20]:http://localhost:%d/%h/{z}/{x}/{y}.png", port, this.hashCode()),
-                "tms",
-                (String) null,
-                (String) null
-            );
-        }
-
-        @Override
-        public String getLabel() {
-            return this.label;
+            super(color, label, tileSize);
         }
     }
 

@@ -27,11 +27,13 @@ import org.openstreetmap.josm.io.OsmReader.Options;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 
 /**
  * Unit tests of {@link OsmReader} class.
  */
 @BasicPreferences
+@I18n
 class OsmReaderTest {
     private static Options[][] options() {
         return new Options[][]{

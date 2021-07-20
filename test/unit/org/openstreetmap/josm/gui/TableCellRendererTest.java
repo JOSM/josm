@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.ReflectionUtils;
 
@@ -39,6 +40,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @see <a href="https://josm.openstreetmap.de/ticket/6301">#6301</a>
  */
+@BasicPreferences
 class TableCellRendererTest {
 
     // list of classes that cannot be easily tested and are verified either manually or another unit tests

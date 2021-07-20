@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.jcs3.access.CacheAccess;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -65,6 +66,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.imagery.ApiKeyProvider;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
@@ -75,6 +77,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Integration tests of {@link ImageryPreference} class.
  */
+@IntegrationTest
 public class ImageryPreferenceTestIT {
 
     private static final String ERROR_SEP = " -> ";
@@ -434,6 +437,7 @@ public class ImageryPreferenceTestIT {
     @Execution(ExecutionMode.CONCURRENT)
     @ParameterizedTest(name = "{0}")
     @MethodSource("data")
+    @Disabled("Takes too long")
     void testImageryEntryValidity(String id, ImageryInfo info) {
         checkEntry(info);
         assertTrue(errors.isEmpty(), format(id, errors));

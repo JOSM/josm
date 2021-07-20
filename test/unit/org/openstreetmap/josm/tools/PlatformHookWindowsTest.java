@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import mockit.Expectations;
@@ -28,6 +29,7 @@ import mockit.Mocked;
 /**
  * Unit tests of {@link PlatformHookWindows} class.
  */
+@BasicPreferences
 class PlatformHookWindowsTest {
 
     /**
@@ -35,7 +37,7 @@ class PlatformHookWindowsTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().https();
+    public JOSMTestRules test = new JOSMTestRules().https();
 
     static PlatformHookWindows hook;
 

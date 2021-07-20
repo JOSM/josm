@@ -15,10 +15,12 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link ExtrudeAction}.
  */
+@BasicPreferences
 class ExtrudeActionTest {
 
     /**
@@ -55,3 +57,4 @@ class ExtrudeActionTest {
         TestUtils.superficialEnumCodeCoverage(Mode.class);
     }
 }
+

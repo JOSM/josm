@@ -8,10 +8,12 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link ChangesetContentPanel} class.
  */
+@BasicPreferences
 class ChangesetContentPanelTest {
 
     /**
@@ -19,7 +21,7 @@ class ChangesetContentPanelTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().main();
+    public JOSMTestRules test = new JOSMTestRules().main();
 
     /**
      * Unit test of {@link ChangesetContentPanel#ChangesetContentPanel}.
@@ -29,3 +31,4 @@ class ChangesetContentPanelTest {
         assertNotNull(new ChangesetContentPanel());
     }
 }
+

@@ -11,10 +11,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 
 /**
  * Performance test of {@code StyledMapRenderer}.
  */
+@FullPreferences
 class StyledMapRendererPerformanceTest extends AbstractMapRendererPerformanceTestParent {
 
     @BeforeAll

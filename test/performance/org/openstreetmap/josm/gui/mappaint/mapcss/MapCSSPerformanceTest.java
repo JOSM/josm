@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -21,12 +19,16 @@ import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapRendererPerformanceTest;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * This performance test measures the time for a full run of MapPaintVisitor.visitAll()
  * against a test data set using a test style.
  *
  */
+@BasicPreferences
+@Projection
 class MapCSSPerformanceTest {
 
     /* ------------------------ configuration section  ---------------------------- */
@@ -45,14 +47,6 @@ class MapCSSPerformanceTest {
               fail("STYLE_FILE refers to '"+STYLE_FILE+"'. This is either not a file or doesn't exist.\n" +
                       "Please update configuration settings in the unit test file.");
           }
-    }
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void createJOSMFixture() {
-        JOSMFixture.createPerformanceTestFixture().init(true);
     }
 
     long timed(Runnable callable) {

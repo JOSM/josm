@@ -12,7 +12,6 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -24,29 +23,25 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
 
 /**
  * Unit tests of {@link ChildOrParentSelector}.
  */
+@BasicPreferences
+@Projection
+@Main
 class ChildOrParentSelectorTest {
 
     private DataSet ds;
 
     /**
-     * Setup rule
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
-
-    /**
      * Setup test
      */
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ds = new DataSet();
     }
 
@@ -78,7 +73,7 @@ class ChildOrParentSelectorTest {
 
     @Test
     @Disabled
-    public void matches_1() {
+    void matches_1() {
         String css = "relation >[role=\"my_role\"] node {}";
         ChildOrParentSelector selector = parse(css);
 
@@ -92,7 +87,7 @@ class ChildOrParentSelectorTest {
 
     @Test
     @Disabled
-    public void matches_2() {
+    void matches_2() {
         String css = "relation >[\"my_role\"] node {}";
         ChildOrParentSelector selector = parse(css);
 
@@ -106,7 +101,7 @@ class ChildOrParentSelectorTest {
 
     @Test
     @Disabled
-    public void matches_3() {
+    void matches_3() {
         String css = "relation >[!\"my_role\"] node {}";
         ChildOrParentSelector selector = parse(css);
 
@@ -119,8 +114,7 @@ class ChildOrParentSelectorTest {
     }
 
     @Test
-    @Disabled
-    public void matches_4() {
+    void matches_4() {
         String css = "way < relation {}";
         ChildOrParentSelector selector = parse(css);
         assertEquals(Selector.ChildOrParentSelectorType.PARENT, selector.type);
@@ -128,7 +122,7 @@ class ChildOrParentSelectorTest {
     }
 
     @Test
-    public void matches_5() {
+    void matches_5() {
         String css = "way <[role != \"my_role\"] relation {text: index();}";
         ChildOrParentSelector selector = parse(css);
         assertEquals(Selector.ChildOrParentSelectorType.PARENT, selector.type);
@@ -158,7 +152,7 @@ class ChildOrParentSelectorTest {
     }
 
     @Test
-    public void matches_6() {
+    void matches_6() {
         String css = "relation >[role != \"my_role\"] way {}";
         ChildOrParentSelector selector = parse(css);
 

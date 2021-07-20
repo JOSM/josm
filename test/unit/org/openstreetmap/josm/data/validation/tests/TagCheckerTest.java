@@ -23,10 +23,12 @@ import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * JUnit Test of {@link TagChecker}.
  */
+@BasicPreferences
 class TagCheckerTest {
 
     /**
@@ -402,3 +404,4 @@ class TagCheckerTest {
         assertEquals(0, errors.size());
     }
 }
+

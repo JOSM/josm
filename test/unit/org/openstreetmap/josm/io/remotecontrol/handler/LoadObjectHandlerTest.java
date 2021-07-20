@@ -8,17 +8,19 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link LoadObjectHandler} class.
  */
+@LayerEnvironment
 class LoadObjectHandlerTest {
     private static LoadObjectHandler newHandler(String url) throws RequestHandlerBadRequestException {
         LoadObjectHandler req = new LoadObjectHandler();

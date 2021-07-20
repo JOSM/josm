@@ -14,12 +14,14 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link DownloadPrimitivesTask} class.
  */
+@BasicPreferences
 class DownloadPrimitivesTaskTest {
 
     /**
@@ -27,7 +29,7 @@ class DownloadPrimitivesTaskTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().devAPI().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().devAPI().timeout(20000);
 
     /**
      * Test of {@link DownloadPrimitivesTask} class.

@@ -16,7 +16,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.UUID;
 
 import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
@@ -25,7 +27,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
  * Use the JOSM home directory. See {@link JOSMTestRules}.
- * Typically only used by {@link FullPreferences}.
+ * Called by {@link BasicPreferences}.
  *
  * @author Taylor Smock
  * @since 18037
@@ -39,7 +41,7 @@ public @interface JosmHome {
      * Create a JOSM home directory. Prefer using {@link JosmHome}.
      * @author Taylor Smock
      */
-    class JosmHomeExtension implements BeforeAllCallback, AfterAllCallback {
+    class JosmHomeExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
         @Override
         public void afterAll(ExtensionContext context) throws Exception {
             Path tempDir = context.getStore(Namespace.create(JosmHome.class)).get("home", Path.class);
@@ -65,6 +67,37 @@ public @interface JosmHome {
             File home = tempDir.toFile();
             System.setProperty("josm.home", home.getAbsolutePath());
             JosmBaseDirectories.getInstance().clearMemos();
+        }
+
+        @Override
+        public void afterEach(ExtensionContext context) throws Exception {
+            if (shouldRun(context)) {
+                this.afterAll(context);
+                // Restore the "original" home
+                ExtensionContext.Store store = context.getStore(Namespace.create(JosmHome.class));
+                Path oldHome = store.get("old_home", Path.class);
+                System.setProperty("josm.home", oldHome.toFile().getAbsolutePath());
+                JosmBaseDirectories.getInstance().clearMemos();
+            }
+        }
+
+        @Override
+        public void beforeEach(ExtensionContext context) throws Exception {
+            if (shouldRun(context)) {
+                // Store the "original" home
+                ExtensionContext.Store store = context.getStore(Namespace.create(JosmHome.class));
+                store.put("old_home", store.get("home", Path.class));
+                this.beforeAll(context);
+            }
+        }
+
+        /**
+         * Check if this should run before/after each test
+         * @param context The context to use
+         * @return {@code true} if we should change home directories before/after each test
+         */
+        private boolean shouldRun(ExtensionContext context) {
+            return AnnotationUtils.findFirstParentAnnotation(context, BasicPreferences.class).map(BasicPreferences::value).orElse(false);
         }
     }
 }

@@ -38,7 +38,6 @@ import javax.json.JsonValue;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -48,7 +47,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -58,15 +57,13 @@ import nl.jqno.equalsverifier.EqualsVerifier;
  * Test class for {@link MapboxVectorStyle}
  * @author Taylor Smock
  */
+// Needed for osm primitives (we really just need to initialize the config)
+// OSM primitives are called when we load style sources
+@BasicPreferences
 public class MapboxVectorStyleTest {
     /** Used to store sprite files (specifically, sprite{,@2x}.{png,json}) */
     @TempDir
     File spritesDirectory;
-
-    // Needed for osm primitives (we really just need to initialize the config)
-    // OSM primitives are called when we load style sources
-    @RegisterExtension
-    JOSMTestRules rules = new JOSMTestRules();
 
     /** The base information */
     private static final String BASE_STYLE = "'{'\"version\":8,\"name\":\"test_style\",\"owner\":\"josm test\",\"id\":\"{0}\",{1}'}'";

@@ -19,10 +19,12 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Test of boundaries OSM file.
  */
+@IntegrationTest
 class BoundariesTestIT {
 
     private static final List<String> RETIRED_ISO3166_1_CODES = Arrays.asList(

@@ -20,10 +20,12 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link SplitWayAction}.
  */
+@BasicPreferences
 final class SplitWayActionTest {
 
     /**
@@ -132,3 +134,4 @@ final class SplitWayActionTest {
         assertSame(4, dataSet.getWays().size(), String.format("Found %d ways after split action instead of 4.", dataSet.getWays().size()));
     }
 }
+

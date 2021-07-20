@@ -15,10 +15,12 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * JUnit Test of Multipolygon validation test.
  */
+@BasicPreferences
 class MultipolygonTestTest {
 
 
@@ -27,7 +29,7 @@ class MultipolygonTestTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection().mapStyles().presets().main().preferences();
+    public JOSMTestRules test = new JOSMTestRules().projection().mapStyles().presets().main();
 
     /**
      * Test all error cases manually created in multipolygon.osm.
@@ -70,3 +72,4 @@ class MultipolygonTestTest {
         }
     }
 }
+

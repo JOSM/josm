@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
 import mockit.Mock;
@@ -30,6 +31,7 @@ import mockit.MockUp;
 /**
  * Unit tests for relation editor actions.
  */
+@I18n
 class RelationEditorActionsTest extends AbstractRelationEditorActionTest {
 
     /**

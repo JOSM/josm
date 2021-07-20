@@ -31,10 +31,12 @@ import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link SplitWayCommand}.
  */
+@BasicPreferences
 final class SplitWayCommandTest {
 
     /**
@@ -42,7 +44,7 @@ final class SplitWayCommandTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().preferences();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Unit test of {@link SplitWayCommand#findVias}.
@@ -434,3 +436,4 @@ final class SplitWayCommandTest {
     }
 
 }
+

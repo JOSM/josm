@@ -18,17 +18,17 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link OsmTransferHandler} class.
  */
+// Prefs for OSM primitives
+@BasicPreferences
 class OsmTransferHandlerTest {
-    /**
-     * Prefs to use OSM primitives
-     */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection().main();
+    public JOSMTestRules test = new JOSMTestRules().projection().main();
 
     private final OsmTransferHandler transferHandler = new OsmTransferHandler();
 
@@ -72,3 +72,4 @@ class OsmTransferHandlerTest {
         assertEquals("ok", n.get("test"));
     }
 }
+

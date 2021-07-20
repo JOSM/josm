@@ -6,7 +6,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowEvent;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,7 +16,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -26,6 +24,7 @@ import java.util.TimeZone;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -64,6 +63,8 @@ import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.testutils.annotations.MockVersion;
+import org.openstreetmap.josm.testutils.annotations.fake_imagery.ColorSource;
 import org.openstreetmap.josm.testutils.mockers.EDTAssertionMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowlessMapViewStateMocker;
 import org.openstreetmap.josm.testutils.mockers.WindowlessNavigatableComponentMocker;
@@ -78,8 +79,6 @@ import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 import org.openstreetmap.josm.tools.date.DateUtils;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * This class runs a test in an environment that resembles the one used by the JOSM main application.
@@ -332,10 +331,10 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
                 true,
                 true,
                 true,
-                new TileSourceRule.ColorSource(Color.WHITE, "White Tiles", 256),
-                new TileSourceRule.ColorSource(Color.BLACK, "Black Tiles", 256),
-                new TileSourceRule.ColorSource(Color.MAGENTA, "Magenta Tiles", 256),
-                new TileSourceRule.ColorSource(Color.GREEN, "Green Tiles", 256)
+                new ColorSource(Color.WHITE, "White Tiles", 256),
+                new ColorSource(Color.BLACK, "Black Tiles", 256),
+                new ColorSource(Color.MAGENTA, "Magenta Tiles", 256),
+                new ColorSource(Color.GREEN, "Green Tiles", 256)
             )
         );
     }
@@ -401,14 +400,6 @@ public class JOSMTestRules implements TestRule, AfterEachCallback, BeforeEachCal
             Logging.error(e);
         }
         return this;
-    }
-
-    private static class MockVersion extends Version {
-        MockVersion(final String propertiesString) {
-            super.initFromRevisionInfo(
-                new ByteArrayInputStream(propertiesString.getBytes(StandardCharsets.UTF_8))
-            );
-        }
     }
 
     @Override

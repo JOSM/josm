@@ -16,10 +16,12 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link ParallelWayAction}.
  */
+@BasicPreferences
 class ParallelWayActionTest {
 
     /**
@@ -64,3 +66,4 @@ class ParallelWayActionTest {
         TestUtils.superficialEnumCodeCoverage(Modifier.class);
     }
 }
+

@@ -8,10 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link AboutAction}.
  */
+@BasicPreferences
 final class AboutActionTest {
 
     /**

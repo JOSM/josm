@@ -22,6 +22,7 @@ import org.openstreetmap.josm.io.OsmHistoryReader;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -29,6 +30,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests of {@link HistoryLoadTask} class.
  */
+@BasicPreferences
 class HistoryLoadTaskTest {
 
     /**
@@ -36,7 +38,7 @@ class HistoryLoadTaskTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().devAPI().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().devAPI().timeout(20000);
 
     /**
      * Unit test of {@link HistoryLoadTask#getLoadingMessage}

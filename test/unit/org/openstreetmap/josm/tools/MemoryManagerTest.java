@@ -81,10 +81,9 @@ public class MemoryManagerTest {
 
     /**
      * Test that too big allocations fail
-     * @throws NotEnoughMemoryException always
      */
     @Test
-    void testAllocationFails() throws NotEnoughMemoryException {
+    void testAllocationFails() {
         MemoryManager manager = MemoryManager.getInstance();
         long available = manager.getAvailableMemory();
 

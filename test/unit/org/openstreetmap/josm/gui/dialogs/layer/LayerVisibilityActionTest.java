@@ -16,17 +16,19 @@ import org.openstreetmap.josm.gui.layer.TMSLayerTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests of {@link LayerVisibilityAction} class.
  */
+@BasicPreferences
 class LayerVisibilityActionTest {
     /**
      * TMS layer needs prefs. Platform for LayerListDialog shortcuts.
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection().main();
+    public JOSMTestRules test = new JOSMTestRules().projection().main();
 
     /**
      * Unit test of {@link LayerVisibilityAction} class.
@@ -95,3 +97,4 @@ class LayerVisibilityActionTest {
         assertEquals(1.0, layer.getOpacity(), 1e-15);
     }
 }
+

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 import org.openstreetmap.josm.tools.PlatformHook;
@@ -25,6 +26,7 @@ import mockit.Mocked;
 /**
  * Unit tests of {@link HelpBrowser} class.
  */
+@BasicPreferences
 class HelpBrowserTest {
 
     static final String URL_1 = "https://josm.openstreetmap.de/wiki/Help";
@@ -36,7 +38,7 @@ class HelpBrowserTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    static JOSMTestRules test = new JOSMTestRules().preferences().https();
+    static JOSMTestRules test = new JOSMTestRules().https();
 
     static IHelpBrowser newHelpBrowser() {
         return new IHelpBrowser() {

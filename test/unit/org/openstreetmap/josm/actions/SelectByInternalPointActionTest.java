@@ -21,10 +21,12 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * Unit tests for class {@link SelectByInternalPointAction}.
  */
+@BasicPreferences
 final class SelectByInternalPointActionTest {
 
     /**
@@ -32,7 +34,7 @@ final class SelectByInternalPointActionTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().preferences().projection().main();
+    public JOSMTestRules rules = new JOSMTestRules().projection().main();
 
     /**
      * Tests that {@code SelectByInternalPointAction} satisfies utility class criteria.
@@ -126,3 +128,4 @@ final class SelectByInternalPointActionTest {
         assertEquals(4, ds.getSelected().size());
     }
 }
+

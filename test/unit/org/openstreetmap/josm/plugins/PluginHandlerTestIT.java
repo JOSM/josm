@@ -15,14 +15,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -33,26 +33,31 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTPS;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.StaticClassCleanup;
+import org.openstreetmap.josm.testutils.annotations.Territories;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Integration tests of {@link PluginHandler} class.
  */
+@BasicPreferences
+@Projection
+@Main
+@Territories
+@StaticClassCleanup(PluginHandler.class)
+@HTTPS
+@LayerEnvironment
+@Timeout(value = 10, unit = TimeUnit.MINUTES)
 public class PluginHandlerTestIT {
 
     private static final List<String> errorsToIgnore = new ArrayList<>();
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().main().projection().preferences().https()
-            .territories().timeout(10 * 60 * 1000);
 
     /**
      * Setup test
@@ -73,7 +78,7 @@ public class PluginHandlerTestIT {
 
         Map<String, Throwable> loadingExceptions = PluginHandler.pluginLoadingExceptions.entrySet().stream()
                 .filter(e -> !(Utils.getRootCause(e.getValue()) instanceof HeadlessException))
-                .collect(Collectors.toMap(e -> e.getKey(), e -> Utils.getRootCause(e.getValue())));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> Utils.getRootCause(e.getValue())));
 
         List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
         Map<String, List<String>> invalidManifestEntries = loadedPlugins.stream().filter(pi -> !pi.invalidManifestEntries.isEmpty())
@@ -147,17 +152,17 @@ public class PluginHandlerTestIT {
     private static <T> Map<String, T> filterKnownErrors(Map<String, T> errorMap) {
         return errorMap.entrySet().parallelStream()
                 .filter(entry -> !errorsToIgnore.contains(convertEntryToString(entry)))
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private static void debugPrint(Map<String, ?> invalidManifestEntries) {
         System.out.println(invalidManifestEntries.entrySet()
                 .stream()
-                .map(e -> convertEntryToString(e))
+                .map(PluginHandlerTestIT::convertEntryToString)
                 .collect(Collectors.joining(", ")));
     }
 
-    private static String convertEntryToString(Entry<String, ?> entry) {
+    private static String convertEntryToString(Map.Entry<String, ?> entry) {
         return entry.getKey() + "=\"" + entry.getValue() + "\"";
     }
 

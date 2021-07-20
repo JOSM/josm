@@ -29,8 +29,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -43,7 +41,9 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.OsmApiType;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -52,15 +52,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 @SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 @Timeout(value = 60, unit = TimeUnit.SECONDS)
+@BasicPreferences
+@OsmApiType(OsmApiType.APIType.DEV)
+@Main
 class MultiFetchServerObjectReaderTest {
     private static final Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
-
-    /**
-     * Setup test.
-     */
-    @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * builds a large data set to be used later for testing MULTI FETCH on the server
@@ -163,7 +159,6 @@ class MultiFetchServerObjectReaderTest {
             return;
         }
         logger.info("initializing ...");
-        JOSMFixture.createFunctionalTestFixture().init();
 
         Config.getPref().put("osm-server.auth-method", "basic");
 

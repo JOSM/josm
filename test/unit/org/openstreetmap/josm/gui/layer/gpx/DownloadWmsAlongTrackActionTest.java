@@ -2,46 +2,52 @@
 package org.openstreetmap.josm.gui.layer.gpx;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.awaitility.Awaitility;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.MergeLayerActionTest.MergeLayerExtendedDialogMocker;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayerTest;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.gpx.DownloadWmsAlongTrackAction.PrecacheWmsTask;
-import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.testutils.TileSourceRule;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.FakeImagery;
+import org.openstreetmap.josm.testutils.annotations.I18n;
+import org.openstreetmap.josm.testutils.annotations.LayerEnvironment;
+import org.openstreetmap.josm.testutils.annotations.Main;
+import org.openstreetmap.josm.testutils.annotations.Projection;
+import org.openstreetmap.josm.testutils.annotations.fake_imagery.ConstSource;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Unit tests of {@link DownloadWmsAlongTrackAction} class.
  */
-public class DownloadWmsAlongTrackActionTest {
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().projection().fakeImagery().timeout(20000);
-
+@BasicPreferences
+@FakeImagery
+@Projection
+@Main
+@Timeout(20)
+@LayerEnvironment
+@I18n
+class DownloadWmsAlongTrackActionTest {
     /**
      * Test action without layer.
      */
     @Test
-    public void testNoLayer() {
+    void testNoLayer() {
         TestUtils.assumeWorkingJMockit();
         final JOptionPaneSimpleMocker jopsMocker = new JOptionPaneSimpleMocker(
             Collections.singletonMap("There are no imagery layers.", 0)
@@ -60,30 +66,25 @@ public class DownloadWmsAlongTrackActionTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testTMSLayer() throws Exception {
+    void testTMSLayer(@BasicWiremock final WireMockServer wireMockServer,
+            @FakeImagery final List<ConstSource> constSources) throws Exception {
         TestUtils.assumeWorkingJMockit();
         final MergeLayerExtendedDialogMocker edMocker = new MergeLayerExtendedDialogMocker();
         edMocker.getMockResultMap().put("Please select the imagery layer.", "Download");
 
-        final TileSourceRule tileSourceRule = this.test.getTileSourceRule();
-
         final TMSLayer layer = new TMSLayer(
-            tileSourceRule.getSourcesList().get(0).getImageryInfo(tileSourceRule.port())
+                constSources.get(0).getImageryInfo(wireMockServer)
         );
-        try {
-            MainApplication.getLayerManager().addLayer(layer);
-            TMSLayer.getCache().clear();
-            assertTrue(TMSLayer.getCache().getMatching(".*").isEmpty());
-            // Perform action
-            PrecacheWmsTask task = new DownloadWmsAlongTrackAction(GpxLayerTest.getMinimalGpxData()).createTask();
-            assertNotNull(task);
-            task.run();
-            // Ensure cache is (eventually) not empty
-            Awaitility.await().atMost(10000, MILLISECONDS).until(() -> !TMSLayer.getCache().getMatching(".*").isEmpty());
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            MainApplication.getLayerManager().removeLayer(layer);
-        }
+
+        MainApplication.getLayerManager().addLayer(layer);
+        TMSLayer.getCache().clear();
+        assertTrue(TMSLayer.getCache().getMatching(".*").isEmpty());
+        // Perform action
+        PrecacheWmsTask task = new DownloadWmsAlongTrackAction(GpxLayerTest.getMinimalGpxData()).createTask();
+        assertNotNull(task);
+        task.run();
+        // Ensure cache is (eventually) not empty
+        Awaitility.await().atMost(10000, MILLISECONDS).until(() -> !TMSLayer.getCache().getMatching(".*").isEmpty());
 
         assertEquals(1, edMocker.getInvocationLog().size());
         Object[] invocationLogEntry = edMocker.getInvocationLog().get(0);

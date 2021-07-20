@@ -14,10 +14,12 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link PlatformHook} class.
  */
+@IntegrationTest
 class PlatformHookTestIT {
 
     /**

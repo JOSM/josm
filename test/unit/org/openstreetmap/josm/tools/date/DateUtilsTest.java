@@ -20,25 +20,21 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.I18n;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link DateUtils} class.
  */
+@I18n
+@BasicPreferences
 public class DateUtilsTest {
-
-    /**
-     * Set the timezone and timeout.
-     * <p>
-     * Timeouts need to be disabled because we change the time zone.
-     */
+    // Solely needed for setting clock to UTC. To be replaced with @TimeZoneAnnotation
     @RegisterExtension
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().i18n().preferences();
-
+    JOSMTestRules josmTestRules = new JOSMTestRules();
     /**
      * Tests that {@code DateUtils} satisfies utility class criteria.
      * @throws ReflectiveOperationException if an error occurs

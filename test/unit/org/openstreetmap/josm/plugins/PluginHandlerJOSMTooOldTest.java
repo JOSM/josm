@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,48 +17,44 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.testutils.PluginServer;
+import org.openstreetmap.josm.testutils.annotations.AssumeRevision;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.HelpAwareOptionPaneMocker;
-
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test parts of {@link PluginHandler} class when the reported JOSM version is too old for the plugin.
  */
-public class PluginHandlerJOSMTooOldTest {
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().main().assumeRevision(
-        "Revision: 6000\n"
-    );
+@BasicPreferences(true)
+@BasicWiremock
+@AssumeRevision("Revision: 6000\n")
+class PluginHandlerJOSMTooOldTest {
+    @RegisterExtension
+    @SuppressWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    JOSMTestRules josmTestRules = new JOSMTestRules().main();
 
     /**
      * Plugin server mock.
      */
-    @Rule
-    public WireMockRule pluginServerRule = new WireMockRule(
-        options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot())
-    );
+    @BasicWiremock
+    public WireMockServer pluginServerRule;
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         Config.getPref().putInt("pluginmanager.version", 999);
         Config.getPref().put("pluginmanager.lastupdate", "999");
@@ -114,7 +110,7 @@ public class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    public void testUpdatePluginsDownloadBoth() throws IOException {
+    void testUpdatePluginsDownloadBoth() throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
@@ -176,7 +172,7 @@ public class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    public void testUpdatePluginsSkipOne() throws IOException {
+    void testUpdatePluginsSkipOne() throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
@@ -248,7 +244,7 @@ public class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    public void testUpdatePluginsUnexpectedlyJOSMTooOld() throws IOException {
+    void testUpdatePluginsUnexpectedlyJOSMTooOld() throws IOException {
         TestUtils.assumeWorkingJMockit();
         final PluginServer pluginServer = new PluginServer(
             new PluginServer.RemotePlugin(this.referenceDummyJarNew),
@@ -302,8 +298,8 @@ public class PluginHandlerJOSMTooOldTest {
      * @throws IOException never
      */
     @Test
-    @JOSMTestRules.OverrideAssumeRevision("Revision: 7200\n")
-    public void testUpdatePluginsMultiVersionInsufficient() throws IOException {
+    @AssumeRevision("Revision: 7200\n")
+    void testUpdatePluginsMultiVersionInsufficient() throws IOException {
         TestUtils.assumeWorkingJMockit();
 
         final PluginServer pluginServer = new PluginServer(
@@ -342,7 +338,8 @@ public class PluginHandlerJOSMTooOldTest {
         // questionably correct
         TestUtils.assertFileContentsEqual(this.referenceQuxJarNewer, this.targetQuxJar);
 
-        assertEquals(2, WireMock.getAllServeEvents().size());
+        assertEquals(2, this.pluginServerRule.getAllServeEvents().size(), "Requests: " + this.pluginServerRule.getAllServeEvents().stream()
+                .map(serveEvent -> serveEvent.getRequest().getUrl()).collect(Collectors.joining(", ")));
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugins")));
         // questionably correct
         this.pluginServerRule.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/plugin/qux_plugin.v432.jar")));

@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 /**
  * JUnit Test of turn restriction validation test.
  */
+@BasicPreferences
 class TurnRestrictionTestTest {
 
     private static final TurnrestrictionTest TURNRESTRICTION_TEST = new TurnrestrictionTest();
@@ -33,3 +35,4 @@ class TurnRestrictionTestTest {
                 name -> name.startsWith("E"), TURNRESTRICTION_TEST, RELATION_TEST);
     }
 }
+

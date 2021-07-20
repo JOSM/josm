@@ -64,7 +64,7 @@ public class MapCSSRendererTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     // development flag - set to true in order to update all reference images
     private static final boolean UPDATE_ALL = false;

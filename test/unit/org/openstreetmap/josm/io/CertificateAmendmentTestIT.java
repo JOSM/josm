@@ -19,10 +19,12 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.testutils.annotations.IntegrationTest;
 
 /**
  * Integration tests of {@link CertificateAmendment} class.
  */
+@IntegrationTest
 class CertificateAmendmentTestIT {
 
     /**

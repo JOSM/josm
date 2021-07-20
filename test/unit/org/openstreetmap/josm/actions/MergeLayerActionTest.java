@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 import org.openstreetmap.josm.testutils.mockers.ExtendedDialogMocker;
 import org.openstreetmap.josm.testutils.mockers.JOptionPaneSimpleMocker;
 
@@ -28,6 +29,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link MergeLayerAction}.
  */
+@BasicPreferences
 public class MergeLayerActionTest {
 
     /**
@@ -123,3 +125,4 @@ public class MergeLayerActionTest {
         assertEquals("Select target layer", invocationLogEntry[2]);
     }
 }
+

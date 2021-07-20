@@ -24,12 +24,14 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link WayConnectionTypeCalculator} class.
  */
+@BasicPreferences
 class WayConnectionTypeCalculatorTest {
 
     private final RelationSorter sorter = new RelationSorter();
@@ -41,7 +43,7 @@ class WayConnectionTypeCalculatorTest {
      */
     @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().projection();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     /**
      * Load the test data set

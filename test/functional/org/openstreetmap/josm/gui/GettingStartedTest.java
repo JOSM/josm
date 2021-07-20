@@ -5,23 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.IOException;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
-import org.openstreetmap.josm.JOSMFixture;
+import org.junit.jupiter.api.Test;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 
 /**
  * Tests the {@link GettingStarted} class.
  */
+@BasicPreferences
+@HTTP
 class GettingStartedTest {
-
-    /**
-     * Setup test.
-     */
-    @BeforeAll
-    public static void init() {
-        JOSMFixture.createFunctionalTestFixture().init();
-    }
 
     /**
      * Tests that image links are replaced.
