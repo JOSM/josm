@@ -4,8 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,37 +14,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.xml.sax.SAXException;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link DefaultNameFormatter} class.
  */
-public class DefaultNameFormatterTest {
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
-
+// Preferences are needed for OSM primitives
+@BasicPreferences
+@BasicWiremock
+@HTTP
+class DefaultNameFormatterTest {
     /**
      * HTTP mock.
      */
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot()));
+    @BasicWiremock
+    WireMockServer wireMockServer;
 
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/9632">#9632</a>.
@@ -55,14 +51,14 @@ public class DefaultNameFormatterTest {
      */
     @Test
     @SuppressFBWarnings(value = "ITA_INEFFICIENT_TO_ARRAY")
-    public void testTicket9632() throws IllegalDataException, IOException, SAXException {
+    void testTicket9632() throws IllegalDataException, IOException, SAXException {
         String source = "presets/Presets_BicycleJunction-preset.xml";
-        wireMockRule.stubFor(get(urlEqualTo("/" + source))
+        wireMockServer.stubFor(get(urlEqualTo("/" + source))
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "text/xml")
                     .withBodyFile(source)));
-        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll(wireMockRule.url(source), true));
+        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll(wireMockServer.url(source), true));
 
         Comparator<IRelation<?>> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
 
@@ -101,7 +97,7 @@ public class DefaultNameFormatterTest {
      * Tests formatting of relation names.
      */
     @Test
-    public void testRelationName() {
+    void testRelationName() {
         assertEquals("relation (0, 0 members)",
                 getFormattedRelationName("X=Y"));
         assertEquals("relation (\"Foo\", 0 members)",
@@ -122,7 +118,7 @@ public class DefaultNameFormatterTest {
      * Tests formatting of way names.
      */
     @Test
-    public void testWayName() {
+    void testWayName() {
         assertEquals("\u200Ebuilding\u200E (0 nodes)\u200C", getFormattedWayName("building=yes"));
         assertEquals("\u200EHouse number 123\u200E (0 nodes)\u200C",
                 getFormattedWayName("building=yes addr:housenumber=123"));
@@ -144,7 +140,7 @@ public class DefaultNameFormatterTest {
      * Test of {@link DefaultNameFormatter#formatAsHtmlUnorderedList} methods.
      */
     @Test
-    public void testFormatAsHtmlUnorderedList() {
+    void testFormatAsHtmlUnorderedList() {
         assertEquals("<ul><li>incomplete</li></ul>",
                 DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(new Node(1)));
 
@@ -158,7 +154,7 @@ public class DefaultNameFormatterTest {
      * Test of {@link DefaultNameFormatter#buildDefaultToolTip(IPrimitive)}.
      */
     @Test
-    public void testBuildDefaultToolTip() {
+    void testBuildDefaultToolTip() {
         assertEquals("<html><strong>id</strong>=0<br>"+
                            "<strong>name:en</strong>=foo<br>"+
                            "<strong>tourism</strong>=hotel<br>"+
@@ -172,7 +168,7 @@ public class DefaultNameFormatterTest {
      * Test of {@link DefaultNameFormatter#removeBiDiCharacters(String)}.
      */
     @Test
-    public void testRemoveBiDiCharacters() {
+    void testRemoveBiDiCharacters() {
         assertEquals("building (0 nodes)", DefaultNameFormatter.removeBiDiCharacters("\u200Ebuilding\u200E (0 nodes)\u200C"));
     }
 }
