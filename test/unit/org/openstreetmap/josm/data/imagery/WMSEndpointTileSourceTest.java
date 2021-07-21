@@ -1,42 +1,42 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class WMSEndpointTileSourceTest {
+@BasicWiremock
+class WMSEndpointTileSourceTest {
     /**
      * Setup test
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().projection();
 
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public WireMockRule tileServer = new WireMockRule(WireMockConfiguration.options().dynamicPort());
+    @BasicWiremock
+    WireMockServer tileServer;
 
     @Test
-    public void testDefaultLayerSetInMaps() throws Exception {
+    void testDefaultLayerSetInMaps() throws Exception {
 
         tileServer.stubFor(
                 WireMock.get(WireMock.urlEqualTo("/capabilities?SERVICE=WMS&REQUEST=GetCapabilities"))
@@ -86,7 +86,7 @@ public class WMSEndpointTileSourceTest {
     }
 
     @Test
-    public void testCustomHeaders() throws Exception {
+    void testCustomHeaders() throws Exception {
         tileServer.stubFor(
                 WireMock.get(WireMock.urlEqualTo("/capabilities?SERVICE=WMS&REQUEST=GetCapabilities"))
                 .willReturn(
