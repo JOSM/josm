@@ -7,53 +7,45 @@ import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.net.URI;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.testutils.mockers.OpenBrowserMocker;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Unit tests of {@link BugReportSender} class.
  */
-public class BugReportSenderTest {
-
+@BasicPreferences
+@BasicWiremock
+@HTTP
+class BugReportSenderTest {
     /**
-     * Setup tests.
+     * HTTP mock
      */
-    @Before
-    public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
-
-    /**
-     * HTTP mock.
-     */
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(options().dynamicPort());
+    @BasicWiremock
+    WireMockServer wireMockServer;
 
     /**
      * Unit test for {@link BugReportSender#BugReportSender}.
      * @throws InterruptedException if the thread is interrupted
      */
     @Test
-    public void testBugReportSender() throws InterruptedException {
-        Config.getPref().put("josm.url", wireMockRule.baseUrl());
-        wireMockRule.stubFor(post(urlEqualTo("/josmticket"))
+    void testBugReportSender() throws InterruptedException {
+        Config.getPref().put("josm.url", wireMockServer.baseUrl());
+        wireMockServer.stubFor(post(urlEqualTo("/josmticket"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
@@ -73,10 +65,10 @@ public class BugReportSenderTest {
 
         assertFalse(sender.isAlive());
         assertNull(sender.getErrorMessage(), sender.getErrorMessage());
-        verify(exactly(1), postRequestedFor(urlEqualTo("/josmticket")).withRequestBody(containing("pdata=")));
+        wireMockServer.verify(exactly(1), postRequestedFor(urlEqualTo("/josmticket")).withRequestBody(containing("pdata=")));
 
         List<URI> calledURIs = OpenBrowserMocker.getCalledURIs();
         assertEquals(1, calledURIs.size());
-        assertEquals(wireMockRule.url("/josmticket?pdata_stored=6bccff5c0417217bfbbe5fff"), calledURIs.get(0).toString());
+        assertEquals(wireMockServer.url("/josmticket?pdata_stored=6bccff5c0417217bfbbe5fff"), calledURIs.get(0).toString());
     }
 }
