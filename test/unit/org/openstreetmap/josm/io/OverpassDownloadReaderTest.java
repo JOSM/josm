@@ -4,57 +4,49 @@ package org.openstreetmap.josm.io;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.openstreetmap.josm.TestUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.io.OverpassDownloadReader.OverpassOutputFormat;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.tools.SearchCompilerQueryWizard;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Unit tests of {@link OverpassDownloadReader} class.
  */
-public class OverpassDownloadReaderTest {
-
-    /**
-     * Base test environment is enough
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
+@BasicWiremock
+@BasicPreferences
+@HTTP
+class OverpassDownloadReaderTest {
     /**
      * HTTP mock.
      */
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot()));
+    @BasicWiremock
+    WireMockServer wireMockServer;
 
     private static final String NOMINATIM_URL_PATH = "/search?format=xml&q=";
 
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
-        NameFinder.NOMINATIM_URL_PROP.put(wireMockRule.url(NOMINATIM_URL_PATH));
+        NameFinder.NOMINATIM_URL_PROP.put(wireMockServer.url(NOMINATIM_URL_PATH));
     }
 
     private String getExpandedQuery(String search) {
@@ -69,7 +61,7 @@ public class OverpassDownloadReaderTest {
      * Tests evaluating the extended query feature {@code bbox}.
      */
     @Test
-    public void testBbox() {
+    void testBbox() {
         final String query = getExpandedQuery("amenity=drinking_water");
         assertEquals("" +
                 "[out:xml][timeout:90][bbox:2.0,1.0,4.0,3.0];\n" +
@@ -81,7 +73,7 @@ public class OverpassDownloadReaderTest {
     }
 
     private void stubNominatim(String query) {
-        wireMockRule.stubFor(get(urlEqualTo(NOMINATIM_URL_PATH + query))
+        wireMockServer.stubFor(get(urlEqualTo(NOMINATIM_URL_PATH + query))
                 .willReturn(aResponse()
                     .withStatus(200)
                     .withHeader("Content-Type", "text/xml")
@@ -92,7 +84,7 @@ public class OverpassDownloadReaderTest {
      * Tests evaluating the extended query feature {@code date}.
      */
     @Test
-    public void testDate() {
+    void testDate() {
         LocalDateTime from = LocalDateTime.of(2017, 7, 14, 2, 40);
         assertEquals("2016-07-14T02:40:00Z", OverpassDownloadReader.date("1 year", from));
         assertEquals("2007-07-14T02:40:00Z", OverpassDownloadReader.date("10years", from));
@@ -118,7 +110,7 @@ public class OverpassDownloadReaderTest {
      * Tests evaluating the extended query feature {@code date} through {@code newer:} operator.
      */
     @Test
-    public void testDateNewer() {
+    void testDateNewer() {
         String query = getExpandedQuery("type:node and newer:3minutes");
         String statement = query.substring(query.indexOf("node(newer:\"") + 12, query.lastIndexOf("\");"));
         assertNotNull(DateUtils.fromString(statement));
@@ -132,7 +124,7 @@ public class OverpassDownloadReaderTest {
      * Tests evaluating the extended query feature {@code geocodeArea}.
      */
     @Test
-    public void testGeocodeArea() {
+    void testGeocodeArea() {
         stubNominatim("London");
         final String query = getExpandedQuery("amenity=drinking_water in London");
         assertEquals("" +
@@ -149,7 +141,7 @@ public class OverpassDownloadReaderTest {
      * Tests evaluating the extended query feature {@code geocodeArea}.
      */
     @Test
-    public void testGeocodeUnknownArea() {
+    void testGeocodeUnknownArea() {
         stubNominatim("foo-bar-baz-does-not-exist");
         final String query = OverpassDownloadReader.expandExtendedQueries("{{geocodeArea:foo-bar-baz-does-not-exist}}");
         assertEquals("// Failed to evaluate {{geocodeArea:foo-bar-baz-does-not-exist}}\n", query);
@@ -159,7 +151,7 @@ public class OverpassDownloadReaderTest {
      * Tests evaluating the overpass output format statements.
      */
     @Test
-    public void testOutputFormatStatement() {
+    void testOutputFormatStatement() {
         for (OverpassOutputFormat oof : OverpassOutputFormat.values()) {
             Matcher m = OverpassDownloadReader.OUTPUT_FORMAT_STATEMENT.matcher("[out:"+oof.getDirective()+"]");
             assertTrue(m.matches());
@@ -181,7 +173,7 @@ public class OverpassDownloadReaderTest {
      * Test {@link OverpassDownloadReader#fixQuery(String)}.
      */
     @Test
-    public void testFixQuery() {
+    void testFixQuery() {
         assertNull(OverpassDownloadReader.fixQuery(null));
 
         assertEquals("out meta;", OverpassDownloadReader.fixQuery("out;"));
@@ -223,7 +215,7 @@ public class OverpassDownloadReaderTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testSearchName() throws Exception {
+    void testSearchName() throws Exception {
         try (StringReader reader = new StringReader(NameFinderTest.SAMPLE)) {
             assertEquals(1942586L,
                     OverpassDownloadReader.searchName(NameFinder.parseSearchResults(reader)).getOsmId().getUniqueId());
