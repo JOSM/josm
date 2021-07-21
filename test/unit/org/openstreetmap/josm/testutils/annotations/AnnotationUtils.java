@@ -16,7 +16,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
  * @author Taylor Smock
  * @since 18037
  */
-final class AnnotationUtils {
+public final class AnnotationUtils {
     private AnnotationUtils() {
         // Utils class
     }
