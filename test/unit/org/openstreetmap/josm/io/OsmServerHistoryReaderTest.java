@@ -1,42 +1,42 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.TestUtils;
+import java.time.Instant;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.spi.preferences.Config;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import java.time.Instant;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Unit tests of {@link OsmServerHistoryReader} class.
  */
-public class OsmServerHistoryReaderTest {
-
+@BasicPreferences
+@BasicWiremock
+@HTTP
+class OsmServerHistoryReaderTest {
     /**
      * HTTP mock.
      */
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot()));
+    @BasicWiremock
+    WireMockServer wireMockServer;
 
     /**
      * Setup tests.
      */
-    @Before
-    public void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-        Config.getPref().put("osm-server.url", wireMockRule.url("/__files/api"));
+    @BeforeEach
+    void setUp() {
+        Config.getPref().put("osm-server.url", wireMockServer.url("/__files/api"));
     }
 
     /**
@@ -44,7 +44,7 @@ public class OsmServerHistoryReaderTest {
      * @throws OsmTransferException if any error occurs
      */
     @Test
-    public void testNode() throws OsmTransferException {
+    void testNode() throws OsmTransferException {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.NODE, 266187);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         History h = ds.getHistory(266187, OsmPrimitiveType.NODE);
@@ -59,7 +59,7 @@ public class OsmServerHistoryReaderTest {
      * @throws OsmTransferException if any error occurs
      */
     @Test
-    public void testWay() throws OsmTransferException {
+    void testWay() throws OsmTransferException {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.WAY, 3058844);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         History h = ds.getHistory(3058844, OsmPrimitiveType.WAY);
@@ -79,7 +79,7 @@ public class OsmServerHistoryReaderTest {
      * @throws OsmTransferException if any error occurs
      */
     @Test
-    public void testRelation() throws OsmTransferException {
+    void testRelation() throws OsmTransferException {
         OsmServerHistoryReader reader = new OsmServerHistoryReader(OsmPrimitiveType.RELATION, 49);
         HistoryDataSet ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         History h = ds.getHistory(49, OsmPrimitiveType.RELATION);
