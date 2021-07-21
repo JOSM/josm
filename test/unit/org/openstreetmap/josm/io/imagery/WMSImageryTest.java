@@ -1,47 +1,48 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.imagery;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link WMSImagery} class.
  */
-public class WMSImageryTest {
+@BasicWiremock
+class WMSImageryTest {
 
     /**
      * Setup test
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
+    JOSMTestRules test = new JOSMTestRules().projection();
 
-    @Rule
-    public WireMockRule tileServer = new WireMockRule(WireMockConfiguration.options()
-            .dynamicPort());
+    @BasicWiremock
+    WireMockServer tileServer;
+
     /**
      * Unit test of {@code WMSImagery.WMSGetCapabilitiesException} class
      */
     @Test
-    public void testWMSGetCapabilitiesException() {
+    void testWMSGetCapabilitiesException() {
         Exception cause = new Exception("test");
         WMSGetCapabilitiesException exc = new WMSGetCapabilitiesException(cause, "bar");
         assertEquals(cause, exc.getCause());
@@ -57,7 +58,7 @@ public class WMSImageryTest {
      * @throws WMSGetCapabilitiesException never
      */
     @Test
-    public void testTicket15730() throws IOException, WMSGetCapabilitiesException {
+    void testTicket15730() throws IOException, WMSGetCapabilitiesException {
         tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
                 Files.readAllBytes(Paths.get(TestUtils.getRegressionDataDir(15730), "capabilities.xml"))
                 )));
@@ -68,7 +69,7 @@ public class WMSImageryTest {
     }
 
     @Test
-    public void testNestedLayers() throws Exception {
+    void testNestedLayers() throws Exception {
         tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(
                 Files.readAllBytes(Paths.get(TestUtils.getTestDataRoot() + "wms/mapa-um-warszawa-pl.xml")))));
         WMSImagery wmsi = new WMSImagery(tileServer.url("/serwis"));
@@ -83,7 +84,7 @@ public class WMSImageryTest {
      * @throws WMSGetCapabilitiesException never
      */
     @Test
-    public void testTicket16248() throws IOException, WMSGetCapabilitiesException {
+    void testTicket16248() throws IOException, WMSGetCapabilitiesException {
         byte[] capabilities = Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(16248, "capabilities.xml")));
         tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(capabilities)));
         WMSImagery wms = new WMSImagery(tileServer.url("any"));
@@ -100,7 +101,7 @@ public class WMSImageryTest {
      * @throws WMSGetCapabilitiesException never
      */
     @Test
-    public void testTicket19193() throws IOException, WMSGetCapabilitiesException {
+    void testTicket19193() throws IOException, WMSGetCapabilitiesException {
         byte[] capabilities = Files.readAllBytes(Paths.get(TestUtils.getRegressionDataFile(19193, "capabilities.xml")));
         tileServer.stubFor(WireMock.get(WireMock.anyUrl()).willReturn(WireMock.aResponse().withBody(capabilities)));
         WMSImagery wms = new WMSImagery(tileServer.url("any"));
@@ -119,7 +120,7 @@ public class WMSImageryTest {
      * @throws WMSGetCapabilitiesException  never
      */
     @Test
-    public void testTicket16333() throws IOException, WMSGetCapabilitiesException {
+    void testTicket16333() throws IOException, WMSGetCapabilitiesException {
         tileServer.stubFor(
                 WireMock.get(WireMock.anyUrl())
                 .willReturn(WireMock.aResponse().withBody(
@@ -128,7 +129,7 @@ public class WMSImageryTest {
         );
         WMSImagery wms = new WMSImagery(tileServer.url("any"));
         assertEquals("https://duinoord.xs4all.nl/geoserver/ows?SERVICE=WMS&", wms.buildRootUrl());
-        assertEquals(null, wms.getLayers().get(0).getName());
+        assertNull(wms.getLayers().get(0).getName());
         assertEquals("", wms.getLayers().get(0).getTitle());
 
         assertEquals("bag:Matching Street", wms.getLayers().get(0).getChildren().get(0).getName());
@@ -136,7 +137,7 @@ public class WMSImageryTest {
     }
 
     @Test
-    public void testForTitleWithinAttribution_ticket16940() throws IOException, WMSGetCapabilitiesException {
+    void testForTitleWithinAttribution_ticket16940() throws IOException, WMSGetCapabilitiesException {
         tileServer.stubFor(
                 WireMock.get(WireMock.anyUrl())
                 .willReturn(WireMock.aResponse().withBody(
@@ -147,4 +148,3 @@ public class WMSImageryTest {
         assertEquals("Hipsográfico", wms.getLayers().stream().findFirst().get().getTitle());
     }
 }
-
