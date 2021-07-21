@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,10 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
 import org.openstreetmap.josm.TestUtils;
@@ -29,28 +28,30 @@ import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link WMTSTileSource}.
  */
-public class WMTSTileSourceTest {
+@BasicWiremock
+@BasicPreferences
+class WMTSTileSourceTest {
 
     /**
      * Setup test.
      */
-    @ClassRule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public static JOSMTestRules test = new JOSMTestRules().preferences().projection().timeout((int) TimeUnit.MINUTES.toMillis(5));
+    public static JOSMTestRules test = new JOSMTestRules().projection().timeout((int) TimeUnit.MINUTES.toMillis(5));
 
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public WireMockRule tileServer = new WireMockRule(WireMockConfiguration.options().dynamicPort());
+    @BasicWiremock
+    WireMockServer tileServer;
 
     private final ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
     private final ImageryInfo testImageryPSEUDO_MERCATOR = getImagery(TestUtils.getTestDataRoot() + "wmts/getcapabilities-pseudo-mercator.xml");
@@ -85,7 +86,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testPseudoMercator() throws IOException, WMTSGetCapabilitiesException {
+    void testPseudoMercator() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryPSEUDO_MERCATOR);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -106,16 +107,16 @@ public class WMTSTileSourceTest {
 
         verifyMercatorTile(testSource, 2 << 9 - 1, 2 << 8 - 1, 10);
 
-        assertEquals("TileXMax", 1, testSource.getTileXMax(0));
-        assertEquals("TileYMax", 1, testSource.getTileYMax(0));
-        assertEquals("TileXMax", 2, testSource.getTileXMax(1));
-        assertEquals("TileYMax", 2, testSource.getTileYMax(1));
-        assertEquals("TileXMax", 4, testSource.getTileXMax(2));
-        assertEquals("TileYMax", 4, testSource.getTileYMax(2));
+        assertEquals(1, testSource.getTileXMax(0), "TileXMax");
+        assertEquals(1, testSource.getTileYMax(0), "TileYMax");
+        assertEquals(2, testSource.getTileXMax(1), "TileXMax");
+        assertEquals(2, testSource.getTileYMax(1), "TileYMax");
+        assertEquals(4, testSource.getTileXMax(2), "TileXMax");
+        assertEquals(4, testSource.getTileYMax(2), "TileYMax");
     }
 
     @Test
-    public void testWALLONIE() throws IOException, WMTSGetCapabilitiesException {
+    void testWALLONIE() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWALLONIE);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -134,8 +135,8 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    @Ignore("disable this test, needs further working") // XXX
-    public void testWALLONIENoMatrixDimension() throws IOException, WMTSGetCapabilitiesException {
+    @Disabled("disable this test, needs further working") // XXX
+    void testWALLONIENoMatrixDimension() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:31370"));
         WMTSTileSource testSource = new WMTSTileSource(getImagery("test/data/wmts/WMTSCapabilities-Wallonie-nomatrixdimension.xml"));
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -151,15 +152,15 @@ public class WMTSTileSourceTest {
 
     private void verifyBounds(Bounds bounds, WMTSTileSource testSource, int z, int x, int y) {
         LatLon ret = CoordinateConversion.coorToLL(testSource.tileXYToLatLon(x, y, z));
-        assertTrue(ret.toDisplayString() + " doesn't lie within: " + bounds.toString(), bounds.contains(ret));
+        assertTrue(bounds.contains(ret), ret.toDisplayString() + " doesn't lie within: " + bounds);
         int tileXmax = testSource.getTileXMax(z);
         int tileYmax = testSource.getTileYMax(z);
-        assertTrue("tile x: " + x + " is greater than allowed max: " + tileXmax, tileXmax >= x);
-        assertTrue("tile y: " + y + " is greater than allowed max: " + tileYmax, tileYmax >= y);
+        assertTrue(tileXmax >= x, "tile x: " + x + " is greater than allowed max: " + tileXmax);
+        assertTrue(tileYmax >= y, "tile y: " + y + " is greater than allowed max: " + tileYmax);
     }
 
     @Test
-    public void testWIEN() throws IOException, WMTSGetCapabilitiesException {
+    void testWIEN() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryWIEN);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -194,14 +195,14 @@ public class WMTSTileSourceTest {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         int result = testSource.getTileXMax(zoom);
         int expected = verifier.getTileXMax(zoom + zoomOffset);
-        assertTrue("TileXMax expected: " + expected + " got: " + result, Math.abs(result - expected) < 5);
+        assertTrue(Math.abs(result - expected) < 5, "TileXMax expected: " + expected + " got: " + result);
         result = testSource.getTileYMax(zoom);
         expected = verifier.getTileYMax(zoom + zoomOffset);
-        assertTrue("TileYMax expected: " + expected + " got: " + result, Math.abs(result - expected) < 5);
+        assertTrue(Math.abs(result - expected) < 5, "TileYMax expected: " + expected + " got: " + result);
     }
 
     @Test
-    public void testGeoportalTOPOPL() throws IOException, WMTSGetCapabilitiesException {
+    void testGeoportalTOPOPL() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryTOPO_PL);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -209,12 +210,12 @@ public class WMTSTileSourceTest {
         verifyTile(new LatLon(56, 12), testSource, 0, 0, 2);
         verifyTile(new LatLon(51.13231917844218, 16.867680821557823), testSource, 1, 1, 1);
 
-        assertEquals("TileXMax", 2, testSource.getTileXMax(0));
-        assertEquals("TileYMax", 1, testSource.getTileYMax(0));
-        assertEquals("TileXMax", 3, testSource.getTileXMax(1));
-        assertEquals("TileYMax", 2, testSource.getTileYMax(1));
-        assertEquals("TileXMax", 6, testSource.getTileXMax(2));
-        assertEquals("TileYMax", 4, testSource.getTileYMax(2));
+        assertEquals(2, testSource.getTileXMax(0), "TileXMax");
+        assertEquals(1, testSource.getTileYMax(0), "TileYMax");
+        assertEquals(3, testSource.getTileXMax(1), "TileXMax");
+        assertEquals(2, testSource.getTileYMax(1), "TileYMax");
+        assertEquals(6, testSource.getTileXMax(2), "TileXMax");
+        assertEquals(4, testSource.getTileYMax(2), "TileYMax");
         assertEquals(
                 "http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO?SERVICE=WMTS&REQUEST=GetTile&"
                 + "VERSION=1.0.0&LAYER=MAPA TOPOGRAFICZNA&STYLE=default&FORMAT=image/jpeg&tileMatrixSet=EPSG:4326&"
@@ -223,7 +224,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testGeoportalORTOPL4326() throws IOException, WMTSGetCapabilitiesException {
+    void testGeoportalORTOPL4326() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:4326"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -232,7 +233,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testGeoportalORTOPL2180() throws IOException, WMTSGetCapabilitiesException {
+    void testGeoportalORTOPL2180() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:2180"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORTO_PL);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -242,7 +243,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testTicket12168() throws IOException, WMTSGetCapabilitiesException {
+    void testTicket12168() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testImagery12168);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -252,7 +253,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testProjectionWithENUAxis() throws IOException, WMTSGetCapabilitiesException {
+    void testProjectionWithENUAxis() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3346"));
         WMTSTileSource testSource = new WMTSTileSource(testImageryORT2LT);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -266,7 +267,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testTwoTileSetsForOneProjection() throws Exception {
+    void testTwoTileSetsForOneProjection() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo ontario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
         ontario.setDefaultLayers(Arrays.asList(new DefaultLayer[] {
@@ -283,7 +284,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testTwoTileSetsForOneProjectionSecondLayer() throws Exception {
+    void testTwoTileSetsForOneProjectionSecondLayer() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo ontario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
         ontario.setDefaultLayers(Arrays.asList(new DefaultLayer[] {
@@ -300,14 +301,14 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testManyLayersScrollbars() throws Exception {
+    void testManyLayersScrollbars() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testLotsOfLayers);
         testSource.initProjection(ProjectionRegistry.getProjection());
     }
 
     @Test
-    public void testParserForDuplicateTags() throws Exception {
+    void testParserForDuplicateTags() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testDuplicateTags);
         testSource.initProjection(ProjectionRegistry.getProjection());
@@ -319,14 +320,14 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testParserForMissingStyleIdentifier() throws Exception {
+    void testParserForMissingStyleIdentifier() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testMissingStyleIdentifier);
         testSource.initProjection(ProjectionRegistry.getProjection());
     }
 
     @Test
-    public void testForMultipleTileMatricesForOneLayerProjection() throws Exception {
+    void testForMultipleTileMatricesForOneLayerProjection() throws Exception {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         ImageryInfo copy = new ImageryInfo(testMultipleTileMatrixForLayer);
         List<DefaultLayer> defaultLayers = new ArrayList<>(1);
@@ -347,7 +348,7 @@ public class WMTSTileSourceTest {
      * @throws WMTSGetCapabilitiesException if any error occurs
      */
     @Test
-    public void testDimension() throws IOException, WMTSGetCapabilitiesException {
+    void testDimension() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:21781"));
         ImageryInfo info = new ImageryInfo(testImageryGeoAdminCh);
         List<DefaultLayer> defaultLayers = new ArrayList<>(1);
@@ -362,7 +363,7 @@ public class WMTSTileSourceTest {
     }
 
     @Test
-    public void testDefaultLayer() throws Exception {
+    void testDefaultLayer() throws Exception {
         // https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/1.0.0/WMTSCapabilities.xml
         // do not use withFileBody as it needs different directory layout :(
 
@@ -411,8 +412,8 @@ public class WMTSTileSourceTest {
 
     private void verifyTile(LatLon expected, WMTSTileSource source, int x, int y, int z) {
         LatLon ll = CoordinateConversion.coorToLL(source.tileXYToLatLon(x, y, z));
-        assertEquals("Latitude", expected.lat(), ll.lat(), 1e-05);
-        assertEquals("Longitude", expected.lon(), ll.lon(), 1e-05);
+        assertEquals(expected.lat(), ll.lat(), 1e-05, "Latitude");
+        assertEquals(expected.lon(), ll.lon(), 1e-05, "Longitude");
     }
 
     private void verifyMercatorTile(WMTSTileSource testSource, int x, int y, int z) {
@@ -423,12 +424,12 @@ public class WMTSTileSourceTest {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = CoordinateConversion.coorToLL(testSource.tileXYToLatLon(x, y, z));
         LatLon expected = CoordinateConversion.coorToLL(verifier.tileXYToLatLon(x, y, z + zoomOffset));
-        assertEquals("Longitude", LatLon.normalizeLon(expected.lon() - result.lon()), 0.0, 1e-04);
-        assertEquals("Latitude", expected.lat(), result.lat(), 1e-04);
+        assertEquals(0.0, LatLon.normalizeLon(expected.lon() - result.lon()), 1e-04, "Longitude");
+        assertEquals(expected.lat(), result.lat(), 1e-04, "Latitude");
     }
 
     @Test
-    public void testGisKtnGvAt() throws IOException, WMTSGetCapabilitiesException {
+    void testGisKtnGvAt() throws IOException, WMTSGetCapabilitiesException {
         ProjectionRegistry.setProjection(Projections.getProjectionByCode("EPSG:31258"));
         final WMTSTileSource source = new WMTSTileSource(testImageryGisKtnGvAt);
         source.initProjection(ProjectionRegistry.getProjection());
