@@ -4,47 +4,49 @@ package org.openstreetmap.josm.actions;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.openstreetmap.josm.TestUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link AddImageryLayerAction}.
  */
-public final class AddImageryLayerActionTest {
+@BasicWiremock
+@BasicPreferences
+final class AddImageryLayerActionTest {
     /**
      * We need prefs for this. We need platform for actions and the OSM API for checking blacklist.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().fakeAPI();
+    public JOSMTestRules test = new JOSMTestRules().fakeAPI();
 
     /**
      * HTTP mock.
      */
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot()));
+    @BasicWiremock
+    WireMockServer wireMockServer;
 
     /**
      * Unit test of {@link AddImageryLayerAction#updateEnabledState}.
      */
     @Test
-    public void testEnabledState() {
+    void testEnabledState() {
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo")).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_tms", "http://bar", "tms", null, null)).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_bing", "http://bar", "bing", null, null)).isEnabled());
@@ -56,7 +58,7 @@ public final class AddImageryLayerActionTest {
      * Unit test of {@link AddImageryLayerAction#actionPerformed} - Enabled cases for TMS.
      */
     @Test
-    public void testActionPerformedEnabledTms() {
+    void testActionPerformedEnabledTms() {
         assertTrue(MainApplication.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
         new AddImageryLayerAction(new ImageryInfo("foo_tms", "http://bar", "tms", null, null)).actionPerformed(null);
         List<TMSLayer> tmsLayers = MainApplication.getLayerManager().getLayersOfType(TMSLayer.class);
@@ -68,20 +70,20 @@ public final class AddImageryLayerActionTest {
      * Unit test of {@link AddImageryLayerAction#actionPerformed} - Enabled cases for WMS.
      */
     @Test
-    public void testActionPerformedEnabledWms() {
-        wireMockRule.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1"))
+    void testActionPerformedEnabledWms() {
+        wireMockServer.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.1.1"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
                         .withBodyFile("imagery/wms-capabilities.xml")));
-        wireMockRule.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities"))
+        wireMockServer.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities"))
                 .willReturn(aResponse()
                         .withStatus(404)));
-        wireMockRule.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"))
+        wireMockServer.stubFor(get(urlEqualTo("/wms?SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"))
                 .willReturn(aResponse()
                         .withStatus(404)));
 
-        new AddImageryLayerAction(new ImageryInfo("localhost", wireMockRule.url("/wms?"),
+        new AddImageryLayerAction(new ImageryInfo("localhost", wireMockServer.url("/wms?"),
                 "wms_endpoint", null, null)).actionPerformed(null);
         List<WMSLayer> wmsLayers = MainApplication.getLayerManager().getLayersOfType(WMSLayer.class);
         assertEquals(1, wmsLayers.size());
@@ -93,7 +95,7 @@ public final class AddImageryLayerActionTest {
      * Unit test of {@link AddImageryLayerAction#actionPerformed} - disabled case.
      */
     @Test
-    public void testActionPerformedDisabled() {
+    void testActionPerformedDisabled() {
         assertTrue(MainApplication.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
         try {
             new AddImageryLayerAction(new ImageryInfo("foo")).actionPerformed(null);
