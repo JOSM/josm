@@ -1,25 +1,27 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.concurrent.ExecutionException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.data.osm.NoteData;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 
 /**
  * Unit tests for class {@link DownloadNotesTask}.
  */
-public class DownloadNotesTaskTest extends AbstractDownloadTaskTestParent {
+@BasicWiremock
+class DownloadNotesTaskTest extends AbstractDownloadTaskTestParent {
 
     /**
      * Unit test of {@code DownloadNotesTask#acceptsUrl} method.
      */
     @Test
-    public void testAcceptsURL() {
+    void testAcceptsURL() {
         DownloadNotesTask task = new DownloadNotesTask();
         assertFalse(task.acceptsUrl(null));
         assertFalse(task.acceptsUrl(""));
@@ -36,7 +38,7 @@ public class DownloadNotesTaskTest extends AbstractDownloadTaskTestParent {
      * @throws InterruptedException if the current thread was interrupted while waiting
      */
     @Test
-    public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
+    void testDownloadExternalFile() throws InterruptedException, ExecutionException {
         mockHttp();
         DownloadNotesTask task = new DownloadNotesTask();
         task.loadUrl(new DownloadParams(), getRemoteFileUrl(), null).get();
