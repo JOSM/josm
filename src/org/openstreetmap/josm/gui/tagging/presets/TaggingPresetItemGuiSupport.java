@@ -5,7 +5,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
-import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
@@ -13,7 +12,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * Supporting class for creating the GUI for a preset item.
@@ -69,8 +67,9 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
     /**
      * Creates a new {@code TaggingPresetItemGuiSupport}
      *
-     * @param selected the selected primitives
      * @param presetInitiallyMatches whether the preset initially matched
+     * @param selected the selected primitives
+     * @param changedTagsSupplier the changed tags
      * @return the new {@code TaggingPresetItemGuiSupport}
      */
     public static TaggingPresetItemGuiSupport create(
@@ -81,8 +80,8 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
     /**
      * Creates a new {@code TaggingPresetItemGuiSupport}
      *
-     * @param selected the selected primitives
      * @param presetInitiallyMatches whether the preset initially matched
+     * @param selected the selected primitives
      * @return the new {@code TaggingPresetItemGuiSupport}
      */
     public static TaggingPresetItemGuiSupport create(
@@ -90,25 +89,38 @@ public final class TaggingPresetItemGuiSupport implements TemplateEngineDataProv
         return new TaggingPresetItemGuiSupport(presetInitiallyMatches, Arrays.asList(selected), Collections::emptyList);
     }
 
+    /**
+     * Get tags with values as currently shown in the dialog.
+     * If exactly one primitive is selected, get all tags of it, then 
+     * overwrite with the current values shown in the dialog.
+     * Else get only the tags shown in the dialog.
+     * @return Tags
+     */
+    public Tagged getTagged() {
+        if (selected.size() != 1) {
+            return Tagged.ofTags(changedTagsSupplier.get());
+        }
+        // if there is only one primitive selected, get its tags
+        Tagged tagged = Tagged.ofMap(selected.iterator().next().getKeys());
+        // update changed tags
+        changedTagsSupplier.get().forEach(tag -> tagged.put(tag));
+        return tagged;
+    }
+
     @Override
     public Collection<String> getTemplateKeys() {
-        return changedTagsSupplier.get().stream().map(Tag::getKey).collect(Collectors.toList());
+        return getTagged().keySet();
     }
 
     @Override
     public Object getTemplateValue(String key, boolean special) {
-        return changedTagsSupplier.get().stream()
-                .filter(tag -> key.equals(tag.getKey()))
-                .findFirst().map(Tag::getValue).orElseGet(() -> {
-                    KeyedItem.Usage usage = KeyedItem.determineTextUsage(getSelected(), key);
-                    return usage.hasUniqueValue() ? usage.getFirst() : null;
-                });
+        String value = getTagged().get(key);
+        return (value == null || value.isEmpty()) ? null : value;
     }
 
     @Override
     public boolean evaluateCondition(SearchCompiler.Match condition) {
-        Tagged tagged = Tagged.ofTags(changedTagsSupplier.get());
-        return condition.match(tagged);
+        return condition.match(getTagged());
     }
 
     /**

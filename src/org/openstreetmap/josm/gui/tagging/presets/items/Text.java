@@ -238,6 +238,11 @@ public class Text extends KeyedItem {
         return Collections.singleton(default_);
     }
 
+    /**
+     * Set the value template.
+     * @param pattern The value_template pattern.
+     * @throws SAXException If an error occured while parsing.
+     */
     public void setValue_template(String pattern) throws SAXException { // NOPMD
         try {
             this.valueTemplate = new TemplateParser(pattern).parse();
@@ -248,16 +253,24 @@ public class Text extends KeyedItem {
     }
 
     private void setupListeners(AutoCompletingTextField textField, TaggingPresetItemGuiSupport support) {
-        if (valueTemplate == null) { // only fire on normal fields
+        // value_templates don't work well with multiple selected items because, 
+        // as the command queue is currently implemented, we can only save 
+        // the same value to all selected primitives, which is probably not 
+        // what you want.
+        if (valueTemplate == null || support.getSelected().size() > 1) { // only fire on normal fields
             textField.getDocument().addDocumentListener(DocumentAdapter.create(ignore ->
                     support.fireItemValueModified(this, key, textField.getText())));
         } else { // only listen on calculated fields
-            textField.setForeground(Color.BLUE);
             support.addListener((source, key, newValue) -> {
                 String valueTemplateText = valueTemplate.getText(support);
                 Logging.trace("Evaluating value_template {0} for key {1} from {2} with new value {3} => {4}",
                         valueTemplate, key, source, newValue, valueTemplateText);
                 textField.setItem(valueTemplateText);
+                if (originalValue != null && !originalValue.equals(valueTemplateText)) {
+                    textField.setForeground(Color.RED);
+                } else {
+                    textField.setForeground(Color.BLUE);
+                }
             });
         }
     }
