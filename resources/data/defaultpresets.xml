@@ -8988,19 +8988,36 @@
                 </roles>
             </item> <!-- Superroute -->
         </group> <!-- Routes -->
-        <item name="Route Network" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+        <item name="Route Network" icon="presets/misc/route.svg" type="relation" preset_name_label="true" match_expression="-&quot;network:type&quot;=node_network">
             <link wiki="Relation:network" />
             <space />
             <key key="type" value="network" />
-            <text key="name" text="Name" />
+            <text key="network" text="Network" />
             <optional>
-                <text key="network" text="Network" />
+                <text key="name" text="Name" />
                 <text key="operator" text="Operator" />
             </optional>
             <roles>
                 <role key="" text="member" requisite="required" type="relation" />
             </roles>
         </item> <!-- Route Network -->
+        <item name="Route Node Network" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
+            <link wiki="Cycle_Node_Network_Tagging#(C)_Network_tagging" />
+            <space />
+            <key key="type" value="network" />
+            <key key="network:type" value="node_network" />
+            <combo key="network" text="Network" values="icn,ncn,rcn,lcn,iwn,nwn,rwn,lwn" display_values="international cycling,national cycling,regional cycling,local cycling,international walking,national walking,regional walking,local walking" values_context="network" values_sort="false"/>
+            <optional>
+                <text key="name" text="Name" />
+                <text key="operator" text="Operator" />
+            </optional>
+            <roles>
+                <role key="" text="route" requisite="required" type="relation" member_expression="&quot;network:type&quot;=node_network (type=route|type=network)" />
+                <role key="" text="junction" requisite="required" type="node" member_expression="&quot;network:type&quot;=node_network" />
+                <role key="connection" text="connection route" requisite="optional" type="relation" member_expression="&quot;network:type&quot;=node_network type=route" />
+                <role key="connection" text="connection junction" requisite="optional" type="node" member_expression="&quot;network:type&quot;=node_network" />
+            </roles>
+        </item> <!-- Route Node Network -->
         <separator/>
         <item name="Associated Street" icon="presets/misc/housenumber.svg" type="relation" preset_name_label="true">
             <link wiki="Relation:associatedStreet" />
