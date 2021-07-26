@@ -3658,6 +3658,14 @@ node[attraction=animal] {
     icon-image: "presets/attraction/animal.svg";
     set icon_z17;
 }
+way[attraction=water_slide] {
+    width: 2;
+    color: attraction#ffbfd3;
+}
+node[attraction=water_slide] {
+    icon-image: "presets/attraction/water_slide.svg";
+    set icon_z17;
+}
 
 /********************/
 /* information tags */
