@@ -377,11 +377,6 @@
     <chunk id="power_loc">
         <combo key="location" text="Location" values="outdoor,indoor,underground,platform,roof" values_context="power" />
     </chunk>
-    <chunk id="power_extra">
-        <reference ref="power_loc" />
-        <reference ref="voltage_frequency" />
-        <reference ref="ref_operator" />
-    </chunk>
     <chunk id="power_line_extra">
         <reference ref="cables_circuits" />
         <reference ref="voltage_frequency" />
@@ -2035,7 +2030,7 @@
             <key key="man_made" value="pipeline" />
             <key key="substance" value="water" />
             <key key="usage" value="penstock" />
-            <combo key="location" text="Location" values="overground,underground" values_context="pipeline" />
+            <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="pipeline" />
             <optional>
                 <reference ref="name_operator" />
                 <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
@@ -5840,7 +5835,7 @@
             <key key="man_made" value="pipeline" />
             <reference ref="name_ref" />
             <reference ref="operator_substance" />
-            <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" />
+            <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="pipeline" />
             <combo key="diameter" text="Diameter (mm)" values="800,1000,1200,1500,1600,1800,2200,2300,2400,2500,2600,2800,3200,3300,3400,3500,4000,4200,4300,4800" />
             <text key="pressure" text="Pressure (bar)" />
         </item> <!-- Pipeline -->
@@ -5873,7 +5868,7 @@
                 <reference ref="ref_operator" />
                 <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
                 <reference ref="color" />
-                <combo key="location" text="Location" values="underground,overground" values_context="pipeline" />
+                <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="pipeline" />
             </optional>
         </item> <!-- Marker -->
         <item name="Manhole" icon="presets/misc/manhole.svg" type="node" preset_name_label="true">
@@ -5968,7 +5963,7 @@
             <key key="military" value="bunker" />
             <optional>
                <combo key="bunker_type" text="Type" values="command,foxhole,gun_emplacement,hardened_aircraft_shelter,mg_nest,munitions,observation,personnel_shelter,pillbox,technical,tobruk" values_context="bunker" values_searchable="true" />
-               <combo key="location" text="Location" values="overground,underground" values_context="bunker" />
+               <combo key="location" text="Location" values="overground,underground,underwater" values_context="bunker" />
                <combo key="building" text="Building" values="bunker,yes" values_context="building" />
                <text key="name" text="Name" />
                <reference ref="POI_access" />
@@ -6167,7 +6162,9 @@
             <key key="power" value="substation" />
             <text key="name" text="Name" />
             <combo key="substation" text="Type of substation" values="compensation,converter,distribution,industrial,minor_distribution,traction,transition,transmission" values_context="power" />
-            <reference ref="power_extra" />
+            <reference ref="power_loc" />
+            <reference ref="voltage_frequency" />
+            <reference ref="ref_operator" />
             <optional>
                 <combo key="rating" text="Power rating (kVA/MVA)" values="2700 kVA,12500 kVA,15 MVA,50 MVA,100 MVA" />
                 <text key="start_date" text="Start date" />
@@ -6377,7 +6374,7 @@
             <reference ref="ref_operator" />
             <optional>
                 <reference ref="cables_circuits" />
-                <combo key="location" text="Location" values="underground,underwater,overground" values_context="power cable" />
+                <combo key="location" text="Location" values="overground,overhead,underground,underwater" values_context="power cable" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" values_sort="false" />
                 <check key="communication" text="Used for data communications" value_on="line" disable_off="true" />
             </optional>
