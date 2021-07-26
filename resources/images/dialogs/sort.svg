@@ -265,12 +265,12 @@
        sodipodi:nodetypes="cccscccscccc"
        id="path3960-8-4"
        d="m 14.471792,1028.8324 v 16.5625 l -2.281237,-2.2813 c -0.376328,-0.3764 -1.061184,-0.3764 -1.437541,0 -0.376348,0.3763 -0.376328,1.0612 5e-5,1.4375 l 4.718722,4.6875 4.718723,-4.6875 c 0.376378,-0.3763 0.376398,-1.0612 5e-5,-1.4375 -0.376358,-0.3764 -1.061214,-0.3764 -1.437542,0 l -2.281237,2.2813 v -16.5625 z"
-       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:'Bitstream Vera Sans';text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;overflow:visible;visibility:visible;opacity:0.5;fill:none;stroke:#ffffff;stroke-width:0.999997;stroke-miterlimit:4;stroke-dasharray:none;marker:none;enable-background:new" />
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:0.5;fill:none;stroke:#ffffff;stroke-width:0.999997;stroke-miterlimit:4;stroke-dasharray:none;marker:none;enable-background:new" />
     <path
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccccccsc"
        id="path3960-8-4-5"
        d="m 20.190519,1043.1136 c -0.376358,-0.3764 -1.061214,-0.3764 -1.437542,0 l -2.281237,2.2813 m -1.999988,-16.5625 v 16.5625 l -2.281237,-2.2813 c -0.376328,-0.3764 -1.061184,-0.3764 -1.437541,0 -0.376348,0.3763 -0.376328,1.0612 5e-5,1.4375"
-       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:'Bitstream Vera Sans';text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-anchor:start;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#ffffff;stroke-width:0.999997;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;marker:none;enable-background:new" />
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:#ffffff;stroke-width:0.999997;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;marker:none;enable-background:new" />
   </g>
 </svg>
