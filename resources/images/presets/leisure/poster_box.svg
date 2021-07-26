@@ -1,15 +1,99 @@
-<svg height="297mm" viewBox="0 0 744.09448819 1052.3622047" width="210mm" xmlns="http://www.w3.org/2000/svg">
-    <g fill="none" stroke="#999" stroke-linejoin="bevel" stroke-width="18.158001">
-        <path d="m191.07091 110.05134h420.01941v636.29248h-420.01941z"/>
-        <path d="m200.22273 100.90605h420.01941v636.29248h-420.01941z"/>
-        <path d="m181.98607 119.14932h420.01941v636.29248h-420.01941z"/>
-        <path d="m172.82809 128.40114h420.01941v636.29248h-420.01941z"/>
-    </g>
-    <path d="m161.06851 145.01726h422.41934v625.82373h-422.41934z" fill="#fffe73"/>
-    <path d="m163.65485 137.5267h420.01941v636.29248h-420.01941z" fill="none" stroke="#999" stroke-linejoin="bevel" stroke-width="18.158001"/>
-    <path d="m320.90356 794.83813h159.03918v128.539h-159.03918z" fill="#999" stroke="#999" stroke-width="43.787045"/>
-    <g stroke-linecap="round">
-        <path d="m375.44702 604.95685-31.36911-32.59461-39.51394 10.15676 21.30573-39.90609-21.87013-34.44138 44.53677 7.9313 25.99746-31.4427 6.21951 44.80789 37.93744 15.00872-40.6929 19.76151z" fill="#b5befe" stroke="#f00" stroke-linejoin="round" stroke-width="8" transform="matrix(2.9276076 0 0 2.9543481 -678.75878 -1168.1206)"/>
-        <ellipse cx="400.40192" cy="947.48474" fill="#999" rx="92.605949" ry="10.238518" stroke="#999" stroke-linejoin="bevel" stroke-width="17.680965"/>
-    </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="16"
+   viewBox="0 0 9.0000005 16.000001"
+   width="9"
+   version="1.1"
+   id="svg24"
+   sodipodi:docname="poster_box12.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs28" />
+  <sodipodi:namedview
+     id="namedview26"
+     pagecolor="#ffffff"
+     bordercolor="#999999"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="true"
+     units="px"
+     width="16px"
+     inkscape:zoom="32"
+     inkscape:cx="3.765625"
+     inkscape:cy="6.109375"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg24">
+    <inkscape:grid
+       type="xygrid"
+       id="grid845" />
+  </sodipodi:namedview>
+  <g
+     fill="none"
+     stroke="#999999"
+     stroke-linejoin="bevel"
+     stroke-width="18.158"
+     id="g10"
+     transform="matrix(0.01896885,0,0,0.01828431,-2.9352655,-1.6789942)">
+    <path
+       d="M 191.07091,110.05134 H 611.09032 V 746.34382 H 191.07091 Z"
+       id="path2" />
+    <path
+       d="M 200.22273,100.90605 H 620.24214 V 737.19853 H 200.22273 Z"
+       id="path4" />
+    <path
+       d="M 181.98607,119.14932 H 602.00548 V 755.4418 H 181.98607 Z"
+       id="path6" />
+    <path
+       d="M 172.82809,128.40114 H 592.8475 V 764.69362 H 172.82809 Z"
+       id="path8" />
+  </g>
+  <path
+     d="M 0.1200193,0.97254395 H 8.1328237 V 12.4153 H 0.1200193 Z"
+     fill="#fffe73"
+     id="path12"
+     style="stroke-width:0.0186234" />
+  <path
+     d="M 0.21815348,0.83473918 H 8.1871242 V 12.376683 H 0.21815348 Z"
+     fill="none"
+     stroke="#999999"
+     stroke-linejoin="bevel"
+     stroke-width="0.338164"
+     id="path14"
+     style="stroke-width:0.436307;stroke-miterlimit:4;stroke-dasharray:none" />
+  <path
+     d="m 3.1519085,12.854064 h 3.0167896 v 2.350252 H 3.1519085 Z"
+     fill="#999999"
+     stroke="#999999"
+     stroke-width="0.815464"
+     id="path16" />
+  <path
+     d="M 5.0813807,9.6414192 3.3698799,7.8807164 1.2139965,8.4293665 2.3764386,6.2737105 1.1832028,4.4132485 3.6131321,4.8416832 5.0315553,3.1432045 5.3708922,5.563647 7.4407616,6.3743913 5.2205542,7.4418729 Z"
+     fill="#b5befe"
+     stroke="#ff0000"
+     stroke-linejoin="round"
+     stroke-width="0.434308"
+     id="path18"
+     style="stroke-linecap:round" />
+  <ellipse
+     cx="4.6604781"
+     cy="15.611964"
+     fill="#999999"
+     rx="1.7414941"
+     ry="0.20994149"
+     stroke="#999999"
+     stroke-linejoin="bevel"
+     stroke-width="0.3472"
+     id="ellipse20"
+     style="stroke-linecap:round" />
 </svg>
