@@ -215,7 +215,7 @@
        y="1036.3621"
        ry="2.0000398" />
     <path
-       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:Sans;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;display:inline;overflow:visible;visibility:visible;fill:#3771c8;fill-opacity:1;stroke:none;stroke-width:45;marker:none;enable-background:accumulate"
+       style="color:#000000;line-height:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;display:inline;overflow:visible;visibility:visible;fill:#3771c8;fill-opacity:1;stroke:none;stroke-width:45;marker:none;enable-background:accumulate"
        d="m 3.0575769,1044.1832 c -1.4348265,0 -2.58901897,1.3471 -2.58901897,3.0193 l 0,5.1595 15.06362407,0 0,-5.1608 c 0,-1.6717 -1.156334,-3.0189 -2.591161,-3.0189 l -9.8834441,0 z"
        id="path3772-4-3-0"
        inkscape:connector-curvature="0"
