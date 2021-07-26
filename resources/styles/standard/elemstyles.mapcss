@@ -3379,6 +3379,10 @@ node[amenity=shelter][shelter_type=basic_hut] {
     icon-image: "presets/accommodation/basic_hut.svg";
     set icon_z17;
 }
+node[amenity=shelter][shelter_type=gazebo] {
+    icon-image: "presets/accommodation/gazebo.svg";
+    set icon_z17;
+}
 node[amenity=shelter][shelter_type=lean_to] {
     icon-image: "presets/accommodation/shelter_lean_to.svg";
     set icon_z17;
