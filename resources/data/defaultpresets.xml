@@ -3557,7 +3557,7 @@
             <space />
             <key key="tourism" value="information" />
             <key key="information" value="map" />
-            <text key="name" text="Name" />
+            <reference ref="name_ref_operator" />
             <combo key="map_type" text="Detail Grade" values="topo,street,scheme,toposcope" />
             <combo key="map_size" text="Shown Area" values="site,city,region" values_sort="false" />
             <text key="description" text="Closer description" />
@@ -3578,7 +3578,7 @@
             <space />
             <key key="tourism" value="information" />
             <key key="information" value="board" />
-            <text key="name" text="Name" />
+            <reference ref="name_ref_operator" />
             <combo key="board_type" text="Board Content" values="notice,history,nature,wildlife,plants,geology" />
             <text key="description" text="Closer description" />
         </item> <!-- Information Board -->
@@ -3653,7 +3653,7 @@
             <link wiki="Tag:tourism=information" />
             <space />
             <key key="tourism" value="information" />
-            <text key="name" text="Name" />
+            <reference ref="name_ref_operator" />
             <text key="description" text="Closer description" />
         </item> <!-- Other Information Point -->
     </group> <!-- Tourism -->
