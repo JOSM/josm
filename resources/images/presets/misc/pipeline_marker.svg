@@ -2,19 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="13"
    height="16"
    id="svg3042"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
-   sodipodi:docname="10.svg">
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="pipeline_marker3.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs3044" />
   <sodipodi:namedview
@@ -24,21 +24,22 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="16.909011"
-     inkscape:cy="8.9007289"
+     inkscape:zoom="128"
+     inkscape:cx="5.1914063"
+     inkscape:cy="2.2070313"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:window-width="1680"
-     inkscape:window-height="988"
+     inkscape:window-height="987"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="0">
     <inkscape:grid
        type="xygrid"
        id="grid3050"
@@ -46,8 +47,10 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-340px"
-       originy="-574px" />
+       originx="-340"
+       originy="-574"
+       spacingx="1"
+       spacingy="1" />
   </sodipodi:namedview>
   <metadata
      id="metadata3047">
@@ -57,7 +60,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -126,51 +128,51 @@
        y="475.36218" />
     <text
        xml:space="preserve"
-       style="font-size:1.421085px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="327.96674"
-       y="488.47931"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Droid Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="328.07797"
+       y="488.46289"
        id="text3068"
-       sodipodi:linespacing="125%"
        transform="scale(1.051936,0.95062818)"><tspan
          sodipodi:role="line"
          id="tspan3070"
-         x="327.96674"
-         y="488.47931">GAS</tspan></text>
+         x="328.07797"
+         y="488.46289"
+         style="font-size:1.42109px;line-height:1.25">GAS</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:4.3321867px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="329.89066"
-       y="483.10718"
+       style="font-style:normal;font-weight:normal;font-size:12.5389px;line-height:0%;font-family:'Droid Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.04491"
+       x="315.71246"
+       y="504.80283"
        id="text3068-1"
-       sodipodi:linespacing="125%"
-       transform="scale(1.0336891,0.96740886)"><tspan
+       transform="scale(1.0801106,0.92583111)"><tspan
          sodipodi:role="line"
          id="tspan3070-7"
-         x="329.89066"
-         y="483.10718">A</tspan></text>
+         x="315.71246"
+         y="504.80283"
+         style="font-size:4.52674px;line-height:1.25;stroke-width:1.04491">A</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:2.38257885px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Droid Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        x="332.9227"
        y="483.92914"
        id="text3068-1-4"
-       sodipodi:linespacing="125%"
        transform="scale(1.0249278,0.97567849)"><tspan
          sodipodi:role="line"
          id="tspan3070-7-0"
          x="332.9227"
-         y="483.92914">1,2</tspan></text>
+         y="483.92914"
+         style="font-size:2.38258px;line-height:1.25">1,2</tspan></text>
     <text
        xml:space="preserve"
-       style="font-size:2.38257885px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:'Droid Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
        x="336.36353"
        y="489.0759"
        id="text3068-1-4-9"
-       sodipodi:linespacing="125%"
        transform="scale(1.0249278,0.97567849)"><tspan
          sodipodi:role="line"
          id="tspan3070-7-0-4"
          x="336.36353"
-         y="489.0759">3,4</tspan></text>
+         y="489.0759"
+         style="font-size:2.38258px;line-height:1.25">3,4</tspan></text>
   </g>
 </svg>

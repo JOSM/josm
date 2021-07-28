@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:i="http://ns.adobe.com/AdobeIllustrator/10.0/"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -13,8 +11,8 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    height="244.17607mm"
    id="svg1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="kiosk2.svg"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
+   sodipodi:docname="kiosk.svg"
    sodipodi:version="0.32"
    width="197.38622mm"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
@@ -24,7 +22,7 @@
     <rdf:RDF>
       <cc:Work
          rdf:about="">
-        <dc:title></dc:title>
+        <dc:title />
         <dc:description>a news paper</dc:description>
         <dc:subject>
           <rdf:Bag>
@@ -163,23 +161,24 @@
      borderopacity="1.0"
      id="base"
      inkscape:current-layer="layer1"
-     inkscape:cx="255.85705"
-     inkscape:cy="580.84749"
+     inkscape:cx="373.6186"
+     inkscape:cy="569.07652"
      inkscape:document-units="px"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:window-height="721"
      inkscape:window-width="1024"
-     inkscape:window-x="88"
-     inkscape:window-y="116"
-     inkscape:zoom="0.36020031"
+     inkscape:window-x="348"
+     inkscape:window-y="126"
+     inkscape:zoom="0.72040062"
      pagecolor="#ffffff"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="0"
+     inkscape:document-rotation="0" />
   <g
      id="layer1"
      inkscape:groupmode="layer"
@@ -188,179 +187,50 @@
     <path
        d="m 125.74091,463.15395 c -1.8e-4,-1.8e-4 -93.102165,276.75655 -90.989453,333.80132 2.112857,57.04482 59.273128,54.59367 59.273128,54.59367 l 564.134675,0 c 0,0 57.1601,2.45115 59.27312,-54.59367 2.11272,-57.04477 -90.98963,-333.8015 -90.98944,-333.80132 l -500.70203,0 z"
        id="path30"
-       inkscape:export-filename="F:\vectoriel\scade\news.png"
-       inkscape:export-xdpi="12.437814"
-       inkscape:export-ydpi="12.437814"
        sodipodi:nodetypes="ccccccc"
        style="fill:url(#linearGradient922);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:16.63807297;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
        inkscape:connector-curvature="0" />
     <path
        d="m 385.61182,632.07795 -242.96878,0 c 0,0 -44.368085,111.97692 -42.25541,150.0067 2.11272,38.02983 25.35328,33.80443 25.35328,33.80443 l 259.87091,0 0,-183.81113 z"
        id="path33"
-       inkscape:export-filename="F:\vectoriel\scade\news.png"
-       inkscape:export-xdpi="12.437814"
-       inkscape:export-ydpi="12.437814"
        style="fill:url(#linearGradient921);fill-opacity:1;fill-rule:evenodd;stroke:#555555;stroke-width:16.63807297;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1"
        inkscape:connector-curvature="0" />
-    <text
-       id="text49"
-       inkscape:export-filename="F:\vectoriel\scade\news.png"
-       inkscape:export-xdpi="12.437814"
-       inkscape:export-ydpi="12.437814"
-       sodipodi:linespacing="110%"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.69969654px;line-height:110.00000238%;font-family:'Bookman Old Style';writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="506.26959"
-       xml:space="preserve"
-       y="508.7988"><tspan
-         id="tspan945"
-         sodipodi:role="line"
-         x="506.26959"
-         y="508.7988">Dec 29, 2004 - The Inkscape </tspan><tspan
-         id="tspan947"
-         sodipodi:role="line"
-         x="506.26959"
-         y="517.26849">developers have set a goal</tspan><tspan
-         id="tspan949"
-         sodipodi:role="line"
-         x="506.26959"
-         y="525.73816">for the release of Inkscape 0.41 </tspan><tspan
-         id="tspan951"
-         sodipodi:role="line"
-         x="506.26959"
-         y="534.20782">for mid-late January. There are </tspan><tspan
-         id="tspan953"
-         sodipodi:role="line"
-         x="506.26959"
-         y="542.67749">some noteworthy new features </tspan><tspan
-         id="tspan955"
-         sodipodi:role="line"
-         x="506.26959"
-         y="551.14716">that would be worth getting out </tspan><tspan
-         id="tspan957"
-         sodipodi:role="line"
-         x="506.26959"
-         y="559.61682">to users, and with some major </tspan><tspan
-         id="tspan959"
-         sodipodi:role="line"
-         x="506.26959"
-         y="568.08649">internal changes that will be </tspan><tspan
-         id="tspan961"
-         sodipodi:role="line"
-         x="506.26959"
-         y="576.55615">taking place soon, a good stable </tspan><tspan
-         id="tspan963"
-         sodipodi:role="line"
-         x="506.26959"
-         y="585.02582">release is needed prior to starting </tspan><tspan
-         id="tspan965"
-         sodipodi:role="line"
-         x="506.26959"
-         y="593.49548">such an undertaking.</tspan></text>
-    <text
-       id="text90"
-       inkscape:export-filename="F:\vectoriel\scade\news.png"
-       inkscape:export-xdpi="12.437814"
-       inkscape:export-ydpi="12.437814"
-       sodipodi:linespacing="140%"
-       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:16.47625923px;line-height:139.99999762%;font-family:'Bookman Old Style';writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="423.21127"
-       xml:space="preserve"
-       y="625.27454"><tspan
-         id="tspan923"
-         sodipodi:role="line"
-         x="423.21127"
-         y="625.27454">Dec 29, 2004 - The Inkscape </tspan><tspan
-         id="tspan925"
-         sodipodi:role="line"
-         x="423.21127"
-         y="648.34131">developers have set a goal</tspan><tspan
-         id="tspan927"
-         sodipodi:role="line"
-         x="423.21127"
-         y="671.40808">for the release of Inkscape 0.41 </tspan><tspan
-         id="tspan929"
-         sodipodi:role="line"
-         x="423.21127"
-         y="694.47485">for mid-late January. There are </tspan><tspan
-         id="tspan931"
-         sodipodi:role="line"
-         x="423.21127"
-         y="717.54156">some noteworthy new features </tspan><tspan
-         id="tspan933"
-         sodipodi:role="line"
-         x="423.21127"
-         y="740.60834">that would be worth getting out </tspan><tspan
-         id="tspan935"
-         sodipodi:role="line"
-         x="423.21127"
-         y="763.67511">to users, and with some major </tspan><tspan
-         id="tspan937"
-         sodipodi:role="line"
-         x="423.21127"
-         y="786.74188">internal changes that will be </tspan><tspan
-         id="tspan939"
-         sodipodi:role="line"
-         x="423.21127"
-         y="809.80865">taking place soon, a good stable </tspan><tspan
-         id="tspan941"
-         sodipodi:role="line"
-         x="423.21127"
-         y="832.87543">release is needed prior to starting </tspan><tspan
-         id="tspan943"
-         sodipodi:role="line"
-         x="423.21127"
-         y="855.94214">such an undertaking.</tspan></text>
     <g
-       id="g466"
-       inkscape:export-filename="F:\vectoriel\scade\news.png"
-       inkscape:export-xdpi="12.437814"
-       inkscape:export-ydpi="12.437814"
-       transform="matrix(16.63807,0,0,16.63807,-5863.9632,-8202.1634)">
-      <text
-         id="text46"
-         sodipodi:linespacing="100%"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.19524765px;line-height:100%;font-family:'Bitstream Vera Sans';writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         transform="matrix(1,0,-0.273892,1,0,0)"
-         x="503.93686"
-         xml:space="preserve"
-         y="528.50177"><tspan
-           id="tspan47"
-           sodipodi:role="line"
-           style="font-family:'Bitstream Vera Sans';letter-spacing:-0.82717609"
-           x="503.93686"
-           y="528.50177">N</tspan></text>
-      <text
-         id="text460"
-         sodipodi:linespacing="100%"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.19524765px;line-height:100%;font-family:'Bitstream Vera Sans';writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         transform="matrix(1,0,-0.136946,1,0,0)"
-         x="437.3074"
-         xml:space="preserve"
-         y="528.50177"><tspan
-           id="tspan461"
-           sodipodi:role="line"
-           style="font-family:'Bitstream Vera Sans';letter-spacing:-0.82717609"
-           x="437.3074"
-           y="528.50177">E</tspan></text>
-      <text
-         id="text463"
-         sodipodi:linespacing="100%"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.19524765px;line-height:100%;font-family:'Bitstream Vera Sans';writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         x="370.13919"
-         xml:space="preserve"
-         y="528.3999"><tspan
-           id="tspan464"
-           sodipodi:role="line"
-           style="font-family:'Bitstream Vera Sans';letter-spacing:-0.82717609"
-           x="370.13919"
-           y="528.3999">WS</tspan></text>
+       aria-label="N"
+       transform="skewX(-15.317214)"
+       id="text46"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:16.6381pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">
+      <path
+         d="m 282.95172,591.08606 v -85.69443 h 16.83492 l 35.07275,57.22705 v -57.22705 h 16.07501 v 85.69443 h -17.36101 l -34.54666,-55.88259 v 55.88259 z"
+         style="stroke-width:16.6381pt"
+         id="path54" />
+    </g>
+    <g
+       aria-label="E"
+       transform="skewX(-7.7979212)"
+       id="text460"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:16.6381pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">
+      <path
+         d="m 297.44426,591.08606 v -85.69443 h 63.54014 v 14.49674 h -46.23758 v 18.99774 h 43.02258 v 14.43829 h -43.02258 v 23.32338 h 47.87431 v 14.43828 z"
+         style="stroke-width:16.6381pt"
+         id="path57" />
+    </g>
+    <g
+       aria-label="WS"
+       id="text463"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:16.6381pt;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">
+      <path
+         d="m 315.30686,589.39117 -20.45911,-85.69442 h 17.71174 l 12.91846,58.86377 15.66583,-58.86377 h 20.57602 l 15.02283,59.8575 13.15228,-59.8575 h 17.41947 l -20.80984,85.69442 H 368.1498 l -17.06874,-64.06622 -17.01028,64.06622 z"
+         style="stroke-width:16.6381pt"
+         id="path60" />
+      <path
+         d="m 411.75693,561.50834 16.83492,-1.63673 q 1.51982,8.47591 6.13773,12.45082 4.67637,3.97492 12.56774,3.97492 8.359,0 12.56774,-3.50728 4.26718,-3.56573 4.26718,-8.30055 0,-3.03964 -1.81209,-5.144 -1.75364,-2.16282 -6.19619,-3.7411 -3.03964,-1.05218 -13.85374,-3.74109 -13.91219,-3.44882 -19.52383,-8.47592 -7.89137,-7.073 -7.89137,-17.2441 0,-6.54691 3.68264,-12.21701 3.7411,-5.72855 10.69719,-8.70973 7.01455,-2.98119 16.89338,-2.98119 16.13346,0 24.25865,7.07301 8.18364,7.073 8.59283,18.88083 l -17.30256,0.75991 q -1.11064,-6.60537 -4.79328,-9.46964 -3.62418,-2.92273 -10.93101,-2.92273 -7.54064,0 -11.80782,3.09809 -2.74737,1.98746 -2.74737,5.31937 0,3.03964 2.572,5.20246 3.27346,2.74736 15.89965,5.72855 12.62619,2.98118 18.64701,6.19618 6.07928,3.15655 9.46965,8.70974 3.44882,5.49473 3.44882,13.61992 0,7.36527 -4.09182,13.79528 -4.09182,6.43 -11.57401,9.58655 -7.48219,3.09809 -18.64702,3.09809 -16.25037,0 -24.9601,-7.48218 -8.70974,-7.54065 -10.40492,-21.92047 z"
+         style="stroke-width:16.6381pt"
+         id="path62" />
     </g>
     <rect
        height="53.408539"
        id="rect620"
-       inkscape:export-filename="F:\vectoriel\scade\news.png"
-       inkscape:export-xdpi="12.437814"
-       inkscape:export-ydpi="12.437814"
        style="color:#000000;display:block;visibility:visible;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none;marker-mid:none;marker-end:none"
        width="663.99811"
        x="39.12167"
