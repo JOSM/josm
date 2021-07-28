@@ -488,21 +488,21 @@
     </chunk>
     <chunk id="walking_routes_roles">
         <roles>
-            <role key="" text="route segment" requisite="required" type="way,closedway,relation" member_expression="highway|route=ferry"/>
-            <role key="alternative" text="alternative segment" requisite="optional" type="way,closedway,relation"/>
-            <role key="approach" text="approach segment" requisite="optional" type="way,closedway,relation"/>
-            <role key="excursion" text="excursion segment" requisite="optional" type="way,closedway,relation"/>
-            <role key="connection" text="connection segment" requisite="optional" type="way,closedway,relation"/>
-            <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity"/>
-            <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality"/>
-            <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
+            <role key="" text="route segment" requisite="required" type="way,closedway,relation" member_expression="highway|route=ferry" />
+            <role key="alternative" text="alternative segment" requisite="optional" type="way,closedway,relation" member_expression="highway|route=ferry" />
+            <role key="approach" text="approach segment" requisite="optional" type="way,closedway,relation" member_expression="highway|route=ferry" />
+            <role key="excursion" text="excursion segment" requisite="optional" type="way,closedway,relation" member_expression="highway|route=ferry" />
+            <role key="connection" text="connection segment" requisite="optional" type="way,closedway,relation" member_expression="highway|route=ferry" />
+            <role key="" text="infrastructure" requisite="optional" type="node,closedway" member_expression="tourism OR amenity" />
+            <role key="" text="natural" requisite="optional" type="node,closedway" member_expression="natural=peak OR natural=volcano OR mountain_pass=yes OR natural=water OR tourism=viewpoint OR amenity=drinking_water OR natural=spring OR place=locality" />
+            <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost" />
         </roles>
     </chunk>
     <chunk id="route_segment_roles">
-        <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry|leisure=track"/>
-        <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
-        <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
-        <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost"/>
+        <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry|leisure=track" />
+        <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry|leisure=track" />
+        <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry|leisure=track" />
+        <role key="guidepost" text="guidepost" requisite="optional" type="node" member_expression="information=guidepost" />
     </chunk>
     <chunk id="route_start_stop_roles">
         <role key="start" text="start endpoint" requisite="optional" type="node" />
@@ -2863,7 +2863,7 @@
                 <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
                 <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
                 <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
-                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="railway" />
+                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="railway|route=ferry" />
             </roles>
         </item> <!-- Public Transport Route (Rail) -->
         <item name="Public Transport Route (Bus)" icon="presets/misc/route.svg" type="relation" preset_name_label="true">
@@ -2884,7 +2884,7 @@
                 <role key="platform" text="platform" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
                 <role key="platform_exit_only" text="platform (exit only)" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
                 <role key="platform_entry_only" text="platform (entry only)" requisite="optional" type="node,way,closedway,multipolygon" member_expression="public_transport=platform" />
-                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway" />
+                <role key="" text="route segment" requisite="required" type="way,closedway" member_expression="highway|route=ferry" />
                 <role key="hail_and_ride" text="hail and ride route segment" requisite="optional" type="way,closedway" member_expression="highway" />
             </roles>
         </item> <!-- Public Transport Route (Bus) -->
@@ -3017,9 +3017,9 @@
                 <text key="website" text="Website" />
             </optional>
             <roles>
-                <role key="" text="route segment" requisite="optional" type="way,closedway" />
-                <role key="forward" text="forward segment" requisite="optional" type="way,closedway" />
-                <role key="backward" text="backward segment" requisite="optional" type="way,closedway" />
+                <role key="" text="route segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
+                <role key="forward" text="forward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
+                <role key="backward" text="backward segment" requisite="optional" type="way,closedway" member_expression="highway|route=ferry" />
                 <role key="stop" text="halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="forward_stop" text="forward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
                 <role key="backward_stop" text="backward halt point" requisite="optional" type="node" member_expression="highway=bus_stop OR railway=station OR railway=halt OR railway=tram_stop" />
@@ -9009,7 +9009,7 @@
             <space />
             <key key="type" value="network" />
             <key key="network:type" value="node_network" />
-            <combo key="network" text="Network" values="icn,ncn,rcn,lcn,iwn,nwn,rwn,lwn" display_values="international cycling,national cycling,regional cycling,local cycling,international walking,national walking,regional walking,local walking" values_context="network" values_sort="false"/>
+            <combo key="network" text="Network" values="icn,ncn,rcn,lcn,ihn,nhn,rhn,lhn,iwn,nwn,rwn,lwn" display_values="international cycling,national cycling,regional cycling,local cycling,international riding,national riding,regional riding,local riding,international walking,national walking,regional walking,local walking" values_context="network" values_sort="false"/>
             <optional>
                 <text key="name" text="Name" />
                 <text key="operator" text="Operator" />
