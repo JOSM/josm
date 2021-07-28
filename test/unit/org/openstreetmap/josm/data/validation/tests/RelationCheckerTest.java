@@ -181,7 +181,7 @@ class RelationCheckerTest {
 
         r.addMember(new RelationMember("", createPrimitive("way no-rail-way=yes")));
         assertEquals(1, testRelation(r).size());
-        assertEquals("Role of relation member does not match template expression 'railway' in preset Public Transport Route (Rail)",
+        assertEquals("Role of relation member does not match template expression 'railway || route=ferry' in preset Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
 
         r.removeMember(3);
