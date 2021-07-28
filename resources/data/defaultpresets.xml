@@ -3704,8 +3704,7 @@
             <link wiki="Tag:leisure=dog_park" />
             <space />
             <key key="leisure" value="dog_park" />
-            <text key="name" text="Name" />
-            <reference ref="oh_wheelchair" />
+            <reference ref="name_oh_wheelchair" />
             <check key="lit" text="Lit" />
         </item> <!-- Dog Park -->
         <item name="Amusement/Theme Park" icon="presets/leisure/theme_park.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -3824,6 +3823,14 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address" />
         </item> <!-- Hackerspace -->
+        <item name="Events Venue" icon="presets/service/events_venue.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link wiki="Tag:amenity=events_venue" />
+            <space />
+            <key key="amenity" value="events_venue" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address" />
+            <preset_link preset_name="Building" />
+        </item> <!-- Events Venue -->
         <separator/>
         <item name="Playground" icon="presets/leisure/playground.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link wiki="Tag:leisure=playground" />
@@ -4023,7 +4030,7 @@
             <link wiki="Tag:amenity=arts_centre" />
             <space />
             <key key="amenity" value="arts_centre" />
-            <text key="name" text="Name" />
+            <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Arts Centre -->
@@ -6599,7 +6606,11 @@
             <link wiki="Tag:historic=boundary_stone" />
             <space />
             <key key="historic" value="boundary_stone" />
-            <text key="name" text="Name" />
+            <optional>
+                <text key="name" text="Name" />
+                <text key="inscription" text="Inscription" />
+            </optional>
+            <preset_link preset_name="Boundary Marker" text="Similar but different tags:" />
         </item> <!-- Boundary Stone -->
         <item name="Milestone" icon="presets/landmark/milestone.svg" type="node" preset_name_label="true">
             <link wiki="Tag:historic=milestone" />
@@ -6607,6 +6618,7 @@
             <key key="historic" value="milestone" />
             <optional>
                 <text key="name" text="Name" />
+                <text key="inscription" text="Inscription" />
             </optional>
         </item> <!-- Milestone -->
     </group> <!-- Historic Places -->
@@ -7912,6 +7924,18 @@
             <combo key="border_type" text="Border type" values="baseline,contiguous,eez,territorial" />
             <text key="name" text="Name" />
         </item> <!-- Maritime -->
+        <separator/>
+        <item name="Boundary Marker" icon="presets/landmark/boundary_marker.svg" type="node" preset_name_label="true">
+            <link wiki="Tag:boundary=marker" />
+            <space />
+            <key key="boundary" value="marker" />
+            <optional>
+                <reference ref="name_ref" />
+                <text key="inscription" text="Inscription" />
+                <combo key="material" text="Material" values="concrete,metal,plastic,steel,stone,wood" />
+            </optional>
+            <preset_link preset_name="Boundary Stone" text="Similar but different tags:" />
+        </item> <!-- Boundary Marker -->
     </group> <!-- Boundaries -->
     <group name="Places" icon="presets/place/isolated_dwelling.svg">
         <item name="Continent" icon="presets/place/capital.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">

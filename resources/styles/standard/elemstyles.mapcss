@@ -3013,11 +3013,16 @@ node[amenity=sanitary_dump_station] {
     set icon_z17;
 }
 area[amenity=townhall],
+area[amenity=events_venue],
 area[amenity=community_centre] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=townhall] {
     icon-image: "presets/service/townhall.svg";
+    set icon_z17;
+}
+node[amenity=events_venue] {
+    icon-image: "presets/service/events_venue.svg";
     set icon_z17;
 }
 node[amenity=community_centre] {
@@ -5177,6 +5182,12 @@ way[boundary=administrative][admin_level=2]::core_boundary,
 relation[boundary=administrative][admin_level=2] > way::core_boundary {
     width: 5;
 }
+
+node[boundary=marker] {
+    icon-image: "presets/landmark/boundary_marker.svg";
+    set icon_z17;
+}
+
 node[boundary=national],
 node[boundary=administrative],
 node[boundary=postal_code],
