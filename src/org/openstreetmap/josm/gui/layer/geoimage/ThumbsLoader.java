@@ -113,7 +113,7 @@ public class ThumbsLoader implements Runnable {
             return null;
         }
 
-        if (img.getWidth() <= 0 || img.getHeight() <= 0) {
+        if (img == null || img.getWidth() <= 0 || img.getHeight() <= 0) {
             Logging.error(" Invalid image");
             return null;
         }

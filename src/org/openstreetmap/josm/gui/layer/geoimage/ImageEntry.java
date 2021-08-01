@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.geoimage;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -14,17 +16,15 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Objects;
 
+import javax.imageio.IIOParam;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+
 import org.openstreetmap.josm.data.ImageData;
 import org.openstreetmap.josm.data.gpx.GpxImageEntry;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
-
-import javax.imageio.IIOParam;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Stores info about each image, with an optional thumbnail
@@ -138,7 +138,7 @@ public class ImageEntry extends GpxImageEntry {
     /**
      * Reads the image represented by this entry in the given target dimension.
      * @param target the desired dimension used for {@linkplain IIOParam#setSourceSubsampling subsampling} or {@code null}
-     * @return the read image
+     * @return the read image, or {@code null}
      * @throws IOException if any I/O error occurs
      */
     public BufferedImage read(Dimension target) throws IOException {
@@ -146,6 +146,10 @@ public class ImageEntry extends GpxImageEntry {
         Logging.info(tr("Loading {0}", imageUrl));
         BufferedImage image = ImageProvider.read(imageUrl, false, false,
                 r -> target == null ? r.getDefaultReadParam() : withSubsampling(r, target));
+        if (image == null) {
+            Logging.warn("Unable to load {0}", imageUrl);
+            return null;
+        }
         Logging.debug("Loaded {0} with dimensions {1}x{2} memoryTaken={3}m exifOrientationSwitchedDimension={4}",
                 imageUrl, image.getWidth(), image.getHeight(), image.getWidth() * image.getHeight() * 4 / 1024 / 1024,
                 ExifReader.orientationSwitchesDimensions(getExifOrientation()));
