@@ -753,6 +753,54 @@ node[emergency_ward_entrance][emergency!=emergency_ward_entrance] {
   fixAdd: "emergency=emergency_ward_entrance";
 }
 
+/* missing or conflicting construction, see #17607 */
+/* {0.key} without {1.key} and {2.key} */
+*[construction:building][!building][!construction],
+*[construction:highway][!highway][!construction],
+*[construction:railway][!railway][!construction],
+*[construction:landuse][!landuse][!construction] {
+  throwWarning: tr("{0} without {1} and {2}", "{0.key}", "{1.key}", "{2.key}");
+  group: tr("missing tag");
+  fixAdd: "{1.key}=construction";
+  fixAdd: "construction={0.value}";
+  assertMatch:   "way construction:building=house";
+  assertNoMatch: "way construction:building=house building=house ";
+  assertNoMatch: "way construction:building=house construction=house";
+}
+/* {0.key} and {1.key} without {2.key} */
+*[building=construction]["construction:building"][!construction],
+*[highway=construction]["construction:highway"][!construction],
+*[railway=construction]["construction:railway"][!construction],
+*[landuse=construction]["construction:landuse"][!construction] {
+  throwWarning:  tr("{0} together with {1} but without {2}", "{0.key}", "{1.key}", "{2.key}");
+  group: tr("missing tag");
+  fixAdd: "construction={1.value}";
+  assertMatch:   "way construction:building=house building=construction";
+  assertNoMatch: "way construction:building=house building=house ";
+  assertNoMatch: "way construction:building=house construction=house";
+}
+/* {0.key} and {1.key} without {2.key} */
+*[building]["construction:building"][!construction][building!=construction],
+*[highway]["construction:highway"][!construction][highway!=construction],
+*[railway]["construction:railway"][!construction][railway!=construction],
+*[landuse]["construction:landuse"][!construction][landuse!=construction] {
+  throwWarning: tr("{0} together with {1} and conflicting values plus no {2}", "{0.key}", "{1.key}", "{2.key}");
+  group: tr("suspicious tag combination");
+  assertMatch:   "way construction:building=house building=office";
+  assertNoMatch: "way construction:building=house building=construction";
+  assertNoMatch: "way construction:building=house construction=house";
+}
+
+*["construction:building"][construction][construction:building != *construction],
+*["construction:highway"][construction][construction:highway != *construction],
+*["construction:railway"][construction][construction:railway != *construction],
+*["construction:landuse"][construction][construction:landuse != *construction] {
+  throwWarning: tr("{0} together with {1} and conflicting values", "{0.key}", "{1.key}");
+  group: tr("suspicious tag combination");
+  assertMatch:   "way construction:building=house construction=office";
+  assertNoMatch: "way construction:building=house construction=house";
+}
+
 /* #18203 */
 way[construction][construction!=yes][construction!=minor][highway][highway!=construction] {
   throwWarning: tr("{0} together with {1}", "{3.tag}", "{0.tag}");
