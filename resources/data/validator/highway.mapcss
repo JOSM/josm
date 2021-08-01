@@ -195,3 +195,15 @@ node[highway=~/^(traffic_signals|stop|give_way)$/][!traffic_signals       ] < wa
   throwWarning: tr("{0} without right of way", "{1.tag}");
   suggestAlternative: "junction=circular";
 }
+
+/* #18217 */
+way[highway =~ /^((motorway|trunk|primary|secondary|tertiary)(_link)?|residential|unclassified)$/][area=yes],
+relation[highway =~ /^((motorway|trunk|primary|secondary|tertiary)(_link)?|residential|unclassified)$/][type=multipolygon] {
+  throwError: tr("Area with {0} above {1} is invalid", "highway=*", "highway=service");
+  group: tr("suspicious tag combination");
+  suggestAlternative: "area:highway=*";
+  assertMatch:   "way highway=trunk area=yes";
+  assertMatch:   "relation highway=trunk type=multipolygon";
+  assertNoMatch: "way highway=service area=yes";
+  assertNoMatch: "way highway=trunk";
+}
