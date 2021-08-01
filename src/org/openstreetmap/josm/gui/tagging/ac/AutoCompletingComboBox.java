@@ -157,7 +157,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
                 item = lookupItem(curText, false);
             }
 
-            setSelectedItem(item);
             if (initial) {
                 start = 0;
             }
@@ -167,6 +166,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
                     selecting = true;
                     super.remove(0, size);
                     super.insertString(0, newText, a);
+                    AutoCompletingComboBox.this.setSelectedItem(item);
                     selecting = false;
                     start = size;
                     end = getLength();
@@ -184,12 +184,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
             } else {
                 editorComponent.select(start, end);
             }
-        }
-
-        private void setSelectedItem(Object item) {
-            selecting = true;
-            AutoCompletingComboBox.this.setSelectedItem(item);
-            selecting = false;
         }
 
         private Object lookupItem(String pattern, boolean match) {
