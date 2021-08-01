@@ -220,8 +220,13 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         return null;
     }
 
+    /**
+     * Returns the {@link ImageResource} attached to this preset, if any.
+     * @return the {@code ImageResource} attached to this preset, or {@code null}
+     * @since 16060
+     */
     public final ImageResource getImageResource() {
-        return (ImageResource) getValue("ImageResource");
+        return ImageResource.getAttachedImageResource(this);
     }
 
     /**

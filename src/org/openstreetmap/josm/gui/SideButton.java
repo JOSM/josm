@@ -35,7 +35,7 @@ public class SideButton extends JButton implements Destroyable {
      */
     public SideButton(Action action) {
         super(action);
-        ImageResource icon = (ImageResource) action.getValue("ImageResource");
+        ImageResource icon = ImageResource.getAttachedImageResource(action);
         if (icon != null) {
             setIcon(icon.getImageIconBounded(
                 ImageProvider.ImageSizes.SIDEBUTTON.getImageDimension()));

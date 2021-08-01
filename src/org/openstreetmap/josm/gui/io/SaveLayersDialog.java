@@ -11,7 +11,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -54,6 +53,8 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
+import org.openstreetmap.josm.tools.ImageResource;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -450,20 +451,15 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     }
 
     final class SaveAndProceedAction extends AbstractAction implements PropertyChangeListener {
-        private static final int ICON_SIZE = 24;
-        private static final String BASE_ICON = "BASE_ICON";
-        private final transient Image save = getImage("save", false);
-        private final transient Image upld = getImage("upload", false);
-        private final transient Image saveDis = getImage("save", true);
-        private final transient Image upldDis = getImage("upload", true);
+
+        private ImageResource actionImg = null;
 
         SaveAndProceedAction() {
             initForReason(Reason.EXIT);
         }
 
-        Image getImage(String name, boolean disabled) {
-            ImageIcon img = new ImageProvider(name).setDisabled(disabled).setOptional(true).get();
-            return img != null ? img.getImage() : null;
+        ImageResource getImage(String name, boolean disabled) {
+            return new ImageProvider(name).setDisabled(disabled).setOptional(true).getResource();
         }
 
         public void initForReason(Reason reason) {
@@ -471,34 +467,43 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 case EXIT:
                     putValue(NAME, tr("Perform actions before exiting"));
                     putValue(SHORT_DESCRIPTION, tr("Exit JOSM with saving. Unsaved changes are uploaded and/or saved."));
-                    putValue(BASE_ICON, ImageProvider.getIfAvailable("exit"));
+                    actionImg = new ImageProvider("exit").getResource();
                     break;
                 case RESTART:
                     putValue(NAME, tr("Perform actions before restarting"));
                     putValue(SHORT_DESCRIPTION, tr("Restart JOSM with saving. Unsaved changes are uploaded and/or saved."));
-                    putValue(BASE_ICON, ImageProvider.getIfAvailable("restart"));
+                    actionImg = new ImageProvider("restart").getResource();
                     break;
                 case DELETE:
                     putValue(NAME, tr("Perform actions before deleting"));
                     putValue(SHORT_DESCRIPTION, tr("Save/Upload layers before deleting. Unsaved changes are not lost."));
-                    putValue(BASE_ICON, ImageProvider.getIfAvailable("dialogs", "delete"));
+                    actionImg = new ImageProvider("dialogs", "delete").getResource();
                     break;
             }
             redrawIcon();
         }
 
         public void redrawIcon() {
-            ImageIcon base = ((ImageIcon) getValue(BASE_ICON));
-            BufferedImage newIco = new BufferedImage(ICON_SIZE*3, ICON_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
+            ImageResource uploadImg = model.getLayersToUpload().isEmpty() ? getImage("upload", true) : getImage("upload", false);
+            ImageResource saveImg = model.getLayersToSave().isEmpty() ? getImage("save", true) : getImage("save", false);
+            attachImageIcon(SMALL_ICON, ImageSizes.SMALLICON, uploadImg, saveImg, actionImg);
+            attachImageIcon(LARGE_ICON_KEY, ImageSizes.LARGEICON, uploadImg, saveImg, actionImg);
+        }
+
+        private void attachImageIcon(String key, ImageSizes size, ImageResource uploadImg, ImageResource saveImg, ImageResource actionImg) {
+            Dimension dim = size.getImageDimension();
+            BufferedImage newIco = new BufferedImage((int) dim.getWidth()*3, (int) dim.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D g = newIco.createGraphics();
-            // CHECKSTYLE.OFF: SingleSpaceSeparator
-            g.drawImage(model.getLayersToUpload().isEmpty() ? upldDis : upld, ICON_SIZE*0, 0, ICON_SIZE, ICON_SIZE, null);
-            g.drawImage(model.getLayersToSave().isEmpty()   ? saveDis : save, ICON_SIZE*1, 0, ICON_SIZE, ICON_SIZE, null);
-            if (base != null) {
-                g.drawImage(base.getImage(),                                  ICON_SIZE*2, 0, ICON_SIZE, ICON_SIZE, null);
+            drawImageIcon(g, 0, dim, uploadImg);
+            drawImageIcon(g, 1, dim, saveImg);
+            drawImageIcon(g, 2, dim, actionImg);
+            putValue(key, new ImageIcon(newIco));
+        }
+
+        private void drawImageIcon(Graphics2D g, int index, Dimension dim, ImageResource img) {
+            if (img != null) {
+                g.drawImage(img.getImageIcon(dim).getImage(), (int) dim.getWidth()*index, 0, (int) dim.getWidth(), (int) dim.getHeight(), null);
             }
-            // CHECKSTYLE.ON: SingleSpaceSeparator
-            putValue(SMALL_ICON, new ImageIcon(newIco));
         }
 
         @Override

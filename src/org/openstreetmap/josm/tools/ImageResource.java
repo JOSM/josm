@@ -15,6 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
+
 import com.kitfox.svg.SVGDiagram;
 
 /**
@@ -100,13 +102,8 @@ public class ImageResource {
      * @since 10369
      */
     public void attachImageIcon(AbstractAction a) {
-        Dimension iconDimension = ImageProvider.ImageSizes.SMALLICON.getImageDimension();
-        ImageIcon icon = getImageIcon(iconDimension);
-        a.putValue(Action.SMALL_ICON, icon);
-
-        iconDimension = ImageProvider.ImageSizes.LARGEICON.getImageDimension();
-        icon = getImageIcon(iconDimension);
-        a.putValue(Action.LARGE_ICON_KEY, icon);
+        a.putValue(Action.SMALL_ICON, getImageIcon(ImageSizes.SMALLICON.getImageDimension()));
+        a.putValue(Action.LARGE_ICON_KEY, getImageIcon(ImageSizes.LARGEICON.getImageDimension()));
     }
 
     /**
@@ -120,6 +117,16 @@ public class ImageResource {
         if (attachImageResource) {
             a.putValue("ImageResource", this);
         }
+    }
+
+    /**
+     * Returns the {@code ImageResource} attached to the given action, if any.
+     * @param a action
+     * @return the {@code ImageResource} attached to the given action, or {@code null}
+     * @since 18099
+     */
+    public static ImageResource getAttachedImageResource(Action a) {
+        return (ImageResource) a.getValue("ImageResource");
     }
 
     /**
