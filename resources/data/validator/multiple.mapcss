@@ -7,7 +7,60 @@
 *[name =~ /.+;(.+)?/],
 *[surface =~ /.+;(.+)?/],
 *[water =~ /.+;(.+)?/] {
-    throwWarning: tr("{0} with multiple values", "{0.key}");
+  throwWarning: tr("{0} with multiple values", "{0.key}");
+}
+
+/* #19419 */
+node[/^(amenity|barrier|building(:part)?|entrance|(high|rail|water)way|leisure)$/][access *=";"],
+way[/^(amenity|building(:part)?|(high|rail|water)way|water|leisure)$/][access *=";"],
+relation[type =~ /^(boundary|multipolygon)$/][access *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/]["4wd_only" *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][agricultural *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][bdouble *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][bicycle *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][bus *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][carriage *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][disabled *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][dog *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][emergency *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][foot *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][golf_cart *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][goods *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][hazmat *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][hgv *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][horse *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][hov *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][mofa *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][moped *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][motor_vehicle *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][motorcar *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][motorcycle *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][psv *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][snowmobile *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][ski *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][taxi *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][tourist_bus *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][vehicle *=";"],
+*[/^(amenity|building(:part)?|entrance|highway|leisure)$/][wheelchair *=";"],
+*[railway][train *=";"],
+*[railway][tram *=";"],
+*[railway][subway *=";"],
+*[/^(leisure|water(way)?)$/][boat *=";"],
+*[/^(leisure|water(way)?)$/][canoe *=";"],
+*[/^(leisure|water(way)?)$/][cargo *=";"],
+*[/^(leisure|water(way)?)$/][motorboat *=";"],
+*[/^(leisure|water(way)?)$/][passenger *=";"],
+*[/^(leisure|water(way)?)$/][ship *=";"],
+*[/^(leisure|water(way)?)$/][swimming *=";"] {
+  throwWarning: tr("{0} with multiple values", "{1.key}");
+  group: tr("Multiple values in access tag");
+  suggestAlternative: tr("only one value and additional {0}", "{1.key}:conditional");
+  assertMatch:   "node barrier=block access=agricultural;forestry";
+  assertNoMatch: "node barrier=block access=agricultural";
+  assertMatch:   "way highway=trunk access=agricultural;forestry";
+  assertNoMatch: "way highway=trunk access=agricultural";
+  assertMatch:   "relation type=multipolygon water=lake access=boat;canoe";
+  assertNoMatch: "relation type=multipolygon water=lake access=boat";
 }
 
 *[source              =~ /^(;.*|.*;;.*|.*;)$/],
@@ -35,11 +88,11 @@
 *[voltage             =~ /^(;.*|.*;;.*|.*;)$/],
 *[sport               =~ /^(;.*|.*;;.*|.*;)$/],
 *[cuisine             =~ /^(;.*|.*;;.*|.*;)$/] {
-	throwWarning: tr("empty value in semicolon-separated ''{0}''", "{0.key}");
-	assertMatch: "node ref=;A1";
-	assertMatch: "node ref=A1;";
-	assertMatch: "node ref=;";
-	assertMatch: "node ref=A1;;A2";
-	assertNoMatch: "node ref=A1";
-	assertNoMatch: "node ref=A1;A2";
+  throwWarning: tr("empty value in semicolon-separated ''{0}''", "{0.key}");
+  assertMatch: "node ref=;A1";
+  assertMatch: "node ref=A1;";
+  assertMatch: "node ref=;";
+  assertMatch: "node ref=A1;;A2";
+  assertNoMatch: "node ref=A1";
+  assertNoMatch: "node ref=A1;A2";
 }
