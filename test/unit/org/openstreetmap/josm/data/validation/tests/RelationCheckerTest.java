@@ -7,8 +7,8 @@ import static org.openstreetmap.josm.data.osm.OsmUtils.createPrimitive;
 
 import java.util.List;
 
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -181,7 +181,8 @@ class RelationCheckerTest {
 
         r.addMember(new RelationMember("", createPrimitive("way no-rail-way=yes")));
         assertEquals(1, testRelation(r).size());
-        assertEquals("Role of relation member does not match template expression 'railway || route=ferry' in preset Public Transport Route (Rail)",
+        assertEquals(
+                "Role of relation member does not match template expression 'railway || route=ferry' in preset Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
 
         r.removeMember(3);

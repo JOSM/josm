@@ -452,7 +452,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
     final class SaveAndProceedAction extends AbstractAction implements PropertyChangeListener {
 
-        private ImageResource actionImg = null;
+        private ImageResource actionImg;
 
         SaveAndProceedAction() {
             initForReason(Reason.EXIT);
