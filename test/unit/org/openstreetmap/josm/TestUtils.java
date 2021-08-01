@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -30,8 +31,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
@@ -166,6 +169,46 @@ public final class TestUtils {
         }
         // Sort relation array
         Arrays.sort(array, comparator);
+    }
+
+    /**
+     * Create a test matrix for parameterized tests.
+     * <br />
+     * <b>WARNING:</b> This can quickly become <i>very</i> large (this is combinatorial,
+     * so the returned {@link Stream} length is the size of the object collections multiplied by each other.
+     * So if you have three lists of size 3, 4, and 5, the stream size would be {@code 3 * 4 * 5} or 60 elements.
+     * <br />
+     * Generally speaking, you should avoid putting expected values into the test matrix.
+     *
+     * @param objectCollections The collections of objects. May include/provide {@code null}.
+     * @return The object arrays to be used as arguments. Note: The returned stream might not be thread-safe.
+     */
+    public static Stream<Object[]> createTestMatrix(List<?>... objectCollections) {
+        // Create the original object arrays
+        final AtomicInteger size = new AtomicInteger(1);
+        Stream.of(objectCollections).mapToInt(Collection::size).forEach(i -> size.set(size.get() * i));
+        final List<Object[]> testMatrix = new ArrayList<>(size.get());
+        final int[] indexes = IntStream.range(0, objectCollections.length).map(i -> 0).toArray();
+
+        // It is important to make a new object array each time (we modify them)
+        return IntStream.range(0, size.get()).mapToObj(index -> new Object[objectCollections.length]).peek(args -> {
+            // Just in case someone tries to make this parallel, synchronize on indexes to avoid most issues.
+            synchronized (indexes) {
+                // Set the args
+                for (int listIndex = 0; listIndex < objectCollections.length; listIndex++) {
+                    args[listIndex] = objectCollections[listIndex].get(indexes[listIndex]);
+                }
+                // Increment indexes
+                for (int listIndex = 0; listIndex < objectCollections.length; listIndex++) {
+                    indexes[listIndex] = indexes[listIndex] + 1;
+                    if (indexes[listIndex] >= objectCollections[listIndex].size()) {
+                        indexes[listIndex] = 0;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     private static <T> String getFailMessage(T o1, T o2, int a, int b) {

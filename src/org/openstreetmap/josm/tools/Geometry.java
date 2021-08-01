@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
+
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -25,6 +27,7 @@ import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.INode;
@@ -1553,6 +1556,29 @@ public final class Geometry {
         double dist4sq = getSegmentNodeDistSq(enWs2Node1, enWs2Node2, enWs1Node2);
         double smallest = Math.min(Math.min(dist1sq, dist2sq), Math.min(dist3sq, dist4sq));
         return smallest != Double.MAX_VALUE ? Math.sqrt(smallest) : Double.NaN;
+    }
+
+    /**
+     * Create a new LatLon at a specified distance. Currently uses WGS84, but may change randomly in the future.
+     * This does not currently attempt to be hugely accurate. The actual location may be off
+     * depending upon the distance and the elevation, but should be within 0.0002 meters.
+     *
+     * @param original The originating point
+     * @param angle The angle (from true north) in radians
+     * @param offset The distance to the new point in the current projection's units
+     * @return The location at the specified angle and distance from the originating point
+     * @since 18109
+     */
+    public static ILatLon getLatLonFrom(final ILatLon original, final double angle, final double offset) {
+        final double meterOffset = ProjectionRegistry.getProjection().getMetersPerUnit() * offset;
+        final double radianLat = Math.toRadians(original.lat());
+        final double radianLon = Math.toRadians(original.lon());
+        final double angularDistance = meterOffset / WGS84.a;
+        final double lat = Math.asin(Math.sin(radianLat) * Math.cos(angularDistance)
+                + Math.cos(radianLat) * Math.sin(angularDistance) * Math.cos(angle));
+        final double lon = radianLon + Math.atan2(Math.sin(angle) * Math.sin(angularDistance) * Math.cos(radianLat),
+                Math.cos(angularDistance) - Math.sin(radianLat) * Math.sin(lat));
+        return new LatLon(Math.toDegrees(lat), Math.toDegrees(lon));
     }
 
     /**

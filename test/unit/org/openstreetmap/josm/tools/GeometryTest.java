@@ -11,11 +11,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -26,6 +31,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -469,4 +477,37 @@ class GeometryTest {
         assertTrue(expected > Geometry.getDistanceSegmentSegment(node1, node2, node3, node4));
     }
 
+    static Stream<Arguments> testGetLatLonFrom() {
+        // The projection can quickly explode the test matrix, so only test WGS84 (EPSG:3857). If other projections have
+        // issues, add them to the first list.
+        return TestUtils.createTestMatrix(
+                // Check specific projections
+                Collections.singletonList(Projections.getProjectionByCode("EPSG:3857")),
+                // Check extreme latitudes (degrees)
+                Arrays.asList(0, 89, -89),
+                // Test extreme longitudes (degrees)
+                Arrays.asList(0, -179, 179),
+                // Test various angles (degrees)
+                // This tests cardinal directions, and then some varying angles.
+                // TBH, the cardinal directions should find any issues uncovered by the varying angles,
+                // but it may not.
+                Arrays.asList(0, 90, 180, 270, 45),
+                // Test various distances (meters)
+                Arrays.asList(1, 10_000)
+                ).map(Arguments::of);
+    }
+
+    @ParameterizedTest(name = "[{index}] {3}Â° {4}m @ lat = {1} lon = {2} - {0}")
+    @MethodSource
+    void testGetLatLonFrom(final Projection projection, final double lat, final double lon, final double angle, final double offsetInMeters) {
+        ProjectionRegistry.setProjection(projection);
+        final double offset = offsetInMeters / projection.getMetersPerUnit();
+        final LatLon original = new LatLon(lat, lon);
+
+        final LatLon actual = (LatLon) Geometry.getLatLonFrom(original, Math.toRadians(angle), offset);
+        // Due to degree -> radian -> degree conversion, there is a limit to how precise it can be
+        assertEquals(offsetInMeters, original.greatCircleDistance(actual), 0.000_000_1);
+        // The docs indicate that this should not be highly precise.
+        assertEquals(angle, Math.toDegrees(original.bearing(actual)), 0.000_001);
+    }
 }
