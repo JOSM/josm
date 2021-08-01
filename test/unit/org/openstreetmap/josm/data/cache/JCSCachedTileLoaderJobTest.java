@@ -9,10 +9,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.head;
 import static com.github.tomakehurst.wiremock.client.WireMock.headRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.status;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -22,32 +22,32 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
 import org.apache.commons.jcs3.engine.behavior.ICacheElement;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.imagery.TileJobOptions;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.tools.Logging;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link JCSCachedTileLoaderJob}.
  */
-public class JCSCachedTileLoaderJobTest {
+@BasicWiremock
+@BasicPreferences
+@Timeout(20)
+class JCSCachedTileLoaderJobTest {
 
     /**
      * mocked tile server
      */
-    @Rule
-    public WireMockRule tileServer = new WireMockRule(WireMockConfiguration.options()
-            .dynamicPort());
+    @BasicWiremock
+    WireMockServer tileServer;
 
     private static class TestCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, CacheEntry> {
         private final String url;
@@ -103,18 +103,11 @@ public class JCSCachedTileLoaderJobTest {
     }
 
     /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(20_000);
-
-    /**
      * Always clear cache before tests
      * @throws Exception when clearing fails
      */
-    @Before
-    public void clearCache() throws Exception {
+    @BeforeEach
+    void clearCache() throws Exception {
         getCache().clear();
     }
 
@@ -124,7 +117,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testStatusCodes() throws IOException, InterruptedException {
+    void testStatusCodes() throws IOException, InterruptedException {
         doTestStatusCode(200);
         doTestStatusCode(401);
         doTestStatusCode(402);
@@ -141,7 +134,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException in case of I/O error
      */
     @Test
-    public void testUnknownHost() throws IOException {
+    void testUnknownHost() throws IOException {
         String key = "key_unknown_host";
         TestCachedTileLoaderJob job = new TestCachedTileLoaderJob("http://unkownhost.unkownhost/unkown", key);
         Listener listener = submitJob(job);
@@ -192,7 +185,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testNoRequestMadeWhenEntryInCache() throws IOException {
+    void testNoRequestMadeWhenEntryInCache() throws IOException {
         ICacheAccess<String, CacheEntry> cache = getCache();
         long expires = TimeUnit.DAYS.toMillis(1);
         long testStart = System.currentTimeMillis();
@@ -213,7 +206,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testRequestMadeWhenEntryInCacheAndForce() throws IOException {
+    void testRequestMadeWhenEntryInCacheAndForce() throws IOException {
         ICacheAccess<String, CacheEntry> cache = getCache();
         long expires = TimeUnit.DAYS.toMillis(1);
         long testStart = System.currentTimeMillis();
@@ -235,7 +228,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testSettingMinimumExpiryWhenNoExpires() throws IOException {
+    void testSettingMinimumExpiryWhenNoExpires() throws IOException {
         long testStart = System.currentTimeMillis();
         tileServer.stubFor(get(urlEqualTo("/test")).willReturn(aResponse().withBody("mock entry")));
 
@@ -243,15 +236,15 @@ public class JCSCachedTileLoaderJobTest {
         Listener listener = submitJob(job, false);
         tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
 
-        assertTrue("Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
-                JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME + " (DEFAULT_EXPIRE_TIME)",
-                listener.attributes.getExpirationTime() >= testStart + JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME);
+        assertTrue(listener.attributes.getExpirationTime() >= testStart + JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME,
+                "Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
+                        JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME + " (DEFAULT_EXPIRE_TIME)");
 
-        assertTrue("Cache entry expiration is " +
-                (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
-                " which is not less than " +
-                JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME + " (DEFAULT_EXPIRE_TIME)",
-                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME
+        assertTrue(listener.attributes.getExpirationTime() <= System.currentTimeMillis() + JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME,
+                "Cache entry expiration is " +
+                        (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
+                        " which is not less than " +
+                        JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME + " (DEFAULT_EXPIRE_TIME)"
                 );
 
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
@@ -263,7 +256,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testSettingExpireByMaxAge() throws IOException {
+    void testSettingExpireByMaxAge() throws IOException {
         long testStart = System.currentTimeMillis();
         long expires = TimeUnit.DAYS.toSeconds(1);
         tileServer.stubFor(get(urlEqualTo("/test"))
@@ -277,16 +270,17 @@ public class JCSCachedTileLoaderJobTest {
         Listener listener = submitJob(job, false);
         tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
 
-        assertTrue("Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
-                TimeUnit.SECONDS.toMillis(expires) + " (max-age)",
-                listener.attributes.getExpirationTime() >= testStart + TimeUnit.SECONDS.toMillis(expires));
+        assertTrue(listener.attributes.getExpirationTime() >= testStart + TimeUnit.SECONDS.toMillis(expires),
+                "Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
+                        TimeUnit.SECONDS.toMillis(expires) + " (max-age)");
 
-        assertTrue("Cache entry expiration is " +
-                (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
-                " which is not less than " +
-                TimeUnit.SECONDS.toMillis(expires) + " (max-age)",
-                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(expires)
-                );
+        assertTrue(
+                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(expires),
+                "Cache entry expiration is " +
+                        (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
+                        " which is not less than " +
+                        TimeUnit.SECONDS.toMillis(expires) + " (max-age)"
+                        );
 
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
     }
@@ -297,7 +291,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testSettingMinimumExpiryByMinimumExpiryTimeLessThanDefault() throws IOException {
+    void testSettingMinimumExpiryByMinimumExpiryTimeLessThanDefault() throws IOException {
         long testStart = System.currentTimeMillis();
         int minimumExpiryTimeSeconds = (int) (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2);
 
@@ -309,16 +303,18 @@ public class JCSCachedTileLoaderJobTest {
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
 
-        assertTrue("Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
-                TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds) + " (minimumExpireTime)",
-                listener.attributes.getExpirationTime() >= testStart + TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds));
+        assertTrue(
+                listener.attributes.getExpirationTime() >= testStart + TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds),
+                "Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
+                        TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds) + " (minimumExpireTime)");
 
-        assertTrue("Cache entry expiration is " +
-                (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
-                " which is not less than " +
-                TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds) + " (minimumExpireTime)",
-                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds)
-                );
+        assertTrue(
+                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds),
+                "Cache entry expiration is " +
+                        (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
+                        " which is not less than " +
+                        TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds) + " (minimumExpireTime)"
+                        );
     }
 
     /**
@@ -328,7 +324,7 @@ public class JCSCachedTileLoaderJobTest {
      */
 
     @Test
-    public void testSettingMinimumExpiryByMinimumExpiryTimeGreaterThanDefault() throws IOException {
+    void testSettingMinimumExpiryByMinimumExpiryTimeGreaterThanDefault() throws IOException {
         long testStart = System.currentTimeMillis();
         int minimumExpiryTimeSeconds = (int) (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME * 2);
 
@@ -340,16 +336,18 @@ public class JCSCachedTileLoaderJobTest {
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
 
-        assertTrue("Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
-                TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds) + " (minimumExpireTime)",
-                listener.attributes.getExpirationTime() >= testStart + TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds));
+        assertTrue(
+                listener.attributes.getExpirationTime() >= testStart + TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds),
+                "Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
+                        TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds) + " (minimumExpireTime)");
 
-        assertTrue("Cache entry expiration is " +
-                (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
-                " which is not less than " +
-                TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds) + " (minimumExpireTime)",
-                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds)
-                );
+        assertTrue(
+                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds),
+                "Cache entry expiration is " +
+                        (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
+                        " which is not less than " +
+                        TimeUnit.SECONDS.toMillis(minimumExpiryTimeSeconds) + " (minimumExpireTime)"
+                        );
     }
 
     /**
@@ -364,7 +362,7 @@ public class JCSCachedTileLoaderJobTest {
      */
 
     @Test
-    public void testCacheControlVsExpires() throws IOException {
+    void testCacheControlVsExpires() throws IOException {
         long testStart = System.currentTimeMillis();
         int minimumExpiryTimeSeconds = 0;
 
@@ -389,16 +387,17 @@ public class JCSCachedTileLoaderJobTest {
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
 
-        assertTrue("Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
-                (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10) + " (Expires header)",
-                listener.attributes.getExpirationTime() >= testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10));
+        assertTrue(
+                listener.attributes.getExpirationTime() >= testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10),
+                "Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
+                        (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10) + " (Expires header)");
 
-        assertTrue("Cache entry expiration is " +
-                (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
-                " which is not less than " +
-                (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2) + " (Cache-Control: max-age=)",
-                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)
-                );
+        assertTrue(listener.attributes.getExpirationTime() <= System.currentTimeMillis() + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2),
+                "Cache entry expiration is " +
+                        (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
+                        " which is not less than " +
+                        (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2) + " (Cache-Control: max-age=)"
+                        );
     }
 
     /**
@@ -409,7 +408,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testMaxAgeVsSMaxAge() throws IOException {
+    void testMaxAgeVsSMaxAge() throws IOException {
         long testStart = System.currentTimeMillis();
         int minimumExpiryTimeSeconds = 0;
 
@@ -434,16 +433,17 @@ public class JCSCachedTileLoaderJobTest {
         tileServer.verify(1, getRequestedFor(urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), listener.data);
 
-        assertTrue("Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
-                (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10) + " (Cache-Control: max-age)",
-                listener.attributes.getExpirationTime() >= testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10));
+        assertTrue(
+                listener.attributes.getExpirationTime() >= testStart + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10),
+                "Cache entry expiration is " + (listener.attributes.getExpirationTime() - testStart) + " which is not larger than " +
+                        (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 10) + " (Cache-Control: max-age)");
 
-        assertTrue("Cache entry expiration is " +
-                (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
-                " which is not less than " +
-                (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2) + " (Cache-Control: s-max-age)",
-                listener.attributes.getExpirationTime() <= System.currentTimeMillis() + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2)
-                );
+        assertTrue(listener.attributes.getExpirationTime() <= System.currentTimeMillis() + (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2),
+                "Cache entry expiration is " +
+                        (listener.attributes.getExpirationTime() - System.currentTimeMillis()) +
+                        " which is not less than " +
+                        (JCSCachedTileLoaderJob.DEFAULT_EXPIRE_TIME / 2) + " (Cache-Control: s-max-age)"
+                        );
     }
 
     /**
@@ -451,7 +451,7 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testCheckUsingHead() throws IOException {
+    void testCheckUsingHead() throws IOException {
         ICacheAccess<String, CacheEntry> cache = getCache();
         long expires = TimeUnit.DAYS.toMillis(1);
         long testStart = System.currentTimeMillis();

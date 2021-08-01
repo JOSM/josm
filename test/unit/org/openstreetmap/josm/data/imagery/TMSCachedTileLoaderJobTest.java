@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -16,9 +16,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.jcs3.access.behavior.ICacheAccess;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
@@ -26,37 +25,28 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link TMSCachedTileLoaderJob}.
  */
-public class TMSCachedTileLoaderJobTest {
-
-    /**
-     * Setup tests
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences();
-
+@BasicWiremock
+@BasicPreferences
+class TMSCachedTileLoaderJobTest {
     /**
      * mocked tile server
      */
-    @Rule
-    public WireMockRule tileServer = new WireMockRule(WireMockConfiguration.options()
-            .dynamicPort());
+    @BasicWiremock
+    WireMockServer tileServer;
 
-    @Before
-    public void clearCache() throws Exception {
+    @BeforeEach
+    void clearCache() throws Exception {
         getCache().clear();
     }
 
@@ -144,7 +134,7 @@ public class TMSCachedTileLoaderJobTest {
      * Tests that {@code TMSCachedTileLoaderJob#SERVICE_EXCEPTION_PATTERN} is correct.
      */
     @Test
-    public void testServiceExceptionPattern() {
+    void testServiceExceptionPattern() {
         testServiceException("missing parameters ['version', 'format']",
                 "<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE ServiceExceptionReport SYSTEM \"http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd\">\n" +
@@ -166,7 +156,7 @@ public class TMSCachedTileLoaderJobTest {
      * Tests that {@code TMSCachedTileLoaderJob#CDATA_PATTERN} is correct.
      */
     @Test
-    public void testCdataPattern() {
+    void testCdataPattern() {
         testCdata("received unsuitable wms request: no <grid> with suitable srs found for layer capitais",
                 "<![CDATA[\r\n" +
                 "received unsuitable wms request: no <grid> with suitable srs found for layer capitais\r\n" +
@@ -177,7 +167,7 @@ public class TMSCachedTileLoaderJobTest {
      * Tests that {@code TMSCachedTileLoaderJob#JSON_PATTERN} is correct.
      */
     @Test
-    public void testJsonPattern() {
+    void testJsonPattern() {
         testJson("Tile does not exist",
                 "{\"message\":\"Tile does not exist\"}");
     }
@@ -196,7 +186,7 @@ public class TMSCachedTileLoaderJobTest {
 
     private static void test(Pattern pattern, String expected, String text) {
         Matcher m = pattern.matcher(text);
-        assertTrue(text, m.matches());
+        assertTrue(m.matches(), text);
         assertEquals(expected, Utils.strip(m.group(1)));
     }
 
@@ -226,7 +216,7 @@ public class TMSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testNoCacheHeaders() throws IOException {
+    void testNoCacheHeaders() throws IOException {
         long testStart = System.currentTimeMillis();
         tileServer.stubFor(
                 WireMock.get(WireMock.urlEqualTo("/test"))
@@ -249,7 +239,7 @@ public class TMSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testNoCacheHeadersMinimumExpires() throws IOException {
+    void testNoCacheHeadersMinimumExpires() throws IOException {
         noCacheHeadersMinimumExpires((int) TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get() * 2));
     }
 
@@ -260,7 +250,7 @@ public class TMSCachedTileLoaderJobTest {
      */
 
     @Test
-    public void testNoCacheHeadersMinimumExpiresLargerThanMaximum() throws IOException {
+    void testNoCacheHeadersMinimumExpiresLargerThanMaximum() throws IOException {
         noCacheHeadersMinimumExpires((int) TimeUnit.MILLISECONDS.toSeconds(TMSCachedTileLoaderJob.MAXIMUM_EXPIRES.get() * 2));
     }
 
@@ -286,7 +276,7 @@ public class TMSCachedTileLoaderJobTest {
      * @throws IOException exception
      */
     @Test
-    public void testShortExpire() throws IOException {
+    void testShortExpire() throws IOException {
         long testStart = System.currentTimeMillis();
         long expires = TMSCachedTileLoaderJob.MINIMUM_EXPIRES.get() / 2;
         tileServer.stubFor(
@@ -306,23 +296,19 @@ public class TMSCachedTileLoaderJobTest {
     }
 
     private void assertExpirationAtLeast(long duration, TestCachedTileLoaderJob job) {
-        assertTrue(
-                "Expiration time shorter by " +
-                        -1 * (job.getAttributes().getExpirationTime() - duration) +
-                        " than expected",
-                job.getAttributes().getExpirationTime() >= duration);
+        assertTrue(job.getAttributes().getExpirationTime() >= duration, "Expiration time shorter by " +
+                                -1 * (job.getAttributes().getExpirationTime() - duration) +
+                                " than expected");
     }
 
     private void assertExpirationAtMost(long duration, TestCachedTileLoaderJob job) {
-        assertTrue(
-                "Expiration time longer by " +
-                        (job.getAttributes().getExpirationTime() - duration) +
-                        " than expected",
-                job.getAttributes().getExpirationTime() <= duration);
+        assertTrue(job.getAttributes().getExpirationTime() <= duration, "Expiration time longer by " +
+                                (job.getAttributes().getExpirationTime() - duration) +
+                                " than expected");
     }
 
     @Test
-    public void testLongExpire() throws IOException {
+    void testLongExpire() throws IOException {
         long testStart = System.currentTimeMillis();
         long expires = TMSCachedTileLoaderJob.MAXIMUM_EXPIRES.get() * 2;
         tileServer.stubFor(
@@ -342,5 +328,4 @@ public class TMSCachedTileLoaderJobTest {
         tileServer.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo("/test")));
         assertArrayEquals("mock entry".getBytes(StandardCharsets.UTF_8), job.get().getContent());
     }
-
 }

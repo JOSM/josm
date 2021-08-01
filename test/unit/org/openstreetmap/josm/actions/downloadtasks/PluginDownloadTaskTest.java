@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,14 +11,16 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -26,17 +28,19 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Unit tests for class {@link PluginDownloadTask}.
  */
-public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
+@BasicWiremock
+@BasicPreferences
+class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
     protected String pluginPath;
 
     /**
      * Setup test.
      */
-    @Rule
+    @RegisterExtension
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules testRule = new JOSMTestRules().https().assumeRevision(
         "Revision: 8000\n"
-    ).preferences();
+    );
 
     @Override
     protected String getRemoteContentType() {
@@ -54,7 +58,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testUpdatePluginValid() throws Exception {
+    void testUpdatePluginValid() throws Exception {
         this.pluginPath = "plugin/dummy_plugin.v31772.jar";
         this.mockHttp();
 
@@ -96,7 +100,7 @@ public class PluginDownloadTaskTest extends AbstractDownloadTaskTestParent {
      * @throws Exception if an error occurs
      */
     @Test
-    public void testUpdatePluginCorrupt() throws Exception {
+    void testUpdatePluginCorrupt() throws Exception {
         this.pluginPath = "plugin/corrupted_plugin.jar";
         this.mockHttp();
 

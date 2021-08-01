@@ -15,8 +15,9 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,40 +34,35 @@ import java.util.logging.LogRecord;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.testutils.annotations.BasicPreferences;
+import org.openstreetmap.josm.testutils.annotations.BasicWiremock;
+import org.openstreetmap.josm.testutils.annotations.HTTP;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.http.HttpHeader;
 import com.github.tomakehurst.wiremock.http.HttpHeaders;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.github.tomakehurst.wiremock.matching.UrlPattern;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Tests the {@link HttpClient}.
  */
-public class HttpClientTest {
-
-    /**
-     * Setup test
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().timeout(15000);
-
+@HTTP
+@BasicWiremock
+@BasicPreferences
+@Timeout(15)
+class HttpClientTest {
     /**
      * mocked local http server
      */
-    @Rule
-    public WireMockRule localServer = new WireMockRule(WireMockConfiguration.options().dynamicPort());
+    @BasicWiremock
+    public WireMockServer localServer;
 
     private ProgressMonitor progress;
 
@@ -90,7 +86,7 @@ public class HttpClientTest {
     /**
      * Setup test.
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         localServer.resetAll();
         progress = TestUtils.newTestProgressMonitor();
@@ -104,7 +100,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testConstructorGetterSetter() throws IOException {
+    void testConstructorGetterSetter() throws IOException {
         final URL localUrl = url("");
         final HttpClient client = HttpClient.create(localUrl);
         assertThat(client.getURL(), is(localUrl));
@@ -126,7 +122,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testGet() throws IOException {
+    void testGet() throws IOException {
         final UrlPattern pattern = urlEqualTo("/get?foo=bar");
         localServer.stubFor(get(pattern).willReturn(aResponse().withStatusMessage("OK")
                 .withHeader("Content-Type", "application/json; encoding=utf-8")));
@@ -150,7 +146,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testHeaders() throws IOException {
+    void testHeaders() throws IOException {
         final UrlPattern pattern = urlEqualTo("/headers");
         localServer.stubFor(get(pattern).willReturn(aResponse()));
         connect("/headers");
@@ -165,7 +161,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testFetchUtf8Content() throws IOException {
+    void testFetchUtf8Content() throws IOException {
         localServer.stubFor(get(urlEqualTo("/encoding/utf8"))
                 .willReturn(aResponse().withBody("∀x∈ℝ: UTF-8 encoded sample plain-text file")));
         final Response response = connect("/encoding/utf8");
@@ -180,7 +176,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testPost() throws IOException {
+    void testPost() throws IOException {
         final UrlPattern pattern = urlEqualTo("/post");
         localServer.stubFor(post(pattern).willReturn(aResponse()));
         final String text = "Hello World!\nGeetings from JOSM, the Java OpenStreetMap Editor";
@@ -199,7 +195,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testPostZero() throws IOException {
+    void testPostZero() throws IOException {
         final UrlPattern pattern = urlEqualTo("/post");
         localServer.stubFor(post(pattern).willReturn(aResponse()));
         final byte[] bytes = "".getBytes(StandardCharsets.UTF_8);
@@ -214,7 +210,7 @@ public class HttpClientTest {
     }
 
     @Test
-    public void testRelativeRedirects() throws IOException {
+    void testRelativeRedirects() throws IOException {
         mockRedirects(false, 3);
         final Response response = connect("/relative-redirect/3");
         assertThat(response.getResponseCode(), is(200));
@@ -222,7 +218,7 @@ public class HttpClientTest {
     }
 
     @Test
-    public void testAbsoluteRedirects() throws IOException {
+    void testAbsoluteRedirects() throws IOException {
         mockRedirects(true, 3);
         final Response response = connect("/absolute-redirect/3");
         assertThat(response.getResponseCode(), is(200));
@@ -233,10 +229,10 @@ public class HttpClientTest {
      * Test maximum number of redirections.
      * @throws IOException if an I/O error occurs
      */
-    @Test(expected = IOException.class)
-    public void testTooMuchRedirects() throws IOException {
+    @Test
+    void testTooMuchRedirects() throws IOException {
         mockRedirects(false, 3);
-        HttpClient.create(url("/relative-redirect/3")).setMaxRedirects(2).connect(progress);
+        assertThrows(IOException.class, () -> HttpClient.create(url("/relative-redirect/3")).setMaxRedirects(2).connect(progress));
     }
 
     /**
@@ -244,7 +240,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testHttp418() throws IOException {
+    void testHttp418() throws IOException {
         // https://tools.ietf.org/html/rfc2324
         final Response response = doTestHttp(418, "I'm a teapot!", "I'm a teapot!",
                 Collections.singletonMap("X-More-Info", "http://tools.ietf.org/html/rfc2324"));
@@ -256,7 +252,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testHttp401() throws IOException {
+    void testHttp401() throws IOException {
         // https://tools.ietf.org/html/rfc2324
         doTestHttp(401, "UNAUTHORIZED", null);
     }
@@ -266,7 +262,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testHttp402() throws IOException {
+    void testHttp402() throws IOException {
         // https://tools.ietf.org/html/rfc2324
         doTestHttp(402, "PAYMENT REQUIRED", "Fuck you, pay me!");
     }
@@ -276,7 +272,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testHttp403() throws IOException {
+    void testHttp403() throws IOException {
         // https://tools.ietf.org/html/rfc2324
         doTestHttp(403, "FORBIDDEN", null);
     }
@@ -286,7 +282,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testHttp404() throws IOException {
+    void testHttp404() throws IOException {
         // https://tools.ietf.org/html/rfc2324
         doTestHttp(404, "NOT FOUND", null);
     }
@@ -296,7 +292,7 @@ public class HttpClientTest {
      * @throws IOException if an I/O error occurs
      */
     @Test
-    public void testHttp500() throws IOException {
+    void testHttp500() throws IOException {
         // https://tools.ietf.org/html/rfc2324
         doTestHttp(500, "INTERNAL SERVER ERROR", null);
     }
@@ -306,7 +302,7 @@ public class HttpClientTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testRequestInTime() throws IOException {
+    void testRequestInTime() throws IOException {
         mockDelay(1);
         final Response response = HttpClient.create(url("/delay/1")).setReadTimeout(2000).connect(progress);
         assertThat(response.getResponseCode(), is(200));
@@ -316,10 +312,10 @@ public class HttpClientTest {
      * Checks that a slow request results in the expected exception if it exceeds the timeout.
      * @throws IOException always
      */
-    @Test(expected = IOException.class)
-    public void testTakesTooLong() throws IOException {
+    @Test
+    void testTakesTooLong() throws IOException {
         mockDelay(1);
-        HttpClient.create(url("/delay/1")).setReadTimeout(500).connect(progress);
+        assertThrows(IOException.class, () -> HttpClient.create(url("/delay/1")).setReadTimeout(500).connect(progress));
     }
 
     /**
@@ -327,7 +323,7 @@ public class HttpClientTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testGzip() throws IOException {
+    void testGzip() throws IOException {
         localServer.stubFor(get(urlEqualTo("/gzip")).willReturn(aResponse().withBody("foo")));
         final Response response = connect("/gzip");
         assertThat(response.getResponseCode(), is(200));
@@ -340,7 +336,7 @@ public class HttpClientTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testOpenUrlGzip() throws IOException {
+    void testOpenUrlGzip() throws IOException {
         final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.gz");
         final byte[] gpx = Files.readAllBytes(path);
         localServer.stubFor(get(urlEqualTo("/trace/1613906/data"))
@@ -360,7 +356,7 @@ public class HttpClientTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testOpenUrlBzip() throws IOException {
+    void testOpenUrlBzip() throws IOException {
         final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.bz2");
         final byte[] gpx = Files.readAllBytes(path);
         localServer.stubFor(get(urlEqualTo("/trace/785544/data"))
@@ -380,7 +376,7 @@ public class HttpClientTest {
      * @throws IOException if any I/O error occurs
      */
     @Test
-    public void testOpenUrlBzipAccordingToContentDisposition() throws IOException {
+    void testOpenUrlBzipAccordingToContentDisposition() throws IOException {
         final Path path = Paths.get(TestUtils.getTestDataRoot(), "tracks/tracks.gpx.bz2");
         final byte[] gpx = Files.readAllBytes(path);
         localServer.stubFor(get(urlEqualTo("/trace/1350010/data"))
@@ -401,7 +397,7 @@ public class HttpClientTest {
      * Test that error message sent by Tomcat can be parsed.
      */
     @Test
-    public void testTomcatErrorMessage() {
+    void testTomcatErrorMessage() {
         Matcher m = HttpClient.getTomcatErrorMatcher(
             "<html><head><title>Apache Tomcat/DGFiP - Rapport d''erreur</title><style><!--"+
                 "H1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;} "+
