@@ -20,7 +20,6 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.Preferences;
@@ -639,9 +638,7 @@ public final class Shortcut {
                 .map(Shortcut::getKeyText)
                 .filter(text -> !text.isEmpty());
 
-        final String laf = UIManager.getLookAndFeel().getID();
-        // "Mac" is the native LAF, "Aqua" is Quaqua. Both use native menus with native tooltips.
-        final boolean canHtml = !(PlatformManager.isPlatformOsx() && (laf.contains("Mac") || laf.contains("Aqua")));
+        final boolean canHtml = PlatformManager.getPlatform().isHtmlSupportedInMenuTooltips();
 
         StringBuilder result = new StringBuilder(48);
         if (canHtml) {
@@ -663,5 +660,4 @@ public final class Shortcut {
         }
         return result.toString();
     }
-
 }

@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.UIManager;
+
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.CertificateAmendment.NativeCertAmend;
@@ -94,6 +96,15 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         }
         checkExpiredJava(javaCallback);
         checkWebStartMigration(webStartCallback);
+    }
+
+    @Override
+    public boolean isHtmlSupportedInMenuTooltips() {
+        // See #17915 - JDK-8164935
+        // "Mac" is the native LAF, "Aqua" is Quaqua. Both use native menus with native tooltips.
+        String laf = UIManager.getLookAndFeel().getID();
+        return !("true".equals(Utils.getSystemProperty("apple.laf.useScreenMenuBar"))
+                && ("Aqua".equals(laf) || laf.contains("Mac")));
     }
 
     @Override

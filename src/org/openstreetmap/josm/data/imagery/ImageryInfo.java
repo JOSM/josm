@@ -35,6 +35,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.PlatformManager;
 import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -704,7 +705,6 @@ public class ImageryInfo extends
         return this.defaultMinZoom;
     }
 
-
     /**
      * Returns a tool tip text for display.
      * @return The text
@@ -712,34 +712,39 @@ public class ImageryInfo extends
      */
     @Override
     public String getToolTipText() {
+        boolean htmlSupported = PlatformManager.getPlatform().isHtmlSupportedInMenuTooltips();
         StringBuilder res = new StringBuilder(getName());
         boolean html = false;
         String dateStr = getDate();
         if (dateStr != null && !dateStr.isEmpty()) {
-            res.append("<br>").append(tr("Date of imagery: {0}", dateStr));
-            html = true;
+            html = addNewLineInTooltip(res, tr("Date of imagery: {0}", dateStr), htmlSupported);
         }
         if (category != null && category.getDescription() != null) {
-            res.append("<br>").append(tr("Imagery category: {0}", category.getDescription()));
-            html = true;
+            html = addNewLineInTooltip(res, tr("Imagery category: {0}", category.getDescription()), htmlSupported);
         }
         if (bestMarked) {
-            res.append("<br>").append(tr("This imagery is marked as best in this region in other editors."));
-            html = true;
+            html = addNewLineInTooltip(res, tr("This imagery is marked as best in this region in other editors."), htmlSupported);
         }
         if (overlay) {
-            res.append("<br>").append(tr("This imagery is an overlay."));
-            html = true;
+            html = addNewLineInTooltip(res, tr("This imagery is an overlay."), htmlSupported);
         }
         String desc = getDescription();
         if (desc != null && !desc.isEmpty()) {
-            res.append("<br>").append(Utils.escapeReservedCharactersHTML(desc));
-            html = true;
+            html = addNewLineInTooltip(res, desc, htmlSupported);
         }
         if (html) {
             res.insert(0, "<html>").append("</html>");
         }
         return res.toString();
+    }
+
+    private static boolean addNewLineInTooltip(StringBuilder res, String line, boolean htmlSupported) {
+        if (htmlSupported) {
+            res.append("<br>").append(Utils.escapeReservedCharactersHTML(line));
+        } else {
+            res.append('\n').append(line);
+        }
+        return htmlSupported;
     }
 
     /**

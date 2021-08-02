@@ -233,6 +233,15 @@ public interface PlatformHook {
     }
 
     /**
+     * Determines if HTML rendering is supported in menu tooltips.
+     * @return {@code true} if HTML rendering is supported in menu tooltips
+     * @since 18116
+     */
+    default boolean isHtmlSupportedInMenuTooltips() {
+        return true;
+    }
+
+    /**
      * Returns extended modifier key used as the appropriate accelerator key for menu shortcuts.
      * It is advised everywhere to use {@link Toolkit#getMenuShortcutKeyMask()} to get the cross-platform modifier, but:
      * <ul>
