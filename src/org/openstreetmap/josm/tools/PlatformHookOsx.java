@@ -85,7 +85,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             // to do it manually if run with `java -jar``.
             eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(
                 appli,
-                ImageProvider.get("logo_macOS", ImageProvider.ImageSizes.ABOUT_LOGO).getImage()
+                ImageProvider.get(/* ICON */ "logo_macOS", ImageProvider.ImageSizes.ABOUT_LOGO).getImage()
             );
 
             // enable full screen
