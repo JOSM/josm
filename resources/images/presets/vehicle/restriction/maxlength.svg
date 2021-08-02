@@ -81,50 +81,50 @@
   </g>
   <path
      d="M 213.03125,432.5 L 170.84375,474.6875 L 213.0625,517.0625 L 238.15625,516.75 L 206.65625,484.59375 L 267.09375,484.59375 L 267.0625,464.9375 L 206.625,464.9375 L 238.125,432.8125 L 213.03125,432.5 z "
-     style="fill: black; fill-opacity: 1; fill-rule: evenodd; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
      id="path1881" />
   <path
      d="M 511.47267,432.54183 L 553.66017,474.72933 L 511.44142,517.10433 L 486.34767,516.79183 L 517.84767,484.63558 L 457.41017,484.63558 L 457.44142,464.97933 L 517.87892,464.97933 L 486.37892,432.85433 L 511.47267,432.54183 z "
-     style="fill: black; fill-opacity: 1; fill-rule: evenodd; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     style="fill:black;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
      id="path1892" />
   <path
      d="M 292.74349,507.09531 L 292.74349,445.60548 L 282.44543,453.11758 L 282.44543,442.12304 L 292.74349,434.61093 L 303.14104,434.61093 L 303.14104,507.09531 L 292.74349,507.09531 z "
      transform="scale(0.993187, 1.00686)"
-     style="font-size: 101.886px; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; text-align: center; line-height: 100%; text-anchor: middle; fill: black; fill-opacity: 1; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     style="line-height:100%;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
      id="text1894" />
   <path
      d="M 348.33509,489.64451 L 348.33509,458.84985 C 348.33506,455.36747 347.39812,452.64786 345.52427,450.69101 C 343.65036,448.73428 341.18779,447.75588 338.13654,447.75582 C 335.05208,447.75588 332.58121,448.73428 330.72393,450.69101 C 328.86662,452.64786 327.93797,455.36747 327.93799,458.84985 L 327.93799,489.64451 C 327.93797,493.16012 328.86662,495.88803 330.72393,497.82822 C 332.58121,499.76845 335.05208,500.73855 338.13654,500.73854 C 341.18779,500.73855 343.65036,499.76845 345.52427,497.82822 C 347.39812,495.88803 348.33506,493.16012 348.33509,489.64451 L 348.33509,489.64451 z M 317.54044,490.2415 L 317.54044,458.25286 C 317.54043,451.58655 319.62989,446.43753 323.80882,442.80579 C 327.98772,439.17418 332.76363,437.35834 338.13654,437.35827 C 343.47624,437.35834 348.24385,439.17418 352.43939,442.80579 C 356.63485,446.43753 358.7326,451.58655 358.73264,458.25286 L 358.73264,490.2415 C 358.7326,496.90788 356.63485,502.04861 352.43939,505.6637 C 348.24385,509.2788 343.47624,511.08634 338.13654,511.08634 C 332.76363,511.08634 327.98772,509.2788 323.80882,505.6637 C 319.62989,502.04861 317.54043,496.90788 317.54044,490.2415 L 317.54044,490.2415 z "
-     style="font-size: 101.886px; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; text-align: center; line-height: 100%; text-anchor: middle; fill: black; fill-opacity: 1; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     style="line-height:100%;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
      id="text1898" />
   <path
      d="M 371.9405,510.98935 L 371.9405,459.34985 L 382.33805,459.34985 L 382.33805,464.872 L 382.53705,464.872 C 385.82046,460.79262 390.29787,458.75292 395.96929,458.75286 C 399.58435,458.75292 402.45321,459.39965 404.57587,460.69308 C 406.69846,461.9866 408.68842,463.57857 410.54576,465.46898 C 414.62513,460.99162 420.06435,458.75292 426.86344,458.75286 C 430.87646,458.75292 434.74859,460.27855 438.47984,463.32978 C 442.21094,466.38109 444.07653,470.82534 444.07661,476.66252 L 444.07661,510.98935 L 433.67906,510.98935 L 433.67906,480.24445 C 433.67899,476.76205 432.70059,474.04244 430.74387,472.08561 C 428.78701,470.12885 426.36589,469.15045 423.48051,469.15041 C 420.49551,469.15045 418.03293,470.12885 416.09277,472.08561 C 414.15251,474.04244 413.18241,476.76205 413.18246,480.24445 L 413.18246,510.98935 L 402.83466,510.98935 L 402.83466,480.24445 C 402.83462,476.76205 401.85622,474.04244 399.89946,472.08561 C 397.94263,470.12885 395.52152,469.15045 392.6361,469.15041 C 389.65114,469.15045 387.18856,470.12885 385.24837,472.08561 C 383.30814,474.04244 382.33803,476.76205 382.33805,480.24445 L 382.33805,510.98935 L 371.9405,510.98935 z "
-     style="font-size: 101.886px; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; text-align: center; line-height: 100%; text-anchor: middle; fill: black; fill-opacity: 1; stroke: none; stroke-width: 1px; stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;"
+     style="line-height:100%;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
      id="text1902" />
   <g
      transform="matrix(0.400053, 0, 0, 0.400053, 143.845, 217.208)"
      id="g2148">
     <path
        d="M 295.78419,86.816926 L 295.78419,335.08252 L 687.71625,335.4031 C 664.71649,354.19396 650.35734,380.09418 650.54503,414.08813 L 261.47933,413.85667 C 257.75238,281.97351 70.642616,282.42223 66.576854,413.09434 C 38.473995,412.88466 34.575813,406.50199 34.30487,380.61469 L 34.304868,281.61469 C 33.952015,237.37253 28.42681,266.57731 61.177014,182.67997 C 94.875059,93.246445 85.585107,101.51291 116.0648,99.204795 L 295.78419,86.816926 z M 217.93865,233.19966 L 219.48981,127.72046 L 119.43969,133.92512 C 101.20003,135.14704 101.04823,135.26154 94.62105,156.41701 L 69.026832,224.66825 C 60.428592,245.6025 61.79713,251.77115 85.314062,248.71131 L 217.93865,233.19966 z M 966.63494,335.59074 L 966.82552,391.36792 L 902.21802,414.23783 L 845.4914,414.20156 C 845.7223,381.85903 832.28136,354.65711 808.44981,335.54893 L 966.63494,335.59074 z "
-       style="fill: black; fill-rule: evenodd; stroke: none;"
+       style="fill:black;fill-rule:evenodd;stroke:none;"
        id="path2135" />
     <rect
        width="631.32404"
        height="301.70154"
        x="335.82718"
        y="12.158683"
-       style="fill: black; stroke: none;"
+       style="fill:black;stroke:none;"
        id="rect2137" />
     <circle
        cx="164"
        cy="412"
        r="77"
-       style="fill: black; stroke: none;"
+       style="fill:black;stroke:none;"
        id="circle2139" />
     <circle
        cx="748"
        cy="412"
        r="77"
-       style="fill: black; stroke: none;"
+       style="fill:black;stroke:none;"
        id="circle2141" />
   </g>
 </svg>

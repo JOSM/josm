@@ -11,7 +11,8 @@ my @default = (
   "src/org/openstreetmap/josm/*/*/*.java",
   "src/org/openstreetmap/josm/*/*/*/*.java",
   "src/org/openstreetmap/josm/*/*/*/*/*.java",
-  "src/org/openstreetmap/josm/*/*/*/*/*/*.java"
+  "src/org/openstreetmap/josm/*/*/*/*/*/*.java",
+  "src/org/openstreetmap/josm/*/*/*/*/*/*/*.java"
 );
 
 my %icons;
@@ -40,13 +41,14 @@ for my $arg (@ARGV ? @ARGV : @default)
       }
       if($l =~ /icon\s*[:=]\s*["']([^"'+]+?)["']/)
       {
-        ++$icons{$1};
+        my $i = $1;
+        ++$icons{$i};
       }
 
       if(($l =~ /(?:icon-image|repeat-image|fill-image)\s*:\s*(\"?(.*?)\"?)\s*;/) && ($1 ne "none"))
       {
-        my $img = $2;
-        ++$icons{$img};
+        my $i = $2;
+        ++$icons{$i};
       }
       if($l =~ /ImageProvider(?:\.get)?\(\"([^\"]*?)\"(?:, (?:ImageProvider\.)?ImageSizes\.[A-Z]+)?\)/)
       {
@@ -148,6 +150,7 @@ for($i = 1; my @ifiles = (glob("resources/images".("/*" x $i).".png"), glob("res
       # check for unwanted svg effects
       if(open FILE, "<","resources/images/$ifile")
       {
+        my $hadfont = 0;
         undef $/;
         my $f = <FILE>;
         close FILE;
@@ -158,6 +161,11 @@ for($i = 1; my @ifiles = (glob("resources/images".("/*" x $i).".png"), glob("res
             for my $x (split(/\s*;\s*/, $1))
             {
               print STDERR "$ifile: Style starts with minus: $x\n" if $x =~ /^-/;
+              ++$hadfont if($x =~ /^font-/);
+              if($x =~ /^font-family:(.*)$/ && $x !~ /^font-family:'Droid Sans'/)
+              {
+                print STDERR "$ifile: Unwanted font-family: $1\n" 
+              }
             }
           }
         }
@@ -169,6 +177,10 @@ for($i = 1; my @ifiles = (glob("resources/images".("/*" x $i).".png"), glob("res
         {
           my $x = $1;
           print STDERR "$ifile: ViewBox has float values: $x\n" if $x =~ /\./;
+        }
+        if($f !~ /<text/ && $hadfont)
+        {
+          print STDERR "$ifile: Font-style without <text>\n";
         }
       }
       else

@@ -12,10 +12,10 @@
 <inkscape:perspective id="perspective10-4" inkscape:persp3d-origin="372.04724 : 350.78739 : 1" inkscape:vp_z="744.09448 : 526.18109 : 1" inkscape:vp_y="0 : 1000 : 0" inkscape:vp_x="0 : 526.18109 : 1" sodipodi:type="inkscape:persp3d"/>
 <inkscape:perspective id="perspective3649" inkscape:persp3d-origin="362.5 : 241.66667 : 1" inkscape:vp_z="725 : 362.5 : 1" inkscape:vp_y="0 : 1000 : 0" inkscape:vp_x="0 : 362.5 : 1" sodipodi:type="inkscape:persp3d"/>
 <marker viewBox="0 0 10 10" refY="5" refX="10" orient="auto" markerWidth="4" markerUnits="strokeWidth" markerHeight="3" id="ArrowStart">
-  <path style="font-size: 12px;" id="path607" d="M 10,0 L 0,5 L 10,10 L 10,0 z"/>
+  <path id="path607" d="M 10,0 L 0,5 L 10,10 L 10,0 z"/>
 </marker>
 <marker viewBox="0 0 10 10" refY="5" refX="0" orient="auto" markerWidth="4" markerUnits="strokeWidth" markerHeight="3" id="ArrowEnd">
-  <path style="font-size: 12px;" id="path605" d="M 0,0 L 10,5 L 0,10 L 0,0 z"/>
+  <path id="path605" d="M 0,0 L 10,5 L 0,10 L 0,0 z"/>
 </marker>
 <inkscape:perspective id="perspective20" inkscape:persp3d-origin="75 : 41.666667 : 1" inkscape:vp_z="150 : 62.5 : 1" inkscape:vp_y="0 : 1000 : 0" inkscape:vp_x="0 : 62.5 : 1" sodipodi:type="inkscape:persp3d"/>
 <inkscape:perspective id="perspective3779" inkscape:persp3d-origin="300.022 : 151.66667 : 1" inkscape:vp_z="600.04401 : 227.5 : 1" inkscape:vp_y="0 : 1000 : 0" inkscape:vp_x="0 : 227.5 : 1" sodipodi:type="inkscape:persp3d"/>

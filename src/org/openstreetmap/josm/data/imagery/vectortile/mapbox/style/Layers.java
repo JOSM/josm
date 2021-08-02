@@ -265,7 +265,7 @@ public class Layers {
         // icon-image
         boolean iconImage = false;
         if (layoutObject.containsKey("icon-image")) {
-            sb.append("icon-image:concat(");
+            sb.append(/* NO-ICON */"icon-image:concat(");
             if (this.styleId != null && !this.styleId.trim().isEmpty()) {
                 sb.append('"').append(this.styleId).append('/').append("\",");
             }

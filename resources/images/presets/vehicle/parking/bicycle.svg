@@ -109,7 +109,7 @@
        sodipodi:rx="78.380615"
        sodipodi:ry="78.380615"
        sodipodi:type="arc"
-       style="font-size:12px;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:26;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:26;stroke-opacity:1"
        transform="matrix(-0.7941975,0,0,0.7941975,844.6956,-247.27632)" />
     <path
        d="M 278.91286 461.96271 A 78.380615 78.380615 0 1 1  122.15163,461.96271 A 78.380615 78.380615 0 1 1  278.91286 461.96271 z"
@@ -119,26 +119,26 @@
        sodipodi:rx="78.380615"
        sodipodi:ry="78.380615"
        sodipodi:type="arc"
-       style="font-size:12px;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#feffff;stroke-width:25.99983025;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#feffff;stroke-width:25.99983025;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        transform="matrix(-0.7941975,0,0,0.7941975,1111.4801,-248.48899)" />
     <path
        d="M 902.90325,12.49531 L 742.83259,13.303766 L 686.24197,118.40065 L 794.57261,118.40065 L 907.75387,41.599088"
        id="path594"
        sodipodi:nodetypes="ccccc"
-       style="font-size:12px;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:16.57887268;stroke-linejoin:round;stroke-opacity:1" />
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:16.57887268;stroke-linejoin:round;stroke-opacity:1" />
     <path
        d="M 896.75233,-50.489179 C 905.44709,-50.489179 912.01918,-50.683176 918.75551,-40.392067 C 920.69453,-36.961461 921.58106,-32.77272 920.86509,-28.603196 C 920.00619,-23.862035 917.19925,-19.203901 913.89022,-16.4464 C 909.5085,-12.79494 905.35013,-13.076632 906.02217,-9.7941826 C 906.88446,-5.5824266 909.51604,0.27036544 912.35992,9.7741226 C 915.24666,19.42106 918.67449,31.227993 922.03921,42.857413 C 925.40393,54.486808 928.70687,65.944962 931.32138,74.873497 C 932.62866,79.337753 933.77035,83.171066 934.6471,86.041895 C 935.5013,88.83894 936.25548,91.011621 936.18584,90.856721 C 938.90979,95.649288 939.28057,98.772121 943.84948,102.85126 C 948.97222,107.33462 953.14308,110.64668 954.59062,111.65843 C 958.26729,114.32927 959.97652,119.96578 958.03499,122.75082 C 955.58819,126.54638 950.53489,127.12861 946.8416,125.99309 C 943.33471,124.87986 937.78337,122.96765 931.34621,117.63605 L 931.29657,117.56161 L 931.22211,117.51197 C 922.26513,109.82917 918.95144,100.50467 918.61424,99.965175 L 918.14268,99.245428 L 917.82003,98.451238 C 917.0439,96.540701 916.57901,94.856088 915.66081,91.849459 C 914.74261,88.842831 913.57861,84.958513 912.26065,80.457684 C 909.62473,71.456073 906.33855,59.980493 902.97847,48.367156 C 899.61837,36.753819 896.19895,25.006992 893.34882,15.482413 C 890.4987,5.9578348 888.69807,-1.8646344 888.03246,-3.528685 C 886.41239,-7.578844 885.58474,-11.951325 886.69224,-16.335124 C 887.79972,-20.718923 891.10922,-24.257008 894.08003,-25.079472 C 900.86114,-26.976615 899.06187,-31.854189 895.59257,-31.861264 L 866.5202,-31.920451 L 866.44854,-50.488779 C 866.44873,-50.489179 885.31934,-50.489179 896.75233,-50.489179 z "
        id="path593"
        sodipodi:nodetypes="ccccscccccsscsccccccccccccssccc"
-       style="font-size:12px;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:25;stroke-linecap:round" />
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke-width:25;stroke-linecap:round" />
     <path
        d="M 792.49843,115.11004 L 737.61984,-19.228118"
        id="path599"
-       style="font-size:12px;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:19.85493851;stroke-opacity:1" />
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:19.85493851;stroke-opacity:1" />
     <path
        d="M 817.07944,72.236162 L 772.49063,166.5587"
        id="path600"
-       style="font-size:12px;fill:#fffffd;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:7.24705219;stroke-linecap:round;stroke-opacity:1" />
+       style="fill:#fffffd;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:7.24705219;stroke-linecap:round;stroke-opacity:1" />
     <path
        d="M 278.91286 461.96271 A 78.380615 78.380615 0 1 1  122.15163,461.96271 A 78.380615 78.380615 0 1 1  278.91286 461.96271 z"
        id="path597"
@@ -147,22 +147,22 @@
        sodipodi:rx="78.380615"
        sodipodi:ry="78.380615"
        sodipodi:type="arc"
-       style="font-size:12px;fill:#fffeff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:31.30500031;stroke-opacity:1"
+       style="fill:#fffeff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:31.30500031;stroke-opacity:1"
        transform="matrix(-0.3120051,0,0,0.3223192,856.53347,-30.297359)" />
     <path
        d="M 828.98308,75.129086 L 799.69311,75.397573"
        id="path601"
        sodipodi:nodetypes="cc"
-       style="font-size:12px;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:10.12601757;stroke-opacity:1" />
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:10.12601757;stroke-opacity:1" />
     <path
        d="M 787.42188,162.59237 L 758.13191,162.86086"
        id="path602"
        sodipodi:nodetypes="cc"
-       style="font-size:12px;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:10.12601757;stroke-opacity:1" />
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:10.12601757;stroke-opacity:1" />
     <path
        d="M 710.75194,-31.233245 L 779.63603,-31.233245 C 782.20847,-31.233245 785.5287,-26.682779 782.20847,-23.658842 C 778.6175,-20.24123 746.33729,-13.226203 746.33729,-13.226203 C 746.33729,-13.226203 737.47669,-10.796683 732.76054,-11.368321 C 728.04443,-11.939982 711.75234,-13.369101 710.75194,-31.233245 z "
        id="path603"
        sodipodi:nodetypes="cssccc"
-       style="font-size:12px;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.79419751pt;stroke-opacity:1" />
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.79419751pt;stroke-opacity:1" />
   </g>
 </svg>

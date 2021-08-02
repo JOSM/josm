@@ -96,7 +96,7 @@
        id="shield"
        style="fill:#ffffff;stroke:none" />
     <path
-       style="font-size:12px;fill:#c3c3c3;fill-rule:evenodd;stroke:#000000;stroke-width:0.03181237;fill-opacity:1"
+       style="fill:#c3c3c3;fill-rule:evenodd;stroke:#000000;stroke-width:0.03181237;fill-opacity:1"
        d="m 16.249466,8.6436365 -5.563218,5.7098325 1.112637,0 0,8.564744 3.337938,0 0,-4.352519 2.30158,0 7e-6,4.352519 3.261638,0 0,-8.564744 1.112644,0 -5.563226,-5.7098325 0,0 0,0 z"
        id="path645"
        sodipodi:nodetypes="ccccccccccccc"

@@ -383,7 +383,7 @@ public class MainApplication {
                     tr("You may face critical Java bugs; we highly recommend you to update to Java {0}.", updVersion))
                .append("</b><br><br>")
                .append(tr("Would you like to update now ?"));
-        askUpdate(tr("Outdated Java version"), tr("Update Java"), "askUpdateJava"+updVersion, "java", content, url);
+        askUpdate(tr("Outdated Java version"), tr("Update Java"), "askUpdateJava"+updVersion, /* ICON */"java", content, url);
     }
 
     /**
@@ -400,7 +400,7 @@ public class MainApplication {
                 .append(tr("OpenWebStart is now considered mature enough by JOSM developers to ask everyone to move away from an Oracle implementation,<br>allowing you to benefit from a recent version of Java, and allowing JOSM developers to move forward by planning the Java {0} migration.", "11"))
                 .append("<br><br>")
                 .append(tr("Would you like to <b>download OpenWebStart now</b>? (Please do!)"));
-        askUpdate(tr("Outdated Java WebStart version"), tr("Update to OpenWebStart"), "askUpdateWebStart", "presets/transport/rocket", content, url);
+        askUpdate(tr("Outdated Java WebStart version"), tr("Update to OpenWebStart"), "askUpdateWebStart", /* ICON */"presets/transport/rocket", content, url);
         // CHECKSTYLE.ON: LineLength
     }
 
