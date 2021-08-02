@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Text field allowing to filter contents.
  * @since 15116
  */
-public class FilterField extends JosmTextField {
+public class FilterField extends DisableShortcutsOnFocusGainedTextField {
 
     /**
      * Constructs a new {@code TableFilterField}.
