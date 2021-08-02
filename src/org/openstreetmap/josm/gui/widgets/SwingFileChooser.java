@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.widgets;
 import java.awt.Component;
 import java.io.File;
 
+import javax.swing.ActionMap;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -104,5 +105,10 @@ public class SwingFileChooser extends AbstractFileChooser {
     public int showSaveDialog(Component parent) {
         jFileChooser.setLocale(locale);
         return jFileChooser.showSaveDialog(parent);
+    }
+
+    @Override
+    public ActionMap getActionMap() {
+        return jFileChooser.getActionMap();
     }
 }

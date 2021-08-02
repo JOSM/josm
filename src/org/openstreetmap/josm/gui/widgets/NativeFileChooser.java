@@ -8,6 +8,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ActionMap;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -159,6 +160,11 @@ public class NativeFileChooser extends AbstractFileChooser {
         fileDialog.setMode(FileDialog.SAVE);
         fileDialog.setVisible(true);
         return fileDialog.getFile() == null ? JFileChooser.CANCEL_OPTION : JFileChooser.APPROVE_OPTION;
+    }
+
+    @Override
+    public ActionMap getActionMap() {
+        return new ActionMap();
     }
 
     /**

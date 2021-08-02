@@ -6,6 +6,7 @@ import java.awt.HeadlessException;
 import java.io.File;
 import java.util.Locale;
 
+import javax.swing.ActionMap;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -214,4 +215,12 @@ public abstract class AbstractFileChooser {
      * @see java.awt.GraphicsEnvironment#isHeadless
      */
     public abstract int showSaveDialog(Component parent);
+
+    /**
+     * Gets the list of action names.
+     *
+     * @return a <code>ActionMap</code> array containing all the action names
+     * @since 18113
+     */
+    public abstract ActionMap getActionMap();
 }
