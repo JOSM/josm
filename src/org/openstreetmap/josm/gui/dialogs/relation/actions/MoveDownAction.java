@@ -33,6 +33,7 @@ public class MoveDownAction extends AbstractRelationEditorAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         editorAccess.getMemberTableModel().moveDown(editorAccess.getMemberTable().getSelectedRows());
+        editorAccess.stopMemberCellEditing();
     }
 
     @Override

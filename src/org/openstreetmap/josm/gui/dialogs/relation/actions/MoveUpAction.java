@@ -33,6 +33,7 @@ public class MoveUpAction extends AbstractRelationEditorAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         editorAccess.getMemberTableModel().moveUp(editorAccess.getMemberTable().getSelectedRows());
+        editorAccess.stopMemberCellEditing();
     }
 
     @Override

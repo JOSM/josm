@@ -39,6 +39,7 @@ public class RemoveAction extends AbstractRelationEditorAction {
             // make first row of former selection visible, see #17952
             editorAccess.getMemberTable().makeMemberVisible(selectedRows[0]);
         }
+        editorAccess.stopMemberCellEditing();
     }
 
     @Override

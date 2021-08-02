@@ -70,4 +70,14 @@ public interface IRelationEditorActionAccess {
      * @return The role text field.
      */
     AutoCompletingTextField getTextFieldRole();
+
+    /**
+     * Tells the member table editor to stop editing and accept any partially edited value as the value of the editor.
+     * The editor returns false if editing was not stopped; this is useful for editors that validate and can not accept invalid entries.
+     * @return {@code true} if editing was stopped; {@code false} otherwise
+     * @since 18118
+     */
+    default boolean stopMemberCellEditing() {
+        return getMemberTable().isEditing() && getMemberTable().getCellEditor().stopCellEditing();
+    }
 }

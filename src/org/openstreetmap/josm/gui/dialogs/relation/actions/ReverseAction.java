@@ -30,6 +30,7 @@ public class ReverseAction extends AbstractRelationEditorAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         editorAccess.getMemberTableModel().reverse();
+        editorAccess.stopMemberCellEditing();
     }
 
     @Override

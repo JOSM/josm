@@ -33,6 +33,7 @@ public class SortAction extends AbstractRelationEditorAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         editorAccess.getMemberTableModel().sort();
+        editorAccess.stopMemberCellEditing();
     }
 
     @Override
