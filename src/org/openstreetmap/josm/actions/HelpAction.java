@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Optional;
 
+import javax.swing.MenuElement;
+import javax.swing.MenuSelectionManager;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.gui.MainApplication;
@@ -50,7 +52,20 @@ public class HelpAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() == null) {
             String topic;
-            if (e.getSource() instanceof Component) {
+            MenuElement[] menuPath = MenuSelectionManager.defaultManager().getSelectedPath();
+            if (menuPath.length > 0) {
+                // Get help topic from last element in selected menu path (usually a JMenuItem).
+                // If a JMenu is selected, which shows a JPopupMenu, then the last path element
+                // is a JPopupMenu and it is necessary to look also into previous path elements.
+                topic = null;
+                for (int i = menuPath.length - 1; i >= 0; i--) {
+                    Component c = menuPath[i].getComponent();
+                    topic = HelpUtil.getContextSpecificHelpTopic(c);
+                    if (topic != null) {
+                        break;
+                    }
+                }
+            } else if (e.getSource() instanceof Component) {
                 Component c = SwingUtilities.getRoot((Component) e.getSource());
                 Point mouse = c.getMousePosition();
                 if (mouse != null) {
