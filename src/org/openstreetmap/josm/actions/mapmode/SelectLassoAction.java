@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.mapmode;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
@@ -26,6 +27,7 @@ public class SelectLassoAction extends MapMode {
                 tr("Lasso selection mode: select objects within a hand-drawn region"),
                 Shortcut.registerShortcut("mapmode:lasso", tr("Mode: {0}", tr("Lasso Mode")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
                 ImageProvider.getCursor("normal", "rope"));
+        setHelpId(ht("/Action/LassoMode"));
     }
 
     @Override
