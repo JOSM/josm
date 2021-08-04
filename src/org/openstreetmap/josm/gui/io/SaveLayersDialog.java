@@ -492,7 +492,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         private void attachImageIcon(String key, ImageSizes size, ImageResource uploadImg, ImageResource saveImg, ImageResource actionImg) {
             Dimension dim = size.getImageDimension();
-            BufferedImage newIco = new BufferedImage((int) dim.getWidth()*3, (int) dim.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+            BufferedImage newIco = new BufferedImage(((int) dim.getWidth())*3, (int) dim.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D g = newIco.createGraphics();
             drawImageIcon(g, 0, dim, uploadImg);
             drawImageIcon(g, 1, dim, saveImg);
@@ -502,7 +502,8 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
         private void drawImageIcon(Graphics2D g, int index, Dimension dim, ImageResource img) {
             if (img != null) {
-                g.drawImage(img.getImageIcon(dim).getImage(), (int) dim.getWidth()*index, 0, (int) dim.getWidth(), (int) dim.getHeight(), null);
+                g.drawImage(img.getImageIcon(dim).getImage(),
+                        ((int) dim.getWidth())*index, 0, (int) dim.getWidth(), (int) dim.getHeight(), null);
             }
         }
 
