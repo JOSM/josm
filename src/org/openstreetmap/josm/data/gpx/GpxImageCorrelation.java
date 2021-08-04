@@ -283,7 +283,6 @@ public final class GpxImageCorrelation {
                         double direction = prevCoor.bearing(curCoor);
                         if (dirpos.isSetImageDirection()) {
                             curTmp.setExifImgDir((Utils.toDegrees(direction) + dirpos.getImageDirectionAngleOffset()) % 360d);
-                            direction = Utils.toRadians(curTmp.getExifImgDir());
                         }
                         if (shiftXY) {
                             final Projection proj = ProjectionRegistry.getProjection();
