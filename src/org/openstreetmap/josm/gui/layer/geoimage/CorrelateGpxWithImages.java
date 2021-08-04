@@ -639,9 +639,6 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
         pDirectionPosition.addChangeListenerOnComponents(statusBarUpdaterWithRepaint);
         pDirectionPosition.addItemListenerOnComponents(statusBarUpdaterWithRepaint);
 
-        statusBarUpdater.matchAndUpdateStatusBar();
-        yLayer.updateBufferAndRepaint();
-
         outerPanel = new JPanel(new BorderLayout());
         outerPanel.add(statusBar, BorderLayout.PAGE_END);
 
@@ -661,6 +658,9 @@ public class CorrelateGpxWithImages extends AbstractAction implements ExpertMode
             syncDialog.pack();
             syncDialog.addWindowListener(new SyncDialogWindowListener());
             syncDialog.showDialog();
+
+            statusBarUpdater.matchAndUpdateStatusBar();
+            yLayer.updateBufferAndRepaint();
         }
     }
 
