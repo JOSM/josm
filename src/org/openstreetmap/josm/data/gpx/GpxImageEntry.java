@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.openstreetmap.josm.data.IQuadBucketType;
@@ -778,7 +777,7 @@ public class GpxImageEntry implements Comparable<GpxImageEntry>, IQuadBucketType
         WayPoint wpt = null;
         if (position != null) {
             wpt = new WayPoint(position);
-            wpt.setInstant(Optional.ofNullable(exifGpsTime).orElse(exifTime));
+            wpt.setInstant(exifTime);
             Double ele = getElevation();
             if (ele != null) {
                 wpt.put(GpxConstants.PT_ELE, ele.toString());
