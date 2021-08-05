@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.ac;
 
-import java.awt.Component;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.FocusEvent;
@@ -11,14 +10,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Locale;
-import java.util.stream.IntStream;
 
-import javax.swing.ComboBoxEditor;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -43,6 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
 
     private boolean autocompleteEnabled = true;
+    private boolean locked = false;
 
     private int maxTextLength = -1;
     private boolean useFixedLocale;
@@ -92,12 +87,9 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
      * Inspired by <a href="http://www.orbital-computer.de/JComboBox">Thomas Bierhance example</a>.
      */
     class AutoCompletingComboBoxDocument extends PlainDocument {
-        private boolean selecting;
 
         @Override
         public void remove(int offs, int len) throws BadLocationException {
-            if (selecting)
-                return;
             try {
                 super.remove(offs, len);
             } catch (IllegalArgumentException e) {
@@ -110,95 +102,44 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
             // TODO get rid of code duplication w.r.t. AutoCompletingTextField.AutoCompletionDocument.insertString
 
-            if (selecting || (offs == 0 && str.equals(getText(0, getLength()))))
+            if (maxTextLength > -1 && str.length() + getLength() > maxTextLength)
                 return;
-            if (maxTextLength > -1 && str.length()+getLength() > maxTextLength)
-                return;
-            boolean initial = offs == 0 && getLength() == 0 && str.length() > 1;
+
             super.insertString(offs, str, a);
 
-            // return immediately when selecting an item
-            // Note: this is done after calling super method because we need
-            // ActionListener informed
-            if (selecting)
-                return;
+            if (locked)
+                return; // don't get in a loop
+
             if (!autocompleteEnabled)
                 return;
+
             // input method for non-latin characters (e.g. scim)
             if (a != null && a.isDefined(StyleConstants.ComposedTextAttribute))
                 return;
 
-            // if the current offset isn't at the end of the document we don't autocomplete.
+            // if the cursor isn't at the end of the text we don't autocomplete.
             // If a highlighted autocompleted suffix was present and we get here Swing has
             // already removed it from the document. getLength() therefore doesn't include the autocompleted suffix.
             if (offs + str.length() < getLength()) {
                 return;
             }
 
-            int size = getLength();
-            int start = offs+str.length();
-            int end = start;
-            String curText = getText(0, size);
+            String prefix = getText(0, getLength()); // the whole text after insertion
 
-            // item for lookup and selection
-            Object item;
-            // if the text is a number we don't autocomplete
-            if (Config.getPref().getBoolean("autocomplete.dont_complete_numbers", true)) {
-                try {
-                    Long.parseLong(str);
-                    if (!curText.isEmpty())
-                        Long.parseLong(curText);
-                    item = lookupItem(curText, true);
-                } catch (NumberFormatException e) {
-                    // either the new text or the current text isn't a number. We continue with autocompletion
-                    item = lookupItem(curText, false);
-                }
-            } else {
-                item = lookupItem(curText, false);
-            }
+            if (Config.getPref().getBoolean("autocomplete.dont_complete_numbers", true)
+                    && prefix.matches("^\\d+$"))
+                return;
 
-            if (initial) {
-                start = 0;
-            }
-            if (item != null) {
-                String newText = ((AutoCompletionItem) item).getValue();
-                if (!newText.equals(curText)) {
-                    selecting = true;
-                    super.remove(0, size);
-                    super.insertString(0, newText, a);
-                    AutoCompletingComboBox.this.setSelectedItem(item);
-                    selecting = false;
-                    start = size;
-                    end = getLength();
-                }
-            }
-            final JTextComponent editorComponent = getEditorComponent();
+            autocomplete(prefix);
+
             // save unix system selection (middle mouse paste)
             Clipboard sysSel = ClipboardUtils.getSystemSelection();
             if (sysSel != null) {
                 Transferable old = ClipboardUtils.getClipboardContent(sysSel);
-                editorComponent.select(start, end);
                 if (old != null) {
                     sysSel.setContents(old, null);
                 }
-            } else {
-                editorComponent.select(start, end);
             }
-        }
-
-        private Object lookupItem(String pattern, boolean match) {
-            ComboBoxModel<AutoCompletionItem> model = getModel();
-            AutoCompletionItem bestItem = null;
-            for (int i = 0, n = model.getSize(); i < n; i++) {
-                AutoCompletionItem currentItem = model.getElementAt(i);
-                if (currentItem.getValue().equals(pattern))
-                    return currentItem;
-                if (!match && currentItem.getValue().startsWith(pattern)
-                && (bestItem == null || currentItem.getPriority().compareTo(bestItem.getPriority()) > 0)) {
-                    bestItem = currentItem;
-                }
-            }
-            return bestItem; // may be null
         }
     }
 
@@ -217,10 +158,55 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
      */
     public AutoCompletingComboBox(String prototype) {
         super(new AutoCompletionItem(prototype));
-        setRenderer(new AutoCompleteListCellRenderer());
         final JTextComponent editorComponent = this.getEditorComponent();
         editorComponent.setDocument(new AutoCompletingComboBoxDocument());
         editorComponent.addFocusListener(new InnerFocusListener(editorComponent));
+    }
+
+    /**
+     * Autocomplete a string.
+     * <p>
+     * Look in the model for an item whose true prefix matches the string. If
+     * found, set the editor to the item and select the item in the model too.
+     *
+     * @param prefix The prefix to autocomplete.
+     */
+    private void autocomplete(String prefix) {
+        // candidate item for autocomplete
+        AutoCompletionItem item = findBestCandidate(prefix);
+        if (item != null) {
+            try {
+                locked = true;
+                setSelectedItem(item);
+                getEditor().setItem(item);
+                // select the autocompleted suffix in the editor
+                getEditorComponent().select(prefix.length(), item.getValue().length());
+            } finally {
+                locked = false;
+            }
+        }
+    }
+
+    /**
+     * Find the best candidate for autocompletion.
+     * @param prefix The true prefix to match.
+     * @return The best candidate (may be null)
+     */
+    private AutoCompletionItem findBestCandidate(String prefix) {
+        ComboBoxModel<AutoCompletionItem> model = getModel();
+        AutoCompletionItem bestCandidate = null;
+        for (int i = 0, n = model.getSize(); i < n; i++) {
+            AutoCompletionItem currentItem = model.getElementAt(i);
+            // the "same" string is always the best candidate, but it is of
+            // no use for autocompletion
+            if (currentItem.getValue().equals(prefix))
+                return null;
+            if (currentItem.getValue().startsWith(prefix)
+            && (bestCandidate == null || currentItem.getPriority().compareTo(bestCandidate.getPriority()) > 0)) {
+                bestCandidate = currentItem;
+            }
+        }
+        return bestCandidate;
     }
 
     /**
@@ -229,33 +215,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
      */
     public void setMaxTextLength(int length) {
         this.maxTextLength = length;
-    }
-
-    /**
-     * Convert the selected item into a String that can be edited in the editor component.
-     *
-     * @param cbEditor    the editor
-     * @param item      excepts AutoCompletionListItem, String and null
-     */
-    @Override
-    public void configureEditor(ComboBoxEditor cbEditor, Object item) {
-        if (item == null) {
-            cbEditor.setItem(null);
-        } else if (item instanceof String) {
-            cbEditor.setItem(item);
-        } else if (item instanceof AutoCompletionItem) {
-            cbEditor.setItem(((AutoCompletionItem) item).getValue());
-        } else
-            throw new IllegalArgumentException("Unsupported item: "+item);
-    }
-
-    /**
-     * Selects a given item in the ComboBox model
-     * @param item the item of type AutoCompletionItem, String or null
-     */
-    @Override
-    public void setSelectedItem(Object item) {
-        setSelectedItem(item, false);
     }
 
     /**
@@ -270,23 +229,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
             // disable autocomplete to prevent unnecessary actions in AutoCompletingComboBoxDocument#insertString
             setAutocompleteEnabled(false);
         }
-        if (item == null) {
-            super.setSelectedItem(null);
-        } else if (item instanceof AutoCompletionItem) {
-            super.setSelectedItem(item);
-        } else if (item instanceof String) {
-            String s = (String) item;
-            // find the string in the model or create a new item
-            AutoCompletionItem acItem = IntStream.range(0, getModel().getSize())
-                    .mapToObj(i -> getModel().getElementAt(i))
-                    .filter(i -> s.equals(i.getValue()))
-                    .findFirst()
-                    .orElseGet(() -> new AutoCompletionItem(s, AutoCompletionPriority.UNKNOWN));
-            super.setSelectedItem(acItem);
-        } else {
-            setAutocompleteEnabled(previousState);
-            throw new IllegalArgumentException("Unsupported item: "+item);
-        }
+        setSelectedItem(item);
         setAutocompleteEnabled(previousState);
     }
 
@@ -407,39 +350,6 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
             return (String) selectedItem;
         } else {
             return getEditItem();
-        }
-    }
-
-    /**
-     * ListCellRenderer for AutoCompletingComboBox
-     * renders an AutoCompletionListItem by showing only the string value part
-     */
-    public static class AutoCompleteListCellRenderer extends JLabel implements ListCellRenderer<AutoCompletionItem> {
-
-        /**
-         * Constructs a new {@code AutoCompleteListCellRenderer}.
-         */
-        public AutoCompleteListCellRenderer() {
-            setOpaque(true);
-        }
-
-        @Override
-        public Component getListCellRendererComponent(
-                JList<? extends AutoCompletionItem> list,
-                AutoCompletionItem item,
-                int index,
-                boolean isSelected,
-                boolean cellHasFocus) {
-            if (isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-            } else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
-            }
-
-            setText(item.getValue());
-            return this;
         }
     }
 }

@@ -74,15 +74,15 @@ public class AutoCompletionItem implements Comparable<AutoCompletionItem> {
         return value;
     }
 
+    /**
+     * Here we return the value instead of a representation of the inner object state because both
+     * {@link javax.swing.plaf.basic.BasicComboBoxEditor#setItem(Object)} and
+     * {@link javax.swing.DefaultListCellRenderer#getListCellRendererComponent}
+     * expect it, thus making derived Editor and CellRenderer classes superfluous.
+     */
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<val='")
-          .append(value)
-          .append("',")
-          .append(priority)
-          .append('>');
-        return sb.toString();
+        return value;
     }
 
     @Override
