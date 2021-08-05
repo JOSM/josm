@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
 
@@ -54,7 +55,14 @@ public class HistoryComboBox extends AutoCompletingComboBox {
      * @see ComboBoxHistory#addElement(java.lang.String)
      */
     public void addCurrentItemToHistory() {
-        model.addElement((String) getEditor().getItem());
+        Object item = getEditor().getItem();
+        if (item instanceof String) {
+            model.addElement((String) item);
+        } else if (item instanceof AutoCompletionItem) {
+            model.addElement((AutoCompletionItem) item);
+        } else {
+            throw new IllegalArgumentException(item.getClass().getSimpleName() + " is not supported in addCurrentItemToHistory");
+        }
     }
 
     /**
