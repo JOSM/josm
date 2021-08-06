@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.widgets;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.stream.Stream;
 
@@ -21,7 +20,7 @@ import org.openstreetmap.josm.testutils.annotations.FullPreferences;
 @FullPreferences
 class HistoryComboBoxTest {
     static Stream<Arguments> testNonRegression21203() {
-        return Stream.of(Arguments.of("Hello world"), Arguments.of(new AutoCompletionItem("Hello world2")));
+        return Stream.of(Arguments.of("Hello world"), Arguments.of(new AutoCompletionItem("Hello world2")), Arguments.of(new Double(42)));
     }
 
     /**
@@ -38,17 +37,11 @@ class HistoryComboBoxTest {
         assertDoesNotThrow(historyComboBox::addCurrentItemToHistory);
     }
 
-    /**
-     * This ensures that we do throw on unknown objects for #21203
-     */
     @Test
-    void testNonRegression21203Throws() {
+    void testEmptyEditor() {
         final HistoryComboBox historyComboBox = new HistoryComboBox();
-        // Sanity check
-        assertEquals(0, historyComboBox.getModel().getSize());
-        historyComboBox.getEditor().setItem(new Object());
-        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
-                historyComboBox::addCurrentItemToHistory);
-        assertEquals("Object is not supported in addCurrentItemToHistory", illegalArgumentException.getMessage());
+        assertDoesNotThrow(historyComboBox::addCurrentItemToHistory);
+        historyComboBox.getEditor().setItem(null);
+        assertDoesNotThrow(historyComboBox::addCurrentItemToHistory);
     }
 }
