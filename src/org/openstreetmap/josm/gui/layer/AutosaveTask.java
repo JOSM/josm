@@ -308,7 +308,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                     layersInfo.add(new AutosaveLayerInfo<>((AbstractModifiableLayer) layer));
                 }
             } else {
-                Logging.error("Unsupported savable layer type: {0}", layer.getClass().getSimpleName());
+                Logging.debug("Unsupported savable layer type: {0}", layer.getClass().getSimpleName());
             }
         }
     }
