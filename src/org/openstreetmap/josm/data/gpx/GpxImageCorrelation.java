@@ -80,7 +80,8 @@ public final class GpxImageCorrelation {
         for (List<List<WayPoint>> segs : loadTracks(selectedGpx.getTracks())) {
             boolean firstSegment = true;
             for (List<WayPoint> wps : segs) {
-                for (int i = 0; i < wps.size(); i++) {
+                int size = wps.size();
+                for (int i = 0; i < size; i++) {
                     final WayPoint curWp = wps.get(i);
                     // Interpolate timestamps in the segment, if one or more waypoints miss them
                     if (!curWp.hasDate()) {
@@ -89,7 +90,7 @@ public final class GpxImageCorrelation {
                             long prevWpTimeNoOffset = wps.get(i - 1).getTimeInMillis();
                             double totalDist = 0;
                             List<Pair<Double, WayPoint>> nextWps = new ArrayList<>();
-                            for (int j = i; j < wps.size(); j++) {
+                            for (int j = i; j < size; j++) {
                                 totalDist += wps.get(j - 1).getCoor().greatCircleDistance(wps.get(j).getCoor());
                                 nextWps.add(new Pair<>(totalDist, wps.get(j)));
                                 if (wps.get(j).hasDate()) {
@@ -138,14 +139,15 @@ public final class GpxImageCorrelation {
                             }
                         }
                     }
-                    ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset, interpolate, tagTime, false, dirpos);
+                    WayPoint nextWp = i < size - 1 ? wps.get(i + 1) : null;
+                    ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset, interpolate, tagTime, nextWp, dirpos);
                     prevWp = curWp;
                     prevWpTime = curWpTime;
                 }
             }
         }
         if (trkTag && prevWp != null) {
-            ret += matchPoints(images, prevWp, prevWpTime, prevWp, prevWpTime, offset, false, trkTagTime, true, dirpos);
+            ret += matchPoints(images, prevWp, prevWpTime, prevWp, prevWpTime, offset, false, trkTagTime, null, dirpos);
         }
         return ret;
     }
@@ -206,9 +208,10 @@ public final class GpxImageCorrelation {
     }
 
     private static int matchPoints(List<? extends GpxImageEntry> images, WayPoint prevWp, long prevWpTime, WayPoint curWp, long curWpTime,
-            long offset, boolean interpolate, int tagTime, boolean isLast, GpxImageDirectionPositionSettings dirpos) {
+            long offset, boolean interpolate, int tagTime, WayPoint nextWp, GpxImageDirectionPositionSettings dirpos) {
 
         int ret = 0;
+        final boolean isLast = nextWp == null;
 
         // i is the index of the timewise last photo that has the same or earlier EXIF time
         int i;
@@ -254,6 +257,10 @@ public final class GpxImageCorrelation {
                     } else {
                         curTmp.setPos(curWp.getCoor());
                     }
+                    if (nextWp != null && dirpos.isSetImageDirection()) {
+                        double direction = curWp.getCoor().bearing(nextWp.getCoor());
+                        curTmp.setExifImgDir(computeDirection(direction, dirpos.getImageDirectionAngleOffset()));
+                    }
                     curTmp.setGpsTime(curImg.getExifInstant().minusMillis(offset));
                     curTmp.flagNewGpsData();
                     curImg.tmpUpdated();
@@ -279,10 +286,10 @@ public final class GpxImageCorrelation {
                     final LatLon prevCoor = prevWp.getCoor();
                     final LatLon curCoor = curWp.getCoor();
                     LatLon position = prevCoor.interpolate(curCoor, timeDiff);
-                    if (shiftXY || dirpos.isSetImageDirection()) {
-                        double direction = prevCoor.bearing(curCoor);
+                    if (nextWp != null && (shiftXY || dirpos.isSetImageDirection())) {
+                        double direction = curCoor.bearing(nextWp.getCoor());
                         if (dirpos.isSetImageDirection()) {
-                            curTmp.setExifImgDir((Utils.toDegrees(direction) + dirpos.getImageDirectionAngleOffset()) % 360d);
+                            curTmp.setExifImgDir(computeDirection(direction, dirpos.getImageDirectionAngleOffset()));
                         }
                         if (shiftXY) {
                             final Projection proj = ProjectionRegistry.getProjection();
@@ -309,6 +316,10 @@ public final class GpxImageCorrelation {
             }
         }
         return ret;
+    }
+
+    private static double computeDirection(double direction, double angleOffset) {
+        return (Utils.toDegrees(direction) + angleOffset) % 360d;
     }
 
     private static int getLastIndexOfListBefore(List<? extends GpxImageEntry> images, long searchedTime) {
