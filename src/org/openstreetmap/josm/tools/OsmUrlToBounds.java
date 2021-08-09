@@ -173,7 +173,8 @@ public final class OsmUrlToBounds {
         int zoom = 0;
         int zoomOffset = 0;
 
-        for (final char ch : shortLink.toCharArray()) {
+        for (int j = 0; j < shortLink.length(); j++) {
+            char ch = shortLink.charAt(j);
             if (array.containsKey(ch)) {
                 int val = array.get(ch);
                 for (int i = 0; i < 3; ++i) {

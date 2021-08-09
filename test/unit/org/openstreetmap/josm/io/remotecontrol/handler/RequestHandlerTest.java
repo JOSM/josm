@@ -8,10 +8,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerBadRequestException;
-
-import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests of {@link RequestHandler} class.
@@ -80,9 +79,9 @@ class RequestHandlerTest {
 
     /**
      * Test request parameter - case 4
-     * @see <a href="http://blog.lunatech.com/2009/02/03/what-every-web-developer-must-know-about-url-encoding">
-     *      What every web developer must know about URL encoding</a>
      * @throws RequestHandlerBadRequestException never
+     * @see <a href="https://www.talisman.org/~erlkonig/misc/lunatech%5Ewhat-every-webdev-must-know-about-url-encoding/">
+     *      What every web developer must know about URL encoding</a>
      */
     @Test
     void testRequestParameter4() throws RequestHandlerBadRequestException {

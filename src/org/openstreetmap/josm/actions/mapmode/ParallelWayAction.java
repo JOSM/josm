@@ -581,7 +581,8 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
 
         private static Map<Modifier, Boolean> createFromString(String string) {
             Map<Modifier, Boolean> ret = new EnumMap<>(Modifier.class);
-            for (char c : string.toCharArray()) {
+            for (int i = 0; i < string.length(); i++) {
+                char c = string.charAt(i);
                 if (c == '?') {
                     continue;
                 }

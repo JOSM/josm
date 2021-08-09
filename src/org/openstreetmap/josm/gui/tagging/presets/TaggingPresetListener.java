@@ -3,8 +3,8 @@ package org.openstreetmap.josm.gui.tagging.presets;
 
 /**
  * Notification of tagging presets events.
- * @since 7100
  * @see TaggingPresets#addListener(TaggingPresetListener)
+ * @since 7100
  */
 @FunctionalInterface
 public interface TaggingPresetListener {

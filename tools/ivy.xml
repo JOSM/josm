@@ -16,9 +16,9 @@
         <!-- javacc->default -->
         <dependency org="net.java.dev.javacc" name="javacc" rev="7.0.10" conf="javacc->default"/>
         <!-- checkstyle->default -->
-        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.43" conf="checkstyle->default"/>
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="8.44" conf="checkstyle->default"/>
         <!-- proguard->default -->
-        <dependency org="com.guardsquare" name="proguard-ant" rev="7.1.0" conf="proguard->default"/>
+        <dependency org="com.guardsquare" name="proguard-ant" rev="7.1.1" conf="proguard->default"/>
         <!-- pmd->default -->
         <dependency org="net.sourceforge.pmd" name="pmd-core" rev="6.20.0" conf="pmd->default"/>
         <dependency org="net.sourceforge.pmd" name="pmd-java" rev="6.20.0" conf="pmd->default"/>
@@ -27,10 +27,10 @@
             <artifact name="saxon" type="jar" maven:classifier="dom"/>
         </dependency>
         <!-- spotbugs->default -->
-        <dependency org="com.github.spotbugs" name="spotbugs" rev="4.2.1" conf="spotbugs->default"/>
-        <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.2.1" conf="spotbugs->default"/>
+        <dependency org="com.github.spotbugs" name="spotbugs" rev="4.2.3" conf="spotbugs->default"/>
+        <dependency org="com.github.spotbugs" name="spotbugs-ant" rev="4.2.3" conf="spotbugs->default"/>
         <!-- errorprone->default -->
-        <dependency org="com.google.errorprone" name="error_prone_core" rev="2.7.1" conf="errorprone->default"/>
+        <dependency org="com.google.errorprone" name="error_prone_core" rev="2.8.1" conf="errorprone->default"/>
         <!-- errorprone->default -->
         <dependency org="com.google.errorprone" name="javac" rev="9+181-r4173-1" conf="errorprone_javac->default"/>
         <!-- animal->default -->

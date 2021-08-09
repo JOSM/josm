@@ -372,8 +372,8 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * Invoke {@link #getMissingPrimitives()} to get a list of primitives which have not been
      * found on  the server (the server response code was 404)
      *
-     * @return the parsed data
      * @param progressMonitor progress monitor
+     * @return the parsed data
      * @throws OsmTransferException if an error occurs while communicating with the API server
      * @see #getMissingPrimitives()
      *
