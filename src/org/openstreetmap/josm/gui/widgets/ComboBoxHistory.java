@@ -41,17 +41,25 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionItem> implement
     public void addElement(AutoCompletionItem o) {
         String newEntry = o.getValue();
 
+        boolean alreadyAdded = false;
         // if history contains this object already, delete it,
         // so that it looks like a move to the top
         for (int i = 0; i < getSize(); i++) {
             String oldEntry = getElementAt(i).getValue();
             if (oldEntry.equals(newEntry)) {
-                removeElementAt(i);
+                if (i == 0) {
+                    alreadyAdded = true;
+                    break;
+                } else {
+                    removeElementAt(i);
+                }
             }
         }
 
-        // insert element at the top
-        insertElementAt(o, 0);
+        if (!alreadyAdded) {
+            // insert element at the top
+            insertElementAt(o, 0);
+        }
 
         // remove an element, if the history gets too large
         if (getSize() > maxSize) {

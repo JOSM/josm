@@ -44,4 +44,26 @@ class HistoryComboBoxTest {
         historyComboBox.getEditor().setItem(null);
         assertDoesNotThrow(historyComboBox::addCurrentItemToHistory);
     }
+
+    /**
+     * Non-regression test for JOSM #21215: StackOverflowError
+     */
+    @Test
+    void testNonRegression21215() {
+        final HistoryComboBox historyComboBox = new HistoryComboBox();
+        // utils plugin2 added a listener that pretty much did this
+        historyComboBox.addItemListener(event -> historyComboBox.addCurrentItemToHistory());
+        final AutoCompletionItem testItem = new AutoCompletionItem("testNonRegression21215");
+        // Add the original item
+        historyComboBox.getEditor().setItem(testItem);
+        historyComboBox.addCurrentItemToHistory();
+
+        // add a new item
+        historyComboBox.getEditor().setItem(new AutoCompletionItem("testNonRegression21215_2"));
+        historyComboBox.addCurrentItemToHistory();
+
+        // Readd the first item
+        historyComboBox.getEditor().setItem(testItem);
+        assertDoesNotThrow(historyComboBox::addCurrentItemToHistory);
+    }
 }
