@@ -10,7 +10,7 @@
   throwWarning: tr("{0} with multiple values", "{0.key}");
 }
 
-/* #19419 */
+/* Multiple access values, #19419 */
 node[/^(amenity|barrier|building(:part)?|entrance|(high|rail|water)way|leisure)$/][access *=";"],
 way[/^(amenity|building(:part)?|(high|rail|water)way|water|leisure)$/][access *=";"],
 relation[type =~ /^(boundary|multipolygon)$/][access *=";"],
@@ -61,6 +61,75 @@ relation[type =~ /^(boundary|multipolygon)$/][access *=";"],
   assertNoMatch: "way highway=trunk access=agricultural";
   assertMatch:   "relation type=multipolygon water=lake access=boat;canoe";
   assertNoMatch: "relation type=multipolygon water=lake access=boat";
+}
+
+/* Multiple access values per direction or lane, #21192 */
+way[/^(high|rail|water)way$/][/^access((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^agricultural((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^bdouble((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^bicycle((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^bus((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^carriage((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^emergency((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^foot((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^goods((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^hazmat((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^hgv((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^horse((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^hov((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^mofa((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^moped((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^motor_vehicle((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^motorcar((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^motorcycle((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^psv((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^taxi((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^tourist_bus((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[highway][/^vehicle((:both_ways)?:(backward|forward)|:both_ways)$/ =~ /;/],
+way[railway][/^train:(backward|forward)$/ =~ /;/],
+way[railway][/^tram:(backward|forward)$/ =~ /;/],
+way[railway][/^subway:(backward|forward)$/ =~ /;/],
+way[waterway][/^boat:(backward|forward)$/ =~ /;/],
+way[waterway][/^canoe:(backward|forward)$/ =~ /;/],
+way[waterway][/^cargo:(backward|forward)$/ =~ /;/],
+way[waterway][/^motorboat:(backward|forward)$/ =~ /;/],
+way[waterway][/^passenger:(backward|forward)$/ =~ /;/],
+way[waterway][/^ship:(backward|forward)$/ =~ /;/] {
+  throwWarning: tr("Multiple values in accces per direction tag");
+  group: tr("Multiple values in access tag");
+  suggestAlternative: tr("only one value and additional {0}", ":conditional");
+  assertMatch:   "way highway=trunk bus:both_ways:forward=designated;yes";
+  assertNoMatch: "way highway=trunk bus:both_ways:forward=designated";
+  assertNoMatch: "way highway=trunk bus=designated;yes";
+}
+way[highway][/^access:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^agricultural:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^bdouble:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^bicycle:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^bus:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^carriage:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^emergency:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^foot:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^goods:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^hazmat:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^hgv:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^horse:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^hov:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^mofa:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^moped:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^motor_vehicle:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^motorcar:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^motorcycle:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^psv:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^taxi:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^tourist_bus:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/],
+way[highway][/^vehicle:lanes(:both_ways)?(:(backward|forward))?$/ =~ /;/] {
+  throwWarning: tr("Multiple values in access per lane tag");
+  group: tr("Multiple values in access tag");
+  suggestAlternative: tr("only one value and additional {0}", ":conditional");
+  assertMatch:   "way highway=trunk bus:lanes:both_ways:forward=designated;yes|no";
+  assertNoMatch: "way highway=trunk bus:lanes:both_ways:forward=designated|no";
+  assertNoMatch: "way highway=trunk bus:both_ways:forward=designated;no";
 }
 
 *[source              =~ /^(;.*|.*;;.*|.*;)$/],
