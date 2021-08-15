@@ -96,6 +96,7 @@ public class SessionWriter {
      * Returns the session layer exporter for the given layer.
      * @param layer layer to export
      * @return session layer exporter for the given layer
+     * @throws IllegalArgumentException if layer cannot be exported
      */
     public static SessionLayerExporter getSessionLayerExporter(Layer layer) {
         Class<? extends Layer> layerClass = layer.getClass();

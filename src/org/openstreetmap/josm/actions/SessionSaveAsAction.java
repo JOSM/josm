@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.session.SessionLayerExporter;
 import org.openstreetmap.josm.io.session.SessionWriter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -209,7 +210,12 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
             Set<Layer> noExporter = new HashSet<>();
 
             for (Layer layer : layers) {
-                SessionLayerExporter exporter = SessionWriter.getSessionLayerExporter(layer);
+                SessionLayerExporter exporter = null;
+                try {
+                    exporter = SessionWriter.getSessionLayerExporter(layer);
+                } catch (IllegalArgumentException | JosmRuntimeException e) {
+                    Logging.error(e);
+                }
                 if (exporter != null) {
                     exporters.put(layer, exporter);
                     Collection<Layer> deps = exporter.getDependencies();

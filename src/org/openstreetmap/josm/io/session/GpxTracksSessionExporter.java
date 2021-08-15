@@ -26,6 +26,9 @@ public class GpxTracksSessionExporter extends GenericSessionExporter<GpxLayer> {
 
     protected GpxTracksSessionExporter(GpxLayer layer, String type) {
         super(layer, type, "0.1", "gpx");
+        if (layer.data == null) {
+            throw new IllegalArgumentException("GPX layer without data: " + layer);
+        }
     }
 
     @Override
