@@ -40,6 +40,15 @@
         <dirname property="base.dir" file="${ant.file.josm}"/>
         <property name="test.dir" location="${base.dir}/test"/>
         <property name="src.dir" location="${base.dir}/src"/>
+        <condition property="sign.jar">
+            <and>
+                <isset property="env.SIGN_ALIAS"/>
+                <isset property="env.SIGN_KEYSTORE"/>
+                <isset property="env.SIGN_KEYPASS"/>
+                <isset property="env.SIGN_STOREPASS"/>
+                <isset property="env.SIGN_TSA"/>
+            </and>
+        </condition>
         <condition property="noJavaFX">
             <or>
                 <isset property="env.JOSM_NOJAVAFX"/>
@@ -175,6 +184,9 @@ Build-Date: ${build.tstamp}
                 <attribute name="Add-Opens" value="java.base/java.lang java.base/java.nio java.base/jdk.internal.loader java.base/jdk.internal.ref java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
             </manifest>
         </jar>
+        <!-- Sign jar if all environment variables are set -->
+    	<signjar jar="${dist.jar}" alias="${env.SIGN_ALIAS}" tsaurl="${env.SIGN_TSA}"
+            keystore="${env.SIGN_KEYSTORE}" storepass="${env.SIGN_STOREPASS}" keypass="${env.SIGN_KEYPASS}" if:set="sign.jar" />
     </target>
     <!-- Windows target -->
     <target name="distwin" depends="dist">

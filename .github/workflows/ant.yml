@@ -115,14 +115,23 @@ jobs:
           /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
 
       - name: Build with Ant
+        env:
+          SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
+          SIGN_CERT: ${{ secrets.SIGN_CERT }}
+          SIGN_KEYPASS: ${{ secrets.SIGN_KEYPASS }}
+          SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
+          SIGN_TSA: ${{ secrets.SIGN_TSA }}
         # Calls ant with -Dreleasebuild=true if we're a 'tested' build
         run: |
+          SIGN_KEYSTORE=certificate.p12
+          echo "$SIGN_CERT" | base64 --decode > $SIGN_KEYSTORE
           if [ "${{ needs.createrelease.outputs.josm_prerelease }}" == "true" ]; then
             ANT="${{ env.ANT_HOME }}/bin/ant"
           else
             ANT="${{ env.ANT_HOME }}/bin/ant -Dreleasebuild=true"
           fi
           $ANT dist
+          rm $SIGN_KEYSTORE
 
       - name: Upload jar
         if: ${{ always() }}
