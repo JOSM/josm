@@ -3,6 +3,8 @@ env:
   junit_platform_version: '1.7.2'
   # ANT_HOME is also our ant version
   ANT_HOME: 'apache-ant-1.10.11'
+  WIX_HOME: 'wix3'
+  WIX_URL: 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip'
 on:
   push:
     branches: [master]
@@ -55,9 +57,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           tag_name: ${{ env.josm_release_tag }}
-          release_name: JOSM.app release ${{ env.josm_release_tag }}
+          release_name: JOSM release ${{ env.josm_release_tag }}
           body: |
-            JOSM.app release ${{ env.josm_release_tag }}
+            JOSM release ${{ env.josm_release_tag }}
           draft: false
           prerelease: ${{ env.josm_prerelease }}
 
@@ -151,10 +153,15 @@ jobs:
       - name: Build and package for Windows
         if: ${{ runner.os == 'windows' && always() }}
         run: |
+          if [ ! -f tools/${{ env.WIX_HOME }}-binaries.zip ]; then
+            curl -o tools/${{ env.WIX_HOME }}-binaries.zip ${{ env.WIX_URL }}
+          fi
+          Expand-Archive -Path tools/${{ env.WIX_HOME }}-binaries.zip -DestinationPath ${{ env.WIX_HOME }}
+          echo "${{ env.WIX_HOME }}" >> $GITHUB_PATH
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
-      - name: Upload native app
-        if: ${{ ( runner.os == 'macos' || runner.os == 'windows' ) && always() }}
+      - name: Upload macOS app
+        if: ${{ runner.os == 'macos' && always() }}
         id: upload-app
         uses: actions/upload-release-asset@v1
         env:
@@ -164,3 +171,15 @@ jobs:
           asset_path: app/JOSM.zip
           asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.zip
           asset_content_type: application/zip
+
+      - name: Upload Windows Installer package
+        if: ${{ runner.os == 'windows' && always() }}
+        id: upload-msi
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
+          asset_path: app/JOSM.msi
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.msi
+          asset_content_type: application/x-ole-storage

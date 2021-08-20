@@ -71,7 +71,7 @@ echo "Building and signing app"
     --java-options "--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED" \
     --app-version "$1" \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
-    --vendor "https://josm.openstreetmap.de" \
+    --vendor "JOSM" \
     --mac-sign \
     --mac-package-identifier de.openstreetmap.josm \
     --mac-package-signing-prefix de.openstreetmap.josm \

@@ -11,7 +11,7 @@ then
     exit 1
 fi
 
-echo "Building JOSM.app"
+echo "Building JOSM Windows Installer package"
 
 mkdir app
 
@@ -20,7 +20,7 @@ JPACKAGEOPTIONS=""
 echo "Building app"
     jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
-    --icon ./native/windows/logo.ico --type app-image --dest app \
+    --icon ./native/windows/logo.ico --type msi --dest app \
     --java-options "--add-exports=java.base/sun.security.action=ALL-UNNAMED" \
     --java-options "--add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED" \
     --java-options "--add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED" \
@@ -31,9 +31,9 @@ echo "Building app"
     --java-options "--add-opens=java.desktop/javax.imageio.spi=ALL-UNNAMED" \
     --java-options "--add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED" \
     --java-options "--add-opens=java.prefs/java.util.prefs=ALL-UNNAMED" \
-    --app-version "$1" \
+    --app-version "1.5.$1" \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
-    --vendor "https://josm.openstreetmap.de" \
+    --vendor "JOSM" \
     --file-associations native/file-associations/bz2.properties \
     --file-associations native/file-associations/geojson.properties \
     --file-associations native/file-associations/gpx.properties \
@@ -43,5 +43,7 @@ echo "Building app"
     --file-associations native/file-associations/osm.properties \
     --file-associations native/file-associations/zip.properties \
     --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
+
+mv app/JOSM-1.5.$1.msi app/JOSM.msi
 
 echo "Building done."
