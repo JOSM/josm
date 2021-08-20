@@ -148,8 +148,13 @@ jobs:
         run: |
           ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
-      - name: Upload macOS app
-        if: ${{ runner.os == 'macos' && always() }}
+      - name: Build and package for Windows
+        if: ${{ runner.os == 'windows' && always() }}
+        run: |
+          ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
+
+      - name: Upload native app
+        if: ${{ ( runner.os == 'macos' || runner.os == 'windows' ) && always() }}
         id: upload-app
         uses: actions/upload-release-asset@v1
         env:

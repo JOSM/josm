@@ -54,7 +54,7 @@ else
   JPACKAGEOPTIONS=""
 fi
 
-echo "Building and signin app"
+echo "Building and signing app"
     jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/macosx/JOSM.icns --type app-image --dest app \
