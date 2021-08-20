@@ -76,14 +76,14 @@ echo "Building and signing app"
     --mac-package-identifier de.openstreetmap.josm \
     --mac-package-signing-prefix de.openstreetmap.josm \
     --mac-signing-keychain $KEYCHAINPATH \
-    --file-associations native/macosx/bz2.properties \
-    --file-associations native/macosx/geojson.properties \
-    --file-associations native/macosx/gpx.properties \
-    --file-associations native/macosx/gz.properties \
-    --file-associations native/macosx/jos.properties \
-    --file-associations native/macosx/joz.properties \
-    --file-associations native/macosx/osm.properties \
-    --file-associations native/macosx/zip.properties \
+    --file-associations native/file-associations/bz2.properties \
+    --file-associations native/file-associations/geojson.properties \
+    --file-associations native/file-associations/gpx.properties \
+    --file-associations native/file-associations/gz.properties \
+    --file-associations native/file-associations/jos.properties \
+    --file-associations native/file-associations/joz.properties \
+    --file-associations native/file-associations/osm.properties \
+    --file-associations native/file-associations/zip.properties \
     --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
 
 echo "Building done."
