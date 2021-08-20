@@ -137,7 +137,7 @@ jobs:
           asset_content_type: application/java-archive
 
       - name: Build and package for macOS
-        if: ${{ runner.os == 'macos' && (matrix.java == '16' || matrix.java == '17-ea' || matrix.java == '18-ea' ) && always() }}
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() }}
         env:
           CERT_MACOS_P12: ${{ secrets.CERT_MACOS_P12 }}
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
@@ -146,7 +146,7 @@ jobs:
           ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Build and package for Windows
-        if: ${{ runner.os == 'windows' && (matrix.java == '16' || matrix.java == '17-ea' || matrix.java == '18-ea' ) && always() }}
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
         run: |
           if [ ! -f tools/${{ env.WIX_HOME }}-binaries.zip ]; then
             curl -o tools/${{ env.WIX_HOME }}-binaries.zip ${{ env.WIX_URL }}
@@ -156,7 +156,7 @@ jobs:
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Upload macOS app
-        if: ${{ runner.os == 'macos' && (matrix.java == '16' || matrix.java == '17-ea' || matrix.java == '18-ea' ) && always() }}
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() }}
         id: upload-app
         uses: actions/upload-release-asset@v1
         env:
@@ -168,7 +168,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload Windows Installer package
-        if: ${{ runner.os == 'windows' && (matrix.java == '16' || matrix.java == '17-ea' || matrix.java == '18-ea' ) && always() }}
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
         id: upload-msi
         uses: actions/upload-release-asset@v1
         env:
