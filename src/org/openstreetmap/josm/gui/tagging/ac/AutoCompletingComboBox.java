@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionItem> {
 
     private boolean autocompleteEnabled = true;
-    private boolean locked = false;
+    private boolean locked;
 
     private int maxTextLength = -1;
     private boolean useFixedLocale;

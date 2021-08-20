@@ -103,7 +103,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         // See #17915 - JDK-8164935
         // "Mac" is the native LAF, "Aqua" is Quaqua. Both use native menus with native tooltips.
         String laf = UIManager.getLookAndFeel().getID();
-        return !("true".equals(Utils.getSystemProperty("apple.laf.useScreenMenuBar"))
+        return !("true".equals(getSystemProperty("apple.laf.useScreenMenuBar"))
                 && ("Aqua".equals(laf) || laf.contains("Mac")));
     }
 
