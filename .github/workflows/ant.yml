@@ -123,7 +123,7 @@ jobs:
           SIGN_TSA: ${{ secrets.SIGN_TSA }}
         # Calls ant with -Dreleasebuild=true if we're a 'tested' build
         run: |
-          SIGN_KEYSTORE=certificate.p12
+          export SIGN_KEYSTORE=certificate.p12
           echo "$SIGN_CERT" | base64 --decode > $SIGN_KEYSTORE
           if [ "${{ needs.createrelease.outputs.josm_prerelease }}" == "true" ]; then
             ANT="${{ env.ANT_HOME }}/bin/ant"
