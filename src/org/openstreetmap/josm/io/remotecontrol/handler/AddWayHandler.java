@@ -43,8 +43,6 @@ public class AddWayHandler extends RequestHandler {
 
     private final List<LatLon> allCoordinates = new ArrayList<>();
 
-    private Way way;
-
     /**
      * The place to remember already added nodes (they are reused if needed @since 5845
      */
@@ -77,9 +75,7 @@ public class AddWayHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
-        GuiHelper.runInEDTAndWait(() -> way = addWay());
-        // parse parameter addtags=tag1=value1|tag2=value2
-        AddTagsDialog.addTags(args, sender, Collections.singleton(way));
+        GuiHelper.runInEDT(this::addWay);
     }
 
     @Override
@@ -157,10 +153,10 @@ public class AddWayHandler extends RequestHandler {
         return nd;
     }
 
-    /*
+    /**
      * This function creates the way with given coordinates of nodes
      */
-    private Way addWay() {
+    private void addWay() {
         addedNodes = new HashMap<>();
         Way way = new Way();
         List<Command> commands = new LinkedList<>();
@@ -178,6 +174,7 @@ public class AddWayHandler extends RequestHandler {
         } else {
             MainApplication.getMap().mapView.repaint();
         }
-        return way;
+        // parse parameter addtags=tag1=value1|tag2=value2
+        AddTagsDialog.addTags(args, sender, Collections.singleton(way));
     }
 }

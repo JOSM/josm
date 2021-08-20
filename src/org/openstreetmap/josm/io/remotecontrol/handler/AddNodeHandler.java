@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Point;
 import java.util.Collections;
-import java.util.Map;
 
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.AutoScaleAction.AutoScaleMode;
@@ -38,7 +37,7 @@ public class AddNodeHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() {
-        GuiHelper.runInEDTAndWait(() -> addNode(args));
+        GuiHelper.runInEDT(this::addNode);
     }
 
     @Override
@@ -77,9 +76,8 @@ public class AddNodeHandler extends RequestHandler {
 
     /**
      * Adds a node, implements the GET /add_node?lon=...&amp;lat=... request.
-     * @param args request arguments
      */
-    private void addNode(Map<String, String> args) {
+    private void addNode() {
 
         // Parse the arguments
         Logging.info("Adding node at (" + lat + ", " + lon + ')');

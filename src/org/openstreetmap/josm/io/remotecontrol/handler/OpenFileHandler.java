@@ -48,7 +48,7 @@ public class OpenFileHandler extends RequestHandler {
         if (PermissionPrefWithDefault.ALLOW_WEB_RESOURCES.isAllowed()) {
             options.add(Options.ALLOW_WEB_RESOURCES);
         }
-        GuiHelper.runInEDTAndWait(() ->
+        GuiHelper.runInEDT(() ->
             OpenFileAction.openFiles(Arrays.asList(new File(args.get("filename"))), options.toArray(new Options[0])));
     }
 

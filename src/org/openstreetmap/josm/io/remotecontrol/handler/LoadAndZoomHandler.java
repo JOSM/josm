@@ -33,11 +33,13 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApiException;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.tools.Logging;
@@ -154,20 +156,27 @@ public class LoadAndZoomHandler extends RequestHandler {
                     if (toDownload != null && toDownload.isEmpty()) {
                         Logging.info("RemoteControl: no download necessary");
                     } else {
-                        Future<?> future = osmTask.download(settings, new Bounds(minlat, minlon, maxlat, maxlon),
-                                null /* let the task manage the progress monitor */);
-                        MainApplication.worker.submit(new PostDownloadHandler(osmTask, future))
-                            .get(OSM_DOWNLOAD_TIMEOUT.get(), TimeUnit.SECONDS);
-                        if (osmTask.isFailed()) {
-                            Object error = osmTask.getErrorObjects().get(0);
-                            throw error instanceof OsmApiException
-                                ? new RequestHandlerOsmApiException((OsmApiException) error)
-                                : new RequestHandlerErrorException(String.join(", ", osmTask.getErrorMessages()));
-                        }
+                        Future<?> future = MainApplication.worker.submit(
+                                new PostDownloadHandler(osmTask, osmTask.download(settings, new Bounds(minlat, minlon, maxlat, maxlon),
+                                        null /* let the task manage the progress monitor */)));
+                        GuiHelper.executeByMainWorkerInEDT(() -> {
+                            try {
+                                future.get(OSM_DOWNLOAD_TIMEOUT.get(), TimeUnit.SECONDS);
+                                if (osmTask.isFailed()) {
+                                    Object error = osmTask.getErrorObjects().get(0);
+                                    throw error instanceof OsmApiException
+                                        ? (OsmApiException) error
+                                        : new OsmTransferException(String.join(", ", osmTask.getErrorMessages()));
+                                }
+                            } catch (InterruptedException | ExecutionException | TimeoutException |
+                                    OsmTransferException | RuntimeException ex) { // NOPMD
+                                ExceptionDialogUtil.explainException(ex);
+                            }
+                        });
                     }
                 }
             }
-        } catch (RuntimeException | InterruptedException | ExecutionException | TimeoutException ex) { // NOPMD
+        } catch (RuntimeException ex) { // NOPMD
             Logging.warn("RemoteControl: Error parsing load_and_zoom remote control request:");
             Logging.error(ex);
             throw new RequestHandlerErrorException(ex);

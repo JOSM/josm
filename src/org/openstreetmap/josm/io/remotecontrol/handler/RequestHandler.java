@@ -96,6 +96,7 @@ public abstract class RequestHandler {
 
     /**
      * Handle a specific command sent as remote control.
+     * Any time-consuming operation must be performed asynchronously to avoid delaying the HTTP response.
      *
      * This method of the subclass will do the real work.
      *
