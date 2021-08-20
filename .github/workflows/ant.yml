@@ -156,6 +156,10 @@ jobs:
 
       - name: Build and package for Windows
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
+        env:
+          SIGN_CERT: ${{ secrets.SIGN_CERT }}
+          SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
+          SIGN_TSA: ${{ secrets.SIGN_TSA }}
         run: |
           if [ ! -f tools/${{ env.WIX_HOME }}-binaries.zip ]; then
             curl -o tools/${{ env.WIX_HOME }}-binaries.zip ${{ env.WIX_URL }}
