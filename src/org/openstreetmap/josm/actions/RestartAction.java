@@ -156,6 +156,8 @@ public class RestartAction extends JosmAction {
                     getSystemProperty("java.library.path").contains(APPLE_APP_PATH) ||
                     getSystemProperty("java.class.path").contains(APPLE_APP_PATH))) {
                 return getAppleCommands();
+            } else if (getSystemProperty("jpackage.app-path") != null) {
+                return Arrays.asList(getSystemProperty("jpackage.app-path"));
             } else {
                 return getCommands();
             }
