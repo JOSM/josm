@@ -1,6 +1,12 @@
 #!/bin/bash
 
-set -Eeou pipefail
+## Expected environment, passed from GitHub secrets:
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets
+# SIGN_CERT       PKCS12 certificate keystore used for code signing, base64 encoded
+# SIGN_STOREPASS  Password for that keystore
+# SIGN_TSA        URL of Time Stamping Authority to use
+
+set -Eeo pipefail
 
 # Don't show one time passwords
 set +x
@@ -15,10 +21,21 @@ echo "Building JOSM Windows Installer package"
 
 mkdir app
 
+if [ -z "$SIGN_CERT" ] || [ -z "$SIGN_STOREPASS" ] || [ -z "$SIGN_TSA" ]
+then
+    echo "SIGN_CERT, SIGN_STOREPASS and SIGN_TSA are not set in the environment."
+    echo "A JOSM.msi will be created but not signed."
+    SIGNAPP=false
+else
+    SIGNAPP=true
+fi
+
+set -u
+
 JPACKAGEOPTIONS=""
 
-echo "Building app"
-    jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
+echo "Building MSI"
+jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/windows/logo.ico --type msi --dest app \
     --java-options "--add-exports=java.base/sun.security.action=ALL-UNNAMED" \
@@ -47,3 +64,10 @@ echo "Building app"
 mv app/JOSM-1.5.$1.msi app/JOSM.msi
 
 echo "Building done."
+
+if $SIGNAPP; then
+    CERTIFICATE_P12=certificate.p12
+    echo "$SIGN_CERT" | base64 --decode > $CERTIFICATE_P12
+    signtool sign //f $CERTIFICATE_P12 //d "Java OpenStreetMap Editor" //du "https://josm.openstreetmap.de" //p "$SIGN_STOREPASS" //v //fd SHA256 //tr "$SIGN_TSA" //td SHA256 "app/JOSM.msi"
+    rm $CERTIFICATE_P12
+fi

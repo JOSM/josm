@@ -6,7 +6,7 @@
 # CERT_MACOS_P12  Certificate used for code signing, base64 encoded
 # CERT_MACOS_PW   Password for that certificate
 
-set -Eeou pipefail
+set -Eeo pipefail
 
 # Don't show one time passwords
 set +x
@@ -27,7 +27,7 @@ mkdir app
 if [ -z "$CERT_MACOS_P12" ] || [ -z "$CERT_MACOS_PW" ] || [ -z "$APPLE_ID_PW" ]
 then
     echo "CERT_MACOS_P12, CERT_MACOS_PW and APPLE_ID_PW are not set in the environment."
-    echo "I will create a JOSM.app but I won't attempt to sign and notarize it."
+    echo "A JOSM.app will be created but not signed nor notarized."
     SIGNAPP=false
 else
     echo "Preparing certificates/keychain for signing…"
@@ -48,6 +48,8 @@ else
     echo "Signing preparation done."
 fi
 
+set -u
+
 if $SIGNAPP; then
   JPACKAGEOPTIONS="--mac-sign --mac-signing-keychain $KEYCHAINPATH"
 else
@@ -55,7 +57,7 @@ else
 fi
 
 echo "Building and signing app"
-    jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
+jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
     --icon ./native/macosx/JOSM.icns --type app-image --dest app \
     --java-options "--add-exports=java.base/sun.security.action=ALL-UNNAMED" \
