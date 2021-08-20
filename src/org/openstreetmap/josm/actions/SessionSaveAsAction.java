@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
@@ -165,8 +166,10 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
 
         SessionWriter sw = new SessionWriter(layersOut, active, exporters, dependencies, zip);
         try {
+            Notification savingNotification = showSavingNotification(file.getName());
             sw.write(file);
             SaveActionBase.addToFileOpenHistory(file);
+            showSavedNotification(savingNotification, file.getName());
         } catch (IOException ex) {
             Logging.error(ex);
             HelpAwareOptionPane.showMessageDialogInEDT(

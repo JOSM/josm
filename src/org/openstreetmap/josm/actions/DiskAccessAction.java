@@ -1,13 +1,18 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.Collection;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -135,5 +140,30 @@ public abstract class DiskAccessAction extends JosmAction {
             Collection<? extends FileFilter> filters, FileFilter defaultFilter, int selectionMode, String lastDirProperty) {
         return new FileChooserManager(open, lastDirProperty).createFileChooser(multiple, title, filters, defaultFilter, selectionMode)
                 .openFileChooser();
+    }
+
+    /**
+     * Show "saving file ..." notification and returns it, for future replacement.
+     * @param filename filename of file to save
+     * @return {@link Notification} to provide to {@link #showSavedNotification} once saving is successful
+     * @since 18135
+     */
+    protected static Notification showSavingNotification(String filename) {
+        Notification savingNotification = new Notification(tr("Saving file {0}...", filename)).setIcon(ImageProvider.get("save"));
+        GuiHelper.runInEDT(savingNotification::show);
+        return savingNotification;
+    }
+
+    /**
+     * Show "Successfully saved file" notification and returns it.
+     * @param savingNotification {@link Notification} returned by {@link #showSavingNotification}
+     * @param filename filename of file saved
+     * @return {@code Notification} displayed
+     * @since 18135
+     */
+    protected static Notification showSavedNotification(Notification savingNotification, String filename) {
+        Notification doneNotification = new Notification(tr("Successfully saved file {0}", filename)).setIcon(ImageProvider.get("save"));
+        GuiHelper.runInEDT(() -> doneNotification.replaceExisting(savingNotification));
+        return doneNotification;
     }
 }
