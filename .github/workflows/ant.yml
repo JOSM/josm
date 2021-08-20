@@ -74,11 +74,6 @@ jobs:
         # test against latest update of each major Java version, as well as specific updates of LTS versions:
         java: [8, 11, 16, 17-ea, 18-ea]
         os: [ubuntu-latest, macos-latest, windows-latest]
-        exclude:
-          - java: 8
-            os: macos-latest
-          - java: 11
-            os: macos-latest
     name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -142,7 +137,7 @@ jobs:
           asset_content_type: application/java-archive
 
       - name: Build and package for macOS
-        if: ${{ runner.os == 'macos' && always() }}
+        if: ${{ runner.os == 'macos' && (matrix.java == '16' || matrix.java == '17-ea' || matrix.java == '18-ea' ) && always() }}
         env:
           CERT_MACOS_P12: ${{ secrets.CERT_MACOS_P12 }}
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
@@ -151,17 +146,17 @@ jobs:
           ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Build and package for Windows
-        if: ${{ runner.os == 'windows' && always() }}
+        if: ${{ runner.os == 'windows' && (matrix.java == '16' || matrix.java == '17-ea' || matrix.java == '18-ea' ) && always() }}
         run: |
           if [ ! -f tools/${{ env.WIX_HOME }}-binaries.zip ]; then
             curl -o tools/${{ env.WIX_HOME }}-binaries.zip ${{ env.WIX_URL }}
           fi
-          Expand-Archive -Path tools/${{ env.WIX_HOME }}-binaries.zip -DestinationPath ${{ env.WIX_HOME }}
+          PowerShell -Command Expand-Archive -Path tools/${{ env.WIX_HOME }}-binaries.zip -DestinationPath ${{ env.WIX_HOME }}
           echo "${{ env.WIX_HOME }}" >> $GITHUB_PATH
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Upload macOS app
-        if: ${{ runner.os == 'macos' && always() }}
+        if: ${{ runner.os == 'macos' && (matrix.java == '16' || matrix.java == '17-ea' || matrix.java == '18-ea' ) && always() }}
         id: upload-app
         uses: actions/upload-release-asset@v1
         env:
@@ -173,7 +168,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload Windows Installer package
-        if: ${{ runner.os == 'windows' && always() }}
+        if: ${{ runner.os == 'windows' && (matrix.java == '16' || matrix.java == '17-ea' || matrix.java == '18-ea' ) && always() }}
         id: upload-msi
         uses: actions/upload-release-asset@v1
         env:
