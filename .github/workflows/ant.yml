@@ -18,4 +18,8 @@ jobs:
     steps:
       - name: Find signtool
         run: |
-          ls "C:/"
+          ls "C:/Microsoft"
+          ls "C:/Program Files"
+          ls "C:/Program Files \(x86\)"
+          ls "C:/tools"
+          ls "C:/vcpkg"
