@@ -18,4 +18,4 @@ jobs:
     steps:
       - name: Find signtool
         run: |
-          find . -name signtool.exe
+          find C:/ -name signtool.exe
