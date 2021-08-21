@@ -160,7 +160,7 @@ jobs:
           SIGN_TSA: ${{ secrets.SIGN_TSA }}
         run: |
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
-          echo "$(Split-Path -Path $(Get-ChildItem -Path ${env:ProgramFiles(x86)} -Recurse -Filter 'signtool.exe' | Where-Object FullName -like '*10.0.19041.0\x64\signtool.exe').FullName)" >> $GITHUB_PATH
+          echo "C:\Program Files (x86)\Windows Kits\10\bin\x64" >> $GITHUB_PATH
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Upload macOS app
