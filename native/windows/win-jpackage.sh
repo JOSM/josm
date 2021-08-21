@@ -68,6 +68,6 @@ echo "Building done."
 if $SIGNAPP; then
     CERTIFICATE_P12=certificate.p12
     echo "$SIGN_CERT" | base64 --decode > $CERTIFICATE_P12
-    signtool sign //f $CERTIFICATE_P12 //d "Java OpenStreetMap Editor" //du "https://josm.openstreetmap.de" //p "$SIGN_STOREPASS" //v //fd SHA256 //tr "$SIGN_TSA" //td SHA256 "app/JOSM.msi"
+    signtool.exe sign //f $CERTIFICATE_P12 //d "Java OpenStreetMap Editor" //du "https://josm.openstreetmap.de" //p "$SIGN_STOREPASS" //v //fd SHA256 //tr "$SIGN_TSA" //td SHA256 "app/JOSM.msi"
     rm $CERTIFICATE_P12
 fi
