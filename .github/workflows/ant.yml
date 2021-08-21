@@ -3,8 +3,6 @@ env:
   junit_platform_version: '1.7.2'
   # ANT_HOME is also our ant version
   ANT_HOME: 'apache-ant-1.10.11'
-  WIX_HOME: 'wix3'
-  WIX_URL: 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip'
 on:
   push:
     branches: [master]
@@ -161,11 +159,7 @@ jobs:
           SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
           SIGN_TSA: ${{ secrets.SIGN_TSA }}
         run: |
-          if [ ! -f tools/${{ env.WIX_HOME }}-binaries.zip ]; then
-            curl -o tools/${{ env.WIX_HOME }}-binaries.zip ${{ env.WIX_URL }}
-          fi
-          PowerShell -Command Expand-Archive -Path tools/${{ env.WIX_HOME }}-binaries.zip -DestinationPath ${{ env.WIX_HOME }}
-          echo "${{ env.WIX_HOME }}" >> $GITHUB_PATH
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Upload macOS app
