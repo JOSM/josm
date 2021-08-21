@@ -48,7 +48,7 @@ public class ProgressMonitorExecutor extends ThreadPoolExecutor {
             try {
                 ((Future<?>) r).get();
             } catch (CancellationException cancellationException) {
-                t = cancellationException;
+                Logging.debug("Thread {0} raised {1}", Thread.currentThread().getName(), cancellationException);
             } catch (ExecutionException executionException) {
                 Logging.trace(executionException);
                 t = executionException.getCause();

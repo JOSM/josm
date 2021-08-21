@@ -18,6 +18,7 @@ import java.time.format.FormatStyle;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -72,6 +73,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             () -> Collections.singleton(imageryFilterSettings));
 
     private final ImageDisplay imgDisplay = new ImageDisplay(imageryFilterSettings);
+    private Future<?> imgLoadingFuture;
     private boolean centerView;
 
     // Only one instance of that class is present at one time
@@ -204,6 +206,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
         imageRemoveAction.destroy();
         imageRemoveFromDiskAction.destroy();
         imageZoomAction.destroy();
+        cancelLoadingImage();
         super.destroy();
         dialog = null;
     }
@@ -466,9 +469,10 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
             btnCopyPath.setEnabled(true);
 
             if (imageChanged) {
+                cancelLoadingImage();
                 // Set only if the image is new to preserve zoom and position if the same image is redisplayed
                 // (e.g. to update the OSD).
-                imgDisplay.setImage(entry);
+                imgLoadingFuture = imgDisplay.setImage(entry);
             }
             setTitle(tr("Geotagged Images") + (!entry.getDisplayName().isEmpty() ? " - " + entry.getDisplayName() : ""));
             StringBuilder osd = new StringBuilder(entry.getDisplayName());
@@ -624,6 +628,13 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
     private void showLayer(Layer newLayer) {
         if (currentData == null && newLayer instanceof GeoImageLayer) {
             ((GeoImageLayer) newLayer).getImageData().selectFirstImage();
+        }
+    }
+
+    private void cancelLoadingImage() {
+        if (imgLoadingFuture != null) {
+            imgLoadingFuture.cancel(false);
+            imgLoadingFuture = null;
         }
     }
 

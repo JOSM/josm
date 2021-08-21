@@ -21,6 +21,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.Future;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -634,13 +635,12 @@ public class ImageDisplay extends JComponent implements Destroyable, PreferenceC
     /**
      * Sets a new source image to be displayed by this {@code ImageDisplay}.
      * @param entry new source image
-     * @since 13220
+     * @return a {@link Future} representing pending completion of the image loading task
+     * @since 18150
      */
-    public void setImage(ImageEntry entry) {
+    public Future<?> setImage(ImageEntry entry) {
         LoadImageRunnable runnable = setImage0(entry);
-        if (runnable != null) {
-            MainApplication.worker.execute(runnable);
-        }
+        return runnable != null ? MainApplication.worker.submit(runnable) : null;
     }
 
     protected LoadImageRunnable setImage0(ImageEntry entry) {
