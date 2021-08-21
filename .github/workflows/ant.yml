@@ -19,8 +19,3 @@ jobs:
       - name: Find signtool
         run: |
           ls "C:\"
-          ls "C:\Program Files \(x86\)"
-          ls "C:\Program Files \(x86\)\Microsoft"
-          ls "C:\Program Files \(x86\)\Microsoft SDKs"
-          ls "C:\Program Files \(x86\)\Microsoft Visual Studio"
-          ls "C:\Program Files \(x86\)\Windows Kits"
