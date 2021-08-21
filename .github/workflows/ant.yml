@@ -1,4 +1,8 @@
 name: Java CI Build
+env:
+  junit_platform_version: '1.7.2'
+  # ANT_HOME is also our ant version
+  ANT_HOME: 'apache-ant-1.10.11'
 on:
   push:
     branches: [master]
@@ -8,17 +12,158 @@ defaults:
     shell: bash
 
 jobs:
+
+  createrelease:
+    name: Create Release
+    runs-on: ubuntu-latest
+    env:
+      LANG: en_US.UTF-8
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      josm_revision: ${{ steps.create_revision.outputs.josm_revision }}
+      josm_prerelease: ${{ steps.create_revision.outputs.josm_prerelease }}
+      josm_release_tag: ${{ steps.create_revision.outputs.josm_release_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 256
+
+      - name: Set revision env variable
+        id: create_revision
+        # grab josm revision from last git-svn-id
+        run: |
+          josm_revision="$(git log -1 --grep 'git-svn-id: https://josm.openstreetmap.de/svn/trunk@' --pretty=format:%B | tail -1 | sed -n 's%git-svn-id: https://josm.openstreetmap.de/svn/trunk@\([0-9]*\) [-0-9a-f]*%\1%p')"
+          if [[ "$josm_revision" == "$(curl --silent https://josm.openstreetmap.de/tested)" ]]; then
+            echo "josm_prerelease=false" >> $GITHUB_ENV
+            echo "::set-output name=josm_prerelease::false"
+            josm_release_tag=$josm_revision-tested
+          else
+            echo "josm_prerelease=true" >> $GITHUB_ENV
+            echo "::set-output name=josm_prerelease::true"
+            josm_release_tag=$josm_revision
+          fi
+          echo "josm_revision=$josm_revision" >> $GITHUB_ENV
+          echo "::set-output name=josm_revision::$josm_revision"
+          echo "josm_release_tag=$josm_release_tag" >> $GITHUB_ENV
+          echo "::set-output name=josm_release_tag::$josm_release_tag"
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ env.josm_release_tag }}
+          release_name: JOSM release ${{ env.josm_release_tag }}
+          body: |
+            JOSM release ${{ env.josm_release_tag }}
+          draft: false
+          prerelease: ${{ env.josm_prerelease }}
+
   build:
-    runs-on: windows-latest
+    needs: createrelease
+    runs-on: ${{ matrix.os }}
     env:
       LANG: en_US.UTF-8
     strategy:
       fail-fast: false
+      matrix:
+        # test against latest update of each major Java version, as well as specific updates of LTS versions:
+        java: [16]
+        os: [windows-latest]
+    name: Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 256
+
+      - name: Cache
+        uses: actions/cache@v2.0.0
+        with:
+          path: |
+            ~/.ivy2/cache/
+            ~/work/josm/josm/tools/
+          key: ${{ runner.os }}-ivy2-${{ hashFiles('build.xml', 'ivy.xml', 'tools/ivy.xml') }}
+
+      - name: Setup Java ${{ matrix.java }}
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: ${{ matrix.java }}
+
+      - name: Install Ant ${{ env.ANT_HOME }}
+        run: |
+          if [ ! -f tools/${{ env.ANT_HOME }}-bin.tar.gz ]; then
+            curl -o tools/${{ env.ANT_HOME }}-bin.tar.gz https://downloads.apache.org/ant/binaries/${{ env.ANT_HOME }}-bin.tar.gz
+          fi
+          tar zxf tools/${{ env.ANT_HOME }}-bin.tar.gz
+
+      - name: Ant diagnostics
+        run: ${{ env.ANT_HOME }}/bin/ant -diagnostics
+
+      - name: Optimise images
+        if: ${{ runner.os == 'macos' && always() }}
+        run: |
+          brew install --cask imageoptim
+          defaults write net.pornel.ImageOptim SvgoEnabled 1
+          defaults write net.pornel.ImageOptim PngCrush2Enabled 1
+          defaults write net.pornel.ImageOptim PngOutEnabled 1
+          /Applications/ImageOptim.app/Contents/MacOS/ImageOptim resources/images
+
+      - name: Build with Ant
+        env:
+          SIGN_ALIAS: ${{ secrets.SIGN_ALIAS }}
+          SIGN_CERT: ${{ secrets.SIGN_CERT }}
+          SIGN_KEYPASS: ${{ secrets.SIGN_KEYPASS }}
+          SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
+          SIGN_TSA: ${{ secrets.SIGN_TSA }}
+        # Calls ant with -Dreleasebuild=true if we're a 'tested' build
+        run: |
+          export SIGN_KEYSTORE=certificate.p12
+          echo "$SIGN_CERT" | base64 --decode > $SIGN_KEYSTORE
+          if [ "${{ needs.createrelease.outputs.josm_prerelease }}" == "true" ]; then
+            ANT="${{ env.ANT_HOME }}/bin/ant"
+          else
+            ANT="${{ env.ANT_HOME }}/bin/ant -Dreleasebuild=true"
+          fi
+          $ANT dist
+          rm $SIGN_KEYSTORE
+
+      - name: Upload jar
+        if: ${{ always() }}
+        id: upload-jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
+          asset_path: dist/josm-custom.jar
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.jar
+          asset_content_type: application/java-archive
+
+      - name: Build and package for macOS
+        if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() }}
+        env:
+          CERT_MACOS_P12: ${{ secrets.CERT_MACOS_P12 }}
+          CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
+          APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
+        run: |
+          ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
+
       - name: Build and package for Windows
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
+        env:
+          SIGN_CERT: ${{ secrets.SIGN_CERT }}
+          SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
+          SIGN_TSA: ${{ secrets.SIGN_TSA }}
         run: |
           ls "C:\Program Files (x86)\"
           ls "C:\Program Files (x86)\Microsoft"
           ls "C:\Program Files (x86)\Microsoft SDKs"
           ls "C:\Program Files (x86)\Microsoft Visual Studio"
           ls "C:\Program Files (x86)\Windows Kits"
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+          echo "$(Split-Path -Path $(Get-ChildItem -Path ${env:ProgramFiles(x86)} -Recurse -Filter 'signtool.exe' | Where-Object FullName -like '*10.0.19041.0\x64\signtool.exe').FullName)" >> $GITHUB_PATH
+          ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
