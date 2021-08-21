@@ -152,6 +152,12 @@ jobs:
         run: |
           ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
+      - name: Setup Windows PATH
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
+        run: |
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+          echo "C:\Program Files (x86)\Windows Kits\10\bin\x64" >> $GITHUB_PATH
+
       - name: Build and package for Windows
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
         env:
@@ -159,8 +165,6 @@ jobs:
           SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
           SIGN_TSA: ${{ secrets.SIGN_TSA }}
         run: |
-          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
-          echo "C:\Program Files (x86)\Windows Kits\10\bin\x64" >> $GITHUB_PATH
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Upload macOS app
