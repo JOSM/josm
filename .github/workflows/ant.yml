@@ -1,8 +1,4 @@
 name: Java CI Build
-env:
-  junit_platform_version: '1.7.2'
-  # ANT_HOME is also our ant version
-  ANT_HOME: 'apache-ant-1.10.11'
 on:
   push:
     branches: [master]
@@ -12,28 +8,14 @@ defaults:
     shell: bash
 
 jobs:
-
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
     env:
       LANG: en_US.UTF-8
     strategy:
       fail-fast: false
-      matrix:
-        java: [11]
-        os: [windows-latest]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 256
-
       - name: Build and package for Windows
-        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
-        env:
-          SIGN_CERT: ${{ secrets.SIGN_CERT }}
-          SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
-          SIGN_TSA: ${{ secrets.SIGN_TSA }}
         run: |
           ls "C:\Program Files (x86)\"
           ls "C:\Program Files (x86)\Microsoft"
