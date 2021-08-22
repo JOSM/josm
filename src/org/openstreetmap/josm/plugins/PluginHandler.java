@@ -163,7 +163,10 @@ public final class PluginHandler {
             new DeprecatedPlugin("rapid", tr(replacedByPlugin, "MapWithAI")),
             new DeprecatedPlugin("MovementAlert", inCore),
             new DeprecatedPlugin("OpenStreetCam", tr(replacedByPlugin, "KartaView")),
-            new DeprecatedPlugin("scoutsigns", tr(replacedByPlugin, "KartaView"))
+            new DeprecatedPlugin("scoutsigns", tr(replacedByPlugin, "KartaView")),
+            new DeprecatedPlugin("javafx-osx", inCore),
+            new DeprecatedPlugin("javafx-unixoid", inCore),
+            new DeprecatedPlugin("javafx-windows", inCore)
         );
         Collections.sort(DEPRECATED_PLUGINS);
     }
