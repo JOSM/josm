@@ -16,7 +16,9 @@ How to get Java Runtime Environment
 -----------------------------------
 You need JRE Version 8, or later.
 
-Microsoft Windows and Apple Mac OS X users should visit https://www.java.com
+Microsoft Windows and Apple macOS users should visit one of:
+- https://www.azul.com/downloads/?package=jdk#download-openjdk
+- https://bell-sw.com/pages/downloads/#mn
 and download the latest Java executable for their system.
 
 Linux users should visit http://www.oracle.com/technetwork/java/index.html
