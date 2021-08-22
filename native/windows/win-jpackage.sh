@@ -39,6 +39,7 @@ set -u
 cp native/windows/main.wxs native/windows/main.wxs.bak
 sed -i 's?%josm-source-dir%?'`pwd`'?' native/windows/main.wxs
 sed -i 's?"/c/?"c:/?g' native/windows/main.wxs
+sed -i 's?"/d/?"d:/?g' native/windows/main.wxs
 
 JPACKAGEOPTIONS=""
 
