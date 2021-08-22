@@ -32,6 +32,14 @@ fi
 
 set -u
 
+# jpackage copies resources files to temp dir but not all of them, only an hardcoded set
+# see https://github.com/openjdk/jdk/blob/739769c8fc4b496f08a92225a12d07414537b6c0/src/jdk.jpackage/windows/classes/jdk/jpackage/internal/WinMsiBundler.java#L437
+# so we replace a placeholder to get an absolute path when wix reads this file
+#sed -i "s|%josm-source-dir%|$(pwd)|g" native/windows/main.wxs
+cp native/windows/main.wxs native/windows/main.wxs.bak
+sed -i 's?%josm-source-dir%?'`pwd`'?' native/windows/main.wxs
+sed -i 's?"/c/?"c:/?g' native/windows/main.wxs
+
 JPACKAGEOPTIONS=""
 
 echo "Building EXE and MSI"
@@ -54,6 +62,7 @@ do
     --app-version "1.5.$1" \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "JOSM" \
+    --resource-dir native/windows \
     --win-upgrade-uuid 79be9cf4-6dc7-41e2-a6cd-bbfaa4c07481 \
     --win-per-user-install \
     --win-dir-chooser \
@@ -70,6 +79,8 @@ do
     --add-launcher HWConsole=native/windows/MLConsole.properties \
     --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom,javafx.controls,javafx.media,javafx.swing,javafx.web
 done
+
+mv native/windows/main.wxs.bak native/windows/main.wxs
 
 mv app/JOSM-1.5.$1.exe app/JOSM.exe
 mv app/JOSM-1.5.$1.msi app/JOSM.msi
