@@ -176,8 +176,20 @@ jobs:
         with:
           upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
           asset_path: app/JOSM.zip
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.zip
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.zip
           asset_content_type: application/zip
+
+      - name: Upload Windows Installer executable
+        if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
+        id: upload-msi
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
+          asset_path: app/JOSM.exe
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
 
       - name: Upload Windows Installer package
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
@@ -188,5 +200,5 @@ jobs:
         with:
           upload_url: ${{ needs.createrelease.outputs.upload_url }} # This pulls from the CREATE RELEASE job above, referencing its ID to get its outputs object, which include a `upload_url`.
           asset_path: app/JOSM.msi
-          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}.msi
+          asset_name: JOSM-${{ runner.os}}-java${{ matrix.java }}-${{ needs.createrelease.outputs.josm_revision }}.msi
           asset_content_type: application/x-ole-storage

@@ -17,14 +17,14 @@ then
     exit 1
 fi
 
-echo "Building JOSM Windows Installer package"
+echo "Building JOSM Windows Installer packages"
 
 mkdir app
 
 if [ -z "$SIGN_CERT" ] || [ -z "$SIGN_STOREPASS" ] || [ -z "$SIGN_TSA" ]
 then
     echo "SIGN_CERT, SIGN_STOREPASS and SIGN_TSA are not set in the environment."
-    echo "A JOSM.msi will be created but not signed."
+    echo "A JOSM.exe and JOSM.msi will be created but not signed."
     SIGNAPP=false
 else
     SIGNAPP=true
@@ -34,10 +34,12 @@ set -u
 
 JPACKAGEOPTIONS=""
 
-echo "Building MSI"
-jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
+echo "Building EXE and MSI"
+for type in exe msi
+do
+    jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --main-class org.openstreetmap.josm.gui.MainApplication \
-    --icon ./native/windows/logo.ico --type msi --dest app \
+    --icon ./native/windows/logo.ico --type $type --dest app \
     --java-options "--add-exports=java.base/sun.security.action=ALL-UNNAMED" \
     --java-options "--add-exports=java.desktop/com.sun.imageio.plugins.jpeg=ALL-UNNAMED" \
     --java-options "--add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED" \
@@ -59,15 +61,25 @@ jpackage $JPACKAGEOPTIONS -n "JOSM" --input dist --main-jar josm-custom.jar \
     --file-associations native/file-associations/joz.properties \
     --file-associations native/file-associations/osm.properties \
     --file-associations native/file-associations/zip.properties \
+    --add-launcher HWConsole=native/windows/MLConsole.properties \
     --add-modules java.base,java.datatransfer,java.desktop,java.logging,java.management,java.naming,java.net.http,java.prefs,java.rmi,java.scripting,java.sql,java.transaction.xa,java.xml,jdk.crypto.ec,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom
+done
 
+mv app/JOSM-1.5.$1.exe app/JOSM.exe
 mv app/JOSM-1.5.$1.msi app/JOSM.msi
+
+# Workaround to https://bugs.openjdk.java.net/browse/JDK-8261845
+# to remove after we switch to Java 17+ for jpackage builds
+chmod u+w app/JOSM.exe
 
 echo "Building done."
 
 if $SIGNAPP; then
     CERTIFICATE_P12=certificate.p12
     echo "$SIGN_CERT" | base64 --decode > $CERTIFICATE_P12
-    signtool.exe sign //f $CERTIFICATE_P12 //d "Java OpenStreetMap Editor" //du "https://josm.openstreetmap.de" //p "$SIGN_STOREPASS" //v //fd SHA256 //tr "$SIGN_TSA" //td SHA256 "app/JOSM.msi"
+    for ext in exe msi
+    do
+        signtool.exe sign //f $CERTIFICATE_P12 //d "Java OpenStreetMap Editor" //du "https://josm.openstreetmap.de" //p "$SIGN_STOREPASS" //v //fd SHA256 //tr "$SIGN_TSA" //td SHA256 "app/JOSM.$ext"
+    done
     rm $CERTIFICATE_P12
 fi
