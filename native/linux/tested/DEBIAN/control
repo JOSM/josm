@@ -6,8 +6,7 @@ Homepage: https://josm.openstreetmap.de
 Priority: extra
 Architecture: all
 Depends: openjdk-11-jre | java11-runtime | openjdk-8-jre | java8-runtime,
-         proj-data, fonts-noto
-Recommends: openjfx
+         proj-data, fonts-noto, openjfx
 Conflicts: josm-plugins
 Replaces: josm-plugins
 Description: Editor for OpenStreetMap
