@@ -1,6 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery.vectortile.mapbox;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -12,14 +21,6 @@ import org.openstreetmap.josm.data.protobuf.ProtobufRecord;
 import org.openstreetmap.josm.data.vector.VectorDataStore;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A class for Mapbox Vector Tiles
@@ -67,7 +68,7 @@ public class MVTTile extends Tile implements VectorTile, IQuadBucketType {
                 }
                 return mvtLayer;
             }).collect(Collectors.toCollection(HashSet::new));
-            this.extent = layers.stream().map(Layer::getExtent).max(Integer::compare).orElse(Layer.DEFAULT_EXTENT);
+            this.extent = layers.stream().filter(Objects::nonNull).mapToInt(Layer::getExtent).max().orElse(Layer.DEFAULT_EXTENT);
             if (this.getData() != null) {
                 this.finishLoading();
                 this.listenerList.fireEvent(event -> event.finishedLoading(this));
