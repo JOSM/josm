@@ -54,6 +54,7 @@ do
     --app-version "1.5.$1" \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "JOSM" \
+    --win-upgrade-uuid 79be9cf4-6dc7-41e2-a6cd-bbfaa4c07481 \
     --win-per-user-install \
     --win-dir-chooser \
     --win-shortcut \
