@@ -3,6 +3,7 @@ env:
   junit_platform_version: '1.7.2'
   # ANT_HOME is also our ant version
   ANT_HOME: 'apache-ant-1.10.11'
+  JAVAFX_VERSION: '16'
 on:
   push:
     branches: [master]
@@ -149,6 +150,11 @@ jobs:
           CERT_MACOS_PW: ${{ secrets.CERT_MACOS_PW }}
           APPLE_ID_PW: ${{ secrets.APPLE_ID_PW }}
         run: |
+          if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip ]; then
+            curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_osx-x64_bin-jmods.zip
+          fi
+          unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip
+          mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
           ./native/macosx/macos-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Setup Windows PATH
@@ -164,6 +170,11 @@ jobs:
           SIGN_STOREPASS: ${{ secrets.SIGN_STOREPASS }}
           SIGN_TSA: ${{ secrets.SIGN_TSA }}
         run: |
+          if [ ! -f tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip ]; then
+            curl -o tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip https://download2.gluonhq.com/openjfx/${JAVAFX_VERSION}/openjfx-${JAVAFX_VERSION}_windows-x64_bin-jmods.zip
+          fi
+          unzip tools/openjfx-${JAVAFX_VERSION}_${{ runner.os }}-jmods.zip
+          mv javafx-jmods-${JAVAFX_VERSION}/*.jmod $JAVA_HOME/jmods/
           ./native/windows/win-jpackage.sh ${{ needs.createrelease.outputs.josm_revision }}
 
       - name: Upload macOS app
