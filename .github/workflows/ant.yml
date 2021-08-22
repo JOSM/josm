@@ -133,7 +133,6 @@ jobs:
 
       - name: Upload jar
         if: ${{ always() }}
-        id: upload-jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: actions/upload-release-asset@v1
@@ -169,7 +168,6 @@ jobs:
 
       - name: Upload macOS app
         if: ${{ runner.os == 'macos' && matrix.java != '8' && matrix.java != '11' && always() }}
-        id: upload-app
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -181,7 +179,6 @@ jobs:
 
       - name: Upload Windows Installer executable
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
-        id: upload-msi
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -193,7 +190,6 @@ jobs:
 
       - name: Upload Windows Installer package
         if: ${{ runner.os == 'windows' && matrix.java != '8' && matrix.java != '11' && always() }}
-        id: upload-msi
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

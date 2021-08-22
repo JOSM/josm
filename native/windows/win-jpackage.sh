@@ -53,6 +53,8 @@ do
     --app-version "1.5.$1" \
     --copyright "JOSM, and all its integral parts, are released under the GNU General Public License v2 or later" \
     --vendor "JOSM" \
+    --win-shortcut \
+    --win-menu \
     --file-associations native/file-associations/bz2.properties \
     --file-associations native/file-associations/geojson.properties \
     --file-associations native/file-associations/gpx.properties \
