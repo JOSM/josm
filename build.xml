@@ -188,13 +188,6 @@ Build-Date: ${build.tstamp}
     	<signjar jar="${dist.jar}" alias="${env.SIGN_ALIAS}" tsaurl="${env.SIGN_TSA}"
             keystore="${env.SIGN_KEYSTORE}" storepass="${env.SIGN_STOREPASS}" keypass="${env.SIGN_KEYPASS}" if:set="sign.jar" />
     </target>
-    <!-- Windows target -->
-    <target name="distwin" depends="dist">
-        <exec dir="native/windows" executable="./josm-setup-unix.sh">
-            <arg value="${version.entry.commit.revision}"/>
-            <arg value="${dist.jar}"/>
-        </exec>
-    </target>
     <target name="javacc" depends="init" unless="javacc.notRequired" description="Compile the MapCSS compiler">
         <ivy:cachepath log="download-only" file="${tools.ivy}" pathid="javacc.classpath" conf="javacc"/>
         <mkdir dir="${mapcss.dir}/parsergen"/>
