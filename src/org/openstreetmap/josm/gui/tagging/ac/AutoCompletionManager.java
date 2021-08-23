@@ -456,7 +456,7 @@ public class AutoCompletionManager implements DataSetListener {
 
     @Override
     public void relationMembersChanged(RelationMembersChangedEvent event) {
-        dirty = true; // TODO: not necessary to rebuid if a member is added
+        dirty = true; // TODO: not necessary to rebuild if a member is added
     }
 
     @Override

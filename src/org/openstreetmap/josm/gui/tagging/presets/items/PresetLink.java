@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
- * Adds a link to an other preset.
+ * Adds a link to another preset.
  * @since 8863
  */
 public class PresetLink extends TextItem {

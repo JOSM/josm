@@ -46,7 +46,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
         @Override
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
 
-            // If a maximum number of characters is specified, avoid to exceed it
+            // If a maximum number of characters is specified, avoid exceeding it
             if (maxChars != null && str != null && getLength() + str.length() > maxChars) {
                 int allowedLength = maxChars-getLength();
                 if (allowedLength > 0) {

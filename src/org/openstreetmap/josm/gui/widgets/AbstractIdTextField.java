@@ -75,7 +75,7 @@ public abstract class AbstractIdTextField<T extends AbstractTextComponentValidat
 
     /**
      * Tries to set text from given contents (no effect with invalid or empty contents)
-     * @param contents The text to interprete as ID(s)
+     * @param contents The text to interpret as ID(s)
      * @return true if text has been pasted and valid ids have been read
      */
     public boolean tryToPasteFrom(String contents) {

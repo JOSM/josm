@@ -10,7 +10,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Albers Equal Area Projection (EPSG code 9822). This is a conic projection with parallels being
  * unequally spaced arcs of concentric circles, more closely spaced at north and south edges of the
- * map. Merideans are equally spaced radii of the same circles and intersect parallels at right
+ * map. Meridians are equally spaced radii of the same circles and intersect parallels at right
  * angles. As the name implies, this projection minimizes distortion in areas.
  * <p>
  * The {@code "standard_parallel_2"} parameter is optional and will be given the same value as
@@ -27,11 +27,11 @@ import org.openstreetmap.josm.tools.Utils;
  * <b>References:</b>
  * <ul>
  *   <li> Proj-4.4.7 available at <A HREF="http://www.remotesensing.org/proj">www.remotesensing.org/proj</A><br>
- *        Relevent files are: PJ_aea.c, pj_fwd.c and pj_inv.c </li>
+ *        Relevant files are: PJ_aea.c, pj_fwd.c and pj_inv.c </li>
  *   <li> John P. Snyder (Map Projections - A Working Manual,
  *        U.S. Geological Survey Professional Paper 1395, 1987)</li>
  *   <li> "Coordinate Conversions and Transformations including Formulas",
- *        EPSG Guidence Note Number 7, Version 19.</li>
+ *        EPSG Guidance Note Number 7, Version 19.</li>
  * </ul>
  *
  * @author Gerald I. Evenden (for original code in Proj4)

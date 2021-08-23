@@ -37,7 +37,7 @@ public abstract class AbstractCoordinateFormat implements ICoordinateFormat {
      * By not using the localized decimal separator, we can present a comma separated list of coordinates.
      * @param pattern decimal format pattern
      * @return {@code DecimalFormat} using dot as decimal separator
-     * @see DecimalFormat#applyPattern
+     * @see DecimalFormat#applyPattern(String)
      * @since 14203
      */
     public static DecimalFormat newUnlocalizedDecimalFormat(String pattern) {

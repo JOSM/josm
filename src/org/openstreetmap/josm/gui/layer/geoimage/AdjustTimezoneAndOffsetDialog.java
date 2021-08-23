@@ -157,7 +157,7 @@ public class AdjustTimezoneAndOffsetDialog extends ExtendedDialog {
 
     /**
      * Sets the {@link AdjustListener}.
-     * @param listener adjuust listener. Can be null
+     * @param listener adjust listener, can be null
      * @return {@code this}
      */
     public final AdjustTimezoneAndOffsetDialog adjustListener(AdjustListener listener) {

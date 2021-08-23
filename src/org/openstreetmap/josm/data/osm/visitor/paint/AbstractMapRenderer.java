@@ -90,7 +90,7 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param n  The node to draw.
      * @param color The color of the node.
      * @param size size in pixels
-     * @param fill determines if the square mmust be filled
+     * @param fill determines if the square must be filled
      */
     public abstract void drawNode(INode n, Color color, int size, boolean fill);
 
@@ -195,7 +195,7 @@ public abstract class AbstractMapRenderer implements Rendering {
     }
 
     /**
-     * Checks if a way segemnt is large enough for additional information display.
+     * Checks if a way segment is large enough for additional information display.
      *
      * @param p1 First point of the way segment.
      * @param p2 Second point of the way segment.
