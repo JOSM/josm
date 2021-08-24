@@ -61,7 +61,7 @@ if [ "$JAVACMD" ]; then
     if [[ "${JAVACMD}" =~ 'java-9' ]] || [[ "${JAVACMD}" =~ 'java-10' ]]; then
         JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
     elif [[ "${JAVACMD}" =~ 'java-1' ]]; then
-        JAVA_OPTS="--add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web $JAVA_OPTS"
+        JAVA_OPTS="--module-path /usr/share/openjfx/lib --add-modules java.scripting,java.sql,javafx.controls,javafx.media,javafx.swing,javafx.web $JAVA_OPTS"
     fi
     set +e
     while true; do
